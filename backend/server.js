@@ -56,6 +56,40 @@ app.get("/api/parts/:category", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+// API to insert or update a part
+app.post("/api/parts", async (req, res) => {
+  try {
+    const {
+      id, category, img, brand, name, desc, price, tags,
+      socket_type, ddr_type, form_factor, power_required,
+      wattage, capacity, speed, type, efficiency
+    } = req.body;
+
+    const tagsJson = JSON.stringify(tags || []);
+
+    const query = `
+      INSERT INTO pc_parts 
+      (id, category, img, brand, name, \`desc\`, price, tags, socket_type, ddr_type, form_factor, power_required, wattage, capacity, speed, type, efficiency) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ON DUPLICATE KEY UPDATE
+      category=VALUES(category), img=VALUES(img), brand=VALUES(brand), name=VALUES(name), \`desc\`=VALUES(\`desc\`), price=VALUES(price), tags=VALUES(tags),
+      socket_type=VALUES(socket_type), ddr_type=VALUES(ddr_type), form_factor=VALUES(form_factor), power_required=VALUES(power_required),
+      wattage=VALUES(wattage), capacity=VALUES(capacity), speed=VALUES(speed), type=VALUES(type), efficiency=VALUES(efficiency)
+    `;
+
+    const values = [
+      id, category, img || null, brand || null, name || null, desc || null, price || null, tagsJson,
+      socket_type || null, ddr_type || null, form_factor || null, power_required || null,
+      wattage || null, capacity || null, speed || null, type || null, efficiency || null
+    ];
+
+    await db.query(query, values);
+    res.json({ success: true, message: "Part added successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // API to get saved builds
 app.get("/api/builds", async (req, res) => {
   try {

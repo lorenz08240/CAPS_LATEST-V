@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { useBuild } from "../../contexts/BuildContext";
+import { checkCompatibility } from "../../utilities/compatibilityEngine";
 import "./Build.css";
 
 export const buildSteps = [
@@ -50,17 +51,28 @@ function Build() {
     getSelectedComponents,
     resetBuild,
   } = useBuild();
-  const [currentStep, setCurrentStep] = useState(0);
+  const location = useLocation();
+  const [currentStep, setCurrentStep] = useState(() => {
+    if (location.state?.stepCategory) {
+      const idx = buildSteps.findIndex((s) => s.key.toLowerCase() === location.state.stepCategory.toLowerCase());
+      return idx !== -1 ? idx : 0;
+    }
+    return 0;
+  });
   const [searchQuery, setSearchQuery] = useState("");
 
   const selectedComponents = getSelectedComponents();
 
-  // Calculate Total Price
-  const totalPrice = selectedComponents.reduce((sum, comp) => {
-    const priceString =
-      typeof comp.price === "string" ? comp.price.replace(/[₱,]/g, "") : "0";
-    return sum + (parseFloat(priceString) || 0);
-  }, 0);
+  useEffect(() => {
+    if (location.state?.scrollTo) {
+      setTimeout(() => {
+        const el = document.getElementById(location.state.scrollTo);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 100);
+    }
+  }, [location.state]);
 
   const handleComponentSelect = (component) => {
     const category = buildSteps[currentStep].key;
@@ -77,14 +89,6 @@ function Build() {
     setCurrentStep(0); // Balik sa Step 1 (PC Case)
   };
 
-  const isStepLocked = (stepIndex) => {
-    // Lock steps based on the previous step's completion
-    if (stepIndex > 0) {
-      const previousStepKey = buildSteps[stepIndex - 1].key;
-      return !currentBuild[previousStepKey];
-    }
-    return false;
-  };
   const currentCategory = buildSteps[currentStep].key;
   const currentComponents = allComponents[currentCategory] || [];
   const selectedComponent = currentBuild[currentCategory];
@@ -146,10 +150,8 @@ function Build() {
               {buildSteps.map((step, index) => (
                 <div
                   key={step.key}
-                  className={`step-item ${index === currentStep ? "active" : ""
-                    } ${currentBuild[step.key] ? "completed" : ""} ${isStepLocked(index) ? "locked" : ""
-                    }`}
-                  onClick={() => !isStepLocked(index) && setCurrentStep(index)}
+                  className={`step-item ${index === currentStep ? "active" : ""} ${currentBuild[step.key] ? "completed" : ""}`}
+                  onClick={() => setCurrentStep(index)}
                 >
                   <div className="step-icon">
                     {currentBuild[step.key] ? "✓" : step.icon}
@@ -188,14 +190,6 @@ function Build() {
                 ))
               )}
             </div>
-            {selectedComponents.length > 0 && (
-              <div className="total-price-section">
-                <span className="total-label">Total Price</span>
-                <span className="total-value">
-                  ₱{totalPrice.toLocaleString()}
-                </span>
-              </div>
-            )}
           </div>
 
 
@@ -262,39 +256,50 @@ function Build() {
             )}
           </div>
           <div className="components-grid">
-            {filteredComponents.map((component) => (
-              <div
-                key={component.id}
-                className={`component-card ${selectedComponent?.id === component.id ? "selected" : ""
-                  }`}
-                onClick={() => handleComponentSelect(component)}
-              >
-                <div className="component-image">
-                  <img src={component.img} alt={component.alt} />
-                </div>
-                <div className="component-details">
-                  <div className="component-brand">{component.brand}</div>
-                  <h3 className="component-name">{component.name}</h3>
-                  <p className="component-description">{component.desc}</p>
-                  <div className="component-tags">
-                    {Array.isArray(component.tags) &&
-                      component.tags.map((tag, index) => (
-                        <span key={index} className="tag">
-                          {tag}
-                        </span>
-                      ))}
+            {filteredComponents.map((component) => {
+              const { isCompatible, reason } = checkCompatibility(component, currentBuild);
+              
+              return (
+                <div
+                  key={component.id}
+                  className={`component-card ${
+                    selectedComponent?.id === component.id ? "selected" : ""
+                  } ${!isCompatible ? "incompatible" : ""}`}
+                  onClick={() => isCompatible && handleComponentSelect(component)}
+                >
+                  <div className="component-image">
+                    <img src={component.img} alt={component.name} />
                   </div>
-                  <div className="component-footer">
-                    <span className="component-price">{component.price}</span>
-                    <span className="component-status">
-                      {selectedComponent?.id === component.id
-                        ? "✓ Selected"
-                        : "Click to select"}
-                    </span>
+                  <div className="component-details">
+                    <div className="component-brand">{component.brand}</div>
+                    <h3 className="component-name">{component.name}</h3>
+                    <p className="component-description">{component.desc}</p>
+                    <div className="component-tags">
+                      {Array.isArray(component.tags) &&
+                        component.tags.map((tag, index) => (
+                          <span key={index} className="tag">
+                            {tag}
+                          </span>
+                        ))}
+                    </div>
+                    <div className="component-footer">
+                      <span className="component-status">
+                        {!isCompatible
+                          ? "🔒 Incompatible"
+                          : selectedComponent?.id === component.id
+                          ? "✓ Selected"
+                          : "Click to select"}
+                      </span>
+                    </div>
+                    {!isCompatible && (
+                      <div className="incompatible-tooltip">
+                        ⚠️ {reason}
+                      </div>
+                    )}
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>

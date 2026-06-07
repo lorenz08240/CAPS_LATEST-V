@@ -182,3 +182,27 @@
     border-right-color: var(--border);
   }
 }
+
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex-grow: 1;
+  margin-left: 0; /* Default: sidebar auto-hides */
+  display: flex;
+  flex-direction: column;
+  transition: margin-left 300ms ease-in-out;
+}
+
+.app-layout.sidebar-pinned .main-content {
+  margin-left: 260px; /* Width of the pinned sidebar */
+}
+
+@media (max-width: 900px) {
+  .main-content {
+    margin-left: 0;
+    padding-bottom: 70px; /* Space for mobile bottom bar */
+  }
+}

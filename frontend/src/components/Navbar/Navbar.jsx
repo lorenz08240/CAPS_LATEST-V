@@ -1,64 +1,81 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 import "./Navbar.css";
 
-function Navbar() {
-  const [isVisible, setIsVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
+function Navbar({ isPinned, setIsPinned }) {
+  const { isAdmin } = useAuth();
+  const [isHovered, setIsHovered] = useState(false);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      
-      // If scrolling down and we scrolled past 50px, hide the navbar
-      if (currentScrollY > lastScrollY && currentScrollY > 50) {
-        setIsVisible(false);
-      } 
-      // If scrolling up, show the navbar
-      else if (currentScrollY < lastScrollY) {
-        setIsVisible(true);
-      }
-
-      setLastScrollY(currentScrollY);
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollY]);
-
-  // Also show navbar if mouse moves near the top of the screen
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      if (e.clientY < 50) {
-        setIsVisible(true);
-      }
-    };
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
+  const isVisible = isPinned || isHovered;
 
   return (
-    <nav className={`navbar ${isVisible ? "" : "navbar-hidden"}`}>
-      <div className="navbar-container">
-        <Link to="/" className="navbar-logo">
-          BUILDLAB
-        </Link>
-        <div className="navbar-links">
-          <Link to="/" className="navbar-link">
-            Home
-          </Link>
-          <Link to="/build" className="navbar-link">
-            Build
-          </Link>
-          <Link to="/compatibility" className="navbar-link">
-            Compatibility
-          </Link>
-          <Link to="/learn" className="navbar-link">
-            Learn
-          </Link>
+    <>
+      {/* Invisible Trigger Zone */}
+      {!isPinned && (
+        <div 
+          className="sidebar-trigger-zone" 
+          onMouseEnter={() => setIsHovered(true)} 
+        />
+      )}
+
+      {/* Soft Backdrop Overlay (Dim Effect) */}
+      <div 
+        className={`sidebar-backdrop ${isHovered && !isPinned ? "active" : ""}`} 
+        onClick={() => setIsHovered(false)} 
+      />
+
+      <nav 
+        className={`sidebar ${isVisible ? "open" : "closed"} ${isPinned ? "pinned" : ""}`}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        {/* Indicator Arrow when closed */}
+        {!isVisible && (
+          <div className="sidebar-indicator">
+            <span className="indicator-arrow">›</span>
+          </div>
+        )}
+
+        <div className="sidebar-container">
+          <div className="sidebar-header">
+            <Link to="/" className="sidebar-logo">
+              BUILDLAB
+            </Link>
+            <button 
+              className={`sidebar-pin-btn ${isPinned ? 'active' : ''}`}
+              onClick={() => setIsPinned(!isPinned)}
+              title={isPinned ? "Unpin Sidebar" : "Pin Sidebar"}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill={isPinned ? "#facc15" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="12" y1="17" x2="12" y2="22"></line>
+                <path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"></path>
+              </svg>
+            </button>
+          </div>
+          
+          <div className="sidebar-links">
+            <Link to="/" className="sidebar-link">
+              Home
+            </Link>
+            <Link to="/build" className="sidebar-link">
+              Build
+            </Link>
+            <Link to="/compatibility" className="sidebar-link">
+              Compatibility
+            </Link>
+            <Link to="/learn" className="sidebar-link">
+              Learn
+            </Link>
+            {isAdmin && (
+              <Link to="/admin" className="sidebar-link" style={{ color: '#00E676', fontWeight: 'bold', marginTop: 'auto' }}>
+                ⚙️ ADMIN
+              </Link>
+            )}
+          </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+    </>
   );
 }
 

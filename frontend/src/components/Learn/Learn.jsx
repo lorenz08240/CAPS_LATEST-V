@@ -133,7 +133,7 @@ const componentGuide = [
     ],
     commonMistakes: [
       "Selecting a PSU with insufficient wattage for your high-performance components, resulting in random power-off crashes under load.",
-      "Prioritizing price over reliability, potentially exposing expensive parts to ripple, voltage spikes, or outright failure.",
+      "Prioritizing aesthetics over reliability, potentially exposing expensive parts to ripple, voltage spikes, or outright failure.",
       "Using non-modular power supplies in cramped cases, making cable management nearly impossible and restricting airflow.",
       "Failing to confirm that the PSU has the correct type and number of connectors (PCIe cables, CPU power) for your GPU and motherboard.",
     ],
@@ -176,7 +176,7 @@ const componentGuide = [
     bestFor: { "1080p": "RTX 4060", "1440p": "RTX 4070", "4K": "RTX 4090", "VR Gaming": "High VRAM models", "AI Workloads": "Professional grade GPUs" },
     brands: [
       { name: "NVIDIA", description: "Industry leader in tech.", tier: "Premium" },
-      { name: "AMD", description: "Best price-to-performance.", tier: "Value" },
+      { name: "AMD", description: "Best value and performance.", tier: "Value" },
       { name: "Intel", description: "Arc series entry-level.", tier: "Budget" },
       { name: "ASUS ROG", description: "Highly overclocked custom cards.", tier: "Enthusiast" },
     ],

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -6,6 +6,7 @@ import {
   useLocation,
 } from "react-router-dom";
 import { BuildProvider } from "./contexts/BuildContext";
+import { AuthProvider } from "./contexts/AuthContext";
 import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
 import Home from "./components/Home/Home";
@@ -14,6 +15,7 @@ import Compatibility from "./components/Compatibility/Compatibility";
 import Learn from "./components/Learn/Learn";
 import Brands from "./components/Brands/Brands";
 import PCBuilder3D from "./components/3D/PCBuilder3D";
+import Admin from "./components/Admin/Admin";
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -26,36 +28,45 @@ const ScrollToTop = () => {
 };
 
 function App() {
+  const [isSidebarPinned, setIsSidebarPinned] = useState(false);
+
   return (
-    <BuildProvider>
-      <Router>
-        <ScrollToTop />
-        <div className="min-h-screen bg-buildlab-dark flex flex-col">
-          <Navbar />
-          <Routes>
-            {/* Main Landing Page */}
-            <Route path="/" element={<Home />} />
+    <AuthProvider>
+      <BuildProvider>
+        <Router>
+          <ScrollToTop />
+          <div className={`min-h-screen bg-buildlab-dark app-layout ${isSidebarPinned ? 'sidebar-pinned' : ''}`}>
+            <Navbar isPinned={isSidebarPinned} setIsPinned={setIsSidebarPinned} />
+            <main className="main-content">
+              <Routes>
+                {/* Main Landing Page */}
+                <Route path="/" element={<Home />} />
 
-            {/* Build Page */}
-            <Route path="/build" element={<Build />} />
+                {/* Build Page */}
+                <Route path="/build" element={<Build />} />
 
-            {/* Compatibility Page */}
-            <Route path="/compatibility" element={<Compatibility />} />
+                {/* Compatibility Page */}
+                <Route path="/compatibility" element={<Compatibility />} />
 
-            {/* Learn Page */}
-            <Route path="/learn" element={<Learn />} />
+                {/* Learn Page */}
+                <Route path="/learn" element={<Learn />} />
 
-            {/* Brands Page */}
-            <Route path="/brands" element={<Brands />} />
+                {/* Brands Page */}
+                <Route path="/brands" element={<Brands />} />
 
-            {/* 3D Builder Page */}
-            <Route path="/3d-builder" element={<PCBuilder3D />} />
+                {/* 3D Builder Page */}
+                <Route path="/3d-builder" element={<PCBuilder3D />} />
 
-          </Routes>
-          <Footer />
-        </div>
-      </Router>
-    </BuildProvider>
+                {/* Admin Dashboard */}
+                <Route path="/admin" element={<Admin />} />
+
+              </Routes>
+              <Footer />
+            </main>
+          </div>
+        </Router>
+      </BuildProvider>
+    </AuthProvider>
   );
 }
 

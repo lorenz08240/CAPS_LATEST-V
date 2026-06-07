@@ -57,7 +57,32 @@ export const BuildProvider = ({ children }) => {
   useEffect(() => {
     fetch("http://localhost:5000/api/parts")
       .then(res => res.json())
-      .then(data => setAllComponents(data))
+      .then(data => {
+        const cleanedData = {};
+        for (const cat in data) {
+          cleanedData[cat] = data[cat].filter(item => {
+            const lowerName = item.name.toLowerCase();
+            return !(
+              lowerName.includes("laptop") || 
+              lowerName.includes("vivobook") || 
+              lowerName.includes("ideapad") || 
+              lowerName.includes("aspire") || 
+              lowerName.includes("nitro") ||
+              lowerName.includes("desktop") ||
+              lowerName.includes("thin 15") ||
+              lowerName.includes("pro 15") ||
+              lowerName.includes("bluetti") ||
+              lowerName.includes("solar") ||
+              lowerName.includes("portable") ||
+              lowerName.includes("generator") ||
+              lowerName.includes("power station") ||
+              lowerName.includes("ac2p") ||
+              lowerName.includes("pv130")
+            );
+          });
+        }
+        setAllComponents(cleanedData);
+      })
       .catch(err => console.error("Error fetching components:", err));
 
     fetch("http://localhost:5000/api/builds")

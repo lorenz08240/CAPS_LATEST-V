@@ -44,14 +44,6 @@ export default function Compatibility() {
     return b;
   };
 
-  const calculateBuildPrice = (build) => {
-    if (!build) return 0;
-    return Object.values(build).reduce((s, c) => {
-      if (!c || !c.price) return s;
-      return s + parsePrice(c.price);
-    }, 0);
-  };
-
   const selectedComponents = getSelectedComponents().sort((a, b) => {
     const order = ["case", "motherboard", "cpu", "ram", "storage", "gpu", "psu"];
     return order.indexOf(a.category.toLowerCase()) - order.indexOf(b.category.toLowerCase());
@@ -60,9 +52,6 @@ export default function Compatibility() {
   const [saveMessage, setSaveMessage] = useState("");
   const [bottleneckDismissed, setBottleneckDismissed] = useState(false);
   const [issueModal, setIssueModal] = useState(null); // { slot, issues[] }
-
-  const parsePrice = (price = "") =>
-    parseFloat(price.toString().replace(/[₱,]/g, "")) || 0;
 
   /* ── Saved build helpers ── */
   const savedComponents = useMemo(() => {
@@ -268,16 +257,8 @@ export default function Compatibility() {
   };
 
   const compatibilityIssues = checkAllCompatibility();
-  const totalPrice = selectedComponents.reduce(
-    (s, c) => s + parsePrice(c.price),
-    0
-  );
-
   const slot1Build = getSavedBuild(0);
   const slot2Build = getSavedBuild(1);
-  const slot1Price = calculateBuildPrice(slot1Build);
-  const slot2Price = calculateBuildPrice(slot2Build);
-
   const currentScore = getBuildScore(currentBuild);
   const savedScore = getBuildScore(savedBuild);
   const radarLabels = getRadarLabels();
@@ -402,7 +383,6 @@ export default function Compatibility() {
                           {comp.category.toUpperCase()}
                         </span>
                         <StatusBadge ok={isOk} />
-                        <span className="comp-price">{comp.price}</span>
                       </div>
                       <div className="comp-body">
                         <div className="comp-img-wrap">
@@ -432,10 +412,7 @@ export default function Compatibility() {
                 })}
               </div>
 
-              <div className="total-row">
-                <span>Total Estimated Cost</span>
-                <strong>₱{totalPrice.toLocaleString()}</strong>
-              </div>
+
             </div>
 
             {/* Bottleneck / Compatibility */}
@@ -464,7 +441,11 @@ export default function Compatibility() {
                   </div>
                 ))}
                 <div className="bottleneck-actions">
-                  <Link to="/build" className="fix-btn">
+                  <Link 
+                    to="/build" 
+                    state={{ scrollTo: "build-main-area", stepCategory: compatibilityIssues[0]?.components?.[0] || "case" }} 
+                    className="fix-btn"
+                  >
                     Fix Compatibility Issues
                   </Link>
                 </div>
@@ -507,276 +488,335 @@ export default function Compatibility() {
             </div>
           </div>
 
-          {/* ════ RIGHT PANEL ════ */}
+          {/* ════ RIGHT PANEL (Dashboard UI) ════ */}
           <div className="right-panel">
-            {/* Radar */}
-            <div className="sidebar-card">
-              <div className="sidebar-label">PERFORMANCE LAB</div>
-              <div className="sidebar-title">System Synergy</div>
+            {/* Top Grid Stats */}
+            <div className="dashboard-grid">
+              <div className="dash-stat-card">
+                <span className="dash-icon" style={{color: "var(--amber)"}}>⚡</span>
+                <div className="dash-info">
+                  <span className="dash-label">EST. WATTAGE</span>
+                  <span className="dash-value" style={{color: "var(--amber)"}}>{estWattage}W</span>
+                </div>
+              </div>
+              <div className="dash-stat-card">
+                <span className="dash-icon" style={{color: "var(--cyan)"}}>⚙️</span>
+                <div className="dash-info">
+                  <span className="dash-label">COMPONENTS</span>
+                  <span className="dash-value" style={{color: "var(--cyan)"}}>{selectedComponents.length}/7</span>
+                </div>
+              </div>
+              <div className="dash-stat-card">
+                <span className="dash-icon" style={{color: "var(--orange)"}}>📈</span>
+                <div className="dash-info">
+                  <span className="dash-label">GAMING SCORE</span>
+                  <span className="dash-value" style={{color: "var(--orange)"}}>{metricScore(currentBuild, "GPU")}</span>
+                </div>
+              </div>
+              <div className="dash-stat-card">
+                <span className="dash-icon" style={{color: "var(--purple)"}}>🧠</span>
+                <div className="dash-info">
+                  <span className="dash-label">PRODUCTIVITY</span>
+                  <span className="dash-value" style={{color: "var(--purple)"}}>{metricScore(currentBuild, "CPU")}</span>
+                </div>
+              </div>
+            </div>
 
-              <div className="radar-wrap">
+            {/* Performance Profile (Radar) */}
+            <div className="sidebar-card">
+              <div className="sidebar-title">
+                <span className="sidebar-title-icon">💻</span>
+                Performance Profile
+              </div>
+
+              <div className="radar-wrap" style={{ marginTop: '1rem' }}>
                 <svg className="radar-svg" viewBox="-20 -20 300 300">
+                  {/* Hexagon Grid */}
                   {[100, 75, 50, 25].map((r, i) => (
-                    <circle
+                    <polygon
                       key={i}
-                      cx="130"
-                      cy="130"
-                      r={r}
-                      className="radar-ring"
+                      points={metrics.map((_, j) => {
+                        const angle = -Math.PI / 2 + ((Math.PI * 2) / metrics.length) * j;
+                        return `${130 + Math.cos(angle) * r},${130 + Math.sin(angle) * r}`;
+                      }).join(" ")}
+                      className="radar-ring-poly"
+                      fill="none"
+                      stroke="rgba(255,255,255,0.05)"
+                      strokeWidth="1"
                     />
                   ))}
+                  
+                  {/* Axes */}
                   {metrics.map((_, i) => {
-                    const angle =
-                      -Math.PI / 2 + ((Math.PI * 2) / metrics.length) * i;
+                    const angle = -Math.PI / 2 + ((Math.PI * 2) / metrics.length) * i;
                     return (
                       <line
-                        key={i}
+                        key={`axis-${i}`}
                         x1="130"
                         y1="130"
                         x2={130 + Math.cos(angle) * 100}
                         y2={130 + Math.sin(angle) * 100}
                         className="radar-axis"
+                        stroke="rgba(255,255,255,0.1)"
                       />
                     );
                   })}
-                  {savedPoints && (
-                    <polygon
-                      points={savedPoints}
-                      className="radar-poly radar-saved"
-                    />
-                  )}
+                  
+                  {/* Current Build Polygon */}
                   <polygon
                     points={currentPoints}
                     className="radar-poly radar-current"
+                    fill="rgba(0, 229, 255, 0.2)"
+                    stroke="var(--cyan)"
+                    strokeWidth="2"
                   />
-                  {radarLabels.map(({ metric, x, y }) => (
-                    <text
-                      key={metric}
-                      x={x}
-                      y={y}
-                      className="radar-label"
-                      dominantBaseline="middle"
-                    >
-                      {metric}
-                    </text>
-                  ))}
+                  
+                  {/* Points on Polygon */}
+                  {metrics.map((m, i) => {
+                    const score = currentBuild ? metricScore(currentBuild, m) : 0;
+                    const norm = (score / 100) * 100;
+                    const angle = -Math.PI / 2 + ((Math.PI * 2) / metrics.length) * i;
+                    const px = 130 + Math.cos(angle) * norm;
+                    const py = 130 + Math.sin(angle) * norm;
+                    return (
+                      <circle key={`pt-${i}`} cx={px} cy={py} r="3" fill="var(--cyan)" />
+                    );
+                  })}
+
+                  {/* Labels */}
+                  {radarLabels.map(({ metric, x, y }) => {
+                    // Adjust label positioning slightly outward
+                    const dx = x - 130;
+                    const dy = y - 130;
+                    const nx = 130 + dx * 1.1;
+                    const ny = 130 + dy * 1.1;
+                    return (
+                      <text
+                        key={metric}
+                        x={nx}
+                        y={ny}
+                        className="radar-label"
+                        dominantBaseline="middle"
+                        textAnchor="middle"
+                        fill="rgba(255,255,255,0.7)"
+                        fontSize="11px"
+                      >
+                        {metric}
+                      </text>
+                    );
+                  })}
                 </svg>
               </div>
-
-              <div className="radar-legend">
+              <div className="radar-legend" style={{justifyContent: 'center', marginTop: '1rem'}}>
                 <div className="legend-pill">
-                  <span className="legend-dot dot-current" />
-                  Current <strong>{currentScore}</strong>
+                  <span className="legend-dot dot-current" style={{background: 'var(--cyan)'}} />
+                  <span style={{color: "rgba(255,255,255,0.7)", fontSize: "12px"}}>Current Build</span>
                 </div>
-                {hasSavedBuild && (
-                  <div className="legend-pill">
-                    <span className="legend-dot dot-saved" />
-                    Saved <strong>{savedScore}</strong>
-                  </div>
-                )}
               </div>
             </div>
 
-            {/* Active Comparisons */}
+            {/* Score Breakdown (Progress Bars) */}
             <div className="sidebar-card">
-              <div className="sidebar-title" style={{ textAlign: "center" }}>Current vs Saved</div>
-
-              <div className="score-vs-row">
-                <div className="score-box">
-                  <div className="score-lbl">Current Build</div>
-                  <div className="score-num">{currentScore}</div>
-                  <div className="score-sub">Score</div>
-                </div>
-                <div className="score-vs">vs</div>
-                <div className="score-box">
-                  <div className="score-lbl">Saved Build</div>
-                  <div className="score-num score-num-saved">
-                    {hasSavedBuild ? savedScore : "—"}
-                  </div>
-                  <div className="score-sub">Score</div>
-                </div>
+              <div className="sidebar-title" style={{ display: 'flex', alignItems: 'center', textShadow: '0 0 10px rgba(255,255,255,0.2)', marginBottom: '20px' }}>
+                <span className="sidebar-title-icon" style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <span style={{ position: 'absolute', top: '-4px', right: '-4px', width: '8px', height: '8px', background: '#FF5252', borderRadius: '50%', boxShadow: '0 0 6px #FF5252' }}></span>
+                </span>
+                <span style={{marginLeft: '12px'}}>Score Breakdown</span>
               </div>
-
-              {/* Save Slots */}
-              <div className="slots-list">
-                {[0, 1].map((slot) => {
-                  const sb = getSavedBuild(slot);
-                  const count = sb ? Object.values(sb).filter(Boolean).length : 0;
-                  const slotIssues = checkBuildCompatibility(sb);
-                  const isSelected = selectedSaveSlot === slot;
-                  const price = slot === 0 ? slot1Price : slot2Price;
-
-                  const isBuild2 = slot === 1;
-                  const isBuild1Saved = Boolean(getSavedBuild(0));
-
+              <div className="score-breakdown-list">
+                {[
+                  { label: "Gaming", score: metricScore(currentBuild, "GPU") },
+                  { label: "Productivity", score: metricScore(currentBuild, "CPU") },
+                  { label: "Rendering", score: Math.round((metricScore(currentBuild, "CPU") + metricScore(currentBuild, "GPU")) / 2) },
+                  { label: "Storage", score: metricScore(currentBuild, "SSD") },
+                  { label: "System Value", score: getBuildScore(currentBuild) },
+                ].map((item, i) => {
+                  let color = "#FF5252"; // Soft Crimson (Low)
+                  if (item.score >= 41) color = "#FFA726"; // Amber (Medium)
+                  if (item.score >= 76) color = "#00E676"; // Emerald (High)
+                  
                   return (
-                    <div
-                      key={slot}
-                      className={`slot-card ${isSelected ? "slot-selected" : ""} ${sb ? "slot-filled" : ""}`}
-                    >
-                      <div className="slot-top-row">
-                        <span className="slot-name">BUILD {slot + 1}</span>
-                        {sb ? (
-                          <span className="slot-parts">{count} parts</span>
-                        ) : (
-                          <span className="slot-empty">Empty</span>
-                        )}
+                    <div key={i} className="score-progress-item-v2">
+                      <div className="progress-label-v2">{item.label}</div>
+                      <div className="progress-track-v2" style={{ border: `1px solid ${color}40` }}>
+                        <div 
+                          className="progress-fill-v2" 
+                          style={{ 
+                            width: `${Math.max(item.score, 5)}%`, // Ensure it's wide enough for text
+                            backgroundColor: color
+                          }} 
+                        >
+                           <span className="progress-fill-text">{item.score}%</span>
+                        </div>
                       </div>
-                      <div className="slot-price">
-                        Total: ₱{sb ? price.toLocaleString() : "0"}
+                      <div className="progress-value-v2" style={{ color: color }}>
+                        {item.score}
                       </div>
-                      
-                      {isBuild2 && !isBuild1Saved ? (
-                        <div style={{ marginTop: '12px', fontSize: '13px', color: 'var(--text-muted)', fontStyle: 'italic', textAlign: 'center' }}>
-                          Save Build 1 first to unlock Build 2
+                      {item.score <= 40 ? (
+                        <div className="progress-alert-icon">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="#FF5252"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
                         </div>
                       ) : (
-                        <div className="slot-btn-grid">
-                          <button
-                            className="save-slot-btn save-slot-btn--save"
-                            style={saveSlotBtnStyle}
-                            onClick={() => handleSave(slot)}
-                          >
-                            {sb ? "Overwrite" : "Save Current"}
-                          </button>
-
-                          {sb ? (
-                            <Link
-                              to="/build"
-                              className="save-slot-btn save-slot-btn--compare"
-                              style={{ ...saveSlotBtnStyle, display: "block", textAlign: "center", boxSizing: "border-box" }}
-                              onClick={() => setSelectedSaveSlot(slot)}
-                            >
-                              Edit Build
-                            </Link>
-                          ) : (
-                            <Link
-                              to="/build"
-                              className="save-slot-btn save-slot-btn--compare"
-                              style={{ ...saveSlotBtnStyle, display: "block", textAlign: "center", boxSizing: "border-box" }}
-                              onClick={() => { setSelectedSaveSlot(slot); resetBuild(); }}
-                            >
-                              {isBuild2 ? "Add New PC" : "Build New PC"}
-                            </Link>
-                          )}
-
-                          {sb && (
-                            <button
-                              className="save-slot-btn slot-check-issues-btn"
-                              style={{ ...saveSlotBtnStyle, gridColumn: '1 / -1' }}
-                              onClick={() => setIssueModal({ slot, issues: checkBuildCompatibility(sb) })}
-                            >
-                              🔍 Check Issues for Build {slot + 1}
-                            </button>
-                          )}
-                        </div>
+                        <div></div>
                       )}
                     </div>
                   );
                 })}
               </div>
+            </div>
 
-              {/* Comparison Section */}
+            {/* Build Slots (Save/Compare) */}
+            <div className="sidebar-card">
+              <div className="sidebar-title">
+                Saved Configurations
+              </div>
+
+              <div className="slots-list">
+                {[0, 1].map((slot) => {
+                  const sb = getSavedBuild(slot);
+                  const count = sb ? Object.values(sb).filter(Boolean).length : 0;
+                  const isSelected = selectedSaveSlot === slot;
+                  const targetPower = sb ? estimateWattage(sb) : 0;
+                  
+                  const slotTitle = slot === 0 
+                    ? "Primary System Config (e.g., Budget Office / Productivity Rig)" 
+                    : "Secondary System Config (e.g., High-End Gaming / Rendering Station)";
+
+                  return (
+                    <div
+                      key={slot}
+                      className={`slot-card ${isSelected ? "slot-selected" : ""}`}
+                    >
+                      <div className="slot-top-row">
+                        <span className="slot-name">{slotTitle}</span>
+                        <div className="slot-meta">
+                          <span className="slot-parts">{count} parts saved</span>
+                          {sb && <span className="slot-power">• {targetPower}W Target Power</span>}
+                        </div>
+                      </div>
+
+                      <div className="slot-btn-grid">
+                        <button
+                          onClick={() => handleSave(slot)}
+                          className="btn-update-slot"
+                        >
+                         Update Slot
+                        </button>
+                        {sb ? (
+                          <button
+                            onClick={() => setSelectedSaveSlot(slot)}
+                            className="btn-open-config"
+                          >
+                           Open Configuration
+                          </button>
+                        ) : (
+                          <button
+                            disabled
+                            className="btn-open-config disabled"
+                          >
+                          Empty Slot
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Master Call-To-Action Button */}
               {getSavedBuild(0) && getSavedBuild(1) && (
-                <>
+                <div className="compare-section">
                   <button 
-                    className="compare-toggle full-width"
                     onClick={() => setCompareMode(!compareMode)}
-                    style={{ marginTop: '16px' }}
+                    className="btn-eval"
                   >
-                    {compareMode ? "HIDE COMPARISON" : "COMPARE BUILDS"}
+                  {compareMode ? "Hide Performance Evaluation" : "Run Dual-Build Performance Evaluation"}
                   </button>
                   
                   {compareMode && (
                     <div className="compare-diff">
-                      <div className="diff-title" style={{ fontFamily: 'var(--font-display)', fontSize: '16px', fontWeight: '700', color: 'var(--text-primary)' }}>
-                        Builds Comparison
-                      </div>
                       <div className="diff-grid">
                         <div className="diff-col">
-                          <div className="diff-head">Build 1</div>
+                          <div className="diff-head head-b1">Build 1</div>
                           {Object.entries(getSavedBuild(0))
                             .filter(([, v]) => v)
                             .map(([cat, comp], i) => (
-                              <div key={`b1-${i}`} className="diff-item">
-                                {comp.name}
+                              <div className="diff-item" key={`b1-${i}`}>
+                                <span className="diff-cat">{cat}:</span> {comp.name}
                               </div>
                             ))}
                         </div>
-                        <div className="diff-col">
-                          <div className="diff-head">Build 2</div>
+                        <div className="diff-col col-right">
+                          <div className="diff-head head-b2">Build 2</div>
                           {Object.entries(getSavedBuild(1))
                             .filter(([, v]) => v)
                             .map(([cat, comp], i) => (
-                              <div key={`b2-${i}`} className="diff-item">
-                                {comp.name}
+                              <div className="diff-item" key={`b2-${i}`}>
+                                <span className="diff-cat">{cat}:</span> {comp.name}
                               </div>
                             ))}
                         </div>
                       </div>
                     </div>
                   )}
-                </>
+                </div>
               )}
-              {saveMessage && <div className="save-toast">{saveMessage}</div>}
+              
+              {saveMessage && (
+                <div className="save-message">
+                  {saveMessage}
+                </div>
+              )}
             </div>
 
-            {/* Price & Power Summary */}
-            <div className="sidebar-card summary-card">
-              <div className="sidebar-label">
-                REAL-TIME PRICE & POWER SUMMARY
+            {/* Compatibility Issues List */}
+            <div className="sidebar-card">
+              <div className="sidebar-title">
+                <span className="sidebar-title-icon" style={{color: compatibilityIssues.length > 0 ? 'var(--red)' : 'var(--green)'}}>
+                  {compatibilityIssues.length > 0 ? '❌' : '✅'}
+                </span>
+                Compatibility
+                <span className="issues-count" style={{marginLeft: 'auto', fontSize: '12px', color: 'rgba(255,255,255,0.5)'}}>
+                  {compatibilityIssues.length} issues
+                </span>
               </div>
-              <div className="summary-grid">
-                <div className="summary-col">
-                  <div className="summary-row">
-                    <span className="summary-lbl">CURRENT BUILD COST</span>
-                    <span className="summary-val summary-price">
-                      ₱{totalPrice.toLocaleString()}
-                    </span>
-                  </div>
-                  <div className="summary-row">
-                    <span className="summary-lbl">CURRENT WATTAGE</span>
-                    <span className="summary-val summary-watt">
-                      EST. {estWattage}W
-                    </span>
-                  </div>
-                  <div className="summary-row">
-                    <span className="summary-lbl">CURRENT SCORE</span>
-                    <div className="score-badge-wrap">
-                      <span className="system-score">{currentScore}.0</span>
-                      <span className="score-max">/ 100</span>
+              <div className="issues-list" style={{marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
+                {compatibilityIssues.length > 0 ? (
+                  compatibilityIssues.map((iss, i) => (
+                    <div key={i} className="issue-box" style={{
+                      padding: '12px',
+                      background: 'rgba(239, 68, 68, 0.1)',
+                      border: '1px solid rgba(239, 68, 68, 0.2)',
+                      borderRadius: 'var(--r-md)',
+                      display: 'flex',
+                      gap: '10px',
+                      alignItems: 'flex-start'
+                    }}>
+                      <span style={{color: 'var(--red)', fontSize: '14px', marginTop: '2px'}}>⊗</span>
+                      <p style={{margin: 0, fontSize: '13px', color: 'rgba(255,255,255,0.8)', lineHeight: '1.4'}}>
+                        {iss.issue}
+                      </p>
                     </div>
+                  ))
+                ) : (
+                  <div className="issue-box" style={{
+                    padding: '12px',
+                    background: 'rgba(34, 197, 94, 0.1)',
+                    border: '1px solid rgba(34, 197, 94, 0.2)',
+                    borderRadius: 'var(--r-md)',
+                    display: 'flex',
+                    gap: '10px',
+                    alignItems: 'center'
+                  }}>
+                    <span style={{color: 'var(--green)', fontSize: '14px'}}>✓</span>
+                    <p style={{margin: 0, fontSize: '13px', color: 'rgba(255,255,255,0.8)'}}>
+                      All components are fully compatible.
+                    </p>
                   </div>
-                </div>
-
-                {hasSavedBuild && (
-                  <>
-                    <div className="summary-divider" />
-                    <div className="summary-col">
-                      <div className="summary-row">
-                        <span className="summary-lbl">BUILD {selectedSaveSlot + 1} COST</span>
-                        <span className="summary-val summary-price" style={{ color: "var(--amber)" }}>
-                          ₱{(selectedSaveSlot === 0 ? slot1Price : slot2Price).toLocaleString()}
-                        </span>
-                      </div>
-                      <div className="summary-row">
-                        <span className="summary-lbl">BUILD {selectedSaveSlot + 1} WATTAGE</span>
-                        <span className="summary-val summary-watt" style={{ color: "var(--amber)" }}>
-                          EST. {savedWattage}W
-                        </span>
-                      </div>
-                      <div className="summary-row">
-                        <span className="summary-lbl">BUILD {selectedSaveSlot + 1} SCORE</span>
-                        <div className="score-badge-wrap">
-                          <span className="system-score" style={{ color: "var(--amber)" }}>{savedScore}.0</span>
-                          <span className="score-max">/ 100</span>
-                        </div>
-                      </div>
-                    </div>
-                  </>
                 )}
               </div>
             </div>
+
           </div>
         </div>
       )}
