@@ -30,6 +30,7 @@ function Admin() {
   });
 
   const [loading, setLoading] = useState(false);
+  const [crawling, setCrawling] = useState(false);
   const [message, setMessage] = useState("");
 
   // Fetch all parts
@@ -93,6 +94,27 @@ function Admin() {
       setMessage("Error connecting to server.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleCrawl = async () => {
+    if (window.confirm("Are you sure you want to run the crawler? This will scrape live data and may take a few seconds.")) {
+      setCrawling(true);
+      setMessage("Crawler is running. Please wait...");
+      try {
+        const res = await fetch("http://localhost:5000/api/crawl", { method: "POST" });
+        const data = await res.json();
+        if (res.ok) {
+          setMessage("Crawling completed successfully!");
+          fetchParts(); // Refresh table
+        } else {
+          setMessage(`Crawling failed: ${data.error}`);
+        }
+      } catch (err) {
+        setMessage("Error connecting to server to run crawler.");
+      } finally {
+        setCrawling(false);
+      }
     }
   };
 
@@ -178,15 +200,25 @@ function Admin() {
           <h1>Admin Dashboard</h1>
           <p>Manage components and compatibility tagging (The Matrix)</p>
         </div>
-        <button 
-          className="btn-logout" 
-          onClick={() => {
-            logoutAdmin();
-            setPassword("");
-          }}
-        >
-          Logout
-        </button>
+        <div style={{ display: 'flex', gap: '16px' }}>
+          <button 
+            className="btn-logout" 
+            style={{ backgroundColor: 'var(--yellow)', color: 'var(--dark)' }}
+            onClick={handleCrawl}
+            disabled={crawling}
+          >
+            {crawling ? "Crawling..." : "Run Web Crawler"}
+          </button>
+          <button 
+            className="btn-logout" 
+            onClick={() => {
+              logoutAdmin();
+              setPassword("");
+            }}
+          >
+            Logout
+          </button>
+        </div>
       </div>
 
       <div className="admin-content">

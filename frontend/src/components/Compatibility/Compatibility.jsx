@@ -5,7 +5,7 @@ import { useBuild } from "../../contexts/BuildContext";
 import { checkCompatibility, getCompatibilitySummary } from "../../utilities/rules";
 import "./Compatibility.css";
 
-/* Siguraduhin na ang Link ay may display properties */
+/* Ensure Link has display properties */
 const saveSlotBtnStyle = {
   display: "block",
   width: "100%",
@@ -25,7 +25,7 @@ const saveSlotBtnStyle = {
   transition: "background 0.18s, color 0.18s",
 };
 
-export default function Compatibility() {
+export default function Compatibility({ isIntegrated = false }) {
   const {
     currentBuild,
     getSelectedComponents,
@@ -318,21 +318,25 @@ export default function Compatibility() {
         document.body
       )}
 
-    <div className="compat-page">
+    <div className={`compat-page ${isIntegrated ? 'integrated-view' : ''}`}>
       {/* Decorative bg elements */}
-      <div className="bg-grid" aria-hidden="true" />
-      <div className="bg-glow bg-glow-1" aria-hidden="true" />
-      <div className="bg-glow bg-glow-2" aria-hidden="true" />
+      {!isIntegrated && (
+        <>
+          <div className="bg-grid" aria-hidden="true" />
+          <div className="bg-glow bg-glow-1" aria-hidden="true" />
+          <div className="bg-glow bg-glow-2" aria-hidden="true" />
 
-      {/* ── Hero ── */}
-      <section className="hero">
-        <h1>
-          Real-Time <span className="accent">Compatibility</span> Check
-        </h1>
-        <p>
-          Every component is instantly verified against your existing choices.
-        </p>
-      </section>
+          {/* ── Hero ── */}
+          <section className="hero">
+            <h1>
+              Real-Time <span className="accent">Compatibility</span> Check
+            </h1>
+            <p>
+              Every component is instantly verified against your existing choices.
+            </p>
+          </section>
+        </>
+      )}
 
       {/* ── Empty State ── */}
       {selectedComponents.length === 0 && (

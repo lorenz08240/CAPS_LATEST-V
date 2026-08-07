@@ -119,5 +119,17 @@ app.post("/api/builds/:slot", async (req, res) => {
   }
 });
 
+// API to trigger crawler
+const { exec } = require("child_process");
+app.post("/api/crawl", (req, res) => {
+  exec("node crawler.js", (error, stdout, stderr) => {
+    if (error) {
+      console.error(`Crawler execution error: ${error.message}`);
+      return res.status(500).json({ error: error.message, stderr });
+    }
+    res.json({ success: true, message: "Crawling completed successfully", output: stdout });
+  });
+});
+
 const PORT = 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

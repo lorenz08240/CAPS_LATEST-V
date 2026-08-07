@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom"; // Import Link from react-router-dom
 import "./Home.css"; // Import the CSS file for styling
+import Build from "../Build/Build";
+import Compatibility from "../Compatibility/Compatibility";
 
 const useElementOnScreen = (options) => {
   const containerRef = useRef(null);
@@ -34,6 +36,7 @@ function Hero() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(true);
+  const [showBackToTop, setShowBackToTop] = useState(false);
 
   const featureSlides = [
     {
@@ -94,9 +97,25 @@ function Hero() {
     setCurrentSlide(idx);
   };
 
+  // Use the hook to track visibility for each card
   const [refCard1, isVisibleCard1] = useElementOnScreen({ threshold: 0.2 });
   const [refCard2, isVisibleCard2] = useElementOnScreen({ threshold: 0.2 });
   const [refCard3, isVisibleCard3] = useElementOnScreen({ threshold: 0.2 });
+
+  useEffect(() => {
+    const handleScroll = () => {
+      // Show back to top button when user scrolls down
+      const scrollPosition = window.scrollY || document.documentElement.scrollTop;
+      if (scrollPosition > 300) {
+        setShowBackToTop(true);
+      } else {
+        setShowBackToTop(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -152,197 +171,211 @@ function Hero() {
           </div>
         </div>
       )}
-      <section id="welcome" className="home-hero">
-        <div className="hero-badge"></div>
+      <section id="welcome" className="home-hero two-col-hero">
+        
+        <div className="hero-content-wrapper">
+          {/* LEFT COLUMN: Typography, Stats, CTA */}
+          <div className="hero-left-col">
+            <div className="hero-subtitle-new" style={{ color: '#4ade80', letterSpacing: '0.2em', fontSize: '1.09rem', fontWeight: 700, marginBottom: '1rem', textTransform: 'uppercase' }}>
+              INTERACTIVE HARDWARE SIMULATION
+            </div>
+            <h1 className="hero-title-new" style={{ marginBottom: '3rem' }}>
+              Build Your Dream PC <br />
+              <span className="gold-glow-text">with Expert Guidance</span>
+            </h1>
+            <p className="hero-desc-new" style={{ color: '#94a3b8', fontSize: '1.6rem', maxWidth: '540px', marginBottom: '4rem', lineHeight: 1.6 }}>
+              The ultimate PC building simulator. Master hardware compatibility, customize your perfect rig, and learn essential assembly skills interactively. No guesswork—just confident building!
+            </p>
 
-        <span className="hero-tagline">INTERACTIVE HARDWARE SIMULATION</span>
-        <h1 className="hero-title">
-          Build Your Dream PC
-          <br />
-          <span className="yellow">with Expert Guidance</span>
-        </h1>
+            <div className="hero-stats-new" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '2rem' }}>
+              <div className="stat-new" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <span className="stat-number-new">72+</span>
+                <span className="stat-label-new">COMPONENTS TRACKED</span>
+              </div>
+              <div className="stat-new" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <span className="stat-number-new">7</span>
+                <span className="stat-label-new">ASSEMBLY STAGES</span>
+              </div>
+              <div className="stat-new" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <span className="stat-number-new">1</span>
+                <span className="stat-label-new">COMPATIBILITY MATRIX ENGINE</span>
+              </div>
+            </div>
 
-        <p className="hero-sub">
-          The ultimate PC building simulator. Master hardware compatibility, customize your perfect rig, and learn essential assembly skills interactively. No guesswork—just confident building!
-        </p>
-
-        <div className="hero-stats">
-          <div className="stat">
-            <span className="stat-number">72+</span>
-            <span className="stat-label">COMPONENTS TRACKED</span>
+            <div className="hero-cta-wrapper">
+              <button 
+                className="hero-cta-btn-new"
+                onClick={() => document.getElementById("build-station").scrollIntoView({ behavior: "smooth" })}
+              >
+                START BUILDING NOW
+              </button>
+            </div>
           </div>
-          <div className="stat">
-            <span className="stat-number">7</span>
-            <span className="stat-label">ASSEMBLY STAGES</span>
-          </div>
-          <div className="stat">
-            <span className="stat-number">1</span>
-            <span className="stat-label">COMPATIBILITY MATRIX ENGINE</span>
-          </div>
-        </div>
 
-
-        {/* Interactive Feature Carousel */}
-        <div className="hero-carousel-container">
-          <div 
-            className="carousel-slide-wrapper" 
-            style={{ 
-              transform: `translateX(-${currentSlide * 100}%)`,
-              transition: isTransitioning ? 'transform 1.5s cubic-bezier(0.4, 0, 0.2, 1.5)' : 'none'
-            }}
-          >
-            {extendedSlides.map((slide, index) => (
-              <div className="carousel-slide" key={`${slide.id}-${index}`}>
-                <div className="slide-content">
-                  <h4>{slide.title}</h4>
-                  <p>{slide.desc}</p>
-                </div>
-                <div className="slide-image">
-                  <img src={slide.image} alt={slide.title} />
-                  <div className="slide-overlay"></div>
+          {/* RIGHT COLUMN: Antigravity Carousel */}
+          <div className="hero-right-col antigravity-track">
+            <div className="hero-carousel-container-new">
+              <div className="ambient-blur-glow"></div>
+              <div className="carousel-viewport">
+                <div 
+                  className="carousel-slide-wrapper-new" 
+                  style={{ 
+                    transform: `translateX(-${currentSlide * 80}%)`,
+                    transition: isTransitioning ? 'transform 1.2s cubic-bezier(0.22, 1, 0.36, 1)' : 'none'
+                  }}
+                >
+                  {extendedSlides.map((slide, index) => (
+                    <div className="carousel-slide-new" key={`${slide.id}-${index}`}>
+                      <div className="slide-inner-new">
+                        <div className="slide-content-new">
+                          <span className="active-guide-badge-new" style={{ marginBottom: '1rem' }}>ACTIVE GUIDE</span>
+                          <h4>{slide.title}</h4>
+                          <p>{slide.desc}</p>
+                          <div className="slide-decoration-nodes" style={{ marginTop: '2rem' }}>
+                            <span className="node"></span>
+                            <span className="node-line"></span>
+                            <span className="node"></span>
+                          </div>
+                        </div>
+                        <div className="slide-media-new">
+                          <img src={slide.image} alt={slide.title} />
+                          <div className="slide-overlay-new"></div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
-            ))}
-          </div>
-          <div className="carousel-indicators">
-            {featureSlides.map((_, idx) => (
-              <button 
-                key={idx} 
-                className={`indicator-dot ${currentSlide === idx || (currentSlide === featureSlides.length && idx === 0) ? 'active' : ''}`}
-                onClick={() => handleDotClick(idx)}
-                aria-label={`Go to slide ${idx + 1}`}
-              />
-            ))}
+
+              {/* FLOATING NAVIGATION MODULE (Right Side) */}
+              <div className="carousel-control-module-new">
+                <div className="control-counter-new">
+                  STAGE 0{(currentSlide % featureSlides.length) + 1} <span className="counter-divider">/</span> 0{featureSlides.length}
+                </div>
+                
+                <div className="carousel-indicators-new">
+                  {featureSlides.map((_, idx) => (
+                    <button 
+                      key={idx} 
+                      className={`indicator-pill ${currentSlide === idx || (currentSlide === featureSlides.length && idx === 0) ? 'active' : ''}`}
+                      onClick={() => handleDotClick(idx)}
+                      aria-label={`Go to slide ${idx + 1}`}
+                    />
+                  ))}
+                </div>
+
+                <div className="control-arrows-new">
+                  <button className="control-arrow-btn" onClick={() => handleDotClick(currentSlide - 1 < 0 ? featureSlides.length - 1 : currentSlide - 1)}>
+                    &lt;
+                  </button>
+                  <button className="control-arrow-btn" onClick={() => handleDotClick((currentSlide + 1) % featureSlides.length)}>
+                    &gt;
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            {/* BOTTOM PANEL: Live System Requirements */}
+            <div className="live-system-requirements-new">
+              <div className="req-item-new">
+                <span className="req-icon-new">✓</span>
+                <span className="req-text-new">HARDWARE VALIDATION LOGIC: <span className="req-status-new">ACTIVE</span></span>
+              </div>
+              <div className="req-item-new">
+                <span className="req-icon-new">✓</span>
+                <span className="req-text-new">THERMAL PROFILE ANALYTICS: <span className="req-status-new">ONLINE</span></span>
+              </div>
+              <div className="req-item-new">
+                <span className="req-icon-new">✓</span>
+                <span className="req-text-new">BOTTLENECK ENGINE: <span className="req-status-new">STABLE</span></span>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="tech-logos-wrapper">
-          <span className="tech-logos-label">Component catalog powered by real-world tech specifications.</span>
-          <div className="tech-logos">
-            <span className="brand-logo">INTEL</span>
-            <span className="brand-logo">AMD</span>
-            <span className="brand-logo">NVIDIA</span>
-            <span className="brand-logo">ASUS</span>
-            <span className="brand-logo">MSI</span>
+        {/* BOTTOM: Scroll Indicator & Trust Badges */}
+        <div className="hero-footer-new">
+          <div className="scroll-divider-container">
+            <div className="scroll-line"></div>
+            <span className="scroll-text-new">SCROLL TO EXPLORE</span>
+            <div className="scroll-line"></div>
+          </div>
+
+          <div className="tech-logos-wrapper-new">
+            <div className="tech-logos translucent-row-new">
+              <span className="brand-logo">intel</span>
+              <span className="brand-logo">AMD</span>
+              <span className="brand-logo" style={{fontStyle: 'normal'}}>DELL</span>
+              <span className="brand-logo" style={{fontFamily: 'Segoe UI'}}>Microsoft</span>
+              <span className="brand-logo" style={{fontFamily: 'sans-serif', fontWeight: 600}}>MSI</span>
+            </div>
           </div>
         </div>
 
-        <div className="scroll-indicator">
-          <span className="scroll-text">Scroll to explore</span>
-          <div className="scroll-arrow">↓</div>
-        </div>
       </section>
 
+      {/* TIER 2: Active Build Station Framework */}
+      <section id="build-station" className="home-integrated-section">
+        <div className="section-header container">
+          <h2>Active Build Station</h2>
+          <p className="section-desc">Select your components and build your custom rig step by step.</p>
+        </div>
+        <Build isIntegrated={true} />
+      </section>
+
+      {/* TIER 3: Why Build Grid */}
       <section id="why-build" className="why-build section-with-glow">
         <div className="ambient-neon-glow"></div>
         <div className="container">
           <h2>Why Build Your Own PC?</h2>
           <p className="section-desc">
-            Building your own PC isn't just about saving money it's about
-            gaining control, learning new skills, and creating something truly
-            yours. Here's why thousands choose BuildLab.
+            Building your own PC isn't just about saving money, it's about gaining control, learning new skills, and creating something truly yours. Here's why thousands choose BuildLab.
           </p>
 
           <div className="benefits-grid">
             <div ref={refCard1} className={`benefit-card fade-up-stagger delay-0 ${isVisibleCard1 ? 'is-visible' : ''}`}>
               <img
                 src="https://storage-asset.msi.com/global/picture/news/2025/mb/x870e-20251103-1.jpg"
-                alt="Custom PC Build"
+                alt="Futuristic high-tech schematic render"
                 className="benefit-image"
               />
               <h3>Complete Customization</h3>
-              <p>
-                Choose every component to match your exact needs gaming, work,
-                or creative projects. No compromises on performance or
-                aesthetics.
-              </p>
+              <p>Choose every component to match your exact needs gaming, work, or creative projects. No compromises on performance or aesthetics.</p>
             </div>
 
             <div ref={refCard2} className={`benefit-card fade-up-stagger delay-1 ${isVisibleCard2 ? 'is-visible' : ''}`}>
               <img
                 src="https://i.pinimg.com/736x/93/64/fc/9364fc1fc62e0438b95023764807d1cd.jpg"
-                alt="Learning Experience"
+                alt="Exploded view diagram ng PC components"
                 className="benefit-image"
               />
               <h3>Educational Journey</h3>
-              <p>
-                Master PC hardware knowledge while building. Understand how
-                components work together for better troubleshooting and
-                upgrades.
-              </p>
+              <p>Master PC hardware knowledge while building. Understand how components work together for better troubleshooting and upgrades.</p>
             </div>
 
             <div ref={refCard3} className={`benefit-card fade-up-stagger delay-2 ${isVisibleCard3 ? 'is-visible' : ''}`}>
               <img
                 src="https://www.imthecheftoo.com/cdn/shop/articles/help_kids_build_a_computer_a_fun_stem_passion_project.webp?v=1770634422"
-                alt="Cost Savings"
+                alt="Hands-on electronic testing"
                 className="benefit-image"
               />
-              <h3>Significant Savings</h3>
-              <p>
-                Gain hands-on experience without the risk. Build a high-end PC with
-                expert guidance and simulation tools.
-              </p>
+              <h3>Hands-on Experience</h3>
+              <p>Gain hands-on experience without the risk. Build a high-end PC with expert guidance and simulation tools.</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* How It Works Section */}
-      <section id="how-it-works" className="how-it-works section-with-glow">
-        <div className="ambient-neon-glow"></div>
-        <div className="container">
-          <h2>How BuildLab Works</h2>
-          <p className="section-desc">Three simple steps to your perfect custom PC.</p>
-          <div className="steps-container" style={{ '--scroll-progress': scrollProgress }}>
-            <div className="step-box">
-              <div className="step-number">1</div>
-              <h3>Select Parts</h3>
-              <p>Browse our database of components with real-world specs.</p>
-            </div>
-            <div className="step-box">
-              <div className="step-number">2</div>
-              <h3>Check Compatibility</h3>
-              <p>Our system ensures all your chosen parts will work together flawlessly.</p>
-            </div>
-            <div className="step-box">
-              <div className="step-number">3</div>
-              <h3>Build & Enjoy</h3>
-              <p>Follow our guides to assemble your PC and start gaming or working!</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ Section */}
-      <section id="faq" className="faq-section section-with-glow">
-        <div className="ambient-neon-glow"></div>
-        <div className="container">
-          <h2>Frequently Asked Questions</h2>
-          <p className="section-desc">Have questions about BuildLab? We have answers.</p>
-          <div className="faq-grid">
-            {[
-              { q: "Is it hard to build a PC?", a: "Not at all! With our compatibility checker and online tutorials, it's like putting together high-tech LEGOs." },
-              { q: "What if I pick parts that don't fit?", a: "Our platform automatically flags incompatibilities, like wrong socket types or inadequate power supplies." },
-              { q: "Does BuildLab sell parts?", a: "We are an educational planning tool to help you learn about PC building." },
-              { q: "How do I know what parts I need?", a: "Start with our 'Explore Resources' section to learn the basics, or check out our Featured Builds for templates." }
-            ].map((faq, index) => (
-              <div className={`faq-item ${activeFaq === index ? 'active' : ''}`} key={index} onClick={() => setActiveFaq(activeFaq === index ? null : index)}>
-                <div className="faq-question">
-                  <h4>{faq.q}</h4>
-                  <span className={`faq-icon ${activeFaq === index ? "rotated" : ""}`}>➕</span>
-                </div>
-                <div className="faq-answer-wrapper">
-                  <div className="faq-answer">
-                    <p className="faq-answer-content">{faq.a}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
+      {/* Back to Top Button */}
+      {showBackToTop && (
+        <button 
+          className="back-to-top-btn" 
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          aria-label="Back to top"
+        >
+          ↑
+        </button>
+      )}
     </div>
   );
 }

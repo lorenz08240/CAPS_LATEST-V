@@ -173,5 +173,5 @@ export const findAlternatives = (category, currentBuild, allComponents) => {
       );
       return result.compatible;
     })
-    .slice(0, 3); // Ibalik ang top 3 alternatives
+    .slice(0, 3); // Return top 3 alternatives
 };

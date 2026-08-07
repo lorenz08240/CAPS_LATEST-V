@@ -51,6 +51,12 @@
   overflow-x: hidden;
 }
 
+.compat-page.integrated-view {
+  min-height: auto;
+  padding-bottom: 2rem;
+  background: transparent;
+}
+
 /* ── Background grid ── */
 .bg-grid {
   position: fixed;
@@ -639,7 +645,7 @@
   background: var(--bg-card);
   border: 1px solid var(--border-dim);
   border-radius: var(--r-xl);
-  /* Dagdagan ang padding para mas lumuwag */
+  /* Increase padding for more space */
   padding: 28px;
   transition: border-color 0.2s;
 }

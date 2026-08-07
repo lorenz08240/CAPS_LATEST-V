@@ -1,13 +1,27 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import "./Navbar.css";
 
 function Navbar({ isPinned, setIsPinned }) {
   const { isAdmin } = useAuth();
   const [isHovered, setIsHovered] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const isVisible = isPinned || isHovered;
+
+  const scrollToBuild = (e) => {
+    e.preventDefault();
+    if (location.pathname !== "/") {
+      navigate("/");
+      setTimeout(() => {
+        document.getElementById("build-station")?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    } else {
+      document.getElementById("build-station")?.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   return (
     <>
@@ -58,9 +72,9 @@ function Navbar({ isPinned, setIsPinned }) {
             <Link to="/" className="sidebar-link">
               Home
             </Link>
-            <Link to="/build" className="sidebar-link">
+            <a href="#build-station" onClick={scrollToBuild} className="sidebar-link">
               Build
-            </Link>
+            </a>
             <Link to="/compatibility" className="sidebar-link">
               Compatibility
             </Link>
