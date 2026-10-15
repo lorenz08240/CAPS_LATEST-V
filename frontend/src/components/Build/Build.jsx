@@ -50,7 +50,7 @@ export const buildSteps = [
 ];
 
 
-function Build() {
+function Build({ isIntegrated = false }) {
   const {
     currentBuild,
     allComponents,
@@ -146,11 +146,11 @@ function Build() {
 
   return (
     <div className="build-page">
-      <div className="bg-grid"></div>
-      <div className="bg-glow bg-glow-1"></div>
-      <div className="bg-glow bg-glow-2"></div>
+      {!isIntegrated && (
+        <div className="build-station-header">
 
-
+        </div>
+      )}
       {/* Main Build Area */}
       <div className="build-main" id="build-main-area">
         <div className="build-sidebar">
@@ -182,15 +182,15 @@ function Build() {
                 <p className="no-components">No components selected yet</p>
               ) : (
                 selectedComponents.map((comp) => (
-                  <div key={comp.category} className="selected-component" style={{display: 'flex', alignItems: 'center', gap: '12px', padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,0.05)'}}>
-                    <div style={{width: '40px', height: '40px', flexShrink: 0, background: 'rgba(0,0,0,0.2)', borderRadius: '8px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4px'}}>
-                      <img src={comp.img} alt={comp.name} style={{maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', mixBlendMode: 'color-dodge', borderRadius: '4px'}} />
+                  <div key={comp.category} className="selected-component" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                    <div style={{ width: '40px', height: '40px', flexShrink: 0, background: 'rgba(0,0,0,0.2)', borderRadius: '8px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4px' }}>
+                      <img src={comp.img} alt={comp.name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', mixBlendMode: 'color-dodge', borderRadius: '4px' }} />
                     </div>
-                    <div className="component-info" style={{flex: 1, display: 'flex', flexDirection: 'column'}}>
-                      <span className="component-category" style={{fontSize: '10px', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.5px'}}>
+                    <div className="component-info" style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                      <span className="component-category" style={{ fontSize: '10px', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                         {comp.category}
                       </span>
-                      <span className="component-name" style={{fontSize: '12px', fontWeight: 'bold', color: 'var(--white)'}}>{comp.name}</span>
+                      <span className="component-name" style={{ fontSize: '12px', fontWeight: 'bold', color: 'var(--white)' }}>{comp.name}</span>
                     </div>
                     <button
                       className="remove-component"
@@ -280,18 +280,23 @@ function Build() {
             </div>
           </div>
 
+          <div className="build-guide-subbar">
+            <span className="build-guide-text">
+              Select your components and build your custom rig step by step.
+            </span>
+          </div>
+
           <div className="build-grid-and-panel">
             <div className="components-grid-wrapper">
               <div className="components-grid compact">
                 {filteredComponents.map((component) => {
                   const { isCompatible, reason } = checkCompatibility(component, currentBuild);
-                  
+
                   return (
                     <div
                       key={component.id}
-                      className={`component-card compact-card ${
-                        viewedComponent?.id === component.id ? "viewed" : ""
-                      } ${selectedComponent?.id === component.id ? "selected" : ""} ${!isCompatible ? "incompatible" : ""}`}
+                      className={`component-card compact-card ${viewedComponent?.id === component.id ? "viewed" : ""
+                        } ${selectedComponent?.id === component.id ? "selected" : ""} ${!isCompatible ? "incompatible" : ""}`}
                       onClick={() => handleCardClick(component)}
                     >
                       <div className="component-image">
@@ -329,23 +334,23 @@ function Build() {
                       <span className="spec-value">{viewedComponent.name || "N/A"}</span>
                     </div>
                     <div className="spec-row spec-desc">
-                      <span className="spec-label" style={{marginBottom: '4px'}}>DESCRIPTION</span>
-                      <p style={{margin: 0}}>{viewedComponent.desc || "N/A"}</p>
+                      <span className="spec-label" style={{ marginBottom: '4px' }}>DESCRIPTION</span>
+                      <p style={{ margin: 0 }}>{viewedComponent.desc || "N/A"}</p>
                     </div>
                     <div className="spec-row">
                       <span className="spec-label">TAGS</span>
-                      <span className="spec-value" style={{textTransform: 'capitalize'}}>
-                        {Array.isArray(viewedComponent.tags) 
-                          ? viewedComponent.tags.join(', ') 
+                      <span className="spec-value" style={{ textTransform: 'capitalize' }}>
+                        {Array.isArray(viewedComponent.tags)
+                          ? viewedComponent.tags.join(', ')
                           : typeof viewedComponent.tags === 'string'
                             ? (() => {
-                                try {
-                                  const parsedTags = JSON.parse(viewedComponent.tags);
-                                  return Array.isArray(parsedTags) ? parsedTags.join(', ') : viewedComponent.tags;
-                                } catch (e) {
-                                  return viewedComponent.tags;
-                                }
-                              })()
+                              try {
+                                const parsedTags = JSON.parse(viewedComponent.tags);
+                                return Array.isArray(parsedTags) ? parsedTags.join(', ') : viewedComponent.tags;
+                              } catch (e) {
+                                return viewedComponent.tags;
+                              }
+                            })()
                             : "N/A"}
                       </span>
                     </div>
@@ -422,30 +427,29 @@ function Build() {
                       </div>
                     )}
                   </div>
-                  
+
                   {(() => {
                     const { isCompatible, reason } = checkCompatibility(viewedComponent, currentBuild);
                     return (
                       <div className="spec-action">
-                        {!isCompatible ? (
-                          <div className="incompatible-warning">
+                        {!isCompatible && (
+                          <div className="incompatible-warning" style={{ marginBottom: "12px" }}>
                             ⚠️ {reason}
                           </div>
-                        ) : (
-                          <button 
-                            className={`btn-select-component ${selectedComponent?.id === viewedComponent.id ? "is-selected" : ""}`}
-                            onClick={() => handleComponentSelect(viewedComponent)}
-                          >
-                            {selectedComponent?.id === viewedComponent.id ? "✓ COMPONENT SELECTED" : "SELECT COMPONENT"}
-                          </button>
                         )}
+                        <button
+                          className={`btn-select-component ${selectedComponent?.id === viewedComponent.id ? "is-selected" : ""}`}
+                          onClick={() => handleComponentSelect(viewedComponent)}
+                        >
+                          {selectedComponent?.id === viewedComponent.id ? "✓ COMPONENT SELECTED" : "SELECT COMPONENT"}
+                        </button>
                       </div>
                     );
                   })()}
                 </>
               ) : (
-                <div className="spec-empty-state" style={{flexDirection: 'column', gap: '20px'}}>
-                  <svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" style={{opacity: 0.3, color: '#00e5a0'}}>
+                <div className="spec-empty-state" style={{ flexDirection: 'column', gap: '20px' }}>
+                  <svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.3, color: '#00e5a0' }}>
                     <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
                     <line x1="8" y1="21" x2="16" y2="21"></line>
                     <line x1="12" y1="17" x2="12" y2="21"></line>
@@ -457,6 +461,49 @@ function Build() {
           </div>
         </div>
       </div>
+
+      {!isIntegrated && (
+        <section id="why-build" className="why-build" style={{ marginTop: '80px', padding: '1rem 2rem 4rem' }}>
+          <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>
+            <h2 style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: '1rem', color: '#ffffff' }}>Why Build Your Own PC?</h2>
+            <p className="section-desc" style={{ fontSize: '1.125rem', color: '#94a3b8', maxWidth: '700px', margin: '0 auto 3rem' }}>
+              Building your own PC isn't just about saving money, it's about gaining control, learning new skills, and creating something truly yours. Here's why thousands choose BuildLab.
+            </p>
+
+            <div className="benefits-grid">
+              <div className="benefit-card">
+                <img
+                  src="https://storage-asset.msi.com/global/picture/news/2025/mb/x870e-20251103-1.jpg"
+                  alt="Futuristic high-tech schematic render"
+                  className="benefit-image"
+                />
+                <h3>Complete Customization</h3>
+                <p>Choose every component to match your exact needs gaming, work, or creative projects. No compromises on performance or aesthetics.</p>
+              </div>
+
+              <div className="benefit-card">
+                <img
+                  src="https://i.pinimg.com/736x/93/64/fc/9364fc1fc62e0438b95023764807d1cd.jpg"
+                  alt="Exploded view diagram ng PC components"
+                  className="benefit-image"
+                />
+                <h3>Educational Journey</h3>
+                <p>Master PC hardware knowledge while building. Understand how components work together for better troubleshooting and upgrades.</p>
+              </div>
+
+              <div className="benefit-card">
+                <img
+                  src="https://www.imthecheftoo.com/cdn/shop/articles/help_kids_build_a_computer_a_fun_stem_passion_project.webp?v=1770634422"
+                  alt="Hands-on electronic testing"
+                  className="benefit-image"
+                />
+                <h3>Hands-on Experience</h3>
+                <p>Gain hands-on experience without the risk. Build a high-end PC with expert guidance and simulation tools.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
     </div>
   );
 }
