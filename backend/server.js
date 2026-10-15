@@ -90,6 +90,51 @@ app.post("/api/parts", async (req, res) => {
   }
 });
 
+// API to delete a part
+app.delete("/api/parts/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    await db.query("DELETE FROM pc_parts WHERE id = ?", [id]);
+    res.json({ success: true, message: "Part deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// API to update a part
+app.put("/api/parts/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      category, img, brand, name, desc, price, tags,
+      socket_type, ddr_type, form_factor, power_required,
+      wattage, capacity, speed, type, efficiency
+    } = req.body;
+
+    const tagsJson = JSON.stringify(tags || []);
+
+    const query = `
+      UPDATE pc_parts SET
+      category = ?, img = ?, brand = ?, name = ?, \`desc\` = ?, price = ?, tags = ?,
+      socket_type = ?, ddr_type = ?, form_factor = ?, power_required = ?,
+      wattage = ?, capacity = ?, speed = ?, type = ?, efficiency = ?
+      WHERE id = ?
+    `;
+
+    const values = [
+      category, img || null, brand || null, name || null, desc || null, price || null, tagsJson,
+      socket_type || null, ddr_type || null, form_factor || null, power_required || null,
+      wattage || null, capacity || null, speed || null, type || null, efficiency || null,
+      id
+    ];
+
+    await db.query(query, values);
+    res.json({ success: true, message: "Part updated successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // API to get saved builds
 app.get("/api/builds", async (req, res) => {
   try {
