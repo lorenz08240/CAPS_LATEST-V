@@ -1,7 +1,7 @@
 .footer {
-  background: #0b1120;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  color: #94a3b8;
+  background: #ffffff;
+  border-top: 1px solid rgba(226, 232, 240, 0.9);
+  color: #64748b;
   padding: 60px 20px 20px;
   font-family: "Inter", sans-serif;
   margin-top: auto;
@@ -18,9 +18,9 @@
 }
 
 .footer-brand h2 {
-  color: #facc15;
+  color: #1d4ed8;
   font-size: 1.5rem;
-  font-weight: 800;
+  font-weight: 900;
   letter-spacing: 2px;
   margin-bottom: 12px;
 }
@@ -57,26 +57,28 @@
 }
 
 .footer-column h3 {
-  color: #f8fafc;
+  color: #0f172a;
   font-size: 1.1rem;
+  font-weight: 700;
   margin-bottom: 8px;
 }
 
 .footer-column a {
-  color: #94a3b8;
+  color: #64748b;
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
 .footer-column a:hover {
-  color: #10b981;
+  color: #1d4ed8;
 }
 
 .footer-bottom {
   max-width: 1200px;
   margin: 0 auto;
   padding-top: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid rgba(226, 232, 240, 0.8);
   text-align: center;
   font-size: 0.9rem;
+  color: #94a3b8;
 }

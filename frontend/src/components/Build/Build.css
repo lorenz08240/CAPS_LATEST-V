@@ -141,6 +141,7 @@
   display: grid;
   grid-template-columns: 420px minmax(0, 1fr); /* Sidebar widened from 380px */
   gap: 48px;
+  scroll-margin-top: 25px;
 }
 
 .build-sidebar {

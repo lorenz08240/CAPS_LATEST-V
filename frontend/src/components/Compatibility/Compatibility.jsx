@@ -183,68 +183,30 @@ export default function Compatibility({ isIntegrated = false }) {
     return getCompatibilitySummary(currentBuild, allComponents);
   };
 
-  /* ── Check compatibility for any build object ── */
+  /* ── Check compatibility for any build object using hardened rules ── */
   const checkBuildCompatibility = (build) => {
     if (!build) return [];
-    const issues = [];
+    const rawIssues = getCompatibilitySummary(build, allComponents);
 
-    // CPU ↔ Motherboard socket
-    if (build.cpu && build.motherboard) {
-      const cpuSocket = build.cpu.socket_type;
-      const mbSocket = build.motherboard.socket_type;
-      if (cpuSocket && mbSocket && cpuSocket !== mbSocket) {
-        issues.push({
-          category: "CPU ↔ Motherboard",
-          icon: "⚙️",
-          severity: "error",
-          message: `CPU socket (${cpuSocket}) does not match motherboard socket (${mbSocket}).`,
-          fix: "Replace the CPU or motherboard so their sockets match.",
-        });
-      }
+    if (!rawIssues || rawIssues.length === 0) {
+      return [
+        {
+          category: "All Clear",
+          icon: "✅",
+          severity: "ok",
+          message: "All selected components are fully compatible with each other!",
+          fix: null,
+        },
+      ];
     }
 
-    // RAM ↔ Motherboard DDR type
-    if (build.ram && build.motherboard) {
-      const ramType = build.ram.ddr_type;
-      const mbType = build.motherboard.ddr_type;
-      if (ramType && mbType && ramType !== mbType) {
-        issues.push({
-          category: "RAM ↔ Motherboard",
-          icon: "💾",
-          severity: "error",
-          message: `RAM type (${ramType}) is incompatible with motherboard (${mbType}).`,
-          fix: `Switch to ${mbType} RAM or a motherboard that supports ${ramType}.`,
-        });
-      }
-    }
-
-    // PSU wattage vs GPU requirement
-    if (build.psu && build.gpu) {
-      const psuW = build.psu.wattage || 0;
-      const gpuW = build.gpu.power_required || 0;
-      const totalNeeded = gpuW + 65 + 60; // CPU TDP estimate + system
-      if (psuW < totalNeeded) {
-        issues.push({
-          category: "PSU ↔ GPU",
-          icon: "⚡",
-          severity: "warning",
-          message: `PSU (${psuW}W) may be insufficient. Estimated system draw: ~${totalNeeded}W.`,
-          fix: `Upgrade to at least a ${Math.ceil(totalNeeded / 50) * 50}W PSU for stable operation.`,
-        });
-      }
-    }
-
-    if (issues.length === 0) {
-      issues.push({
-        category: "All Clear",
-        icon: "✅",
-        severity: "ok",
-        message: "All components are compatible with each other!",
-        fix: null,
-      });
-    }
-
-    return issues;
+    return rawIssues.map((iss) => ({
+      category: Array.isArray(iss.components) ? iss.components.map(c => c.toUpperCase()).join(" ↔ ") : "Compatibility Notice",
+      icon: "⚠️",
+      severity: "error",
+      message: iss.issue,
+      fix: iss.tip || "Verify component specifications and adjust your selection in the picker.",
+    }));
   };
 
   /* ── Power estimate ── */
@@ -693,9 +655,35 @@ export default function Compatibility({ isIntegrated = false }) {
                     >
                       <div className="slot-top-row">
                         <span className="slot-name">{slotTitle}</span>
-                        <div className="slot-meta">
+                        <div className="slot-meta" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                           <span className="slot-parts">{count} parts saved</span>
                           {sb && <span className="slot-power">• {targetPower}W Target Power</span>}
+                          {sb && (() => {
+                            const rawIssues = getCompatibilitySummary(sb, allComponents);
+                            const isOk = !rawIssues || rawIssues.length === 0;
+                            return (
+                              <button
+                                type="button"
+                                onClick={() => setIssueModal({ slot, issues: checkBuildCompatibility(sb) })}
+                                style={{
+                                  background: isOk ? 'rgba(34, 197, 94, 0.15)' : 'rgba(239, 68, 68, 0.15)',
+                                  border: `1px solid ${isOk ? 'rgba(34, 197, 94, 0.4)' : 'rgba(239, 68, 68, 0.4)'}`,
+                                  color: isOk ? '#4ade80' : '#f87171',
+                                  borderRadius: '6px',
+                                  padding: '3px 8px',
+                                  fontSize: '11px',
+                                  fontWeight: 700,
+                                  cursor: 'pointer',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '4px'
+                                }}
+                                title="Click to view detailed compatibility report"
+                              >
+                                {isOk ? '✓ Compatible' : `⚠️ ${rawIssues.length} Issue${rawIssues.length > 1 ? 's' : ''}`}
+                              </button>
+                            );
+                          })()}
                         </div>
                       </div>
 

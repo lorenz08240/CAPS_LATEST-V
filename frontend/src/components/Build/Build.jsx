@@ -8,36 +8,43 @@ export const buildSteps = [
   {
     key: "case",
     label: "PC Case",
+    icon: "🖥️",
     description: "Houses all components",
   },
   {
     key: "motherboard",
     label: "Motherboard",
+    icon: "🖲️",
     description: "Connects all components",
   },
   {
     key: "cpu",
     label: "CPU (Processor)",
+    icon: "⚙️",
     description: "The brain of your PC",
   },
   {
     key: "ram",
     label: "RAM (Memory)",
+    icon: "💾",
     description: "Temporary data storage",
   },
   {
     key: "storage",
     label: "Storage",
+    icon: "💿",
     description: "Permanent data storage",
   },
   {
     key: "gpu",
     label: "GPU (Graphics Card)",
+    icon: "🎮",
     description: "Handles graphics and gaming",
   },
   {
     key: "psu",
     label: "Power Supply (PSU)",
+    icon: "⚡",
     description: "Powers your entire system",
   },
 ];
@@ -216,28 +223,20 @@ function Build() {
                   </div>
                 </Link>
 
-                {selectedComponents.length === buildSteps.length ? (
-                  <Link
-                    to="/3d-builder"
-                    className="sidebar-cta-btn sidebar-cta-3d"
-                  >
-                    <span className="sidebar-cta-icon">🧊</span>
-                    <div className="sidebar-cta-text">
-                      <span className="sidebar-cta-label">Launch 3D Builder</span>
-                      <span className="sidebar-cta-sub">Visualize your full PC</span>
-                    </div>
-                  </Link>
-                ) : (
-                  <div className="sidebar-cta-btn sidebar-cta-3d sidebar-cta-locked">
-                    <span className="sidebar-cta-icon">🔒</span>
-                    <div className="sidebar-cta-text">
-                      <span className="sidebar-cta-label">Launch 3D Builder</span>
-                      <span className="sidebar-cta-sub">
-                        {buildSteps.length - selectedComponents.length} more part{buildSteps.length - selectedComponents.length !== 1 ? "s" : ""} needed
-                      </span>
-                    </div>
+                <Link
+                  to="/3d-builder"
+                  className="sidebar-cta-btn sidebar-cta-3d"
+                >
+                  <span className="sidebar-cta-icon">🧊</span>
+                  <div className="sidebar-cta-text">
+                    <span className="sidebar-cta-label">Launch 3D Studio</span>
+                    <span className="sidebar-cta-sub">
+                      {selectedComponents.length === 0 
+                        ? "Interactive 3D Assembly" 
+                        : `Inspect ${selectedComponents.length}/${buildSteps.length} parts in 3D`}
+                    </span>
                   </div>
-                )}
+                </Link>
               </div>
             </div>
             {/* Reset Button */}

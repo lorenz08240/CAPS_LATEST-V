@@ -75,17 +75,18 @@ function Navbar({ isPinned, setIsPinned }) {
             <a href="#build-station" onClick={scrollToBuild} className="sidebar-link">
               Build
             </a>
+            <Link to="/3d-builder" className="sidebar-link" style={{ color: '#00e5ff' }}>
+              🧊 3D Studio
+            </Link>
             <Link to="/compatibility" className="sidebar-link">
               Compatibility
             </Link>
             <Link to="/learn" className="sidebar-link">
               Learn
             </Link>
-            {isAdmin && (
-              <Link to="/admin" className="sidebar-link" style={{ color: '#00E676', fontWeight: 'bold', marginTop: 'auto' }}>
-                ⚙️ ADMIN
-              </Link>
-            )}
+            <Link to="/admin" className="sidebar-link" style={{ color: isAdmin ? '#00E676' : '#94a3b8', fontWeight: isAdmin ? 'bold' : '500', marginTop: 'auto' }}>
+              ⚙️ {isAdmin ? 'ADMIN DECK' : 'Admin Access'}
+            </Link>
           </div>
         </div>
       </nav>

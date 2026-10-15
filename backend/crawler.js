@@ -22,22 +22,38 @@ async function scrapeEasyPC(page = 1) {
       const name = product.title;
       const lowerName = name.toLowerCase();
 
-      // Exclude pre-built laptops and notebooks
-      if (lowerName.includes("laptop") || lowerName.includes("notebook") || lowerName.includes("vivobook") || lowerName.includes("ideapad") || lowerName.includes("aspire") || lowerName.includes("nitro")) {
-        return; // Skip this item
+      // Exclude pre-built laptops, notebooks, all-in-ones, power stations, and complete PCs
+      const excludedKeywords = [
+        "laptop", "notebook", "vivobook", "ideapad", "aspire", "nitro", "cyborg",
+        "modern 14", "zenbook", "macbook", "thinkpad", "legion", "pavilion", "predator", "victus",
+        "desktop pc", "gaming desktop", "bundle", "all-in-one", "aio pc",
+        "bluetti", "solar", "portable", "generator", "power station", "pv130", "ac2p", "ups",
+        "14.0\"", "15.6\"", "16.0\"", "17.3\"", "ips fhd", "ips qhd"
+      ];
+
+      if (excludedKeywords.some(kw => lowerName.includes(kw))) {
+        return; // Skip non-component items
       }
 
       let brand = product.vendor || "Unknown";
       
       let rawType = product.product_type ? product.product_type.toLowerCase() : "";
       let category = "other";
-      if (rawType.includes("processor") || name.toLowerCase().includes("core") || name.toLowerCase().includes("ryzen")) category = "cpu";
-      else if (rawType.includes("motherboard") || rawType.includes("board")) category = "motherboard";
-      else if (rawType.includes("graphic") || rawType.includes("vga")) category = "gpu";
-      else if (rawType.includes("memory") || rawType.includes("ram")) category = "ram";
-      else if (rawType.includes("drive") || rawType.includes("ssd") || rawType.includes("hdd")) category = "storage";
-      else if (rawType.includes("power") || rawType.includes("psu")) category = "psu";
-      else if (rawType.includes("case") || rawType.includes("chassis")) category = "case";
+      if ((rawType.includes("processor") || rawType.includes("cpu")) || (name.match(/\b(ryzen|intel core|i[3579]-|core i[3579])\b/i) && !lowerName.includes("cooler"))) {
+        category = "cpu";
+      } else if (rawType.includes("motherboard") || rawType.includes("mainboard")) {
+        category = "motherboard";
+      } else if (rawType.includes("graphic") || rawType.includes("vga") || rawType.includes("videocard") || lowerName.includes("rtx") || lowerName.includes("radeon rx")) {
+        category = "gpu";
+      } else if (rawType.includes("memory") || rawType.includes("ram") || lowerName.includes("ddr4") || lowerName.includes("ddr5")) {
+        category = "ram";
+      } else if (rawType.includes("drive") || rawType.includes("ssd") || rawType.includes("hdd") || lowerName.includes("nvme") || lowerName.includes("sata")) {
+        category = "storage";
+      } else if ((rawType.includes("power") || rawType.includes("psu")) && (lowerName.includes("watt") || lowerName.includes("80+") || lowerName.includes("modular") || lowerName.match(/\b\d{3}w\b/))) {
+        category = "psu";
+      } else if (rawType.includes("case") || rawType.includes("chassis")) {
+        category = "case";
+      }
 
       const priceVal = "Price not included"; 
       const img = product.images && product.images.length > 0 ? product.images[0].src : "placeholder.png";

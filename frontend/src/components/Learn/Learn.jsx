@@ -224,13 +224,258 @@ export default function Learn() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const selectedComponent = componentGuide[currentIndex];
   const [fadeKey, setFadeKey] = useState(0); // To trigger animation on change
+  const [scrolledPastHero, setScrolledPastHero] = useState(false);
+  const [quizCardIndex, setQuizCardIndex] = useState(0);
+  const [userAnswers, setUserAnswers] = useState({});
+
+  // Question bank: 4 quick Google-definition-style quiz flash cards per component
+  const flashcardDeck = {
+    cpu: [
+      {
+        question: "What is the primary physical constraint when installing a CPU into a motherboard?",
+        options: [
+          { text: "The socket type (e.g., LGA1700 or AM5) must match exactly.", correct: true },
+          { text: "The CPU fan color must match the motherboard RGB.", correct: false },
+          { text: "The CPU must be from the exact same company as the GPU.", correct: false },
+        ],
+        explanation: "CPU sockets are mechanically engineered; trying to install an AM5 chip into an LGA1700 socket or vice versa will bend pins or not physically fit."
+      },
+      {
+        question: "What does TDP (Thermal Design Power) indicate on a processor?",
+        options: [
+          { text: "The maximum amount of heat dissipated that the cooling solution must handle.", correct: true },
+          { text: "The total number of monitors the CPU can output.", correct: false },
+          { text: "The speed at which the RAM runs with the CPU.", correct: false },
+        ],
+        explanation: "TDP measures expected heat output under real workloads, helping you choose adequate air or liquid cooling."
+      },
+      {
+        question: "For dedicated competitive gaming, what CPU metric is generally most beneficial?",
+        options: [
+          { text: "High single-core boost clock speed and large L3 cache.", correct: true },
+          { text: "Having 64 low-frequency server cores.", correct: false },
+          { text: "Using integrated graphics instead of a dedicated GPU.", correct: false },
+        ],
+        explanation: "Most gaming game engines rely heavily on single-thread frame latency and rapid cache access rather than dozens of idle cores."
+      },
+      {
+        question: "What critical step is required right before mounting a CPU cooler?",
+        options: [
+          { text: "Applying thermal paste and removing the protective plastic film from the cooler plate.", correct: true },
+          { text: "Submerging the CPU in water for 5 minutes.", correct: false },
+          { text: "Turning on the PC while the cooler is disconnected.", correct: false },
+        ],
+        explanation: "Leaving the factory protective plastic film on a cooler or forgetting thermal paste is one of the most common thermal throttling errors."
+      }
+    ],
+    motherboard: [
+      {
+        question: "Which form factor is typically the largest standard consumer motherboard size?",
+        options: [
+          { text: "ATX (Advanced Technology eXtended)", correct: true },
+          { text: "Mini-ITX", correct: false },
+          { text: "Micro-ATX", correct: false },
+        ],
+        explanation: "Standard ATX provides up to 7 expansion slots, whereas mATX has 4 and Mini-ITX has only 1."
+      },
+      {
+        question: "Can a motherboard designed exclusively for DDR4 RAM accept DDR5 RAM modules?",
+        options: [
+          { text: "No, DDR4 and DDR5 have different notch keys and voltage architectures.", correct: true },
+          { text: "Yes, RAM slots are always universal.", correct: false },
+          { text: "Only if you perform a BIOS firmware upgrade.", correct: false },
+        ],
+        explanation: "DDR4 and DDR5 memory modules possess physically different notch positions to prevent accidental cross-insertion."
+      },
+      {
+        question: "What is the primary role of the motherboard's VRM (Voltage Regulator Module)?",
+        options: [
+          { text: "To step down 12V from the PSU into clean, precise low voltage for the CPU.", correct: true },
+          { text: "To control display resolutions on your monitor.", correct: false },
+          { text: "To store permanent Windows operating system files.", correct: false },
+        ],
+        explanation: "High-quality VRMs with robust heatsinks keep power delivery stable during heavy sustained CPU boost clocks."
+      },
+      {
+        question: "What is an M.2 NVMe slot on the motherboard used for?",
+        options: [
+          { text: "Ultra-fast direct PCIe solid-state storage (SSDs).", correct: true },
+          { text: "Connecting the wall power cord directly.", correct: false },
+          { text: "Plugging in the keyboard and mouse.", correct: false },
+        ],
+        explanation: "M.2 slots communicate directly through high-speed PCIe lanes, providing transfer speeds up to 7000+ MB/s."
+      }
+    ],
+    ram: [
+      {
+        question: "Why should RAM be installed in matching pairs rather than a single stick?",
+        options: [
+          { text: "It activates dual-channel mode, doubling memory bandwidth to the processor.", correct: true },
+          { text: "It cuts electricity consumption in half.", correct: false },
+          { text: "Single sticks do not allow the PC to turn on.", correct: false },
+        ],
+        explanation: "Dual-channel mode lets the memory controller read and write to two sticks simultaneously, eliminating CPU bottlenecks."
+      },
+      {
+        question: "What must you enable in the BIOS to run high-speed RAM at its rated advertised speed?",
+        options: [
+          { text: "XMP (Intel Extreme Memory Profile) or AMD EXPO.", correct: true },
+          { text: "Windows Safe Mode.", correct: false },
+          { text: "Bluetooth High Priority Mode.", correct: false },
+        ],
+        explanation: "By default, motherboards boot RAM at conservative JEDEC baseline speeds until XMP/EXPO is toggled."
+      },
+      {
+        question: "What happens when your PC runs completely out of available RAM?",
+        options: [
+          { text: "The OS pages to the SSD/HDD, causing severe stuttering and lag.", correct: true },
+          { text: "The monitor immediately loses signal forever.", correct: false },
+          { text: "The power supply trips and shuts off.", correct: false },
+        ],
+        explanation: "Virtual memory paging keeps software from instantly crashing, but disk speeds are orders of magnitude slower than RAM."
+      },
+      {
+        question: "What does the CAS Latency (CL) number signify on a RAM spec sheet?",
+        options: [
+          { text: "The clock cycles delay between sending a read command and receiving data.", correct: true },
+          { text: "The number of gigabytes inside the memory module.", correct: false },
+          { text: "The maximum operating temperature in Celsius.", correct: false },
+        ],
+        explanation: "Lower CAS latency at the same clock frequency yields faster response time."
+      }
+    ],
+    psu: [
+      {
+        question: "What does the '80 Plus' certification indicate on a power supply?",
+        options: [
+          { text: "Energy efficiency rating (at least 80% of drawn AC power is converted to DC).", correct: true },
+          { text: "That the power supply will last for exactly 80 months.", correct: false },
+          { text: "That the power supply generates 80 decibels of sound.", correct: false },
+        ],
+        explanation: "Certifications from Bronze to Titanium verify lower heat waste and electrical efficiency."
+      },
+      {
+        question: "What is the primary benefit of a 'Fully Modular' power supply?",
+        options: [
+          { text: "You only plug in the cables your build actually needs, improving cable management and airflow.", correct: true },
+          { text: "It allows wireless power transmission to the motherboard.", correct: false },
+          { text: "It doubles your GPU's gaming framerate.", correct: false },
+        ],
+        explanation: "Detachable cables leave no bulky clutter inside the case, keeping airflow channels clear."
+      },
+      {
+        question: "What can occur if you pair high-draw parts with an undersized, low-wattage PSU?",
+        options: [
+          { text: "Automatic shutdowns, reboot loops, or tripped over-current protections during gaming peaks.", correct: true },
+          { text: "Your keyboard letters will type backwards.", correct: false },
+          { text: "The CPU fan will turn in reverse.", correct: false },
+        ],
+        explanation: "Modern GPUs exhibit transient power spikes that trip safety protections on undersized power supplies."
+      },
+      {
+        question: "Why should you never mix and match modular cables between different PSU brands?",
+        options: [
+          { text: "The pinouts at the power supply end are not standardized and can fry hardware.", correct: true },
+          { text: "The cables will physically melt within 5 seconds.", correct: false },
+          { text: "Cables from other brands only transmit black and white video.", correct: false },
+        ],
+        explanation: "While the component-side connector is standardized, the PSU-side pin arrangement varies wildly between manufacturers."
+      }
+    ],
+    gpu: [
+      {
+        question: "What is VRAM (Video RAM) on a graphics card responsible for?",
+        options: [
+          { text: "Storing high-res textures, shaders, framebuffers, and 3D geometric assets.", correct: true },
+          { text: "Powering the CPU cooling fan.", correct: false },
+          { text: "Saving your Windows user password securely.", correct: false },
+        ],
+        explanation: "High resolution textures and ray-tracing buffers require fast dedicated VRAM to render frames smoothly."
+      },
+      {
+        question: "Which motherboard slot does a dedicated graphics card plug into?",
+        options: [
+          { text: "The primary PCIe x16 slot (usually the top slot connected directly to the CPU).", correct: true },
+          { text: "The SATA 3.0 storage port.", correct: false },
+          { text: "The front-panel USB header.", correct: false },
+        ],
+        explanation: "The top PCIe x16 slot has the widest bandwidth and direct lanes leading straight to the CPU."
+      },
+      {
+        question: "What happens if a high-end graphics card is installed with an old, underpowered dual-core CPU?",
+        options: [
+          { text: "A severe CPU bottleneck will prevent the GPU from reaching its full potential.", correct: true },
+          { text: "The GPU will automatically increase its clock speed to compensate.", correct: false },
+          { text: "The graphics card will fail to power on.", correct: false },
+        ],
+        explanation: "When the CPU cannot prepare frames as fast as the GPU can render them, frame drops and stutters occur."
+      },
+      {
+        question: "What modern GPU connector powers RTX 40-series and next-gen cards with up to 600W?",
+        options: [
+          { text: "The 12VHPWR / 12V-2x6 16-pin connector.", correct: true },
+          { text: "Standard USB-C phone charger.", correct: false },
+          { text: "Floppy drive 4-pin connector.", correct: false },
+        ],
+        explanation: "The 12VHPWR high-density connector replaces up to three or four older 8-pin PCIe cables."
+      }
+    ],
+    case: [
+      {
+        question: "What is the primary factor that dictates good computer case thermal performance?",
+        options: [
+          { text: "Perforated mesh ventilation panels that provide unobstructed positive or neutral airflow.", correct: true },
+          { text: "Completely sealed heavy tempered glass on all panels.", correct: false },
+          { text: "Having the maximum number of stickers on the exterior.", correct: false },
+        ],
+        explanation: "Cases with solid front glass choke intake fans, driving internal temperatures and fan noise up."
+      },
+      {
+        question: "What is 'Positive Pressure' in PC case airflow management?",
+        options: [
+          { text: "More intake airflow than exhaust, which prevents dust from entering through un-filtered cracks.", correct: true },
+          { text: "Pressurizing the case with compressed air so components hover.", correct: false },
+          { text: "Having only exhaust fans with no intakes.", correct: false },
+        ],
+        explanation: "Positive pressure forces air out of seam gaps, ensuring air only enters through removable dust filters."
+      },
+      {
+        question: "What must you check before buying a large CPU dual-tower air cooler?",
+        options: [
+          { text: "The maximum CPU cooler clearance height supported by the chassis specifications.", correct: true },
+          { text: "Whether the cooler matches the color of your room walls.", correct: false },
+          { text: "The size of your mousepad.", correct: false },
+        ],
+        explanation: "Tower coolers that exceed the case's specified cooler clearance will prevent the side panel from closing."
+      },
+      {
+        question: "What purpose do pre-installed motherboard standoffs serve in a case?",
+        options: [
+          { text: "They elevate the motherboard to prevent metal-on-metal electrical short circuits against the tray.", correct: true },
+          { text: "They act as thermal heat sinks for the hard drive.", correct: false },
+          { text: "They hold the tempered glass panel in place.", correct: false },
+        ],
+        explanation: "Fastening a bare motherboard directly against metal chassis sheet metal without standoffs will short out circuits upon power-up."
+      }
+    ]
+  };
+
+  const currentQuestions = flashcardDeck[selectedComponent.id] || flashcardDeck.cpu;
+  const currentCard = currentQuestions[quizCardIndex] || currentQuestions[0];
 
   const handleNext = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % componentGuide.length);
+    setQuizCardIndex(0);
   };
 
   const handlePrev = () => {
     setCurrentIndex((prevIndex) => (prevIndex === 0 ? componentGuide.length - 1 : prevIndex - 1));
+    setQuizCardIndex(0);
+  };
+
+  const handleSelectComponent = (idx) => {
+    setCurrentIndex(idx);
+    setQuizCardIndex(0);
   };
 
   // Preload hero images
@@ -241,11 +486,30 @@ export default function Learn() {
     });
   }, []);
 
+  // Listen to scroll to display floating quick-switcher when scrolled past hero
+  useEffect(() => {
+    const handleScroll = () => {
+      const heroEl = document.querySelector(".cinematic-hero");
+      if (heroEl) {
+        const bottom = heroEl.getBoundingClientRect().bottom;
+        setScrolledPastHero(bottom < 120);
+      }
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   // Trigger re-render animation when component changes
   useEffect(() => {
     setFadeKey(prev => prev + 1);
   }, [currentIndex]);
 
+  const handleAnswerSelect = (qIdx, optIdx) => {
+    setUserAnswers(prev => ({
+      ...prev,
+      [`${selectedComponent.id}-${qIdx}`]: optIdx
+    }));
+  };
 
   return (
     <div className="learn-page">
@@ -253,6 +517,40 @@ export default function Learn() {
       <div className="bg-grid" aria-hidden="true" />
       <div className="bg-glow bg-glow-1" aria-hidden="true" />
       <div className="bg-glow bg-glow-2" aria-hidden="true" />
+
+      {/* ── STICKY QUICK COMPONENT SWITCHER BAR (Visible when scrolled down) ── */}
+      <div className={`sticky-component-bar ${scrolledPastHero ? "visible" : ""}`}>
+        <div className="sticky-bar-inner">
+          <div className="sticky-bar-label">
+            <span className="sticky-dot"></span>
+            <span>LEARN MODULE:</span>
+          </div>
+          <div className="sticky-pill-track">
+            {componentGuide.map((comp, idx) => (
+              <button
+                key={comp.id}
+                className={`sticky-pill-btn ${currentIndex === idx ? "active" : ""}`}
+                onClick={() => handleSelectComponent(idx)}
+              >
+                <span className="sticky-pill-icon">
+                  {comp.id === "cpu" && "⚡"}
+                  {comp.id === "motherboard" && "🎛️"}
+                  {comp.id === "ram" && "💾"}
+                  {comp.id === "psu" && "🔋"}
+                  {comp.id === "gpu" && "🎮"}
+                  {comp.id === "case" && "📦"}
+                </span>
+                <span className="sticky-pill-text">{comp.name.split(" ")[0]}</span>
+              </button>
+            ))}
+          </div>
+          <div className="sticky-bar-nav">
+            <button onClick={handlePrev} className="sticky-arrow" title="Previous Component">‹</button>
+            <span className="sticky-counter">0{currentIndex + 1} / 0{componentGuide.length}</span>
+            <button onClick={handleNext} className="sticky-arrow" title="Next Component">›</button>
+          </div>
+        </div>
+      </div>
       
       {/* ── CINEMATIC HERO ── */}
       <div 
@@ -282,18 +580,191 @@ export default function Learn() {
                 <div 
                   key={comp.id} 
                   className={`carousel-dot ${currentIndex === idx ? 'active' : ''}`}
-                  onClick={() => setCurrentIndex(idx)}
+                  onClick={() => handleSelectComponent(idx)}
                 ></div>
               ))}
             </div>
             
             <div className="hero-nav-buttons">
               <button onClick={handlePrev} className="nav-btn" aria-label="Previous component">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
               </button>
               <button onClick={handleNext} className="nav-btn" aria-label="Next component">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
               </button>
+            </div>
+          </div>
+        </div>
+
+        {/* ── SCROLL INDICATOR (Bottom Center) ── */}
+        <div 
+          className="hero-scroll-guide"
+          onClick={() => {
+            const target = document.getElementById("learn-modules-section");
+            if (target) {
+              target.scrollIntoView({ behavior: "smooth" });
+            }
+          }}
+        >
+          <span className="scroll-guide-text">SCROLL</span>
+          <svg className="scroll-guide-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="m6 9 6 6 6-6"/>
+          </svg>
+        </div>
+      </div>
+
+      {/* ── W3SCHOOLS-STYLE LEARNING HUB ── */}
+      <div id="learn-modules-section" className="w3-learning-section">
+        <div className="w3-learning-container">
+          <div className="w3-learning-header">
+            <div className="w3-badge-wrap">
+              <span className="w3-pill">W3Schools Learning Standard</span>
+              <span className="w3-module-indicator">Module: {selectedComponent.name}</span>
+            </div>
+            <h2 className="w3-main-title">Hardware Architecture & Technical Reference</h2>
+            <p className="w3-subtitle">
+              Master physical specifications, compatibility laws, and real-world engineering principles behind modern PC hardware.
+            </p>
+          </div>
+
+          {/* W3 Reference Navigation Banner */}
+          <div className="w3-ref-banner">
+            <div className="w3-ref-info">
+              <span className="w3-code-icon">⚡</span>
+              <div>
+                <strong>Connected Learning Hub:</strong> W3Schools computing fundamentals & computer systems architecture references.
+              </div>
+            </div>
+            <a 
+              href="https://www.w3schools.com/" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="w3-external-link"
+            >
+              Visit W3Schools Reference ↗
+            </a>
+          </div>
+
+          {/* ── INTERACTIVE WORKBENCH: ARCHITECTURE OVERVIEW + GOOGLE-STYLE QUICK QUIZ FLASHCARDS ── */}
+          <div className="w3-academy-grid">
+            <div className="w3-panel w3-panel-main">
+              <div className="w3-panel-bar">
+                <span className="w3-dot red"></span>
+                <span className="w3-dot yellow"></span>
+                <span className="w3-dot green"></span>
+                <span className="w3-panel-title">technical_overview.sys</span>
+              </div>
+              <div className="w3-panel-body">
+                <h3>Understanding {selectedComponent.name}</h3>
+                <p className="w3-body-desc">{selectedComponent.whyMatters}</p>
+                
+                <div className="w3-code-box">
+                  <div className="w3-code-header">
+                    <span>HARDWARE DATA REGISTRY</span>
+                    <span className="w3-live-tag">LIVE SPEC</span>
+                  </div>
+                  <pre>
+                    <code>
+{`// System Specification Definition: ${selectedComponent.name}
+{
+  "category": "${selectedComponent.id.toUpperCase()}",
+  "operational_role": "${selectedComponent.tags.join(" | ")}",
+  "thermal_envelope": "${selectedComponent.specs.find(s => s.label.toLowerCase().includes('tdp') || s.label.toLowerCase().includes('power'))?.value || 'Dynamic'}",
+  "interface_socket": "${selectedComponent.specs.find(s => s.label.toLowerCase().includes('socket') || s.label.toLowerCase().includes('interface') || s.label.toLowerCase().includes('factor'))?.value || 'Standard'}"
+}`}
+                    </code>
+                  </pre>
+                </div>
+              </div>
+            </div>
+
+            {/* ── GOOGLE SEARCH DEFINITION STYLE: QUICK QUIZ FLASH CARD DECK ── */}
+            <div className="w3-panel w3-panel-quiz">
+              <div className="w3-panel-bar">
+                <div className="w3-flashcard-header-left">
+                  <span className="google-quiz-icon">🔍</span>
+                  <span className="w3-panel-title">Quick Definition Quiz</span>
+                </div>
+                <div className="w3-card-pills">
+                  {currentQuestions.map((_, qIdx) => (
+                    <button
+                      key={qIdx}
+                      className={`card-step-pill ${quizCardIndex === qIdx ? "active" : ""} ${userAnswers[`${selectedComponent.id}-${qIdx}`] !== undefined ? "answered" : ""}`}
+                      onClick={() => setQuizCardIndex(qIdx)}
+                      title={`Card ${qIdx + 1}`}
+                    >
+                      {qIdx + 1}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="w3-panel-body google-flashcard-body">
+                <div className="flashcard-badge-row">
+                  <span className="flashcard-tag">QUESTION {quizCardIndex + 1} OF {currentQuestions.length}</span>
+                  <span className="flashcard-topic">{selectedComponent.name}</span>
+                </div>
+
+                <h4 className="flashcard-question-text">
+                  {currentCard.question}
+                </h4>
+
+                <div className="flashcard-options-list">
+                  {currentCard.options.map((opt, optIdx) => {
+                    const answeredOpt = userAnswers[`${selectedComponent.id}-${quizCardIndex}`];
+                    const isSelected = answeredOpt === optIdx;
+                    const showFeedback = answeredOpt !== undefined;
+                    
+                    let statusClass = "";
+                    if (showFeedback) {
+                      if (opt.correct) statusClass = "correct-choice";
+                      else if (isSelected && !opt.correct) statusClass = "wrong-choice";
+                    }
+
+                    return (
+                      <button
+                        key={optIdx}
+                        className={`flashcard-opt-btn ${isSelected ? "selected" : ""} ${statusClass}`}
+                        onClick={() => handleAnswerSelect(quizCardIndex, optIdx)}
+                      >
+                        <span className="opt-letter">{String.fromCharCode(65 + optIdx)}</span>
+                        <span className="opt-text">{opt.text}</span>
+                        {showFeedback && opt.correct && <span className="opt-check">✓</span>}
+                        {showFeedback && isSelected && !opt.correct && <span className="opt-cross">✕</span>}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {userAnswers[`${selectedComponent.id}-${quizCardIndex}`] !== undefined && (
+                  <div className="flashcard-explanation-box animate-fade-in">
+                    <span className="exp-icon">💡</span>
+                    <span className="exp-text">
+                      <strong>Takeaway: </strong>{currentCard.explanation}
+                    </span>
+                  </div>
+                )}
+
+                <div className="flashcard-footer-controls">
+                  <button 
+                    className="flashcard-nav-btn"
+                    disabled={quizCardIndex === 0}
+                    onClick={() => setQuizCardIndex(prev => Math.max(0, prev - 1))}
+                  >
+                    ← Previous
+                  </button>
+                  <span className="flashcard-progress-counter">
+                    Card {quizCardIndex + 1} / {currentQuestions.length}
+                  </span>
+                  <button 
+                    className="flashcard-nav-btn next-btn"
+                    disabled={quizCardIndex === currentQuestions.length - 1}
+                    onClick={() => setQuizCardIndex(prev => Math.min(currentQuestions.length - 1, prev + 1))}
+                  >
+                    Next Card →
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -316,14 +787,6 @@ export default function Learn() {
             </div>
           </div>
 
-          {/* ── WHY IT MATTERS ── */}
-          <div className="content-card">
-            <h3 className="section-title">Why It Matters</h3>
-            <p className="card-text">
-              {selectedComponent.whyMatters}
-            </p>
-          </div>
-
           {/* ── PRO TIPS ── */}
           <div className="content-card">
             <h3 className="section-title">Pro Tips</h3>
@@ -338,7 +801,7 @@ export default function Learn() {
 
           {/* ── COMMON MISTAKES ── */}
           <div className="content-card">
-            <h3 className="section-title">Common Mistakes</h3>
+            <h3 className="section-title">Common Mistakes to Avoid</h3>
             <div className="mistakes-grid">
               {selectedComponent.commonMistakes.map((mistake, idx) => (
                 <div key={idx} className="mistake-item">
@@ -350,7 +813,7 @@ export default function Learn() {
 
           {/* ── BEST FOR ── */}
           <div className="content-card">
-            <h3 className="section-title">Best For</h3>
+            <h3 className="section-title">Recommendation Matrix</h3>
             <div className="best-for-grid">
               {Object.entries(selectedComponent.bestFor).map(
                 ([useCase, recommendation], idx) => (
@@ -365,7 +828,7 @@ export default function Learn() {
 
           {/* ── BRANDS ── */}
           <div className="content-card">
-            <h3 className="section-title">Popular Brands</h3>
+            <h3 className="section-title">Popular Hardware Manufacturers</h3>
             <div className="brands-grid">
               {selectedComponent.brands.map((brand, idx) => (
                 <div key={idx} className="brand-item">
@@ -385,7 +848,7 @@ export default function Learn() {
         {/* ── CTA ── */}
         <div className="detail-cta" style={{ display: 'flex', gap: '20px', justifyContent: 'center' }}>
           <Link to="/build" className="cta-button-neon">
-            Go to Build
+            Launch PC Builder
           </Link>
           <Link to="/brands" className="cta-button-neon">
             Explore All Brands

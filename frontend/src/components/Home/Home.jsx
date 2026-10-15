@@ -3,6 +3,7 @@ import { Link } from "react-router-dom"; // Import Link from react-router-dom
 import "./Home.css"; // Import the CSS file for styling
 import Build from "../Build/Build";
 import Compatibility from "../Compatibility/Compatibility";
+import papercutBg from "../../assets/login_bg.png";
 
 const useElementOnScreen = (options) => {
   const containerRef = useRef(null);
@@ -145,6 +146,15 @@ function Hero() {
     };
   }, [isBannerVisible]);
 
+  const scrollToBuildStation = () => {
+    const target = document.getElementById("build-main-area") || document.getElementById("build-station");
+    if (target) {
+      const yOffset = -25;
+      const y = target.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: "smooth" });
+    }
+  };
+
   const handleStartBuild = () => {
     setIsFadingOut(true);
     hasSeenBannerThisSession = true;
@@ -154,15 +164,13 @@ function Hero() {
   };
 
   return (
-    <div className="home-page">
-      <div className="bg-grid"></div>
-      <div className="bg-glow bg-glow-1"></div>
-      <div className="bg-glow bg-glow-2"></div>
+    <div className="home-page papercut-theme">
       {isBannerVisible && (
         <div className={`welcome-banner ${isFadingOut ? "fade-out" : ""}`}>
+          <div className="welcome-banner-bg" style={{ backgroundImage: `url(${papercutBg})` }}></div>
           <div className="welcome-banner-content">
             <h1 className="welcome-title">
-              Welcome to <span className="yellow">BuildLab</span>
+              Welcome to <span className="brand-accent">BuildLab</span>
             </h1>
             <p className="welcome-text">Your ultimate PC building simulator.</p>
             <button className="btn-primary banner-btn" onClick={handleStartBuild}>
@@ -171,44 +179,38 @@ function Hero() {
           </div>
         </div>
       )}
-      <section id="welcome" className="home-hero two-col-hero">
-        
+      <section 
+        id="welcome" 
+        className="home-hero two-col-hero"
+        style={{ backgroundImage: `url(${papercutBg})` }}
+      >
         <div className="hero-content-wrapper">
           {/* LEFT COLUMN: Typography, Stats, CTA */}
           <div className="hero-left-col">
-            <div className="hero-subtitle-new" style={{ color: '#4ade80', letterSpacing: '0.2em', fontSize: '1.09rem', fontWeight: 700, marginBottom: '1rem', textTransform: 'uppercase' }}>
+            <div className="hero-subtitle-new">
               INTERACTIVE HARDWARE SIMULATION
             </div>
-            <h1 className="hero-title-new" style={{ marginBottom: '3rem' }}>
+            <h1 className="hero-title-new">
               Build Your Dream PC <br />
               <span className="gold-glow-text">with Expert Guidance</span>
             </h1>
-            <p className="hero-desc-new" style={{ color: '#94a3b8', fontSize: '1.6rem', maxWidth: '540px', marginBottom: '4rem', lineHeight: 1.6 }}>
+            <p className="hero-desc-new">
               The ultimate PC building simulator. Master hardware compatibility, customize your perfect rig, and learn essential assembly skills interactively. No guesswork—just confident building!
             </p>
 
-            <div className="hero-stats-new" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '2rem' }}>
-              <div className="stat-new" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <div className="hero-stats-new">
+              <div className="stat-new">
                 <span className="stat-number-new">72+</span>
                 <span className="stat-label-new">COMPONENTS TRACKED</span>
               </div>
-              <div className="stat-new" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <div className="stat-new">
                 <span className="stat-number-new">7</span>
                 <span className="stat-label-new">ASSEMBLY STAGES</span>
               </div>
-              <div className="stat-new" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <div className="stat-new">
                 <span className="stat-number-new">1</span>
                 <span className="stat-label-new">COMPATIBILITY MATRIX ENGINE</span>
               </div>
-            </div>
-
-            <div className="hero-cta-wrapper">
-              <button 
-                className="hero-cta-btn-new"
-                onClick={() => document.getElementById("build-station").scrollIntoView({ behavior: "smooth" })}
-              >
-                START BUILDING NOW
-              </button>
             </div>
           </div>
 
@@ -220,7 +222,7 @@ function Hero() {
                 <div 
                   className="carousel-slide-wrapper-new" 
                   style={{ 
-                    transform: `translateX(-${currentSlide * 80}%)`,
+                    transform: `translateX(-${currentSlide * 100}%)`,
                     transition: isTransitioning ? 'transform 1.2s cubic-bezier(0.22, 1, 0.36, 1)' : 'none'
                   }}
                 >
@@ -291,6 +293,16 @@ function Hero() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* CENTERED CTA BUTTON */}
+        <div className="hero-cta-wrapper centered-cta">
+          <button 
+            className="hero-cta-btn-new"
+            onClick={scrollToBuildStation}
+          >
+            START BUILDING NOW
+          </button>
         </div>
 
         {/* BOTTOM: Scroll Indicator & Trust Badges */}

@@ -35,7 +35,7 @@ function App() {
       <BuildProvider>
         <Router>
           <ScrollToTop />
-          <div className={`min-h-screen bg-buildlab-dark app-layout ${isSidebarPinned ? 'sidebar-pinned' : ''}`}>
+          <div className={`min-h-screen bg-slate-50 app-layout ${isSidebarPinned ? 'sidebar-pinned' : ''}`}>
             <Navbar isPinned={isSidebarPinned} setIsPinned={setIsSidebarPinned} />
             <main className="main-content">
               <Routes>
