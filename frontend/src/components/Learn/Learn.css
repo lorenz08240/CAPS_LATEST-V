@@ -55,15 +55,16 @@
 .cinematic-hero {
   position: relative;
   width: 100%;
-  height: 100vh; /* Full screen height */
+  height: 100vh;
   background-size: cover;
-  background-position: center;
+  background-position: center 10%; /* Kept high up so top of PC cases and chips are 100% visible */
   background-repeat: no-repeat;
   display: flex;
-  align-items: flex-end; /* Align content to the bottom */
+  align-items: flex-end;
   padding: 0 4rem;
-  padding-bottom: 4.5rem;
+  padding-bottom: 5rem;
   box-sizing: border-box;
+  transition: background-image 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .hero-gradient-overlay {
@@ -72,9 +73,10 @@
   left: 0;
   width: 100%;
   height: 100%;
-  /* Dark vignette on left for clear text readability, dark bottom for smooth section transition */
-  background: linear-gradient(90deg, rgba(11, 15, 26, 0.95) 0%, rgba(11, 15, 26, 0.75) 30%, rgba(11, 15, 26, 0.3) 60%, rgba(11, 15, 26, 0.1) 100%),
-              linear-gradient(0deg, #0b0f1a 0%, rgba(11, 15, 26, 0.5) 25%, transparent 60%);
+  /* Keep top completely clear (0% black) so top of cases/hardware is crisp and visible */
+  background: 
+    linear-gradient(90deg, rgba(11, 15, 26, 0.92) 0%, rgba(11, 15, 26, 0.65) 32%, rgba(11, 15, 26, 0.15) 65%, transparent 100%),
+    linear-gradient(180deg, transparent 0%, transparent 60%, rgba(11, 15, 26, 0.9) 95%, #0b0f1a 100%);
   z-index: 1;
 }
 
@@ -200,35 +202,37 @@
 /* ── HERO SCROLL GUIDE (Bottom Center) ── */
 .hero-scroll-guide {
   position: absolute;
-  bottom: 24px;
+  bottom: 38px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   cursor: pointer;
   z-index: 10;
-  padding: 8px 16px;
-  border-radius: 20px;
-  background: rgba(11, 15, 26, 0.4);
-  backdrop-filter: blur(6px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  transition: all 0.3s ease;
+  padding: 8px 18px;
+  border-radius: 999px;
+  background: rgba(11, 15, 26, 0.65);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 229, 160, 0.25);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 229, 160, 0.15);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .hero-scroll-guide:hover {
-  background: rgba(0, 229, 160, 0.12);
-  border-color: rgba(0, 229, 160, 0.35);
-  transform: translateX(-50%) translateY(-3px);
+  background: rgba(0, 229, 160, 0.15);
+  border-color: rgba(0, 229, 160, 0.6);
+  transform: translateX(-50%) translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 229, 160, 0.3);
 }
 
 .scroll-guide-text {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  color: #94a3b8;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  color: #cbd5e1;
   text-transform: uppercase;
   transition: color 0.3s ease;
 }
@@ -239,7 +243,7 @@
 
 .scroll-guide-icon {
   color: #00e5a0;
-  animation: scrollBounce 2s infinite ease-in-out;
+  animation: scrollBounce 1.8s infinite ease-in-out;
 }
 
 @keyframes scrollBounce {
@@ -356,23 +360,103 @@
 
 .w3-academy-grid {
   display: grid;
-  grid-template-columns: 1.3fr 1fr;
-  gap: 24px;
-  margin-bottom: 30px;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 28px;
+  margin-bottom: 35px;
+  align-items: stretch;
 }
 
 .w3-panel {
-  background: rgba(17, 24, 39, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 16px;
+  background: rgba(17, 24, 39, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(12px);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.w3-panel:hover {
+  border-color: rgba(0, 229, 160, 0.25);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.55), 0 0 20px rgba(0, 229, 160, 0.08);
+}
+
+.w3-panel-main .w3-panel-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.w3-panel-main h3 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #fff;
+  margin: 0 0 10px 0;
+  letter-spacing: -0.01em;
+}
+
+.w3-body-desc {
+  color: #94a3b8;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 22px;
+}
+
+.w3-code-box {
+  background: #080c14;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-top: auto;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+.w3-code-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-family: monospace;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 0.08em;
+}
+
+.w3-live-tag {
+  background: rgba(0, 229, 160, 0.12);
+  color: #00e5a0;
+  border: 1px solid rgba(0, 229, 160, 0.3);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+}
+
+.w3-code-box pre {
+  margin: 0;
+  padding: 18px 20px;
+  overflow-x: auto;
+}
+
+.w3-code-box code {
+  font-family: "JetBrains Mono", Consolas, "Fira Code", monospace;
+  font-size: 0.88rem;
+  line-height: 1.7;
+  color: #38bdf8;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .w3-panel-bar {
-  background: rgba(11, 15, 26, 0.85);
-  padding: 12px 18px;
+  background: rgba(11, 15, 26, 0.9);
+  padding: 12px 20px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   display: flex;
   align-items: center;

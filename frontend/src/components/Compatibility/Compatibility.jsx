@@ -360,7 +360,7 @@ export default function Compatibility({ isIntegrated = false }) {
               <div className="empty-card glass-panel">
                 <div className="empty-img-wrap">
                   <img
-                    src="component_picker_image_bg.png"
+                    src="/assets/component_picker_image_bg.png"
                     alt="PC Build"
                     className="empty-img"
                     onError={(e) => {

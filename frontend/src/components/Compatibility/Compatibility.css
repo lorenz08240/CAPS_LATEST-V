@@ -38,7 +38,7 @@
   overflow-x: hidden;
   background-image:
     linear-gradient(rgba(11, 14, 20, 0.55), rgba(11, 14, 20, 0.72)),
-    url("/compatibility_bg.jpg");
+    url("/assets/compatibility_bg.jpg");
   background-size: cover;
   background-position: center center;
   background-attachment: fixed;
