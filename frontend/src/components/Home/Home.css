@@ -6,9 +6,6 @@
   overflow-x: hidden;
 }
 
-
-
-
 /* General styles for the hero section */
 .home-hero {
   background-color: #0b0f1a;
@@ -47,8 +44,6 @@
   z-index: 2;
 }
 
-
-
 .btn-primary,
 .btn-secondary,
 .btn-outline {
@@ -69,10 +64,6 @@
   background-color: #facc15;
   /* Darker yellow */
 }
-
-
-
-
 
 /* Background Ambient Glow for Sections */
 .section-with-glow {
