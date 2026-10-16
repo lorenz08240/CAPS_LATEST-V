@@ -10,7 +10,7 @@ const componentGuide = [
     heroImage: "https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?q=80&w=2000",
     tags: ["2026", "Hardware", "Brain", "Compute"],
     description: "The central engine of your PC. It executes every instruction from your OS and applications. Its speed and core count directly influence how fast your computer boots and how responsive your software feels.",
-    image: "https://i.pinimg.com/736x/86/99/ea/8699ea01df7d3b229a4a4e39d4e6735f.jpg",
+    image: "/assets/cpu_learn.jpg",
     specs: [
       { label: "Socket", value: "LGA1700, AM5", info: "Must match motherboard" },
       { label: "Cores/Threads", value: "6-24 cores", info: "More cores = multitasking" },

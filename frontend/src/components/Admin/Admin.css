@@ -9,11 +9,16 @@
   width: 100%;
   background-color: #060911;
   background-image:
+<<<<<<< HEAD
     radial-gradient(circle at 85% 18%, rgba(212, 163, 75, 0.16) 0%, transparent 45%),
     radial-gradient(circle at 12% 45%, rgba(0, 229, 255, 0.1) 0%, transparent 40%),
     radial-gradient(circle at 50% 90%, rgba(94, 22, 45, 0.2) 0%, transparent 50%),
     linear-gradient(rgba(6, 9, 17, 0.42), rgba(6, 9, 17, 0.62)),
     url("/waves_dark_bg.jpg");
+=======
+    linear-gradient(rgba(11, 15, 26, 0.82), rgba(11, 15, 26, 0.88)),
+    url("/assets/waves_dark_vertical.jpg");
+>>>>>>> 5a8ff4c9616968cbd7875f77061e7ee51f767208
   background-size: cover;
   background-position: center top;
   background-repeat: no-repeat;
