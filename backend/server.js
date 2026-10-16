@@ -296,7 +296,144 @@ app.get("/api/health", async (req, res) => {
   }
 });
 
-// API to trigger crawler
+// ==========================================
+// SCRAPED DATA REVIEW QUEUE ENDPOINTS
+// ==========================================
+const initScrapedQueueTable = async () => {
+  try {
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS scraped_queue (
+        id VARCHAR(255) PRIMARY KEY,
+        source VARCHAR(100) DEFAULT 'Source: EasyPC',
+        source_name VARCHAR(100) DEFAULT 'EasyPC',
+        date VARCHAR(50),
+        scraped_name TEXT NOT NULL,
+        category VARCHAR(50) DEFAULT 'case',
+        brand VARCHAR(100),
+        form_factor VARCHAR(50),
+        socket_type VARCHAR(50),
+        ddr_type VARCHAR(50),
+        wattage VARCHAR(50),
+        power_required VARCHAR(50),
+        capacity VARCHAR(50),
+        speed VARCHAR(50),
+        type VARCHAR(50),
+        efficiency VARCHAR(50),
+        price VARCHAR(50),
+        img TEXT,
+        \`desc\` TEXT,
+        tags TEXT,
+        approved TINYINT(1) DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Seed initial EasyPC items if queue is empty
+    const [existing] = await db.query("SELECT COUNT(*) as cnt FROM scraped_queue");
+    if (existing[0]?.cnt === 0) {
+      const initialEasyPC = [
+        ["easypc-c500", "1) Source: EasyPC", "EasyPC", "2023-03-11", "GIGABYTE AORUS C500 GLASS Micro ATX Case", "case", "GIGABYTE", "Micro ATX", null, null, null, "₱6,450", "/pcbackground.png", "Scraped from EasyPC via BuildLab Crawler", JSON.stringify(["scraped", "case", "easypc"]), 0],
+        ["easypc-2300x", "2) Source: EasyPC", "EasyPC", "2024-03-14", "GIGABYTE AORUS 2300X ATX Tower", "case", "GIGABYTE", "ATX", null, null, null, "₱5,200", "/pcbackground.png", "Scraped from EasyPC via BuildLab Crawler", JSON.stringify(["scraped", "case", "easypc"]), 0],
+        ["easypc-psu-bundle", "3) Source: EasyPC", "EasyPC", "2023-03-13", "GIGABYTE GP-P750GM 750W 80+ Gold Power Supply", "psu", "GIGABYTE", null, null, null, "750", "₱4,850", "/pcbackground.png", "Scraped from EasyPC via BuildLab Crawler", JSON.stringify(["scraped", "psu", "easypc"]), 0],
+        ["easypc-ssd-1tb", "4) Source: EasyPC", "EasyPC", "2024-03-13", "GIGABYTE AORUS Gen4 7300 SSD 1TB NVMe M.2", "storage", "GIGABYTE", null, null, null, null, "₱4,590", "/pcbackground.png", "Scraped from EasyPC via BuildLab Crawler", JSON.stringify(["scraped", "storage", "easypc"]), 0]
+      ];
+
+      for (const row of initialEasyPC) {
+        await db.query(`
+          INSERT IGNORE INTO scraped_queue 
+          (id, source, source_name, date, scraped_name, category, brand, form_factor, socket_type, ddr_type, wattage, price, img, \`desc\`, tags, approved)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `, row);
+      }
+    }
+  } catch (err) {
+    console.error("Scraped queue table check error:", err.message);
+  }
+};
+initScrapedQueueTable();
+
+// API to get all queued scraped items
+app.get("/api/scraped-queue", async (req, res) => {
+  try {
+    const [rows] = await db.query("SELECT * FROM scraped_queue ORDER BY created_at DESC");
+    res.json(rows.map(row => ({
+      ...row,
+      tags: typeof row.tags === 'string' ? JSON.parse(row.tags || "[]") : (row.tags || []),
+      approved: Boolean(row.approved)
+    })));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// API to toggle approval of a scraped item
+app.post("/api/scraped-queue/approve/:id", async (req, res) => {
+  try {
+    await db.query("UPDATE scraped_queue SET approved = NOT approved WHERE id = ?", [req.params.id]);
+    const [updated] = await db.query("SELECT * FROM scraped_queue WHERE id = ?", [req.params.id]);
+    res.json({ success: true, item: updated[0] });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// API to discard / delete a scraped item from the review queue
+app.delete("/api/scraped-queue/:id", async (req, res) => {
+  try {
+    await db.query("DELETE FROM scraped_queue WHERE id = ?", [req.params.id]);
+    res.json({ success: true, message: "Scraped component discarded from queue." });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// API to merge all approved scraped items into production pc_parts table
+app.post("/api/scraped-queue/merge", async (req, res) => {
+  try {
+    const [approvedItems] = await db.query("SELECT * FROM scraped_queue WHERE approved = 1");
+    if (!approvedItems || approvedItems.length === 0) {
+      return res.status(400).json({ error: "No items are approved for merging." });
+    }
+
+    let mergedCount = 0;
+    for (const item of approvedItems) {
+      const prodId = item.id.startsWith("easypc-") ? item.id : `prod-${item.id}`;
+      const query = `
+        INSERT INTO pc_parts 
+        (id, category, img, brand, name, \`desc\`, price, tags, socket_type, ddr_type, form_factor, power_required, wattage, capacity, speed, type, efficiency) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE
+        category=VALUES(category), img=VALUES(img), brand=VALUES(brand), name=VALUES(name), \`desc\`=VALUES(\`desc\`),
+        price=VALUES(price), tags=VALUES(tags), socket_type=VALUES(socket_type), ddr_type=VALUES(ddr_type),
+        form_factor=VALUES(form_factor), wattage=VALUES(wattage)
+      `;
+      const values = [
+        prodId, item.category || "case", item.img || "/pcbackground.png",
+        item.brand || "GIGABYTE", item.scraped_name, item.desc || "Verified from EasyPC",
+        item.price || null, typeof item.tags === 'string' ? item.tags : JSON.stringify(item.tags || ["Verified", "EasyPC"]),
+        item.socket_type || null, item.ddr_type || null, item.form_factor || null,
+        item.power_required || null, item.wattage || null, item.capacity || null,
+        item.speed || null, item.type || null, item.efficiency || null
+      ];
+
+      await db.query(query, values);
+      mergedCount++;
+    }
+
+    // Delete merged items from queue
+    await db.query("DELETE FROM scraped_queue WHERE approved = 1");
+
+    res.json({
+      success: true,
+      mergedCount,
+      message: `Successfully verified and merged ${mergedCount} item(s) from EasyPC into production inventory!`
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// API to trigger crawler (scraping EasyPC to Review Queue)
 const { exec } = require("child_process");
 app.post("/api/crawl", (req, res) => {
   exec("node crawler.js", (error, stdout, stderr) => {
@@ -304,7 +441,7 @@ app.post("/api/crawl", (req, res) => {
       console.error(`Crawler execution error: ${error.message}`);
       return res.status(500).json({ error: error.message, stderr });
     }
-    res.json({ success: true, message: "Crawling completed successfully", output: stdout });
+    res.json({ success: true, message: "EasyPC Crawling completed. Components placed into Scraped Data Review Queue.", output: stdout });
   });
 });
 
