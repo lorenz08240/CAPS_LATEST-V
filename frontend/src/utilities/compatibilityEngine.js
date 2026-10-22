@@ -133,10 +133,11 @@ export const checkCompatibility = (componentToTest, currentBuild) => {
     }
 
     case "psu": {
-      // Check if PSU can handle current CPU + GPU
+      // Check if PSU can handle current CPU + GPU (only when CPU or GPU is actively selected)
+      if (!currentBuild.cpu && !currentBuild.gpu) break;
       const psuWattage = getNumber(componentToTest.wattage);
       const gpuPower = currentBuild.gpu ? getNumber(currentBuild.gpu.power_required) || 200 : 0;
-      const cpuPower = currentBuild.cpu ? getNumber(currentBuild.cpu.wattage) || 65 : 100;
+      const cpuPower = currentBuild.cpu ? getNumber(currentBuild.cpu.wattage) || 65 : 0;
       const totalSystemDraw = gpuPower + cpuPower + (gpuPower > 0 ? 80 : 50);
 
       if (psuWattage > 0 && psuWattage < totalSystemDraw) {

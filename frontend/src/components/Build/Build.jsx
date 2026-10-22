@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useBuild } from "../../contexts/BuildContext";
 import { checkCompatibility } from "../../utilities/compatibilityEngine";
+import FullscreenGate from "../FullscreenGate/FullscreenGate";
 import "./Build.css";
 
 export const buildSteps = [
@@ -44,7 +45,62 @@ export const buildSteps = [
 ];
 
 
-function Build({ isIntegrated = false }) {
+const CATEGORY_FILTERS = {
+  case: [
+    { label: "ALL", filterFn: () => true },
+    { label: "Mid Tower", filterFn: (c) => (c.form_factor || "").toLowerCase().includes("mid") || (c.tags || []).some(t => t.toLowerCase().includes("mid")) },
+    { label: "Full Tower", filterFn: (c) => (c.form_factor || "").toLowerCase().includes("full") || (c.tags || []).some(t => t.toLowerCase().includes("full")) },
+    { label: "Micro-ATX", filterFn: (c) => (c.form_factor || "").toLowerCase().includes("micro") || (c.form_factor || "").toLowerCase().includes("matx") || (c.tags || []).some(t => t.toLowerCase().includes("micro") || t.toLowerCase().includes("matx")) },
+  ],
+  motherboard: [
+    { label: "ALL", filterFn: () => true },
+    { label: "AM5", filterFn: (c) => (c.socket_type || "").toUpperCase() === "AM5" || (c.tags || []).some(t => t.toUpperCase().includes("AM5")) },
+    { label: "LGA1700", filterFn: (c) => (c.socket_type || "").toUpperCase().includes("1700") || (c.tags || []).some(t => t.toUpperCase().includes("1700")) },
+    { label: "AM4", filterFn: (c) => (c.socket_type || "").toUpperCase() === "AM4" || (c.tags || []).some(t => t.toUpperCase().includes("AM4")) },
+    { label: "DDR5", filterFn: (c) => (c.ddr_type || "").toUpperCase() === "DDR5" || (c.tags || []).some(t => t.toUpperCase().includes("DDR5")) },
+    { label: "DDR4", filterFn: (c) => (c.ddr_type || "").toUpperCase() === "DDR4" || (c.tags || []).some(t => t.toUpperCase().includes("DDR4")) },
+    { label: "ATX", filterFn: (c) => (c.form_factor || "").toUpperCase() === "ATX" },
+    { label: "mATX", filterFn: (c) => (c.form_factor || "").toUpperCase().includes("MATX") || (c.form_factor || "").toLowerCase().includes("micro") },
+  ],
+  cpu: [
+    { label: "ALL", filterFn: () => true },
+    { label: "AM5", filterFn: (c) => (c.socket_type || "").toUpperCase() === "AM5" || (c.tags || []).some(t => t.toUpperCase().includes("AM5")) },
+    { label: "LGA1700", filterFn: (c) => (c.socket_type || "").toUpperCase().includes("1700") || (c.tags || []).some(t => t.toUpperCase().includes("1700")) },
+    { label: "AM4", filterFn: (c) => (c.socket_type || "").toUpperCase() === "AM4" || (c.tags || []).some(t => t.toUpperCase().includes("AM4")) },
+    { label: "Intel", filterFn: (c) => (c.brand || "").toLowerCase().includes("intel") || (c.name || "").toLowerCase().includes("intel") || (c.name || "").toLowerCase().includes("core") },
+    { label: "AMD", filterFn: (c) => (c.brand || "").toLowerCase().includes("amd") || (c.name || "").toLowerCase().includes("ryzen") || (c.name || "").toLowerCase().includes("amd") },
+  ],
+  ram: [
+    { label: "ALL", filterFn: () => true },
+    { label: "DDR5", filterFn: (c) => (c.ddr_type || "").toUpperCase() === "DDR5" || (c.tags || []).some(t => t.toUpperCase().includes("DDR5")) || (c.name || "").toUpperCase().includes("DDR5") },
+    { label: "DDR4", filterFn: (c) => (c.ddr_type || "").toUpperCase() === "DDR4" || (c.tags || []).some(t => t.toUpperCase().includes("DDR4")) || (c.name || "").toUpperCase().includes("DDR4") },
+    { label: "16GB", filterFn: (c) => (c.capacity || "").toUpperCase().includes("16GB") || (c.name || "").toUpperCase().includes("16GB") },
+    { label: "32GB", filterFn: (c) => (c.capacity || "").toUpperCase().includes("32GB") || (c.name || "").toUpperCase().includes("32GB") },
+  ],
+  storage: [
+    { label: "ALL", filterFn: () => true },
+    { label: "NVMe M.2", filterFn: (c) => (c.type || "").toUpperCase().includes("NVME") || (c.tags || []).some(t => t.toUpperCase().includes("NVME") || t.toUpperCase().includes("M.2")) || (c.name || "").toUpperCase().includes("NVME") },
+    { label: "SATA SSD", filterFn: (c) => (c.type || "").toUpperCase().includes("SATA") || (c.tags || []).some(t => t.toUpperCase().includes("SATA")) || (c.name || "").toUpperCase().includes("SATA") },
+    { label: "512GB", filterFn: (c) => (c.capacity || "").toUpperCase().includes("512GB") || (c.name || "").toUpperCase().includes("512GB") },
+    { label: "1TB", filterFn: (c) => (c.capacity || "").toUpperCase().includes("1TB") || (c.name || "").toUpperCase().includes("1TB") },
+    { label: "2TB+", filterFn: (c) => (c.capacity || "").toUpperCase().includes("2TB") || (c.name || "").toUpperCase().includes("2TB") },
+  ],
+  gpu: [
+    { label: "ALL", filterFn: () => true },
+    { label: "NVIDIA RTX", filterFn: (c) => (c.name || "").toUpperCase().includes("RTX") || (c.name || "").toUpperCase().includes("GEFORCE") || (c.tags || []).some(t => t.toUpperCase().includes("RTX")) },
+    { label: "AMD Radeon", filterFn: (c) => (c.name || "").toUpperCase().includes("RADEON") || (c.name || "").toUpperCase().includes("RX") || (c.tags || []).some(t => t.toUpperCase().includes("RX")) },
+    { label: "12GB+ VRAM", filterFn: (c) => (c.tags || []).some(t => t.toUpperCase().includes("12GB") || t.toUpperCase().includes("16GB") || t.toUpperCase().includes("24GB")) || (c.name || "").toUpperCase().includes("12GB") || (c.name || "").toUpperCase().includes("16GB") },
+  ],
+  psu: [
+    { label: "ALL", filterFn: () => true },
+    { label: "500W - 650W", filterFn: (c) => (Number(c.wattage) >= 500 && Number(c.wattage) <= 650) || (c.tags || []).some(t => t.includes("500W") || t.includes("650W")) },
+    { label: "750W - 850W+", filterFn: (c) => Number(c.wattage) >= 750 || (c.tags || []).some(t => t.includes("750W") || t.includes("850W") || t.includes("1000W")) },
+    { label: "80+ Gold / Plat", filterFn: (c) => (c.efficiency || "").toLowerCase().includes("gold") || (c.efficiency || "").toLowerCase().includes("platinum") || (c.tags || []).some(t => t.toLowerCase().includes("gold") || t.toLowerCase().includes("platinum")) },
+    { label: "Modular", filterFn: (c) => (c.desc || "").toLowerCase().includes("modular") || (c.tags || []).some(t => t.toLowerCase().includes("modular")) },
+  ]
+};
+
+function BuildPage({ isIntegrated = false }) {
   const {
     currentBuild,
     allComponents,
@@ -62,15 +118,15 @@ function Build({ isIntegrated = false }) {
     return 0;
   });
   const [searchQuery, setSearchQuery] = useState("");
-  const [tierFilter, setTierFilter] = useState("");
+  const [activeFilter, setActiveFilter] = useState("ALL");
   const [viewedComponent, setViewedComponent] = useState(null);
 
   const selectedComponents = getSelectedComponents();
 
   useEffect(() => {
-    setViewedComponent(null);
+    setViewedComponent(currentBuild[buildSteps[currentStep].key] || null);
     setSearchQuery("");
-    setTierFilter("");
+    setActiveFilter("ALL");
   }, [currentStep]);
 
   useEffect(() => {
@@ -87,11 +143,23 @@ function Build({ isIntegrated = false }) {
   const handleComponentSelect = (component) => {
     const category = buildSteps[currentStep].key;
     addComponent(category, component);
-    setViewedComponent(null);
 
     // Automatically move to the next step
     if (currentStep < buildSteps.length - 1) {
-      setCurrentStep(currentStep + 1);
+      const nextStepIndex = currentStep + 1;
+      setCurrentStep(nextStepIndex);
+      setViewedComponent(currentBuild[buildSteps[nextStepIndex].key] || null);
+    } else {
+      setViewedComponent(null);
+    }
+
+    // Anchor view so user never has to scroll up and down repeatedly
+    const buildArea = document.getElementById("build-main-area");
+    if (buildArea) {
+      const rect = buildArea.getBoundingClientRect();
+      if (rect.top < -50 || rect.top > 200) {
+        buildArea.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
     }
   };
 
@@ -108,11 +176,11 @@ function Build({ isIntegrated = false }) {
   const currentComponents = allComponents[currentCategory] || [];
   const selectedComponent = currentBuild[currentCategory];
   const currentStepData = buildSteps[currentStep];
+  const currentCategoryFilters = CATEGORY_FILTERS[currentCategory] || [{ label: "ALL", filterFn: () => true }];
 
-  // Filter components based on search query
+  // Filter components based on search query and category filters
   const filteredComponents = currentComponents.filter((component) => {
     const searchLower = searchQuery.toLowerCase();
-    // Safely check if tags exists and is an array before using .some()
     const tagsMatch = Array.isArray(component.tags)
       ? component.tags.some((tag) => tag.toLowerCase().includes(searchLower))
       : typeof component.tags === "string" &&
@@ -122,84 +190,60 @@ function Build({ isIntegrated = false }) {
       (component.brand || "").toLowerCase().includes(searchLower) ||
       tagsMatch;
 
-    const tierKeywords = {
-      "BUDGET OFFICE": ["i3", "ryzen 3", "pentium", "athlon", "a320", "a520", "h410", "h510", "h610", "8gb", "500w", "450w", "gtx 1650", "rx 580", "gt 730", "tecware", "inplay", "ygt", "darkflash", "256gb", "500gb"],
-      "MID-RANGE GAMING": ["i5", "ryzen 5", "b450", "b550", "b660", "b760", "16gb", "650w", "750w", "rtx 3060", "rtx 4060", "rx 6600", "rx 7600", "1tb", "montech", "deepcool", "mag", "tuf", "prime"],
-      "HIGH-END WORKSTATION": ["i7", "i9", "ryzen 7", "ryzen 9", "z690", "z790", "x570", "x670", "32gb", "64gb", "850w", "1000w", "1200w", "rtx 3080", "rtx 4080", "rtx 4090", "rx 7900", "2tb", "4tb", "rog", "aorus", "nzxt", "corsair", "lian li"]
-    };
+    const currentFilterObj = currentCategoryFilters.find(f => f.label === activeFilter);
+    const matchesCategoryFilter = !currentFilterObj || activeFilter === "ALL" || currentFilterObj.filterFn(component);
 
-    const matchesTier = tierFilter === "" || (() => {
-      const keywords = tierKeywords[tierFilter] || [];
-      const combinedString = `${component.name} ${component.brand} ${Array.isArray(component.tags) ? component.tags.join(' ') : component.tags || ''}`.toLowerCase();
-      // If at least one keyword matches the component's combined string, it belongs to the tier
-      return keywords.some(kw => combinedString.includes(kw));
-    })();
-
-    return matchesSearch && matchesTier;
+    return matchesSearch && matchesCategoryFilter;
   });
 
   return (
-    <div className="build-page">
-      {!isIntegrated && (
-        <div className="build-station-header">
-
-        </div>
-      )}
+    <div className={`build-page ${isIntegrated ? '' : 'standalone'}`}>
       {/* Main Build Area */}
       <div className="build-main" id="build-main-area">
         <div className="build-sidebar">
           <div className="sidebar-card">
-            <h3>Build Steps</h3>
+            <div className="sidebar-header-row">
+              <h3>Build Steps</h3>
+              <span className="build-step-progress-badge">
+                {selectedComponents.length} / {buildSteps.length}
+              </span>
+            </div>
             <div className="step-list">
-              {buildSteps.map((step, index) => (
-                <div
-                  key={step.key}
-                  className={`step-item ${index === currentStep ? "active" : ""} ${currentBuild[step.key] ? "completed" : ""}`}
-                  onClick={() => setCurrentStep(index)}
-                >
-                  <div className="step-icon">
-                    {currentBuild[step.key] ? "✓" : step.icon}
+              {buildSteps.map((step, index) => {
+                const picked = currentBuild[step.key];
+                return (
+                  <div
+                    key={step.key}
+                    className={`step-item ${index === currentStep ? "active" : ""} ${picked ? "completed" : ""}`}
+                    onClick={() => setCurrentStep(index)}
+                  >
+                    <div className="step-icon">
+                      {picked ? "✓" : step.icon}
+                    </div>
+                    <div className="step-content">
+                      <div className="step-title">{step.label}</div>
+                      <div className={`step-desc ${picked ? "step-picked-title" : ""}`}>
+                        {picked ? picked.name : step.description}
+                      </div>
+                    </div>
+                    {picked && (
+                      <button
+                        type="button"
+                        className="step-remove-mini"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          removeComponent(step.key);
+                        }}
+                        title={`Remove ${step.label}`}
+                      >
+                        ✕
+                      </button>
+                    )}
                   </div>
-                  <div className="step-content">
-                    <div className="step-title">{step.label}</div>
-                    <div className="step-desc">{step.description}</div>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
-
-          <div className="sidebar-card">
-            <h3>Selected Components</h3>
-            <div className="selected-components">
-              {selectedComponents.length === 0 ? (
-                <p className="no-components">No components selected yet</p>
-              ) : (
-                selectedComponents.map((comp) => (
-                  <div key={comp.category} className="selected-component" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                    <div style={{ width: '40px', height: '40px', flexShrink: 0, background: 'rgba(0,0,0,0.2)', borderRadius: '8px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4px' }}>
-                      <img src={comp.img} alt={comp.name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', mixBlendMode: 'color-dodge', borderRadius: '4px' }} />
-                    </div>
-                    <div className="component-info" style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                      <span className="component-category" style={{ fontSize: '10px', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                        {comp.category}
-                      </span>
-                      <span className="component-name" style={{ fontSize: '12px', fontWeight: 'bold', color: 'var(--white)' }}>{comp.name}</span>
-                    </div>
-                    <button
-                      className="remove-component"
-                      onClick={() => removeComponent(comp.category)}
-                      title="Remove component"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-
-
         </div>
 
         <div className="build-content">
@@ -256,19 +300,13 @@ function Build({ isIntegrated = false }) {
               )}
             </div>
             <div className="tier-filters">
-              <button
-                className={`tier-btn ${tierFilter === "" ? "active" : ""}`}
-                onClick={() => setTierFilter("")}
-              >
-                [ ALL ]
-              </button>
-              {["BUDGET OFFICE", "MID-RANGE GAMING", "HIGH-END WORKSTATION"].map((tier) => (
+              {currentCategoryFilters.map((filter) => (
                 <button
-                  key={tier}
-                  className={`tier-btn ${tierFilter === tier ? "active" : ""}`}
-                  onClick={() => setTierFilter(tierFilter === tier ? "" : tier)}
+                  key={filter.label}
+                  className={`tier-btn ${activeFilter === filter.label ? "active" : ""}`}
+                  onClick={() => setActiveFilter(activeFilter === filter.label ? "ALL" : filter.label)}
                 >
-                  [ {tier} ]
+                  [ {filter.label.toUpperCase()} ]
                 </button>
               ))}
             </div>
@@ -284,25 +322,24 @@ function Build({ isIntegrated = false }) {
             <div className="components-grid-wrapper">
               <div className="components-grid compact">
                 {filteredComponents.map((component) => {
-                  const { isCompatible, reason } = checkCompatibility(component, currentBuild);
+                  const isSelected = selectedComponent?.id === component.id;
+                  const isViewed = viewedComponent?.id === component.id;
 
                   return (
                     <div
                       key={component.id}
-                      className={`component-card compact-card ${viewedComponent?.id === component.id ? "viewed" : ""
-                        } ${selectedComponent?.id === component.id ? "selected" : ""} ${!isCompatible ? "incompatible" : ""}`}
+                      className={`component-card compact-card ${isViewed ? "viewed" : ""} ${isSelected ? "selected" : ""}`}
                       onClick={() => handleCardClick(component)}
                     >
                       <div className="component-image">
                         <img src={component.img} alt={component.name} />
                       </div>
                       <div className="component-details compact-details">
+                        <span className="card-brand-label">{component.brand}</span>
                         <h3 className="component-name">{component.name}</h3>
                       </div>
-                      {!isCompatible && (
-                        <div className="incompatible-tooltip">
-                          ⚠️ {reason}
-                        </div>
+                      {isSelected && (
+                        <span className="card-installed-tag">✓ SELECTED</span>
                       )}
                     </div>
                   );
@@ -316,7 +353,21 @@ function Build({ isIntegrated = false }) {
                   <div className="spec-image-container">
                     <img src={viewedComponent.img} alt={viewedComponent.name} />
                   </div>
-                  <h3>Specifications</h3>
+                  <div className="spec-title-area">
+                    <span className="spec-brand-tag">{viewedComponent.brand || "Hardware"}</span>
+                    <h3 className="spec-component-title">{viewedComponent.name}</h3>
+                  </div>
+
+                  {/* Primary Select Action right at the top so it is always above the fold */}
+                  <div className="spec-action-top">
+                    <button
+                      className={`btn-select-component ${selectedComponent?.id === viewedComponent.id ? "is-selected" : ""}`}
+                      onClick={() => handleComponentSelect(viewedComponent)}
+                    >
+                      {selectedComponent?.id === viewedComponent.id ? "✓ COMPONENT SELECTED" : "SELECT COMPONENT"}
+                    </button>
+                  </div>
+
                   <div className="spec-details-list">
                     {/* ALL categories have these first four fields */}
                     <div className="spec-row">
@@ -421,85 +472,77 @@ function Build({ isIntegrated = false }) {
                       </div>
                     )}
                   </div>
-
-                  {(() => {
-                    const { isCompatible, reason } = checkCompatibility(viewedComponent, currentBuild);
-                    return (
-                      <div className="spec-action">
-                        {!isCompatible && (
-                          <div className="incompatible-warning" style={{ marginBottom: "12px" }}>
-                            ⚠️ {reason}
-                          </div>
-                        )}
-                        <button
-                          className={`btn-select-component ${selectedComponent?.id === viewedComponent.id ? "is-selected" : ""}`}
-                          onClick={() => handleComponentSelect(viewedComponent)}
-                        >
-                          {selectedComponent?.id === viewedComponent.id ? "✓ COMPONENT SELECTED" : "SELECT COMPONENT"}
-                        </button>
-                      </div>
-                    );
-                  })()}
                 </>
               ) : (
-                <div className="spec-empty-state" style={{ flexDirection: 'column', gap: '20px' }}>
-                  <svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.3, color: '#00e5a0' }}>
-                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-                    <line x1="8" y1="21" x2="16" y2="21"></line>
-                    <line x1="12" y1="17" x2="12" y2="21"></line>
-                  </svg>
-                  <span>Select a component to view its specifications</span>
+                <div className="spec-overview-card">
+                  <div className="spec-overview-header">
+                    <span className="spec-overview-tag">RIG STATUS</span>
+                    <h3 className="spec-overview-title">Build Overview</h3>
+                  </div>
+
+                  {/* Total Selected Progress */}
+                  <div className="build-progress-box">
+                    <div className="progress-top-row">
+                      <span className="progress-label">TOTAL SELECTED</span>
+                      <span className="progress-value">
+                        {selectedComponents.length} / {buildSteps.length}
+                      </span>
+                    </div>
+                    <div className="progress-track">
+                      <div
+                        className="progress-fill"
+                        style={{ width: `${(selectedComponents.length / buildSteps.length) * 100}%` }}
+                      />
+                    </div>
+                    <span className="progress-caption">
+                      {selectedComponents.length === buildSteps.length
+                        ? "🎉 Complete rig assembled! Ready for 3D Studio."
+                        : `${buildSteps.length - selectedComponents.length} component${buildSteps.length - selectedComponents.length === 1 ? '' : 's'} remaining to complete rig.`}
+                    </span>
+                  </div>
+
+                  {/* Next Step Instruction */}
+                  <div className="next-step-prompt">
+                    <div className="next-step-badge">
+                      <span className="next-step-icon">👉</span>
+                      <div className="next-step-content">
+                        <div className="next-step-title">CURRENT STEP: {currentStepData.label.toUpperCase()}</div>
+                        <div className="next-step-desc">
+                          {selectedComponent
+                            ? `Selected: "${selectedComponent.name}". Click any card in grid to switch or inspect.`
+                            : `Please select a compatible ${currentStepData.label.toLowerCase()} from the grid.`}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Compatibility status pill */}
+                  <div className="spec-compat-banner">
+                    <span className="compat-shield">🛡️</span>
+                    <span>
+                      {selectedComponents.length > 0
+                        ? "Live pin & wattage compatibility active"
+                        : "Ready to assemble. Choose your case to begin."}
+                    </span>
+                  </div>
                 </div>
               )}
             </div>
           </div>
         </div>
       </div>
-
-      {!isIntegrated && (
-        <section id="why-build" className="why-build" style={{ marginTop: '80px', padding: '1rem 2rem 4rem' }}>
-          <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>
-            <h2 style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: '1rem', color: '#ffffff' }}>Why Build Your Own PC?</h2>
-            <p className="section-desc" style={{ fontSize: '1.125rem', color: '#94a3b8', maxWidth: '700px', margin: '0 auto 3rem' }}>
-              Building your own PC isn't just about saving money, it's about gaining control, learning new skills, and creating something truly yours. Here's why thousands choose BuildLab.
-            </p>
-
-            <div className="benefits-grid">
-              <div className="benefit-card">
-                <img
-                  src="https://storage-asset.msi.com/global/picture/news/2025/mb/x870e-20251103-1.jpg"
-                  alt="Futuristic high-tech schematic render"
-                  className="benefit-image"
-                />
-                <h3>Complete Customization</h3>
-                <p>Choose every component to match your exact needs gaming, work, or creative projects. No compromises on performance or aesthetics.</p>
-              </div>
-
-              <div className="benefit-card">
-                <img
-                  src="https://i.pinimg.com/736x/93/64/fc/9364fc1fc62e0438b95023764807d1cd.jpg"
-                  alt="Exploded view diagram ng PC components"
-                  className="benefit-image"
-                />
-                <h3>Educational Journey</h3>
-                <p>Master PC hardware knowledge while building. Understand how components work together for better troubleshooting and upgrades.</p>
-              </div>
-
-              <div className="benefit-card">
-                <img
-                  src="https://www.imthecheftoo.com/cdn/shop/articles/help_kids_build_a_computer_a_fun_stem_passion_project.webp?v=1770634422"
-                  alt="Hands-on electronic testing"
-                  className="benefit-image"
-                />
-                <h3>Hands-on Experience</h3>
-                <p>Gain hands-on experience without the risk. Build a high-end PC with expert guidance and simulation tools.</p>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
     </div>
   );
 }
 
 export default Build;
+
+/**
+ * Build — routed at /build with the FullscreenGate wrapper so the
+ * standalone build experience always runs in immersive fullscreen mode.
+ * The instance integrated into the Home page is gated by Home instead.
+ */
+function Build({ isIntegrated = false }) {
+  const page = <BuildPage isIntegrated={isIntegrated} />;
+  return isIntegrated ? page : <FullscreenGate requireFullscreen>{page}</FullscreenGate>;
+}

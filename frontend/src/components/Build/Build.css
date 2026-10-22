@@ -35,7 +35,7 @@
 
 .home-integrated-section .build-page {
   background: transparent !important;
-  min-height: auto;
+  min-height: 0 !important;
   padding-bottom: 0;
 }
 
@@ -127,6 +127,7 @@
   /* Sidebar widened from 380px */
   gap: 48px;
   scroll-margin-top: 25px;
+  align-items: start;
 }
 
 .build-sidebar {
@@ -138,24 +139,42 @@
 .sidebar-card {
   background: rgba(17, 24, 39, 0.78);
   border-radius: 28px;
-  padding: 36px 32px;
+  padding: 24px 20px;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.55), inset 0 1px 1px rgba(255, 255, 255, 0.12);
 }
 
+.sidebar-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
 .sidebar-card h3 {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 800;
-  margin: 0 0 24px;
+  margin: 0;
   color: var(--white);
+  letter-spacing: 0.5px;
+}
+
+.build-step-progress-badge {
+  font-size: 11px;
+  font-weight: 800;
+  color: #00e5a0;
+  background: rgba(0, 229, 160, 0.12);
+  border: 1px solid rgba(0, 229, 160, 0.25);
+  padding: 3px 8px;
+  border-radius: 999px;
   letter-spacing: 0.5px;
 }
 
 .step-list {
   position: relative;
-  gap: 8px;
+  gap: 6px;
 }
 
 .step-list::before {
@@ -172,14 +191,41 @@
 .step-item {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 16px;
+  gap: 12px;
+  padding: 10px 14px;
   border: 1.5px solid transparent;
-  border-radius: 18px;
+  border-radius: 14px;
   cursor: pointer;
   transition: all 0.25s ease;
   position: relative;
   z-index: 1;
+}
+
+.step-picked-title {
+  color: #00e5a0 !important;
+  font-weight: 600 !important;
+}
+
+.step-remove-mini {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #f87171;
+  font-size: 11px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  margin-left: auto;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.step-remove-mini:hover {
+  background: #ef4444;
+  color: white;
+  transform: scale(1.1);
 }
 
 .step-item:hover {
@@ -239,10 +285,10 @@
 .selected-components {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  max-height: 140px;
+  gap: 10px;
+  max-height: 260px;
   overflow-y: auto;
-  padding-right: 8px;
+  padding-right: 6px;
 }
 
 .selected-components::-webkit-scrollbar {
@@ -415,8 +461,8 @@
   padding: 40px;
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.65), inset 0 1px 1px rgba(255, 255, 255, 0.12);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
   width: 100%;
   box-sizing: border-box;
 }
@@ -613,29 +659,7 @@
 
 
 
-/* --- Incompatible Component Styles (Caution/Reminder only, no lockout) --- */
-.component-card.incompatible {
-  cursor: pointer;
-  border-color: rgba(239, 68, 68, 0.4);
-}
 
-.component-card.incompatible:hover {
-  transform: translateY(-5px);
-  border-color: rgba(239, 68, 68, 0.7);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5), 0 0 20px rgba(239, 68, 68, 0.2);
-}
-
-.incompatible-tooltip {
-  margin-top: 12px;
-  padding: 8px 12px;
-  background: rgba(239, 68, 68, 0.15);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  border-radius: 8px;
-  color: #f87171;
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 1.4;
-}
 
 /* -- NEW BUILD UI ADDITIONS -- */
 .search-and-filters {
@@ -706,9 +730,10 @@
 
 .components-grid-wrapper {
   flex: 1;
-  max-height: 639px;
+  min-height: 480px;
+  max-height: 560px;
   overflow-y: auto;
-  padding-right: 16px;
+  padding-right: 12px;
 }
 
 /* Custom Scrollbar for Grid */
@@ -746,8 +771,8 @@
   cursor: pointer;
   background: rgba(15, 23, 42, 0.65);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
   transition: all 0.25s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
@@ -793,33 +818,71 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
+}
+
+.card-brand-label {
+  font-size: 10px;
+  font-weight: 800;
+  color: #00e5a0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
 }
 
 .component-details.compact-details .component-name {
-  font-size: 14px;
+  font-size: 13px;
   margin: 0;
   font-weight: 600;
   color: var(--white);
+  line-height: 1.3;
+}
+
+.card-quick-select-btn {
+  width: 100%;
+  margin-top: 10px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: #00e5a0;
+  color: #0b0f1a;
+  border: none;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+}
+
+.card-quick-select-btn:hover:not(.is-selected) {
+  background: #00ffb3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 229, 160, 0.35);
+}
+
+.card-quick-select-btn.is-selected {
+  background: rgba(0, 229, 160, 0.15);
+  color: #00e5a0;
+  border: 1px solid rgba(0, 229, 160, 0.4);
 }
 
 .specifications-panel {
-  width: 350px;
-  max-height: 639px;
+  width: 360px;
+  min-height: 480px;
+  max-height: 560px;
   overflow-y: auto;
   box-sizing: border-box;
   background: rgba(15, 23, 42, 0.65);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 24px;
-  padding: 24px;
+  padding: 20px;
   position: sticky;
-  top: 24px;
+  top: 20px;
   display: flex;
   flex-direction: column;
-  backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 229, 160, 0.25) rgba(255, 255, 255, 0.03);
 }
 
 /* Custom Scrollbar for Specification Panel */
@@ -842,58 +905,86 @@
 }
 
 .spec-image-container {
-  height: 200px;
+  height: 130px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 24px;
+  margin-bottom: 12px;
   background: rgba(0, 0, 0, 0.2);
-  border-radius: 16px;
-  padding: 16px;
+  border-radius: 14px;
+  padding: 12px;
+  flex-shrink: 0;
 }
 
 .spec-image-container img {
   max-height: 100%;
   max-width: 100%;
   object-fit: contain;
-  mix-blend-mode: color-dodge;
-  border-radius: 12px;
+  mix-blend-mode: normal;
+  border-radius: 8px;
+}
+
+.spec-title-area {
+  margin-bottom: 12px;
+}
+
+.spec-brand-tag {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #00e5a0;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.spec-component-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--white);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.spec-action-top {
+  margin-bottom: 14px;
+  width: 100%;
 }
 
 .specifications-panel h3 {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
-  margin: 0 0 16px;
+  margin: 0 0 12px;
   color: var(--white);
 }
 
 .spec-details-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-bottom: 24px;
+  gap: 10px;
+  margin-bottom: 16px;
 }
 
 .spec-row {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 4px;
-  font-size: 13px;
+  gap: 3px;
+  font-size: 12px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  padding-bottom: 12px;
+  padding-bottom: 8px;
 }
 
 .spec-row.spec-desc {
   border-bottom: none;
   color: var(--muted);
-  line-height: 1.5;
-  margin-top: 8px;
+  line-height: 1.4;
+  margin-top: 4px;
 }
 
 .spec-label {
   color: var(--muted);
-  font-size: 11px;
+  font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -905,22 +996,19 @@
   max-width: 100%;
 }
 
-.spec-action {
-  margin-top: auto;
-}
-
 .btn-select-component {
   width: 100%;
   background: #00e5a0;
   color: #0b0f1a;
   border: none;
-  padding: 14px;
+  padding: 12px;
   border-radius: 12px;
   font-weight: 800;
   cursor: pointer;
   transition: all 0.3s ease;
   text-transform: uppercase;
   letter-spacing: 1px;
+  font-size: 12px;
 }
 
 .btn-select-component:hover:not(.is-selected) {
@@ -934,16 +1022,6 @@
   color: rgba(255, 255, 255, 0.5);
   box-shadow: none;
   cursor: default;
-}
-
-.incompatible-warning {
-  color: #ef4444;
-  background: rgba(239, 68, 68, 0.1);
-  padding: 12px;
-  border-radius: 12px;
-  font-size: 13px;
-  text-align: center;
-  font-weight: 600;
 }
 
 .spec-empty-state {
@@ -983,8 +1061,8 @@
   border-radius: 24px;
   overflow: hidden;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
   transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s ease, border-color 0.4s ease;
   display: flex;
   flex-direction: column;
@@ -1019,4 +1097,370 @@
   margin: 0 1.5rem 2rem;
   line-height: 1.6;
   text-align: center;
+}
+
+/* -- BUILD SPEC OVERVIEW / RIG STATUS CARD -- */
+.spec-overview-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: 100%;
+}
+
+.spec-overview-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.spec-overview-tag {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #00e5a0;
+  text-transform: uppercase;
+}
+
+.spec-overview-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--white);
+  margin: 0;
+  letter-spacing: 0.3px;
+}
+
+/* Progress Box */
+.build-progress-box {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.progress-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.progress-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: 0.5px;
+}
+
+.progress-value {
+  font-size: 13px;
+  font-weight: 800;
+  color: #00e5a0;
+  background: rgba(0, 229, 160, 0.12);
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.progress-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00e5a0, #00b4d8);
+  border-radius: 999px;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.progress-caption {
+  font-size: 11px;
+  color: #cbd5e1;
+  line-height: 1.4;
+}
+
+/* Next Step Prompt */
+.next-step-prompt {
+  background: rgba(250, 204, 21, 0.08);
+  border: 1px solid rgba(250, 204, 21, 0.25);
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+
+.next-step-badge {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.next-step-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.next-step-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.next-step-title {
+  font-size: 11px;
+  font-weight: 800;
+  color: #facc15;
+  letter-spacing: 0.5px;
+}
+
+.next-step-desc {
+  font-size: 12px;
+  color: #f1f5f9;
+  line-height: 1.4;
+}
+
+/* Rig Slots Mini */
+.build-slots-mini {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.slots-mini-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.slots-mini-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.slot-mini-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.slot-mini-item:hover {
+  background: rgba(255, 255, 255, 0.07);
+  transform: translateX(2px);
+}
+
+.slot-mini-item.active-step {
+  border-color: rgba(250, 204, 21, 0.4);
+  background: rgba(250, 204, 21, 0.05);
+}
+
+.slot-mini-item.filled {
+  border-color: rgba(0, 229, 160, 0.25);
+}
+
+.slot-mini-icon {
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  font-weight: 800;
+  color: #64748b;
+  flex-shrink: 0;
+}
+
+.slot-mini-item.filled .slot-mini-icon {
+  color: #00e5a0;
+}
+
+.slot-mini-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.slot-mini-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #e2e8f0;
+  white-space: nowrap;
+}
+
+.slot-mini-status {
+  font-size: 10px;
+  color: #94a3b8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.slot-mini-item.filled .slot-mini-status {
+  color: #00e5a0;
+  font-weight: 500;
+}
+
+/* Compat Banner */
+.spec-compat-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: rgba(0, 229, 160, 0.06);
+  border: 1px solid rgba(0, 229, 160, 0.2);
+  border-radius: 12px;
+  font-size: 11px;
+  color: #00e5a0;
+  font-weight: 600;
+  margin-top: auto;
+}
+
+.compat-shield {
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+/* Installed-state tag on selected cards (replaces the redundant
+   per-card SELECT PART button) */
+.card-installed-tag {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 229, 160, 0.95);
+  color: #04241a;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0, 229, 160, 0.35);
+  z-index: 2;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   STANDALONE BUILD PAGE (/build) — VIEWPORT-FITTED WORKSPACE
+   The whole station fits the screen: locked to viewport height,
+   no page scrolling (Footer suppressed via App.jsx on /build).
+   All columns stretch to the SAME height as the left sidebar,
+   and overflow scrolls internally inside each panel.
+   The integrated Home variant keeps the normal flow above.
+   ───────────────────────────────────────────────────────────── */
+.build-page.standalone {
+  /* lock to exactly one viewport (graceful fallback first) */
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+  padding-bottom: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.build-page.standalone .build-main {
+  flex: 1 1 0;
+  min-height: 0;
+  height: 100%;
+  padding: 10px 2rem 16px;
+  /* the row track always equals the container height — every column
+     is forced to the same (steady) height */
+  grid-template-rows: minmax(0, 1fr);
+  align-items: stretch;
+}
+
+/* LEFT: ruler column — Steps card auto-height, Selected fills the rest */
+.build-page.standalone .build-sidebar {
+  min-height: 0;
+  overflow-y: auto; /* safety net for very short screens */
+  height: 100%;
+}
+
+.build-page.standalone .sidebar-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* Steps card keeps its natural height; Selected Components absorbs the rest */
+.build-page.standalone .sidebar-card:nth-child(2) {
+  flex: 1 1 0;
+}
+
+.build-page.standalone .selected-components {
+  flex: 1 1 0;
+  min-height: 100px;
+  max-height: none;
+  overflow-y: auto;
+}
+
+/* RIGHT: content panel — stretches to match the sidebar exactly */
+.build-page.standalone .build-content {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 28px 32px;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.build-page.standalone .step-header {
+  margin-bottom: 16px;
+  flex-shrink: 0;
+}
+
+.build-page.standalone .search-and-filters {
+  flex-shrink: 0;
+  margin-bottom: 6px;
+}
+
+.build-page.standalone .build-guide-subbar {
+  flex-shrink: 0;
+  margin-bottom: 12px;
+}
+
+.build-page.standalone .build-grid-and-panel {
+  flex: 1 1 0;
+  min-height: 0;
+  align-items: stretch;
+}
+
+.build-page.standalone .components-grid-wrapper {
+  flex: 1 1 0;
+  min-height: 0;
+  max-height: none;
+}
+
+.build-page.standalone .specifications-panel {
+  position: static; /* page can't scroll — sticky is meaningless here */
+  min-height: 0;
+  max-height: none;
+  height: auto;
+  align-self: stretch;
+  width: 360px;
+  flex-shrink: 0;
+}
+
+/* Slightly tighter spec panel internals so everything fits one screen */
+.build-page.standalone .spec-image-container {
+  height: 110px;
+}
+
+/* Narrow screens: let the sidebar breathe before the grid cramps */
+@media (max-width: 1250px) {
+  .build-page.standalone .build-main {
+    grid-template-columns: 360px minmax(0, 1fr);
+    gap: 28px;
+  }
 }

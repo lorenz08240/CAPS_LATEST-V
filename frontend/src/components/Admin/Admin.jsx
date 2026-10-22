@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import "./Admin.css";
 
@@ -112,16 +113,16 @@ const formatDate = (dateStr) => {
   }
 };
 
-// Default showcase parts if database has fewer items
+// Default showcase parts if database has fewer items (reduced demo components)
 const DEFAULT_PARTS = [
   {
     id: "case-antec-df600",
     category: "case",
     brand: "ANTEC",
-    name: "Antec DF600 Tempered Case Side Panel w/ 3 120 Fans Micro ATX PC Case Black",
+    name: "Antec DF600 Tempered Case Micro ATX Black",
     form_factor: "ATX",
     img: "/pcbackground.png",
-    desc: "Ultimate gaming mid-tower with tempered glass and high airflow front mesh.",
+    desc: "Gaming mid-tower with tempered glass and high airflow front mesh.",
     tags: ["ATX", "Micro ATX", "Tempered Glass", "ARGB"]
   },
   {
@@ -133,149 +134,13 @@ const DEFAULT_PARTS = [
     img: "/pcbackground.png",
     desc: "Compact high-performance chassis engineered with 4 ARGB fans and USB Type-C.",
     tags: ["ATX", "ARGB", "USB Type-C"]
-  },
-  {
-    id: "case-cm-td500-v2",
-    category: "case",
-    brand: "COOLERMASTER",
-    name: "Cooler Master TD500 Micro V2 ATX PC Case",
-    form_factor: "ATX",
-    img: "/pcbackground.png",
-    desc: "Polygonal fine mesh contour 3D crystalline case with triple CF120 fans.",
-    tags: ["ATX", "Micro ATX", "Mesh", "3D Front"]
-  },
-  {
-    id: "case-lianli-o11-dynamic",
-    category: "case",
-    brand: "LIAN LI",
-    name: "Lian Li PC-O11 Dynamic Micro ATX PC Case",
-    form_factor: "ATX",
-    img: "/pcbackground.png",
-    desc: "Dual-chamber tempered glass showcase designed for extreme custom watercooling.",
-    tags: ["ATX", "Dual Chamber", "Tempered Glass"]
-  },
-  {
-    id: "case-phanteks-g360a",
-    category: "case",
-    brand: "PHANTEKS",
-    name: "Phanteks Eclipse G360A Micro ATX PC Case",
-    form_factor: "ATX",
-    img: "/pcbackground.png",
-    desc: "Ultra-fine performance mesh front panel with 3 DRGB fans and integrated controller.",
-    tags: ["ATX", "DRGB", "High Airflow"]
   }
 ];
 
 const INITIAL_SCRAPED_QUEUE = [];
-const DEPRECATED_SCRAPED = [
-  {
-    id: "easypc-ram-hkc",
-    source: "1) Source: EasyPC",
-    sourceName: "EasyPC",
-    date: "2026-10-16",
-    scrapedName: "HKC 8GB 2666Mhz DDR4 with Heatsink Memory",
-    category: "ram",
-    brand: "HKC",
-    ddr_type: "DDR4",
-    capacity: "8GB",
-    speed: "2666MHz",
-    img: "/pcbackground.png",
-    desc: "Desktop memory module with integrated aluminum heat spreader.",
-    tags: ["RAM", "DDR4", "2666MHz", "8GB"],
-    approved: true
-  },
-  {
-    id: "easypc-gpu-rtx5070",
-    source: "2) Source: EasyPC",
-    sourceName: "EasyPC",
-    date: "2026-10-16",
-    scrapedName: "MSI Nvidia GeForce RTX 5070 VENTUS 2X OC 12GB 192-bit GDDR7 Videocard",
-    category: "gpu",
-    brand: "MSI",
-    power_required: "250",
-    img: "/pcbackground.png",
-    desc: "Dual-fan high performance gaming graphics card with GDDR7 memory.",
-    tags: ["GPU", "Nvidia", "RTX 5070", "GDDR7"],
-    approved: true
-  },
-  {
-    id: "easypc-cpu-ryzen5",
-    source: "3) Source: EasyPC",
-    sourceName: "EasyPC",
-    date: "2026-10-16",
-    scrapedName: "AMD Ryzen 5 8400F 4.2GHz AM5 Socket DDR5 Processor MPK",
-    category: "cpu",
-    brand: "AMD",
-    socket_type: "AM5",
-    wattage: "65",
-    img: "/pcbackground.png",
-    desc: "6-core 12-thread AM5 desktop processor with high-efficiency Zen 4 architecture.",
-    tags: ["CPU", "AM5", "Ryzen 5", "DDR5"],
-    approved: true
-  },
-  {
-    id: "easypc-mobo-b550m",
-    source: "4) Source: EasyPC",
-    sourceName: "EasyPC",
-    date: "2026-10-16",
-    scrapedName: "Gigabyte B550M-K Socket Am4 Ddr4 Motherboard",
-    category: "motherboard",
-    brand: "GIGABYTE",
-    socket_type: "AM4",
-    ddr_type: "DDR4",
-    form_factor: "Micro ATX",
-    img: "/pcbackground.png",
-    desc: "Durable AM4 motherboard with PCIe 4.0 and dual M.2 slots.",
-    tags: ["Motherboard", "AM4", "DDR4", "Micro ATX"],
-    approved: true
-  },
-  {
-    id: "easypc-ssd-1tb",
-    source: "5) Source: EasyPC",
-    sourceName: "EasyPC",
-    date: "2026-10-16",
-    scrapedName: "GIGABYTE AORUS Gen4 7000s 1TB NVMe M.2 Solid State Drive",
-    category: "storage",
-    brand: "GIGABYTE",
-    capacity: "1TB",
-    type: "NVMe M.2",
-    img: "/pcbackground.png",
-    desc: "PCIe 4.0 x4 high-speed M.2 solid state drive with copper heatsink spreader.",
-    tags: ["Storage", "SSD", "NVMe", "1TB"],
-    approved: false
-  },
-  {
-    id: "easypc-psu-750w",
-    source: "6) Source: EasyPC",
-    sourceName: "EasyPC",
-    date: "2026-10-16",
-    scrapedName: "MSI MAG A750GL 750W 80+ Gold PCIe 5.0 Fully Modular Power Supply",
-    category: "psu",
-    brand: "MSI",
-    wattage: "750",
-    efficiency: "80+ Gold",
-    img: "/pcbackground.png",
-    desc: "750W 80 Plus Gold certified modular PSU with native 16-pin PCIe 5.0 connector.",
-    tags: ["PSU", "750W", "80+ Gold", "Modular"],
-    approved: false
-  },
-  {
-    id: "easypc-c500",
-    source: "7) Source: EasyPC",
-    sourceName: "EasyPC",
-    date: "2026-10-16",
-    scrapedName: "GIGABYTE AORUS C500 GLASS Micro ATX Case",
-    category: "case",
-    brand: "GIGABYTE",
-    form_factor: "Micro ATX",
-    img: "/pcbackground.png",
-    desc: "AORUS premium tempered glass chassis with vertical GPU mount and sync ARGB.",
-    tags: ["Case", "Micro ATX", "Tempered Glass", "ARGB"],
-    approved: false
-  }
-];
 
 function Admin() {
+  const navigate = useNavigate();
   const { isAdmin, loginAdmin, logoutAdmin } = useAuth();
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -821,6 +686,19 @@ function Admin() {
             <p>Manage components and compatibility tagging (The Matrix)</p>
           </div>
           <div className="admin-header-actions">
+            <button
+              type="button"
+              className="btn-glass-back"
+              onClick={() => {
+                navigate("/");
+                setTimeout(() => {
+                  document.getElementById("build-station")?.scrollIntoView({ behavior: "smooth" });
+                }, 150);
+              }}
+              title="Return to 2D Component Picker"
+            >
+              ← Back to Component Picker
+            </button>
             <button
               className="btn-glass-crawler"
               onClick={handleCrawl}

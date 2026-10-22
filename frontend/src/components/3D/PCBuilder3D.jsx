@@ -7,6 +7,7 @@ import { buildSteps } from '../Build/Build';
 import { useBuild } from '../../contexts/BuildContext';
 import { calculateScores } from '../../utilities/scoringEngine';
 import { checkCompatibility } from '../../utilities/compatibilityEngine';
+import FullscreenGate from '../FullscreenGate/FullscreenGate';
 import GenericPCCase from './GenericPCCase';
 import ComponentModels3D from './ComponentModels3D';
 import './PCBuilder3D.css';
@@ -102,7 +103,7 @@ function DropIndicator({ activeCategory, category, position, isPlaced }) {
   );
 }
 
-function PCBuilder3D() {
+function PCBuilder3DWorkspace() {
   const navigate = useNavigate();
   const { currentBuild, allComponents, addComponent, removeComponent, resetBuild, loadDemoBuild } = useBuild();
 
@@ -115,7 +116,6 @@ function PCBuilder3D() {
   const [autoRotate, setAutoRotate] = useState(false);
   const [glassMode, setGlassMode] = useState('closed'); // 'closed', 'open', 'removed'
   const [isExploded, setIsExploded] = useState(false);
-  const [lightingTheme, setLightingTheme] = useState('cyber'); // 'cyber', 'studio', 'stealth'
   const [rgbColor, setRgbColor] = useState('#00e5ff');
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [buildMode, setBuildMode] = useState('guided'); // 'guided' or 'free'
@@ -130,6 +130,7 @@ function PCBuilder3D() {
   const [inspectedPart, setInspectedPart] = useState(null);
   const [hoveredPart, setHoveredPart] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);
+  const [confirmDisassemble, setConfirmDisassemble] = useState(false);
 
   const orbitRef = useRef();
 
@@ -291,7 +292,7 @@ function PCBuilder3D() {
   ];
 
   return (
-    <div className={`pc-builder-workspace ${lightingTheme}`}>
+    <div className="pc-builder-workspace cyber">
       {/* ── TOP HUD HEADER BAR ── */}
       <header className="workspace-header">
         <div className="header-left">
@@ -310,13 +311,7 @@ function PCBuilder3D() {
             <span className="metric-label">ASSEMBLY</span>
             <span className="metric-val">{placedParts.length} / 7 Parts</span>
           </div>
-          <div className="metric-divider"></div>
-          <div className="metric-badge">
-            <span className="metric-label">TOTAL COST</span>
-            <span className="metric-val" style={{ color: '#00e676' }}>
-              {scores.totalCostFormatted}
-            </span>
-          </div>
+
           <div className="metric-divider"></div>
           <div className="metric-badge">
             <span className="metric-label">EST. POWER</span>
@@ -382,12 +377,8 @@ function PCBuilder3D() {
           <button 
             className="header-action-btn clear-btn" 
             onClick={() => {
-              if (window.confirm('Disassemble all components in the current 3D rig?')) {
-                resetBuild();
-                setInspectedPart(null);
-                playSound('click');
-                showToast('Rig Disassembled');
-              }
+              playSound('click');
+              setConfirmDisassemble(true);
             }}
             disabled={placedParts.length === 0}
             title="Disassemble PC"
@@ -669,31 +660,6 @@ function PCBuilder3D() {
                 />
               ))}
             </div>
-
-            <div className="hud-divider"></div>
-
-            <span className="hud-title">LIGHTS</span>
-            <button 
-              className={`hud-btn ${lightingTheme === 'cyber' ? 'active' : ''}`}
-              onClick={() => setLightingTheme('cyber')}
-              title="Neon Cyberpunk Studio"
-            >
-              🌆 Cyber
-            </button>
-            <button 
-              className={`hud-btn ${lightingTheme === 'studio' ? 'active' : ''}`}
-              onClick={() => setLightingTheme('studio')}
-              title="Clean High-Key Studio"
-            >
-              💡 Clean
-            </button>
-            <button 
-              className={`hud-btn ${lightingTheme === 'stealth' ? 'active' : ''}`}
-              onClick={() => setLightingTheme('stealth')}
-              title="Stealth Dark Room"
-            >
-              🌙 Dark
-            </button>
           </div>
 
           {/* ── 3D CANVAS SCENE (With Refined Lighting, No Snapback, and No Ground Sinking) ── */}
@@ -701,13 +667,13 @@ function PCBuilder3D() {
             camera={{ position: CAMERA_PRESETS.isometric.position, fov: 42 }}
             gl={{ antialias: true, alpha: false }}
           >
-            <color attach="background" args={[lightingTheme === 'studio' ? '#182130' : '#0a0e17']} />
+            <color attach="background" args={['#0a0e17']} />
 
             {/* 3-Point Studio Lighting + Brilliant Internal Chassis Fill */}
-            <ambientLight intensity={lightingTheme === 'studio' ? 1.5 : 1.2} />
+            <ambientLight intensity={1.2} />
             <directionalLight 
               position={[-15, 20, 15]} 
-              intensity={lightingTheme === 'studio' ? 3.0 : 2.5} 
+              intensity={2.5} 
               castShadow 
             />
             <directionalLight 
@@ -726,7 +692,7 @@ function PCBuilder3D() {
             <pointLight position={[-0.5, -1.5, 0]} intensity={2.2} color="#ffffff" distance={10} />
             <pointLight position={[0, 0, 3.5]} intensity={2.8} color={rgbColor} distance={8} />
 
-            <Environment preset={lightingTheme === 'studio' ? 'city' : 'night'} />
+            <Environment preset="night" />
 
             {/* Camera Controller & OrbitControls with Free Dragging and Auto-Rotate */}
             <CameraController cameraTarget={cameraTarget} orbitRef={orbitRef} />
@@ -870,7 +836,61 @@ function PCBuilder3D() {
           )}
         </section>
       </div>
+
+      {/* ── DISASSEMBLE CONFIRM (in-app overlay — native browser prompts
+             would kick the user out of fullscreen mode) ── */}
+      {confirmDisassemble && (
+        <div
+          className="builder-confirm-overlay"
+          onClick={() => setConfirmDisassemble(false)}
+        >
+          <div className="builder-confirm-box" onClick={(e) => e.stopPropagation()}>
+            <div className="builder-confirm-icon">🗑</div>
+            <h3 className="builder-confirm-title">Disassemble Rig?</h3>
+            <p className="builder-confirm-desc">
+              All installed components will be removed from the current 3D build.
+              Your parts stay in the inventory drawer.
+            </p>
+            <div className="builder-confirm-actions">
+              <button
+                type="button"
+                className="builder-confirm-btn ghost"
+                onClick={() => setConfirmDisassemble(false)}
+              >
+                Keep Building
+              </button>
+              <button
+                type="button"
+                className="builder-confirm-btn danger"
+                onClick={() => {
+                  resetBuild();
+                  setInspectedPart(null);
+                  setConfirmDisassemble(false);
+                  playSound('install');
+                  showToast('Rig Disassembled');
+                }}
+              >
+                Yes, Disassemble
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
+  );
+}
+
+/**
+ * PCBuilder3D — routed at /3d-builder with the FullscreenGate wrapper.
+ * The 3D studio is an immersive workspace: the user is kept in fullscreen
+ * mode (browsers still allow Esc, but the gate immediately re-prompts
+ * them back in via the overlay banner).
+ */
+function PCBuilder3D() {
+  return (
+    <FullscreenGate requireFullscreen>
+      <PCBuilder3DWorkspace />
+    </FullscreenGate>
   );
 }
 

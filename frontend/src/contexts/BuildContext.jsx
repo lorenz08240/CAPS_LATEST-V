@@ -9,7 +9,9 @@ const BuildContext = createContext();
 export const BuildProvider = ({ children }) => {
   const [currentBuild, setCurrentBuild] = useState(() => {
     try {
-      const saved = localStorage.getItem("buildlab_current_build");
+      // Clear legacy permanent localStorage if present so it resets clean
+      localStorage.removeItem("buildlab_current_build");
+      const saved = sessionStorage.getItem("buildlab_current_build");
       if (saved) return JSON.parse(saved);
     } catch {}
     return {
@@ -34,10 +36,10 @@ export const BuildProvider = ({ children }) => {
   });
   const [selectedSaveSlot, setSelectedSaveSlot] = useState(0);
 
-  // Sync current build to localStorage
+  // Sync current build to sessionStorage (automatically resets when frontend/tab is closed)
   useEffect(() => {
     try {
-      localStorage.setItem("buildlab_current_build", JSON.stringify(currentBuild));
+      sessionStorage.setItem("buildlab_current_build", JSON.stringify(currentBuild));
     } catch {}
   }, [currentBuild]);
 
@@ -71,6 +73,7 @@ export const BuildProvider = ({ children }) => {
     setCurrentBuild(emptyBuild);
     setCompatibilityResults([]);
     try {
+      sessionStorage.removeItem("buildlab_current_build");
       localStorage.removeItem("buildlab_current_build");
     } catch {}
   };

@@ -7,6 +7,8 @@ import {
 } from "react-router-dom";
 import { BuildProvider } from "./contexts/BuildContext";
 import { AuthProvider } from "./contexts/AuthContext";
+import { ThemeProvider, useTheme } from "./contexts/ThemeContext";
+import { AnimatePresence } from "motion/react";
 import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
 import Home from "./components/Home/Home";
@@ -16,6 +18,7 @@ import Learn from "./components/Learn/Learn";
 import Brands from "./components/Brands/Brands";
 import PCBuilder3D from "./components/3D/PCBuilder3D";
 import Admin from "./components/Admin/Admin";
+import MotionPage from "./utilities/pageTransitions";
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -27,47 +30,62 @@ const ScrollToTop = () => {
   return null;
 };
 
-function App() {
+function AppContent() {
   const [isSidebarPinned, setIsSidebarPinned] = useState(false);
+  const { theme } = useTheme();
+  const location = useLocation();
 
   return (
-    <AuthProvider>
-      <BuildProvider>
-        <Router>
-          <ScrollToTop />
-          <div className={`min-h-screen bg-slate-50 app-layout ${isSidebarPinned ? 'sidebar-pinned' : ''}`}>
-            <Navbar isPinned={isSidebarPinned} setIsPinned={setIsSidebarPinned} />
-            <main className="main-content">
-              <Routes>
-                {/* Main Landing Page */}
-                <Route path="/" element={<Home />} />
+    <div className={`min-h-screen app-layout ${theme === 'dark' ? 'theme-dark' : 'theme-light'} ${isSidebarPinned ? 'sidebar-pinned' : ''}`}>
+      <Navbar isPinned={isSidebarPinned} setIsPinned={setIsSidebarPinned} />
+      <main className="main-content">
+              <AnimatePresence mode="wait" initial={false}>
+                <Routes location={location} key={location.pathname}>
+                  {/* Main Landing Page */}
+                  <Route path="/" element={<MotionPage routeKey="/"><Home /></MotionPage>} />
 
-                {/* Build Page */}
-                <Route path="/build" element={<Build />} />
+                  {/* Build Page */}
+                  <Route path="/build" element={<MotionPage routeKey="/build"><Build /></MotionPage>} />
 
-                {/* Compatibility Page */}
-                <Route path="/compatibility" element={<Compatibility />} />
+                  {/* Compatibility Page */}
+                  <Route path="/compatibility" element={<MotionPage routeKey="/compatibility"><Compatibility /></MotionPage>} />
 
-                {/* Learn Page & Component Deep-Dives */}
-                <Route path="/learn" element={<Learn />} />
-                <Route path="/learn/:componentId" element={<Learn />} />
+                  {/* Learn Page & Component Deep-Dives */}
+                  <Route path="/learn" element={<MotionPage routeKey="/learn"><Learn /></MotionPage>} />
+                  <Route path="/learn/:componentId" element={<MotionPage routeKey="/learn"><Learn /></MotionPage>} />
 
-                {/* Brands Page */}
-                <Route path="/brands" element={<Brands />} />
+                  {/* Brands Page */}
+                  <Route path="/brands" element={<MotionPage routeKey="/brands"><Brands /></MotionPage>} />
 
-                {/* 3D Builder Page */}
-                <Route path="/3d-builder" element={<PCBuilder3D />} />
+                  {/* 3D Builder Page */}
+                  <Route path="/3d-builder" element={<MotionPage routeKey="/3d-builder"><PCBuilder3D /></MotionPage>} />
 
-                {/* Admin Dashboard */}
-                <Route path="/admin" element={<Admin />} />
+                  {/* Admin Dashboard */}
+                  <Route path="/admin" element={<MotionPage routeKey="/admin"><Admin /></MotionPage>} />
 
-              </Routes>
-              <Footer />
+                </Routes>
+              </AnimatePresence>
+              {/* Footer suppressed on the Build experience — the Component
+                  Picker (home "/") and /build are fixed viewport-height
+                  workspaces with no page scrolling. */}
+              {location.pathname !== "/" && location.pathname !== "/build" && <Footer />}
             </main>
-          </div>
-        </Router>
-      </BuildProvider>
-    </AuthProvider>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <ThemeProvider>
+      <AuthProvider>
+        <BuildProvider>
+          <Router>
+            <ScrollToTop />
+            <AppContent />
+          </Router>
+        </BuildProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

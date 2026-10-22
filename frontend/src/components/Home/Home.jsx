@@ -1,34 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom"; // Import Link from react-router-dom
+import React, { useState, useEffect } from "react";
 import "./Home.css"; // Import the CSS file for styling
 import Build from "../Build/Build";
 import Compatibility from "../Compatibility/Compatibility";
-
-const useElementOnScreen = (options = {}) => {
-  const containerRef = useRef(null);
-  const [isVisible, setIsVisible] = useState(false);
-  const threshold = options.threshold || 0.1;
-
-  useEffect(() => {
-    const currentRef = containerRef.current;
-    if (!currentRef) return;
-
-    const observer = new IntersectionObserver((entries) => {
-      const [entry] = entries;
-      if (entry.isIntersecting) {
-        setIsVisible(true);
-        if (currentRef) observer.unobserve(currentRef); // Run once
-      }
-    }, { threshold });
-
-    observer.observe(currentRef);
-    return () => {
-      if (currentRef) observer.unobserve(currentRef);
-    };
-  }, [threshold]);
-
-  return [containerRef, isVisible];
-};
+import FullscreenGate from "../FullscreenGate/FullscreenGate";
+import { enterFullscreen, isFullscreenActive } from "../../utilities/fullscreen";
+import soundManager from "../../utilities/soundManager";
 
 let hasSeenBannerThisSession = false;
 
@@ -100,10 +76,18 @@ function Hero() {
     setCurrentSlide(idx);
   };
 
-  // Use the hook to track visibility for each card
-  const [refCard1, isVisibleCard1] = useElementOnScreen({ threshold: 0.2 });
-  const [refCard2, isVisibleCard2] = useElementOnScreen({ threshold: 0.2 });
-  const [refCard3, isVisibleCard3] = useElementOnScreen({ threshold: 0.2 });
+  // Track banner dismissal requests coming from other components
+  // (e.g. the sidebar "Build" link) and treat them as entering the app.
+  useEffect(() => {
+    const handler = () => {
+      hasSeenBannerThisSession = true;
+      setIsFadingOut(true);
+      soundManager.openBox();
+      setTimeout(() => setIsBannerVisible(false), 500);
+    };
+    window.addEventListener("buildlab:enter-build", handler);
+    return () => window.removeEventListener("buildlab:enter-build", handler);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -151,13 +135,36 @@ function Hero() {
   const handleStartBuild = () => {
     setIsFadingOut(true);
     hasSeenBannerThisSession = true;
+    soundManager.openBox();
+
+    // Enter immersive fullscreen mode right away — this runs inside the
+    // click handler, which is the user gesture browsers require.
+    enterFullscreen();
+
     setTimeout(() => {
       setIsBannerVisible(false);
     }, 500); // Wait for the 0.5s fade-out animation to complete
   };
 
+  // If the user escapes fullscreen after committing to the build (Engaged),
+  // the FullscreenGate overlay re-prompts them — play a soft warning.
+  useEffect(() => {
+    const onExit = () => {
+      if (!isFullscreenActive() && hasSeenBannerThisSession) {
+        soundManager.warning();
+      }
+    };
+    document.addEventListener("fullscreenchange", onExit);
+    document.addEventListener("webkitfullscreenchange", onExit);
+    return () => {
+      document.removeEventListener("fullscreenchange", onExit);
+      document.removeEventListener("webkitfullscreenchange", onExit);
+    };
+  }, []);
+
   return (
-    <div className="home-page">
+    <FullscreenGate>
+      <div className="home-page">
       {isBannerVisible && (
         <div className={`welcome-banner ${isFadingOut ? "fade-out" : ""}`}>
           <div className="welcome-banner-modal">
@@ -283,56 +290,13 @@ function Hero() {
       {/* TIER 2: Active Build Station Framework */}
       <section id="build-station" className="home-integrated-section">
         <div className="section-header container">
-          <h2>Active Build Station</h2>
+          <h2>Pick a Component</h2>
         </div>
         <Build isIntegrated={true} />
       </section>
 
-      {/* TIER 3: Why Build Grid */}
-      <section id="why-build" className="why-build section-with-glow">
-        <div className="ambient-neon-glow"></div>
-        <div className="container">
-          <h2>Why Build Your Own PC?</h2>
-          <p className="section-desc">
-            Building your own PC isn't just about saving money, it's about gaining control, learning new skills, and creating something truly yours. Here's why thousands choose BuildLab.
-          </p>
-
-          <div className="benefits-grid">
-            <div ref={refCard1} className={`benefit-card fade-up-stagger delay-0 ${isVisibleCard1 ? 'is-visible' : ''}`}>
-              <img
-                src="https://storage-asset.msi.com/global/picture/news/2025/mb/x870e-20251103-1.jpg"
-                alt="Futuristic high-tech schematic render"
-                className="benefit-image"
-              />
-              <h3>Complete Customization</h3>
-              <p>Choose every component to match your exact needs gaming, work, or creative projects. No compromises on performance or aesthetics.</p>
-            </div>
-
-            <div ref={refCard2} className={`benefit-card fade-up-stagger delay-1 ${isVisibleCard2 ? 'is-visible' : ''}`}>
-              <img
-                src="https://i.pinimg.com/736x/93/64/fc/9364fc1fc62e0438b95023764807d1cd.jpg"
-                alt="Exploded view diagram ng PC components"
-                className="benefit-image"
-              />
-              <h3>Educational Journey</h3>
-              <p>Master PC hardware knowledge while building. Understand how components work together for better troubleshooting and upgrades.</p>
-            </div>
-
-            <div ref={refCard3} className={`benefit-card fade-up-stagger delay-2 ${isVisibleCard3 ? 'is-visible' : ''}`}>
-              <img
-                src="https://www.imthecheftoo.com/cdn/shop/articles/help_kids_build_a_computer_a_fun_stem_passion_project.webp?v=1770634422"
-                alt="Hands-on electronic testing"
-                className="benefit-image"
-              />
-              <h3>Hands-on Experience</h3>
-              <p>Gain hands-on experience without the risk. Build a high-end PC with expert guidance and simulation tools.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-
-    </div>
+      </div>
+    </FullscreenGate>
   );
 }
 

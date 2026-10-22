@@ -15,6 +15,12 @@ def send_notification(message: str) -> bool:
             print('Telegram notification sent successfully.')
             return True
         else:
+            # Fallback without parse_mode if Markdown parsing failed
+            payload.pop('parse_mode', None)
+            fallback_resp = requests.post(url, json=payload, timeout=10)
+            if fallback_resp.json().get('ok'):
+                print('Telegram notification sent successfully (plain text fallback).')
+                return True
             print(f"Failed to send notification: {data.get('description')}", file=sys.stderr)
             return False
     except requests.RequestException as e:

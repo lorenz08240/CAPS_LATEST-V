@@ -9,7 +9,8 @@ const componentGuide = [
     id: "cpu",
     name: "Processor (CPU)",
     badge: "PROCESSOR (CPU) ARCHITECTURE",
-    heroImage: "https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?q=80&w=2000",
+    heroImage: "/assets/cpu_learn.jpg",
+    youtubeId: "IOXvE4Qo43U",
     tags: ["Processor", "Cores", "Sockets", "Overclocking"],
     description: "The central processing unit executes instructions, coordinates memory paging, and performs millions of arithmetic operations to power your PC.",
     specs: [
@@ -113,7 +114,8 @@ const componentGuide = [
     id: "motherboard",
     name: "Motherboard",
     badge: "MOTHERBOARD CIRCUIT ARCHITECTURE",
-    heroImage: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2000",
+    heroImage: "/textures/motherboard2.jpg",
+    youtubeId: "s1fxZ-HYWqA",
     tags: ["Foundation", "Chipset", "VRM", "PCIe 5.0"],
     description: "The foundational printed circuit board connecting CPU, GPU, memory, and storage while distributing regulated power through its VRM.",
     specs: [
@@ -203,7 +205,8 @@ const componentGuide = [
     id: "ram",
     name: "Memory (RAM)",
     badge: "HIGH-SPEED MEMORY ARCHITECTURE",
-    heroImage: "https://images.unsplash.com/photo-1562976540-1502f7596005?q=80&w=2000",
+    heroImage: "/textures/core-i7_02.jpg",
+    youtubeId: "k4Zp3P76W9U",
     tags: ["Speed", "DDR5", "Dual Channel", "Latency"],
     description: "Ultra-low latency volatile storage holding real-time OS instructions and live game textures for immediate nanosecond processor access.",
     specs: [
@@ -292,7 +295,8 @@ const componentGuide = [
     id: "gpu",
     name: "Graphics Card (GPU)",
     badge: "GPU RASTER & RAY TRACING ARCHITECTURE",
-    heroImage: "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?q=80&w=2000",
+    heroImage: "/assets/pc_build.png",
+    youtubeId: "mKkL5pP_qP8",
     tags: ["Visuals", "Ray Tracing", "VRAM", "DLSS / FSR"],
     description: "Massively parallel computing powerhouse equipped with dedicated shaders, tensor cores, and ray-tracing hardware to render real-time photorealistic worlds.",
     specs: [
@@ -381,7 +385,8 @@ const componentGuide = [
     id: "psu",
     name: "Power Supply (PSU)",
     badge: "POWER DELIVERY & EFFICIENCY ARCHITECTURE",
-    heroImage: "https://images.unsplash.com/photo-1555680202-c86f0e12f086?q=80&w=2000",
+    heroImage: "/textures/core-i7_01.jpg",
+    youtubeId: "rXwV_xV1zVo",
     tags: ["Power", "ATX 3.0", "Modular", "80 Plus Gold"],
     description: "Converts high-voltage alternating wall current into clean, isolated direct current rails (12V, 5V, 3.3V) with over-current and surge protections.",
     specs: [
@@ -470,7 +475,8 @@ const componentGuide = [
     id: "case",
     name: "Computer Case",
     badge: "CHASSIS THERMAL & AIRFLOW ARCHITECTURE",
-    heroImage: "https://images.unsplash.com/photo-1591488320449-011701bb6704?q=80&w=2000",
+    heroImage: "/textures/case1.png",
+    youtubeId: "jXv4F_P9F9E",
     tags: ["Chassis", "Airflow", "Tempered Glass", "Cable Routing"],
     description: "The structural chassis housing your build, engineered with high-flow perforated mesh, acoustic dampening, and radiator clearances.",
     specs: [
@@ -573,6 +579,7 @@ export default function Learn() {
 
   // Active step in Step-by-Step Installation
   const [activeStep, setActiveStep] = useState(1);
+  const [isPlaying, setIsPlaying] = useState(true);
 
   // Quiz state
   const [quizIndex, setQuizIndex] = useState(0);
@@ -938,28 +945,76 @@ export default function Learn() {
                 <span className="caret-icon">^</span>
               </div>
 
-              <div className="installation-steps-stack">
-                {selectedComp.steps.map((item) => (
-                  <div
-                    key={item.step}
-                    className={`step-interactive-row ${activeStep === item.step ? "active-step" : ""}`}
-                    onClick={() => setActiveStep(item.step)}
-                  >
-                    <div className="step-left-content">
-                      <span className="step-tag-bold">Step {item.step}</span>
-                      <p className="step-title-text">{item.title}</p>
-                      <p className="step-desc-text">{item.desc}</p>
-                    </div>
+              <div className="installation-main-grid">
+                <div className="installation-steps-stack">
+                  {selectedComp.steps.map((item) => (
+                    <div
+                      key={item.step}
+                      className={`step-interactive-row ${activeStep === item.step ? "active-step" : ""}`}
+                      onClick={() => {
+                        setActiveStep(item.step);
+                        setIsPlaying(true);
+                      }}
+                    >
+                      <div className="step-left-content">
+                        <span className="step-tag-bold">Step {item.step}</span>
+                        <p className="step-title-text">{item.title}</p>
+                        <p className="step-desc-text">{item.desc}</p>
+                      </div>
 
-                    <div className="step-icon-graphic">
-                      {item.step === 1 && "🖥️"}
-                      {item.step === 2 && "📐"}
-                      {item.step === 3 && "⚡"}
-                      {item.step === 4 && "🔒"}
-                      {item.step === 5 && "❄️"}
+                      <div className="step-icon-graphic">
+                        {item.step === 1 && "🖥️"}
+                        {item.step === 2 && "📐"}
+                        {item.step === 3 && "⚡"}
+                        {item.step === 4 && "🔒"}
+                        {item.step === 5 && "❄️"}
+                      </div>
                     </div>
+                  ))}
+                </div>
+
+                {/* RIGHT CONTAINER: BRIEF DEMO VIDEO CONTAINER (AUTOPLAYED, LOOP, NO CONTROLS, ONLY PLAY/PAUSE) */}
+                <div className="installation-step-preview-container">
+                  <div className="step-preview-header">
+                    <span className="step-preview-badge">Step {activeStep} Demonstration</span>
+                    <button 
+                      className="step-preview-pause-btn"
+                      onClick={() => setIsPlaying(!isPlaying)}
+                      title={isPlaying ? "Pause Video" : "Play Video"}
+                    >
+                      {isPlaying ? "❚❚ Pause" : "▶ Play"}
+                    </button>
                   </div>
-                ))}
+
+                  <div className="step-preview-video-wrapper">
+                    {selectedComp.youtubeId ? (
+                      <iframe
+                        key={`${selectedComp.id}-${activeStep}-${isPlaying}`}
+                        src={`https://www.youtube.com/embed/${selectedComp.youtubeId}?autoplay=${isPlaying ? 1 : 0}&mute=1&loop=1&playlist=${selectedComp.youtubeId}&controls=0&showinfo=0&modestbranding=1&rel=0&iv_load_policy=3&disablekb=1&fs=0`}
+                        title={`${selectedComp.name} Step ${activeStep} Demonstration`}
+                        className="step-preview-iframe"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      />
+                    ) : (
+                      <div className="step-preview-placeholder">
+                        <img src={selectedComp.heroImage} alt={selectedComp.name} />
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="step-preview-caption">
+                    <strong>{selectedComp.steps.find((s) => s.step === activeStep)?.title}</strong>
+                    <p>{selectedComp.steps.find((s) => s.step === activeStep)?.desc}</p>
+                    <a 
+                      href={`https://www.youtube.com/watch?v=${selectedComp.youtubeId}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="step-quick-youtube-link"
+                    >
+                      ▶ Watch Full Tutorial on YouTube
+                    </a>
+                  </div>
+                </div>
               </div>
 
               {/* COMMON ERRORS BOX */}

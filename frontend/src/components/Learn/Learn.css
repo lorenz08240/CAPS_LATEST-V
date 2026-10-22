@@ -132,6 +132,7 @@
   letter-spacing: 0.08em;
   padding: 0.3rem 0.8rem;
   border-radius: 999px;
+  -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
 }
 
@@ -246,6 +247,7 @@
   border: 1px solid rgba(255, 255, 255, 0.15);
   padding: 0.55rem 0.9rem;
   border-radius: 999px;
+  -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
   transition: all 0.25s ease;
 }
@@ -281,10 +283,12 @@
 
 /* ── HORIZONTAL SUB-TAB SYSTEM BAR ── */
 .horizontal-subtab-bar {
+  position: -webkit-sticky;
   position: sticky;
   top: 0;
   z-index: 40;
   background: rgba(9, 13, 22, 0.95);
+  -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   padding: 0.75rem 2rem;
@@ -349,6 +353,7 @@
   padding: 1.5rem 1.75rem;
   margin-bottom: 1.5rem;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+  -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px);
 }
 
@@ -1076,4 +1081,134 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Installation Main Grid (Steps on Left, Video Demo on Right) */
+.installation-main-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .installation-main-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.installation-step-preview-container {
+  background: rgba(13, 18, 31, 0.95);
+  border: 1px solid rgba(212, 163, 75, 0.3);
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.step-preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.step-preview-badge {
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #f7d28b;
+  letter-spacing: 0.05em;
+}
+
+.step-preview-pause-btn {
+  background: rgba(212, 163, 75, 0.15);
+  border: 1px solid rgba(212, 163, 75, 0.35);
+  color: #f7d28b;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.step-preview-pause-btn:hover {
+  background: rgba(212, 163, 75, 0.3);
+  color: #ffffff;
+}
+
+.step-preview-video-wrapper {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #000000;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.step-preview-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  pointer-events: none;
+}
+
+.step-preview-placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0a0e17;
+}
+
+.step-preview-placeholder img {
+  max-width: 80%;
+  max-height: 80%;
+  object-fit: contain;
+}
+
+.step-preview-caption {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.step-preview-caption strong {
+  font-size: 0.82rem;
+  color: #ffffff;
+}
+
+.step-preview-caption p {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.step-quick-youtube-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 0.4rem;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #38bdf8;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.step-quick-youtube-link:hover {
+  color: #00e5ff;
+  text-decoration: underline;
 }

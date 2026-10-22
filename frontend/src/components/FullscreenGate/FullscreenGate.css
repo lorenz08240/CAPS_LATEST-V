@@ -1,0 +1,237 @@
+/* FullscreenGate — immersive mode & orientation overlays */
+
+.fs-gate-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+  color: #e5e7eb;
+  background:
+    radial-gradient(ellipse at 20% 20%, rgba(16, 185, 129, 0.08), transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(45, 212, 191, 0.07), transparent 50%),
+    rgba(3, 7, 18, 0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  animation: fs-gate-fade-in 0.35s ease both;
+}
+
+@keyframes fs-gate-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.fs-gate-panel {
+  max-width: 520px;
+  padding: 48px 40px;
+  border-radius: 20px;
+  background: linear-gradient(160deg, rgba(17, 24, 39, 0.85), rgba(13, 17, 26, 0.9));
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  box-shadow:
+    0 0 60px rgba(16, 185, 129, 0.12),
+    0 24px 60px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+/* ---------- Shared typography (mirrors Home hero) ---------- */
+
+.fs-gate-badge {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: #34d399;
+  text-transform: uppercase;
+}
+
+.fs-gate-title {
+  margin: 0;
+  font-size: clamp(28px, 4.5vw, 40px);
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.15;
+}
+
+.fs-gate-desc {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.65;
+  color: rgba(229, 231, 235, 0.75);
+}
+
+.fs-gate-status {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 18px;
+  font-family: "Consolas", "Courier New", monospace;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: rgba(255, 255, 255, 0.25);
+}
+
+/* ---------- Fullscreen prompt ---------- */
+
+.fs-gate-expands {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 6px;
+}
+
+.fs-gate-frame {
+  border: 2px solid rgba(52, 211, 153, 0.5);
+  border-radius: 8px;
+  display: inline-block;
+}
+
+.fs-gate-frame-small {
+  width: 26px;
+  height: 18px;
+  opacity: 0.45;
+}
+
+.fs-gate-frame-large {
+  width: 52px;
+  height: 34px;
+  animation: fs-gate-pulse 2.2s ease-in-out infinite;
+}
+
+.fs-gate-arrows {
+  font-size: 22px;
+  color: #34d399;
+  animation: fs-gate-pulse 2.2s ease-in-out infinite;
+}
+
+@keyframes fs-gate-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.85; }
+  50% { transform: scale(1.12); opacity: 1; }
+}
+
+.fs-gate-btn {
+  margin-top: 14px;
+  padding: 16px 42px;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #ffffff;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow:
+    0 8px 24px rgba(16, 185, 129, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.fs-gate-btn:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+  box-shadow: 0 12px 32px rgba(16, 185, 129, 0.45);
+}
+
+.fs-gate-btn:active {
+  transform: translateY(0);
+}
+
+.fs-gate-btn:focus-visible {
+  outline: 2px solid #34d399;
+  outline-offset: 3px;
+}
+
+.fs-gate-hint {
+  margin: 10px 0 0;
+  font-size: 12px;
+  color: rgba(229, 231, 235, 0.45);
+}
+
+.fs-gate-hint kbd {
+  padding: 2px 7px;
+  font-size: 10px;
+  border-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.06);
+  font-family: inherit;
+}
+
+/* ---------- Rotate your device ---------- */
+
+.fs-gate-phone {
+  position: relative;
+  width: 58px;
+  height: 104px;
+  border: 3px solid rgba(52, 211, 153, 0.7);
+  border-radius: 12px;
+  margin-bottom: 10px;
+  animation: fs-gate-rotate-device 3s ease-in-out infinite;
+}
+
+.fs-gate-phone-notch {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 18px;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(52, 211, 153, 0.6);
+}
+
+@keyframes fs-gate-rotate-device {
+  0%, 12% { transform: rotate(0deg); }
+  48%, 78% { transform: rotate(-90deg); }
+  100% { transform: rotate(-90deg); }
+}
+
+/* ---------- Light theme variant ------------------------------------------ */
+
+.theme-light .fs-gate-overlay {
+  background:
+    radial-gradient(ellipse at 20% 20%, rgba(16, 185, 129, 0.1), transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(59, 130, 246, 0.08), transparent 50%),
+    rgba(248, 250, 252, 0.94);
+  color: #1e293b;
+}
+
+.theme-light .fs-gate-panel {
+  background: linear-gradient(160deg, #ffffff, #f1f5f9);
+  border-color: rgba(16, 185, 129, 0.35);
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.15);
+}
+
+.theme-light .fs-gate-badge { color: #059669; }
+
+.theme-light .fs-gate-title { color: #0f172a; }
+
+.theme-light .fs-gate-desc {
+  color: rgba(30, 41, 59, 0.75);
+}
+
+.theme-light .fs-gate-hint {
+  color: rgba(30, 41, 59, 0.5);
+}
+
+.theme-light .fs-gate-status {
+  color: rgba(30, 41, 59, 0.35);
+}
+
+/* ---------- Smaller phones ---------- */
+
+@media (max-width: 480px) {
+  .fs-gate-panel {
+    padding: 36px 22px;
+    gap: 10px;
+  }
+  .fs-gate-desc {
+    font-size: 13.5px;
+  }
+}

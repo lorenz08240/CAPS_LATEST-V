@@ -15,18 +15,13 @@
   color: #e2e8f0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   overflow: hidden;
+  -webkit-user-select: none;
   user-select: none;
 }
 
-/* Lighting Theme Variants */
+/* Workspace Background (fixed cyber theme — lighting modes removed) */
 .pc-builder-workspace.cyber {
   background: radial-gradient(circle at 60% 40%, #111a2e 0%, #080b12 85%);
-}
-.pc-builder-workspace.studio {
-  background: radial-gradient(circle at 50% 30%, #1e293b 0%, #0f172a 90%);
-}
-.pc-builder-workspace.stealth {
-  background: #05070a;
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -35,6 +30,7 @@
 .workspace-header {
   height: 64px;
   background: rgba(14, 19, 31, 0.92);
+  -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
@@ -67,9 +63,9 @@
 }
 
 .back-build-btn:hover {
-  background: rgba(0, 229, 255, 0.15);
-  border-color: #00e5ff;
-  color: #00e5ff;
+  background: rgba(212, 163, 75, 0.15);
+  border-color: #d4a34b;
+  color: #d4a34b;
   transform: translateX(-2px);
 }
 
@@ -92,6 +88,7 @@
   letter-spacing: 0.5px;
   background: linear-gradient(90deg, #ffffff, #cbd5e1);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
@@ -200,15 +197,15 @@
 }
 
 .header-action-btn.compat-btn {
-  border-color: rgba(0, 229, 255, 0.3);
-  color: #00e5ff;
+  border-color: rgba(212, 163, 75, 0.3);
+  color: #d4a34b;
 }
 .header-action-btn.compat-btn:hover {
-  background: rgba(0, 229, 255, 0.15);
+  background: rgba(212, 163, 75, 0.15);
 }
 
 .header-action-btn.demo-btn {
-  background: linear-gradient(135deg, rgba(250, 204, 21, 0.2), rgba(0, 229, 255, 0.2));
+  background: linear-gradient(135deg, rgba(250, 204, 21, 0.2), rgba(212, 163, 75, 0.2));
   border-color: #facc15;
   color: #facc15;
   font-weight: 700;
@@ -244,8 +241,10 @@
    3. LEFT HARDWARE DRAWER & VERTICAL PROGRESSION (PATAYO)
    ───────────────────────────────────────────────────────────── */
 .hardware-drawer {
-  width: 530px;
+  width: clamp(360px, 34vw, 530px); /* responsive — never cramps the catalog panel */
+  min-width: 360px;
   background: rgba(14, 19, 31, 0.95);
+  -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
   border-right: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
@@ -257,6 +256,7 @@
 
 .hardware-drawer.collapsed {
   width: 52px;
+  min-width: 52px;
 }
 
 .drawer-header {
@@ -277,7 +277,7 @@
 .drawer-sub {
   font-size: 0.65rem;
   font-weight: 700;
-  color: #00e5ff;
+  color: #d4a34b;
   letter-spacing: 1px;
 }
 
@@ -297,8 +297,8 @@
 }
 
 .drawer-collapse-btn:hover {
-  background: rgba(0, 229, 255, 0.2);
-  color: #00e5ff;
+  background: rgba(212, 163, 75, 0.2);
+  color: #d4a34b;
 }
 
 /* Split Layout inside Drawer */
@@ -310,15 +310,23 @@
 
 /* VERTICAL PROGRESSION RAIL (PATAYO) */
 .vertical-stages-rail {
-  width: 175px;
+  width: clamp(140px, 12vw, 175px);
   background: rgba(8, 12, 20, 0.7);
   border-right: 1px solid rgba(255, 255, 255, 0.06);
   display: flex;
   flex-direction: column;
   gap: 6px;
-  padding: 0.75rem 0.6rem;
+  padding: 0.75rem 0.55rem;
   overflow-y: auto;
-  scrollbar-width: thin;
+  flex-shrink: 0;
+}
+
+.vertical-stages-rail::-webkit-scrollbar {
+  width: 5px;
+}
+.vertical-stages-rail::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
 }
 
 .vertical-stage-btn {
@@ -342,12 +350,12 @@
 }
 
 .vertical-stage-btn.active {
-  background: rgba(0, 229, 255, 0.14);
-  border-color: #00e5ff;
-  box-shadow: 0 0 12px rgba(0, 229, 255, 0.25);
+  background: rgba(212, 163, 75, 0.14);
+  border-color: #d4a34b;
+  box-shadow: 0 0 12px rgba(212, 163, 75, 0.25);
 }
 .vertical-stage-btn.active .stage-name {
-  color: #00e5ff;
+  color: #d4a34b;
 }
 
 .vertical-stage-btn.installed {
@@ -374,21 +382,27 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
+  gap: 2px;
 }
 
 .stage-name {
-  font-size: 0.76rem;
+  font-size: 0.72rem;
   font-weight: 700;
   color: #f1f5f9;
-  white-space: nowrap;
+  /* wrap to two clean lines instead of truncating ("CPU (Process…") */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-clamp: 2;
   overflow: hidden;
-  text-overflow: ellipsis;
+  line-height: 1.2;
 }
 
 .stage-status-sub {
-  font-size: 0.62rem;
+  font-size: 0.6rem;
   color: #94a3b8;
   letter-spacing: 0.3px;
+  white-space: nowrap;
 }
 
 .stage-badge-indicator {
@@ -418,6 +432,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap; /* badge drops to next line instead of overlapping the title */
+  gap: 6px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
@@ -438,10 +454,11 @@
 .inventory-count-badge {
   font-size: 0.66rem;
   font-weight: 700;
-  color: #00e5ff;
-  background: rgba(0, 229, 255, 0.1);
+  color: #d4a34b;
+  background: rgba(212, 163, 75, 0.1);
   padding: 2px 8px;
   border-radius: 4px;
+  white-space: nowrap;
 }
 
 /* Search & Tier Pills */
@@ -464,7 +481,7 @@
 }
 
 .drawer-search-input:focus {
-  border-color: #00e5ff;
+  border-color: #d4a34b;
 }
 
 .search-clear-btn {
@@ -541,7 +558,7 @@
 
 .catalog-card:hover {
   background: rgba(255, 255, 255, 0.07);
-  border-color: rgba(0, 229, 255, 0.4);
+  border-color: rgba(212, 163, 75, 0.4);
   transform: translateY(-2px);
 }
 
@@ -551,8 +568,8 @@
 }
 
 .card-thumb-wrap {
-  width: 66px;
-  height: 66px;
+  width: 58px;
+  height: 58px;
   background: #0f1420;
   border-radius: 6px;
   position: relative;
@@ -570,28 +587,34 @@
   object-fit: contain;
 }
 
+/* Status chips render as full-width ribbons overlapping the thumb's
+   top/bottom edges — can never spill onto the card text. */
 .installed-chip {
   position: absolute;
-  top: 2px;
-  left: 2px;
-  background: #00e676;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 230, 118, 0.92);
   color: #052e16;
-  font-size: 0.55rem;
+  font-size: 0.48rem;
   font-weight: 800;
-  padding: 1px 4px;
-  border-radius: 3px;
+  padding: 2px 0;
+  text-align: center;
+  letter-spacing: 0.4px;
 }
 
 .warning-chip {
   position: absolute;
-  bottom: 2px;
-  left: 2px;
-  background: #eab308;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(234, 179, 8, 0.92);
   color: #422006;
-  font-size: 0.55rem;
+  font-size: 0.48rem;
   font-weight: 800;
-  padding: 1px 4px;
-  border-radius: 3px;
+  padding: 2px 0;
+  text-align: center;
+  letter-spacing: 0.4px;
 }
 
 .card-body {
@@ -610,13 +633,17 @@
 }
 
 .card-name {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 600;
   color: #f1f5f9;
-  white-space: nowrap;
+  /* two-line clamp — no mid-word clipping, row heights stay uniform */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-clamp: 2;
   overflow: hidden;
-  text-overflow: ellipsis;
-  margin: 1px 0 3px 0;
+  line-height: 1.3;
+  margin: 1px 0 4px 0;
 }
 
 .card-meta {
@@ -629,15 +656,20 @@
 .meta-tag {
   background: rgba(255, 255, 255, 0.06);
   color: #94a3b8;
-  font-size: 0.6rem;
-  padding: 1px 4px;
+  font-size: 0.58rem;
+  padding: 1px 5px;
   border-radius: 3px;
+  white-space: nowrap;
 }
 
 .compatibility-note {
-  font-size: 0.65rem;
+  font-size: 0.62rem;
   color: #fbbf24;
   margin-bottom: 5px;
+  /* one clean ellipsized line, hover shows full text via the card title */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .card-actions {
@@ -647,17 +679,20 @@
 
 .action-btn {
   flex: 1;
-  padding: 4px 8px;
+  padding: 5px 8px;
   border-radius: 5px;
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
   border: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .install-btn {
-  background: #00e5ff;
+  background: #d4a34b;
   color: #041a22;
 }
 .install-btn:hover {
@@ -704,6 +739,7 @@
   position: absolute;
   z-index: 15;
   background: rgba(14, 19, 31, 0.88);
+  -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   padding: 0.4rem 0.6rem;
@@ -747,9 +783,9 @@
 }
 
 .hud-btn.active {
-  background: rgba(0, 229, 255, 0.2);
-  border-color: #00e5ff;
-  color: #00e5ff;
+  background: rgba(212, 163, 75, 0.2);
+  border-color: #d4a34b;
+  color: #d4a34b;
 }
 
 .hud-btn.explode-btn.active {
@@ -779,6 +815,8 @@
 .aesthetics-hud {
   top: 1rem;
   left: 1.25rem;
+  flex-wrap: wrap;          /* never let the RGB toolbar overflow/overlap */
+  max-width: calc(100vw - 3rem);
 }
 
 .color-swatches {
@@ -808,15 +846,15 @@
 /* Drop Indicator Badge inside Canvas */
 .drop-indicator-badge {
   background: rgba(8, 11, 18, 0.9);
-  border: 1px solid #00e5ff;
-  color: #00e5ff;
+  border: 1px solid #d4a34b;
+  color: #d4a34b;
   font-size: 10px;
   font-weight: 700;
   padding: 3px 8px;
   border-radius: 4px;
   white-space: nowrap;
   pointer-events: none;
-  box-shadow: 0 0 12px rgba(0, 229, 255, 0.4);
+  box-shadow: 0 0 12px rgba(212, 163, 75, 0.4);
   display: flex;
   align-items: center;
   gap: 5px;
@@ -840,8 +878,9 @@
   right: 1.5rem;
   width: 290px;
   background: rgba(14, 19, 31, 0.95);
+  -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(0, 229, 255, 0.3);
+  border: 1px solid rgba(212, 163, 75, 0.3);
   border-radius: 10px;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7);
   z-index: 25;
@@ -864,7 +903,7 @@
 .inspector-category-tag {
   font-size: 0.65rem;
   font-weight: 800;
-  color: #00e5ff;
+  color: #d4a34b;
   letter-spacing: 1px;
 }
 
@@ -942,12 +981,12 @@
 }
 
 .focus-btn {
-  background: rgba(0, 229, 255, 0.15);
-  color: #00e5ff;
-  border: 1px solid rgba(0, 229, 255, 0.3);
+  background: rgba(212, 163, 75, 0.15);
+  color: #d4a34b;
+  border: 1px solid rgba(212, 163, 75, 0.3);
 }
 .focus-btn:hover {
-  background: #00e5ff;
+  background: #d4a34b;
   color: #041a22;
 }
 
@@ -992,4 +1031,119 @@
 @keyframes popIn {
   from { opacity: 0; transform: translate(-50%, -10px); }
   to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   IN-APP CONFIRM DIALOG
+   (replaces native window.confirm — native dialogs steal focus
+   and force the browser out of fullscreen mode)
+   ───────────────────────────────────────────────────────────── */
+.builder-confirm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 4000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(3, 7, 18, 0.78);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  animation: confirmFade 0.22s ease both;
+}
+
+@keyframes confirmFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.builder-confirm-box {
+  max-width: 380px;
+  width: 100%;
+  padding: 30px 28px 24px;
+  border-radius: 18px;
+  text-align: center;
+  background: linear-gradient(160deg, rgba(17, 24, 39, 0.96), rgba(13, 17, 26, 0.98));
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+  animation: confirmPop 0.24s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes confirmPop {
+  from { opacity: 0; transform: scale(0.92) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.builder-confirm-icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  border-radius: 50%;
+  background: rgba(248, 113, 113, 0.12);
+  border: 1px solid rgba(248, 113, 113, 0.35);
+  box-shadow: 0 0 24px rgba(248, 113, 113, 0.15);
+}
+
+.builder-confirm-title {
+  margin: 0 0 8px;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.builder-confirm-desc {
+  margin: 0 0 22px;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: rgba(203, 213, 225, 0.75);
+}
+
+.builder-confirm-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.builder-confirm-btn {
+  padding: 10px 20px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.builder-confirm-btn.ghost {
+  color: #cbd5e1;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.builder-confirm-btn.ghost:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+.builder-confirm-btn.danger {
+  color: #ffffff;
+  background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
+}
+
+.builder-confirm-btn.danger:hover {
+  transform: translateY(-1px);
+  background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+  box-shadow: 0 8px 26px rgba(239, 68, 68, 0.4);
+}
+
+.builder-confirm-btn:focus-visible {
+  outline: 2px solid #f87171;
+  outline-offset: 2px;
 }

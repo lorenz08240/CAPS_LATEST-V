@@ -10,7 +10,7 @@ app.use(express.json());
 // API to get all parts grouped by category
 app.get("/api/parts", async (req, res) => {
   try {
-    const [rows] = await db.query("SELECT * FROM pc_parts ORDER BY created_at DESC, id DESC");
+    const [rows] = await db.query("SELECT * FROM pc_parts ORDER BY id DESC");
     const componentsData = {};
     rows.forEach(row => {
       if (!componentsData[row.category]) {
@@ -39,7 +39,7 @@ app.get("/api/parts", async (req, res) => {
 // API to get parts by category
 app.get("/api/parts/:category", async (req, res) => {
   try {
-    const [rows] = await db.query("SELECT * FROM pc_parts WHERE category = ? ORDER BY created_at DESC, id DESC", [
+    const [rows] = await db.query("SELECT * FROM pc_parts WHERE category = ? ORDER BY id DESC", [
       req.params.category,
     ]);
     res.json(rows.map(row => {

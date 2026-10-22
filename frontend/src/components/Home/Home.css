@@ -285,8 +285,8 @@
   border-radius: 24px;
   overflow: hidden;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
   transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s ease, border-color 0.4s ease;
   display: flex;
   flex-direction: column;
@@ -432,8 +432,8 @@
   overflow-x: hidden;
   border-radius: 28px;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.05) 100%);
-  backdrop-filter: blur(25px) saturate(190%) contrast(105%);
   -webkit-backdrop-filter: blur(25px) saturate(190%) contrast(105%);
+  backdrop-filter: blur(25px) saturate(190%) contrast(105%);
   border: 1.5px solid rgba(255, 255, 255, 0.35);
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5), inset 0 1.5px 2px rgba(255, 255, 255, 0.5), inset 0 -1.5px 2px rgba(0, 0, 0, 0.3);
   display: flex;
@@ -482,6 +482,7 @@
 
 .welcome-banner-modal .hero-left-col {
   background: transparent;
+  -webkit-backdrop-filter: none;
   backdrop-filter: none;
   text-align: left;
   align-items: flex-start;
@@ -548,8 +549,8 @@
 
 .welcome-banner-modal .hero-cta-btn-new {
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
   color: #ffffff;
   font-size: 1.15rem;
   font-weight: 800;
@@ -611,8 +612,8 @@
 
 .welcome-banner-modal .slide-content-new {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.06) 100%);
-  backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
   border-right: 1.5px solid rgba(255, 255, 255, 0.25);
   padding: 2.2rem 2rem;
   display: flex;
@@ -681,8 +682,8 @@
   align-items: center;
   justify-content: center;
   background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.3);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
   padding: 0.5rem 0.9rem;
@@ -775,8 +776,8 @@
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
   max-width: 90%;
 }
 
@@ -857,6 +858,7 @@
   align-items: center;
   text-align: center;
   background: linear-gradient(to right, rgba(11, 15, 26, 0.8), transparent);
+  -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
   padding: 0;
   padding-right: 2rem;
@@ -1155,6 +1157,7 @@
   background: rgba(17, 24, 39, 0.6);
   padding: 0.6rem 1.5rem;
   border-radius: 50px;
+  -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -1335,4 +1338,45 @@
 .translucent-row-new {
   gap: 3rem;
   /* Reduce brand logo space to prevent right overflow */
+}
+
+/* Why Build leads to Learn styles */
+.benefit-learn-link {
+  display: inline-block;
+  margin-top: 14px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #38bdf8;
+  transition: all 0.2s ease;
+}
+
+.benefit-card:hover .benefit-learn-link {
+  color: #00e5ff;
+  transform: translateX(4px);
+}
+
+.why-build-cta-btn {
+  background: linear-gradient(135deg, rgba(212, 163, 75, 0.22) 0%, rgba(140, 78, 30, 0.3) 100%);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  color: #f7d28b;
+  border: 1px solid rgba(212, 163, 75, 0.45);
+  padding: 14px 32px;
+  border-radius: 12px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.why-build-cta-btn:hover {
+  background: linear-gradient(135deg, rgba(212, 163, 75, 0.38) 0%, rgba(140, 78, 30, 0.45) 100%);
+  color: #ffffff;
+  border-color: #f7d28b;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(212, 163, 75, 0.3);
 }

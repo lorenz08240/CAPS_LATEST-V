@@ -5,7 +5,11 @@ import subprocess
 import requests
 import psutil
 
-WORKSPACE_DIR = os.path.dirname(os.path.abspath(__file__))
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+if os.path.basename(SCRIPT_DIR) == ".agents":
+    WORKSPACE_DIR = os.path.dirname(SCRIPT_DIR)
+else:
+    WORKSPACE_DIR = SCRIPT_DIR
 BACKEND_DIR = os.path.join(WORKSPACE_DIR, "backend")
 FRONTEND_DIR = os.path.join(WORKSPACE_DIR, "frontend")
 
