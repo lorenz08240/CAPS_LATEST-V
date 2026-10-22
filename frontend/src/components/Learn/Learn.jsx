@@ -659,7 +659,6 @@ export default function Learn() {
           <span className="bread-active">{selectedComp.name}</span>
         </div>
       </div>
-
       {/* ── HERO BANNER CAROUSEL SECTION ── */}
       <div
         className="cinematic-hero full-bleed-hero"

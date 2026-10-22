@@ -89,6 +89,7 @@
   position: relative;
   width: 100%;
   min-height: 72vh;
+  margin-top: 0;
   background-size: cover;
   background-position: center 25%;
   background-repeat: no-repeat;
