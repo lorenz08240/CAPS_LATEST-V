@@ -1,8 +1,116 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import "./Admin.css";
 
 const categories = ["case", "motherboard", "gpu", "ram", "storage", "cpu", "psu"];
+
+const CATEGORY_LABELS = {
+  cpu: "CPU",
+  motherboard: "Motherboard",
+  ram: "RAM",
+  gpu: "GPU",
+  storage: "Storage",
+  psu: "PSU",
+  case: "Case"
+};
+
+const detectCategory = (item) => {
+  if (!item) return "case";
+  const cat = (item.category || "").toLowerCase().trim();
+  if (["cpu", "motherboard", "gpu", "ram", "storage", "psu", "case"].includes(cat)) {
+    return cat;
+  }
+  if (cat === "processor") return "cpu";
+  if (cat === "mobo" || cat === "mainboard") return "motherboard";
+  if (cat === "graphics" || cat === "video card" || cat === "videocard") return "gpu";
+  if (cat === "memory") return "ram";
+  if (cat === "ssd" || cat === "hdd" || cat === "hard drive") return "storage";
+  if (cat === "power supply" || cat === "power") return "psu";
+  if (cat === "chassis") return "case";
+
+  const text = `${item.scrapedName || item.scraped_name || item.name || ""} ${Array.isArray(item.tags) ? item.tags.join(" ") : (item.tags || "")} ${item.desc || ""}`.toLowerCase();
+  if (/\b(motherboard|b550|b650|b450|b850|b860|z790|z690|h610|a520|lga1851|socket am\d)\b/i.test(text)) return "motherboard";
+  if (/\b(geforce|rtx|gtx|radeon|videocard|video card|graphics card|gpu)\b/i.test(text)) return "gpu";
+  if (/\b(ddr4|ddr5|ddr3|ram|memory|dimm|sodimm|heatsink memory)\b/i.test(text)) return "ram";
+  if (/\b(ryzen|intel core|core i\d|processor|cpu|air cooler)\b/i.test(text)) return "cpu";
+  if (/\b(ssd|nvme|m\.2|hard drive|hdd|storage)\b/i.test(text)) return "storage";
+  if (/\b(psu|power supply|80\+|80 plus|watt\b)\b/i.test(text)) return "psu";
+  if (/\b(case|chassis|tower|tempered glass|mid tower)\b/i.test(text)) return "case";
+
+  return "case";
+};
+
+// Helper to determine component age tier and badge properties
+const getComponentAgeInfo = (createdAt) => {
+  if (!createdAt) {
+    return {
+      type: "older",
+      badgeText: "1mo+",
+      fullLabel: "Over 1 month ago",
+      isRecent24h: false
+    };
+  }
+
+  const dateObj = new Date(createdAt);
+  if (isNaN(dateObj.getTime())) {
+    return {
+      type: "older",
+      badgeText: "1mo+",
+      fullLabel: "Over 1 month ago",
+      isRecent24h: false
+    };
+  }
+
+  const now = new Date();
+  const diffMs = now.getTime() - dateObj.getTime();
+  const diffHours = diffMs / (1000 * 60 * 60);
+  const diffDays = diffHours / 24;
+
+  if (diffHours < 24 && diffHours >= -1) {
+    const hoursAgo = Math.max(1, Math.floor(diffHours));
+    return {
+      type: "new",
+      badgeText: " NEW",
+      fullLabel: hoursAgo <= 1 ? "Just added" : `${hoursAgo}h ago`,
+      isRecent24h: true
+    };
+  } else if (diffDays <= 7) {
+    const daysAgo = Math.max(1, Math.floor(diffDays));
+    return {
+      type: "recent",
+      badgeText: `${daysAgo}d ago`,
+      fullLabel: `${daysAgo} day${daysAgo > 1 ? "s" : ""} ago`,
+      isRecent24h: false
+    };
+  } else if (diffDays <= 30) {
+    const weeksAgo = Math.max(1, Math.floor(diffDays / 7));
+    return {
+      type: "weeks",
+      badgeText: `${weeksAgo}w ago`,
+      fullLabel: `${weeksAgo} week${weeksAgo > 1 ? "s" : ""} ago`,
+      isRecent24h: false
+    };
+  } else {
+    const monthsAgo = Math.max(1, Math.floor(diffDays / 30));
+    return {
+      type: "older",
+      badgeText: monthsAgo > 1 ? `${monthsAgo}mo+` : "1mo+",
+      fullLabel: `${monthsAgo} month${monthsAgo > 1 ? "s" : ""} ago`,
+      isRecent24h: false
+    };
+  }
+};
+
+const formatDate = (dateStr) => {
+  if (!dateStr) return "—";
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return dateStr;
+    return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  } catch (e) {
+    return dateStr;
+  }
+};
 
 // Default showcase parts if database has fewer items
 const DEFAULT_PARTS = [
@@ -58,64 +166,111 @@ const DEFAULT_PARTS = [
   }
 ];
 
-// Initial EasyPC Scraped Queue Items (Exclusively from EasyPC crawler)
-const INITIAL_SCRAPED_QUEUE = [
+const INITIAL_SCRAPED_QUEUE = [];
+const DEPRECATED_SCRAPED = [
   {
-    id: "easypc-c500",
+    id: "easypc-ram-hkc",
     source: "1) Source: EasyPC",
     sourceName: "EasyPC",
-    date: "2023-03-11",
-    scrapedName: "GIGABYTE AORUS C500 GLASS Micro ATX Case",
-    category: "case",
-    brand: "GIGABYTE",
-    form_factor: "Micro ATX",
+    date: "2026-10-16",
+    scrapedName: "HKC 8GB 2666Mhz DDR4 with Heatsink Memory",
+    category: "ram",
+    brand: "HKC",
+    ddr_type: "DDR4",
+    capacity: "8GB",
+    speed: "2666MHz",
     img: "/pcbackground.png",
-    desc: "AORUS premium tempered glass chassis with vertical GPU mount and sync ARGB.",
-    tags: ["E-ATX", "GLASS", "ARGB", "Gaming"],
-    approved: false
+    desc: "Desktop memory module with integrated aluminum heat spreader.",
+    tags: ["RAM", "DDR4", "2666MHz", "8GB"],
+    approved: true
   },
   {
-    id: "easypc-2300x",
+    id: "easypc-gpu-rtx5070",
     source: "2) Source: EasyPC",
     sourceName: "EasyPC",
-    date: "2024-03-14",
-    scrapedName: "GIGABYTE AORUS 2300X ATX Tower",
-    category: "case",
-    brand: "GIGABYTE",
-    form_factor: "ATX Tower",
+    date: "2026-10-16",
+    scrapedName: "MSI Nvidia GeForce RTX 5070 VENTUS 2X OC 12GB 192-bit GDDR7 Videocard",
+    category: "gpu",
+    brand: "MSI",
+    power_required: "250",
     img: "/pcbackground.png",
-    desc: "Full ATX gaming tower with optimized front airflow and stealth cable channel.",
-    tags: ["ATX", "Tower", "Gaming"],
-    approved: false
+    desc: "Dual-fan high performance gaming graphics card with GDDR7 memory.",
+    tags: ["GPU", "Nvidia", "RTX 5070", "GDDR7"],
+    approved: true
   },
   {
-    id: "easypc-psu-bundle",
+    id: "easypc-cpu-ryzen5",
     source: "3) Source: EasyPC",
     sourceName: "EasyPC",
-    date: "2023-03-13",
-    scrapedName: "GIGABYTE Amazon w/ PSU",
-    category: "case",
-    brand: "GIGABYTE",
-    form_factor: "ATX",
-    wattage: "750",
+    date: "2026-10-16",
+    scrapedName: "AMD Ryzen 5 8400F 4.2GHz AM5 Socket DDR5 Processor MPK",
+    category: "cpu",
+    brand: "AMD",
+    socket_type: "AM5",
+    wattage: "65",
     img: "/pcbackground.png",
-    desc: "Modular mid-tower chassis bundled with 750W 80+ Gold certified power supply.",
-    tags: ["ATX", "PSU Bundle", "Gold"],
-    approved: false
+    desc: "6-core 12-thread AM5 desktop processor with high-efficiency Zen 4 architecture.",
+    tags: ["CPU", "AM5", "Ryzen 5", "DDR5"],
+    approved: true
+  },
+  {
+    id: "easypc-mobo-b550m",
+    source: "4) Source: EasyPC",
+    sourceName: "EasyPC",
+    date: "2026-10-16",
+    scrapedName: "Gigabyte B550M-K Socket Am4 Ddr4 Motherboard",
+    category: "motherboard",
+    brand: "GIGABYTE",
+    socket_type: "AM4",
+    ddr_type: "DDR4",
+    form_factor: "Micro ATX",
+    img: "/pcbackground.png",
+    desc: "Durable AM4 motherboard with PCIe 4.0 and dual M.2 slots.",
+    tags: ["Motherboard", "AM4", "DDR4", "Micro ATX"],
+    approved: true
   },
   {
     id: "easypc-ssd-1tb",
-    source: "4) Source: EasyPC",
+    source: "5) Source: EasyPC",
     sourceName: "EasyPC",
-    date: "2024-03-13",
-    scrapedName: "GIGABYTE AORUS C500 SSD",
+    date: "2026-10-16",
+    scrapedName: "GIGABYTE AORUS Gen4 7000s 1TB NVMe M.2 Solid State Drive",
     category: "storage",
     brand: "GIGABYTE",
     capacity: "1TB",
     type: "NVMe M.2",
     img: "/pcbackground.png",
     desc: "PCIe 4.0 x4 high-speed M.2 solid state drive with copper heatsink spreader.",
-    tags: ["SSD", "NVMe", "PCIe 4.0", "1TB"],
+    tags: ["Storage", "SSD", "NVMe", "1TB"],
+    approved: false
+  },
+  {
+    id: "easypc-psu-750w",
+    source: "6) Source: EasyPC",
+    sourceName: "EasyPC",
+    date: "2026-10-16",
+    scrapedName: "MSI MAG A750GL 750W 80+ Gold PCIe 5.0 Fully Modular Power Supply",
+    category: "psu",
+    brand: "MSI",
+    wattage: "750",
+    efficiency: "80+ Gold",
+    img: "/pcbackground.png",
+    desc: "750W 80 Plus Gold certified modular PSU with native 16-pin PCIe 5.0 connector.",
+    tags: ["PSU", "750W", "80+ Gold", "Modular"],
+    approved: false
+  },
+  {
+    id: "easypc-c500",
+    source: "7) Source: EasyPC",
+    sourceName: "EasyPC",
+    date: "2026-10-16",
+    scrapedName: "GIGABYTE AORUS C500 GLASS Micro ATX Case",
+    category: "case",
+    brand: "GIGABYTE",
+    form_factor: "Micro ATX",
+    img: "/pcbackground.png",
+    desc: "AORUS premium tempered glass chassis with vertical GPU mount and sync ARGB.",
+    tags: ["Case", "Micro ATX", "Tempered Glass", "ARGB"],
     approved: false
   }
 ];
@@ -129,8 +284,11 @@ function Admin() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState(null);
-  const [scrapedQueue, setScrapedQueue] = useState(INITIAL_SCRAPED_QUEUE);
+  const [scrapedQueue, setScrapedQueue] = useState([]);
+  const [scrapedCategoryFilter, setScrapedCategoryFilter] = useState("all");
   const [verifyingScrapedId, setVerifyingScrapedId] = useState(null);
+  const [quickFilter, setQuickFilter] = useState("all"); // "all", "recent24h", "recent7d"
+  const [sortBy, setSortBy] = useState("newest"); // "newest", "oldest", "name_asc", "name_desc"
   const formRef = useRef(null);
 
   const [formData, setFormData] = useState({
@@ -196,17 +354,18 @@ function Admin() {
       const res = await fetch("http://localhost:5000/api/scraped-queue");
       if (!res.ok) throw new Error("Queue fetch error");
       const data = await res.json();
-      if (Array.isArray(data) && data.length > 0) {
+      if (Array.isArray(data)) {
         setScrapedQueue(data.map((item, index) => ({
           ...item,
           source: item.source || `${index + 1}) Source: EasyPC`,
           scrapedName: item.scraped_name || item.scrapedName || item.name
         })));
       } else {
-        setScrapedQueue(INITIAL_SCRAPED_QUEUE);
+        setScrapedQueue([]);
       }
     } catch (err) {
-      setScrapedQueue(INITIAL_SCRAPED_QUEUE);
+      console.warn("Could not fetch scraped queue from server:", err);
+      setScrapedQueue([]);
     }
   };
 
@@ -332,7 +491,7 @@ function Admin() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(cleanedData),
         });
-      } catch (networkErr) {}
+      } catch (networkErr) { }
 
       // If verifying a scraped item, remove from queue on server and locally
       if (verifyingScrapedId) {
@@ -340,7 +499,7 @@ function Admin() {
           await fetch(`http://localhost:5000/api/scraped-queue/${encodeURIComponent(verifyingScrapedId)}`, {
             method: "DELETE"
           });
-        } catch (e) {}
+        } catch (e) { }
         setScrapedQueue(prev => prev.filter(item => item.id !== verifyingScrapedId));
         setVerifyingScrapedId(null);
       }
@@ -358,8 +517,8 @@ function Admin() {
         verifyingScrapedId
           ? `Verified & merged "${cleanedData.name}" directly into production inventory!`
           : isEditing
-          ? `Component "${cleanedData.name}" updated successfully!`
-          : `Component "${cleanedData.name}" added to inventory!`
+            ? `Component "${cleanedData.name}" updated successfully!`
+            : `Component "${cleanedData.name}" added to inventory!`
       );
 
       setIsEditing(false);
@@ -401,7 +560,7 @@ function Admin() {
       await fetch(`http://localhost:5000/api/scraped-queue/approve/${encodeURIComponent(id)}`, {
         method: "POST"
       });
-    } catch (e) {}
+    } catch (e) { }
     setScrapedQueue(prev =>
       prev.map(item =>
         item.id === id ? { ...item, approved: !item.approved } : item
@@ -410,14 +569,15 @@ function Admin() {
   };
 
   const handleEditScraped = (item) => {
+    const itemCat = detectCategory(item);
     setVerifyingScrapedId(item.id);
     setIsEditing(false);
     setEditingId(null);
-    setActiveTab(item.category || "case");
+    setActiveTab(itemCat);
 
     setFormData({
       id: `${item.brand || "easypc"}-${item.scrapedName || item.scraped_name || "part"}`.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
-      category: item.category || "case",
+      category: itemCat,
       img: item.img || "/pcbackground.png",
       brand: item.brand || "GIGABYTE",
       name: item.scrapedName || item.scraped_name || "",
@@ -445,7 +605,7 @@ function Admin() {
       await fetch(`http://localhost:5000/api/scraped-queue/${encodeURIComponent(id)}`, {
         method: "DELETE"
       });
-    } catch (e) {}
+    } catch (e) { }
     const target = scrapedQueue.find(i => i.id === id);
     setScrapedQueue(prev => prev.filter(i => i.id !== id));
     setMessage(`Discarded unverified scraped item: ${target?.scrapedName || target?.scraped_name || id}`);
@@ -467,29 +627,11 @@ function Admin() {
         await fetchParts();
         await fetchScrapedQueue();
       } else {
-        // Fallback local merge
-        for (const item of approvedItems) {
-          const newPart = {
-            id: `${item.brand || "easypc"}-${item.scrapedName || item.scraped_name}`.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
-            category: item.category || "case",
-            img: item.img || "/pcbackground.png",
-            brand: item.brand || "GIGABYTE",
-            name: item.scrapedName || item.scraped_name,
-            desc: item.desc || "Verified scraped hardware from EasyPC.",
-            tags: item.tags || ["Verified", "EasyPC"],
-            form_factor: item.form_factor || "ATX",
-            wattage: item.wattage || null,
-            capacity: item.capacity || null,
-            type: item.type || null
-          };
-          setParts(prev => [newPart, ...prev]);
-        }
-        setScrapedQueue(prev => prev.filter(i => !i.approved));
-        setMessage(`Successfully merged ${approvedItems.length} verified EasyPC component(s) into production inventory!`);
+        setMessage(`Merge error: ${data.error || "Failed to merge approved items into production inventory."}`);
       }
     } catch (err) {
-      setScrapedQueue(prev => prev.filter(i => !i.approved));
-      setMessage(`Approved items merged into inventory.`);
+      console.error("Merge error:", err);
+      setMessage(`Server error while merging items: ${err.message}`);
     } finally {
       setLoading(false);
     }
@@ -572,28 +714,73 @@ function Admin() {
     );
   }
 
-  const filteredParts = parts
-    .filter((p) => activeTab === "all" ? true : p.category === activeTab)
-    .filter((p) => {
-      if (!searchTerm.trim()) return true;
-      const term = searchTerm.toLowerCase();
-      return (
-        (p.name && p.name.toLowerCase().includes(term)) ||
-        (p.brand && p.brand.toLowerCase().includes(term)) ||
-        (p.desc && p.desc.toLowerCase().includes(term)) ||
-        (p.category && p.category.toLowerCase().includes(term))
-      );
+  const filteredParts = useMemo(() => {
+    let result = parts
+      .filter((p) => activeTab === "all" ? true : p.category === activeTab)
+      .filter((p) => {
+        if (!searchTerm.trim()) return true;
+        const term = searchTerm.toLowerCase();
+        return (
+          (p.name && p.name.toLowerCase().includes(term)) ||
+          (p.brand && p.brand.toLowerCase().includes(term)) ||
+          (p.desc && p.desc.toLowerCase().includes(term)) ||
+          (p.category && p.category.toLowerCase().includes(term))
+        );
+      });
+
+    // Quick filter by date / age
+    if (quickFilter === "recent24h") {
+      result = result.filter(p => {
+        const info = getComponentAgeInfo(p.created_at);
+        return info.isRecent24h;
+      });
+    } else if (quickFilter === "recent7d") {
+      result = result.filter(p => {
+        const info = getComponentAgeInfo(p.created_at);
+        return info.type === "new" || info.type === "recent";
+      });
+    }
+
+    // Sort components
+    result.sort((a, b) => {
+      if (sortBy === "newest") {
+        const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
+        const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
+        return dateB - dateA;
+      }
+      if (sortBy === "oldest") {
+        const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
+        const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
+        return dateA - dateB;
+      }
+      if (sortBy === "name_asc") {
+        return (a.name || "").localeCompare(b.name || "");
+      }
+      if (sortBy === "name_desc") {
+        return (b.name || "").localeCompare(a.name || "");
+      }
+      return 0;
     });
 
+    return result;
+  }, [parts, activeTab, searchTerm, quickFilter, sortBy]);
+
+  const filteredScrapedQueue = useMemo(() => {
+    if (scrapedCategoryFilter === "all") {
+      return scrapedQueue;
+    }
+    return scrapedQueue.filter((item) => {
+      const cat = detectCategory(item);
+      return cat === scrapedCategoryFilter.toLowerCase();
+    });
+  }, [scrapedQueue, scrapedCategoryFilter]);
+
   const getCategoryCount = (cat) => {
-    if (cat === "all") return totalComponentsCount;
-    const realCount = parts.filter(p => p.category === cat).length;
-    if (realCount > 0) return realCount;
-    const defaults = { case: 18, motherboard: 16, gpu: 31, ram: 7, storage: 11, cpu: 13, psu: 16 };
-    return defaults[cat] || 10;
+    if (cat === "all") return parts.length;
+    return parts.filter(p => p.category === cat).length;
   };
 
-  const totalComponentsCount = Math.max(parts.length, 90);
+  const totalComponentsCount = parts.length;
 
   return (
     <div className="admin-page-wrapper">
@@ -679,8 +866,8 @@ function Admin() {
                 {verifyingScrapedId
                   ? "Verify & Approve Scraped Component"
                   : isEditing
-                  ? "Edit Component"
-                  : "Add New Component"}
+                    ? "Edit Component"
+                    : "Add New Component"}
               </h2>
               {isEditing && (
                 <span className="editing-badge">
@@ -884,10 +1071,10 @@ function Admin() {
                   {loading
                     ? "Saving..."
                     : verifyingScrapedId
-                    ? "Approve & Push to Production"
-                    : isEditing
-                    ? "Update Component"
-                    : "Add Component"}
+                      ? "Approve & Push to Production"
+                      : isEditing
+                        ? "Update Component"
+                        : "Add Component"}
                 </button>
                 {(isEditing || verifyingScrapedId) && (
                   <button
@@ -904,11 +1091,12 @@ function Admin() {
 
           {/* RIGHT PANEL: EXISTING COMPONENTS */}
           <div className="admin-panel glass-card-panel table-panel">
-              <div className="table-header-title-bar">
-                <h2>Existing Components ({totalComponentsCount})</h2>
-              </div>
+            <div className="table-header-title-bar">
+              <h2>Existing Components ({totalComponentsCount})</h2>
+            </div>
 
-              {/* SEARCH INPUT */}
+            {/* SEARCH & FILTER/SORT TOOLBAR */}
+            <div className="table-controls-toolbar">
               <div className="admin-search-bar">
                 <input
                   type="text"
@@ -916,24 +1104,75 @@ function Admin() {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
-                <span className="search-icon">🔍</span>
               </div>
 
-              {/* TABLE CONTAINER */}
-              <div className="table-container">
-                <table className="admin-table">
-                  <thead>
-                    <tr>
-                      <th style={{ width: "52px" }}>BRAND</th>
-                      <th style={{ width: "20%" }}>NAME</th>
-                      <th style={{ width: "30%", color: "#d4a34b" }}>DESCRIPTION</th>
-                      <th style={{ width: "12%" }}>{renderDynamicHeader(activeTab)}</th>
-                      <th style={{ width: "18%", textAlign: "center" }}>ACTIONS</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredParts.map((part) => (
-                      <tr key={part.id} className={editingId === part.id ? "row-editing" : ""}>
+              <div className="table-filter-sort-group">
+                {/* Quick Filter Pill Buttons */}
+                <div className="quick-filter-pills">
+                  <button
+                    type="button"
+                    className={`quick-pill ${quickFilter === "all" ? "active" : ""}`}
+                    onClick={() => setQuickFilter("all")}
+                  >
+                    All ({parts.filter(p => activeTab === "all" || p.category === activeTab).length})
+                  </button>
+                  <button
+                    type="button"
+                    className={`quick-pill pill-new ${quickFilter === "recent24h" ? "active" : ""}`}
+                    onClick={() => setQuickFilter("recent24h")}
+                    title="Show only items added in the last 24 hours"
+                  >
+                    New (&lt;24h)
+                  </button>
+                  <button
+                    type="button"
+                    className={`quick-pill pill-week ${quickFilter === "recent7d" ? "active" : ""}`}
+                    onClick={() => setQuickFilter("recent7d")}
+                    title="Show items added in the last 7 days"
+                  >
+                    Recent (&le;7d)
+                  </button>
+                </div>
+
+                {/* Sort Dropdown */}
+                <div className="sort-dropdown-wrapper">
+                  <span className="sort-label">Sort:</span>
+                  <select
+                    className="admin-sort-select"
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                    aria-label="Sort components"
+                  >
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                    <option value="name_asc">Name (A-Z)</option>
+                    <option value="name_desc">Name (Z-A)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* TABLE CONTAINER */}
+            <div className="table-container">
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th style={{ width: "48px" }}>BRAND</th>
+                    <th style={{ width: "22%" }}>NAME</th>
+                    <th style={{ width: "22%", color: "#d4a34b" }}>DESCRIPTION</th>
+                    <th style={{ width: "12%" }}>{renderDynamicHeader(activeTab)}</th>
+                    <th style={{ width: "16%", textAlign: "center" }}>DATE ADDED / AGE</th>
+                    <th style={{ width: "16%", textAlign: "center" }}>ACTIONS</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredParts.map((part) => {
+                    const ageInfo = getComponentAgeInfo(part.created_at);
+                    return (
+                      <tr
+                        key={part.id}
+                        className={`${editingId === part.id ? "row-editing" : ""} ${ageInfo.isRecent24h ? "row-highlight-new" : ""}`}
+                      >
                         {/* BRAND / THUMBNAIL */}
                         <td>
                           <div className="component-list-thumb" title={part.brand || part.name}>
@@ -956,8 +1195,8 @@ function Admin() {
                         {/* DESCRIPTION */}
                         <td className="part-desc-cell">
                           {part.desc
-                            ? part.desc.length > 60
-                              ? part.desc.slice(0, 60) + "…"
+                            ? part.desc.length > 55
+                              ? part.desc.slice(0, 55) + "…"
                               : part.desc
                             : <span style={{ color: "#475569", fontStyle: "italic" }}>—</span>
                           }
@@ -965,6 +1204,19 @@ function Admin() {
 
                         {/* SPEC / FORM FACTOR */}
                         <td className="spec-cell">{renderDynamicData(part.category || activeTab, part)}</td>
+
+                        {/* DATE ADDED / AGE BADGE */}
+                        <td className="part-age-cell">
+                          <div className="age-badge-wrapper">
+                            <span
+                              className={`badge-age badge-age-${ageInfo.type}`}
+                              title={`Date Added: ${formatDate(part.created_at)}`}
+                            >
+                              {ageInfo.badgeText}
+                            </span>
+                            <span className="age-sublabel">{ageInfo.fullLabel}</span>
+                          </div>
+                        </td>
 
                         {/* ACTIONS (Matching second image: Edit & Delete buttons) */}
                         <td>
@@ -975,7 +1227,6 @@ function Admin() {
                               title={`Edit ${part.name}`}
                               onClick={() => handleEdit(part)}
                             >
-                              <span className="btn-icon">✏️</span>
                               <span className="btn-label">Edit</span>
                             </button>
                             <button
@@ -984,53 +1235,75 @@ function Admin() {
                               title={`Delete ${part.name}`}
                               onClick={() => handleDelete(part)}
                             >
-                              <span className="btn-icon">🗑️</span>
                               <span className="btn-label">Delete</span>
                             </button>
                           </div>
                         </td>
                       </tr>
-                    ))}
-                    {filteredParts.length === 0 && (
-                      <tr>
-                        <td colSpan="5" style={{ textAlign: "center", padding: "30px", color: "#94a3b8" }}>
-                          {searchTerm ? `No components match "${searchTerm}".` : "No components found in this category."}
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
+                    );
+                  })}
+                  {filteredParts.length === 0 && (
+                    <tr>
+                      <td colSpan="6" style={{ textAlign: "center", padding: "30px", color: "#94a3b8" }}>
+                        {searchTerm ? `No components match "${searchTerm}".` : "No components found for the selected filter."}
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* SCRAPED DATA REVIEW QUEUE (Staging Queue Column Connected to Crawler) */}
+          <div className="scraped-review-card glass-card-panel">
+            <div className="scraped-review-header">
+              <div className="scraped-review-title">
+                <h3>Scraped Data Review Queue</h3>
+                <span className="staging-note-tag">Admin Verification Required</span>
               </div>
+              <button
+                type="button"
+                className="btn-merge-all"
+                onClick={handleMergeAllApproved}
+                disabled={loading || scrapedQueue.length === 0}
+              >
+                Merge All Approved
+              </button>
             </div>
 
-            {/* SCRAPED DATA REVIEW QUEUE (Staging Queue Column Connected to Crawler) */}
-            <div className="scraped-review-card glass-card-panel">
-              <div className="scraped-review-header">
-                <div className="scraped-review-title">
-                  <h3>Scraped Data Review Queue</h3>
-                  <span className="staging-note-tag">Admin Verification Required</span>
+            {/* GOLD-BORDERED HEADER BAR */}
+            <div className="gold-header-bar">
+              <div className="col-source">SOURCE</div>
+              <div className="col-date">DATE</div>
+              <div className="col-category">
+                <div className="category-header-filter">
+                  <span className="category-header-label">CATEGORY</span>
+                  <select
+                    className="category-filter-dropdown"
+                    value={scrapedCategoryFilter}
+                    onChange={(e) => setScrapedCategoryFilter(e.target.value)}
+                    aria-label="Filter scraped items by category"
+                  >
+                    <option value="all">ALL</option>
+                    <option value="cpu">CPU</option>
+                    <option value="motherboard">MOTHERBOARD</option>
+                    <option value="ram">RAM</option>
+                    <option value="gpu">GPU</option>
+                    <option value="storage">STORAGE</option>
+                    <option value="psu">PSU</option>
+                    <option value="case">CASE</option>
+                  </select>
                 </div>
-                <button
-                  type="button"
-                  className="btn-merge-all"
-                  onClick={handleMergeAllApproved}
-                  disabled={loading || scrapedQueue.length === 0}
-                >
-                  Merge All Approved
-                </button>
               </div>
+              <div className="col-name">SCRAPED NAME / MODEL</div>
+              <div className="col-actions">ACTIONS</div>
+            </div>
 
-              {/* GOLD-BORDERED HEADER BAR */}
-              <div className="gold-header-bar">
-                <div className="col-source">SOURCE</div>
-                <div className="col-date">DATE</div>
-                <div className="col-name">SCRAPED NAME / MODEL</div>
-                <div className="col-actions">ACTIONS</div>
-              </div>
-
-              {/* REVIEW QUEUE LIST (Matching Image 1: Three elongated blocks per row) */}
-              <div className="scraped-items-list">
-                {scrapedQueue.map((item, index) => (
+            {/* REVIEW QUEUE LIST */}
+            <div className="scraped-items-list">
+              {filteredScrapedQueue.map((item, index) => {
+                const itemCat = detectCategory(item);
+                return (
                   <div
                     key={item.id || index}
                     className={`scraped-item-card-row ${item.approved ? "item-approved" : ""}`}
@@ -1043,6 +1316,12 @@ function Admin() {
                     </div>
 
                     <div className="scraped-date-cell">{item.date}</div>
+
+                    <div className="scraped-category-cell">
+                      <span className={`scraped-category-pill badge-cat-${itemCat}`}>
+                        {CATEGORY_LABELS[itemCat] || itemCat.toUpperCase()}
+                      </span>
+                    </div>
 
                     <div className="scraped-name-cell" title={item.scrapedName || item.scraped_name}>
                       <span className="scraped-name-text">{item.scrapedName || item.scraped_name}</span>
@@ -1076,15 +1355,29 @@ function Admin() {
                       </button>
                     </div>
                   </div>
-                ))}
+                );
+              })}
 
-                {scrapedQueue.length === 0 && (
-                  <div className="empty-queue-message">
-                    ✓ All scraped data from EasyPC has been reviewed and merged into production.
-                  </div>
-                )}
-              </div>
+              {scrapedQueue.length > 0 && filteredScrapedQueue.length === 0 && (
+                <div className="empty-category-queue-message">
+                  <span>No scraped items found in category <strong>{CATEGORY_LABELS[scrapedCategoryFilter] || scrapedCategoryFilter.toUpperCase()}</strong>.</span>
+                  <button
+                    type="button"
+                    className="btn-reset-category-filter"
+                    onClick={() => setScrapedCategoryFilter("all")}
+                  >
+                    Show All Categories
+                  </button>
+                </div>
+              )}
+
+              {scrapedQueue.length === 0 && (
+                <div className="empty-queue-message">
+                  ✓ All scraped data from EasyPC has been reviewed and merged into production.
+                </div>
+              )}
             </div>
+          </div>
         </div>
       </div>
     </div>

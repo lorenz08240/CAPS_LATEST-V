@@ -635,7 +635,7 @@
   margin: 16px auto;
   aspect-ratio: 1 / 1;
   position: relative;
-  background: 
+  background:
     radial-gradient(circle at 65% 28%, rgba(220, 38, 38, 0.09) 0%, transparent 55%),
     radial-gradient(circle at 35% 68%, rgba(0, 229, 160, 0.08) 0%, transparent 55%),
     rgba(11, 15, 23, 0.4);

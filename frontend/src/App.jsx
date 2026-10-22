@@ -48,8 +48,9 @@ function App() {
                 {/* Compatibility Page */}
                 <Route path="/compatibility" element={<Compatibility />} />
 
-                {/* Learn Page */}
+                {/* Learn Page & Component Deep-Dives */}
                 <Route path="/learn" element={<Learn />} />
+                <Route path="/learn/:componentId" element={<Learn />} />
 
                 {/* Brands Page */}
                 <Route path="/brands" element={<Brands />} />

@@ -1,858 +1,1149 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useBuild } from "../../contexts/BuildContext";
 import "./Learn.css";
 
+// ── COMPREHENSIVE HARDWARE COMPONENTS GUIDE ──
 const componentGuide = [
   {
     id: "cpu",
     name: "Processor (CPU)",
+    badge: "PROCESSOR (CPU) ARCHITECTURE",
     heroImage: "https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?q=80&w=2000",
-    tags: ["2026", "Hardware", "Brain", "Compute"],
-    description: "The central engine of your PC. It executes every instruction from your OS and applications. Its speed and core count directly influence how fast your computer boots and how responsive your software feels.",
-    image: "/assets/cpu_learn.jpg",
+    tags: ["Processor", "Cores", "Sockets", "Overclocking"],
+    description: "The central processing unit executes instructions, coordinates memory paging, and performs millions of arithmetic operations to power your PC.",
     specs: [
-      { label: "Socket", value: "LGA1700, AM5", info: "Must match motherboard" },
-      { label: "Cores/Threads", value: "6-24 cores", info: "More cores = multitasking" },
-      { label: "Clock Speed", value: "3.5-5.8 GHz", info: "Speed of processing" },
-      { label: "TDP", value: "65-250W", info: "Heat output" },
+      { label: "Socket", value: "AM5 / LGA1700" },
+      { label: "Cores", value: "6 - 24 Cores" },
+      { label: "Base Clock", value: "3.5 - 4.5 GHz" },
+      { label: "Boost Clock", value: "5.0 - 5.8 GHz" },
+      { label: "Memory Support", value: "DDR5 / DDR4" },
+      { label: "PCIe Lanes", value: "16 - 28 Lanes" },
+      { label: "Cache", value: "32MB - 128MB L3" },
+      { label: "TDP Envelope", value: "65W - 253W" }
     ],
-    whyMatters: "The CPU is the central engine of your PC. It executes every instruction from your OS and applications. Its speed and core count directly influence how fast your computer boots, how responsive your software feels, and how well it handles demanding multi-threaded tasks like video editing or gaming. Choosing the right CPU is crucial because it sets the baseline for your system's performance ceiling and dictates compatibility with your motherboard and cooling solution.",
-    proTips: [
-      "Always verify the CPU socket matches the motherboard socket before purchasing.",
-      "For gaming builds, prioritize a high-clock-speed CPU over an excessive number of cores.",
-      "Consider a CPU with an integrated graphics chip if you plan to troubleshoot without a dedicated GPU.",
-      "Always check the Thermal Design Power (TDP) to ensure you select an appropriate air or liquid cooler.",
-      "Look for 'K' (Intel) or 'X' (AMD) suffixes if you intend to perform manual overclocking.",
+    matcherRows: [
+      { id: 1, tier: "Gaming", model: "Ryzen 7 7800X3D", socket: "AM5", targetSocket: "AM5" },
+      { id: 2, tier: "Streaming", model: "Core i7-14700K", socket: "LGA1700", targetSocket: "LGA1700" },
+      { id: 3, tier: "Workstation", model: "Ryzen 9 7950X", socket: "AM5", targetSocket: "LGA1700" },
+      { id: 4, tier: "Budget", model: "Core i3-14100F", socket: "LGA1700", targetSocket: "LGA1700" }
     ],
-    commonMistakes: [
-      "Buying a CPU with a socket that is physically incompatible with your motherboard, which will prevent installation.",
-      "Overspending on a top-tier CPU while neglecting the GPU, which creates a bottleneck that limits gaming performance.",
-      "Failing to account for the CPU's TDP when selecting a cooler, leading to thermal throttling or system instability.",
-      "Neglecting to apply high-quality thermal paste or removing the plastic film from a pre-applied cooler during installation.",
+    modelOptions: [
+      { name: "Ryzen 7 7800X3D", socket: "AM5" },
+      { name: "Ryzen 5 7600X", socket: "AM5" },
+      { name: "Ryzen 9 7950X", socket: "AM5" },
+      { name: "Core i5-14600K", socket: "LGA1700" },
+      { name: "Core i7-14700K", socket: "LGA1700" },
+      { name: "Core i9-14900K", socket: "LGA1700" },
+      { name: "Core i3-14100F", socket: "LGA1700" },
+      { name: "Ryzen 5 5600", socket: "AM4" }
     ],
-    bestFor: { gaming: "6-8 cores", streaming: "12+ cores", work: "16+ cores", budget: "Core i5 / Ryzen 5", enthusiast: "Core i9 / Ryzen 9" },
-    brands: [
-      { name: "Intel", description: "Core i9/i7/i5 series.", tier: "Performance" },
-      { name: "AMD", description: "Ryzen 9/7/5 series.", tier: "Value/Efficiency" },
-      { name: "Qualcomm", description: "Emerging ARM-based PC chips.", tier: "Efficiency" },
-      { name: "Apple", description: "M-series proprietary silicon.", tier: "Unified" },
+    targetSockets: ["AM5", "LGA1700", "AM4", "LGA1851"],
+    namingLeft: {
+      title: "intel naming guide",
+      colorClass: "intel-head",
+      rows: [
+        { label: "Type", val: "Intel Desktop Processor" },
+        { label: "Tier", val: "i3, i5, i7, i9 (Performance Tiers)" },
+        { label: "Gen", val: "14th Gen (e.g. 14700 / 14900)" },
+        { label: "Suffixes", val: "K: Unlocked | F: No iGPU | KF: Unlocked + No iGPU | KS: Special Edition" }
+      ]
+    },
+    namingRight: {
+      title: "AMD naming guides",
+      colorClass: "amd-head",
+      rows: [
+        { label: "Type", val: "AMD Ryzen Desktop Processor" },
+        { label: "Tier", val: "Ryzen 5, Ryzen 7, Ryzen 9" },
+        { label: "Series", val: "7000 / 9000 Series (Zen 4 / Zen 5)" },
+        { label: "Suffixes", val: "X: High Boost | X3D: Stacked 3D V-Cache | G: APU iGPU | Non-X: 65W Base" }
+      ]
+    },
+    steps: [
+      { step: 1, title: "Step 1: Open Socket Retention Latch", desc: "Gently unhook the steel retention lever from the retention hook and lift the load plate upward." },
+      { step: 2, title: "Step 2: Align Golden Triangle Indicator", desc: "Locate the small gold triangle marker etched on the CPU corner and align it with the matching triangle icon molded into the socket." },
+      { step: 3, title: "Step 3: Drop CPU Gently (Zero Insertion Force)", desc: "Lower the CPU vertically into the socket without tilting or applying force. The processor must settle completely flush under its own weight." },
+      { step: 4, title: "Step 4: Close Socket Latch & Lock Lever", desc: "Lower the retention load plate and clamp the retention arm down under the latch hook. The plastic socket cover will eject automatically." },
+      { step: 5, title: "Step 5: Apply Thermal Paste & Mount Cooler", desc: "Apply a pea-sized dot (~4-5mm) in the center of the CPU integrated heat spreader (IHS) and fasten cooler screws in a cross diagonal X-pattern." }
     ],
-  },
-  {
-    id: "motherboard",
-    name: "Motherboard",
-    heroImage: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2000",
-    tags: ["Foundation", "Connectivity", "Hub"],
-    description: "The central communication hub. It connects your CPU, RAM, GPU, and storage, ensuring data flows efficiently between them.",
-    image: "https://i.pinimg.com/736x/bf/78/40/bf78407d4e2b911170cf064615d571eb.jpg",
-    specs: [
-      { label: "Socket", value: "LGA1700, AM5", info: "Matches CPU" },
-      { label: "RAM Type", value: "DDR4, DDR5", info: "Must match RAM" },
-      { label: "Form Factor", value: "ATX, mATX, ITX", info: "Case compatibility" },
-      { label: "Expansion", value: "PCIe Gen 4/5", info: "For GPUs/SSDs" },
-    ],
-    whyMatters: "The motherboard serves as the communication hub for your entire system. It connects your CPU, RAM, GPU, and storage, ensuring data flows efficiently between them. A high-quality motherboard provides stable power delivery to your CPU, features for future expansion, and necessary connectivity options like high-speed USB ports and fast networking. It acts as the backbone, and its form factor is the primary constraint on your case size and component compatibility.",
-    proTips: [
-      "Ensure the motherboard form factor (ATX, mATX, ITX) physically fits inside your chosen case.",
-      "Verify the motherboard supports the RAM speed and generation (DDR4 or DDR5) you plan to use.",
-      "Look for boards with reinforced PCIe slots if you are using a very heavy high-end GPU.",
-      "Check the number of M.2 slots available if you intend to run multiple NVMe SSDs.",
-      "Consider built-in Wi-Fi and Bluetooth if you don't plan on using a wired Ethernet connection.",
-    ],
-    commonMistakes: [
-      "Choosing a motherboard with an incompatible CPU socket, rendering the components impossible to assemble.",
-      "Buying a motherboard that only supports DDR4 memory when you have purchased a faster DDR5 RAM kit.",
-      "Selecting a large ATX motherboard for a compact ITX case, causing physical clearance issues.",
-      "Overlooking the need for BIOS updates, which may be required to support the latest generation of CPUs.",
-    ],
-    bestFor: { gaming: "ATX boards", budget: "mATX", compact: "ITX", workstation: "E-ATX boards", server: "Server-grade boards" },
-    brands: [
-      { name: "ASUS", description: "Reliable and high performance.", tier: "Premium" },
-      { name: "MSI", description: "Excellent value boards.", tier: "Mid-range" },
-      { name: "Gigabyte", description: "Strong feature sets.", tier: "Mid-range" },
-      { name: "ASRock", description: "Feature-rich budget boards.", tier: "Value" },
-      { name: "Biostar", description: "Entry-level specialized boards.", tier: "Budget" },
-    ],
-  },
-  {
-    id: "ram",
-    name: "Memory (RAM)",
-    heroImage: "https://images.unsplash.com/photo-1562976540-1502f7596005?q=80&w=2000",
-    tags: ["Speed", "Multitasking", "Storage"],
-    description: "Your computer's short-term memory, providing lightning-fast access to data currently being used by the CPU.",
-    image: "https://i.pinimg.com/736x/3e/63/46/3e6346153850d046d9019c94a0214dc1.jpg",
-    specs: [
-      { label: "Capacity", value: "16GB - 64GB", info: "16GB minimum gaming" },
-      { label: "Speed", value: "3200-6400MHz", info: "Higher is faster" },
-      { label: "Type", value: "DDR4 / DDR5", info: "No backward compatibility" },
-      { label: "Channels", value: "Dual Channel", info: "Use 2 sticks" },
-    ],
-    whyMatters: "RAM acts as your computer's short-term memory, providing lightning-fast access to data currently being used by the CPU. Without enough RAM, your system will rely on your storage drive (which is significantly slower), leading to noticeable sluggishness and stuttering. Faster speed and sufficient capacity ensure that your PC can handle complex multitasking and intensive games without performance bottlenecks, making it a key factor in overall system responsiveness.",
-    proTips: [
-      "Always install RAM in matching pairs to take advantage of dual-channel performance.",
-      "16GB is the current standard for gaming, while 32GB is recommended for creative tasks.",
-      "Check your motherboard's QVL (Qualified Vendor List) to ensure your specific RAM kit is supported.",
-      "Enable XMP or EXPO in the BIOS after installation to run your RAM at its advertised speed.",
-      "Lower CAS latency is often more beneficial than higher raw clock speed for real-world performance.",
-    ],
-    commonMistakes: [
-      "Using only a single stick of RAM, which halves the memory bandwidth by disabling dual-channel mode.",
-      "Mixing different RAM kits with varying speeds or timings, which can cause instability or reduce the system to the lowest speed.",
-      "Attempting to install DDR4 memory into a DDR5-only motherboard slot, causing physical and electrical incompatibility.",
-      "Underestimating total RAM requirements, leading to heavy paging to the SSD and severe system slowdowns.",
-    ],
-    bestFor: { gaming: "16GB/32GB", streaming: "32GB+", productivity: "64GB+", rendering: "128GB+", workstation: "256GB+" },
-    brands: [
-      { name: "Corsair", description: "Reliable and great RGB.", tier: "Premium" },
-      { name: "G.Skill", description: "High-speed performance.", tier: "Premium" },
-      { name: "Kingston", description: "Industry standard stability.", tier: "Reliable" },
-      { name: "Crucial", description: "Cost-effective memory solutions.", tier: "Value" },
-    ],
-  },
-  {
-    id: "psu",
-    name: "Power Supply",
-    heroImage: "https://images.unsplash.com/photo-1616588589676-62b3bd4ff6d2?q=80&w=2000",
-    tags: ["Energy", "Stability", "Efficiency"],
-    description: "The lifeblood of your PC, safely converting electricity from your wall into the stable DC power your components require.",
-    image: "https://www.bequiet.com/admin/ImageServer.php?ID=aca5aa48198@be-quiet.net&width=550&colorspace=rgb&force=true",
-    specs: [
-      { label: "Wattage", value: "650W - 1200W", info: "Ensure 20% headroom" },
-      { label: "Efficiency", value: "80+ Bronze/Gold", info: "Gold is ideal" },
-      { label: "Modularity", value: "Full / Semi", info: "Modular is cleaner" },
-      { label: "Warranty", value: "5-10 years", info: "Quality indicator" },
-    ],
-    whyMatters: "The PSU is the lifeblood of your PC, safely converting electricity from your wall into the stable DC power your components require. A reliable PSU is non-negotiable; cheap or undersized units can cause random system crashes, unstable performance, or even catastrophic hardware failure if they fail under load. Choosing a unit with adequate wattage and high efficiency protects your investment and ensures your system runs silently and efficiently for years.",
-    proTips: [
-      "Aim for 80+ Gold efficiency or higher to minimize heat output and electricity costs.",
-      "Calculate your system's peak power draw and add a 20% buffer to choose the right wattage.",
-      "Opt for a fully modular PSU to significantly simplify cable management inside your case.",
-      "Check if your PSU includes the necessary 12VHPWR cable if using a modern high-end NVIDIA GPU.",
-      "Don't ignore the warranty length; reputable manufacturers often offer 7-10 years as a sign of quality.",
-    ],
-    commonMistakes: [
-      "Selecting a PSU with insufficient wattage for your high-performance components, resulting in random power-off crashes under load.",
-      "Prioritizing aesthetics over reliability, potentially exposing expensive parts to ripple, voltage spikes, or outright failure.",
-      "Using non-modular power supplies in cramped cases, making cable management nearly impossible and restricting airflow.",
-      "Failing to confirm that the PSU has the correct type and number of connectors (PCIe cables, CPU power) for your GPU and motherboard.",
-    ],
-    bestFor: { "Budget Build": "650W Bronze", "Gaming Rig": "750W-850W Gold", "Workstation": "1000W+", "Server": "1200W Platinum", "Compact Build": "SFX Form Factor" },
-    brands: [
-      { name: "EVGA", description: "Top-tier reliability.", tier: "Premium" },
-      { name: "Seasonic", description: "Gold standard for PSUs.", tier: "Premium" },
-      { name: "Corsair", description: "Great modular options.", tier: "Mid-range" },
-      { name: "Cooler Master", description: "Versatile and quiet units.", tier: "Mid-range" },
-      { name: "Thermaltake", description: "Affordable reliable PSUs.", tier: "Value" },
-    ],
-  },
-  {
-    id: "gpu",
-    name: "Graphics Card",
-    heroImage: "https://images.unsplash.com/photo-1600003014755-ba31aa59c4b6?q=80&w=2000",
-    tags: ["Gaming", "Rendering", "Visuals"],
-    description: "The engine driving your visual experience, handling all graphics calculations for games, video rendering, and 3D design software.",
-    image: "https://st4.depositphotos.com/1719616/38666/i/450/depositphotos_386666498-stock-photo-modern-black-computer-video-card.jpg",
-    specs: [
-      { label: "VRAM", value: "8GB - 24GB", info: "8GB minimum for 1440p" },
-      { label: "Interface", value: "PCIe 4.0 / 5.0", info: "Connects to Mobo" },
-      { label: "Power", value: "150W - 450W", info: "Requires PSU power" },
-      { label: "Size", value: "2-3 Slot", info: "Check case clearance" },
-    ],
-    whyMatters: "The GPU is the engine that drives your visual experience, handling all graphics calculations for games, video rendering, and 3D design software. It is arguably the most critical component for gamers, determining frame rates, resolution capabilities, and visual quality. A powerful GPU allows for smooth gameplay at higher resolutions, while also offloading intensive graphical tasks from your CPU, creating a balanced and powerful system for both leisure and professional workloads.",
-    proTips: [
-      "Allocate approximately 40-50% of your total budget to the GPU for a gaming-focused build.",
-      "Check the physical dimensions of the GPU to ensure it fits in your case without hitting drive bays.",
-      "Use display cables that support the refresh rate and resolution of your monitor.",
-      "Install the latest drivers directly from the manufacturer's website immediately after installation.",
-      "Consider a triple-fan model for better thermals and quieter operation if space allows.",
-    ],
-    commonMistakes: [
-      "Underpowering the GPU with an undersized PSU, which can lead to black screens or system restarts during graphically demanding scenes.",
-      "Neglecting physical size constraints, leading to a card that is too long or thick to fit in the chosen computer case.",
-      "Overspending on a high-VRAM model for lower-resolution gaming (1080p), where the extra memory provides no meaningful benefit.",
-      "Forgetting to plug in all required auxiliary PCIe power cables, which will prevent the card from booting.",
-    ],
-    bestFor: { "1080p": "RTX 4060", "1440p": "RTX 4070", "4K": "RTX 4090", "VR Gaming": "High VRAM models", "AI Workloads": "Professional grade GPUs" },
-    brands: [
-      { name: "NVIDIA", description: "Industry leader in tech.", tier: "Premium" },
-      { name: "AMD", description: "Best value and performance.", tier: "Value" },
-      { name: "Intel", description: "Arc series entry-level.", tier: "Budget" },
-      { name: "ASUS ROG", description: "Highly overclocked custom cards.", tier: "Enthusiast" },
-    ],
-  },
-  {
-    id: "case",
-    name: "PC Chassis",
-    heroImage: "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?q=80&w=2000",
-    tags: ["Airflow", "Aesthetics", "Shell"],
-    description: "More than just an aesthetic shell, your case is a critical thermal management tool that determines airflow and component longevity.",
-    image: "https://images.unsplash.com/photo-1725302862351-869681e17dbf?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Y29tcHV0ZXIlMjBjYXNlfGVufDB8fDB8fHww",
-    specs: [
-      { label: "Form Factor", value: "ATX, mATX, ITX", info: "Must match Mobo" },
-      { label: "Airflow", value: "Mesh / Glass", info: "Mesh is better for cooling" },
-      { label: "Cooling", value: "120-360mm Rads", info: "Check radiator support" },
-      { label: "Storage", value: "2.5\" / 3.5\"", info: "Drive bays available" },
-    ],
-    whyMatters: "Beyond just an aesthetic shell, your case is a critical thermal management tool. It determines how effectively your fans, air coolers, or radiators can intake cool air and exhaust hot air, directly impacting the longevity and performance of your internal hardware. A well-designed case makes the building process significantly easier with thoughtful cable management and sufficient space, ensuring all your high-performance parts fit comfortably and stay cool under sustained heavy workloads.",
-    proTips: [
-      "Prioritize cases with mesh or perforated front panels for significantly better airflow.",
-      "Ensure the case supports the maximum height of your intended CPU air cooler.",
-      "Check if the case includes pre-installed fans to save on additional purchase costs.",
-      "Look for cases with removable dust filters for easier maintenance and cleanliness.",
-      "Ensure the case supports the radiator size if you plan on using an AIO liquid cooler.",
-    ],
-    commonMistakes: [
-      "Purchasing a case that does not support your motherboard's form factor (e.g., trying to fit an ATX board in an ITX case).",
-      "Ignoring airflow requirements, such as picking a case with a solid front panel that chokes the intake fans.",
-      "Overlooking component clearance for large GPUs or tall CPU air coolers, forcing you to return or replace parts.",
-      "Buying a case without adequate cable management options, which can clutter the interior and obstruct necessary airflow paths.",
-    ],
-    bestFor: { "Airflow": "Fractal Meshify", "Minimalist": "NZXT H Series", "Compact": "ITX cases", "Open Frame": "Unique aesthetic designs", "Server/NAS": "Multi-drive storage cases" },
-    brands: [
-      { name: "Fractal", description: "Excellent airflow & design.", tier: "Premium" },
-      { name: "NZXT", description: "Sleek, minimalist aesthetic.", tier: "Premium" },
-      { name: "Corsair", description: "Great versatility.", tier: "Mid-range" },
-      { name: "Lian Li", description: "High-end glass chassis.", tier: "Premium" },
-      { name: "Phanteks", description: "Innovative cooling designs.", tier: "Mid-range" },
-    ],
-  },
-];
-
-export default function Learn() {
-  const { getSelectedComponents } = useBuild();
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const selectedComponent = componentGuide[currentIndex];
-  const [fadeKey, setFadeKey] = useState(0); // To trigger animation on change
-  const [scrolledPastHero, setScrolledPastHero] = useState(false);
-  const [quizCardIndex, setQuizCardIndex] = useState(0);
-  const [userAnswers, setUserAnswers] = useState({});
-
-  // Question bank: 4 quick Google-definition-style quiz flash cards per component
-  const flashcardDeck = {
-    cpu: [
+    commonErrors: "Dropping the CPU or forcing it at an angle will bend delicate socket pins. Leaving the plastic protective peel on the cooler base causes immediate 100°C thermal throttling.",
+    quiz: [
       {
-        question: "What is the primary physical constraint when installing a CPU into a motherboard?",
+        question: "What is the primary physical constraint when installing a CPU?",
         options: [
-          { text: "The socket type (e.g., LGA1700 or AM5) must match exactly.", correct: true },
-          { text: "The CPU fan color must match the motherboard RGB.", correct: false },
-          { text: "The CPU must be from the exact same company as the GPU.", correct: false },
+          { text: "The socket type (e.g. AM5 or LGA1700) must match the CPU mechanically and electrically.", correct: true },
+          { text: "The CPU fan RGB lighting must sync with motherboard vendor software.", correct: false },
+          { text: "The CPU must be from the exact same company as the graphics card.", correct: false },
+          { text: "The CPU must be inserted diagonally with 10kg of downward pressure.", correct: false }
         ],
-        explanation: "CPU sockets are mechanically engineered; trying to install an AM5 chip into an LGA1700 socket or vice versa will bend pins or not physically fit."
+        explanation: "CPU sockets are mechanically engineered; attempting to insert an AM5 processor into an LGA1700 motherboard destroys socket pins and ruins both parts."
       },
       {
         question: "What does TDP (Thermal Design Power) indicate on a processor?",
         options: [
-          { text: "The maximum amount of heat dissipated that the cooling solution must handle.", correct: true },
-          { text: "The total number of monitors the CPU can output.", correct: false },
-          { text: "The speed at which the RAM runs with the CPU.", correct: false },
+          { text: "The maximum heat output under load that your cooling solution must dissipate in watts.", correct: true },
+          { text: "The total number of monitors the CPU can output simultaneously.", correct: false },
+          { text: "The maximum RAM frequency supported by the memory controller.", correct: false },
+          { text: "The number of hours the processor can run before requiring a reboot.", correct: false }
         ],
-        explanation: "TDP measures expected heat output under real workloads, helping you choose adequate air or liquid cooling."
-      },
-      {
-        question: "For dedicated competitive gaming, what CPU metric is generally most beneficial?",
-        options: [
-          { text: "High single-core boost clock speed and large L3 cache.", correct: true },
-          { text: "Having 64 low-frequency server cores.", correct: false },
-          { text: "Using integrated graphics instead of a dedicated GPU.", correct: false },
-        ],
-        explanation: "Most gaming game engines rely heavily on single-thread frame latency and rapid cache access rather than dozens of idle cores."
-      },
-      {
-        question: "What critical step is required right before mounting a CPU cooler?",
-        options: [
-          { text: "Applying thermal paste and removing the protective plastic film from the cooler plate.", correct: true },
-          { text: "Submerging the CPU in water for 5 minutes.", correct: false },
-          { text: "Turning on the PC while the cooler is disconnected.", correct: false },
-        ],
-        explanation: "Leaving the factory protective plastic film on a cooler or forgetting thermal paste is one of the most common thermal throttling errors."
+        explanation: "TDP measures expected heat output under real workloads, guiding you to select an adequate air cooler or 240/360mm AIO liquid cooler."
       }
     ],
-    motherboard: [
-      {
-        question: "Which form factor is typically the largest standard consumer motherboard size?",
-        options: [
-          { text: "ATX (Advanced Technology eXtended)", correct: true },
-          { text: "Mini-ITX", correct: false },
-          { text: "Micro-ATX", correct: false },
-        ],
-        explanation: "Standard ATX provides up to 7 expansion slots, whereas mATX has 4 and Mini-ITX has only 1."
-      },
-      {
-        question: "Can a motherboard designed exclusively for DDR4 RAM accept DDR5 RAM modules?",
-        options: [
-          { text: "No, DDR4 and DDR5 have different notch keys and voltage architectures.", correct: true },
-          { text: "Yes, RAM slots are always universal.", correct: false },
-          { text: "Only if you perform a BIOS firmware upgrade.", correct: false },
-        ],
-        explanation: "DDR4 and DDR5 memory modules possess physically different notch positions to prevent accidental cross-insertion."
-      },
+    mistakes: [
+      { name: "Pin Damage", desc: "Dropping CPU onto LGA socket bends microscopic contact pins, causing permanent motherboard ruin." },
+      { name: "Mismatched Sockets", desc: "Attempting to force an LGA1700 processor into an AM5 socket physically fractures the board." },
+      { name: "Dry Thermal Paste", desc: "Omitting paste or failing to peel protective wrap causes instant 100°C shutdown under load." },
+      { name: "Throttling", desc: "Using an underpowered 65W stock cooler on a 253W Core i9 drops boost frequencies by over 30%." }
+    ],
+    matrix: [
+      { tier: "Gaming", cpu: "Ryzen 7 7800X3D / Core i5-14600K", socket: "AM5 / LGA1700", spec: "8 Cores • 96MB 3D Cache", tdp: "65W - 120W", highlight: true },
+      { tier: "Streaming", cpu: "Ryzen 9 7900X / Core i7-14700K", socket: "AM5 / LGA1700", spec: "12 - 20 Cores • Up to 5.6 GHz", tdp: "125W - 170W" },
+      { tier: "Workstation", cpu: "Ryzen 9 7950X / Core i9-14900K", socket: "AM5 / LGA1700", spec: "16 - 24 Cores • Up to 6.0 GHz", tdp: "170W - 253W" },
+      { tier: "Budget", cpu: "Ryzen 5 5600 / Core i3-14100F", socket: "AM4 / LGA1700", spec: "4 - 6 Cores • Up to 4.6 GHz", tdp: "58W - 65W" },
+      { tier: "Enthusiast", cpu: "Ryzen 9 7950X3D / Core i9-14900KS", socket: "AM5 / LGA1700", spec: "Top Binned • Up to 6.2 GHz", tdp: "120W - 253W+" }
+    ],
+    brands: [
+      { name: "Intel", icon: "🔵", desc: "Core i9/i7/i5 series desktop processors" },
+      { name: "AMD", icon: "🔴", desc: "Ryzen Zen micro-architecture with 3D V-Cache" },
+      { name: "Qualcomm", icon: "🟣", desc: "Snapdragon X Elite ARM silicon for PC" },
+      { name: "NVIDIA", icon: "🟢", desc: "Grace CPU & unified AI computing engines" }
+    ]
+  },
+  {
+    id: "motherboard",
+    name: "Motherboard",
+    badge: "MOTHERBOARD CIRCUIT ARCHITECTURE",
+    heroImage: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2000",
+    tags: ["Foundation", "Chipset", "VRM", "PCIe 5.0"],
+    description: "The foundational printed circuit board connecting CPU, GPU, memory, and storage while distributing regulated power through its VRM.",
+    specs: [
+      { label: "Socket", value: "LGA1700, AM5" },
+      { label: "Form Factor", value: "ATX / mATX / ITX" },
+      { label: "Memory Slots", value: "2 - 4 DIMM (DDR5)" },
+      { label: "Expansion", value: "PCIe Gen 4 / Gen 5" },
+      { label: "M.2 NVMe", value: "2 - 5 Dedicated Slots" },
+      { label: "VRM Phases", value: "12 - 24 Power Phases" },
+      { label: "Networking", value: "2.5GbE / Wi-Fi 7" },
+      { label: "SATA 3.0", value: "4 - 6 Storage Ports" }
+    ],
+    matcherRows: [
+      { id: 1, tier: "Gaming ATX", model: "ASUS ROG B650-E", socket: "AM5", targetSocket: "AM5" },
+      { id: 2, tier: "Content Creation", model: "MSI Z790 Tomahawk", socket: "LGA1700", targetSocket: "LGA1700" },
+      { id: 3, tier: "Compact ITX", model: "Gigabyte B650I AORUS", socket: "AM5", targetSocket: "LGA1700" },
+      { id: 4, tier: "Budget Build", model: "ASRock B760M Pro", socket: "LGA1700", targetSocket: "LGA1700" }
+    ],
+    modelOptions: [
+      { name: "ASUS ROG B650-E", socket: "AM5" },
+      { name: "MSI Z790 Tomahawk", socket: "LGA1700" },
+      { name: "Gigabyte B650I AORUS", socket: "AM5" },
+      { name: "ASRock B760M Pro", socket: "LGA1700" },
+      { name: "ASUS TUF X670E-PLUS", socket: "AM5" },
+      { name: "MSI MAG B550 TOMAHAWK", socket: "AM4" }
+    ],
+    targetSockets: ["AM5", "LGA1700", "AM4", "LGA1851"],
+    namingLeft: {
+      title: "Intel Chipset Guide",
+      colorClass: "intel-head",
+      rows: [
+        { label: "H-Series", val: "H610 / H770: Budget Entry-Level, Baseline Connectivity" },
+        { label: "B-Series", val: "B760: Mainstream Gaming Sweet-Spot, RAM Overclocking" },
+        { label: "Z-Series", val: "Z790: Full CPU Multiplier Overclocking & Maximum PCIe Lanes" }
+      ]
+    },
+    namingRight: {
+      title: "AMD Chipset Guide",
+      colorClass: "amd-head",
+      rows: [
+        { label: "A-Series", val: "A620: Entry-Level Value, Conservative Power Delivery" },
+        { label: "B-Series", val: "B650 / B650E: Performance Sweet-Spot, Full PBO Tuning" },
+        { label: "X-Series", val: "X670E / X870E: Dual Promontory Chipset, Dual PCIe 5.0 Slots" }
+      ]
+    },
+    steps: [
+      { step: 1, title: "Step 1: Check & Install I/O Shield", desc: "Ensure the rear I/O shield is snapped into the case frame (or verify your board has a pre-installed integrated shield)." },
+      { step: 2, title: "Step 2: Install Brass Chassis Standoffs", desc: "Screw brass motherboard standoffs into the chassis tray matching the exact ATX or mATX mounting hole pattern." },
+      { step: 3, title: "Step 3: Lower Motherboard into Position", desc: "Carefully seat the motherboard so rear port connectors align with the I/O shield and holes sit over standoffs." },
+      { step: 4, title: "Step 4: Fasten Screws in Cross Sequence", desc: "Screw in all mounting screws gently with a magnetic Phillips screwdriver without over-torquing the PCB." },
+      { step: 5, title: "Step 5: Connect 24-Pin & EPS Power Cables", desc: "Plug in the main 24-pin ATX power harness and the top 8-pin (or dual 8-pin) CPU power cable until they latch." }
+    ],
+    commonErrors: "Forgetting brass chassis standoffs causes the motherboard's exposed solder traces to short-circuit directly against the case sheet metal, immediately destroying the board.",
+    quiz: [
       {
         question: "What is the primary role of the motherboard's VRM (Voltage Regulator Module)?",
         options: [
-          { text: "To step down 12V from the PSU into clean, precise low voltage for the CPU.", correct: true },
-          { text: "To control display resolutions on your monitor.", correct: false },
-          { text: "To store permanent Windows operating system files.", correct: false },
+          { text: "To step down 12V from the PSU into clean, precise low voltage (1.1-1.3V) for the CPU.", correct: true },
+          { text: "To output 3D graphics directly to your monitor.", correct: false },
+          { text: "To store permanent Windows operating system boot files.", correct: false },
+          { text: "To control the color of all internal RGB lighting.", correct: false }
         ],
-        explanation: "High-quality VRMs with robust heatsinks keep power delivery stable during heavy sustained CPU boost clocks."
-      },
-      {
-        question: "What is an M.2 NVMe slot on the motherboard used for?",
-        options: [
-          { text: "Ultra-fast direct PCIe solid-state storage (SSDs).", correct: true },
-          { text: "Connecting the wall power cord directly.", correct: false },
-          { text: "Plugging in the keyboard and mouse.", correct: false },
-        ],
-        explanation: "M.2 slots communicate directly through high-speed PCIe lanes, providing transfer speeds up to 7000+ MB/s."
+        explanation: "High-quality VRMs with robust heatsinks keep power delivery stable during heavy sustained CPU boost clocks without thermal throttling."
       }
     ],
-    ram: [
-      {
-        question: "Why should RAM be installed in matching pairs rather than a single stick?",
-        options: [
-          { text: "It activates dual-channel mode, doubling memory bandwidth to the processor.", correct: true },
-          { text: "It cuts electricity consumption in half.", correct: false },
-          { text: "Single sticks do not allow the PC to turn on.", correct: false },
-        ],
-        explanation: "Dual-channel mode lets the memory controller read and write to two sticks simultaneously, eliminating CPU bottlenecks."
-      },
-      {
-        question: "What must you enable in the BIOS to run high-speed RAM at its rated advertised speed?",
-        options: [
-          { text: "XMP (Intel Extreme Memory Profile) or AMD EXPO.", correct: true },
-          { text: "Windows Safe Mode.", correct: false },
-          { text: "Bluetooth High Priority Mode.", correct: false },
-        ],
-        explanation: "By default, motherboards boot RAM at conservative JEDEC baseline speeds until XMP/EXPO is toggled."
-      },
-      {
-        question: "What happens when your PC runs completely out of available RAM?",
-        options: [
-          { text: "The OS pages to the SSD/HDD, causing severe stuttering and lag.", correct: true },
-          { text: "The monitor immediately loses signal forever.", correct: false },
-          { text: "The power supply trips and shuts off.", correct: false },
-        ],
-        explanation: "Virtual memory paging keeps software from instantly crashing, but disk speeds are orders of magnitude slower than RAM."
-      },
-      {
-        question: "What does the CAS Latency (CL) number signify on a RAM spec sheet?",
-        options: [
-          { text: "The clock cycles delay between sending a read command and receiving data.", correct: true },
-          { text: "The number of gigabytes inside the memory module.", correct: false },
-          { text: "The maximum operating temperature in Celsius.", correct: false },
-        ],
-        explanation: "Lower CAS latency at the same clock frequency yields faster response time."
-      }
+    mistakes: [
+      { name: "Missing Standoffs", desc: "Installing directly against bare metal creates fatal short-circuits across motherboard traces." },
+      { name: "Wrong RAM Generation", desc: "Attempting to force DDR4 modules into DDR5 slots physically breaks memory pins." },
+      { name: "Weak VRMs", desc: "Pairing an entry-level budget board with an i9 or Ryzen 9 causes severe VRM thermal throttling." },
+      { name: "Chassis Clearance", desc: "Purchasing a full-size ATX motherboard for a compact Mini-ITX case." }
     ],
-    psu: [
-      {
-        question: "What does the '80 Plus' certification indicate on a power supply?",
-        options: [
-          { text: "Energy efficiency rating (at least 80% of drawn AC power is converted to DC).", correct: true },
-          { text: "That the power supply will last for exactly 80 months.", correct: false },
-          { text: "That the power supply generates 80 decibels of sound.", correct: false },
-        ],
-        explanation: "Certifications from Bronze to Titanium verify lower heat waste and electrical efficiency."
-      },
-      {
-        question: "What is the primary benefit of a 'Fully Modular' power supply?",
-        options: [
-          { text: "You only plug in the cables your build actually needs, improving cable management and airflow.", correct: true },
-          { text: "It allows wireless power transmission to the motherboard.", correct: false },
-          { text: "It doubles your GPU's gaming framerate.", correct: false },
-        ],
-        explanation: "Detachable cables leave no bulky clutter inside the case, keeping airflow channels clear."
-      },
-      {
-        question: "What can occur if you pair high-draw parts with an undersized, low-wattage PSU?",
-        options: [
-          { text: "Automatic shutdowns, reboot loops, or tripped over-current protections during gaming peaks.", correct: true },
-          { text: "Your keyboard letters will type backwards.", correct: false },
-          { text: "The CPU fan will turn in reverse.", correct: false },
-        ],
-        explanation: "Modern GPUs exhibit transient power spikes that trip safety protections on undersized power supplies."
-      },
-      {
-        question: "Why should you never mix and match modular cables between different PSU brands?",
-        options: [
-          { text: "The pinouts at the power supply end are not standardized and can fry hardware.", correct: true },
-          { text: "The cables will physically melt within 5 seconds.", correct: false },
-          { text: "Cables from other brands only transmit black and white video.", correct: false },
-        ],
-        explanation: "While the component-side connector is standardized, the PSU-side pin arrangement varies wildly between manufacturers."
-      }
+    matrix: [
+      { tier: "Gaming", cpu: "B650 / B760 ATX Motherboard", socket: "AM5 / LGA1700", spec: "12+2 VRM • Dual M.2 PCIe 4.0", tdp: "Supports up to 200W", highlight: true },
+      { tier: "Streaming", cpu: "Z790 / B650E Wi-Fi Board", socket: "AM5 / LGA1700", spec: "16+1+1 VRM • Wi-Fi 6E/7 • USB 20G", tdp: "Supports up to 253W" },
+      { tier: "Workstation", cpu: "X670E / Z790 Creator Series", socket: "AM5 / LGA1700", spec: "Dual PCIe 5.0 x16 • 10GbE • USB4", tdp: "Supports up to 300W+" },
+      { tier: "Budget", cpu: "A620 / H610 Micro-ATX", socket: "AM4 / AM5 / LGA", spec: "6-8 VRM Phases • Single PCIe 4.0", tdp: "Optimized for 65W CPUs" },
+      { tier: "Enthusiast", cpu: "ROG Maximus / MEG Godlike", socket: "AM5 / LGA1700", spec: "24+2 VRM • Liquid Cooling Ready", tdp: "Extreme OC Over 350W" }
     ],
-    gpu: [
-      {
-        question: "What is VRAM (Video RAM) on a graphics card responsible for?",
-        options: [
-          { text: "Storing high-res textures, shaders, framebuffers, and 3D geometric assets.", correct: true },
-          { text: "Powering the CPU cooling fan.", correct: false },
-          { text: "Saving your Windows user password securely.", correct: false },
-        ],
-        explanation: "High resolution textures and ray-tracing buffers require fast dedicated VRAM to render frames smoothly."
-      },
-      {
-        question: "Which motherboard slot does a dedicated graphics card plug into?",
-        options: [
-          { text: "The primary PCIe x16 slot (usually the top slot connected directly to the CPU).", correct: true },
-          { text: "The SATA 3.0 storage port.", correct: false },
-          { text: "The front-panel USB header.", correct: false },
-        ],
-        explanation: "The top PCIe x16 slot has the widest bandwidth and direct lanes leading straight to the CPU."
-      },
-      {
-        question: "What happens if a high-end graphics card is installed with an old, underpowered dual-core CPU?",
-        options: [
-          { text: "A severe CPU bottleneck will prevent the GPU from reaching its full potential.", correct: true },
-          { text: "The GPU will automatically increase its clock speed to compensate.", correct: false },
-          { text: "The graphics card will fail to power on.", correct: false },
-        ],
-        explanation: "When the CPU cannot prepare frames as fast as the GPU can render them, frame drops and stutters occur."
-      },
-      {
-        question: "What modern GPU connector powers RTX 40-series and next-gen cards with up to 600W?",
-        options: [
-          { text: "The 12VHPWR / 12V-2x6 16-pin connector.", correct: true },
-          { text: "Standard USB-C phone charger.", correct: false },
-          { text: "Floppy drive 4-pin connector.", correct: false },
-        ],
-        explanation: "The 12VHPWR high-density connector replaces up to three or four older 8-pin PCIe cables."
-      }
-    ],
-    case: [
-      {
-        question: "What is the primary factor that dictates good computer case thermal performance?",
-        options: [
-          { text: "Perforated mesh ventilation panels that provide unobstructed positive or neutral airflow.", correct: true },
-          { text: "Completely sealed heavy tempered glass on all panels.", correct: false },
-          { text: "Having the maximum number of stickers on the exterior.", correct: false },
-        ],
-        explanation: "Cases with solid front glass choke intake fans, driving internal temperatures and fan noise up."
-      },
-      {
-        question: "What is 'Positive Pressure' in PC case airflow management?",
-        options: [
-          { text: "More intake airflow than exhaust, which prevents dust from entering through un-filtered cracks.", correct: true },
-          { text: "Pressurizing the case with compressed air so components hover.", correct: false },
-          { text: "Having only exhaust fans with no intakes.", correct: false },
-        ],
-        explanation: "Positive pressure forces air out of seam gaps, ensuring air only enters through removable dust filters."
-      },
-      {
-        question: "What must you check before buying a large CPU dual-tower air cooler?",
-        options: [
-          { text: "The maximum CPU cooler clearance height supported by the chassis specifications.", correct: true },
-          { text: "Whether the cooler matches the color of your room walls.", correct: false },
-          { text: "The size of your mousepad.", correct: false },
-        ],
-        explanation: "Tower coolers that exceed the case's specified cooler clearance will prevent the side panel from closing."
-      },
-      {
-        question: "What purpose do pre-installed motherboard standoffs serve in a case?",
-        options: [
-          { text: "They elevate the motherboard to prevent metal-on-metal electrical short circuits against the tray.", correct: true },
-          { text: "They act as thermal heat sinks for the hard drive.", correct: false },
-          { text: "They hold the tempered glass panel in place.", correct: false },
-        ],
-        explanation: "Fastening a bare motherboard directly against metal chassis sheet metal without standoffs will short out circuits upon power-up."
-      }
+    brands: [
+      { name: "ASUS", icon: "🔴", desc: "ROG, TUF Gaming, and Prime motherboard series" },
+      { name: "MSI", icon: "🐉", desc: "Tomahawk, MPG, and MEG rugged power boards" },
+      { name: "Gigabyte", icon: "🦅", desc: "AORUS lineup with high PCIe lane counts" },
+      { name: "ASRock", icon: "⚙️", desc: "Taichi and Steel Legend feature-rich value boards" }
     ]
+  },
+  {
+    id: "ram",
+    name: "Memory (RAM)",
+    badge: "HIGH-SPEED MEMORY ARCHITECTURE",
+    heroImage: "https://images.unsplash.com/photo-1562976540-1502f7596005?q=80&w=2000",
+    tags: ["Speed", "DDR5", "Dual Channel", "Latency"],
+    description: "Ultra-low latency volatile storage holding real-time OS instructions and live game textures for immediate nanosecond processor access.",
+    specs: [
+      { label: "Standard", value: "DDR5 / DDR4" },
+      { label: "Frequency", value: "3200 - 6400+ MT/s" },
+      { label: "Sweet Spot", value: "DDR5-6000 CL30" },
+      { label: "Capacity", value: "16GB - 64GB" },
+      { label: "Channels", value: "Dual Channel (128-Bit)" },
+      { label: "Voltage", value: "1.1V - 1.35V" },
+      { label: "Profiles", value: "XMP 3.0 / EXPO" },
+      { label: "Form Factor", value: "288-Pin DIMM" }
+    ],
+    matcherRows: [
+      { id: 1, tier: "Gaming Sweet Spot", model: "Corsair Vengeance 32GB", socket: "DDR5-6000 CL30", targetSocket: "DDR5-6000 CL30" },
+      { id: 2, tier: "High-End Creator", model: "G.Skill Trident Z5 64GB", socket: "DDR5-6400 CL32", targetSocket: "DDR5-6400 CL32" },
+      { id: 3, tier: "Budget DDR4", model: "Kingston Fury 16GB", socket: "DDR4-3200 CL16", targetSocket: "DDR5-6000 CL30" },
+      { id: 4, tier: "Esports Rig", model: "TeamGroup Delta 32GB", socket: "DDR5-5600 CL36", targetSocket: "DDR5-5600 CL36" }
+    ],
+    modelOptions: [
+      { name: "Corsair Vengeance 32GB (2x16)", socket: "DDR5-6000 CL30" },
+      { name: "G.Skill Trident Z5 32GB (2x16)", socket: "DDR5-6000 CL30" },
+      { name: "G.Skill Trident Z5 64GB (2x32)", socket: "DDR5-6400 CL32" },
+      { name: "Kingston Fury Beast 16GB (2x8)", socket: "DDR4-3200 CL16" },
+      { name: "Crucial Pro 32GB (2x16)", socket: "DDR5-5600 CL46" }
+    ],
+    targetSockets: ["DDR5-6000 CL30", "DDR5-6400 CL32", "DDR5-5600 CL36", "DDR4-3200 CL16"],
+    namingLeft: {
+      title: "Intel XMP Profiles",
+      colorClass: "intel-head",
+      rows: [
+        { label: "XMP 3.0", val: "Extreme Memory Profile for Intel 12th/13th/14th Gen platforms" },
+        { label: "Presets", val: "Up to 3 factory pre-tuned frequency and sub-timing profiles" },
+        { label: "Tuning", val: "Custom user-editable on-die SPD profiles" }
+      ]
+    },
+    namingRight: {
+      title: "AMD EXPO Profiles",
+      colorClass: "amd-head",
+      rows: [
+        { label: "EXPO", val: "Extended Profiles for Overclocking specifically for Ryzen AM5" },
+        { label: "Infinity Fabric", val: "Optimized 1:1 ratio for UCLK and FCLK memory controller clocks" },
+        { label: "Sweet Spot", val: "DDR5-6000 CL30 delivers minimum latency and zero stutter" }
+      ]
+    },
+    steps: [
+      { step: 1, title: "Step 1: Open Latches on Slots 2 and 4", desc: "Push down the retention clips on motherboard memory slots A2 and B2 (slots 2 & 4 from the CPU socket)." },
+      { step: 2, title: "Step 2: Align Memory Key Notch", desc: "Check the offset notch on the bottom edge of the RAM stick and match it with the plastic socket divider." },
+      { step: 3, title: "Step 3: Press Down Evenly on Both Ends", desc: "Apply firm, equal pressure with both thumbs until both plastic retention clips snap shut with an audible click." },
+      { step: 4, title: "Step 4: Verify Full Seating Flush", desc: "Inspect the side profile to ensure neither end of the RAM stick is tilted or sitting unseated." },
+      { step: 5, title: "Step 5: Enable XMP or EXPO in BIOS", desc: "Reboot PC, press DEL/F2 to enter motherboard BIOS, and toggle XMP or EXPO to unlock advertised 6000 MT/s speeds." }
+    ],
+    commonErrors: "Installing in adjacent slots 1 & 2 causes memory to run in sluggish single-channel mode. Forgetting to toggle XMP in BIOS leaves memory running at conservative 4800 baseline.",
+    quiz: [
+      {
+        question: "Why should desktop RAM be installed in slots 2 and 4 (matching pairs)?",
+        options: [
+          { text: "It engages dual-channel mode, doubling memory bandwidth to the CPU memory controller.", correct: true },
+          { text: "It reduces system power consumption by exactly 50%.", correct: false },
+          { text: "Single sticks do not allow the computer to boot.", correct: false },
+          { text: "It allows one stick to cool while the other stick works.", correct: false }
+        ],
+        explanation: "Dual-channel mode lets the memory controller read and write to two modules simultaneously, eliminating severe processor bottlenecks."
+      }
+    ],
+    mistakes: [
+      { name: "Single Channel", desc: "Using only 1 RAM stick cuts memory bandwidth in half, causing micro-stutters in games." },
+      { name: "Forgetting XMP", desc: "Leaving RAM at default 4800MHz JEDEC baseline wastes paid-for high-speed performance." },
+      { name: "Wrong Slots", desc: "Placing sticks in adjacent slots 1 and 2 instead of 2 and 4 disables dual-channel mode." },
+      { name: "Mixing Kits", desc: "Combining RAM sticks from different brands leads to timing mismatch crashes and BSODs." }
+    ],
+    matrix: [
+      { tier: "Gaming", cpu: "32GB (2x16GB) DDR5-6000 CL30", socket: "Dual Channel", spec: "Lowest Latency • Optimal 1:1 FCLK", tdp: "1.35V", highlight: true },
+      { tier: "Streaming", cpu: "32GB - 64GB DDR5-6000 CL32", socket: "Dual Channel", spec: "High Buffer for OBS & Game Assets", tdp: "1.35V" },
+      { tier: "Workstation", cpu: "64GB - 128GB DDR5-5600", socket: "Dual Channel", spec: "High Density for 4K Video & 3D Render", tdp: "1.25V" },
+      { tier: "Budget", cpu: "16GB (2x8GB) DDR4-3200 CL16", socket: "Dual Channel", spec: "Cost-Effective 1080p Esports Standard", tdp: "1.35V" },
+      { tier: "Enthusiast", cpu: "32GB (2x16GB) DDR5-7200 CL34", socket: "Dual Channel", spec: "Top Binned Hynix A-Die Silicon", tdp: "1.45V" }
+    ],
+    brands: [
+      { name: "Corsair", icon: "⛵", desc: "Vengeance & Dominator Titanium RGB series" },
+      { name: "G.Skill", icon: "⚡", desc: "Trident Z5 low-latency Hynix A-die overclocking RAM" },
+      { name: "Kingston", icon: "👑", desc: "Fury Beast & Renegade highly compatible kits" },
+      { name: "Crucial", icon: "🔬", desc: "Micron-backed Pro series with rock-solid JEDEC stability" }
+    ]
+  },
+  {
+    id: "gpu",
+    name: "Graphics Card (GPU)",
+    badge: "GPU RASTER & RAY TRACING ARCHITECTURE",
+    heroImage: "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?q=80&w=2000",
+    tags: ["Visuals", "Ray Tracing", "VRAM", "DLSS / FSR"],
+    description: "Massively parallel computing powerhouse equipped with dedicated shaders, tensor cores, and ray-tracing hardware to render real-time photorealistic worlds.",
+    specs: [
+      { label: "VRAM Buffer", value: "8GB - 24GB GDDR6X" },
+      { label: "Bus Interface", value: "PCIe 4.0 / 5.0 x16" },
+      { label: "Memory Bus", value: "128-Bit to 384-Bit" },
+      { label: "Power Draw", value: "115W - 450W TGP" },
+      { label: "Connector", value: "12V-2x6 / 8-Pin PCIe" },
+      { label: "Outputs", value: "HDMI 2.1 / DP 2.1" },
+      { label: "AI Hardware", value: "Tensor Cores / NPU" },
+      { label: "Form Length", value: "240mm - 340mm" }
+    ],
+    matcherRows: [
+      { id: 1, tier: "1440p Sweet Spot", model: "RTX 4070 Super 12GB", socket: "750W PSU", targetSocket: "750W PSU" },
+      { id: 2, tier: "4K Enthusiast", model: "RTX 4080 Super 16GB", socket: "850W PSU", targetSocket: "850W PSU" },
+      { id: 3, tier: "Workstation AI", model: "RTX 4090 24GB", socket: "1000W PSU", targetSocket: "750W PSU" },
+      { id: 4, tier: "Budget Esports", model: "RX 7600 8GB", socket: "550W PSU", targetSocket: "550W PSU" }
+    ],
+    modelOptions: [
+      { name: "GeForce RTX 4070 Super 12GB", socket: "750W PSU" },
+      { name: "GeForce RTX 4080 Super 16GB", socket: "850W PSU" },
+      { name: "GeForce RTX 4090 24GB", socket: "1000W PSU" },
+      { name: "Radeon RX 7800 XT 16GB", socket: "700W PSU" },
+      { name: "Radeon RX 7600 8GB", socket: "550W PSU" }
+    ],
+    targetSockets: ["750W PSU", "850W PSU", "1000W PSU", "550W PSU"],
+    namingLeft: {
+      title: "NVIDIA GeForce Naming",
+      colorClass: "intel-head",
+      rows: [
+        { label: "RTX Prefix", val: "Ray Tracing Texel eXtreme with Tensor AI acceleration" },
+        { label: "Super / Ti", val: "Enhanced core count, faster memory clock, or wider bus width" },
+        { label: "Tiers", val: "4060 (1080p), 4070 (1440p), 4080 (4K), 4090 (Extreme Titan Class)" }
+      ]
+    },
+    namingRight: {
+      title: "AMD Radeon Naming",
+      colorClass: "amd-head",
+      rows: [
+        { label: "RX Prefix", val: "Radeon Experience architecture based on RDNA 3 compute units" },
+        { label: "XT / XTX", val: "Fully enabled silicon die with highest shader core counts" },
+        { label: "Tiers", val: "7600 (Budget), 7700 XT (Mid), 7800 XT (1440p King), 7900 XTX (4K)" }
+      ]
+    },
+    steps: [
+      { step: 1, title: "Step 1: Remove Correct Chassis Expansion Covers", desc: "Unscrew and remove the 2 or 3 PCIe rear expansion slot covers aligning with the top PCIe x16 motherboard slot." },
+      { step: 2, title: "Step 2: Open PCIe Slot Retention Latch", desc: "Press outward on the plastic retention latch at the right edge of the top PCIe x16 motherboard slot." },
+      { step: 3, title: "Step 3: Seat Graphics Card Firmly", desc: "Lower the GPU vertically into the slot and push down firmly until the latch clicks securely over the retention tooth." },
+      { step: 4, title: "Step 4: Fasten Screws & Anti-Sag Bracket", desc: "Screw the metal bracket securely into the chassis frame and position an anti-sag support bracket under heavy cards." },
+      { step: 5, title: "Step 5: Connect Dedicated Power Cables", desc: "Plug in the 12V-2x6 or individual 8-pin PCIe cables until fully seated with zero gap. Never use daisy-chained splitters." }
+    ],
+    commonErrors: "Plugging the monitor HDMI or DisplayPort cable into the motherboard instead of the graphics card bypasses the GPU entirely.",
+    quiz: [
+      {
+        question: "What is the primary role of VRAM (Video RAM) on a graphics card?",
+        options: [
+          { text: "Buffering high-resolution game textures, geometry buffers, and framebuffers for the GPU.", correct: true },
+          { text: "Powering the CPU cooling fan directly.", correct: false },
+          { text: "Storing your permanent Windows OS operating files.", correct: false },
+          { text: "Regulating household wall outlet voltage.", correct: false }
+        ],
+        explanation: "High-resolution 1440p and 4K textures require massive, high-bandwidth VRAM buffers to render frames without hitching."
+      }
+    ],
+    mistakes: [
+      { name: "Daisy-Chained Cables", desc: "Powering a 300W+ graphics card with a single split cable causes melted connectors." },
+      { name: "Case Clearance Clash", desc: "Purchasing a 340mm triple-fan card that physically hits front-mounted radiators." },
+      { name: "Wrong Video Port", desc: "Plugging the monitor cable into the motherboard instead of the dedicated GPU." },
+      { name: "Undersized PSU", desc: "High transient power spikes trip safety shutoffs on low-wattage power supplies." }
+    ],
+    matrix: [
+      { tier: "Gaming", cpu: "GeForce RTX 4070 Super 12GB", socket: "PCIe 4.0 x16", spec: "1440p Ultra • DLSS 3.5 Frame Gen", tdp: "220W TGP", highlight: true },
+      { tier: "Streaming", cpu: "GeForce RTX 4070 Ti Super 16GB", socket: "PCIe 4.0 x16", spec: "Dual AV1 Encoders • 16GB VRAM Buffer", tdp: "285W TGP" },
+      { tier: "Workstation", cpu: "GeForce RTX 4090 24GB", socket: "PCIe 4.0 x16", spec: "16,384 CUDA Cores • 24GB GDDR6X", tdp: "450W TGP" },
+      { tier: "Budget", cpu: "Radeon RX 7600 / RTX 4060", socket: "PCIe 4.0 x8/x16", spec: "1080p High FPS Esports Standard", tdp: "115W - 165W" },
+      { tier: "Enthusiast", cpu: "GeForce RTX 4080 Super / 7900 XTX", socket: "PCIe 4.0 x16", spec: "Full 4K Ray Tracing Supremacy", tdp: "320W - 355W" }
+    ],
+    brands: [
+      { name: "NVIDIA", icon: "🟢", desc: "GeForce RTX series with DLSS 3.5 and Ray Tracing" },
+      { name: "AMD", icon: "🔴", desc: "Radeon RX graphics with generous VRAM buffers" },
+      { name: "Intel", icon: "🔵", desc: "Arc discrete graphics featuring dual AV1 video encoders" },
+      { name: "ASUS ROG", icon: "⚡", desc: "Strix and TUF custom board-partner cooling designs" }
+    ]
+  },
+  {
+    id: "psu",
+    name: "Power Supply (PSU)",
+    badge: "POWER DELIVERY & EFFICIENCY ARCHITECTURE",
+    heroImage: "https://images.unsplash.com/photo-1555680202-c86f0e12f086?q=80&w=2000",
+    tags: ["Power", "ATX 3.0", "Modular", "80 Plus Gold"],
+    description: "Converts high-voltage alternating wall current into clean, isolated direct current rails (12V, 5V, 3.3V) with over-current and surge protections.",
+    specs: [
+      { label: "Wattage", value: "650W - 1200W" },
+      { label: "Efficiency", value: "80 Plus Gold / Plat" },
+      { label: "Modern Standard", value: "ATX 3.0 / ATX 3.1" },
+      { label: "GPU Connector", value: "12V-2x6 (Up to 600W)" },
+      { label: "Cabling", value: "Fully Modular" },
+      { label: "Rail Topology", value: "Single +12V Rail" },
+      { label: "Protections", value: "OVP, UVP, OCP, SCP" },
+      { label: "Acoustics", value: "Zero-RPM Fan Mode" }
+    ],
+    matcherRows: [
+      { id: 1, tier: "Mid-Range Gaming", model: "Corsair RM750e 750W", socket: "ATX 3.0 Gold", targetSocket: "ATX 3.0 Gold" },
+      { id: 2, tier: "High-End Flagship", model: "Seasonic Vertex 1000W", socket: "ATX 3.0 Plat", targetSocket: "ATX 3.0 Plat" },
+      { id: 3, tier: "Budget Builder", model: "be quiet! Pure Power 650W", socket: "ATX 3.0 Bronze", targetSocket: "ATX 3.0 Gold" },
+      { id: 4, tier: "SFF Compact", model: "Corsair SF750 SFX", socket: "SFX Platinum", targetSocket: "SFX Platinum" }
+    ],
+    modelOptions: [
+      { name: "Corsair RM750e 750W Gold", socket: "ATX 3.0 Gold" },
+      { name: "Corsair RM850x 850W Gold", socket: "ATX 3.0 Gold" },
+      { name: "Seasonic Vertex GX-1000W", socket: "ATX 3.0 Plat" },
+      { name: "be quiet! Pure Power 12 M 850W", socket: "ATX 3.0 Gold" },
+      { name: "Corsair SF750 Platinum", socket: "SFX Platinum" }
+    ],
+    targetSockets: ["ATX 3.0 Gold", "ATX 3.0 Plat", "ATX 3.0 Bronze", "SFX Platinum"],
+    namingLeft: {
+      title: "80 Plus Efficiency Ratings",
+      colorClass: "intel-head",
+      rows: [
+        { label: "Bronze", val: "82% - 85% Efficiency: Greater heat waste, entry-level designs" },
+        { label: "Gold", val: "87% - 90% Efficiency: The universal sweet spot for modern PCs" },
+        { label: "Platinum", val: "90% - 92% Efficiency: Premium Japanese 105°C capacitors" }
+      ]
+    },
+    namingRight: {
+      title: "ATX 3.0 & Modular Cabling",
+      colorClass: "amd-head",
+      rows: [
+        { label: "ATX 3.0", val: "Handles 200% transient power spikes without tripping safety breakers" },
+        { label: "12V-2x6", val: "Single native cable powering RTX 40-series cards safely up to 600W" },
+        { label: "Modular", val: "Attach only cables needed to ensure clean unobstructed chassis airflow" }
+      ]
+    },
+    steps: [
+      { step: 1, title: "Step 1: Plug Necessary Cables into PSU Body", desc: "Attach the 24-pin motherboard, CPU EPS, and PCIe power leads before sliding the PSU into the case." },
+      { step: 2, title: "Step 2: Orient Intake Fan Downward", desc: "Position the power supply so the cooling fan faces the bottom chassis dust filter vent to draw fresh ambient air." },
+      { step: 3, title: "Step 3: Secure with 4 Rear Chassis Screws", desc: "Fasten the 4 corner hex screws through the chassis rear bracket into the power supply casing." },
+      { step: 4, title: "Step 4: Route Cables Through Shroud", desc: "Feed cables through bottom routing grommets into the rear management chamber of the PC case." },
+      { step: 5, title: "Step 5: Verify Complete Connector Latching", desc: "Press each power plug firmly into its component until the locking plastic tab clicks over the connector." }
+    ],
+    commonErrors: "Mixing and matching modular cables between different power supply brands or models will send 12V voltage into ground pins, immediately frying SSDs and components.",
+    quiz: [
+      {
+        question: "Why must you NEVER mix modular cables between different power supply brands?",
+        options: [
+          { text: "PSU-side pinouts are not standardized; wrong wiring sends 12V directly into ground and fries parts.", correct: true },
+          { text: "The cables will physically dissolve inside the case.", correct: false },
+          { text: "Other brand cables only transmit black and white video signals.", correct: false },
+          { text: "The CPU fan will turn in reverse.", correct: false }
+        ],
+        explanation: "While component-side plugs are standardized, manufacturers use completely different proprietary pin layouts at the PSU casing side."
+      }
+    ],
+    mistakes: [
+      { name: "Mixing Cables", desc: "Plugging Cable A into PSU B reverses polarity, immediately frying drives and motherboards." },
+      { name: "Cheap No-Name PSUs", desc: "Uncertified low-tier units lack over-current protection and fail under heavy gaming loads." },
+      { name: "Zero Headroom", desc: "Running a power supply at 98% continuous capacity causes loud coil whine and fan wear." },
+      { name: "Fan Inversion", desc: "Installing the intake fan against solid unventilated sheet metal causes thermal shutdown." }
+    ],
+    matrix: [
+      { tier: "Gaming", cpu: "750W - 850W ATX 3.0 Gold", socket: "Fully Modular", spec: "Native 12V-2x6 • Japanese Capacitors", tdp: "Handles 450W GPU Peaks", highlight: true },
+      { tier: "Streaming", cpu: "850W - 1000W ATX 3.0 Gold", socket: "Fully Modular", spec: "Generous Headroom for CPU + GPU", tdp: "Zero RPM Silent Fan Curve" },
+      { tier: "Workstation", cpu: "1000W - 1200W Platinum", socket: "Fully Modular", spec: "Dual 12V-2x6 • Cybenetics Platinum", tdp: "Handles 600W Sustained Draw" },
+      { tier: "Budget", cpu: "550W - 650W 80 Plus Bronze", socket: "Semi-Modular", spec: "Reliable Baseline for 1080p Esports", tdp: "Single 12V Rail" },
+      { tier: "Enthusiast", cpu: "1200W+ Titanium ATX 3.1", socket: "Fully Modular", spec: "Extreme Overclocking & Multi-GPU", tdp: "Maximum Electrical Isolation" }
+    ],
+    brands: [
+      { name: "Seasonic", icon: "⚡", desc: "Industry benchmark OEM with 10-12 year manufacturer warranties" },
+      { name: "Corsair", icon: "⛵", desc: "RMx and SF series with silent zero-RPM magnetic levitation fans" },
+      { name: "be quiet!", icon: "🔇", desc: "Dark Power and Pure Power featuring acoustic silence" },
+      { name: "EVGA", icon: "🔋", desc: "SuperNOVA line known for rock-solid stability and customer service" }
+    ]
+  },
+  {
+    id: "case",
+    name: "Computer Case",
+    badge: "CHASSIS THERMAL & AIRFLOW ARCHITECTURE",
+    heroImage: "https://images.unsplash.com/photo-1591488320449-011701bb6704?q=80&w=2000",
+    tags: ["Chassis", "Airflow", "Tempered Glass", "Cable Routing"],
+    description: "The structural chassis housing your build, engineered with high-flow perforated mesh, acoustic dampening, and radiator clearances.",
+    specs: [
+      { label: "Chassis Class", value: "Mid-Tower, ITX, Full" },
+      { label: "Board Support", value: "E-ATX, ATX, mATX, ITX" },
+      { label: "GPU Max Length", value: "360mm - 420mm" },
+      { label: "Cooler Height", value: "165mm - 185mm" },
+      { label: "Radiator Size", value: "Up to 360mm / 420mm" },
+      { label: "Included Fans", value: "3x - 4x High-CFM Fans" },
+      { label: "Front Panel", value: "USB-C 10Gbps, Audio" },
+      { label: "Dust Filters", value: "Magnetic Top & Bottom" }
+    ],
+    matcherRows: [
+      { id: 1, tier: "High Airflow Mesh", model: "Fractal Meshify 2", socket: "ATX Mid-Tower", targetSocket: "ATX Mid-Tower" },
+      { id: 2, tier: "Aquarium Showcase", model: "NZXT H9 Flow", socket: "Dual-Chamber", targetSocket: "Dual-Chamber" },
+      { id: 3, tier: "Compact SFF", model: "Fractal Terra", socket: "Mini-ITX", targetSocket: "ATX Mid-Tower" },
+      { id: 4, tier: "Budget Airflow", model: "Montech Air 903 MAX", socket: "ATX Mid-Tower", targetSocket: "ATX Mid-Tower" }
+    ],
+    modelOptions: [
+      { name: "Fractal Design Meshify 2", socket: "ATX Mid-Tower" },
+      { name: "NZXT H9 Flow", socket: "Dual-Chamber" },
+      { name: "Lian Li O11 Dynamic EVO", socket: "Dual-Chamber" },
+      { name: "Corsair 4000D Airflow", socket: "ATX Mid-Tower" },
+      { name: "Fractal Terra SFF", socket: "Mini-ITX" }
+    ],
+    targetSockets: ["ATX Mid-Tower", "Dual-Chamber", "Mini-ITX", "Full-Tower"],
+    namingLeft: {
+      title: "Chassis Layout Types",
+      colorClass: "intel-head",
+      rows: [
+        { label: "High Airflow", val: "Perforated mesh front panel providing maximum intake CFM" },
+        { label: "Dual Chamber", val: "Aquarium panoramic glass with PSU and drives concealed behind motherboard" },
+        { label: "Small Form Factor", val: "Sub-20L compact footprint requiring ITX boards and SFX power supplies" }
+      ]
+    },
+    namingRight: {
+      title: "Airflow Physics Standards",
+      colorClass: "amd-head",
+      rows: [
+        { label: "Positive Pressure", val: "More intake fans than exhaust; forces air out of seam gaps to prevent dust" },
+        { label: "Negative Pressure", val: "More exhaust than intake; draws unfiltered ambient dust into chassis cracks" },
+        { label: "Neutral Flow", val: "Balanced CFM front-to-back laminar tunnel for optimal GPU cooling" }
+      ]
+    },
+    steps: [
+      { step: 1, title: "Step 1: Remove Panels & Prep Interior", desc: "Take off both side tempered glass and metal panels and unbox the chassis accessory screw box." },
+      { step: 2, title: "Step 2: Configure Fan Placements", desc: "Ensure front fans act as filtered intakes and rear/top fans act as warm air exhaust." },
+      { step: 3, title: "Step 3: Check Standoff Alignment", desc: "Verify motherboard standoffs match your exact ATX or mATX board mounting holes." },
+      { step: 4, title: "Step 4: Route Front I/O Headers", desc: "Pass USB-C, USB 3.0, and front panel power switch leads through lower chassis cutouts." },
+      { step: 5, title: "Step 5: Bundle Cables with Velcro Tracks", desc: "Fasten loose power and fan cables securely along the rear management spine with zip-ties." }
+    ],
+    commonErrors: "Solid glass front panels choke intake fans, driving temperatures up by 10-15°C. Setting all fans to exhaust creates heavy negative pressure that pulls dust into every seam.",
+    quiz: [
+      {
+        question: "What is the primary factor that dictates good computer case cooling performance?",
+        options: [
+          { text: "Perforated mesh ventilation panels providing unobstructed airflow to internal components.", correct: true },
+          { text: "Completely sealed thick tempered glass on all exterior panels.", correct: false },
+          { text: "Having the maximum number of exterior RGB light strips.", correct: false },
+          { text: "Placing the chassis directly against a warm wall.", correct: false }
+        ],
+        explanation: "Cases with solid front panels severely choke fans, forcing fan curves higher and raising temperatures."
+      }
+    ],
+    mistakes: [
+      { name: "Solid Glass Choke", desc: "Sealed glass front panels choke intake fans, raising internal temps by 10-15°C." },
+      { name: "Form Size Clash", desc: "Purchasing a compact Mini-ITX case when you purchased a standard ATX motherboard." },
+      { name: "All Exhaust Trap", desc: "Setting all fans to exhaust creates severe negative pressure that pulls in dust." },
+      { name: "Cooler Clearance", desc: "Tall 165mm air coolers preventing the tempered glass side panel from closing." }
+    ],
+    matrix: [
+      { tier: "Gaming", cpu: "Fractal Meshify 2 / Corsair 4000D", socket: "Mid-Tower", spec: "High Airflow Mesh • 3x 140mm Fans", tdp: "Supports 360mm Rad", highlight: true },
+      { tier: "Streaming", cpu: "NZXT H9 Flow / Lian Li O11", socket: "Dual-Chamber", spec: "Panoramic View • Separate Cable Chamber", tdp: "Supports Dual 360mm" },
+      { tier: "Workstation", cpu: "Fractal Define 7 / Silent Base", socket: "Full-Tower", spec: "Acoustic Insulation • Multi-Drive Bays", tdp: "High Thermal Mass" },
+      { tier: "Budget", cpu: "Montech Air 903 MAX", socket: "Mid-Tower", spec: "Included 4x 140mm ARGB Fans • Mesh", tdp: "Exceptional Value" },
+      { tier: "Enthusiast", cpu: "Lian Li O11 Dynamic EVO XL", socket: "Dual-Chamber", spec: "Custom Loop Watercooling Ready", tdp: "Supports Triple 420mm" }
+    ],
+    brands: [
+      { name: "Fractal Design", icon: "🌲", desc: "Scandinavian aesthetic, real wood accents, and benchmark airflow" },
+      { name: "NZXT", icon: "⬛", desc: "Clean minimalist design, cable management bar, and tempered glass" },
+      { name: "Lian Li", icon: "✨", desc: "Dual-chamber aquarium chassis (O11 series) and premium aluminum" },
+      { name: "Corsair", icon: "⛵", desc: "4000D / 5000D airflow series with RapidRoute cable channels" }
+    ]
+  }
+];
+
+export default function Learn() {
+  const navigate = useNavigate();
+  const { addComponent } = useBuild();
+
+  // Active Component Index (0 = CPU, 1 = Motherboard, 2 = RAM, 3 = GPU, 4 = PSU, 5 = Case)
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const selectedComp = componentGuide[currentIndex];
+
+  // Active Sub-tab for scrolling: "overview" | "architecture" | "installation" | "knowledge"
+  const [activeTab, setActiveTab] = useState("overview");
+
+  // Dynamic matcher rows for current component
+  const [matcherRows, setMatcherRows] = useState(selectedComp.matcherRows);
+
+  // Active step in Step-by-Step Installation
+  const [activeStep, setActiveStep] = useState(1);
+
+  // Quiz state
+  const [quizIndex, setQuizIndex] = useState(0);
+  const [quizAnswers, setQuizAnswers] = useState({});
+
+  // Common Mistakes popup detail
+  const [selectedMistake, setSelectedMistake] = useState(null);
+
+  // When selected component changes, reset rows and quiz
+  useEffect(() => {
+    setMatcherRows(selectedComp.matcherRows);
+    setActiveStep(1);
+    setQuizIndex(0);
+    setQuizAnswers({});
+    setSelectedMistake(null);
+  }, [currentIndex]);
+
+  const handleNextComponent = () => {
+    setCurrentIndex((prev) => (prev + 1) % componentGuide.length);
   };
 
-  const currentQuestions = flashcardDeck[selectedComponent.id] || flashcardDeck.cpu;
-  const currentCard = currentQuestions[quizCardIndex] || currentQuestions[0];
-
-  const handleNext = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % componentGuide.length);
-    setQuizCardIndex(0);
-  };
-
-  const handlePrev = () => {
-    setCurrentIndex((prevIndex) => (prevIndex === 0 ? componentGuide.length - 1 : prevIndex - 1));
-    setQuizCardIndex(0);
+  const handlePrevComponent = () => {
+    setCurrentIndex((prev) => (prev === 0 ? componentGuide.length - 1 : prev - 1));
   };
 
   const handleSelectComponent = (idx) => {
     setCurrentIndex(idx);
-    setQuizCardIndex(0);
   };
 
-  // Preload hero images
-  useEffect(() => {
-    componentGuide.forEach((comp) => {
-      const img = new Image();
-      img.src = comp.heroImage;
-    });
-  }, []);
-
-  // Listen to scroll to display floating quick-switcher when scrolled past hero
-  useEffect(() => {
-    const handleScroll = () => {
-      const heroEl = document.querySelector(".cinematic-hero");
-      if (heroEl) {
-        const bottom = heroEl.getBoundingClientRect().bottom;
-        setScrolledPastHero(bottom < 120);
-      }
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  // Trigger re-render animation when component changes
-  useEffect(() => {
-    setFadeKey(prev => prev + 1);
-  }, [currentIndex]);
-
-  const handleAnswerSelect = (qIdx, optIdx) => {
-    setUserAnswers(prev => ({
-      ...prev,
-      [`${selectedComponent.id}-${qIdx}`]: optIdx
-    }));
+  const handleTabClick = (tabId, elementId) => {
+    setActiveTab(tabId);
+    const el = document.getElementById(elementId);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   };
+
+  const handleModelChange = (rowId, newModelName) => {
+    const selected = selectedComp.modelOptions.find((c) => c.name === newModelName);
+    if (!selected) return;
+    setMatcherRows((prev) =>
+      prev.map((row) =>
+        row.id === rowId ? { ...row, model: newModelName, socket: selected.socket } : row
+      )
+    );
+  };
+
+  const handleSocketChange = (rowId, newSocket) => {
+    setMatcherRows((prev) =>
+      prev.map((row) =>
+        row.id === rowId ? { ...row, targetSocket: newSocket } : row
+      )
+    );
+  };
+
+  const handleConnectToBuild = (modelName, socketName) => {
+    if (addComponent) {
+      addComponent(selectedComp.id, {
+        name: modelName || selectedComp.name,
+        socket: socketName || "Standard",
+        price: "$299"
+      });
+    }
+    navigate("/build");
+  };
+
+  const currentQuiz = selectedComp.quiz[quizIndex] || selectedComp.quiz[0];
 
   return (
-    <div className="learn-page">
-      {/* Decorative bg elements to match Compatibility */}
-      <div className="bg-grid" aria-hidden="true" />
+    <div className="learn-page full-bleed-page">
+      {/* Background Decorative Grid and Ambient Glows */}
       <div className="bg-glow bg-glow-1" aria-hidden="true" />
       <div className="bg-glow bg-glow-2" aria-hidden="true" />
 
-      {/* ── STICKY QUICK COMPONENT SWITCHER BAR (Visible when scrolled down) ── */}
-      <div className={`sticky-component-bar ${scrolledPastHero ? "visible" : ""}`}>
-        <div className="sticky-bar-inner">
-          <div className="sticky-bar-label">
-            <span className="sticky-dot"></span>
-            <span>LEARN MODULE:</span>
-          </div>
-          <div className="sticky-pill-track">
-            {componentGuide.map((comp, idx) => (
-              <button
-                key={comp.id}
-                className={`sticky-pill-btn ${currentIndex === idx ? "active" : ""}`}
-                onClick={() => handleSelectComponent(idx)}
-              >
-                <span className="sticky-pill-icon">
-                  {comp.id === "cpu" && "⚡"}
-                  {comp.id === "motherboard" && "🎛️"}
-                  {comp.id === "ram" && "💾"}
-                  {comp.id === "psu" && "🔋"}
-                  {comp.id === "gpu" && "🎮"}
-                  {comp.id === "case" && "📦"}
-                </span>
-                <span className="sticky-pill-text">{comp.name.split(" ")[0]}</span>
-              </button>
-            ))}
-          </div>
-          <div className="sticky-bar-nav">
-            <button onClick={handlePrev} className="sticky-arrow" title="Previous Component">‹</button>
-            <span className="sticky-counter">0{currentIndex + 1} / 0{componentGuide.length}</span>
-            <button onClick={handleNext} className="sticky-arrow" title="Next Component">›</button>
-          </div>
+      {/* ── TOP BREADCRUMB HEADER BAR ── */}
+      <div className="top-breadcrumb-bar">
+        <div className="breadcrumb-inner">
+          <span className="brand-name">BuildLab</span>
+          <span className="bread-sep">›</span>
+          <span className="bread-link">Learn</span>
+          <span className="bread-sep">›</span>
+          <span className="bread-link">Hardware Deep-Dives</span>
+          <span className="bread-sep">›</span>
+          <span className="bread-active">{selectedComp.name}</span>
         </div>
       </div>
-      
-      {/* ── CINEMATIC HERO ── */}
-      <div 
-        key={`bg-${fadeKey}`}
-        className="cinematic-hero" 
-        style={{ backgroundImage: `url(${selectedComponent.image})` }}
+
+      {/* ── HERO BANNER CAROUSEL SECTION ── */}
+      <div
+        className="cinematic-hero full-bleed-hero"
+        style={{ backgroundImage: `url('${selectedComp.heroImage}')` }}
       >
-        <div className="hero-gradient-overlay"></div>
-        
+        <div className="hero-gradient-overlay" />
+
         <div className="hero-content-wrapper">
-          <h1 key={`title-${fadeKey}`} className="hero-title animate-fade-in">{selectedComponent.name}</h1>
-          
-          <div key={`badges-${fadeKey}`} className="hero-badges animate-fade-in-delayed">
-            {selectedComponent.tags.map((tag, idx) => (
+          {/* Green Category Badge */}
+          <div className="hero-badge-tag-wrap animate-fade-in">
+            <span className="hero-tech-badge neon-green-badge">
+              <span className="pulse-indicator" />
+              {selectedComp.badge}
+            </span>
+          </div>
+
+          {/* Main Title */}
+          <h1 className="hero-title animate-fade-in">{selectedComp.name}</h1>
+
+          {/* Tag Pills */}
+          <div className="hero-badges animate-fade-in-delayed">
+            {selectedComp.tags.map((tag, idx) => (
               <span key={idx} className="badge-pill">{tag}</span>
             ))}
           </div>
-          
-          <p key={`desc-${fadeKey}`} className="hero-description animate-fade-in-delayed-more">
-            {selectedComponent.description}
+
+          {/* Description */}
+          <p className="hero-description animate-fade-in-delayed-more">
+            {selectedComp.description}
           </p>
-          
-          {/* Controls */}
+
+          {/* Carousel Indicators & Controls */}
           <div className="hero-controls-wrapper animate-fade-in-delayed-more">
             <div className="hero-carousel-indicators">
               {componentGuide.map((comp, idx) => (
-                <div 
-                  key={comp.id} 
-                  className={`carousel-dot ${currentIndex === idx ? 'active' : ''}`}
+                <button
+                  key={comp.id}
+                  className={`carousel-dot ${currentIndex === idx ? "active" : ""}`}
                   onClick={() => handleSelectComponent(idx)}
-                ></div>
+                  aria-label={comp.name}
+                />
               ))}
             </div>
-            
+
             <div className="hero-nav-buttons">
-              <button onClick={handlePrev} className="nav-btn" aria-label="Previous component">
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+              <button
+                onClick={handlePrevComponent}
+                className="nav-btn"
+                aria-label="Previous component"
+                title="Previous component"
+              >
+                ‹
               </button>
-              <button onClick={handleNext} className="nav-btn" aria-label="Next component">
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+              <button
+                onClick={handleNextComponent}
+                className="nav-btn"
+                aria-label="Next component"
+                title="Next component"
+              >
+                ›
               </button>
             </div>
           </div>
         </div>
 
-        {/* ── SCROLL INDICATOR (Bottom Center) ── */}
-        <div 
+        {/* Floating Circular SCROLL Button */}
+        <div
           className="hero-scroll-guide"
           onClick={() => {
-            const target = document.getElementById("learn-modules-section");
+            const target = document.getElementById("sub-tab-bar");
             if (target) {
               target.scrollIntoView({ behavior: "smooth" });
             }
           }}
         >
           <span className="scroll-guide-text">SCROLL</span>
-          <svg className="scroll-guide-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="m6 9 6 6 6-6"/>
-          </svg>
+          <div className="scroll-chevron-bounce">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="m6 9 6 6 6-6" />
+            </svg>
+          </div>
         </div>
       </div>
 
-      {/* ── W3SCHOOLS-STYLE LEARNING HUB ── */}
-      <div id="learn-modules-section" className="w3-learning-section">
-        <div className="w3-learning-container">
-          <div className="w3-learning-header">
-            <div className="w3-badge-wrap">
-              <span className="w3-pill">W3Schools Learning Standard</span>
-              <span className="w3-module-indicator">Module: {selectedComponent.name}</span>
-            </div>
-            <h2 className="w3-main-title">Hardware Architecture & Technical Reference</h2>
-            <p className="w3-subtitle">
-              Master physical specifications, compatibility laws, and real-world engineering principles behind modern PC hardware.
-            </p>
-          </div>
-
-          {/* W3 Reference Navigation Banner */}
-          <div className="w3-ref-banner">
-            <div className="w3-ref-info">
-              <span className="w3-code-icon">⚡</span>
-              <div>
-                <strong>Connected Learning Hub:</strong> W3Schools computing fundamentals & computer systems architecture references.
-              </div>
-            </div>
-            <a 
-              href="https://www.w3schools.com/" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="w3-external-link"
+      {/* ── HORIZONTAL SUB-TAB SYSTEM BAR ── */}
+      <div id="sub-tab-bar" className="horizontal-subtab-bar">
+        <div className="subtab-bar-container">
+          <div className="subtab-pills-wrap">
+            <button
+              className={`subtab-btn ${activeTab === "overview" ? "active" : ""}`}
+              onClick={() => handleTabClick("overview", "key-specs-section")}
             >
-              Visit W3Schools Reference ↗
-            </a>
+              Overview
+            </button>
+            <button
+              className={`subtab-btn ${activeTab === "architecture" ? "active" : ""}`}
+              onClick={() => handleTabClick("architecture", "naming-decoder-section")}
+            >
+              Architecture
+            </button>
+            <button
+              className={`subtab-btn ${activeTab === "installation" ? "active" : ""}`}
+              onClick={() => handleTabClick("installation", "installation-section")}
+            >
+              Installation Guide
+            </button>
+            <button
+              className={`subtab-btn ${activeTab === "knowledge" ? "active" : ""}`}
+              onClick={() => handleTabClick("knowledge", "recommendation-matrix-section")}
+            >
+              Knowledge Check
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* ── MAIN CONTENT CONTAINER (VERTICAL CARDS STACK) ── */}
+      <div className="learn-content-flow">
+        <div className="learn-container">
+
+          {/* ══════════════════════════════════════════════════
+              CARD 1: KEY SPECIFICATIONS (8 TILES)
+             ══════════════════════════════════════════════════ */}
+          <div id="key-specs-section" className="mockup-card key-specs-card">
+            <div className="mockup-card-header">
+              <h3 className="mockup-card-title">Key Specifications</h3>
+              <span className="caret-icon">^</span>
+            </div>
+            <div className="specs-8grid">
+              {selectedComp.specs.map((spec, idx) => (
+                <div key={idx} className="spec-tile">
+                  <span className="spec-tile-label">{spec.label}</span>
+                  <span className="spec-tile-value">{spec.value}</span>
+                </div>
+              ))}
+            </div>
           </div>
 
-          {/* ── INTERACTIVE WORKBENCH: ARCHITECTURE OVERVIEW + GOOGLE-STYLE QUICK QUIZ FLASHCARDS ── */}
-          <div className="w3-academy-grid">
-            <div className="w3-panel w3-panel-main">
-              <div className="w3-panel-bar">
-                <span className="w3-dot red"></span>
-                <span className="w3-dot yellow"></span>
-                <span className="w3-dot green"></span>
-                <span className="w3-panel-title">technical_overview.sys</span>
-              </div>
-              <div className="w3-panel-body">
-                <h3>Understanding {selectedComponent.name}</h3>
-                <p className="w3-body-desc">{selectedComponent.whyMatters}</p>
-                
-                <div className="w3-code-box">
-                  <div className="w3-code-header">
-                    <span>HARDWARE DATA REGISTRY</span>
-                    <span className="w3-live-tag">LIVE SPEC</span>
-                  </div>
-                  <pre>
-                    <code>
-{`// System Specification Definition: ${selectedComponent.name}
-{
-  "category": "${selectedComponent.id.toUpperCase()}",
-  "operational_role": "${selectedComponent.tags.join(" | ")}",
-  "thermal_envelope": "${selectedComponent.specs.find(s => s.label.toLowerCase().includes('tdp') || s.label.toLowerCase().includes('power'))?.value || 'Dynamic'}",
-  "interface_socket": "${selectedComponent.specs.find(s => s.label.toLowerCase().includes('socket') || s.label.toLowerCase().includes('interface') || s.label.toLowerCase().includes('factor'))?.value || 'Standard'}"
-}`}
-                    </code>
-                  </pre>
-                </div>
-              </div>
+          {/* ══════════════════════════════════════════════════
+              CARD 2: TRY IT YOURSELF (COMPATIBILITY MATCHER)
+             ══════════════════════════════════════════════════ */}
+          <div id="matcher-section" className="mockup-card try-it-yourself-card">
+            <div className="mockup-card-header">
+              <h3 className="mockup-card-title">Try It Yourself</h3>
+              <span className="caret-icon">^</span>
             </div>
 
-            {/* ── GOOGLE SEARCH DEFINITION STYLE: QUICK QUIZ FLASH CARD DECK ── */}
-            <div className="w3-panel w3-panel-quiz">
-              <div className="w3-panel-bar">
-                <div className="w3-flashcard-header-left">
-                  <span className="google-quiz-icon">🔍</span>
-                  <span className="w3-panel-title">Quick Definition Quiz</span>
+            <div className="matcher-table-wrapper">
+              <div className="matcher-table-head">
+                <span className="col-head col-tier">Profile Tier</span>
+                <span className="col-head col-model">Component Model</span>
+                <span className="col-head col-socket">Interface / Socket Target</span>
+                <span className="col-head col-status">Status &amp; Action</span>
+              </div>
+
+              <div className="matcher-table-rows">
+                {matcherRows.map((row) => {
+                  const isMatch = row.socket === row.targetSocket;
+                  return (
+                    <div key={row.id} className={`matcher-row ${isMatch ? "match-ok" : "match-err"}`}>
+                      {/* Tier */}
+                      <div className="col-cell col-tier">
+                        <span className="tier-tag-text">{row.tier}</span>
+                      </div>
+
+                      {/* Model Dropdown */}
+                      <div className="col-cell col-model">
+                        <select
+                          className="mockup-select"
+                          value={row.model}
+                          onChange={(e) => handleModelChange(row.id, e.target.value)}
+                        >
+                          {selectedComp.modelOptions.map((opt, i) => (
+                            <option key={i} value={opt.name}>
+                              {opt.name} ({opt.socket})
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* Interface / Socket Dropdown */}
+                      <div className="col-cell col-socket">
+                        <select
+                          className="mockup-select"
+                          value={row.targetSocket}
+                          onChange={(e) => handleSocketChange(row.id, e.target.value)}
+                        >
+                          {selectedComp.targetSockets.map((sock, i) => (
+                            <option key={i} value={sock}>
+                              {sock}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* Status / Action */}
+                      <div className="col-cell col-status">
+                        {isMatch ? (
+                          <div className="status-cell-wrap">
+                            <span className="match-badge-success">✓ Compatible</span>
+                            <button
+                              className="btn-cell-builder"
+                              onClick={() => handleConnectToBuild(row.model, row.targetSocket)}
+                            >
+                              Load
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="status-cell-wrap">
+                            <span className="match-badge-error">✕ Incompatible</span>
+                            <button
+                              className="btn-cell-fix"
+                              onClick={() => handleSocketChange(row.id, row.socket)}
+                            >
+                              Fix
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          {/* ══════════════════════════════════════════════════
+              CARD 3: DETAILED NAMING & SUFFIX DECODER
+             ══════════════════════════════════════════════════ */}
+          <div id="naming-decoder-section" className="mockup-card naming-decoder-card">
+            <div className="mockup-card-header">
+              <h3 className="mockup-card-title">Detailed Naming &amp; Suffix Decoder</h3>
+              <span className="caret-icon">^</span>
+            </div>
+
+            <div className="decoder-2col-grid">
+              {/* Left Column Guide */}
+              <div className="decoder-table-panel intel-table-panel">
+                <div className={`decoder-panel-head ${selectedComp.namingLeft.colorClass}`}>
+                  <span>{selectedComp.namingLeft.title}</span>
                 </div>
-                <div className="w3-card-pills">
-                  {currentQuestions.map((_, qIdx) => (
-                    <button
-                      key={qIdx}
-                      className={`card-step-pill ${quizCardIndex === qIdx ? "active" : ""} ${userAnswers[`${selectedComponent.id}-${qIdx}`] !== undefined ? "answered" : ""}`}
-                      onClick={() => setQuizCardIndex(qIdx)}
-                      title={`Card ${qIdx + 1}`}
-                    >
-                      {qIdx + 1}
-                    </button>
+                <div className="decoder-rows-stack">
+                  {selectedComp.namingLeft.rows.map((r, i) => (
+                    <div key={i} className="decoder-spec-row">
+                      <span className="d-label">{r.label}</span>
+                      <span className="d-val">{r.val}</span>
+                    </div>
                   ))}
                 </div>
               </div>
-              
-              <div className="w3-panel-body google-flashcard-body">
-                <div className="flashcard-badge-row">
-                  <span className="flashcard-tag">QUESTION {quizCardIndex + 1} OF {currentQuestions.length}</span>
-                  <span className="flashcard-topic">{selectedComponent.name}</span>
+
+              {/* Right Column Guide */}
+              <div className="decoder-table-panel amd-table-panel">
+                <div className={`decoder-panel-head ${selectedComp.namingRight.colorClass}`}>
+                  <span>{selectedComp.namingRight.title}</span>
                 </div>
-
-                <h4 className="flashcard-question-text">
-                  {currentCard.question}
-                </h4>
-
-                <div className="flashcard-options-list">
-                  {currentCard.options.map((opt, optIdx) => {
-                    const answeredOpt = userAnswers[`${selectedComponent.id}-${quizCardIndex}`];
-                    const isSelected = answeredOpt === optIdx;
-                    const showFeedback = answeredOpt !== undefined;
-                    
-                    let statusClass = "";
-                    if (showFeedback) {
-                      if (opt.correct) statusClass = "correct-choice";
-                      else if (isSelected && !opt.correct) statusClass = "wrong-choice";
-                    }
-
-                    return (
-                      <button
-                        key={optIdx}
-                        className={`flashcard-opt-btn ${isSelected ? "selected" : ""} ${statusClass}`}
-                        onClick={() => handleAnswerSelect(quizCardIndex, optIdx)}
-                      >
-                        <span className="opt-letter">{String.fromCharCode(65 + optIdx)}</span>
-                        <span className="opt-text">{opt.text}</span>
-                        {showFeedback && opt.correct && <span className="opt-check">✓</span>}
-                        {showFeedback && isSelected && !opt.correct && <span className="opt-cross">✕</span>}
-                      </button>
-                    );
-                  })}
-                </div>
-
-                {userAnswers[`${selectedComponent.id}-${quizCardIndex}`] !== undefined && (
-                  <div className="flashcard-explanation-box animate-fade-in">
-                    <span className="exp-icon">💡</span>
-                    <span className="exp-text">
-                      <strong>Takeaway: </strong>{currentCard.explanation}
-                    </span>
-                  </div>
-                )}
-
-                <div className="flashcard-footer-controls">
-                  <button 
-                    className="flashcard-nav-btn"
-                    disabled={quizCardIndex === 0}
-                    onClick={() => setQuizCardIndex(prev => Math.max(0, prev - 1))}
-                  >
-                    ← Previous
-                  </button>
-                  <span className="flashcard-progress-counter">
-                    Card {quizCardIndex + 1} / {currentQuestions.length}
-                  </span>
-                  <button 
-                    className="flashcard-nav-btn next-btn"
-                    disabled={quizCardIndex === currentQuestions.length - 1}
-                    onClick={() => setQuizCardIndex(prev => Math.min(currentQuestions.length - 1, prev + 1))}
-                  >
-                    Next Card →
-                  </button>
+                <div className="decoder-rows-stack">
+                  {selectedComp.namingRight.rows.map((r, i) => (
+                    <div key={i} className="decoder-spec-row">
+                      <span className="d-label">{r.label}</span>
+                      <span className="d-val">{r.val}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* ── DETAIL PANEL ── */}
-      <div className="detail-panel">
-        <div className="detail-cards-grid">
-          {/* ── SPECS TABLE ── */}
-          <div className="content-card">
-            <h3 className="section-title">Key Specifications</h3>
-            <div className="specs-grid">
-              {selectedComponent.specs.map((spec, idx) => (
-                <div key={idx} className="spec-item">
-                  <div className="spec-label">{spec.label}</div>
-                  <div className="spec-value">{spec.value}</div>
-                  <div className="spec-info">{spec.info}</div>
-                </div>
-              ))}
-            </div>
-          </div>
+          {/* ══════════════════════════════════════════════════
+              CARD 4: 2-COLUMN SECTION (INSTALLATION & QUIZ/MISTAKES)
+             ══════════════════════════════════════════════════ */}
+          <div id="installation-section" className="split-2col-layout">
+            {/* LEFT COLUMN: STEP-BY-STEP INSTALLATION */}
+            <div className="mockup-card installation-card">
+              <div className="mockup-card-header">
+                <h3 className="mockup-card-title">Step-by-Step Installation</h3>
+                <span className="caret-icon">^</span>
+              </div>
 
-          {/* ── PRO TIPS ── */}
-          <div className="content-card">
-            <h3 className="section-title">Pro Tips</h3>
-            <div className="tips-grid">
-              {selectedComponent.proTips.map((tip, idx) => (
-                <div key={idx} className="tip-item">
-                  <span>{tip}</span>
-                </div>
-              ))}
-            </div>
-          </div>
+              <div className="installation-steps-stack">
+                {selectedComp.steps.map((item) => (
+                  <div
+                    key={item.step}
+                    className={`step-interactive-row ${activeStep === item.step ? "active-step" : ""}`}
+                    onClick={() => setActiveStep(item.step)}
+                  >
+                    <div className="step-left-content">
+                      <span className="step-tag-bold">Step {item.step}</span>
+                      <p className="step-title-text">{item.title}</p>
+                      <p className="step-desc-text">{item.desc}</p>
+                    </div>
 
-          {/* ── COMMON MISTAKES ── */}
-          <div className="content-card">
-            <h3 className="section-title">Common Mistakes to Avoid</h3>
-            <div className="mistakes-grid">
-              {selectedComponent.commonMistakes.map((mistake, idx) => (
-                <div key={idx} className="mistake-item">
-                  <span>{mistake}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* ── BEST FOR ── */}
-          <div className="content-card">
-            <h3 className="section-title">Recommendation Matrix</h3>
-            <div className="best-for-grid">
-              {Object.entries(selectedComponent.bestFor).map(
-                ([useCase, recommendation], idx) => (
-                  <div key={idx} className="best-for-item">
-                    <div className="use-case">{useCase}</div>
-                    <div className="recommendation">{recommendation}</div>
-                  </div>
-                )
-              )}
-            </div>
-          </div>
-
-          {/* ── BRANDS ── */}
-          <div className="content-card">
-            <h3 className="section-title">Popular Hardware Manufacturers</h3>
-            <div className="brands-grid">
-              {selectedComponent.brands.map((brand, idx) => (
-                <div key={idx} className="brand-item">
-                  <div className="brand-header">
-                    <div>
-                      <div className="brand-name">{brand.name}</div>
-                      <div className="brand-tier">{brand.tier}</div>
+                    <div className="step-icon-graphic">
+                      {item.step === 1 && "🖥️"}
+                      {item.step === 2 && "📐"}
+                      {item.step === 3 && "⚡"}
+                      {item.step === 4 && "🔒"}
+                      {item.step === 5 && "❄️"}
                     </div>
                   </div>
-                  <p className="brand-description">{brand.description}</p>
+                ))}
+              </div>
+
+              {/* COMMON ERRORS BOX */}
+              <div className="common-errors-alert">
+                <div className="errors-header-line">
+                  <span className="error-title-text">Common Errors</span>
+                  <span className="error-badge-pill">Danger</span>
+                </div>
+                <p className="error-body-text">{selectedComp.commonErrors}</p>
+              </div>
+            </div>
+
+            {/* RIGHT COLUMN: QUIZ & COMMON MISTAKES */}
+            <div className="right-subcolumn">
+              {/* QUIZ CARD */}
+              <div className="mockup-card quiz-card">
+                <div className="mockup-card-header">
+                  <h3 className="mockup-card-title">Quiz</h3>
+                  <span className="caret-icon">^</span>
+                </div>
+
+                <div className="quiz-card-body">
+                  <p className="quiz-prompt">{currentQuiz.question}</p>
+
+                  <div className="quiz-options-vertical">
+                    {currentQuiz.options.map((opt, i) => {
+                      const answered = quizAnswers[quizIndex];
+                      const isSelected = answered === i;
+                      const showResult = answered !== undefined;
+
+                      let optClass = "";
+                      if (showResult) {
+                        if (opt.correct) optClass = "opt-correct";
+                        else if (isSelected) optClass = "opt-wrong";
+                      }
+
+                      return (
+                        <button
+                          key={i}
+                          className={`quiz-choice-btn ${isSelected ? "selected" : ""} ${optClass}`}
+                          onClick={() => setQuizAnswers((prev) => ({ ...prev, [quizIndex]: i }))}
+                        >
+                          <span className="choice-bullet">{isSelected ? "●" : "○"}</span>
+                          <span className="choice-text">{opt.text}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {quizAnswers[quizIndex] !== undefined && (
+                    <div className="quiz-feedback-box animate-fade-in">
+                      <strong>Takeaway:</strong> {currentQuiz.explanation}
+                    </div>
+                  )}
+
+                  <div className="quiz-footer-actions">
+                    <span className="quiz-progress-text">
+                      Question {quizIndex + 1} of {selectedComp.quiz.length}
+                    </span>
+                    <button
+                      className="quiz-action-btn"
+                      onClick={() => {
+                        if (quizIndex < selectedComp.quiz.length - 1) {
+                          setQuizIndex((prev) => prev + 1);
+                        } else {
+                          setQuizIndex(0);
+                        }
+                      }}
+                    >
+                      {quizIndex < selectedComp.quiz.length - 1 ? "Next" : "Restart ↺"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* COMMON MISTAKES TO AVOID CARD */}
+              <div className="mockup-card common-mistakes-card">
+                <div className="mockup-card-header">
+                  <h3 className="mockup-card-title red-title">Common Mistakes to Avoid</h3>
+                </div>
+
+                <div className="mistakes-2x2-grid">
+                  {selectedComp.mistakes.map((m, idx) => (
+                    <div
+                      key={idx}
+                      className="mistake-badge-btn"
+                      onClick={() => setSelectedMistake(selectedMistake === m.name ? null : m.name)}
+                    >
+                      <span className="m-icon">⚠️</span>
+                      <span className="m-name">{m.name}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {selectedMistake && (
+                  <div className="mistake-details-drawer animate-fade-in">
+                    {selectedComp.mistakes.find((m) => m.name === selectedMistake)?.desc}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* ══════════════════════════════════════════════════
+              CARD 5: RECOMMENDATION MATRIX (NO APPLE)
+             ══════════════════════════════════════════════════ */}
+          <div id="recommendation-matrix-section" className="mockup-card matrix-card">
+            <div className="mockup-card-header">
+              <h3 className="mockup-card-title">{selectedComp.name} Recommendation Matrix</h3>
+              <a href="#matcher-section" className="view-specs-link">View specs</a>
+            </div>
+
+            <div className="matrix-table-responsive">
+              <table className="matrix-table">
+                <thead>
+                  <tr>
+                    <th>Build tier</th>
+                    <th>Recommended Hardware</th>
+                    <th>Interface / Target</th>
+                    <th>Target Spec</th>
+                    <th>Release / TDP</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {selectedComp.matrix.map((row, idx) => (
+                    <tr key={idx} className={row.highlight ? "highlight-green-row" : ""}>
+                      <td><span className="matrix-tier-name">{row.tier}</span></td>
+                      <td><strong>{row.cpu}</strong></td>
+                      <td>{row.socket}</td>
+                      <td>{row.spec}</td>
+                      <td>{row.tdp}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* ══════════════════════════════════════════════════
+              CARD 6: POPULAR MANUFACTURERS (NO APPLE)
+             ══════════════════════════════════════════════════ */}
+          <div className="mockup-card popular-manufacturers-card">
+            <div className="mockup-card-header">
+              <h3 className="mockup-card-title">Popular Manufacturers</h3>
+            </div>
+
+            <div className="manufacturers-4col-grid">
+              {selectedComp.brands.map((brand, idx) => (
+                <div key={idx} className="mfg-card-tile">
+                  <span className="mfg-logo-icon">{brand.icon}</span>
+                  <div className="mfg-text-wrap">
+                    <span className="mfg-title">{brand.name}</span>
+                    <span className="mfg-sub">{brand.desc}</span>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
-        </div>
-        
-        {/* ── CTA ── */}
-        <div className="detail-cta" style={{ display: 'flex', gap: '20px', justifyContent: 'center' }}>
-          <Link to="/build" className="cta-button-neon">
-            Launch PC Builder
-          </Link>
-          <Link to="/brands" className="cta-button-neon">
-            Explore All Brands
-          </Link>
+
+          {/* ══════════════════════════════════════════════════
+              CARD 7: ACTION BAR ("READY TO BUILD YOUR DREAM PC?")
+             ══════════════════════════════════════════════════ */}
+          <div className="mockup-card action-bar-card">
+            <div className="action-left-text">
+              <h4 className="action-main-title">Ready to build your dream PC?</h4>
+              <p className="action-sub-text">
+                Put your hardware knowledge to work with real-time socket matching, power estimation, and 3D component fitting.
+              </p>
+            </div>
+
+            <div className="action-right-buttons">
+              <button
+                className="btn-connect-build"
+                onClick={() => handleConnectToBuild(selectedComp.matcherRows[0]?.model, selectedComp.matcherRows[0]?.socket)}
+              >
+                ⚡ Connect to Build
+              </button>
+              <Link to="/brands" className="btn-add-charts">
+                + Add Spec Charts
+              </Link>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>

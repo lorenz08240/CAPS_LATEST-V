@@ -8,43 +8,37 @@ export const buildSteps = [
   {
     key: "case",
     label: "PC Case",
-    icon: "🖥️",
     description: "Houses all components",
   },
   {
     key: "motherboard",
     label: "Motherboard",
-    icon: "🖲️",
     description: "Connects all components",
   },
   {
     key: "cpu",
     label: "CPU (Processor)",
-    icon: "⚙️",
+
     description: "The brain of your PC",
   },
   {
     key: "ram",
     label: "RAM (Memory)",
-    icon: "💾",
     description: "Temporary data storage",
   },
   {
     key: "storage",
     label: "Storage",
-    icon: "💿",
     description: "Permanent data storage",
   },
   {
     key: "gpu",
     label: "GPU (Graphics Card)",
-    icon: "🎮",
     description: "Handles graphics and gaming",
   },
   {
     key: "psu",
     label: "Power Supply (PSU)",
-    icon: "⚡",
     description: "Powers your entire system",
   },
 ];
@@ -231,8 +225,8 @@ function Build({ isIntegrated = false }) {
                   <div className="sidebar-cta-text">
                     <span className="sidebar-cta-label">Launch 3D Studio</span>
                     <span className="sidebar-cta-sub">
-                      {selectedComponents.length === 0 
-                        ? "Interactive 3D Assembly" 
+                      {selectedComponents.length === 0
+                        ? "Interactive 3D Assembly"
                         : `Inspect ${selectedComponents.length}/${buildSteps.length} parts in 3D`}
                     </span>
                   </div>

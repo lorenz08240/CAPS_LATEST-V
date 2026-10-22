@@ -15,14 +15,12 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    90deg,
-    rgba(10, 14, 22, 0.78) 0%,
-    rgba(10, 14, 22, 0.4) 28%,
-    rgba(10, 14, 22, 0.25) 50%,
-    rgba(10, 14, 22, 0.45) 75%,
-    rgba(10, 14, 22, 0.82) 100%
-  );
+  background: linear-gradient(90deg,
+      rgba(10, 14, 22, 0.78) 0%,
+      rgba(10, 14, 22, 0.4) 28%,
+      rgba(10, 14, 22, 0.25) 50%,
+      rgba(10, 14, 22, 0.45) 75%,
+      rgba(10, 14, 22, 0.82) 100%);
   pointer-events: none;
   z-index: 1;
 }

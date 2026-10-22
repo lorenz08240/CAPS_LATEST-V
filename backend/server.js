@@ -10,7 +10,7 @@ app.use(express.json());
 // API to get all parts grouped by category
 app.get("/api/parts", async (req, res) => {
   try {
-    const [rows] = await db.query("SELECT * FROM pc_parts");
+    const [rows] = await db.query("SELECT * FROM pc_parts ORDER BY created_at DESC, id DESC");
     const componentsData = {};
     rows.forEach(row => {
       if (!componentsData[row.category]) {
@@ -19,11 +19,10 @@ app.get("/api/parts", async (req, res) => {
       
       // Map the DB row to the frontend format
       const item = { ...row };
-      // The column in DB is already `desc`, so row.desc has the data.
-      // Ensure strings are not null to prevent frontend crashes:
       item.desc = item.desc || "";
       item.name = item.name || "";
       item.brand = item.brand || "";
+      item.created_at = item.created_at || new Date().toISOString();
 
       if (typeof item.tags === 'string') {
         try { item.tags = JSON.parse(item.tags); } catch(e) {}
@@ -40,7 +39,7 @@ app.get("/api/parts", async (req, res) => {
 // API to get parts by category
 app.get("/api/parts/:category", async (req, res) => {
   try {
-    const [rows] = await db.query("SELECT * FROM pc_parts WHERE category = ?", [
+    const [rows] = await db.query("SELECT * FROM pc_parts WHERE category = ? ORDER BY created_at DESC, id DESC", [
       req.params.category,
     ]);
     res.json(rows.map(row => {
@@ -48,6 +47,7 @@ app.get("/api/parts/:category", async (req, res) => {
       item.desc = item.desc || "";
       item.name = item.name || "";
       item.brand = item.brand || "";
+      item.created_at = item.created_at || new Date().toISOString();
       if (typeof item.tags === 'string') {
         try { item.tags = JSON.parse(item.tags); } catch(e) {}
       }
@@ -70,8 +70,8 @@ app.post("/api/parts", async (req, res) => {
 
     const query = `
       INSERT INTO pc_parts 
-      (id, category, img, brand, name, \`desc\`, price, tags, socket_type, ddr_type, form_factor, power_required, wattage, capacity, speed, type, efficiency) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      (id, category, img, brand, name, \`desc\`, price, tags, socket_type, ddr_type, form_factor, power_required, wattage, capacity, speed, type, efficiency, created_at) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
       ON DUPLICATE KEY UPDATE
       category=VALUES(category), img=VALUES(img), brand=VALUES(brand), name=VALUES(name), \`desc\`=VALUES(\`desc\`), price=VALUES(price), tags=VALUES(tags),
       socket_type=VALUES(socket_type), ddr_type=VALUES(ddr_type), form_factor=VALUES(form_factor), power_required=VALUES(power_required),
@@ -327,25 +327,6 @@ const initScrapedQueueTable = async () => {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
-
-    // Seed initial EasyPC items if queue is empty
-    const [existing] = await db.query("SELECT COUNT(*) as cnt FROM scraped_queue");
-    if (existing[0]?.cnt === 0) {
-      const initialEasyPC = [
-        ["easypc-c500", "1) Source: EasyPC", "EasyPC", "2023-03-11", "GIGABYTE AORUS C500 GLASS Micro ATX Case", "case", "GIGABYTE", "Micro ATX", null, null, null, "₱6,450", "/pcbackground.png", "Scraped from EasyPC via BuildLab Crawler", JSON.stringify(["scraped", "case", "easypc"]), 0],
-        ["easypc-2300x", "2) Source: EasyPC", "EasyPC", "2024-03-14", "GIGABYTE AORUS 2300X ATX Tower", "case", "GIGABYTE", "ATX", null, null, null, "₱5,200", "/pcbackground.png", "Scraped from EasyPC via BuildLab Crawler", JSON.stringify(["scraped", "case", "easypc"]), 0],
-        ["easypc-psu-bundle", "3) Source: EasyPC", "EasyPC", "2023-03-13", "GIGABYTE GP-P750GM 750W 80+ Gold Power Supply", "psu", "GIGABYTE", null, null, null, "750", "₱4,850", "/pcbackground.png", "Scraped from EasyPC via BuildLab Crawler", JSON.stringify(["scraped", "psu", "easypc"]), 0],
-        ["easypc-ssd-1tb", "4) Source: EasyPC", "EasyPC", "2024-03-13", "GIGABYTE AORUS Gen4 7300 SSD 1TB NVMe M.2", "storage", "GIGABYTE", null, null, null, null, "₱4,590", "/pcbackground.png", "Scraped from EasyPC via BuildLab Crawler", JSON.stringify(["scraped", "storage", "easypc"]), 0]
-      ];
-
-      for (const row of initialEasyPC) {
-        await db.query(`
-          INSERT IGNORE INTO scraped_queue 
-          (id, source, source_name, date, scraped_name, category, brand, form_factor, socket_type, ddr_type, wattage, price, img, \`desc\`, tags, approved)
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `, row);
-      }
-    }
   } catch (err) {
     console.error("Scraped queue table check error:", err.message);
   }
@@ -397,15 +378,21 @@ app.post("/api/scraped-queue/merge", async (req, res) => {
 
     let mergedCount = 0;
     for (const item of approvedItems) {
-      const prodId = item.id.startsWith("easypc-") ? item.id : `prod-${item.id}`;
+      let prodId = item.id.startsWith("easypc-") ? item.id : `prod-${item.id}`;
+      // Check if prodId already exists in pc_parts; if so, append unique suffix to make it a distinct added component
+      const [existingPart] = await db.query("SELECT id FROM pc_parts WHERE id = ?", [prodId]);
+      if (existingPart && existingPart.length > 0) {
+        prodId = `${prodId}-${Date.now().toString().slice(-4)}`;
+      }
+
       const query = `
         INSERT INTO pc_parts 
-        (id, category, img, brand, name, \`desc\`, price, tags, socket_type, ddr_type, form_factor, power_required, wattage, capacity, speed, type, efficiency) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        (id, category, img, brand, name, \`desc\`, price, tags, socket_type, ddr_type, form_factor, power_required, wattage, capacity, speed, type, efficiency, created_at) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
         ON DUPLICATE KEY UPDATE
         category=VALUES(category), img=VALUES(img), brand=VALUES(brand), name=VALUES(name), \`desc\`=VALUES(\`desc\`),
         price=VALUES(price), tags=VALUES(tags), socket_type=VALUES(socket_type), ddr_type=VALUES(ddr_type),
-        form_factor=VALUES(form_factor), wattage=VALUES(wattage)
+        form_factor=VALUES(form_factor), wattage=VALUES(wattage), created_at=NOW()
       `;
       const values = [
         prodId, item.category || "case", item.img || "/pcbackground.png",
@@ -429,6 +416,7 @@ app.post("/api/scraped-queue/merge", async (req, res) => {
       message: `Successfully verified and merged ${mergedCount} item(s) from EasyPC into production inventory!`
     });
   } catch (err) {
+    console.error("Scraped queue merge error:", err);
     res.status(500).json({ error: err.message });
   }
 });
