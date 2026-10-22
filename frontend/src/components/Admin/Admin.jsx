@@ -523,6 +523,26 @@ function Admin() {
 
       setIsEditing(false);
       setEditingId(null);
+
+      // Reset form to blank defaults after successful add/edit
+      setFormData({
+        id: "",
+        category: activeTab,
+        img: "/pcbackground.png",
+        brand: "",
+        name: "",
+        desc: "",
+        tags: "",
+        socket_type: "",
+        ddr_type: "",
+        form_factor: "",
+        power_required: "",
+        wattage: "",
+        capacity: "",
+        speed: "",
+        type: "",
+        efficiency: ""
+      });
     } catch (err) {
       setMessage("Error saving component: " + err.message);
     } finally {
@@ -671,49 +691,7 @@ function Admin() {
     }
   };
 
-  if (!isAdmin) {
-    return (
-      <div className="admin-page-wrapper">
-        <div className="admin-page admin-login-wrapper">
-          <div className="admin-login-left">
-            <div className="login-graphic">
-              <h1>BuildLab Control Deck</h1>
-              <p>Secure access for hardware administration and matrix configuration.</p>
-              <div className="cyber-circuit"></div>
-            </div>
-          </div>
-
-          <div className="admin-login-right">
-            <div className="admin-panel login-panel">
-              <h2>Admin Access</h2>
-              <form onSubmit={handleLogin} className="admin-form">
-                <div className="form-group">
-                  <label>Password</label>
-                  <div className="password-input-wrapper">
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Enter admin password"
-                      required
-                    />
-                    <button type="button" className="eye-btn" onClick={() => setShowPassword(!showPassword)}>
-                      {showPassword ? "👁️" : "👁️‍🗨️"}
-                    </button>
-                  </div>
-                </div>
-                <button type="submit" className="admin-submit-btn" style={{ width: "100%" }}>Login</button>
-                <button type="button" className="return-link" onClick={() => window.location.href = "/"}>
-                  &larr; Return to Student Builder
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
+  // ── HOOKS MUST BE CALLED BEFORE ANY CONDITIONAL RETURNS (React Rules of Hooks) ──
   const filteredParts = useMemo(() => {
     let result = parts
       .filter((p) => activeTab === "all" ? true : p.category === activeTab)
@@ -781,6 +759,50 @@ function Admin() {
   };
 
   const totalComponentsCount = parts.length;
+
+  // ── LOGIN SCREEN (conditional return AFTER all hooks) ──
+  if (!isAdmin) {
+    return (
+      <div className="admin-page-wrapper">
+        <div className="admin-page admin-login-wrapper">
+          <div className="admin-login-left">
+            <div className="login-graphic">
+              <h1>BuildLab Control Deck</h1>
+              <p>Secure access for hardware administration and matrix configuration.</p>
+              <div className="cyber-circuit"></div>
+            </div>
+          </div>
+
+          <div className="admin-login-right">
+            <div className="admin-panel login-panel">
+              <h2>Admin Access</h2>
+              <form onSubmit={handleLogin} className="admin-form">
+                <div className="form-group">
+                  <label>Password</label>
+                  <div className="password-input-wrapper">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Enter admin password"
+                      required
+                    />
+                    <button type="button" className="eye-btn" onClick={() => setShowPassword(!showPassword)}>
+                      {showPassword ? "👁️" : "👁️‍🗨️"}
+                    </button>
+                  </div>
+                </div>
+                <button type="submit" className="admin-submit-btn" style={{ width: "100%" }}>Login</button>
+                <button type="button" className="return-link" onClick={() => window.location.href = "/"}>
+                  &larr; Return to Student Builder
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="admin-page-wrapper">
@@ -1271,6 +1293,31 @@ function Admin() {
               </button>
             </div>
 
+            {/* STATS ROW */}
+            <div className="scraped-stats-row">
+              <div className="scraped-stat-chip">
+                <span className="stat-chip-value">{scrapedQueue.length}</span>
+                <span className="stat-chip-label">Total In Queue</span>
+              </div>
+              <div className="scraped-stat-chip stat-chip-today">
+                <span className="stat-chip-value">
+                  {scrapedQueue.filter(item => {
+                    const today = new Date().toISOString().slice(0, 10);
+                    return item.date === today;
+                  }).length}
+                </span>
+                <span className="stat-chip-label">Crawled Today</span>
+              </div>
+              <div className="scraped-stat-chip stat-chip-approved">
+                <span className="stat-chip-value">{scrapedQueue.filter(i => i.approved).length}</span>
+                <span className="stat-chip-label">Approved</span>
+              </div>
+              <div className="scraped-stat-chip stat-chip-pending">
+                <span className="stat-chip-value">{scrapedQueue.filter(i => !i.approved).length}</span>
+                <span className="stat-chip-label">Pending</span>
+              </div>
+            </div>
+
             {/* GOLD-BORDERED HEADER BAR */}
             <div className="gold-header-bar">
               <div className="col-source">SOURCE</div>
@@ -1295,6 +1342,7 @@ function Admin() {
                   </select>
                 </div>
               </div>
+              <div className="col-image">IMAGE</div>
               <div className="col-name">SCRAPED NAME / MODEL</div>
               <div className="col-actions">ACTIONS</div>
             </div>
@@ -1321,6 +1369,18 @@ function Admin() {
                       <span className={`scraped-category-pill badge-cat-${itemCat}`}>
                         {CATEGORY_LABELS[itemCat] || itemCat.toUpperCase()}
                       </span>
+                    </div>
+
+                    {/* COMPONENT IMAGE THUMBNAIL */}
+                    <div className="scraped-image-cell">
+                      <div className="scraped-thumb-wrap">
+                        <img
+                          src={item.img || "/pcbackground.png"}
+                          alt={item.scrapedName || item.scraped_name || "Component"}
+                          className="scraped-thumb-img"
+                          onError={(e) => { e.target.src = "/pcbackground.png"; }}
+                        />
+                      </div>
                     </div>
 
                     <div className="scraped-name-cell" title={item.scrapedName || item.scraped_name}>

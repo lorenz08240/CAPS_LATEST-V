@@ -1074,10 +1074,72 @@
   transform: none;
 }
 
+/* Stats Row under header */
+.scraped-stats-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.scraped-stat-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 18px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  min-width: 90px;
+}
+
+.stat-chip-value {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #f8fafc;
+  line-height: 1.2;
+}
+
+.stat-chip-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.stat-chip-today {
+  border-color: rgba(212, 163, 75, 0.4);
+  background: rgba(212, 163, 75, 0.08);
+}
+
+.stat-chip-today .stat-chip-value {
+  color: #f6d88e;
+}
+
+.stat-chip-approved {
+  border-color: rgba(0, 255, 163, 0.3);
+  background: rgba(0, 255, 163, 0.06);
+}
+
+.stat-chip-approved .stat-chip-value {
+  color: #00ffa3;
+}
+
+.stat-chip-pending {
+  border-color: rgba(251, 191, 36, 0.3);
+  background: rgba(251, 191, 36, 0.06);
+}
+
+.stat-chip-pending .stat-chip-value {
+  color: #fbbf24;
+}
+
 /* Gold-Bordered Table Header Bar */
 .gold-header-bar {
   display: grid;
-  grid-template-columns: 16% 11% 15% 36% 22%;
+  grid-template-columns: 14% 9% 13% 8% 34% 22%;
   align-items: center;
   padding: 11px 16px;
   background: linear-gradient(90deg, rgba(181, 132, 52, 0.42) 0%, rgba(135, 95, 27, 0.32) 100%);
@@ -1169,7 +1231,7 @@
 /* Scraped Item Card Row matching User Design */
 .scraped-item-card-row {
   display: grid;
-  grid-template-columns: 16% 11% 15% 36% 22%;
+  grid-template-columns: 14% 9% 13% 8% 34% 22%;
   align-items: center;
   padding: 14px 16px;
   background: rgba(12, 18, 30, 0.75);
@@ -1325,6 +1387,45 @@
   overflow: hidden;
   text-overflow: ellipsis;
   padding: 2px 0;
+}
+
+/* Scraped Image Cell */
+.col-image {
+  text-align: center;
+}
+
+.scraped-image-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scraped-thumb-wrap {
+  width: 52px;
+  height: 52px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.scraped-thumb-wrap:hover {
+  transform: scale(1.6);
+  z-index: 10;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  border-color: rgba(212, 163, 75, 0.6);
+}
+
+.scraped-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 /* Scraped Actions Cell: Horizontal Row Matching User's First Image */
