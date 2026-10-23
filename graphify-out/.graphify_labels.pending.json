@@ -6,6 +6,7 @@
   "4": "App.jsx",
   "6": "BuildContext.jsx",
   "7": "devDependencies",
+  "8": "[2026-10-23] - OpenCode Session - Immersive Fullscreen System & UX Cleanups (OC)",
   "9": "Home.jsx",
   "10": "SynthAudio",
   "11": "Workspace Rules & Instructions",
@@ -18,6 +19,8 @@
   "18": "cleanse.md",
   "19": "notes.md",
   "20": "postcss.config.js",
+  "21": "rules.js",
   "22": "BuildLab Changelog",
-  "23": "BuildLab Commands & Workflows Cheat Sheet"
+  "23": "BuildLab Commands & Workflows Cheat Sheet",
+  "24": "dependencies"
 }

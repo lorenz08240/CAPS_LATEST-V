@@ -66,10 +66,12 @@ function AppContent() {
 
                 </Routes>
               </AnimatePresence>
-              {/* Footer suppressed on the Build experience — the Component
-                  Picker (home "/") and /build are fixed viewport-height
-                  workspaces with no page scrolling. */}
-              {location.pathname !== "/" && location.pathname !== "/build" && !location.pathname.startsWith("/learn") && <Footer />}
+              {/* Footer suppressed on immersive fullscreen workstations */}
+              {location.pathname !== "/" &&
+                location.pathname !== "/build" &&
+                location.pathname !== "/compatibility" &&
+                location.pathname !== "/3d-builder" &&
+                !location.pathname.startsWith("/learn") && <Footer />}
             </main>
     </div>
   );

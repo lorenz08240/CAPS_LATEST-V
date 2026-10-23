@@ -8,6 +8,7 @@ import {
   needsRotation,
   onViewportChange,
 } from "../../utilities/fullscreen";
+import soundManager from "../../utilities/soundManager";
 import "./FullscreenGate.css";
 
 /**
@@ -59,7 +60,8 @@ export default function FullscreenGate({ children, requireFullscreen = false }) 
   }, [showRotation, showFullscreen]);
 
   const handleEnterFullscreen = useCallback(async () => {
-    await enterFullscreen();
+    const ok = await enterFullscreen();
+    if (ok) soundManager.granted();
   }, []);
 
   return (
@@ -101,10 +103,13 @@ export default function FullscreenGate({ children, requireFullscreen = false }) 
               <span className="fs-gate-frame fs-gate-frame-large" />
             </div>
             <div className="fs-gate-badge">IMMERSIVE MODE REQUIRED</div>
-            <h1 className="fs-gate-title">Return to Full Screen</h1>
+            <h1 className="fs-gate-title">
+              {engaged ? "Return to Full Screen" : "Enter Full Screen"}
+            </h1>
             <p className="fs-gate-desc">
-              You left full screen mode — your build station is paused. Hop back
-              in for the complete interactive experience.
+              {engaged
+                ? "You left full screen mode — your workstation is paused. Hop back in for the complete interactive experience."
+                : "BuildLab is designed as an immersive hardware workstation. Enter full screen for the complete interactive experience."}
             </p>
             <button
               type="button"

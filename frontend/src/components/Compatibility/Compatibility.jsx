@@ -4,9 +4,10 @@ import { Link } from "react-router-dom";
 import { useBuild } from "../../contexts/BuildContext";
 import { getCompatibilitySummary } from "../../utilities/rules";
 import soundManager from "../../utilities/soundManager";
+import FullscreenGate from "../FullscreenGate/FullscreenGate";
 import "./Compatibility.css";
 
-export default function Compatibility({ isIntegrated = false }) {
+function CompatibilityView({ isIntegrated = false }) {
   const {
     currentBuild,
     getSelectedComponents,
@@ -886,4 +887,9 @@ export default function Compatibility({ isIntegrated = false }) {
       </div>
     </>
   );
+}
+
+export default function Compatibility({ isIntegrated = false }) {
+  const content = <CompatibilityView isIntegrated={isIntegrated} />;
+  return isIntegrated ? content : <FullscreenGate requireFullscreen>{content}</FullscreenGate>;
 }

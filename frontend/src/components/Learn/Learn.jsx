@@ -2,6 +2,7 @@ import CourseShell from "./CourseShell";
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useBuild } from "../../contexts/BuildContext";
+import FullscreenGate from "../FullscreenGate/FullscreenGate";
 import "./Learn.css";
 
 // ── COMPREHENSIVE HARDWARE COMPONENTS GUIDE ──
@@ -559,5 +560,9 @@ const componentGuide = [
 ];
 
 export default function Learn() {
-  return <CourseShell componentGuide={componentGuide} />;
+  return (
+    <FullscreenGate requireFullscreen>
+      <CourseShell componentGuide={componentGuide} />
+    </FullscreenGate>
+  );
 }

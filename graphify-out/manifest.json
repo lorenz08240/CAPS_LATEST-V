@@ -66,9 +66,9 @@
     "semantic_hash": "8e5f2021f5b1721b527c842f43f78c73"
   },
   "frontend/src/App.jsx": {
-    "mtime": 1792715345.806391,
-    "seen": 1792715643.1025653,
-    "ast_hash": "8e3fce15b46f1e8a7ca48f1cea768a3c",
+    "mtime": 1792718504.472244,
+    "seen": 1792718526.9173195,
+    "ast_hash": "ebc5ae60db06a3c724251e20430c812f",
     "semantic_hash": ""
   },
   "frontend/src/components/3D/ComponentModels3D.jsx": {
@@ -114,9 +114,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Compatibility/Compatibility.jsx": {
-    "mtime": 1792717782.6974113,
-    "seen": 1792717819.3218176,
-    "ast_hash": "bf30de92bc1123a37f12a5d32a18f8d7",
+    "mtime": 1792718460.7271504,
+    "seen": 1792718526.9188144,
+    "ast_hash": "343e0eff657afb063353e2061beed221",
     "semantic_hash": ""
   },
   "frontend/src/components/Footer/Footer.jsx": {
@@ -132,9 +132,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/Learn.jsx": {
-    "mtime": 1792712900.8389823,
-    "seen": 1792713278.1964698,
-    "ast_hash": "1e8614dc407a49fa6b007ea38b8f1848",
+    "mtime": 1792718486.0535543,
+    "seen": 1792718526.9201872,
+    "ast_hash": "3193eb83496364eb02cf3cdb8b135146",
     "semantic_hash": ""
   },
   "frontend/src/components/Navbar/Navbar.jsx": {
@@ -450,9 +450,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/FullscreenGate/FullscreenGate.jsx": {
-    "mtime": 1792707731.6756313,
-    "seen": 1792708367.4245448,
-    "ast_hash": "c7269e0e02023ac495daa4ad062ce4b7",
+    "mtime": 1792718426.9589548,
+    "seen": 1792718526.9194674,
+    "ast_hash": "aed969e99c8d1b08cf1b556e22293860",
     "semantic_hash": ""
   },
   "frontend/src/utilities/fullscreen.js": {
@@ -462,9 +462,9 @@
     "semantic_hash": ""
   },
   "CHANGELOG.md": {
-    "mtime": 1792716869.4368136,
-    "seen": 1792717819.3259206,
-    "ast_hash": "1f134c85775ff8009b1d66b5a47f2ee6",
+    "mtime": 1792717843.7151077,
+    "seen": 1792718526.9250286,
+    "ast_hash": "bb092e70c6dd0dd21616254c186b9512",
     "semantic_hash": ""
   },
   "frontend/src/components/FeatureCarousel/FeatureCarousel.jsx": {

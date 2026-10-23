@@ -325,3 +325,33 @@ pm run build completed with 0 errors.
 - **Snapshot Save Feedback**: `handleSave` triggers `soundManager.granted()` when saving a rig slot.
 - **Build Page Link**: Clicking "Check Compatibility" in `Build.jsx` fires responsive click audio before transition.
 - Build verified (0 errors); knowledge graph updated with 348 nodes & 609 edges.
+
+## [2026-10-23] Fullscreen Requirement Enabled for Compatibility & Learn
+
+### 🖥️ Fullscreen Gating (`FullscreenGate.jsx`)
+- **Compatibility Page (`Compatibility.jsx`)**: Wrapped standalone route with `<FullscreenGate requireFullscreen>` while maintaining clean non-gated embedding when used with `isIntegrated`.
+- **Learn Page (`Learn.jsx`)**: Wrapped `CourseShell` with `<FullscreenGate requireFullscreen>` across all course and lesson deep-dive routes (`/learn` and `/learn/:componentId`).
+- **Dynamic Contextual Messaging**: `FullscreenGate` now dynamically adapts its prompt between initial entry ("Enter Full Screen" / "BuildLab is designed as an immersive hardware workstation...") and mid-session recovery ("Return to Full Screen" / "You left full screen mode...").
+- **Auditory Engagement**: Added `soundManager.granted()` chime when the user clicks the "ENTER FULL SCREEN" button.
+- **Layout Cleanup (`App.jsx`)**: Suppressed global footer on immersive fullscreen workspaces (`/compatibility`, `/learn`, `/3d-builder`, `/build`).
+- Verified: production build clean (0 errors); knowledge graph updated to 352 nodes & 620 edges.
+
+## [2026-10-23] Learn Page: NotebookLLM Master Source Script for Module 1
+
+### 📚 Generated Educational Master Script (`Module_1_NotebookLLM_Source.md`)
+- Extracted and enriched the full curriculum from `CourseShell.jsx` (Module 1: Computer Fundamentals) into a dedicated NotebookLLM source guide.
+- **Structured Sections**:
+  1. **Executive Summary & Learning Goals**: Clear objectives for student understanding.
+  2. **Lesson 1 — Components of a Computer**: Input-Processing-Output loop, Core Four (CPU, RAM, Storage, Motherboard), and Supporting Cast (PSU, GPU, Case/Cooling, Peripherals).
+  3. **The Workshop Analogy & Myth Busting**: Explains why more RAM provides more workspace without artificially accelerating raw CPU compute speed.
+  4. **Lesson 2 — How the Parts Talk**: Data buses, PCIe bandwidth scaling (PCIe 3.0/4.0/5.0), and why hardware generations (AM4 vs. AM5, DDR4 vs. DDR5) are mechanically and electrically keyed.
+  5. **Assembly Safety Rule**: "If it needs force to seat, STOP" — zero-insertion force CPU seating vs. RAM latch clicks.
+  6. **Self-Check Quizzes with Explanations**: Memory volatility, bottleneck identification, and socket keying.
+  7. **NotebookLLM Audio Overview Prompts**: Structured dialogue hooks and narrative threads tailored for NotebookLLM's two-host deep dive podcast.
+- Saved to [Module_1_NotebookLLM_Source.md](file:///d:/Capstone%20Project/BuildLab/CAPS_LATEST-V/Module_1_NotebookLLM_Source.md) and [docs/Module_1_NotebookLLM_Source.md](file:///d:/Capstone%20Project/BuildLab/CAPS_LATEST-V/docs/Module_1_NotebookLLM_Source.md).
+
+### 🎙️ Pure Native Text Format Optimization for NotebookLLM
+- Converted all sections into pure flowing conversational English prose.
+- Removed all markdown tables (`|`) to eliminate unnatural tabular reading artifacts in AI text-to-speech.
+- Stripped all asterisks (`*`) and bold/bullet syntax that cause pauses, mispronunciations, or token glitches in NotebookLLM's audio generation models.
+- Verified 0 asterisks and 0 pipe symbols across both copies ([Module_1_NotebookLLM_Source.md](file:///d:/Capstone%20Project/BuildLab/CAPS_LATEST-V/Module_1_NotebookLLM_Source.md) and [docs/Module_1_NotebookLLM_Source.md](file:///d:/Capstone%20Project/BuildLab/CAPS_LATEST-V/docs/Module_1_NotebookLLM_Source.md)).

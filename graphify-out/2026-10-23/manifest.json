@@ -108,16 +108,16 @@
     "semantic_hash": "3289aa68fa94a89c0b14c2276cc4be07"
   },
   "frontend/src/components/Build/Build.jsx": {
-    "mtime": 1792715396.4854367,
-    "seen": 1792715643.1033313,
-    "ast_hash": "75c2b6db2fda2ca2dec9d1a4ea32b15b",
+    "mtime": 1792717797.1117682,
+    "seen": 1792717819.3218143,
+    "ast_hash": "a1ff8a226a406d3f567b7d0c09dc2604",
     "semantic_hash": ""
   },
   "frontend/src/components/Compatibility/Compatibility.jsx": {
-    "mtime": 1792704903.918209,
-    "seen": 1792708367.424387,
-    "ast_hash": "d9cf7f62cd3be80b34c708341acee1af",
-    "semantic_hash": "d9cf7f62cd3be80b34c708341acee1af"
+    "mtime": 1792717782.6974113,
+    "seen": 1792717819.3218176,
+    "ast_hash": "bf30de92bc1123a37f12a5d32a18f8d7",
+    "semantic_hash": ""
   },
   "frontend/src/components/Footer/Footer.jsx": {
     "mtime": 1791800606.249702,
@@ -186,9 +186,9 @@
     "semantic_hash": "ae8bb0590964660edb25cf8229ac18ed"
   },
   "frontend/src/utilities/soundManager.js": {
-    "mtime": 1792715328.8161252,
-    "seen": 1792715643.1058433,
-    "ast_hash": "13c08d4bed95e36a61665dedc43deae7",
+    "mtime": 1792717772.5072184,
+    "seen": 1792717819.3244817,
+    "ast_hash": "3b39a0a303f2bb5179b72ea82a56aaa5",
     "semantic_hash": ""
   },
   "frontend/tailwind.config.js": {
@@ -198,10 +198,10 @@
     "semantic_hash": "0a4eec1bc2d10c604a1e23e739035357"
   },
   "frontend/vite.config.js": {
-    "mtime": 1791800606.256185,
-    "seen": 1792136978.856011,
-    "ast_hash": "199e1221ae03d6974fdc8b5e23787b98",
-    "semantic_hash": "199e1221ae03d6974fdc8b5e23787b98"
+    "mtime": 1792716965.252275,
+    "seen": 1792717819.324626,
+    "ast_hash": "e7bfdcf52a42f3c9079a262a08898f68",
+    "semantic_hash": ""
   },
   "frontend/public/sfx/click.wav": {
     "mtime": 1791789343.4101427,
@@ -462,9 +462,9 @@
     "semantic_hash": ""
   },
   "CHANGELOG.md": {
-    "mtime": 1792715672.9027872,
-    "seen": 1792716845.2976952,
-    "ast_hash": "06fbf473dd857df1b63f2e014e3abc95",
+    "mtime": 1792716869.4368136,
+    "seen": 1792717819.3259206,
+    "ast_hash": "1f134c85775ff8009b1d66b5a47f2ee6",
     "semantic_hash": ""
   },
   "frontend/src/components/FeatureCarousel/FeatureCarousel.jsx": {
@@ -519,6 +519,54 @@
     "mtime": 1792704243.4776688,
     "seen": 1792716845.296016,
     "ast_hash": "3f0f14cb82aa8b28fc5170120e199bc9",
+    "semantic_hash": ""
+  },
+  "frontend/public/sfx/Error1.mp3": {
+    "mtime": 1792716852.6433003,
+    "seen": 1792717819.3299062,
+    "ast_hash": "b243907e548607daa5346111269c7082",
+    "semantic_hash": ""
+  },
+  "frontend/public/sfx/Error2.mp3": {
+    "mtime": 1792717209.9882054,
+    "seen": 1792717819.3299084,
+    "ast_hash": "ad25bf8234af9536ac81fa66f8db8953",
+    "semantic_hash": ""
+  },
+  "frontend/public/sfx/Error3.mp3": {
+    "mtime": 1792717234.4851596,
+    "seen": 1792717819.3299103,
+    "ast_hash": "04739b1bbb541f19ea3c015f1b7e4d05",
+    "semantic_hash": ""
+  },
+  "frontend/public/sfx/UI_Denied_2.mp3": {
+    "mtime": 1792716933.558544,
+    "seen": 1792717819.3299127,
+    "ast_hash": "92ce2b1a761c4a314f60410efa7943b8",
+    "semantic_hash": ""
+  },
+  "frontend/public/sfx/UI_Interact.mp3": {
+    "mtime": 1792717361.7475314,
+    "seen": 1792717819.3299143,
+    "ast_hash": "48d1af1a0daa0a3bc22e92cc0d3c0b2c",
+    "semantic_hash": ""
+  },
+  "frontend/public/sfx/denied.mp3": {
+    "mtime": 1792717623.2285683,
+    "seen": 1792717819.3300655,
+    "ast_hash": "92ce2b1a761c4a314f60410efa7943b8",
+    "semantic_hash": ""
+  },
+  "frontend/public/sfx/error.mp3": {
+    "mtime": 1792717623.2285683,
+    "seen": 1792717819.3300679,
+    "ast_hash": "ad25bf8234af9536ac81fa66f8db8953",
+    "semantic_hash": ""
+  },
+  "frontend/public/sfx/granted.wav": {
+    "mtime": 1792717616.249749,
+    "seen": 1792717819.33007,
+    "ast_hash": "409488c6755cdb5a42befa02646b271c",
     "semantic_hash": ""
   }
 }
