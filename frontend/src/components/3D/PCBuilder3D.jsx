@@ -8,6 +8,7 @@ import { useBuild } from '../../contexts/BuildContext';
 import { calculateScores } from '../../utilities/scoringEngine';
 import { checkCompatibility } from '../../utilities/compatibilityEngine';
 import FullscreenGate from '../FullscreenGate/FullscreenGate';
+import soundManager from '../../utilities/soundManager';
 import GenericPCCase from './GenericPCCase';
 import ComponentModels3D from './ComponentModels3D';
 import './PCBuilder3D.css';
@@ -117,7 +118,7 @@ function PCBuilder3DWorkspace() {
   const [glassMode, setGlassMode] = useState('closed'); // 'closed', 'open', 'removed'
   const [isExploded, setIsExploded] = useState(false);
   const [rgbColor, setRgbColor] = useState('#00e5ff');
-  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [soundEnabled, setSoundEnabled] = useState(soundManager.enabled);
   const [buildMode, setBuildMode] = useState('guided'); // 'guided' or 'free'
   const [activeStep, setActiveStep] = useState(0);
 
@@ -134,14 +135,10 @@ function PCBuilder3DWorkspace() {
 
   const orbitRef = useRef();
 
-  // Play audio safely
+  // Play audio safely via central soundManager
   const playSound = (type) => {
     if (!soundEnabled) return;
-    try {
-      const audio = new Audio(`/sfx/${type}.wav`);
-      audio.volume = 0.3;
-      audio.play().catch(() => {});
-    } catch {}
+    soundManager.play(type);
   };
 
   const showToast = (msg) => {
@@ -345,7 +342,10 @@ function PCBuilder3DWorkspace() {
           {/* Sound FX Toggle */}
           <button 
             className={`tool-icon-btn ${soundEnabled ? 'active' : ''}`} 
-            onClick={() => setSoundEnabled(!soundEnabled)}
+            onClick={() => {
+              const next = soundManager.toggleSound();
+              setSoundEnabled(next);
+            }}
             title={soundEnabled ? 'Mute SFX' : 'Enable SFX'}
           >
             {soundEnabled ? '🔊' : '🔇'}

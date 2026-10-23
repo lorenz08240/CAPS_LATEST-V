@@ -1,9 +1,14 @@
 .home-page {
   background: #0b0f1a;
-  min-height: 100vh;
+  height: 100vh;
+  height: 100dvh;
+  width: 100vw;
+  max-height: 100vh;
+  max-height: 100dvh;
   color: white;
   position: relative;
-  overflow-x: hidden;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 /* General styles for the hero section */
@@ -207,31 +212,23 @@
 
 /* ── Integrated Build Station Section on Homepage ── */
 .home-integrated-section {
-  background-color: #0b0f1a;
-  background-image: url("/assets/waves_dark_bg.jpg");
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  background-repeat: no-repeat;
-  padding: 60px 20px 20px;
+  background-color: transparent;
+  padding: 0 !important;
+  margin: 0 !important;
+  height: 100vh;
+  height: 100dvh;
+  width: 100vw;
+  max-height: 100vh;
+  max-height: 100dvh;
+  overflow: hidden;
   position: relative;
   z-index: 2;
+  display: flex;
+  flex-direction: column;
 }
 
 .home-integrated-section .section-header {
-  max-width: 1400px;
-  margin: 0 auto 20px;
-  padding: 0 16px;
-  text-align: left;
-}
-
-.home-integrated-section .section-header h2 {
-  font-size: 2.5rem;
-  font-weight: 800;
-  color: #ffffff;
-  letter-spacing: -0.02em;
-  margin-bottom: 0;
-  text-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  display: none !important;
 }
 
 /* ── Why Build Section ── */

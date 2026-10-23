@@ -4,6 +4,63 @@ All notable project changes, UI/UX refinements, and compatibility fixes will be 
 
 ---
 
+## [2026-10-23] - Admin Dashboard Syntax Error Fix (Vite Parse Error Resolved)
+- **Resolved `[PARSE_ERROR] Unexpected token` in `Admin.jsx`**:
+  - OpenCode had appended the confirmation modal JSX after `export default Admin;` at the end of the file instead of inside the component return.
+  - Corrected JSX tag hierarchy: nested `{(confirmDelete.show || confirmCrawler) && ...}` inside `.admin-page` container before the component return terminates.
+  - Fixed mangled UTF-8 byte sequences for crawler and delete dialog icons with clean emojis (`🕷️` / `🗑️`).
+  - Verified clean production build (`npm run build` completed in 2.86s with 0 errors).
+  - Synced workspace AST knowledge graph (`graphify update .`).
+
+
+- **Graph Status & Freshness**: Re-extracted AST symbols and relationship graph across the workspace.
+- **Metrics**: 317 nodes, 540 edges, and 22 structural communities across 54 tracked code and document files.
+- **Artifacts Refreshed**: Updated `graphify-out/graph.json`, `graphify-out/graph.html`, and `graphify-out/GRAPH_REPORT.md` (0 token/API cost).
+
+
+- **Progressional Course Restored**: Fully restored the structured curriculum course on `/learn` (4 Modules, 12 Lessons inspired by Udemy / W3Schools) in `CourseShell.jsx` and `CourseShell.css`, mounted directly via `Learn.jsx`.
+- **Autoplaying Hero Video Player**:
+  - Restored `CourseVideoPlayer.jsx` & `CourseVideoPlayer.css` utilizing YouTube IFrame API.
+  - Video player takes front-and-center hero stage with muted autoplay compliant with browser policies, glowing "🔇 Tap to unmute" chip, and custom amber/gold control deck (play/pause, seek scrubber, 10s back/forward, volume slider, fullscreen).
+  - Fixed media layout in `renderArticleLesson` and `renderComponentLesson`: video comes first and autoplays immediately; blueprint visuals and hardware specimen cards sit side-by-side as sleek companions rather than stacking vertically or pushing the video down.
+- **Mouse-Hover Triggered Syllabus Rail**:
+  - Right sidebar course outline defaults to unpinned (`isPinned: false`).
+  - Added 24px invisible edge trigger zone (`.course-sidebar-trigger-zone`) and pull-tab indicator (`‹`) on the right screen edge.
+  - Sidebar glides in smoothly on mouse hover, and glides away on mouse leave. User can click the pin icon to dock it.
+- **Double Scrollbar Elimination**:
+  - App-level viewport lock in `App.css` (`.app-layout:has(.course-shell-root)`) ensures only the main course lesson column (`.course-main`) scrolls, eliminating duplicate scrollbars.
+  - Suppressed outer global footer on `/learn` in `App.jsx`.
+- **Production Build Verified**:
+  - Ran `npm run build` with zero errors (all 1031 modules transformed cleanly).
+
+
+- **Original Cinematic UI Restored**: Purged the flat course article shell and restored the authentic 7-card interactive Learn experience (Key Specs, Socket Matcher & Naming Decoder, Step-by-Step Installation Film, Hardware Knowledge Check & Common Mistakes, Recommendation Matrix, Popular Manufacturers, and Action Bar).
+- **1000x Upgraded Cinematic Hero Banner**:
+  - Curated, high-fidelity, high-contrast hardware imagery for CPU, Motherboard, RAM, GPU, PSU, and Case.
+  - Added interactive **Hardware Matrix Quick-Switcher Dock** directly in the hero banner with component icons and active neon indicators.
+  - Added floating **Cyberpunk Spec HUD Card** displaying real-time flagship architecture metrics (e.g. Sockets, Boost Clock, Core scale, TDP).
+  - Enhanced ambient color glow tailored to each component (emerald, cyber gold, RGB violet, neon teal, electric amber, ice blue).
+  - Quick action CTAs ("Explore Specs ↓" and "Installation Guide ›") with micro-interactions.
+- **Mouse Hover Triggered Sidebar**:
+  - Re-activated mouse-hover triggering on the main left sidebar (`Navbar.jsx` / `Navbar.css`) with widened 24px edge trigger zone and smooth glide transitions.
+  - Cleaned up viewport locks in `App.css` to allow natural, smooth page scrolling.
+
+## [2026-10-23] - Symmetrical Dual-Sidebar Architecture & Course Outline Fix (Learn Page)
+- **Viewport Lock & Double Scrollbar Fix**: Locked `.course-shell-root` into 100vh viewport height in `App.css` and suppressed global `Footer` on `/learn`. Lesson content now scrolls independently within `.course-main` using a single custom amber-themed scrollbar, completely eliminating duplicate/overlapping scrollbars.
+- **Fixed Docking (Never Leaves the Screen)**: Converted the right sidebar (`.course-outline`) from `position: sticky` to `position: fixed` (100vh height, `top: 0; right: 0; bottom: 0`). When scrolling lesson content, the sidebar remains anchored and accessible at all times.
+- **Visual & Structural Mirroring to Main Left Sidebar**:
+  - Styled with identical rich mahogany wood gradient, warm amber borders (`#d4a34b`), and `.sidebar-wood-overlay` grain texture.
+  - Added header with pin button (`sidebar-pin-btn`) that toggles locked/pinned and unpinned/auto-hide states, persisted in `localStorage`.
+  - Added hidden trigger zone (`course-sidebar-trigger-zone`) and pull-tab indicator arrow (`‹`) on the right edge when unpinned.
+  - Added full light theme support matching the left sidebar's warm birch / natural oak palette.
+
+## [2026-10-23] - Server Deployment (/deploy)
+- **Backend Service**: Started Express API on port 5000 via 
+ode server.js daemon.
+- **Frontend Service**: Confirmed Vite client server listening on port 5173.
+- **Production Build**: Verified clean production build compilation via ite build.
+
+
 ## [2026-10-23] - OpenCode Session - Immersive Fullscreen System & UX Cleanups (OC)
 
 ### 🖥️ Fullscreen Gate (New Feature)
@@ -161,3 +218,60 @@ pm run build completed with 0 errors.
 - **Direct Card Button**: Added a dedicated `[ SELECT PART ]` / `[ ✓ SELECTED ]` button directly on every component card in the grid. Users can select any component instantly with 1 click without glancing at or scrolling to the bottom right.
 - **Top Action Button in Specs**: Moved `SELECT COMPONENT` to `.spec-action-top` directly below the component image and title, ensuring it is always immediately visible above the fold.
 - **Compact Viewport Fitting**: Compacted grid wrapper and specifications panel (`min-height: 480px; max-height: 560px; overflow-y: auto;`) and anchored auto-scrolling so the view never throws users out of position.
+
+## [2026-10-23] Learn Page: Video Player Overhaul + 9 Dead Videos Replaced (OC)
+
+### Fixed / Added — `components/Learn/CourseVideoPlayer.jsx` + `CourseVideoPlayer.css` (new)
+- **Real video player** built on the YouTube IFrame API replaces the three raw iframes (article lesson video, component lesson video, assembly step-demonstration).
+- **Autoplay kept** — starts muted (browser autoplay policy); floating "🔇 Tap to unmute" chip + mute toggle give full audio with one click.
+- **Custom control deck** (gold/mahogany, scoped `.cvp-*` classes, standalone CSS = no clash with the other agent's CourseShell.css work): play/pause, ⏪ -10s / ⏩ +10s rewind & forward, click/drag scrub bar with gold knob + timecode, mute toggle, fullscreen (targets the player shell so controls stay visible in fullscreen; double-click video also toggles).
+- Root cause of "can't control the video": old iframes had `pointer-events: none` (CourseShell.css/Learn.css) — native controls were un-clickable; fullscreen was impossible without `allowfullscreen`.
+- **Optimization**: removed the `key={...isPlaying}` iframe remount hack — play/pause/seek go through the API so the video never reloads; step-film no longer reloads when clicking steps; removed redundant Pause buttons + orphaned `isPlaying` state.
+
+### Replaced — 9 unavailable YouTube videos (all new IDs verified 200 via oEmbed, embeddable)
+- Articles (CourseShell.jsx): How the Parts Talk → "Explaining PCIe Slots" (ExplainingComputers, `PrXwe21biJo`); Purpose & Budget → "How to Pick PC Parts in 2026" (`x7tAAr2fcMw`); First Boot → "How to Fix a PC That Won't Boot" (`XzgPUozaiKU`).
+- Components (Learn.jsx data): CPU → Branch Education "How do CPUs Work?" (`16zrEPOsIcI`); Motherboard → PowerCert "Motherboards Explained" (`b2pd3Y6aBag`); RAM → Branch Education "How does Computer Memory Work?" (`7J7X7aZvMXQ`); GPU → Branch Education "How do Graphics Cards Work?" (`h9Z4oGN89MU`); PSU → "How a Power Supply ACTUALLY works" (`ot9lIXsRXzo`); Case → JayzTwoCents "How to optimize your case airflow!" (`Ba6w3QdnWBw`).
+- 3 previously-live videos untouched: Computer parts Explained, Bitwit step-by-step, LTT last guide.
+- Build passes; /learn serves 200.
+## [2026-10-23] Learn: Course-Outline Sidebar REWORK REVERTED to the previous design (OC — user request)
+
+### Reverted
+- The other agent's in-progress "course sidebar" rework (hover/pin architecture with `isVisible`/`isHovered`/`isPinned`, pin-icon header button, wood overlay) crashed the page twice (`ReferenceError: isVisible is not defined`) and, per user, didn't match the approved design. Removed all of it including the OC hotfix declarations that had only triangulated their missing states.
+- Restored the previous rail behavior exactly to the surviving CourseShell.css contract: fixed 320px right rail (`.course-outline open/closed`, translate 320ms), opens by default on ≥960px, drawer + click-outside backdrop on ≤960px, right-edge nudge strip + `‹` pull-tab to reopen, `goLesson` auto-closes on mobile.
+- Content shift uses the pre-existing `.course-shell.right-pinned .course-main { margin-right: 320px }` rule (mobile: 0) — shell now toggles `right-pinned` instead of the never-styled `outline-open`.
+- Header back to eyebrow/title only + a small ghost gold `✕` collapse button (new minimal `.outline-collapse-btn` styles appended at CSS end; desktop keeps backdrop non-dimming via ≥960px media rule).
+- Untouched: progress card, module/lesson list, continue foot, video gating, and the earlier video-player overhaul (CourseVideoPlayer stays).
+- Build passes; /learn 200.
+
+## [2026-10-23] UI Interaction Sounds Restored & Centralized (`soundManager.js`)
+
+### 🔊 Root Cause Identified & Resolved
+- Sound files (`click.wav`, `install.wav`, `snap.wav`, `complete.wav`, `error.wav`, `modal_open.wav`, `modal_close.wav`, `open_box.wav`, `warning.wav`, `hint.wav`) were present in `frontend/public/sfx/` and partially managed in `soundManager.js`, but were **never hooked up globally** to UI buttons, links, or builder workflows.
+- `PCBuilder3D.jsx` was duplicating audio with local `new Audio` instances instead of utilizing `soundManager`.
+- `Build.jsx` (2D Component Picker), `CourseShell.jsx` (Learn page), and `Navbar.jsx` were completely silent.
+
+### ⚡ Upgrades to `frontend/src/utilities/soundManager.js`
+1. **Procedural Web Audio API Synthesis Fallback**: Added `SynthAudio` oscillator engine producing zero-latency clicks, magnetic snaps, mechanical locks, modal chimes, and victory chords. Guarantees sounds never fail even under browser autoplay blocking or offline mode.
+2. **Zero-Latency Audio Pooling**: Audio files are preloaded and pooled (up to 4 clones per sound) to eliminate playback stutter and garbage collection pauses.
+3. **Automated Global UI Click Listener**: Attached delegated click listener on `document` targeting all `button`, `a`, `[role="button"]`, `[role="tab"]`, `.clickable`, `.nav-link`, `.btn`, and card elements with 45ms anti-spam debouncing and `data-no-sound="true"` / `data-sound="<type>"` overrides.
+4. **Local Storage Persistence**: Persists mute/volume settings in `buildlab_sound_enabled` and `buildlab_sound_volume`.
+
+### 🎮 Wired Semantic Audio Events Across Workspaces
+- **Build (`Build.jsx`)**:
+  - `soundManager.install()` on choosing & confirming any PC component.
+  - `soundManager.snap()` on card previews.
+  - `soundManager.click()` on step navigation & component removal (`✕`).
+  - `soundManager.complete()` on completing all 7 rig slots.
+  - `soundManager.modalClose()` on rig reset.
+- **Learn (`CourseShell.jsx`)**:
+  - `soundManager.click()` on lesson row selections.
+  - `soundManager.snap()` on video watched toggles.
+  - `soundManager.complete()` on lesson completion & correct quiz answers.
+  - `soundManager.error()` on wrong quiz answers.
+  - `soundManager.install()` on "Add to Build" hardware transfer.
+- **3D Studio (`PCBuilder3D.jsx`)**:
+  - Refactored to use centralized `soundManager` instance.
+  - Synced top HUD SFX toggle button (`🔊 / 🔇`) with `soundManager.toggleSound()`.
+- **Navbar (`Navbar.jsx`)**:
+  - Added dedicated Sound FX toggle switch (`🔊 Sound FX / 🔇 SFX Muted`) in the sidebar footer controls.
+- Tested and verified: `npm run build` cleanly compiled with 0 errors.

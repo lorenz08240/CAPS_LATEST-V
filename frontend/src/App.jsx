@@ -19,6 +19,7 @@ import Brands from "./components/Brands/Brands";
 import PCBuilder3D from "./components/3D/PCBuilder3D";
 import Admin from "./components/Admin/Admin";
 import MotionPage from "./utilities/pageTransitions";
+import soundManager from "./utilities/soundManager";
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -68,7 +69,7 @@ function AppContent() {
               {/* Footer suppressed on the Build experience — the Component
                   Picker (home "/") and /build are fixed viewport-height
                   workspaces with no page scrolling. */}
-              {location.pathname !== "/" && location.pathname !== "/build" && <Footer />}
+              {location.pathname !== "/" && location.pathname !== "/build" && !location.pathname.startsWith("/learn") && <Footer />}
             </main>
     </div>
   );

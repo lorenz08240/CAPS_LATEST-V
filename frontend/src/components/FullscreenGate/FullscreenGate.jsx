@@ -8,7 +8,6 @@ import {
   needsRotation,
   onViewportChange,
 } from "../../utilities/fullscreen";
-import soundManager from "../../utilities/soundManager";
 import "./FullscreenGate.css";
 
 /**
@@ -60,8 +59,7 @@ export default function FullscreenGate({ children, requireFullscreen = false }) 
   }, [showRotation, showFullscreen]);
 
   const handleEnterFullscreen = useCallback(async () => {
-    const ok = await enterFullscreen();
-    if (ok) soundManager.complete();
+    await enterFullscreen();
   }, []);
 
   return (

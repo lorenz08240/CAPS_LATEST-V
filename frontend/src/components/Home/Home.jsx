@@ -82,7 +82,6 @@ function Hero() {
     const handler = () => {
       hasSeenBannerThisSession = true;
       setIsFadingOut(true);
-      soundManager.openBox();
       setTimeout(() => setIsBannerVisible(false), 500);
     };
     window.addEventListener("buildlab:enter-build", handler);
@@ -135,7 +134,6 @@ function Hero() {
   const handleStartBuild = () => {
     setIsFadingOut(true);
     hasSeenBannerThisSession = true;
-    soundManager.openBox();
 
     // Enter immersive fullscreen mode right away — this runs inside the
     // click handler, which is the user gesture browsers require.
@@ -289,10 +287,7 @@ function Hero() {
 
       {/* TIER 2: Active Build Station Framework */}
       <section id="build-station" className="home-integrated-section">
-        <div className="section-header container">
-          <h2>Pick a Component</h2>
-        </div>
-        <Build isIntegrated={true} />
+        <Build isIntegrated={false} />
       </section>
 
       </div>

@@ -4,11 +4,11 @@
   "2": "PCBuilder3D.jsx",
   "3": "bot_listener.py",
   "4": "App.jsx",
-  "6": "db.js",
+  "6": "BuildContext.jsx",
   "7": "devDependencies",
   "8": "rules.js",
   "9": "Home.jsx",
-  "10": "checkCompatibility",
+  "10": "SynthAudio",
   "11": "Workspace Rules & Instructions",
   "12": "Workspace Rules & Instructions",
   "13": "Workspace Rules & Instructions",
@@ -19,6 +19,6 @@
   "18": "cleanse.md",
   "19": "notes.md",
   "20": "postcss.config.js",
-  "21": "TO BE EDITED.md",
-  "22": "[2026-10-23] - Master Checklist & Safari Compatibility Updates"
+  "22": "BuildLab Changelog",
+  "23": "BuildLab Commands & Workflows Cheat Sheet"
 }

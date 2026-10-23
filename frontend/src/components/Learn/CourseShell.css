@@ -1,0 +1,1265 @@
+/* ══════════════════════════════════════════════════════════════
+   CourseShell.css — Learn page "Quick Course" layout.
+   Main lesson column + right-hand course outline rail
+   (Learn-only, sticky on desktop / drawer on mobile).
+   Reuses shared card styles from Learn.css.
+   ══════════════════════════════════════════════════════════════ */
+
+.course-shell-root {
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  position: relative;
+}
+
+.course-shell {
+  display: flex;
+  height: 100vh;
+  height: 100dvh;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* ── MAIN LESSON COLUMN (Single scroll container; stays fixed with sidebars) ── */
+.course-main {
+  flex: 1;
+  height: 100vh;
+  height: 100dvh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-width: 0;
+  transition: margin-right 320ms cubic-bezier(0.16, 1, 0.3, 1);
+  scroll-behavior: smooth;
+}
+
+.course-shell.right-pinned .course-main {
+  margin-right: 320px;
+}
+
+/* Single custom themed scrollbar for lesson content */
+.course-main::-webkit-scrollbar {
+  width: 8px;
+}
+.course-main::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+}
+.course-main::-webkit-scrollbar-thumb {
+  background: rgba(212, 163, 75, 0.25);
+  border-radius: 999px;
+}
+.course-main::-webkit-scrollbar-thumb:hover {
+  background: rgba(212, 163, 75, 0.45);
+}
+
+body.theme-light .course-main::-webkit-scrollbar-thumb,
+.theme-light .course-main::-webkit-scrollbar-thumb {
+  background: rgba(162, 115, 60, 0.28);
+}
+
+.course-stream {
+  max-width: 1150px;
+  margin: 0 auto;
+  padding: 1.5rem 1.75rem 3.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── COMPACT LESSON HEADER (replaces the old 72vh hero) ── */
+.lesson-header {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #0d1424;
+  background-size: cover;
+  background-position: center 30%;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.5);
+}
+
+.lesson-header.has-hero {
+  background-color: rgba(13, 18, 31, 0.92);
+  background-blend-mode: luminosity;
+}
+
+.lesson-header-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(9, 13, 22, 0.97) 0%, rgba(9, 13, 22, 0.85) 55%, rgba(9, 13, 22, 0.62) 100%),
+    linear-gradient(180deg, transparent 40%, rgba(9, 13, 22, 0.55) 100%);
+  pointer-events: none;
+}
+
+.lesson-header-inner {
+  position: relative;
+  z-index: 1;
+  padding: 1.35rem 1.6rem 1.45rem;
+}
+
+.lesson-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.74rem;
+  color: #64748b;
+  margin-bottom: 0.55rem;
+}
+
+.eyebrow-link {
+  color: #00f2fe;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.eyebrow-link:hover {
+  text-decoration: underline;
+}
+
+.eyebrow-sep { color: #475569; }
+.eyebrow-module { color: #94a3b8; font-weight: 600; }
+
+.lesson-title {
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 0.75rem;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.lesson-meta-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.8rem;
+}
+
+.meta-chip {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 0.24rem 0.65rem;
+  border-radius: 999px;
+}
+
+.meta-chip.minutes-chip {
+  color: #00f2fe;
+  border-color: rgba(0, 242, 254, 0.35);
+  background: rgba(0, 242, 254, 0.08);
+  font-family: monospace;
+}
+
+.meta-chip.done-chip {
+  color: #00ff87;
+  border-color: rgba(0, 255, 135, 0.4);
+  background: rgba(0, 255, 135, 0.08);
+}
+
+.lesson-header-desc {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: #cbd5e1;
+  max-width: 720px;
+}
+
+/* ── ARTICLE LESSON PIECES ── */
+.article-section-heading {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin: 0 0 0.75rem;
+}
+
+.article-section-heading::after {
+  content: "";
+  display: block;
+  width: 42px;
+  height: 2px;
+  margin-top: 0.45rem;
+  background: linear-gradient(90deg, #00ff87, #00f2fe);
+  border-radius: 2px;
+}
+
+.lesson-para {
+  font-size: 0.88rem;
+  line-height: 1.65;
+  color: #cbd5e1;
+  margin: 0 0 0.8rem;
+}
+
+.lesson-list {
+  margin: 0;
+  padding-left: 1.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.lesson-list li {
+  font-size: 0.86rem;
+  line-height: 1.55;
+  color: #cbd5e1;
+}
+
+.lesson-list li::marker {
+  color: #00ff87;
+}
+
+.know-part-subhead {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: #00f2fe;
+  margin-bottom: 0.65rem;
+}
+
+.tools-subhead,
+.mistakes-subhead {
+  margin-top: 1.1rem;
+}
+
+.lesson-objectives {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.lesson-objectives li {
+  position: relative;
+  padding-left: 1.6rem;
+  font-size: 0.88rem;
+  color: #e2e8f0;
+  line-height: 1.5;
+}
+
+.lesson-objectives li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #00ff87;
+  font-weight: 800;
+}
+
+.article-objectives-card .know-part-subhead {
+  margin-top: 0;
+}
+
+.lesson-table-wrap {
+  overflow-x: auto;
+  margin-top: 1.15rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+}
+
+.lesson-table-wrap .matrix-table {
+  margin: 0;
+}
+
+/* Numbered checklist */
+.lesson-checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 0.4rem;
+}
+
+.checklist-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  background: rgba(13, 18, 31, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 9px;
+  padding: 0.75rem 0.95rem;
+}
+
+.checklist-n {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: rgba(0, 255, 135, 0.1);
+  border: 1px solid rgba(0, 255, 135, 0.35);
+  color: #00ff87;
+  font-weight: 800;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.checklist-body strong {
+  display: block;
+  font-size: 0.85rem;
+  color: #f1f5f9;
+  margin-bottom: 0.15rem;
+}
+
+.checklist-body p {
+  margin: 0;
+  font-size: 0.76rem;
+  color: #94a3b8;
+  line-height: 1.45;
+}
+
+.lesson-note {
+  margin-top: 0.9rem;
+  background: rgba(0, 242, 254, 0.07);
+  border-left: 3px solid #00f2fe;
+  border-radius: 0 8px 8px 0;
+  padding: 0.8rem 1rem;
+  font-size: 0.8rem;
+  line-height: 1.55;
+  color: #a5f3fc;
+}
+
+/* ── COMPONENT LESSON: LESSON BRIEF (BIG VIDEO) ── */
+.lesson-brief-grid {
+  display: grid;
+  grid-template-columns: 1.55fr 1fr;
+  gap: 1.4rem;
+  align-items: start;
+}
+
+.lesson-video-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  max-height: 62vh;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.55);
+}
+
+.lesson-video-frame .step-preview-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  pointer-events: none;
+}
+
+.lesson-video-fallback {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.lesson-video-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.7rem;
+}
+
+.lesson-tags-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 0.9rem;
+}
+
+.lesson-brief-text {
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: #cbd5e1;
+  margin: 0 0 1rem;
+}
+
+.compact-errors {
+  margin-top: 0;
+}
+
+/* ── KNOW YOUR PART (specs + decoder merged) ── */
+.know-part-grid {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.know-part-grid .specs-8grid {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.know-decoder {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* ── ASSEMBLY CARD: steps left + BIG step video right ── */
+.assembly-grid {
+  grid-template-columns: 0.85fr 1.15fr !important;
+}
+
+.assembly-grid .step-preview-caption strong {
+  font-size: 0.84rem;
+  color: #f7d28b;
+}
+
+.assembly-grid .step-preview-caption p {
+  margin: 0.3rem 0 0;
+  font-size: 0.78rem;
+  color: #cbd5e1;
+  line-height: 1.5;
+}
+
+/* ── KNOWLEDGE CHECK (quiz + mistakes merged) ── */
+.knowledge-check-grid {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.knowledge-mistakes-side {
+  padding-left: 1.5rem;
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.quiz-verdict {
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 0.28rem 0.7rem;
+  border-radius: 999px;
+}
+
+.verdict-pass {
+  color: #00ff87;
+  background: rgba(0, 255, 135, 0.1);
+  border: 1px solid rgba(0, 255, 135, 0.4);
+}
+
+.verdict-fail {
+  color: #f87171;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+/* ── MATRIX + MANUFACTURERS (merged) ── */
+.manufacturers-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  margin: 1.15rem 0 1.05rem;
+}
+
+/* ── TRY IT / assembly hints ── */
+.try-it-hint {
+  font-size: 0.72rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+/* ── LESSON FOOTER NAV ── */
+.lesson-footer-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.6rem;
+  padding-top: 1.3rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.lesson-nav-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #cbd5e1;
+  font-size: 0.84rem;
+  font-weight: 700;
+  padding: 0.6rem 1.3rem;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.lesson-nav-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(0, 242, 254, 0.5);
+  color: #ffffff;
+}
+
+.lesson-nav-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.lesson-nav-btn.next {
+  background: #00ff87;
+  border-color: #00ff87;
+  color: #090d16;
+}
+
+.lesson-nav-btn.next:hover:not(:disabled) {
+  background: #5effca;
+  border-color: #5effca;
+  color: #090d16;
+}
+
+.lesson-mark-btn {
+  background: rgba(0, 255, 135, 0.07);
+  border: 1px solid rgba(0, 255, 135, 0.4);
+  color: #00ff87;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.45rem 1.1rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.lesson-mark-btn:hover {
+  background: rgba(0, 255, 135, 0.16);
+}
+
+.lesson-done-note {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #00ff87;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   RIGHT SIDEBAR: COURSE OUTLINE & SYLLABUS
+   Identical architecture & luxury wood theme as the left sidebar
+   ══════════════════════════════════════════════════════════════ */
+
+.course-outline {
+  /* Default: Deep rich dark mahogany wood matching Navbar */
+  background: 
+    radial-gradient(ellipse at top right, rgba(74, 38, 22, 0.45) 0%, transparent 60%),
+    radial-gradient(ellipse at bottom left, rgba(42, 20, 12, 0.6) 0%, transparent 70%),
+    linear-gradient(180deg, #1f110b 0%, #170c07 40%, #120905 100%);
+  border-left: 1px solid rgba(212, 163, 75, 0.25);
+  color: #f1e7db;
+  box-shadow: -12px 0 35px rgba(0, 0, 0, 0.65), inset 1px 0 0 rgba(255, 255, 255, 0.04);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  width: 320px;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  height: 100vh;
+  height: 100dvh;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  transition: transform 320ms cubic-bezier(0.16, 1, 0.3, 1), background 300ms ease, border-color 300ms ease;
+  overflow: hidden;
+}
+
+/* Light mode variant matching Left Sidebar (warm birch / natural oak) */
+body.theme-light .course-outline,
+.theme-light .course-outline {
+  background: 
+    radial-gradient(ellipse at top right, rgba(247, 231, 206, 0.6) 0%, transparent 65%),
+    linear-gradient(180deg, #f7f1e7 0%, #efe5d5 50%, #e6d8c3 100%);
+  border-left: 1px solid rgba(162, 115, 60, 0.28);
+  color: #382416;
+  box-shadow: -8px 0 25px rgba(100, 60, 20, 0.08);
+}
+
+.course-outline.closed {
+  transform: translateX(100%);
+}
+
+.course-outline.open {
+  transform: translateX(0);
+}
+
+/* Invisible Trigger Zone on Right Edge */
+.course-sidebar-trigger-zone {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 24px;
+  z-index: 998;
+  cursor: pointer;
+}
+
+/* Pull-Tab Indicator Arrow pointing LEFT (‹) when closed */
+.course-sidebar-indicator {
+  position: absolute;
+  top: 50%;
+  left: -26px;
+  transform: translateY(-50%);
+  width: 26px;
+  height: 54px;
+  background: #1f110b;
+  border: 1px solid rgba(212, 163, 75, 0.35);
+  border-right: none;
+  border-radius: 9px 0 0 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #d4a34b;
+  box-shadow: -6px 0 16px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  pointer-events: auto;
+  transition: all 0.2s ease;
+}
+
+.course-sidebar-indicator:hover {
+  background: #2a160e;
+  color: #f7d28b;
+  width: 30px;
+  left: -30px;
+}
+
+body.theme-light .course-sidebar-indicator,
+.theme-light .course-sidebar-indicator {
+  background: #efe5d5;
+  border-color: rgba(162, 115, 60, 0.35);
+  color: #8c5222;
+}
+
+/* Soft Backdrop Overlay */
+.course-sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 6, 4, 0.55);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  z-index: 999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 300ms ease-in-out;
+}
+
+.course-sidebar-backdrop.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Sidebar Container */
+.course-sidebar-container {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 1.25rem 0 0.5rem;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* Header */
+.course-sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.25rem;
+  margin-bottom: 0.85rem;
+  border-bottom: 1px solid rgba(212, 163, 75, 0.15);
+  padding-bottom: 0.85rem;
+}
+
+.sidebar-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.course-sidebar-eyebrow {
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #d4a34b;
+}
+
+body.theme-light .course-sidebar-eyebrow,
+.theme-light .course-sidebar-eyebrow {
+  color: #8c5222;
+}
+
+.course-sidebar-title {
+  font-size: 1.05rem;
+  font-weight: 900;
+  letter-spacing: 1.2px;
+  color: #f7d28b;
+  margin: 0;
+  text-shadow: 0 2px 8px rgba(212, 163, 75, 0.2);
+}
+
+body.theme-light .course-sidebar-title,
+.theme-light .course-sidebar-title {
+  color: #4a2810;
+  text-shadow: none;
+}
+
+/* Progress Card */
+.course-sidebar-progress-card {
+  padding: 0 1.25rem 0.85rem;
+  border-bottom: 1px solid rgba(212, 163, 75, 0.12);
+  margin-bottom: 0.5rem;
+}
+
+.outline-progress {
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  margin-bottom: 0.4rem;
+}
+
+body.theme-light .outline-progress,
+.theme-light .outline-progress {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.outline-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #d4a34b, #00ff87);
+  transition: width 0.5s ease;
+  box-shadow: 0 0 10px rgba(212, 163, 75, 0.4);
+}
+
+.outline-progress-text {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #c4af98;
+  font-family: monospace;
+}
+
+body.theme-light .outline-progress-text,
+.theme-light .outline-progress-text {
+  color: #634327;
+}
+
+/* Inner scrollable syllabus */
+.outline-scroll {
+  flex: 1;
+  padding: 0.5rem 0.85rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.05rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(212, 163, 75, 0.3) transparent;
+}
+
+.outline-scroll::-webkit-scrollbar {
+  width: 5px;
+}
+
+.outline-scroll::-webkit-scrollbar-thumb {
+  background: rgba(212, 163, 75, 0.25);
+  border-radius: 999px;
+}
+
+.outline-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(212, 163, 75, 0.45);
+}
+
+body.theme-light .outline-scroll::-webkit-scrollbar-thumb,
+.theme-light .outline-scroll::-webkit-scrollbar-thumb {
+  background: rgba(162, 115, 60, 0.28);
+}
+
+.outline-module-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.outline-module-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  padding: 0 0.45rem 0.3rem;
+}
+
+.outline-module-label {
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #d4a34b;
+  white-space: nowrap;
+}
+
+body.theme-light .outline-module-label,
+.theme-light .outline-module-label {
+  color: #8c5222;
+}
+
+.outline-module-title {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #f1e7db;
+}
+
+body.theme-light .outline-module-title,
+.theme-light .outline-module-title {
+  color: #382416;
+}
+
+/* Lesson item styling matching left sidebar links */
+.outline-lesson {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 0.52rem 0.65rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.outline-lesson:hover {
+  background: rgba(212, 163, 75, 0.12);
+  border-color: rgba(212, 163, 75, 0.25);
+}
+
+body.theme-light .outline-lesson:hover,
+.theme-light .outline-lesson:hover {
+  background: rgba(162, 115, 60, 0.12);
+  border-color: rgba(162, 115, 60, 0.25);
+}
+
+.outline-lesson.active {
+  background: rgba(212, 163, 75, 0.18);
+  border-color: rgba(212, 163, 75, 0.5);
+}
+
+body.theme-light .outline-lesson.active,
+.theme-light .outline-lesson.active {
+  background: rgba(162, 115, 60, 0.18);
+  border-color: #8c5222;
+}
+
+.outline-lesson.done.active {
+  background: rgba(212, 163, 75, 0.15);
+  border-color: rgba(212, 163, 75, 0.4);
+}
+
+.lesson-dot {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(212, 163, 75, 0.35);
+  color: transparent;
+  font-size: 0.62rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.outline-lesson.done .lesson-dot {
+  border-color: #00ff87;
+  background: rgba(0, 255, 135, 0.12);
+  color: #00ff87;
+}
+
+.outline-lesson.active .lesson-dot.dot-now {
+  border-color: #d4a34b;
+  color: #f7d28b;
+  background: rgba(212, 163, 75, 0.2);
+}
+
+.outline-lesson-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: #cbd5e1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+body.theme-light .outline-lesson-name,
+.theme-light .outline-lesson-name {
+  color: #55331a;
+}
+
+.outline-lesson.done .outline-lesson-name {
+  color: #94a3b8;
+  text-decoration: line-through;
+  text-decoration-color: rgba(148, 163, 184, 0.4);
+}
+
+.outline-lesson.active .outline-lesson-name {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+body.theme-light .outline-lesson.active .outline-lesson-name,
+.theme-light .outline-lesson.active .outline-lesson-name {
+  color: #201006;
+}
+
+.outline-lesson-min {
+  flex-shrink: 0;
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: #d4a34b;
+  opacity: 0.75;
+  font-family: monospace;
+}
+
+body.theme-light .outline-lesson-min,
+.theme-light .outline-lesson-min {
+  color: #8c5222;
+}
+
+.course-sidebar-foot {
+  padding: 0.85rem 1.15rem 1rem;
+  border-top: 1px solid rgba(212, 163, 75, 0.18);
+  background: rgba(20, 10, 6, 0.45);
+  box-sizing: border-box;
+}
+
+body.theme-light .course-sidebar-foot,
+.theme-light .course-sidebar-foot {
+  background: rgba(240, 230, 215, 0.7);
+  border-top-color: rgba(162, 115, 60, 0.25);
+}
+
+.outline-continue-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #d4a34b 0%, #b88628 100%);
+  border: 1px solid rgba(255, 230, 160, 0.35);
+  color: #1f110b;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  padding: 0.75rem 1rem;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(212, 163, 75, 0.25);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.outline-continue-btn:hover {
+  filter: brightness(1.12);
+  box-shadow: 0 6px 20px rgba(212, 163, 75, 0.45);
+  transform: translateY(-1px);
+}
+
+.course-sidebar-foot .outline-continue-btn.done-btn {
+  background: transparent;
+  border: 1px solid rgba(212, 163, 75, 0.5);
+  color: #f7d28b;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════════════════════════ */
+
+/* Narrow screens: full-width content, rail drawer with backdrop */
+@media (max-width: 960px) {
+  .course-shell.right-pinned .course-main {
+    margin-right: 0;
+  }
+
+  .course-outline {
+    width: min(330px, 88vw);
+    z-index: 1000;
+  }
+
+  .article-media-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lesson-brief-grid,
+  .know-part-grid,
+  .assembly-grid,
+  .knowledge-check-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .knowledge-mistakes-side {
+    padding-left: 0;
+    border-left: none;
+    padding-top: 1.25rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .course-stream {
+    padding: 1.25rem 1.1rem 3rem;
+  }
+
+  .lesson-title {
+    font-size: 1.35rem;
+  }
+
+  .lesson-footer-nav {
+    flex-wrap: wrap;
+  }
+}
+
+/* ── Outline rail revert additions ─────────────────────────────
+   Desktop (≥960px): the rail is a sticky pinned panel — the
+   backdrop must never dim the whole page there. Mobile (≤960px):
+   backdrop dims + click-outside-to-close is the drawer pattern. */
+@media (min-width: 960px) {
+  .course-sidebar-backdrop.active {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+/* Ghost collapse control in the rail header (old-design palette) */
+.outline-collapse-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  line-height: 1;
+  color: rgba(247, 210, 139, 0.7);
+  background: transparent;
+  border: 1px solid rgba(212, 163, 75, 0.25);
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+
+.outline-collapse-btn:hover {
+  background: rgba(212, 163, 75, 0.15);
+  color: #f7d28b;
+}
+
+body.theme-light .outline-collapse-btn,
+.theme-light .outline-collapse-btn {
+  color: #8c5222;
+  border-color: rgba(162, 115, 60, 0.3);
+}
+
+body.theme-light .outline-collapse-btn:hover,
+.theme-light .outline-collapse-btn:hover {
+  background: rgba(162, 115, 60, 0.12);
+  color: #4a2810;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   UPGRADED MEDIA LAYOUTS: VIDEO HERO & COMPANION SPEC CARDS
+   ══════════════════════════════════════════════════════════════ */
+
+.article-media-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(0, 0.95fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.lesson-brief-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(0, 0.95fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+/* ── Hardware Specimen Companion Card ── */
+.hardware-specimen-header {
+  margin-bottom: 1.15rem;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(212, 163, 75, 0.3);
+  background: rgba(14, 8, 5, 0.65);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+}
+
+.specimen-badge-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.55rem 0.85rem;
+  background: rgba(212, 163, 75, 0.1);
+  border-bottom: 1px solid rgba(212, 163, 75, 0.2);
+}
+
+.specimen-badge-pill {
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #f7d28b;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.specimen-tier-pill {
+  font-size: 0.62rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.18rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(0, 255, 135, 0.14);
+  color: #00ff87;
+  border: 1px solid rgba(0, 255, 135, 0.35);
+}
+
+.specimen-image-container {
+  position: relative;
+  width: 100%;
+  height: 150px;
+  overflow: hidden;
+  background: #080402;
+}
+
+.hardware-specimen-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.35s ease;
+}
+
+.hardware-specimen-header:hover .hardware-specimen-img {
+  transform: scale(1.05);
+}
+
+.specimen-caption-overlay {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  padding: 0.5rem 0.85rem;
+  background: linear-gradient(180deg, transparent 0%, rgba(12, 6, 4, 0.95) 100%);
+  display: flex;
+  flex-direction: column;
+}
+
+.specimen-part-title {
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: #f1e7db;
+  letter-spacing: 0.02em;
+}
+
+.specimen-subtext {
+  font-size: 0.64rem;
+  color: #c4af98;
+  font-family: monospace;
+}
+
+/* ── Topic Blueprint Companion Visual ── */
+.article-visual-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.article-img-frame {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(212, 163, 75, 0.28);
+  height: 220px;
+  background: #080c14;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.45);
+}
+
+.article-hero-preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.35s ease;
+}
+
+.article-img-frame:hover .article-hero-preview-img {
+  transform: scale(1.04);
+}
+
+.article-img-caption {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  padding: 0.5rem 0.85rem;
+  background: linear-gradient(180deg, transparent 0%, rgba(9, 13, 22, 0.95) 100%);
+  display: flex;
+  flex-direction: column;
+}
+
+.article-img-title {
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: #f7d28b;
+}
+
+.article-img-sub {
+  font-size: 0.64rem;
+  color: #94a3b8;
+  font-family: monospace;
+}
+
+.article-objectives-box {
+  margin-top: 1rem;
+  padding: 0.9rem 1.05rem;
+  border-radius: 10px;
+  background: rgba(212, 163, 75, 0.06);
+  border: 1px solid rgba(212, 163, 75, 0.2);
+}
+
+.objectives-heading {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #d4a34b;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.objectives-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.objectives-list li {
+  font-size: 0.78rem;
+  color: #cbd5e1;
+  line-height: 1.45;
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.obj-check {
+  color: #00ff87;
+  font-weight: 800;
+}
+
+/* Wood grain overlay layer matching Left Sidebar */
+.sidebar-wood-overlay {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(212, 163, 75, 0.04) 1px, transparent 1px);
+  background-size: 16px 16px;
+  pointer-events: none;
+}

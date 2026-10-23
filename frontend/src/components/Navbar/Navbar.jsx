@@ -9,6 +9,7 @@ import "./Navbar.css";
 function Navbar({ isPinned, setIsPinned }) {
   const { isAdmin, logoutAdmin } = useAuth();
   const { theme, toggleTheme, isDark } = useTheme();
+  const [soundActive, setSoundActive] = useState(() => soundManager.enabled);
   const [isHovered, setIsHovered] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -26,7 +27,6 @@ function Navbar({ isPinned, setIsPinned }) {
     e.preventDefault();
     // "Build" is the app's entry point — the Component Picker on "/" is home.
     enterFullscreen(); // click gesture = permission for immersive fullscreen
-    soundManager.openBox();
     if (location.pathname !== "/") {
       navigate("/");
     }
@@ -173,6 +173,25 @@ function Navbar({ isPinned, setIsPinned }) {
                   >
                     <div className="theme-toggle-slider">
                       <span className="theme-icon">{isDark ? "🌙" : "☀️"}</span>
+                    </div>
+                  </button>
+                </div>
+
+                <div className="theme-toggle-row" style={{ marginTop: "8px" }}>
+                  <span className="theme-toggle-label">
+                    {soundActive ? "🔊 Sound FX" : "🔇 SFX Muted"}
+                  </span>
+                  <button 
+                    type="button" 
+                    className={`theme-toggle-switch ${soundActive ? "dark" : "light"}`}
+                    onClick={() => {
+                      const next = soundManager.toggleSound();
+                      setSoundActive(next);
+                    }}
+                    title={soundActive ? "Mute Sound Effects" : "Enable Sound Effects"}
+                  >
+                    <div className="theme-toggle-slider">
+                      <span className="theme-icon">{soundActive ? "🔊" : "🔇"}</span>
                     </div>
                   </button>
                 </div>

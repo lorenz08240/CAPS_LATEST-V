@@ -62,7 +62,7 @@ body.theme-light .sidebar,
   top: 0;
   left: 0;
   bottom: 0;
-  width: 16px;
+  width: 24px;
   z-index: 998;
   cursor: pointer;
 }

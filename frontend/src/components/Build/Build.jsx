@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useBuild } from "../../contexts/BuildContext";
 import { checkCompatibility } from "../../utilities/compatibilityEngine";
+import soundManager from "../../utilities/soundManager";
 import FullscreenGate from "../FullscreenGate/FullscreenGate";
 import "./Build.css";
 
@@ -123,6 +124,20 @@ function BuildPage({ isIntegrated = false }) {
 
   const selectedComponents = getSelectedComponents();
 
+  // Completion toast: fires once the rig selection is considered "done"
+  // (every step slot filled) — nudges the user to the Compatibility Checker.
+  const [showCompleteToast, setShowCompleteToast] = useState(false);
+
+  useEffect(() => {
+    if (selectedComponents.length === buildSteps.length) {
+      soundManager.complete();
+      setShowCompleteToast(true);
+      const timer = setTimeout(() => setShowCompleteToast(false), 9000);
+      return () => clearTimeout(timer);
+    }
+    setShowCompleteToast(false);
+  }, [selectedComponents.length]);
+
   useEffect(() => {
     setViewedComponent(currentBuild[buildSteps[currentStep].key] || null);
     setSearchQuery("");
@@ -143,6 +158,7 @@ function BuildPage({ isIntegrated = false }) {
   const handleComponentSelect = (component) => {
     const category = buildSteps[currentStep].key;
     addComponent(category, component);
+    soundManager.install();
 
     // Automatically move to the next step
     if (currentStep < buildSteps.length - 1) {
@@ -164,10 +180,12 @@ function BuildPage({ isIntegrated = false }) {
   };
 
   const handleCardClick = (component) => {
+    soundManager.snap();
     setViewedComponent(component);
   };
 
   const handleReset = () => {
+    soundManager.modalClose();
     resetBuild();
     setCurrentStep(0); // Reset to Step 1 (PC Case)
   };
@@ -197,7 +215,7 @@ function BuildPage({ isIntegrated = false }) {
   });
 
   return (
-    <div className={`build-page ${isIntegrated ? '' : 'standalone'}`}>
+    <div className="build-page standalone">
       {/* Main Build Area */}
       <div className="build-main" id="build-main-area">
         <div className="build-sidebar">
@@ -232,6 +250,7 @@ function BuildPage({ isIntegrated = false }) {
                         className="step-remove-mini"
                         onClick={(e) => {
                           e.stopPropagation();
+                          soundManager.click();
                           removeComponent(step.key);
                         }}
                         title={`Remove ${step.label}`}
@@ -243,46 +262,21 @@ function BuildPage({ isIntegrated = false }) {
                 );
               })}
             </div>
+
+            <div className="sidebar-foot-row">
+              <button
+                onClick={handleReset}
+                className="reset-build-btn sidebar-reset-btn"
+                disabled={selectedComponents.length === 0}
+                title="Clear all selected components"
+              >
+                Reset Build
+              </button>
+            </div>
           </div>
         </div>
 
         <div className="build-content">
-          <div className="step-header">
-            <div className="step-info">
-              <div className="content-cta-row">
-                <Link
-                  to="/compatibility"
-                  className="sidebar-cta-btn sidebar-cta-compat"
-                >
-                  <span className="sidebar-cta-icon">🛡️</span>
-                  <div className="sidebar-cta-text">
-                    <span className="sidebar-cta-label">Check Compatibility</span>
-                    <span className="sidebar-cta-sub">Verify your build parts</span>
-                  </div>
-                </Link>
-
-                <Link
-                  to="/3d-builder"
-                  className="sidebar-cta-btn sidebar-cta-3d"
-                >
-                  <span className="sidebar-cta-icon">🧊</span>
-                  <div className="sidebar-cta-text">
-                    <span className="sidebar-cta-label">Launch 3D Studio</span>
-                    <span className="sidebar-cta-sub">
-                      {selectedComponents.length === 0
-                        ? "Interactive 3D Assembly"
-                        : `Inspect ${selectedComponents.length}/${buildSteps.length} parts in 3D`}
-                    </span>
-                  </div>
-                </Link>
-              </div>
-            </div>
-            {/* Reset Button */}
-            <button onClick={handleReset} className="reset-build-btn">
-              Reset Build
-            </button>
-          </div>
-
           <div className="search-and-filters">
             <div className="search-container">
               <input
@@ -525,12 +519,60 @@ function BuildPage({ isIntegrated = false }) {
                         : "Ready to assemble. Choose your case to begin."}
                     </span>
                   </div>
+
+                  {/* Secondary actions — relocated from the top header strip */}
+                  <div className="overview-cta-row">
+                    <Link to="/compatibility" className="sidebar-cta-btn sidebar-cta-compat">
+                      <span className="sidebar-cta-icon">🛡️</span>
+                      <div className="sidebar-cta-text">
+                        <span className="sidebar-cta-label">Check Compatibility</span>
+                        <span className="sidebar-cta-sub">Verify your build parts</span>
+                      </div>
+                    </Link>
+
+                    <Link to="/3d-builder" className="sidebar-cta-btn sidebar-cta-3d">
+                      <span className="sidebar-cta-icon">🧊</span>
+                      <div className="sidebar-cta-text">
+                        <span className="sidebar-cta-label">Launch 3D Studio</span>
+                        <span className="sidebar-cta-sub">
+                          {selectedComponents.length === 0
+                            ? "Interactive 3D Assembly"
+                            : `Inspect ${selectedComponents.length}/${buildSteps.length} parts in 3D`}
+                        </span>
+                      </div>
+                    </Link>
+                  </div>
                 </div>
               )}
             </div>
           </div>
         </div>
       </div>
+
+      {/* Build-complete toast — full-screen safe (in-app DOM, no native dialogs) */}
+      {showCompleteToast && (
+        <div className="build-complete-toast" role="status">
+          <span className="bct-icon">🎉</span>
+          <div className="bct-body">
+            <strong>All {buildSteps.length} parts selected — build complete!</strong>
+            <span>Verify pins, sockets &amp; wattage before you buy.</span>
+          </div>
+          <Link
+            to="/compatibility"
+            className="bct-cta"
+            onClick={() => setShowCompleteToast(false)}
+          >
+            🛡️ Check Compatibility
+          </Link>
+          <button
+            className="bct-close"
+            onClick={() => setShowCompleteToast(false)}
+            aria-label="Dismiss notification"
+          >
+            ✕
+          </button>
+        </div>
+      )}
     </div>
   );
 }

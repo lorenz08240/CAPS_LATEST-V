@@ -30,7 +30,7 @@ const MOTION_PROPS = {
       y: "22vh",
       transition: { duration: 0.34, ease: EASE },
     },
-    style: { minHeight: "100dvh" },
+    style: { height: "100%", width: "100%", overflow: "hidden" },
   },
   "/compatibility": {
     initial: { opacity: 0, y: "-22vh" },

@@ -1763,3 +1763,93 @@
   color: #00e5a0;
   text-shadow: 0 0 8px rgba(0, 229, 160, 0.5);
 }
+
+/* ==========================================================================
+   Control Deck Login — Feature Carousel (same as welcome banner)
+   Scoped size adaptation of the shared Home.css carousel classes
+   ========================================================================== */
+.admin-login-left .hero-carousel-container-new {
+  height: 340px;
+  max-width: 560px;
+}
+
+.admin-login-left .carousel-slide-new {
+  min-width: 88%;
+  padding-right: 1.25rem;
+}
+
+.admin-login-left .slide-inner-new {
+  grid-template-columns: 5fr 5fr;
+}
+
+.admin-login-left .slide-content-new {
+  padding: 1.6rem 1.4rem;
+}
+
+.admin-login-left .slide-content-new h4 {
+  font-size: 1.25rem;
+  margin-bottom: 0.6rem;
+}
+
+.admin-login-left .slide-content-new p {
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
+.admin-login-left .slide-decoration-nodes {
+  margin-top: 1.1rem !important;
+}
+
+.admin-login-left .active-guide-badge-new {
+  font-size: 0.72rem;
+}
+
+.admin-login-left .carousel-control-module-new {
+  left: 16px;
+  bottom: 16px;
+  padding: 0.45rem 0.9rem;
+  background: rgba(255, 255, 255, 0.14);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+}
+
+.admin-login-left .carousel-indicators-new {
+  gap: 7px;
+}
+
+.admin-login-left .indicator-pill {
+  width: 13px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.admin-login-left .indicator-pill:hover {
+  background: rgba(255, 255, 255, 0.6);
+  transform: scale(1.15);
+}
+
+.admin-login-left .indicator-pill.active {
+  width: 28px;
+  background: #00e5a0;
+  box-shadow: 0 0 10px rgba(0, 229, 160, 0.7);
+}
+
+@media (max-width: 900px) {
+  .admin-login-wrapper {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-login-left {
+    border-right: none;
+    padding-right: 0;
+    border-bottom: 1px solid rgba(0, 229, 160, 0.2);
+    padding-bottom: 24px;
+  }
+
+  .admin-login-left .hero-carousel-container-new {
+    height: 300px;
+    max-width: 100%;
+  }
+}

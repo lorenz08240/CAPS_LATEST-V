@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import FeatureCarousel from "../FeatureCarousel/FeatureCarousel";
 import "./Admin.css";
 
 const categories = ["case", "motherboard", "gpu", "ram", "storage", "cpu", "psu"];
@@ -178,6 +179,8 @@ function Admin() {
   const [loading, setLoading] = useState(false);
   const [crawling, setCrawling] = useState(false);
   const [message, setMessage] = useState("");
+  const [confirmDelete, setConfirmDelete] = useState({ show: false, part: null });
+  const [confirmCrawler, setConfirmCrawler] = useState(false);
 
   // Fetch production parts from server
   const fetchParts = async () => {
@@ -302,11 +305,8 @@ function Admin() {
     });
   };
 
-  const handleDelete = async (part) => {
-    if (!window.confirm(`Are you sure you want to delete "${part.name}" (${part.brand})? This will permanently remove it from the database.`)) {
-      return;
-    }
-
+  const performDelete = async (part) => {
+    if (!part) return;
     setLoading(true);
     try {
       const res = await fetch(`http://localhost:5000/api/parts/${encodeURIComponent(part.id)}`, {
@@ -328,6 +328,10 @@ function Admin() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleDelete = (part) => {
+    setConfirmDelete({ show: true, part });
   };
 
   const handleSubmit = async (e) => {
@@ -416,26 +420,28 @@ function Admin() {
   };
 
   // --- CONNECT CRAWLER TO SCRAPED DATA REVIEW QUEUE ---
-  const handleCrawl = async () => {
-    if (window.confirm("Are you sure you want to run the web crawler on EasyPC? This will scrape hardware components and place them directly into the Scraped Data Review Queue for admin verification.")) {
-      setCrawling(true);
-      setMessage("Web crawler started: Scraping hardware components from EasyPC...");
-      try {
-        const res = await fetch("http://localhost:5000/api/crawl", { method: "POST" });
-        const data = await res.json().catch(() => ({}));
-        if (res.ok) {
-          setMessage("Crawler finished successfully! New EasyPC components placed in Scraped Data Review Queue.");
-          await fetchScrapedQueue();
-        } else {
-          setMessage(`Crawler message: ${data.message || data.error || "Completed"}`);
-          await fetchScrapedQueue();
-        }
-      } catch (err) {
-        setMessage("Crawler execution finished. Review queued EasyPC items below.");
+  const handleCrawl = () => {
+    setConfirmCrawler(true);
+  };
+
+  const runCrawlerNow = async () => {
+    setCrawling(true);
+    setMessage("Web crawler started: Scraping hardware components from EasyPC...");
+    try {
+      const res = await fetch("http://localhost:5000/api/crawl", { method: "POST" });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        setMessage("Crawler finished successfully! New EasyPC components placed in Scraped Data Review Queue.");
         await fetchScrapedQueue();
-      } finally {
-        setCrawling(false);
+      } else {
+        setMessage(`Crawler message: ${data.message || data.error || "Completed"}`);
+        await fetchScrapedQueue();
       }
+    } catch (err) {
+      setMessage("Crawler execution finished. Review queued EasyPC items below.");
+      await fetchScrapedQueue();
+    } finally {
+      setCrawling(false);
     }
   };
 
@@ -632,18 +638,18 @@ function Admin() {
         <div className="admin-page admin-login-wrapper">
           <div className="admin-login-left">
             <div className="login-graphic">
-              <h1>BuildLab Control Deck</h1>
-              <p>Secure access for hardware administration and matrix configuration.</p>
-              <div className="cyber-circuit"></div>
+              <h1>Control Deck</h1>
+              <p>For Hardware &amp; PC Matrix Administrations</p>
+              <FeatureCarousel />
             </div>
           </div>
 
           <div className="admin-login-right">
             <div className="admin-panel login-panel">
-              <h2>Admin Access</h2>
+              <h2>Enter Credentials to Access</h2>
               <form onSubmit={handleLogin} className="admin-form">
                 <div className="form-group">
-                  <label>Password</label>
+                  <label>Given by the Developers</label>
                   <div className="password-input-wrapper">
                     <input
                       type={showPassword ? "text" : "password"}
@@ -1318,6 +1324,61 @@ function Admin() {
           </div>
         </div>
       </div>
+
+      {/* ── ADMIN CONFIRM MODAL (replaces native window.confirm) ── */}
+      {(confirmDelete.show || confirmCrawler) && (
+        <div
+          className="builder-confirm-overlay"
+          onClick={() => {
+            setConfirmDelete({ show: false, part: null });
+            setConfirmCrawler(false);
+          }}
+        >
+          <div className="builder-confirm-box" onClick={(e) => e.stopPropagation()}>
+            <div className="builder-confirm-icon">
+              {confirmCrawler ? "🕷️" : "🗑️"}
+            </div>
+            <h3 className="builder-confirm-title">
+              {confirmCrawler ? "Run Web Crawler?" : "Delete Component?"}
+            </h3>
+            <p className="builder-confirm-desc">
+              {confirmCrawler
+                ? "This will scrape hardware components from EasyPC and place them directly into the Scraped Data Review Queue for admin verification."
+                : `Are you sure you want to delete "${confirmDelete.part?.name}" (${confirmDelete.part?.brand})? This action cannot be undone.`}
+            </p>
+            <div className="builder-confirm-actions">
+              <button
+                type="button"
+                className="builder-confirm-btn ghost"
+                onClick={() => {
+                  setConfirmDelete({ show: false, part: null });
+                  setConfirmCrawler(false);
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="builder-confirm-btn danger"
+                onClick={async () => {
+                  if (confirmCrawler) {
+                    setConfirmCrawler(false);
+                    await runCrawlerNow();
+                    return;
+                  }
+                  if (confirmDelete.part) {
+                    const partToDelete = confirmDelete.part;
+                    setConfirmDelete({ show: false, part: null });
+                    await performDelete(partToDelete);
+                  }
+                }}
+              >
+                {confirmCrawler ? "Run Crawler" : "Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
