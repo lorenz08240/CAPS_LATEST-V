@@ -1,8 +1,9 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { Link } from "react-router-dom";
 import { useBuild } from "../../contexts/BuildContext";
 import { getCompatibilitySummary } from "../../utilities/rules";
+import soundManager from "../../utilities/soundManager";
 import "./Compatibility.css";
 
 export default function Compatibility({ isIntegrated = false }) {
@@ -229,9 +230,24 @@ export default function Compatibility({ isIntegrated = false }) {
     iss.components.some((c) => c.toLowerCase() === "psu" || c.toLowerCase() === "gpu")
   );
 
+  // Auditory feedback when entering Compatibility Checker
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (compatibilityIssues.length > 0) {
+        soundManager.denied();
+      } else if (selectedComponents.length >= 2) {
+        soundManager.granted();
+      }
+    }, 280);
+
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleSave = (slot) => {
     saveBuildSnapshot(slot);
     setSelectedSaveSlot(slot);
+    soundManager.granted();
     setSaveMessage(`Build saved to Slot ${slot + 1}!`);
     setTimeout(() => setSaveMessage(""), 3500);
   };

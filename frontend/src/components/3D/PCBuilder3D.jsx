@@ -357,11 +357,11 @@ function PCBuilder3DWorkspace() {
             onClick={() => {
               loadDemoBuild();
               playSound('install');
-              showToast('⚡ Demo Gaming Rig Loaded (7/7 Parts Assembled)');
+              showToast('Demo Gaming Rig Loaded (7/7 Parts Assembled)');
             }}
             title="Instantly assemble full demo PC"
           >
-            ⚡ Load Demo Rig
+            Load Demo Rig
           </button>
 
           {/* Quick Compatibility Link */}
@@ -370,7 +370,7 @@ function PCBuilder3DWorkspace() {
             onClick={() => navigate('/compatibility')}
             title="Inspect Compatibility Matrix"
           >
-            🛡️ Compatibility
+            Compatibility
           </button>
 
           {/* Disassemble / Clear */}
@@ -383,7 +383,7 @@ function PCBuilder3DWorkspace() {
             disabled={placedParts.length === 0}
             title="Disassemble PC"
           >
-            🗑 Disassemble
+            Disassemble
           </button>
         </div>
       </header>
@@ -516,14 +516,14 @@ function PCBuilder3DWorkspace() {
                                   className="action-btn remove-btn"
                                   onClick={() => handleRemovePart(activeCategory)}
                                 >
-                                  ✕ Uninstall
+                                  Uninstall
                                 </button>
                               ) : (
                                 <button 
                                   className="action-btn install-btn"
                                   onClick={() => handleInstallPart(comp, activeCategory)}
                                 >
-                                  + Install in 3D
+                                  Install in 3D
                                 </button>
                               )}
                             </div>
@@ -554,42 +554,42 @@ function PCBuilder3DWorkspace() {
               onClick={() => handleCameraPreset('whole')}
               title="Fit and Frame Whole PC Rig"
             >
-              🏠 Whole Rig
+              Whole Rig
             </button>
             <button 
               className={`hud-btn ${cameraPreset === 'isometric' ? 'active' : ''}`}
               onClick={() => handleCameraPreset('isometric')}
               title="Isometric 3D Perspective"
             >
-              📐 Iso
+              Iso
             </button>
             <button 
               className={`hud-btn ${cameraPreset === 'interior' ? 'active' : ''}`}
               onClick={() => handleCameraPreset('interior')}
               title="Motherboard & Socket Close-up"
             >
-              🔍 Inside
+              Inside
             </button>
             <button 
               className={`hud-btn ${cameraPreset === 'gpu' ? 'active' : ''}`}
               onClick={() => handleCameraPreset('gpu')}
               title="Graphics Card Focus"
             >
-              🎮 GPU
+              GPU
             </button>
             <button 
               className={`hud-btn ${cameraPreset === 'front' ? 'active' : ''}`}
               onClick={() => handleCameraPreset('front')}
               title="Front Intake Fans"
             >
-              🚪 Front
+              Front
             </button>
             <button 
               className={`hud-btn ${cameraPreset === 'top' ? 'active' : ''}`}
               onClick={() => handleCameraPreset('top')}
               title="Top-Down Plan"
             >
-              ⬆️ Top
+              Top
             </button>
 
             <div className="hud-divider"></div>
@@ -603,7 +603,7 @@ function PCBuilder3DWorkspace() {
               }}
               title="Toggle Constant 360° Turntable Auto-Rotation"
             >
-              {autoRotate ? '⏸️ Stop Spin' : '🔄 Auto-Rotate'}
+              {autoRotate ? 'Stop Spin' : 'Auto-Rotate'}
             </button>
           </div>
 
@@ -616,21 +616,21 @@ function PCBuilder3DWorkspace() {
                 onClick={() => setGlassMode('closed')}
                 title="Glass Panel On"
               >
-                🪟 Closed
+                Closed
               </button>
               <button 
                 className={`hud-btn ${glassMode === 'open' ? 'active' : ''}`}
                 onClick={() => setGlassMode('open')}
                 title="Hinged Open"
               >
-                📂 Open
+                Open
               </button>
               <button 
                 className={`hud-btn ${glassMode === 'removed' ? 'active' : ''}`}
                 onClick={() => setGlassMode('removed')}
                 title="Panel Removed (Best for internal inspection)"
               >
-                ✕ Off
+                Off
               </button>
             </div>
 
@@ -642,7 +642,7 @@ function PCBuilder3DWorkspace() {
               onClick={() => setIsExploded(!isExploded)}
               title="Toggle Exploded Assembly Diagram"
             >
-              💥 {isExploded ? 'Assembled View' : 'Exploded View'}
+              {isExploded ? 'Assembled View' : 'Exploded View'}
             </button>
           </div>
 
@@ -805,7 +805,7 @@ function PCBuilder3DWorkspace() {
                     className="insp-btn focus-btn"
                     onClick={() => handleFocusComponent(inspectedPart)}
                   >
-                    🎯 Focus Camera
+                    Focus Camera
                   </button>
                   <button 
                     className="insp-btn swap-btn"
@@ -815,13 +815,13 @@ function PCBuilder3DWorkspace() {
                       setDrawerOpen(true);
                     }}
                   >
-                    🔄 Swap Part
+                    Swap Part
                   </button>
                   <button 
                     className="insp-btn remove-btn"
                     onClick={() => handleRemovePart(inspectedPart.category)}
                   >
-                    🗑 Remove
+                    Remove
                   </button>
                 </div>
               </div>

@@ -1,6 +1,27 @@
 // Centralized UI & System Sound Effects Manager for BuildLab
 // High-performance audio pool + procedural Web Audio API synthesis fallback
 
+const SOUND_SOURCE_MAP = {
+  click: ["/sfx/click.wav", "/sfx/UI_Interact.mp3"],
+  snap: ["/sfx/snap.wav"],
+  install: ["/sfx/install.wav"],
+  open_box: ["/sfx/open_box.wav"],
+  modal_open: ["/sfx/modal_open.wav"],
+  modal_close: ["/sfx/modal_close.wav"],
+  complete: ["/sfx/granted.wav"],
+  error: ["/sfx/error.mp3", "/sfx/Error2.mp3", "/sfx/Error1.mp3"],
+  Error1: ["/sfx/Error1.mp3"],
+  Error2: ["/sfx/Error2.mp3"],
+  Error3: ["/sfx/Error3.mp3"],
+  hint: ["/sfx/hint.wav"],
+  warning: ["/sfx/warning.wav", "/sfx/denied.mp3"],
+  denied: ["/sfx/denied.mp3", "/sfx/UI_Denied_2.mp3", "/sfx/Error2.mp3"],
+  UI_Denied_2: ["/sfx/UI_Denied_2.mp3", "/sfx/denied.mp3"],
+  granted: ["/sfx/granted.wav", "/sfx/complete.wav"],
+  interact: ["/sfx/UI_Interact.mp3", "/sfx/click.wav"],
+  UI_Interact: ["/sfx/UI_Interact.mp3", "/sfx/click.wav"],
+};
+
 class SynthAudio {
   constructor() {
     this.ctx = null;
@@ -92,8 +113,31 @@ class SynthAudio {
   }
 
   error(vol = 0.2) {
-    // Low buzz
-    this.playTone(180, "sawtooth", 0.12, vol * 0.7, 130);
+    // Cute low alert
+    this.playTone(220, "triangle", 0.1, vol * 0.8, 160);
+  }
+
+  denied(vol = 0.22) {
+    // Cute descending "uh-oh / bonk" sound: 360Hz down to 220Hz
+    this.playTone(360, "sine", 0.08, vol, 240);
+    setTimeout(() => {
+      this.playTone(220, "triangle", 0.12, vol * 0.9, 140);
+    }, 70);
+  }
+
+  granted(vol = 0.22) {
+    // Cute sparkling celesta chime: C6 -> E6 -> G6 -> C7
+    const notes = [1046.5, 1318.5, 1567.98, 2093.0];
+    notes.forEach((freq, i) => {
+      setTimeout(() => {
+        this.playTone(freq, "sine", 0.15, vol * 0.8, freq * 1.02);
+      }, i * 75);
+    });
+  }
+
+  interact(vol = 0.14) {
+    // Cute light bubble click
+    this.playTone(900, "sine", 0.03, vol, 500);
   }
 
   hint(vol = 0.15) {
@@ -172,7 +216,11 @@ class SoundManager {
     let audio = pool.find((a) => a.paused || a.ended);
     if (!audio && pool.length < 4) {
       try {
-        audio = new Audio(`/sfx/${soundName}.wav`);
+        const candidates = SOUND_SOURCE_MAP[soundName] || [
+          `/sfx/${soundName}.mp3`,
+          `/sfx/${soundName}.wav`,
+        ];
+        audio = new Audio(candidates[0]);
         pool.push(audio);
       } catch {
         return null;
@@ -242,6 +290,18 @@ class SoundManager {
 
   error() {
     this.play("error", 0.35);
+  }
+
+  denied() {
+    this.play("denied", 0.38);
+  }
+
+  granted() {
+    this.play("granted", 0.38);
+  }
+
+  interact() {
+    this.play("interact", 0.28);
   }
 
   hint() {

@@ -560,7 +560,10 @@ function BuildPage({ isIntegrated = false }) {
           <Link
             to="/compatibility"
             className="bct-cta"
-            onClick={() => setShowCompleteToast(false)}
+            onClick={() => {
+              soundManager.click();
+              setShowCompleteToast(false);
+            }}
           >
             🛡️ Check Compatibility
           </Link>
