@@ -4,6 +4,99 @@ All notable project changes, UI/UX refinements, and compatibility fixes will be 
 
 ---
 
+## [2026-10-25] - Graphify Architecture Concept & Visualizer Guide
+- **Core Purpose & Mental Model**:
+  - Functions like an X-ray GPS map for entire codebases: turns hundreds of isolated files into an interactive constellation graph ([graph.html](file:///d:/Capstone%20Project/WhiteHats%20Utilities/graphify-out/graph.html)).
+  - Identifies core hubs ("God Nodes"), maps neighborhoods ("Communities"), and traces direct shortest paths between features without reading raw files manually.
+
+---
+
+## [2026-10-25] - WhiteHats Utilities Knowledge Graph & Workspace State Sync
+- **Knowledge Graph Generated for WhiteHats Utilities**:
+  - Indexed 24 code files across `anti-slop` CLI and architecture into `WhiteHats Utilities/graphify-out/`.
+  - Rebuilt graph with 241 nodes, 379 edges across 12 communities with 0 token cost.
+  - Generated interactive visualizer (`graph.html`) and audit report (`GRAPH_REPORT.md`).
+- **Comprehensive Workspace Model Synchronized**:
+  - `BuildLab/CAPS_LATEST-V`: Cleaned core app (frontend, backend, db) with private `.agents/` and `event_dispatcher.py` isolated from git.
+  - `WhiteHats Utilities`: Dedicated standalone workspace housing `anti-slop` agent skills, documentation archives, and utility scripts.
+
+---
+
+## [2026-10-25] - Audio Deduplication: `UI_Denied_2.mp3` Purged & Unified to `denied.mp3`
+- **Identical Hash Verification**:
+  - Verified that `UI_Denied_2.mp3` and `denied.mp3` shared identical SHA256 hashes (`288260A86F7CF6B1D225FE941163AD621979677192CA2909388C9D8FEA0FB6BB`, 33,024 bytes).
+- **Centralized Sound Manager Harmonization**:
+  - Updated `frontend/src/utilities/soundManager.js` to standardize all denial and warning sound chains on `/sfx/denied.mp3`.
+  - Mapped legacy `UI_Denied_2` calls to `/sfx/denied.mp3` for seamless backwards compatibility with `Compatibility.jsx`.
+- **Asset Removal & Build Verification**:
+  - Safely deleted `frontend/public/sfx/UI_Denied_2.mp3`.
+  - Verified clean production build (`npm run build` completed in 1.71s with 1,031 modules transformed and zero errors).
+
+---
+
+## [2026-10-25] - Audio Deduplication: `Error2.mp3` Purged & Unified to `error.mp3`
+- **Identical Hash Verification**:
+  - Verified that `Error2.mp3` and `error.mp3` shared identical SHA256 hashes (`3EC21AD945F8496B48D287EB8A4B5291E9F76F08061F3096C178F932ECA37195`, 32,600 bytes).
+- **Centralized Sound Manager Harmonization**:
+  - Updated `frontend/src/utilities/soundManager.js` to standardize all error and denial sound arrays on `/sfx/error.mp3`.
+  - Mapped legacy `Error2` requests to `/sfx/error.mp3` for seamless backwards compatibility.
+- **Asset Removal & Build Verification**:
+  - Safely deleted `frontend/public/sfx/Error2.mp3`.
+  - Confirmed clean production build (`npm run build` completed in 10.51s with 1,031 modules transformed and zero errors).
+
+---
+
+## [2026-10-25] - Git Exclusion & Local Developer Privacy
+- **100% Private Local Setup**:
+  - Restored `.agents` as a private, hidden folder on disk for your personal use.
+  - Added root `.gitignore` excluding `.agents/`, `event_dispatcher.py`, `logs/`, `.webui_secret_key`, and build artifacts from Git tracking.
+  - Untracked `.agents` from git index (`git rm -r --cached .agents`) so git operations never push or share personal agent tools, bot tokens, or rules to your team.
+
+---
+
+## [2026-10-25] - WhiteHats Agents Renaming & Anti-Slop Setup
+- **`.agents` Folder Renamed to `WhiteHats Agents`**:
+  - The actual directory on disk was renamed to `WhiteHats Agents` for cleaner, less obvious naming and tracked in Git.
+  - A transparent Windows filesystem junction was established (`.agents` -> `WhiteHats Agents`) so Antigravity IDE continues detecting rules and workflows seamlessly without breaking.
+- **Anti-Slop Utility Installed**:
+  - Cloned repository `anti-slop` into `d:\Capstone Project\WhiteHats Utilities\anti-slop`.
+  - Installed CLI dependencies via `npm install` inside `anti-slop/cli` for immediate agent rule and skill availability.
+
+---
+
+## [2026-10-25] - Stealth Renaming & Rule Compaction (Dev Protocol Scheme)
+- **Purged Bytecode Cache**:
+  - Completely removed `.agents/__pycache__` and compiled `.pyc` artifacts.
+- **Rule Consolidation & Stealth Renaming**:
+  - Unified all workspace directives into `.agents/rules/dev_protocol.md`.
+  - Deleted redundant legacy rule files: `telegram_notifications.md`, `workspace.md`, `GEMINI.md`, and `AGENTS.md`.
+- **Dispatcher Script Renaming**:
+  - Renamed `notify_telegram.py` to `event_dispatcher.py` at workspace root.
+  - Updated internal usage help and `.agents/workflows/clean.md` to reference `event_dispatcher.py`.
+
+---
+
+## [2026-10-25] - Operation Cleanse: Workspace Bloat Reduction & Telegram Hub Unification
+- **Workspace Cleanup & Asset Offloading**:
+  - Offloaded `graphify-out/` and `docs/` to `d:\Capstone Project\WhiteHats Utilities` as external archives.
+  - Permanently removed obsolete media and scripts: `scrolling.mp4` (65MB), `delete_laptops.js`, and `delete_prebuilts.js`.
+- **Telegram Unified Hub (`notify_telegram.py`)**:
+  - Merged CLI notifier (`notify_telegram.py`) and remote daemon listener (`bot_listener.py`) into a single, clean root script.
+  - Supports instant CLI notifications (`python notify_telegram.py "<msg>"`) and remote control daemon (`python notify_telegram.py --listen`) with `/status`, `/screenshot`, `/deploy`, `/terminate`, `/restart`, `/run`, and `/git`.
+  - Deleted redundant `.agents/rules/bot_listener.py`.
+- **Core Workspace Preserved**:
+  - `frontend/`, `backend/`, and `buildlab_db.sql` remain intact and functional.
+
+---
+
+## [2026-10-25] - Graphify & Workspace Logs Analysis
+- **`logs/` Directory Breakdown**:
+  - `backend.log`: Tracks Express API server daemon events (running on port 5000, environment loading via dotenvx).
+  - `frontend.log`: Captures Vite dev server runtime logs, HMR update pulses, and Three.js runtime warnings (`THREE.Clock` deprecations).
+- **Knowledge Graph Integration**: Confirmed that `logs/` contains ephemeral diagnostic output excluded from AST extraction; persisted knowledge memory in `graphify-out/memory/`.
+
+---
+
 ## [2026-10-23] - Admin Dashboard Syntax Error Fix (Vite Parse Error Resolved)
 - **Resolved `[PARSE_ERROR] Unexpected token` in `Admin.jsx`**:
   - OpenCode had appended the confirmation modal JSX after `export default Admin;` at the end of the file instead of inside the component return.

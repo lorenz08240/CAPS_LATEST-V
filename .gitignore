@@ -1,0 +1,24 @@
+# Personal Agent Configuration & Automation (Private)
+.agents/
+WhiteHats Agents/
+event_dispatcher.py
+notify_telegram.py
+.webui_secret_key
+logs/
+graphify-out/
+pc_screen.png
+
+# Environment & Local Secrets
+.env
+.env.local
+*.log
+
+# Python virtual environment & cache
+.venv/
+__pycache__/
+*.pyc
+
+# Node dependencies
+node_modules/
+dist/
+build/
