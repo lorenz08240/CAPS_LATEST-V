@@ -187,7 +187,7 @@ function CompatibilityView({ isIntegrated = false }) {
       return [
         {
           category: "All Clear",
-          icon: "✅",
+          icon: "✓",
           severity: "ok",
           message: "All selected components are fully compatible with each other!",
           fix: null,
@@ -199,7 +199,7 @@ function CompatibilityView({ isIntegrated = false }) {
       category: Array.isArray(iss.components)
         ? iss.components.map((c) => c.toUpperCase()).join(" ↔ ")
         : "Compatibility Notice",
-      icon: "⚠️",
+      icon: "!",
       severity: "error",
       message: iss.issue,
       fix: iss.tip || "Verify component specifications and adjust your selection in the picker.",
@@ -318,7 +318,7 @@ function CompatibilityView({ isIntegrated = false }) {
                       <span className="compat-issue-category">{issue.category}</span>
                     </div>
                     <p className="compat-issue-message">{issue.message}</p>
-                    {issue.fix && <p className="compat-issue-fix">💡 {issue.fix}</p>}
+                    {issue.fix && <p className="compat-issue-fix"><strong>Recommendation:</strong> {issue.fix}</p>}
                   </div>
                 ))}
               </div>
@@ -457,7 +457,9 @@ function CompatibilityView({ isIntegrated = false }) {
                                 className="component-thumb-img"
                               />
                             ) : (
-                              <span className="thumb-placeholder-icon">🖥️</span>
+                              <span className="thumb-placeholder-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                              </span>
                             )}
                           </div>
                         </div>
@@ -471,7 +473,6 @@ function CompatibilityView({ isIntegrated = false }) {
                   <div className="bottleneck-darkred-card">
                     <div className="bottleneck-card-header">
                       <h3 className="bottleneck-card-title">Bottleneck Analysis</h3>
-
                     </div>
 
                     <div className="bottleneck-conflicts-list">
@@ -502,7 +503,9 @@ function CompatibilityView({ isIntegrated = false }) {
                   </div>
                 ) : compatibilityIssues.length === 0 ? (
                   <div className="compatibility-all-clear-card glass-panel">
-                    <span className="all-clear-icon">✅</span>
+                    <span className="all-clear-icon">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    </span>
                     <div className="all-clear-copy">
                       <h4>All Components are 100% Compatible</h4>
                       <p>No socket mismatches, clearance constraints, or wattage overdraw detected.</p>
@@ -516,11 +519,13 @@ function CompatibilityView({ isIntegrated = false }) {
                     className={`sub-diag-card ${hasSocketIssue ? "diag-issue" : "diag-ready"}`}
                   >
                     <div className="diag-header">
-                      <span className="diag-icon">🔲</span>
+                      <span className="diag-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/></svg>
+                      </span>
                       <h4 className="diag-label">Socket Matching</h4>
                     </div>
                     <p className="diag-desc">
-                      Socket matches connect matchers are as socket matching.
+                      Pin-level socket and chipset verification between CPU and motherboard.
                     </p>
                   </div>
 
@@ -528,11 +533,13 @@ function CompatibilityView({ isIntegrated = false }) {
                     className={`sub-diag-card ${hasRamIssue ? "diag-issue" : "diag-ready"}`}
                   >
                     <div className="diag-header">
-                      <span className="diag-icon">💾</span>
+                      <span className="diag-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="6" width="20" height="12" rx="1"/><line x1="6" y1="18" x2="6" y2="15"/><line x1="10" y1="18" x2="10" y2="15"/><line x1="14" y1="18" x2="14" y2="15"/><line x1="18" y1="18" x2="18" y2="15"/></svg>
+                      </span>
                       <h4 className="diag-label">RAM Compatibility</h4>
                     </div>
                     <p className="diag-desc">
-                      Compatibilities are to the RAM quality and RAM compatibility.
+                      Memory generation (DDR4/DDR5) and slot speed validation against the board.
                     </p>
                   </div>
 
@@ -540,11 +547,13 @@ function CompatibilityView({ isIntegrated = false }) {
                     className={`sub-diag-card ${hasPowerIssue ? "diag-issue" : "diag-ready"}`}
                   >
                     <div className="diag-header">
-                      <span className="diag-icon">⚡</span>
+                      <span className="diag-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                      </span>
                       <h4 className="diag-label">Power Requirements</h4>
                     </div>
                     <p className="diag-desc">
-                      Power requirements must be checked and meet power requirements.
+                      Calculates system peak draw against PSU rated wattage with safety margin.
                     </p>
                   </div>
                 </div>
@@ -559,7 +568,9 @@ function CompatibilityView({ isIntegrated = false }) {
                   <div className="kpi-grid-2x2">
                     {/* Est. Wattage */}
                     <div className="kpi-tile-box">
-                      <span className="kpi-icon-symbol kpi-icon-red">⚡</span>
+                      <span className="kpi-icon-symbol kpi-icon-red">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                      </span>
                       <div className="kpi-metric-info">
                         <span className="kpi-metric-label">Est. Wattage</span>
                         <span className="kpi-metric-value">{estWattage}W</span>
@@ -568,7 +579,9 @@ function CompatibilityView({ isIntegrated = false }) {
 
                     {/* Components Count */}
                     <div className="kpi-tile-box">
-                      <span className="kpi-icon-symbol kpi-icon-green">⊞</span>
+                      <span className="kpi-icon-symbol kpi-icon-green">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                      </span>
                       <div className="kpi-metric-info">
                         <span className="kpi-metric-label">Components</span>
                         <span className="kpi-metric-value">{selectedComponents.length}/7</span>
@@ -577,7 +590,9 @@ function CompatibilityView({ isIntegrated = false }) {
 
                     {/* Gaming Score */}
                     <div className="kpi-tile-box">
-                      <span className="kpi-icon-symbol kpi-icon-purple">🎮</span>
+                      <span className="kpi-icon-symbol kpi-icon-purple">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="8" cy="12" r="1.5"/><circle cx="16" cy="12" r="1.5"/></svg>
+                      </span>
                       <div className="kpi-metric-info">
                         <span className="kpi-metric-label">Gaming Score</span>
                         <span className="kpi-metric-value">
@@ -588,7 +603,9 @@ function CompatibilityView({ isIntegrated = false }) {
 
                     {/* Productivity Score */}
                     <div className="kpi-tile-box">
-                      <span className="kpi-icon-symbol kpi-icon-cyan">📊</span>
+                      <span className="kpi-icon-symbol kpi-icon-cyan">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                      </span>
                       <div className="kpi-metric-info">
                         <span className="kpi-metric-label">Productivity</span>
                         <span className="kpi-metric-value">

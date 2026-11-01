@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import { apiFetch } from "../../utilities/api";
 import FeatureCarousel from "../FeatureCarousel/FeatureCarousel";
 import "./Admin.css";
 
@@ -185,7 +186,7 @@ function Admin() {
   // Fetch production parts from server
   const fetchParts = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/parts");
+      const res = await apiFetch("/api/parts");
       if (!res.ok) throw new Error("Network response was not ok");
       const data = await res.json();
       const flattened = [];
@@ -219,7 +220,7 @@ function Admin() {
   // Fetch queued EasyPC scraped components from server
   const fetchScrapedQueue = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/scraped-queue");
+      const res = await apiFetch("/api/scraped-queue");
       if (!res.ok) throw new Error("Queue fetch error");
       const data = await res.json();
       if (Array.isArray(data)) {
@@ -309,7 +310,7 @@ function Admin() {
     if (!part) return;
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/parts/${encodeURIComponent(part.id)}`, {
+      const res = await apiFetch(`/api/parts/${encodeURIComponent(part.id)}`, {
         method: "DELETE"
       });
       if (res.ok) {
@@ -350,12 +351,12 @@ function Admin() {
       }
 
       const url = isEditing
-        ? `http://localhost:5000/api/parts/${encodeURIComponent(cleanedData.id)}`
-        : "http://localhost:5000/api/parts";
+        ? `/api/parts/${encodeURIComponent(cleanedData.id)}`
+        : "/api/parts";
       const method = isEditing ? "PUT" : "POST";
 
       try {
-        await fetch(url, {
+        await apiFetch(url, {
           method,
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(cleanedData),
@@ -365,7 +366,7 @@ function Admin() {
       // If verifying a scraped item, remove from queue on server and locally
       if (verifyingScrapedId) {
         try {
-          await fetch(`http://localhost:5000/api/scraped-queue/${encodeURIComponent(verifyingScrapedId)}`, {
+          await apiFetch(`/api/scraped-queue/${encodeURIComponent(verifyingScrapedId)}`, {
             method: "DELETE"
           });
         } catch (e) { }
@@ -428,7 +429,7 @@ function Admin() {
     setCrawling(true);
     setMessage("Web crawler started: Scraping hardware components from EasyPC...");
     try {
-      const res = await fetch("http://localhost:5000/api/crawl", { method: "POST" });
+      const res = await apiFetch("/api/crawl", { method: "POST" });
       const data = await res.json().catch(() => ({}));
       if (res.ok) {
         setMessage("Crawler finished successfully! New EasyPC components placed in Scraped Data Review Queue.");
@@ -448,7 +449,7 @@ function Admin() {
   // --- SCRAPED DATA REVIEW QUEUE ACTIONS ---
   const handleApproveScraped = async (id) => {
     try {
-      await fetch(`http://localhost:5000/api/scraped-queue/approve/${encodeURIComponent(id)}`, {
+      await apiFetch(`/api/scraped-queue/approve/${encodeURIComponent(id)}`, {
         method: "POST"
       });
     } catch (e) { }
@@ -485,7 +486,7 @@ function Admin() {
       efficiency: item.efficiency || ""
     });
 
-    setMessage(`⚡ Reviewing Scraped Item: Verify name, specs, form factor & image URL before pushing to production.`);
+    setMessage(`Reviewing Scraped Item: Verify name, specs, form factor & image URL before pushing to production.`);
     if (formRef.current) {
       formRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
     }
@@ -493,7 +494,7 @@ function Admin() {
 
   const handleDiscardScraped = async (id) => {
     try {
-      await fetch(`http://localhost:5000/api/scraped-queue/${encodeURIComponent(id)}`, {
+      await apiFetch(`/api/scraped-queue/${encodeURIComponent(id)}`, {
         method: "DELETE"
       });
     } catch (e) { }
@@ -511,7 +512,7 @@ function Admin() {
 
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/scraped-queue/merge", { method: "POST" });
+      const res = await apiFetch("/api/scraped-queue/merge", { method: "POST" });
       const data = await res.json().catch(() => ({}));
       if (res.ok) {
         setMessage(`Successfully merged ${data.mergedCount || approvedItems.length} verified EasyPC component(s) into production inventory!`);
@@ -658,8 +659,12 @@ function Admin() {
                       placeholder="Enter admin password"
                       required
                     />
-                    <button type="button" className="eye-btn" onClick={() => setShowPassword(!showPassword)}>
-                      {showPassword ? "👁️" : "👁️‍🗨️"}
+                    <button type="button" className="eye-btn" onClick={() => setShowPassword(!showPassword)} title={showPassword ? "Hide password" : "Show password"}>
+                      {showPassword ? (
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                      ) : (
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                      )}
                     </button>
                   </div>
                 </div>
@@ -1336,7 +1341,7 @@ function Admin() {
         >
           <div className="builder-confirm-box" onClick={(e) => e.stopPropagation()}>
             <div className="builder-confirm-icon">
-              {confirmCrawler ? "🕷️" : "🗑️"}
+              {confirmCrawler ? "Crawl" : "Clear"}
             </div>
             <h3 className="builder-confirm-title">
               {confirmCrawler ? "Run Web Crawler?" : "Delete Component?"}

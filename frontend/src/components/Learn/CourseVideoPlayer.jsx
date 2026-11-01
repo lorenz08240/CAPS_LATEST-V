@@ -220,7 +220,7 @@ export default function CourseVideoPlayer({ videoId, title, compact = false }) {
             onClick={toggleMute}
             title="Unmute audio"
           >
-            🔇 Tap to unmute
+            Tap to unmute
           </button>
         )}
         {!ready && <div className="cvp-loading">Loading video…</div>}
@@ -273,7 +273,7 @@ export default function CourseVideoPlayer({ videoId, title, compact = false }) {
           onClick={toggleMute}
           title={muted ? "Unmute" : "Mute"}
         >
-          {muted ? "🔇" : "🔊"}
+          {muted ? "Muted" : "Audio"}
         </button>
         <button
           className="cvp-btn"

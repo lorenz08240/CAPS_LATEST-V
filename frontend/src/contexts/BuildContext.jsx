@@ -1,15 +1,14 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { OFFLINE_COMPONENTS, DEMO_GAMING_RIG } from "../utilities/offlineParts";
+import { apiFetch } from "../utilities/api";
 
 // Build Context for managing selected components
 const BuildContext = createContext();
-
 
 // Build Provider component
 export const BuildProvider = ({ children }) => {
   const [currentBuild, setCurrentBuild] = useState(() => {
     try {
-      // Clear legacy permanent localStorage if present so it resets clean
       localStorage.removeItem("buildlab_current_build");
       const saved = sessionStorage.getItem("buildlab_current_build");
       if (saved) return JSON.parse(saved);
@@ -84,7 +83,7 @@ export const BuildProvider = ({ children }) => {
 
   // Fetch all components and saved builds from backend on load
   useEffect(() => {
-    fetch("http://localhost:5000/api/parts")
+    apiFetch("/api/parts")
       .then(res => res.json())
       .then(data => {
         if (data && typeof data === 'object' && Object.keys(data).length > 0) {
@@ -118,7 +117,7 @@ export const BuildProvider = ({ children }) => {
         console.warn("Backend API offline or database disconnected; using offline fallback parts.", err);
       });
 
-    fetch("http://localhost:5000/api/builds")
+    apiFetch("/api/builds")
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) setSavedBuilds(data);
@@ -137,7 +136,7 @@ export const BuildProvider = ({ children }) => {
     });
 
     // Save to database
-    fetch(`http://localhost:5000/api/builds/${slotIndex}`, {
+    apiFetch(`/api/builds/${slotIndex}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

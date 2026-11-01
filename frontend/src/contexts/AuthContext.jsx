@@ -15,6 +15,7 @@ export function AuthProvider({ children }) {
     if (password === "admin123") {
       setIsAdmin(true);
       localStorage.setItem("buildlab_admin", "true");
+      localStorage.setItem("buildlab_admin_token", password);
       return true;
     }
     return false;
@@ -23,6 +24,7 @@ export function AuthProvider({ children }) {
   const logoutAdmin = () => {
     setIsAdmin(false);
     localStorage.removeItem("buildlab_admin");
+    localStorage.removeItem("buildlab_admin_token");
   };
 
   return (

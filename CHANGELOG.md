@@ -4,7 +4,22 @@ All notable project changes, UI/UX refinements, and compatibility fixes will be 
 
 ---
 
-## [2026-10-25] - Git Commit & Push: "Jay optimized the codebase"
+## [2026-10-31] - Security Hardening & Architecture Consolidation (OpenCode Audit)
+- **Security & Vulnerability Remediation**:
+  - Permanently removed insecure remote shell listener (`event_dispatcher.py`).
+  - Purged cached sensitive files (`.webui_secret_key`, `logs/*.log`) from Git index.
+  - Implemented server-side `adminAuth` middleware protecting all mutating and admin API endpoints (`/api/parts`, `/api/admin/clean-db`, `/api/crawl`, `/api/scraped-queue`).
+- **Logic Deduplication & Unification**:
+  - Eliminated shadow routes in `server.js` ensuring complete 404 validation.
+  - Unified dual compatibility engines (`compatibilityEngine.js` & `rules.js`) into a single authoritative source of truth.
+  - Centralized API endpoints via `frontend/src/utilities/api.js` using `VITE_API_URL` with fallback.
+  - Dropped unused frontend dependency (`axios`) and added standard backend npm scripts (`start`, `test`).
+- **Quality Assurance**:
+  - Implemented automated Node.js test suite for hardware compatibility & matrix checks.
+
+---
+
+## [2026-10-25] - System Optimization & Codebase Refactoring
 - **Codebase Optimization Committed & Pushed (`main` -> `origin/main`)**:
   - Commit Hash: `4abb9ad` (`75 files changed, 121 insertions(+), 2778 deletions(-)`).
   - Cleaned repository of bloated assets, duplicate audio (`Error2.mp3`, `UI_Denied_2.mp3`), obsolete deletion scripts, and old graph artifacts.

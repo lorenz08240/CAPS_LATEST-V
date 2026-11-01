@@ -3,31 +3,8 @@ import { useFrame } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
 import * as THREE from 'three';
 import ProceduralSickleFan from './ProceduralSickleFan';
-
-// Individual GPU fan with true curved sickle blades rotating around X axis
-function GPUFanRotor({ position, rgbColor }) {
-  return (
-    <group position={position}>
-      {/* Fixed Outer Bezel Ring (facing towards -X) */}
-      <mesh position={[-0.01, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
-        <cylinderGeometry args={[0.52, 0.52, 0.04, 32, 1, true]} />
-        <meshStandardMaterial color="#475569" metalness={0.8} roughness={0.3} />
-      </mesh>
-
-      {/* Swept Sickle Rotor facing -X in Y-Z plane */}
-      <ProceduralSickleFan
-        position={[0, 0, 0]}
-        rotation={[0, -Math.PI / 2, 0]}
-        showFrame={false}
-        radius={0.48}
-        hubRadius={0.17}
-        speed={12}
-        numBlades={9}
-        rgbColor={rgbColor}
-      />
-    </group>
-  );
-}
+import NepotatoGPU from './NepotatoGPU';
+import { MotherboardDDR4Kit } from './DDR4RAMModel';
 
 // Procedural high-detail 3D models for all PC components (Clean Generic Models per Panel Specs)
 export default function ComponentModels3D({ 
@@ -36,16 +13,18 @@ export default function ComponentModels3D({
   explodedProgress = 0,
   isSelected = false,
   isHovered = false,
+  showTooltip = false,
+  enableHighlight = true,
   onSelect,
   onHover
 }) {
   const groupRef = useRef();
   const [localHover, setLocalHover] = useState(false);
 
-  // Gentle hover scale effect
+  // Gentle hover scale effect (only when highlights are enabled)
   useFrame(() => {
     if (groupRef.current) {
-      const targetScale = isHovered || localHover ? 1.03 : 1.0;
+      const targetScale = enableHighlight && (isHovered || localHover) ? 1.03 : 1.0;
       groupRef.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 0.15);
     }
   });
@@ -79,37 +58,41 @@ export default function ComponentModels3D({
     basePos[2] + explodedOffset[2]
   ];
 
-  const effectiveHover = isHovered || localHover;
-  const highlightEmissive = isSelected ? '#00e5ff' : effectiveHover ? '#475569' : '#000000';
-  const highlightIntensity = isSelected ? 1.5 : effectiveHover ? 0.8 : 0;
+  const effectiveHover = enableHighlight && (isHovered || localHover);
+  const activeSelected = enableHighlight && isSelected;
+  const highlightEmissive = activeSelected ? '#00e5ff' : effectiveHover ? '#475569' : '#000000';
+  const highlightIntensity = activeSelected ? 1.5 : effectiveHover ? 0.8 : 0;
 
   return (
     <group
       ref={groupRef}
       position={finalPos}
       onPointerOver={(e) => {
+        if (!enableHighlight) return;
         e.stopPropagation();
         setLocalHover(true);
         if (onHover) onHover(part, true);
         document.body.style.cursor = 'pointer';
       }}
       onPointerOut={(e) => {
+        if (!enableHighlight) return;
         e.stopPropagation();
         setLocalHover(false);
         if (onHover) onHover(part, false);
         document.body.style.cursor = 'auto';
       }}
       onClick={(e) => {
+        if (!onSelect) return;
         e.stopPropagation();
-        if (onSelect) onSelect(part);
+        onSelect(part);
       }}
     >
-      {/* Selection / Hover Indicator Ring */}
-      {(isSelected || effectiveHover) && (
+      {/* Selection / Hover Indicator Ring (Only rendered when highlights enabled) */}
+      {enableHighlight && (activeSelected || effectiveHover) && (
         <mesh position={[-0.2, 0, 0]} rotation={[0, Math.PI / 2, 0]}>
           <ringGeometry args={[1.5, 1.6, 32]} />
           <meshBasicMaterial 
-            color={isSelected ? '#00e5ff' : '#facc15'} 
+            color={activeSelected ? '#00e5ff' : '#facc15'} 
             transparent 
             opacity={0.75} 
             side={THREE.DoubleSide} 
@@ -415,142 +398,28 @@ export default function ComponentModels3D({
       )}
 
       {/* ───────────────────────────────────────────────────────────── */}
-      {/* 3. DUAL RAM KIT (DDR5 HIGH-PERFORMANCE SLIM VERTICAL MODULES) */}
+      {/* 3. DUAL RAM KIT (PHOTOREALISTIC DDR4 MODULES WITH PBR TEXTURES) */}
       {/* ───────────────────────────────────────────────────────────── */}
       {category === 'ram' && (
-        <group>
-          {[-0.2, 0.2].map((zOffset, stickIdx) => (
-            <group key={stickIdx} position={[0, 0, zOffset]}>
-              {/* Gold Plated Edge Connector with DDR5 Center Notch */}
-              <mesh position={[0, 0.55, 0]}>
-                <boxGeometry args={[0.04, 1.0, 0.04]} />
-                <meshStandardMaterial color="#f59e0b" metalness={0.95} roughness={0.15} />
-              </mesh>
-              <mesh position={[0, -0.55, 0]}>
-                <boxGeometry args={[0.04, 1.0, 0.04]} />
-                <meshStandardMaterial color="#f59e0b" metalness={0.95} roughness={0.15} />
-              </mesh>
-
-              {/* Matte Black 8-Layer PCB Substrate */}
-              <mesh position={[-0.15, 0, 0]}>
-                <boxGeometry args={[0.28, 2.25, 0.05]} />
-                <meshStandardMaterial color="#0f172a" roughness={0.8} />
-              </mesh>
-
-              {/* Anodized Brushed Aluminum Heatspreader (Dark Charcoal/Slate) */}
-              <mesh position={[-0.32, 0, 0]}>
-                <boxGeometry args={[0.34, 2.28, 0.08]} />
-                <meshStandardMaterial 
-                  color="#1e293b" 
-                  metalness={0.85} 
-                  roughness={0.25}
-                  emissive={highlightEmissive}
-                  emissiveIntensity={highlightIntensity}
-                />
-              </mesh>
-
-              {/* Angled Heatspreader Embossed Fin Plates */}
-              <mesh position={[-0.34, 0.3, 0]}>
-                <boxGeometry args={[0.24, 1.2, 0.09]} />
-                <meshStandardMaterial color="#334155" metalness={0.92} roughness={0.2} />
-              </mesh>
-
-              {/* Diamond-Cut Chrome Edge Trim Accent */}
-              <mesh position={[-0.45, 0, 0]}>
-                <boxGeometry args={[0.02, 2.26, 0.085]} />
-                <meshStandardMaterial color="#e2e8f0" metalness={1.0} roughness={0.08} />
-              </mesh>
-
-              {/* Premium Frosted Acrylic Top RGB Diffuser Lightbar */}
-              <mesh position={[-0.52, 0, 0]}>
-                <boxGeometry args={[0.12, 2.2, 0.075]} />
-                <meshStandardMaterial 
-                  color={rgbColor} 
-                  emissive={rgbColor} 
-                  emissiveIntensity={3.6} 
-                  roughness={0.12}
-                  transparent
-                  opacity={0.95}
-                />
-              </mesh>
-
-              {/* Center Illuminated Lightbar Fin Cutouts */}
-              {[-0.6, 0, 0.6].map((finY, fIdx) => (
-                <mesh key={fIdx} position={[-0.53, finY, 0]}>
-                  <boxGeometry args={[0.08, 0.12, 0.082]} />
-                  <meshStandardMaterial color="#0f172a" metalness={0.9} />
-                </mesh>
-              ))}
-            </group>
-          ))}
-        </group>
+        <MotherboardDDR4Kit
+          part={part}
+          rgbColor={rgbColor}
+          isSelected={activeSelected}
+          isHovered={effectiveHover}
+          enableHighlight={enableHighlight}
+        />
       )}
 
       {/* ───────────────────────────────────────────────────────────── */}
-      {/* 4. GPU (GRAPHICS CARD - TRIPLE FAN WITH TRUE ROTATION)        */}
+      {/* 4. GPU (GRAPHICS CARD - TRIPLE FAN NEPOTATO PROCEDURAL MODEL) */}
       {/* ───────────────────────────────────────────────────────────── */}
       {category === 'gpu' && (
-        <group>
-          <group position={[0, 0, 0]}>
-            {/* Die-Cast Outer Shroud */}
-            <mesh position={[0, 0, 0]}>
-              <boxGeometry args={[1.2, 1.1, 4.4]} />
-              <meshStandardMaterial 
-                color="#334155" 
-                roughness={0.6} 
-                metalness={0.6}
-                emissive={highlightEmissive}
-                emissiveIntensity={highlightIntensity}
-              />
-            </mesh>
-
-            {/* Brushed Metal Backplate */}
-            <mesh position={[0, 0.56, 0]}>
-              <boxGeometry args={[1.18, 0.04, 4.35]} />
-              <meshStandardMaterial color="#64748b" metalness={0.92} roughness={0.18} />
-            </mesh>
-
-            {/* Backplate Flow-Through Exhaust Cutout */}
-            <mesh position={[0, 0.58, 1.3]}>
-              <boxGeometry args={[0.7, 0.01, 1.1]} />
-              <meshStandardMaterial color="#1e293b" roughness={0.9} wireframe />
-            </mesh>
-
-            {/* Side Illuminated GPU Branding Badge */}
-            <mesh position={[-0.61, 0.15, 0]}>
-              <boxGeometry args={[0.02, 0.35, 2.2]} />
-              <meshStandardMaterial color="#1e293b" roughness={0.3} />
-            </mesh>
-            <mesh position={[-0.625, 0.15, 0]}>
-              <boxGeometry args={[0.01, 0.2, 1.8]} />
-              <meshStandardMaterial color={rgbColor} emissive={rgbColor} emissiveIntensity={4.0} />
-            </mesh>
-
-            {/* Triple Axial Cooling Fans (Individual spinning rotors facing -X) */}
-            <group position={[-0.62, -0.15, 0]}>
-              {[-1.3, 0, 1.3].map((zPos, fanIdx) => (
-                <GPUFanRotor key={fanIdx} position={[0, 0, zPos]} rgbColor={rgbColor} />
-              ))}
-            </group>
-
-            {/* 12VHPWR PCIe Power Connector */}
-            <mesh position={[0.2, 0.58, 0.8]}>
-              <boxGeometry args={[0.25, 0.12, 0.4]} />
-              <meshStandardMaterial color="#0f172a" />
-            </mesh>
-            {/* Sleeved Cable */}
-            <mesh position={[0.25, 0.1, 0.8]} rotation={[0, 0, 0.2]}>
-              <cylinderGeometry args={[0.09, 0.09, 1.0, 12]} />
-              <meshStandardMaterial color="#1e293b" roughness={0.9} />
-            </mesh>
-
-            {/* Rear Metal Mounting Bracket */}
-            <mesh position={[0, 0, -2.25]}>
-              <boxGeometry args={[1.3, 1.8, 0.08]} />
-              <meshStandardMaterial color="#f1f5f9" metalness={0.95} roughness={0.12} />
-            </mesh>
-          </group>
-        </group>
+        <NepotatoGPU 
+          rgbColor={rgbColor} 
+          explodedProgress={explodedProgress} 
+          isSelected={isSelected} 
+          isHovered={isHovered || localHover} 
+        />
       )}
 
       {/* ───────────────────────────────────────────────────────────── */}
@@ -645,8 +514,8 @@ export default function ComponentModels3D({
         </group>
       )}
 
-      {/* Tooltip on hover */}
-      {effectiveHover && (
+      {/* Tooltip on hover (Optional, default false) */}
+      {showTooltip && effectiveHover && (
         <Html center position={[0, 1.6, 0]} distanceFactor={15}>
           <div style={{
             background: 'rgba(15, 23, 42, 0.95)',

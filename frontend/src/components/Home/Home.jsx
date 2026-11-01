@@ -1,298 +1,325 @@
 import React, { useState, useEffect } from "react";
-import "./Home.css"; // Import the CSS file for styling
+import { useNavigate } from "react-router-dom";
+import "./Home.css";
 import Build from "../Build/Build";
-import Compatibility from "../Compatibility/Compatibility";
 import FullscreenGate from "../FullscreenGate/FullscreenGate";
-import { enterFullscreen, isFullscreenActive } from "../../utilities/fullscreen";
+import Home3DHero from "./Home3DHero";
+import { enterFullscreen } from "../../utilities/fullscreen";
 import soundManager from "../../utilities/soundManager";
 
-let hasSeenBannerThisSession = false;
-
-function Hero() {
-  const [isBannerVisible, setIsBannerVisible] = useState(!hasSeenBannerThisSession);
-  const [isFadingOut, setIsFadingOut] = useState(false);
-  const [activeFaq, setActiveFaq] = useState(null);
+function Home() {
+  const navigate = useNavigate();
+  const [activeModel, setActiveModel] = useState('case');
   const [scrollProgress, setScrollProgress] = useState(0);
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(true);
-  const [showBackToTop, setShowBackToTop] = useState(false);
 
-  const featureSlides = [
-    {
-      id: 1,
-      title: "Component Picker",
-      desc: "Clean, organized database of real PC parts with live specifications.",
-      image: "https://i.pinimg.com/1200x/01/a3/78/01a37845e39a32d225adcb81aafb30aa.jpg",
-    },
-    {
-      id: 2,
-      title: "Real-Time Compatibility Engine",
-      desc: "Instantly catches bottlenecks, socket mismatches, and power errors.",
-      image: "https://i.pinimg.com/1200x/75/6d/c3/756dc3817fdee27c0e1b327e963e4507.jpg",
-    },
-    {
-      id: 3,
-      title: "Performance Profile Analysis",
-      desc: "Visual preview of your spider web graph and performance scores breakdown.",
-      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=800",
-    },
-    {
-      id: 4,
-      title: "Step-by-Step Assembly Guide",
-      desc: "Preview of our intuitive 7-stage workstation setup guide.",
-      image: "https://i.pinimg.com/736x/bd/94/25/bd9425d84aaf8ffe4c641bb3f2734bf2.jpg",
-    }
-  ];
-
-  const extendedSlides = [...featureSlides, featureSlides[0]];
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setIsTransitioning(true);
-      setCurrentSlide((prev) => prev + 1);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, []);
-
-  useEffect(() => {
-    if (currentSlide === featureSlides.length) {
-      // When it hits the clone at the end
-      const timeout = setTimeout(() => {
-        setIsTransitioning(false); // disable animation
-        setCurrentSlide(0);        // snap to actual first slide
-      }, 1500); // wait for slide transition to finish (matches CSS 1.5s)
-      return () => clearTimeout(timeout);
-    } else if (currentSlide === 0 && !isTransitioning) {
-      // Re-enable animation after snapping back
-      const timeout = setTimeout(() => {
-        setIsTransitioning(true);
-      }, 50);
-      return () => clearTimeout(timeout);
-    }
-  }, [currentSlide, isTransitioning, featureSlides.length]);
-
-  const handleDotClick = (idx) => {
-    setIsTransitioning(true);
-    setCurrentSlide(idx);
+  const STAGE_META = {
+    case: { num: '01', name: 'ATX CHASSIS' },
+    motherboard: { num: '02', name: 'ARCHITECTURAL MOTHERBOARD' },
+    cpu: { num: '03', name: 'THERMAL SICKLE COOLER' },
+    ram: { num: '04', name: 'HIGH-SPEED DDR4 MEMORY' },
+    storage: { num: '05', name: 'M.2 NVMe SSD STORAGE' },
+    gpu: { num: '06', name: 'DEDICATED TRIPLE GPU' },
+    psu: { num: '07', name: 'MODULAR POWER SUPPLY' },
   };
 
-  // Track banner dismissal requests coming from other components
-  // (e.g. the sidebar "Build" link) and treat them as entering the app.
-  useEffect(() => {
-    const handler = () => {
-      hasSeenBannerThisSession = true;
-      setIsFadingOut(true);
-      setTimeout(() => setIsBannerVisible(false), 500);
-    };
-    window.addEventListener("buildlab:enter-build", handler);
-    return () => window.removeEventListener("buildlab:enter-build", handler);
-  }, []);
-
+  // Track window scroll progress across the hero section
   useEffect(() => {
     const handleScroll = () => {
-      // Show back to top button when user scrolls down
-      const scrollPosition = window.scrollY || document.documentElement.scrollTop;
-      if (scrollPosition > 300) {
-        setShowBackToTop(true);
-      } else {
-        setShowBackToTop(false);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const stepsSection = document.getElementById('how-it-works');
-      if (stepsSection) {
-        const rect = stepsSection.getBoundingClientRect();
-        const windowHeight = window.innerHeight;
-        const progress = Math.min(1, Math.max(0, (windowHeight - rect.top) / (windowHeight * 0.7)));
+      const hero = document.getElementById("cyber-hero");
+      if (hero) {
+        const heroHeight = hero.offsetHeight || window.innerHeight;
+        const currentScroll = window.scrollY || window.pageYOffset;
+        const progress = Math.min(1, Math.max(0, currentScroll / (heroHeight * 0.85)));
         setScrollProgress(progress);
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
-  useEffect(() => {
-    if (isBannerVisible) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
+    // Support direct hash navigation (e.g. /#build-station)
+    if (window.location.hash === "#build-station" || window.location.search.includes("scroll=build")) {
+      setTimeout(() => {
+        handleScrollToBuild("instant");
+      }, 400);
     }
 
-    return () => {
-      document.body.style.overflow = "auto";
-    };
-  }, [isBannerVisible]);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
-  const handleStartBuild = () => {
-    setIsFadingOut(true);
-    hasSeenBannerThisSession = true;
-
-    // Enter immersive fullscreen mode right away — this runs inside the
-    // click handler, which is the user gesture browsers require.
-    enterFullscreen();
-
-    setTimeout(() => {
-      setIsBannerVisible(false);
-    }, 500); // Wait for the 0.5s fade-out animation to complete
+  const handleScrollToBuild = (behavior = "smooth") => {
+    try {
+      soundManager.click();
+    } catch {
+      // Audio playback fallback
+    }
+    const scrollBehavior = typeof behavior === "string" ? behavior : "smooth";
+    const buildStation = document.getElementById("build-station");
+    if (buildStation) {
+      try {
+        buildStation.scrollIntoView({ behavior: scrollBehavior, block: "start" });
+      } catch {
+        const top = window.pageYOffset + buildStation.getBoundingClientRect().top;
+        window.scrollTo({ top, behavior: scrollBehavior });
+      }
+    }
   };
 
-  // If the user escapes fullscreen after committing to the build (Engaged),
-  // the FullscreenGate overlay re-prompts them — play a soft warning.
-  useEffect(() => {
-    const onExit = () => {
-      if (!isFullscreenActive() && hasSeenBannerThisSession) {
-        soundManager.warning();
-      }
-    };
-    document.addEventListener("fullscreenchange", onExit);
-    document.addEventListener("webkitfullscreenchange", onExit);
-    return () => {
-      document.removeEventListener("fullscreenchange", onExit);
-      document.removeEventListener("webkitfullscreenchange", onExit);
-    };
-  }, []);
+  const handleLaunch3DStudio = () => {
+    soundManager.click();
+    enterFullscreen();
+    navigate('/3d-builder');
+  };
+
+  const handleOpenCompatibility = () => {
+    soundManager.click();
+    navigate('/compatibility');
+  };
 
   return (
     <FullscreenGate>
       <div className="home-page">
-      {isBannerVisible && (
-        <div className={`welcome-banner ${isFadingOut ? "fade-out" : ""}`}>
-          <div className="welcome-banner-modal">
-            <div className="hero-content-wrapper">
-              {/* LEFT COLUMN: Typography, Stats, CTA */}
-              <div className="hero-left-col">
-                <div className="hero-subtitle-new">
-                  INTERACTIVE HARDWARE SIMULATION
-                </div>
-                <h1 className="hero-title-new">
-                  Build Your Dream PC <br />
-                  with <span className="expert-guidance-badge">Expert Guidance</span>
-                </h1>
-                <p className="hero-desc-new">
-                  The ultimate PC building simulator. Master hardware compatibility, customize your perfect rig, and learn essential assembly skills interactively. No guesswork—just confident building!
-                </p>
+        {/* ══════════════════════════════════════════════════════════════════════ */}
+        {/* FULL-BLEED CYBERPUNK 3D HERO SECTION (Inspired by Cyber Metaverse Ref) */}
+        {/* ══════════════════════════════════════════════════════════════════════ */}
+        <section id="cyber-hero" className="cyber-hero-section">
+          {/* Ambient Lighting Gradients */}
+          <div className="cyber-ambient-pink-spot" />
+          <div className="cyber-ambient-grid" />
 
-                <div className="hero-stats-new" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '2rem' }}>
-                  <div className="stat-new" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <span className="stat-number-new">72+</span>
-                    <span className="stat-label-new">COMPONENTS TRACKED</span>
-                  </div>
-                  <div className="stat-new" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <span className="stat-number-new">7</span>
-                    <span className="stat-label-new">ASSEMBLY STAGES</span>
-                  </div>
-                  <div className="stat-new" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <span className="stat-number-new">1</span>
-                    <span className="stat-label-new">COMPATIBILITY MATRIX ENGINE</span>
-                  </div>
-                </div>
-
-                <div className="hero-cta-wrapper">
-                  <button
-                    className="hero-cta-btn-new"
-                    onClick={handleStartBuild}
-                  >
-                    START BUILDING NOW
-                  </button>
-                </div>
+          {/* 1. TOP HIGH-TECH NAVIGATION BAR */}
+          <header className="cyber-top-nav">
+            <div className="cyber-brand" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+              <div className="cyber-logo-box">
+                <img 
+                  src="/assets/system_logo.png" 
+                  alt="BuildLab Logo" 
+                  className="cyber-logo-img" 
+                  onError={(e) => { e.currentTarget.style.display = 'none'; }} 
+                />
+                <span className="cyber-logo-fallback">▲</span>
               </div>
-
-              {/* RIGHT COLUMN: Antigravity Carousel */}
-              <div className="hero-right-col antigravity-track">
-                <div className="hero-carousel-container-new">
-                  <div className="ambient-blur-glow"></div>
-                  <div className="carousel-viewport">
-                    <div
-                      className="carousel-slide-wrapper-new"
-                      style={{
-                        transform: `translateX(-${currentSlide * 100}%)`,
-                        transition: isTransitioning ? 'transform 1.2s cubic-bezier(0.22, 1, 0.36, 1)' : 'none'
-                      }}
-                    >
-                      {extendedSlides.map((slide, index) => (
-                        <div className="carousel-slide-new" key={`${slide.id}-${index}`}>
-                          <div className="slide-inner-new">
-                            <div className="slide-content-new">
-                              <span className="active-guide-badge-new" style={{ marginBottom: '1rem' }}>ACTIVE GUIDE</span>
-                              <h4>{slide.title}</h4>
-                              <p>{slide.desc}</p>
-                              <div className="slide-decoration-nodes" style={{ marginTop: '2rem' }}>
-                                <span className="node"></span>
-                                <span className="node-line"></span>
-                                <span className="node"></span>
-                              </div>
-                            </div>
-                            <div className="slide-media-new">
-                              <img src={slide.image} alt={slide.title} />
-                              <div className="slide-overlay-new"></div>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* FLOATING NAVIGATION MODULE (Right Side) */}
-                  <div className="carousel-control-module-new">
-                    <div className="carousel-indicators-new">
-                      {featureSlides.map((_, idx) => (
-                        <button
-                          key={idx}
-                          className={`indicator-pill ${currentSlide === idx || (currentSlide === featureSlides.length && idx === 0) ? 'active' : ''}`}
-                          onClick={() => handleDotClick(idx)}
-                          aria-label={`Go to slide ${idx + 1}`}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* BOTTOM PANEL: Live System Requirements */}
-                <div className="live-system-requirements-new">
-                  <div className="req-item-new">
-                    <span className="req-icon-new">✓</span>
-                    <span className="req-text-new">HARDWARE VALIDATION LOGIC: <span className="req-status-new">ACTIVE</span></span>
-                  </div>
-                  <div className="req-item-new">
-                    <span className="req-icon-new">✓</span>
-                    <span className="req-text-new">THERMAL PROFILE ANALYTICS: <span className="req-status-new">ONLINE</span></span>
-                  </div>
-                </div>
+              <div className="cyber-brand-text">
+                <span className="cyber-brand-title">BUILDLAB</span>
+                <span className="cyber-brand-badge">SYSTEM V2.4</span>
               </div>
             </div>
 
-            {/* BOTTOM: Scroll Indicator & Trust Badges */}
-            <div className="hero-footer-new">
-              <div className="tech-logos-wrapper-new">
-                <div className="tech-logos translucent-row-new">
-                  <span className="brand-logo">intel</span>
-                  <span className="brand-logo">AMD</span>
-                  <span className="brand-logo" style={{ fontStyle: 'normal' }}>DELL</span>
-                  <span className="brand-logo" style={{ fontFamily: 'Segoe UI' }}>Microsoft</span>
-                  <span className="brand-logo" style={{ fontFamily: 'sans-serif', fontWeight: 600 }}>MSI</span>
-                </div>
+            <nav className="cyber-nav-links">
+              <button 
+                type="button" 
+                className="cyber-nav-link active" 
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              >
+                HOME
+              </button>
+              <button 
+                type="button" 
+                className="cyber-nav-link" 
+                onClick={handleLaunch3DStudio}
+              >
+                3D STUDIO
+              </button>
+              <button 
+                type="button" 
+                className="cyber-nav-link" 
+                onClick={handleOpenCompatibility}
+              >
+                COMPATIBILITY
+              </button>
+              <button 
+                type="button" 
+                className="cyber-nav-link" 
+                onClick={() => { soundManager.click(); navigate('/learn'); }}
+              >
+                LEARN
+              </button>
+              <button 
+                type="button" 
+                className="cyber-nav-link" 
+                onClick={() => { soundManager.click(); navigate('/brands'); }}
+              >
+                BRANDS
+              </button>
+            </nav>
+
+            <div className="cyber-nav-actions">
+              <button 
+                type="button" 
+                className="cyber-search-btn" 
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleScrollToBuild("smooth");
+                }}
+                title="Search Components"
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+              </button>
+            </div>
+          </header>
+
+          {/* 2. LEFT VERTICAL UTILITY & SCROLL RAIL */}
+          <aside className="cyber-left-rail">
+            <div className="rail-top-icon">
+              <span className="cyber-square-icon" />
+            </div>
+            <div className="rail-vertical-label">BUILDLAB // HARDWARE LAB</div>
+            <div 
+              className="rail-scroll-indicator" 
+              onClick={(e) => {
+                e.preventDefault();
+                handleScrollToBuild("smooth");
+              }}
+              style={{ cursor: "pointer" }}
+            >
+              <span className="scroll-pulse-dot" />
+              <span className="scroll-v-text">SCROLL DOWN</span>
+              <span className="scroll-v-line" />
+            </div>
+          </aside>
+
+          {/* 3. GIGANTIC BACKGROUND TYPOGRAPHY (Layered Behind 3D Canvas) */}
+          <div 
+            className="cyber-giant-text-backdrop"
+            style={{ 
+              transform: `translate(-50%, calc(-50% + ${scrollProgress * 90}px)) scale(${1 - scrollProgress * 0.08})`,
+              opacity: Math.max(0.15, 1 - scrollProgress * 1.2)
+            }}
+          >
+            <h1 className="giant-bg-text">BUILDLAB</h1>
+          </div>
+
+          {/* 4. CENTERPIECE INTERACTIVE & SCROLL-TRIGGERED 3D HARDWARE STAGE */}
+          <div className="cyber-canvas-stage">
+            <Home3DHero 
+              activeModel={activeModel}
+              setActiveModel={setActiveModel}
+              rgbColor="#f43f5e" 
+              scrollProgress={scrollProgress} 
+            />
+          </div>
+
+          {/* 5. EDITORIAL FLANKING OVERLAYS */}
+          <div className="cyber-editorial-grid">
+            {/* Left Editorial Column (Tailored for Students & Hardware Learning) */}
+            <div className="cyber-editorial-col cyber-col-left">
+              <div className="cyber-tag-badge">
+                <span className="tag-bracket">[</span>
+                <span className="tag-dot" />
+                <span className="tag-text">STUDENT & BUILDER ACADEMY</span>
+                <span className="tag-bracket">]</span>
+              </div>
+              <h2 className="cyber-col-title">LEARN HARDWARE</h2>
+              <p className="cyber-col-desc">
+                Master PC architecture through hands-on virtual assembly. Understand component hierarchies, socket clearances, pinouts, and thermal dynamics with guided interactive lessons designed for students and enthusiasts.
+              </p>
+              <div className="cyber-btn-group">
+                <button 
+                  type="button" 
+                  className="cyber-btn-primary"
+                  onClick={() => { soundManager.click(); navigate('/learn'); }}
+                >
+                  <span>EXPLORE LEARN LAB</span>
+                  <span className="btn-notch">///</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Right Editorial Column (BuildLab Web App Introduction & Description Hook) */}
+            <div className="cyber-editorial-col cyber-col-right">
+              <div className="cyber-meta-header">
+                <span className="meta-kicker">{STAGE_META[activeModel]?.name || 'NEXT-GEN HARDWARE SIMULATOR'}</span>
+                <span className="meta-counter">{STAGE_META[activeModel]?.num || '01'} / 07</span>
+              </div>
+              <h2 className="cyber-col-title">BUILDLAB SUITE</h2>
+              <p className="cyber-col-desc">
+                An intelligent 3D computer engineering workspace. Plan, customize, and validate high-performance rigs with real-time socket matching, TDP thermal auditing, and zero bottleneck tolerance before you buy physical parts.
+              </p>
+              <div className="cyber-btn-group right-align">
+                <button 
+                  type="button" 
+                  className="cyber-btn-outline"
+                  onClick={handleOpenCompatibility}
+                >
+                  <span>COMPATIBILITY MATRIX</span>
+                  <span className="btn-arrow">&rarr;</span>
+                </button>
               </div>
             </div>
           </div>
-        </div>
-      )}
 
-      {/* TIER 2: Active Build Station Framework */}
-      <section id="build-station" className="home-integrated-section">
-        <Build isIntegrated={false} />
-      </section>
+          {/* 6. FLOATING BOTTOM GLASSMORPHIC TELEMETRY HUD BAR */}
+          <div className="cyber-hud-bar">
+            {/* Left Metric: Active Hardware Stages */}
+            <div className="hud-metric-item">
+              <div className="hud-radar-dial">
+                <div className="radar-sweep" />
+                <div className="radar-core-dot" />
+              </div>
+              <div className="hud-metric-text">
+                <span className="hud-metric-label">ACTIVE RIG</span>
+                <span className="hud-metric-val">+7 HARDWARE STAGES</span>
+                <span className="hud-metric-sub">Modular snap-fit validation</span>
+              </div>
+            </div>
 
+            <div className="hud-divider" />
+
+            {/* Center Metric: Compatibility Engine */}
+            <div className="hud-metric-item">
+              <div className="hud-status-pulse">
+                <span className="pulse-ring" />
+                <span className="pulse-center" />
+              </div>
+              <div className="hud-metric-text">
+                <span className="hud-metric-label">COMPATIBILITY</span>
+                <span className="hud-metric-val val-green">100% VERIFIED</span>
+                <span className="hud-metric-sub">Zero socket or TDP conflicts</span>
+              </div>
+            </div>
+
+            <div className="hud-divider" />
+
+            {/* Right Metric: Simulation Engine */}
+            <div className="hud-metric-item">
+              <div className="hud-chip-badge">
+                <span>3D</span>
+              </div>
+              <div className="hud-metric-text">
+                <span className="hud-metric-label">SIMULATION ENGINE</span>
+                <span className="hud-metric-val">THREE.JS WEBGL</span>
+                <span className="hud-metric-sub">Physically based rendering</span>
+              </div>
+            </div>
+
+            {/* START BUILD Action Button in place of the scroll circle */}
+            <button 
+              type="button" 
+              className="hud-start-build-btn"
+              onClick={(e) => {
+                e.preventDefault();
+                handleScrollToBuild("smooth");
+              }}
+              title="Launch 2D Workbench"
+            >
+              <span className="btn-label">START BUILD</span>
+              <span className="btn-arrow">&rarr;</span>
+            </button>
+          </div>
+        </section>
+
+        {/* ══════════════════════════════════════════════════════════════════════ */}
+        {/* TIER 2: Active Build Station Framework (Smooth Scroll Target)         */}
+        {/* ══════════════════════════════════════════════════════════════════════ */}
+        <section id="build-station" className="home-integrated-section">
+          <Build isIntegrated={true} />
+        </section>
       </div>
     </FullscreenGate>
   );
 }
 
-export default Hero;
+export default Home;

@@ -14,8 +14,8 @@
     radial-gradient(ellipse at 20% 20%, rgba(16, 185, 129, 0.08), transparent 50%),
     radial-gradient(ellipse at 80% 80%, rgba(45, 212, 191, 0.07), transparent 50%),
     rgba(3, 7, 18, 0.92);
-  backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
   animation: fs-gate-fade-in 0.35s ease both;
 }
 

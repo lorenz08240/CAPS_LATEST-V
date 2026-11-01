@@ -751,7 +751,7 @@ export default function CourseShell({ componentGuide }) {
   const handleNext = () => {
     if (currentVideoId && !isVideoWatched) {
       soundManager.warning();
-      setVideoToast("⚠️ Video Requirement: You must watch the lesson video tutorial before proceeding! Click 'Mark as Watched' once viewed.");
+      setVideoToast("Video Requirement: You must watch the lesson video tutorial before proceeding! Click 'Mark as Watched' once viewed.");
       setTimeout(() => setVideoToast(null), 4500);
       return;
     }
@@ -764,7 +764,7 @@ export default function CourseShell({ componentGuide }) {
   const handleMarkComplete = (lessonId) => {
     if (currentVideoId && !isVideoWatched) {
       soundManager.warning();
-      setVideoToast("⚠️ Video Requirement: You must watch the lesson video before marking this lesson complete! Click 'Mark as Watched' once viewed.");
+      setVideoToast("Video Requirement: You must watch the lesson video before marking this lesson complete! Click 'Mark as Watched' once viewed.");
       setTimeout(() => setVideoToast(null), 4500);
       return;
     }
@@ -927,7 +927,7 @@ export default function CourseShell({ componentGuide }) {
               <div className="video-gate-status">
                 {watchedVideos.includes(current.id) ? (
                   <span className="video-gate-badge watched">
-                    ✅ Video Watched &amp; Verified
+                    Video Verified
                   </span>
                 ) : (
                   <span className="video-gate-badge unwatched">
@@ -971,7 +971,7 @@ export default function CourseShell({ componentGuide }) {
 
             {!watchedVideos.includes(current.id) && (
               <div className="video-gate-notice">
-                🔒 <strong>Prerequisite:</strong> Watch this video tutorial before continuing to the next topic.
+                <strong>Prerequisite:</strong> Watch this video tutorial before continuing to the next topic.
               </div>
             )}
           </div>
@@ -1072,7 +1072,7 @@ export default function CourseShell({ componentGuide }) {
               <div className="video-gate-status">
                 {watchedVideos.includes(comp.id) ? (
                   <span className="video-gate-badge watched">
-                    ✅ Video Watched &amp; Verified
+                    Video Verified
                   </span>
                 ) : (
                   <span className="video-gate-badge unwatched">
@@ -1114,7 +1114,7 @@ export default function CourseShell({ componentGuide }) {
 
             {!watchedVideos.includes(comp.id) && (
               <div className="video-gate-notice">
-                🔒 <strong>Prerequisite:</strong> Watch this instructional hardware video before moving to the next lesson or marking complete.
+                <strong>Prerequisite:</strong> Watch this instructional hardware video before moving to the next lesson or marking complete.
               </div>
             )}
           </div>
@@ -1123,7 +1123,7 @@ export default function CourseShell({ componentGuide }) {
             {/* Hardware Part Image Inspection Specimen Card */}
             <div className="hardware-specimen-header">
               <div className="specimen-badge-row">
-                <span className="specimen-badge-pill">🔍 Hardware Specimen</span>
+                <span className="specimen-badge-pill">Hardware Specimen</span>
                 <span className="specimen-tier-pill">{comp.badge || "Verified Architecture"}</span>
               </div>
               <div className="specimen-image-container">
@@ -1308,11 +1308,11 @@ export default function CourseShell({ componentGuide }) {
                   <p className="step-desc-text">{item.desc}</p>
                 </div>
                 <div className="step-icon-graphic">
-                  {item.step === 1 && "🖥️"}
-                  {item.step === 2 && "📐"}
-                  {item.step === 3 && "⚡"}
-                  {item.step === 4 && "🔒"}
-                  {item.step === 5 && "❄️"}
+                  {item.step === 1 && "01"}
+                  {item.step === 2 && "02"}
+                  {item.step === 3 && "03"}
+                  {item.step === 4 && "04"}
+                  {item.step === 5 && "05"}
                 </div>
               </div>
             ))}
@@ -1367,7 +1367,7 @@ export default function CourseShell({ componentGuide }) {
                   className="mistake-badge-btn"
                   onClick={() => setSelectedMistake(selectedMistake === m.name ? null : m.name)}
                 >
-                  <span className="m-icon">⚠️</span>
+                  <span className="m-icon">!</span>
                   <span className="m-name">{m.name}</span>
                 </div>
               ))}
@@ -1442,7 +1442,7 @@ export default function CourseShell({ componentGuide }) {
               handleConnectToBuild(comp.matcherRows[0]?.model, comp.matcherRows[0]?.socket)
             }
           >
-            ⚡ Connect to Build
+            Connect to Build
           </button>
           <Link to="/brands" className="btn-add-charts">
             + Add Spec Charts
@@ -1524,7 +1524,7 @@ export default function CourseShell({ componentGuide }) {
             {/* Video gating toast reminder */}
             {videoToast && (
               <div className="video-toast-banner animate-fade-in">
-                <span className="toast-icon">🔒</span>
+                <span className="toast-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
                 <span className="toast-text">{videoToast}</span>
                 <button
                   className="video-toast-mark-btn"
@@ -1556,7 +1556,7 @@ export default function CourseShell({ componentGuide }) {
                   onClick={() => handleMarkComplete(current.id)}
                   title={currentVideoId && !isVideoWatched ? "Watch video before marking complete" : "Mark lesson complete"}
                 >
-                  {currentVideoId && !isVideoWatched ? "🔒 Complete (Watch Video First)" : "✓ Mark complete"}
+                  {currentVideoId && !isVideoWatched ? "Complete (Watch Video First)" : "✓ Mark complete"}
                 </button>
               )}
 
@@ -1566,9 +1566,9 @@ export default function CourseShell({ componentGuide }) {
                 title={currentVideoId && !isVideoWatched ? "Watch video before proceeding to next lesson" : "Next lesson"}
               >
                 {currentVideoId && !isVideoWatched
-                  ? "🔒 Next lesson (Watch video first)"
+                  ? "Next lesson (Watch video first)"
                   : currentIndex === FLAT.length - 1
-                  ? "Finish Course 🏁"
+                  ? "Finish Course"
                   : "Next lesson ›"}
               </button>
             </div>
@@ -1621,7 +1621,7 @@ export default function CourseShell({ componentGuide }) {
               </div>
               <span className="outline-progress-text">
                 {doneCount === FLAT.length
-                  ? "🏆 Course complete — you're build-ready!"
+                  ? "Course complete. You're build-ready!"
                   : `${doneCount} of ${FLAT.length} lessons · ${progressPct}%`}
               </span>
             </div>
@@ -1678,7 +1678,7 @@ export default function CourseShell({ componentGuide }) {
                   className="outline-continue-btn done-btn"
                   onClick={() => navigate("/build")}
                 >
-                  ⚡ Start your first build
+                  Start your first build
                 </button>
               )}
             </div>

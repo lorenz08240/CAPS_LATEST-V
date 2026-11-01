@@ -105,10 +105,10 @@ const componentGuide = [
       { tier: "Enthusiast", cpu: "Ryzen 9 7950X3D / Core i9-14900KS", socket: "AM5 / LGA1700", spec: "Top Binned • Up to 6.2 GHz", tdp: "120W - 253W+" }
     ],
     brands: [
-      { name: "Intel", icon: "🔵", desc: "Core i9/i7/i5 series desktop processors" },
-      { name: "AMD", icon: "🔴", desc: "Ryzen Zen micro-architecture with 3D V-Cache" },
-      { name: "Qualcomm", icon: "🟣", desc: "Snapdragon X Elite ARM silicon for PC" },
-      { name: "NVIDIA", icon: "🟢", desc: "Grace CPU & unified AI computing engines" }
+      { name: "Intel", icon: "INTC", desc: "Core i9/i7/i5 series desktop processors" },
+      { name: "AMD", icon: "AMD", desc: "Ryzen Zen micro-architecture with 3D V-Cache" },
+      { name: "Qualcomm", icon: "QCOM", desc: "Snapdragon X Elite ARM silicon for PC" },
+      { name: "NVIDIA", icon: "NVDA", desc: "Grace CPU & unified AI computing engines" }
     ]
   },
   {
@@ -195,10 +195,10 @@ const componentGuide = [
       { tier: "Enthusiast", cpu: "ROG Maximus / MEG Godlike", socket: "AM5 / LGA1700", spec: "24+2 VRM • Liquid Cooling Ready", tdp: "Extreme OC Over 350W" }
     ],
     brands: [
-      { name: "ASUS", icon: "🔴", desc: "ROG, TUF Gaming, and Prime motherboard series" },
-      { name: "MSI", icon: "🐉", desc: "Tomahawk, MPG, and MEG rugged power boards" },
-      { name: "Gigabyte", icon: "🦅", desc: "AORUS lineup with high PCIe lane counts" },
-      { name: "ASRock", icon: "⚙️", desc: "Taichi and Steel Legend feature-rich value boards" }
+      { name: "ASUS", icon: "ASUS", desc: "ROG, TUF Gaming, and Prime motherboard series" },
+      { name: "MSI", icon: "MSI", desc: "Tomahawk, MPG, and MEG rugged power boards" },
+      { name: "Gigabyte", icon: "GIGA", desc: "AORUS lineup with high PCIe lane counts" },
+      { name: "ASRock", icon: "ASR", desc: "Taichi and Steel Legend feature-rich value boards" }
     ]
   },
   {
@@ -284,10 +284,10 @@ const componentGuide = [
       { tier: "Enthusiast", cpu: "32GB (2x16GB) DDR5-7200 CL34", socket: "Dual Channel", spec: "Top Binned Hynix A-Die Silicon", tdp: "1.45V" }
     ],
     brands: [
-      { name: "Corsair", icon: "⛵", desc: "Vengeance & Dominator Titanium RGB series" },
-      { name: "G.Skill", icon: "⚡", desc: "Trident Z5 low-latency Hynix A-die overclocking RAM" },
-      { name: "Kingston", icon: "👑", desc: "Fury Beast & Renegade highly compatible kits" },
-      { name: "Crucial", icon: "🔬", desc: "Micron-backed Pro series with rock-solid JEDEC stability" }
+      { name: "Corsair", icon: "COR", desc: "Vengeance & Dominator Titanium RGB series" },
+      { name: "G.Skill", icon: "GSK", desc: "Trident Z5 low-latency Hynix A-die overclocking RAM" },
+      { name: "Kingston", icon: "KNG", desc: "Fury Beast & Renegade highly compatible kits" },
+      { name: "Crucial", icon: "CRU", desc: "Micron-backed Pro series with rock-solid JEDEC stability" }
     ]
   },
   {
@@ -373,10 +373,10 @@ const componentGuide = [
       { tier: "Enthusiast", cpu: "GeForce RTX 4080 Super / 7900 XTX", socket: "PCIe 4.0 x16", spec: "Full 4K Ray Tracing Supremacy", tdp: "320W - 355W" }
     ],
     brands: [
-      { name: "NVIDIA", icon: "🟢", desc: "GeForce RTX series with DLSS 3.5 and Ray Tracing" },
-      { name: "AMD", icon: "🔴", desc: "Radeon RX graphics with generous VRAM buffers" },
-      { name: "Intel", icon: "🔵", desc: "Arc discrete graphics featuring dual AV1 video encoders" },
-      { name: "ASUS ROG", icon: "⚡", desc: "Strix and TUF custom board-partner cooling designs" }
+      { name: "NVIDIA", icon: "NVDA", desc: "GeForce RTX series with DLSS 3.5 and Ray Tracing" },
+      { name: "AMD", icon: "AMD", desc: "Radeon RX graphics with generous VRAM buffers" },
+      { name: "Intel", icon: "INTC", desc: "Arc discrete graphics featuring dual AV1 video encoders" },
+      { name: "ASUS ROG", icon: "ASUS", desc: "Strix and TUF custom board-partner cooling designs" }
     ]
   },
   {
@@ -462,10 +462,10 @@ const componentGuide = [
       { tier: "Enthusiast", cpu: "1200W+ Titanium ATX 3.1", socket: "Fully Modular", spec: "Extreme Overclocking & Multi-GPU", tdp: "Maximum Electrical Isolation" }
     ],
     brands: [
-      { name: "Seasonic", icon: "⚡", desc: "Industry benchmark OEM with 10-12 year manufacturer warranties" },
-      { name: "Corsair", icon: "⛵", desc: "RMx and SF series with silent zero-RPM magnetic levitation fans" },
-      { name: "be quiet!", icon: "🔇", desc: "Dark Power and Pure Power featuring acoustic silence" },
-      { name: "EVGA", icon: "🔋", desc: "SuperNOVA line known for rock-solid stability and customer service" }
+      { name: "Seasonic", icon: "SSN", desc: "Industry benchmark OEM with 10-12 year manufacturer warranties" },
+      { name: "Corsair", icon: "COR", desc: "RMx and SF series with silent zero-RPM magnetic levitation fans" },
+      { name: "be quiet!", icon: "BQT", desc: "Dark Power and Pure Power featuring acoustic silence" },
+      { name: "EVGA", icon: "EVGA", desc: "SuperNOVA line known for rock-solid stability and customer service" }
     ]
   },
   {
@@ -551,10 +551,10 @@ const componentGuide = [
       { tier: "Enthusiast", cpu: "Lian Li O11 Dynamic EVO XL", socket: "Dual-Chamber", spec: "Custom Loop Watercooling Ready", tdp: "Supports Triple 420mm" }
     ],
     brands: [
-      { name: "Fractal Design", icon: "🌲", desc: "Scandinavian aesthetic, real wood accents, and benchmark airflow" },
+      { name: "Fractal Design", icon: "FD", desc: "Scandinavian aesthetic, real wood accents, and benchmark airflow" },
       { name: "NZXT", icon: "⬛", desc: "Clean minimalist design, cable management bar, and tempered glass" },
-      { name: "Lian Li", icon: "✨", desc: "Dual-chamber aquarium chassis (O11 series) and premium aluminum" },
-      { name: "Corsair", icon: "⛵", desc: "4000D / 5000D airflow series with RapidRoute cable channels" }
+      { name: "Lian Li", icon: "LL", desc: "Dual-chamber aquarium chassis (O11 series) and premium aluminum" },
+      { name: "Corsair", icon: "COR", desc: "4000D / 5000D airflow series with RapidRoute cable channels" }
     ]
   }
 ];
