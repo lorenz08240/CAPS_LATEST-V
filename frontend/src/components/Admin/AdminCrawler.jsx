@@ -579,7 +579,7 @@ export const AdminCrawler = () => {
                     id="queue-cat-select"
                     value={queueFilterCategory}
                     onChange={(e) => setQueueFilterCategory(e.target.value)}
-                    className="category-filter-dropdown"
+                    className="category-filter-dropdown min-w-[140px] px-3"
                   >
                     {CATEGORIES.map((c) => (
                       <option key={c} value={c}>
@@ -624,31 +624,36 @@ export const AdminCrawler = () => {
             </div>
 
             {/* REVIEW QUEUE TABLE CONTAINER */}
-            <div className="table-container queue-table-container">
-              <table className="admin-table queue-table">
+            <div className="table-container queue-table-container w-full overflow-hidden">
+              <table className="admin-table queue-table table-fixed w-full">
                 <thead>
                   <tr>
-                    <th style={{ width: "48px", textAlign: "center" }}>ICON</th>
-                    <th style={{ width: "13%" }}>SOURCE</th>
-                    <th style={{ width: "10%" }}>DATE</th>
-                    <th style={{ width: "11%" }}>CATEGORY</th>
-                    <th style={{ width: "32%" }}>SCRAPED PRODUCT NAME</th>
-                    <th style={{ width: "16%" }}>PARSED SPECS</th>
-                    <th style={{ width: "18%", textAlign: "center" }}>ACTIONS</th>
+                    <th className="w-12 text-center" style={{ width: "48px", textAlign: "center" }}>ICON</th>
+                    <th className="w-20 text-center" style={{ width: "80px", textAlign: "center" }}>SOURCE</th>
+                    <th className="w-24 text-center" style={{ width: "96px", textAlign: "center" }}>DATE</th>
+                    <th className="w-28 text-center" style={{ width: "110px", textAlign: "center" }}>CATEGORY</th>
+                    <th className="flex-1 text-left" style={{ textAlign: "left" }}>SCRAPED PRODUCT NAME</th>
+                    <th className="w-36 text-left" style={{ width: "140px", textAlign: "left" }}>PARSED SPECS</th>
+                    <th className="w-72 text-right pr-5" style={{ width: "280px", textAlign: "right", paddingRight: "20px" }}>ACTIONS</th>
                   </tr>
                 </thead>
                 <tbody>
                   {paginatedQueue.map((item) => {
                     const cat = (item.category || "case").toLowerCase();
                     const isApproved = Boolean(item.approved);
+                    const brandStr = item.brand ? item.brand.toUpperCase() : "GENERIC";
+                    let modelStr = item.scrapedName || "Component";
+                    if (item.brand && modelStr.toLowerCase().startsWith(item.brand.toLowerCase())) {
+                      modelStr = modelStr.slice(item.brand.length).trim();
+                    }
 
                     return (
                       <tr
                         key={item.id}
-                        className={`queue-row ${isApproved ? "item-approved" : ""}`}
+                        className={`queue-row py-3 px-3 border-b border-white/5 hover:bg-white/[0.02] ${isApproved ? "item-approved" : ""}`}
                       >
-                        {/* ICON (Generic Hardware SVG with Lazy Hover CDN Image) */}
-                        <td style={{ textAlign: "center" }}>
+                        {/* ICON (w-12 / 48px: centered 36x36px thumbnail) */}
+                        <td className="queue-icon-cell w-12 text-center" style={{ width: "48px", textAlign: "center" }}>
                           <HoverImagePreview
                             category={cat}
                             imageUrl={item.img}
@@ -658,40 +663,49 @@ export const AdminCrawler = () => {
                           />
                         </td>
 
-                        {/* SOURCE */}
-                        <td className="source-cell">
+                        {/* SOURCE (w-20 / 80px) */}
+                        <td className="source-cell w-20 text-center" style={{ width: "80px", textAlign: "center" }}>
                           <span className={`source-pill ${item.source_name === "Bermor Techzone" ? "source-bermor" : "source-easypc"}`}>
                             {item.source_name || "EasyPC"}
                           </span>
                           {isApproved && <span className="approved-inline-tick">✓</span>}
                         </td>
 
-                        {/* DATE */}
-                        <td className="date-cell">{item.date || "—"}</td>
-
-                        {/* CATEGORY BADGE */}
-                        <td className="category-cell">
-                          <span className={`scraped-category-pill badge-cat-${cat}`}>
-                            {cat.toUpperCase()}
+                        {/* DATE (w-24 / 96px) */}
+                        <td className="date-cell w-24 text-center" style={{ width: "96px", textAlign: "center" }}>
+                          <span className="text-xs text-slate-400 font-medium">
+                            {item.date || "—"}
                           </span>
                         </td>
 
-                        {/* SCRAPED NAME */}
-                        <td className="scraped-name-cell" title={item.scrapedName}>
-                          <div className="queue-product-title">{item.scrapedName}</div>
-                          <div className="queue-product-brand">
-                            {item.brand ? item.brand.toUpperCase() : "GENERIC"}
-                            {item.price && <span className="queue-price">{item.price}</span>}
+                        {/* CATEGORY (w-28 / 110px) */}
+                        <td className="category-cell w-28 text-center" style={{ width: "110px", textAlign: "center" }}>
+                          <span className={`scraped-category-pill cat-badge-${cat}`}>
+                            [ {cat.toUpperCase()} ]
+                          </span>
+                        </td>
+
+                        {/* SCRAPED PRODUCT NAME (flex-1 / remaining space with max-w & truncate) */}
+                        <td className="scraped-name-cell max-w-xs md:max-w-md lg:max-w-lg truncate pl-4" title={item.scrapedName}>
+                          <div className="part-title-line max-w-xs md:max-w-md lg:max-w-lg truncate" title={item.scrapedName}>
+                            <span className="brand-highlight">{brandStr}</span>
+                            <span className="model-name-text truncate">{modelStr}</span>
+                          </div>
+                          <div className="part-subtitle-line max-w-xs md:max-w-md lg:max-w-lg truncate">
+                            <span className="scraped-cat-tag">{cat.toUpperCase()}</span>
+                            <span className="clean-desc-text truncate">Scraped from {item.source_name || "EasyPC"}</span>
                           </div>
                         </td>
 
-                        {/* PARSED SPECS */}
-                        <td className="parsed-specs-cell">
-                          <span className="spec-tag-pill">{renderSpecsSnippet(item)}</span>
+                        {/* PARSED SPECS (w-36 / 140px) */}
+                        <td className="parsed-specs-cell w-36 text-left" style={{ width: "140px", textAlign: "left" }}>
+                          <span className="spec-tag-pill truncate" title={renderSpecsSnippet(item)}>
+                            {renderSpecsSnippet(item)}
+                          </span>
                         </td>
 
-                        {/* ACTIONS (APPROVE, QUICK EDIT, DISCARD) */}
-                        <td style={{ textAlign: "center" }}>
+                        {/* ACTIONS (w-72 / 280px: right-aligned with comfortable margin) */}
+                        <td className="queue-actions-cell w-72 text-right pr-5" style={{ width: "280px", textAlign: "right", paddingRight: "20px" }}>
                           <div className="queue-actions-cluster">
                             <button
                               type="button"

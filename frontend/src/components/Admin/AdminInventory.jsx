@@ -264,27 +264,79 @@ export const AdminInventory = () => {
     }
   };
 
-  // Spec column helper
-  const renderSpecData = (part) => {
-    const cat = (part.category || "").toLowerCase();
-    switch (cat) {
-      case "cpu":
-        return `${part.socket_type || "Socket —"} / ${part.wattage ? `${part.wattage}W` : "TDP —"}`;
-      case "motherboard":
-        return `${part.socket_type || "Socket —"} / ${part.ddr_type || "DDR —"}`;
-      case "ram":
-        return `${part.ddr_type || "DDR"} ${part.capacity || "—"} ${part.speed ? `(${part.speed})` : ""}`;
-      case "storage":
-        return `${part.capacity || "Storage"} ${part.type ? `(${part.type})` : ""}`;
-      case "gpu":
-        return part.power_required ? `${part.power_required}W TDP` : "PCIe GPU";
-      case "psu":
-        return `${part.wattage ? `${part.wattage}W` : "PSU"} ${part.efficiency ? `(${part.efficiency})` : ""}`;
-      case "case":
-        return part.form_factor || "ATX Mid Tower";
-      default:
-        return "—";
+  // Brand prefix and model name formatting helper
+  const formatBrandAndModel = (brand, name) => {
+    const brandRaw = (brand || "").trim();
+    let modelRaw = (name || "").trim();
+
+    // If model name starts with brand prefix, strip it so brand is not duplicated
+    if (brandRaw && modelRaw.toLowerCase().startsWith(brandRaw.toLowerCase())) {
+      modelRaw = modelRaw.slice(brandRaw.length).trim();
     }
+
+    return {
+      brandPrefix: brandRaw ? brandRaw.toUpperCase() : "GENERIC",
+      modelName: modelRaw || name || "Component"
+    };
+  };
+
+  // Spec tags helper returning concise horizontal matrix values
+  const getSpecsTags = (part) => {
+    const cat = (part.category || "").toLowerCase();
+    const tags = [];
+
+    switch (cat) {
+      case "gpu":
+        tags.push(part.power_required ? `${part.power_required}W TDP` : "PCIe GPU");
+        tags.push(
+          part.interface ||
+            (Array.isArray(part.tags) && part.tags.find((t) => typeof t === "string" && t.toLowerCase().includes("pcie"))) ||
+            "PCIe 5.0"
+        );
+        break;
+      case "cpu":
+        if (part.socket_type) tags.push(part.socket_type);
+        if (part.wattage || part.power_required) {
+          tags.push(`${part.wattage || part.power_required}W TDP`);
+        } else if (tags.length === 0) {
+          tags.push("Desktop CPU");
+        }
+        break;
+      case "motherboard":
+        if (part.socket_type) tags.push(part.socket_type);
+        if (part.ddr_type) tags.push(part.ddr_type);
+        else if (part.form_factor) tags.push(part.form_factor);
+        break;
+      case "ram":
+        if (part.ddr_type) tags.push(part.ddr_type);
+        if (part.capacity) tags.push(part.capacity);
+        else if (part.speed) tags.push(part.speed);
+        break;
+      case "storage":
+        if (part.capacity) tags.push(part.capacity);
+        if (part.type) tags.push(part.type);
+        else tags.push("NVMe M.2");
+        break;
+      case "psu":
+        if (part.wattage) tags.push(`${part.wattage}W`);
+        if (part.efficiency) tags.push(part.efficiency);
+        else tags.push("80+ Certified");
+        break;
+      case "case":
+        if (part.form_factor) tags.push(part.form_factor);
+        if (part.type) tags.push(part.type);
+        else tags.push("Mid Tower");
+        break;
+      default:
+        if (part.socket_type) tags.push(part.socket_type);
+        if (part.wattage) tags.push(`${part.wattage}W`);
+    }
+
+    if (tags.length === 0) {
+      tags.push("Standard");
+    }
+
+    return tags.slice(0, 2);
   };
 
   if (!isAdmin) {
@@ -441,99 +493,110 @@ export const AdminInventory = () => {
               <table className="admin-table">
                 <thead>
                   <tr>
-                    <th style={{ width: "52px", textAlign: "center" }}>ICON</th>
-                    <th style={{ width: "13%" }}>BRAND</th>
-                    <th style={{ width: "30%" }}>NAME / MODEL</th>
-                    <th style={{ width: "23%" }}>SPECS / MATRIX</th>
-                    <th style={{ width: "16%", textAlign: "center" }}>AGE TIER</th>
-                    <th style={{ width: "18%", textAlign: "center" }}>ACTIONS</th>
+                    <th style={{ width: "60px", minWidth: "60px", paddingLeft: "16px" }}>THUMB</th>
+                    <th style={{ textAlign: "left" }}>BRAND & MODEL</th>
+                    <th style={{ width: "90px", textAlign: "center" }}>CATEGORY</th>
+                    <th style={{ width: "170px", textAlign: "left" }}>SPECS / MATRIX</th>
+                    <th style={{ width: "90px", textAlign: "center" }}>ADDED</th>
+                    <th style={{ width: "130px", textAlign: "right", paddingRight: "16px" }}>ACTIONS</th>
                   </tr>
                 </thead>
                 <tbody>
                   {paginatedParts.map((part) => {
                     const ageInfo = getComponentAgeInfo(part.created_at);
                     const cat = (part.category || "case").toLowerCase();
+                    const { brandPrefix, modelName } = formatBrandAndModel(part.brand, part.name);
+                    const specTags = getSpecsTags(part);
 
                     return (
                       <tr
                         key={part.id}
-                        className={ageInfo.isRecent24h ? "row-highlight-new" : ""}
+                        className={`inventory-table-row ${ageInfo.isRecent24h ? "row-highlight-new" : ""}`}
                       >
-                        {/* ICON / LAZY HOVER THUMBNAIL */}
-                        <td style={{ textAlign: "center" }}>
+                        {/* Col 1: THUMB (60px) */}
+                        <td className="cell-thumb" style={{ width: "60px", paddingLeft: "16px" }}>
                           <HoverImagePreview
                             category={cat}
                             imageUrl={part.img}
                             name={part.name}
                             brand={part.brand}
-                            size={36}
+                            size={48}
                           />
                         </td>
 
-                        {/* BRAND */}
-                        <td className="part-brand-cell">
-                          <span className="brand-badge-pill">
-                            {part.brand ? part.brand.toUpperCase() : "GENERIC"}
-                          </span>
-                        </td>
-
-                        {/* NAME & CATEGORY TAG */}
-                        <td className="part-name-cell">
-                          <div className="part-name-text" title={part.name}>
-                            {part.name}
+                        {/* Col 2: BRAND & MODEL (Flex-1) */}
+                        <td className="cell-brand-model">
+                          <div className="part-title-line" title={`${brandPrefix} ${modelName}`}>
+                            <span className="brand-highlight">{brandPrefix}</span>
+                            <span className="model-name-text">{modelName}</span>
                           </div>
-                          <div className="part-submeta">
-                            <span className={`cat-inline-badge cat-${cat}`}>
-                              {cat.toUpperCase()}
-                            </span>
-                            {part.desc && (
-                              <span className="desc-snippet" title={part.desc}>
-                                {part.desc.slice(0, 48)}
-                                {part.desc.length > 48 ? "…" : ""}
-                              </span>
+                          <div className="part-subtitle-line" title={part.desc || ""}>
+                            {part.desc ? (
+                              part.desc.toLowerCase().includes("scraped") ? (
+                                <>
+                                  <span className="scraped-cat-tag">{cat.toUpperCase()}</span>
+                                  <span className="scraped-desc-text">
+                                    {part.desc.replace(/^Scraped from\s*/i, "Scraped from ").slice(0, 68)}
+                                  </span>
+                                </>
+                              ) : (
+                                <span className="clean-desc-text">{part.desc}</span>
+                              )
+                            ) : (
+                              <span className="clean-desc-text">Hardware component</span>
                             )}
                           </div>
                         </td>
 
-                        {/* SPECS */}
-                        <td className="spec-cell">
-                          <span className="spec-pill">{renderSpecData(part)}</span>
+                        {/* Col 3: CATEGORY (90px) */}
+                        <td className="cell-category" style={{ width: "90px", textAlign: "center" }}>
+                          <span className={`category-pill-badge cat-badge-${cat}`}>
+                            [ {cat.toUpperCase()} ]
+                          </span>
                         </td>
 
-                        {/* AGE BADGE */}
-                        <td className="part-age-cell">
-                          <div className="age-badge-wrapper">
-                            <span
-                              className={`badge-age badge-age-${ageInfo.type}`}
-                              title={`Added: ${formatDate(part.created_at)}`}
-                            >
-                              {ageInfo.badgeText}
-                            </span>
-                            <span className="age-sublabel">{ageInfo.fullLabel}</span>
+                        {/* Col 4: SPECS / MATRIX (170px) */}
+                        <td className="cell-specs" style={{ width: "170px" }}>
+                          <div className="spec-matrix-tags">
+                            {specTags.map((tag, idx) => (
+                              <span key={idx} className="spec-matrix-pill">
+                                {tag}
+                              </span>
+                            ))}
                           </div>
                         </td>
 
-                        {/* ACTIONS (EDIT & DELETE) */}
-                        <td style={{ textAlign: "center" }}>
-                          <div className="table-actions">
+                        {/* Col 5: ADDED (90px) */}
+                        <td className="cell-added" style={{ width: "90px", textAlign: "center" }}>
+                          <span
+                            className="added-minimal-text"
+                            title={`Added: ${formatDate(part.created_at)}`}
+                          >
+                            {ageInfo.badgeText.toLowerCase() === "new" ? "Just added" : ageInfo.badgeText}
+                          </span>
+                        </td>
+
+                        {/* Col 6: ACTIONS (130px) */}
+                        <td className="cell-actions" style={{ width: "130px", textAlign: "right", paddingRight: "16px" }}>
+                          <div className="compact-action-group">
                             <button
                               type="button"
-                              className="sleek-block-action-btn edit-block-btn"
+                              className="compact-action-btn btn-edit-compact"
                               title={`Edit ${part.name}`}
                               onClick={() => {
                                 setDrawerInitialData(part);
                                 setIsDrawerOpen(true);
                               }}
                             >
-                              <span className="btn-label">Edit</span>
+                              Edit
                             </button>
                             <button
                               type="button"
-                              className="sleek-block-action-btn delete-block-btn"
+                              className="compact-action-btn btn-delete-compact"
                               title={`Delete ${part.name}`}
                               onClick={() => handleDeleteComponent(part)}
                             >
-                              <span className="btn-label">Delete</span>
+                              Delete
                             </button>
                           </div>
                         </td>
