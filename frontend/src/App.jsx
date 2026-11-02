@@ -15,7 +15,8 @@ import Compatibility from "./components/Compatibility/Compatibility";
 import Learn from "./components/Learn/Learn";
 import Brands from "./components/Brands/Brands";
 import PCBuilder3D from "./components/3D/PCBuilder3D";
-import Admin from "./components/Admin/Admin";
+import { AdminInventory, AdminCrawler, AdminLogin, AdminAuthGuard } from "./components/Admin/Admin";
+import { Navigate } from "react-router-dom";
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -58,8 +59,34 @@ function App() {
                 {/* 3D Builder Page */}
                 <Route path="/3d-builder" element={<PCBuilder3D />} />
 
-                {/* Admin Dashboard */}
-                <Route path="/admin" element={<Admin />} />
+                {/* Dedicated Admin Login Route */}
+                <Route path="/admin/login" element={<AdminLogin />} />
+
+                {/* Protected Admin Routes (Session Auth Guard redirects to /admin/login on expiry/close) */}
+                <Route
+                  path="/admin"
+                  element={
+                    <AdminAuthGuard>
+                      <Navigate to="/admin/inventory" replace />
+                    </AdminAuthGuard>
+                  }
+                />
+                <Route
+                  path="/admin/inventory"
+                  element={
+                    <AdminAuthGuard>
+                      <AdminInventory />
+                    </AdminAuthGuard>
+                  }
+                />
+                <Route
+                  path="/admin/crawler"
+                  element={
+                    <AdminAuthGuard>
+                      <AdminCrawler />
+                    </AdminAuthGuard>
+                  }
+                />
 
               </Routes>
               <Footer />

@@ -421,15 +421,26 @@ app.post("/api/scraped-queue/merge", async (req, res) => {
   }
 });
 
-// API to trigger crawler (scraping EasyPC to Review Queue)
+// API to trigger crawler (scraping EasyPC or Bermor Techzone to Review Queue)
 const { exec } = require("child_process");
 app.post("/api/crawl", (req, res) => {
-  exec("node crawler.js", (error, stdout, stderr) => {
+  const store = req.body?.store || "EasyPC";
+  const category = req.body?.category || "all";
+  const maxPages = req.body?.maxPages || 1;
+  const cmd = `node crawler.js --store="${store}" --category="${category}" --pages=${maxPages}`;
+  exec(cmd, (error, stdout, stderr) => {
     if (error) {
       console.error(`Crawler execution error: ${error.message}`);
-      return res.status(500).json({ error: error.message, stderr });
+      return res.status(500).json({ error: error.message, stderr, output: stdout });
     }
-    res.json({ success: true, message: "EasyPC Crawling completed. Components placed into Scraped Data Review Queue.", output: stdout });
+    res.json({
+      success: true,
+      message: `${store} crawling finished. Components placed into Scraped Data Review Queue.`,
+      output: stdout,
+      store,
+      category,
+      maxPages
+    });
   });
 });
 
