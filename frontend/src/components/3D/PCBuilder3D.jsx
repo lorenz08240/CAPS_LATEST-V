@@ -7,6 +7,8 @@ import { buildSteps } from '../Build/Build';
 import { useBuild } from '../../contexts/BuildContext';
 import { calculateScores } from '../../utilities/scoringEngine';
 import { checkCompatibility } from '../../utilities/compatibilityEngine';
+import FullscreenGate from '../FullscreenGate/FullscreenGate';
+import soundManager from '../../utilities/soundManager';
 import GenericPCCase from './GenericPCCase';
 import ComponentModels3D from './ComponentModels3D';
 import './PCBuilder3D.css';
@@ -76,12 +78,13 @@ function CameraController({ cameraTarget, orbitRef }) {
 // Floating Animated Indicator for active drop zones
 function DropIndicator({ activeCategory, category, position, isPlaced }) {
   const meshRef = useRef();
+  const isCase = category === 'case';
   
   useFrame((state) => {
     if (meshRef.current) {
-      meshRef.current.rotation.y += 0.02;
-      meshRef.current.scale.x = 1 + Math.sin(state.clock.elapsedTime * 4) * 0.08;
-      meshRef.current.scale.y = 1 + Math.sin(state.clock.elapsedTime * 4) * 0.08;
+      if (!isCase) meshRef.current.rotation.y += 0.02;
+      meshRef.current.scale.x = 1 + Math.sin(state.clock.elapsedTime * 4) * 0.04;
+      meshRef.current.scale.y = 1 + Math.sin(state.clock.elapsedTime * 4) * 0.04;
     }
   });
 
@@ -90,19 +93,25 @@ function DropIndicator({ activeCategory, category, position, isPlaced }) {
   return (
     <group position={position}>
       <mesh ref={meshRef}>
-        <boxGeometry args={[1.8, 1.8, 1.8]} />
-        <meshBasicMaterial color="#00e5ff" wireframe transparent opacity={0.4} />
+        <boxGeometry args={isCase ? [4.6, 9.2, 9.2] : [1.8, 1.8, 1.8]} />
+        <meshBasicMaterial color="#00e5ff" wireframe transparent opacity={isCase ? 0.35 : 0.4} />
       </mesh>
-      <Html center position={[0, 1.3, 0]} distanceFactor={14}>
+      {isCase && (
+        <mesh position={[0, -4.88, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <ringGeometry args={[5.0, 5.3, 48]} />
+          <meshBasicMaterial color="#00e5ff" transparent opacity={0.65} side={THREE.DoubleSide} />
+        </mesh>
+      )}
+      <Html center position={[0, isCase ? 0 : 1.3, 0]} distanceFactor={14}>
         <div className="drop-indicator-badge">
-          <span className="pulse-dot">●</span> Mount {category.toUpperCase()} Here
+          <span className="pulse-dot">●</span> {isCase ? 'Place PC Case On Plane' : `Mount ${category.toUpperCase()} Here`}
         </div>
       </Html>
     </group>
   );
 }
 
-function PCBuilder3D() {
+function PCBuilder3DWorkspace() {
   const navigate = useNavigate();
   const { currentBuild, allComponents, addComponent, removeComponent, resetBuild, loadDemoBuild } = useBuild();
 
@@ -115,9 +124,9 @@ function PCBuilder3D() {
   const [autoRotate, setAutoRotate] = useState(false);
   const [glassMode, setGlassMode] = useState('closed'); // 'closed', 'open', 'removed'
   const [isExploded, setIsExploded] = useState(false);
-  const [lightingTheme, setLightingTheme] = useState('cyber'); // 'cyber', 'studio', 'stealth'
   const [rgbColor, setRgbColor] = useState('#00e5ff');
-  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [caseColor, setCaseColor] = useState('black'); // 'black' | 'white'
+  const [soundEnabled, setSoundEnabled] = useState(soundManager.enabled);
   const [buildMode, setBuildMode] = useState('guided'); // 'guided' or 'free'
   const [activeStep, setActiveStep] = useState(0);
 
@@ -130,17 +139,14 @@ function PCBuilder3D() {
   const [inspectedPart, setInspectedPart] = useState(null);
   const [hoveredPart, setHoveredPart] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);
+  const [confirmDisassemble, setConfirmDisassemble] = useState(false);
 
   const orbitRef = useRef();
 
-  // Play audio safely
+  // Play audio safely via central soundManager
   const playSound = (type) => {
     if (!soundEnabled) return;
-    try {
-      const audio = new Audio(`/sfx/${type}.wav`);
-      audio.volume = 0.3;
-      audio.play().catch(() => {});
-    } catch {}
+    soundManager.play(type);
   };
 
   const showToast = (msg) => {
@@ -149,6 +155,19 @@ function PCBuilder3D() {
       setToastMessage((prev) => (prev === msg ? null : prev));
     }, 3200);
   };
+
+  // Keyboard shortcut: Escape to deselect active 3D component
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setInspectedPart(null);
+        setHoveredPart(null);
+        document.body.style.cursor = 'auto';
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   // Convert currentBuild object into array of placed parts
   const placedParts = useMemo(() => {
@@ -182,7 +201,7 @@ function PCBuilder3D() {
     if (isStageLocked(step.key)) {
       const reqs = STAGE_REQUIREMENTS[step.key] || [];
       const missing = reqs.filter(r => !currentBuild[r]).map(r => r.toUpperCase()).join(' & ');
-      showToast(`🔒 Stage Locked: Please install ${missing} first!`);
+      showToast(`Stage Locked: Please install ${missing} first.`);
       playSound('click');
       return;
     }
@@ -207,7 +226,7 @@ function PCBuilder3D() {
         position: [part.targetPosition[0] - 5.5, part.targetPosition[1] + 0.8, part.targetPosition[2] + 4],
         target: part.targetPosition
       });
-      showToast(`🎯 Focused on ${part.name}`);
+      showToast(`Focused camera on ${part.name}`);
     }
   };
 
@@ -215,7 +234,13 @@ function PCBuilder3D() {
   const handleInstallPart = (part, category) => {
     addComponent(category, part);
     playSound('install');
-    showToast(`✓ Installed ${part.name}`);
+    showToast(`Mounted ${part.name}`);
+
+    if (category === 'case') {
+      const lowerName = (part.name || '').toLowerCase();
+      if (lowerName.includes('white')) setCaseColor('white');
+      else if (lowerName.includes('black')) setCaseColor('black');
+    }
 
     setInspectedPart({ ...part, category, targetPosition: TARGET_POSITIONS[category] });
 
@@ -235,7 +260,7 @@ function PCBuilder3D() {
     if (inspectedPart?.category === category) {
       setInspectedPart(null);
     }
-    showToast(`✕ Removed ${category.toUpperCase()}`);
+    showToast(`Removed ${category.toUpperCase()}`);
   };
 
   // HTML5 Drag and Drop handlers
@@ -291,16 +316,44 @@ function PCBuilder3D() {
   ];
 
   return (
-    <div className={`pc-builder-workspace ${lightingTheme}`}>
+    <div className="pc-builder-workspace cyber">
       {/* ── TOP HUD HEADER BAR ── */}
       <header className="workspace-header">
         <div className="header-left">
           <button className="back-build-btn" onClick={() => navigate('/build')} title="Return to 2D Component Configurator">
             ← Back to Build
           </button>
-          <div className="workspace-title-box">
-            <span className="workspace-tag">HARDWARE SIMULATION</span>
-            <h1 className="workspace-title">BuildLab 3D Studio</h1>
+          <div className="workspace-brand-wrap">
+            <div className="system-logo-mini" title="BuildLab System Logo (Canva 1000x1000 asset pending)">
+              <img
+                src="/assets/system_logo.png"
+                alt="BuildLab Logo"
+                className="system-logo-mini-img"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                  const fallback = e.currentTarget.nextElementSibling;
+                  if (fallback) fallback.style.display = 'flex';
+                }}
+              />
+              <div className="system-logo-mini-fallback">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="4" y="4" width="16" height="16" rx="3" />
+                  <rect x="9" y="9" width="6" height="6" />
+                  <path d="M9 1v3" />
+                  <path d="M15 1v3" />
+                  <path d="M9 20v3" />
+                  <path d="M15 20v3" />
+                  <path d="M20 9h3" />
+                  <path d="M20 14h3" />
+                  <path d="M1 9h3" />
+                  <path d="M1 14h3" />
+                </svg>
+              </div>
+            </div>
+            <div className="workspace-title-box">
+              <span className="workspace-tag">HARDWARE SIMULATION</span>
+              <h1 className="workspace-title">BuildLab 3D Studio</h1>
+            </div>
           </div>
         </div>
 
@@ -310,18 +363,12 @@ function PCBuilder3D() {
             <span className="metric-label">ASSEMBLY</span>
             <span className="metric-val">{placedParts.length} / 7 Parts</span>
           </div>
-          <div className="metric-divider"></div>
-          <div className="metric-badge">
-            <span className="metric-label">TOTAL COST</span>
-            <span className="metric-val" style={{ color: '#00e676' }}>
-              {scores.totalCostFormatted}
-            </span>
-          </div>
+
           <div className="metric-divider"></div>
           <div className="metric-badge">
             <span className="metric-label">EST. POWER</span>
             <span className="metric-val" style={{ color: scores.estWattage > 650 ? '#facc15' : '#00e5ff' }}>
-              ⚡ {scores.estWattage}W
+              {scores.estWattage} W
             </span>
           </div>
           <div className="metric-divider"></div>
@@ -350,10 +397,17 @@ function PCBuilder3D() {
           {/* Sound FX Toggle */}
           <button 
             className={`tool-icon-btn ${soundEnabled ? 'active' : ''}`} 
-            onClick={() => setSoundEnabled(!soundEnabled)}
+            onClick={() => {
+              const next = soundManager.toggleSound();
+              setSoundEnabled(next);
+            }}
             title={soundEnabled ? 'Mute SFX' : 'Enable SFX'}
           >
-            {soundEnabled ? '🔊' : '🔇'}
+            {soundEnabled ? (
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+            ) : (
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+            )}
           </button>
 
           {/* Load Demo Rig */}
@@ -362,11 +416,11 @@ function PCBuilder3D() {
             onClick={() => {
               loadDemoBuild();
               playSound('install');
-              showToast('⚡ Demo Gaming Rig Loaded (7/7 Parts Assembled)');
+              showToast('Demo Gaming Rig Loaded (7/7 Parts Assembled)');
             }}
             title="Instantly assemble full demo PC"
           >
-            ⚡ Load Demo Rig
+            Load Demo Rig
           </button>
 
           {/* Quick Compatibility Link */}
@@ -375,24 +429,20 @@ function PCBuilder3D() {
             onClick={() => navigate('/compatibility')}
             title="Inspect Compatibility Matrix"
           >
-            🛡️ Compatibility
+            Compatibility
           </button>
 
           {/* Disassemble / Clear */}
           <button 
             className="header-action-btn clear-btn" 
             onClick={() => {
-              if (window.confirm('Disassemble all components in the current 3D rig?')) {
-                resetBuild();
-                setInspectedPart(null);
-                playSound('click');
-                showToast('Rig Disassembled');
-              }
+              playSound('click');
+              setConfirmDisassemble(true);
             }}
             disabled={placedParts.length === 0}
             title="Disassemble PC"
           >
-            🗑 Disassemble
+            Disassemble
           </button>
         </div>
       </header>
@@ -435,11 +485,11 @@ function PCBuilder3D() {
                       <div className="stage-info">
                         <span className="stage-name">{step.label}</span>
                         <span className="stage-status-sub">
-                          {isInstalled ? '✓ Mounted' : isLocked ? '🔒 Locked' : '● Ready'}
+                          {isInstalled ? 'Mounted' : isLocked ? 'Locked' : 'Ready'}
                         </span>
                       </div>
                       <div className="stage-badge-indicator">
-                        {isInstalled ? '✓' : isLocked ? '🔒' : '▶'}
+                        {isInstalled ? '✓' : isLocked ? '•' : '›'}
                       </div>
                     </button>
                   );
@@ -498,9 +548,16 @@ function PCBuilder3D() {
                           onDragStart={(e) => handleDragStart(e, comp, activeCategory)}
                         >
                           <div className="card-thumb-wrap">
-                            <img src={comp.img} alt={comp.name} />
-                            {isSelected && <span className="installed-chip">✓ INSTALLED</span>}
-                            {!isCompatible && <span className="warning-chip">⚠️ MISMATCH</span>}
+                            <img
+                              src={comp.img || '/assets/favicon.svg'}
+                              alt={comp.name}
+                              onError={(e) => {
+                                e.currentTarget.src = '/assets/favicon.svg';
+                                e.currentTarget.classList.add('img-fallback');
+                              }}
+                            />
+                            {isSelected && <span className="installed-chip">INSTALLED</span>}
+                            {!isCompatible && <span className="warning-chip">MISMATCH</span>}
                           </div>
 
                           <div className="card-body">
@@ -516,7 +573,7 @@ function PCBuilder3D() {
                             </div>
 
                             {!isCompatible && (
-                              <div className="compatibility-note">⚠️ {reason}</div>
+                              <div className="compatibility-note">{reason}</div>
                             )}
 
                             <div className="card-actions">
@@ -525,14 +582,14 @@ function PCBuilder3D() {
                                   className="action-btn remove-btn"
                                   onClick={() => handleRemovePart(activeCategory)}
                                 >
-                                  ✕ Uninstall
+                                  Uninstall
                                 </button>
                               ) : (
                                 <button 
                                   className="action-btn install-btn"
                                   onClick={() => handleInstallPart(comp, activeCategory)}
                                 >
-                                  + Install in 3D
+                                  Install
                                 </button>
                               )}
                             </div>
@@ -563,42 +620,42 @@ function PCBuilder3D() {
               onClick={() => handleCameraPreset('whole')}
               title="Fit and Frame Whole PC Rig"
             >
-              🏠 Whole Rig
+              Whole Rig
             </button>
             <button 
               className={`hud-btn ${cameraPreset === 'isometric' ? 'active' : ''}`}
               onClick={() => handleCameraPreset('isometric')}
               title="Isometric 3D Perspective"
             >
-              📐 Iso
+              Iso
             </button>
             <button 
               className={`hud-btn ${cameraPreset === 'interior' ? 'active' : ''}`}
               onClick={() => handleCameraPreset('interior')}
               title="Motherboard & Socket Close-up"
             >
-              🔍 Inside
+              Inside
             </button>
             <button 
               className={`hud-btn ${cameraPreset === 'gpu' ? 'active' : ''}`}
               onClick={() => handleCameraPreset('gpu')}
               title="Graphics Card Focus"
             >
-              🎮 GPU
+              GPU
             </button>
             <button 
               className={`hud-btn ${cameraPreset === 'front' ? 'active' : ''}`}
               onClick={() => handleCameraPreset('front')}
               title="Front Intake Fans"
             >
-              🚪 Front
+              Front
             </button>
             <button 
               className={`hud-btn ${cameraPreset === 'top' ? 'active' : ''}`}
               onClick={() => handleCameraPreset('top')}
               title="Top-Down Plan"
             >
-              ⬆️ Top
+              Top
             </button>
 
             <div className="hud-divider"></div>
@@ -612,7 +669,7 @@ function PCBuilder3D() {
               }}
               title="Toggle Constant 360° Turntable Auto-Rotation"
             >
-              {autoRotate ? '⏸️ Stop Spin' : '🔄 Auto-Rotate'}
+              {autoRotate ? 'Stop Spin' : 'Auto-Rotate'}
             </button>
           </div>
 
@@ -625,21 +682,21 @@ function PCBuilder3D() {
                 onClick={() => setGlassMode('closed')}
                 title="Glass Panel On"
               >
-                🪟 Closed
+                Closed
               </button>
               <button 
                 className={`hud-btn ${glassMode === 'open' ? 'active' : ''}`}
                 onClick={() => setGlassMode('open')}
                 title="Hinged Open"
               >
-                📂 Open
+                Open
               </button>
               <button 
                 className={`hud-btn ${glassMode === 'removed' ? 'active' : ''}`}
                 onClick={() => setGlassMode('removed')}
                 title="Panel Removed (Best for internal inspection)"
               >
-                ✕ Off
+                Off
               </button>
             </div>
 
@@ -651,7 +708,7 @@ function PCBuilder3D() {
               onClick={() => setIsExploded(!isExploded)}
               title="Toggle Exploded Assembly Diagram"
             >
-              💥 {isExploded ? 'Assembled View' : 'Exploded View'}
+              {isExploded ? 'Assembled View' : 'Exploded View'}
             </button>
           </div>
 
@@ -669,64 +726,59 @@ function PCBuilder3D() {
                 />
               ))}
             </div>
-
-            <div className="hud-divider"></div>
-
-            <span className="hud-title">LIGHTS</span>
-            <button 
-              className={`hud-btn ${lightingTheme === 'cyber' ? 'active' : ''}`}
-              onClick={() => setLightingTheme('cyber')}
-              title="Neon Cyberpunk Studio"
-            >
-              🌆 Cyber
-            </button>
-            <button 
-              className={`hud-btn ${lightingTheme === 'studio' ? 'active' : ''}`}
-              onClick={() => setLightingTheme('studio')}
-              title="Clean High-Key Studio"
-            >
-              💡 Clean
-            </button>
-            <button 
-              className={`hud-btn ${lightingTheme === 'stealth' ? 'active' : ''}`}
-              onClick={() => setLightingTheme('stealth')}
-              title="Stealth Dark Room"
-            >
-              🌙 Dark
-            </button>
           </div>
 
-          {/* ── 3D CANVAS SCENE (With Refined Lighting, No Snapback, and No Ground Sinking) ── */}
+          {/* ── 3D CANVAS SCENE (With High-Clarity Studio Lighting & Ground Plane) ── */}
           <Canvas 
             camera={{ position: CAMERA_PRESETS.isometric.position, fov: 42 }}
-            gl={{ antialias: true, alpha: false }}
+            gl={{ 
+              antialias: true, 
+              alpha: false,
+              toneMapping: THREE.ACESFilmicToneMapping,
+              toneMappingExposure: 0.95
+            }}
+            onPointerMissed={(e) => {
+              // Click in empty space deselects active 3D part and closes inspector
+              if (e.type === 'click') {
+                setInspectedPart(null);
+                setHoveredPart(null);
+                document.body.style.cursor = 'auto';
+              }
+            }}
           >
-            <color attach="background" args={[lightingTheme === 'studio' ? '#182130' : '#0a0e17']} />
+            <color attach="background" args={['#141a26']} />
+            <fog attach="fog" args={['#141a26', 32, 85]} />
 
-            {/* 3-Point Studio Lighting + Brilliant Internal Chassis Fill */}
-            <ambientLight intensity={lightingTheme === 'studio' ? 1.5 : 1.2} />
+            {/* Calibrated Studio Lighting with Rich Ambient Occlusion Contrast */}
+            <ambientLight intensity={0.9} color="#e2e8f0" />
             <directionalLight 
-              position={[-15, 20, 15]} 
-              intensity={lightingTheme === 'studio' ? 3.0 : 2.5} 
+              position={[-14, 20, 16]} 
+              intensity={2.0} 
               castShadow 
+              color="#ffffff"
             />
             <directionalLight 
-              position={[15, 10, -10]} 
-              intensity={1.8} 
+              position={[16, 14, -14]} 
+              intensity={1.5} 
+              color="#93c5fd"
+            />
+            <directionalLight 
+              position={[0, -8, 0]} 
+              intensity={0.8} 
               color="#cbd5e1"
             />
             <directionalLight 
-              position={[0, -5, 15]} 
-              intensity={1.2} 
-              color="#94a3b8"
+              position={[0, 6, 18]} 
+              intensity={1.1} 
+              color="#f8fafc"
             />
             
             {/* Direct Internal Case Illumination */}
-            <pointLight position={[0.5, 1.5, 0]} intensity={3.5} color="#ffffff" distance={12} />
-            <pointLight position={[-0.5, -1.5, 0]} intensity={2.2} color="#ffffff" distance={10} />
-            <pointLight position={[0, 0, 3.5]} intensity={2.8} color={rgbColor} distance={8} />
+            <pointLight position={[0.5, 1.5, 0]} intensity={2.0} color="#ffffff" distance={12} />
+            <pointLight position={[-0.5, -1.5, 0]} intensity={1.5} color="#ffffff" distance={10} />
+            <pointLight position={[0, 0, 3.5]} intensity={1.8} color={rgbColor} distance={8} />
 
-            <Environment preset={lightingTheme === 'studio' ? 'city' : 'night'} />
+            <Environment preset="studio" />
 
             {/* Camera Controller & OrbitControls with Free Dragging and Auto-Rotate */}
             <CameraController cameraTarget={cameraTarget} orbitRef={orbitRef} />
@@ -742,34 +794,63 @@ function PCBuilder3D() {
 
             {/* 3D Scene Root */}
             <group position={[0, 0, 0]}>
-              {/* Ground Grid resting exactly at case rubber feet Y = -4.9 (NO SINKING!) */}
+              {/* Studio Turntable Platform under the PC at Y = -4.898 (Click deselects) */}
+              <mesh 
+                position={[0, -4.898, 0]} 
+                rotation={[-Math.PI / 2, 0, 0]}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setInspectedPart(null);
+                  setHoveredPart(null);
+                  document.body.style.cursor = 'auto';
+                }}
+              >
+                <circleGeometry args={[11.5, 64]} />
+                <meshStandardMaterial color="#1a2333" roughness={0.7} metalness={0.35} />
+              </mesh>
+              {/* Turntable Outer Chamfer Accent Ring */}
+              <mesh position={[0, -4.895, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+                <ringGeometry args={[11.3, 11.5, 64]} />
+                <meshBasicMaterial color="#38bdf8" transparent opacity={0.45} />
+              </mesh>
+
+              {/* High-Contrast Technical Ground Grid */}
               <Grid 
-                position={[0, -4.9, 0]}
+                position={[0, -4.89, 0]}
                 args={[50, 50]} 
                 cellSize={1} 
-                cellThickness={1} 
-                cellColor="#242e42" 
+                cellThickness={1.2} 
+                cellColor="#334155" 
                 sectionSize={5} 
-                sectionThickness={1.5} 
-                sectionColor="#3d4d6b" 
+                sectionThickness={2} 
+                sectionColor="#60a5fa" 
                 fadeDistance={45} 
-                fadeStrength={1} 
+                fadeStrength={1.2} 
               />
               <ContactShadows 
-                position={[0, -4.89, 0]} 
-                opacity={0.8} 
-                scale={28} 
-                blur={2.5} 
-                far={14} 
+                position={[0, -4.88, 0]} 
+                opacity={0.75} 
+                scale={26} 
+                blur={2.2} 
+                far={12} 
+                color="#060911" 
               />
 
               <Suspense fallback={null}>
-                {/* 1. PC Case Chassis */}
-                <GenericPCCase 
-                  rgbColor={rgbColor}
-                  glassMode={glassMode}
-                  explodedProgress={isExploded ? 1 : 0}
-                />
+                {/* 1. PC Case Chassis (Rendered ONLY once chosen and placed by user) */}
+                {currentBuild.case && (
+                  <GenericPCCase 
+                    part={currentBuild.case}
+                    rgbColor={rgbColor}
+                    caseColor={caseColor}
+                    glassMode={glassMode}
+                    explodedProgress={isExploded ? 1 : 0}
+                    isSelected={inspectedPart?.category === 'case'}
+                    isHovered={hoveredPart?.category === 'case'}
+                    onSelect={handleSelect3DPart}
+                    onHover={(p, h) => setHoveredPart(h ? p : null)}
+                  />
+                )}
 
                 {/* 2. Active Drop Zone Indicators */}
                 {buildSteps.map((step) => (
@@ -783,7 +864,7 @@ function PCBuilder3D() {
                 ))}
 
                 {/* 3. Installed Internal 3D Components */}
-                {placedParts.map((part) => (
+                {placedParts.filter(part => part.category !== 'case').map((part) => (
                   <ComponentModels3D 
                     key={part.category} 
                     part={part}
@@ -839,7 +920,7 @@ function PCBuilder3D() {
                     className="insp-btn focus-btn"
                     onClick={() => handleFocusComponent(inspectedPart)}
                   >
-                    🎯 Focus Camera
+                    Focus Camera
                   </button>
                   <button 
                     className="insp-btn swap-btn"
@@ -849,13 +930,13 @@ function PCBuilder3D() {
                       setDrawerOpen(true);
                     }}
                   >
-                    🔄 Swap Part
+                    Swap Part
                   </button>
                   <button 
                     className="insp-btn remove-btn"
                     onClick={() => handleRemovePart(inspectedPart.category)}
                   >
-                    🗑 Remove
+                    Remove
                   </button>
                 </div>
               </div>
@@ -870,7 +951,63 @@ function PCBuilder3D() {
           )}
         </section>
       </div>
+
+      {/* ── DISASSEMBLE CONFIRM (in-app overlay — native browser prompts
+             would kick the user out of fullscreen mode) ── */}
+      {confirmDisassemble && (
+        <div
+          className="builder-confirm-overlay"
+          onClick={() => setConfirmDisassemble(false)}
+        >
+          <div className="builder-confirm-box" onClick={(e) => e.stopPropagation()}>
+            <div className="builder-confirm-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+            </div>
+            <h3 className="builder-confirm-title">Disassemble Rig?</h3>
+            <p className="builder-confirm-desc">
+              All installed components will be removed from the current 3D build.
+              Your parts stay in the inventory drawer.
+            </p>
+            <div className="builder-confirm-actions">
+              <button
+                type="button"
+                className="builder-confirm-btn ghost"
+                onClick={() => setConfirmDisassemble(false)}
+              >
+                Keep Building
+              </button>
+              <button
+                type="button"
+                className="builder-confirm-btn danger"
+                onClick={() => {
+                  resetBuild();
+                  setInspectedPart(null);
+                  setConfirmDisassemble(false);
+                  playSound('install');
+                  showToast('Rig Disassembled');
+                }}
+              >
+                Yes, Disassemble
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
+  );
+}
+
+/**
+ * PCBuilder3D — routed at /3d-builder with the FullscreenGate wrapper.
+ * The 3D studio is an immersive workspace: the user is kept in fullscreen
+ * mode (browsers still allow Esc, but the gate immediately re-prompts
+ * them back in via the overlay banner).
+ */
+function PCBuilder3D() {
+  return (
+    <FullscreenGate requireFullscreen>
+      <PCBuilder3DWorkspace />
+    </FullscreenGate>
   );
 }
 

@@ -1,0 +1,18 @@
+{
+  "name": "nepotato Procedural Triple-Fan Graphics Card",
+  "class": "fictional triple-fan desktop graphics card",
+  "representation": "procedural Three.js geometry",
+  "license": "MIT",
+  "sourceUrl": "https://github.com/arar228/nepotato-threejs-gpu",
+  "specifications": {
+    "fans": 3,
+    "bladesPerFan": 11,
+    "heatsinkFins": 58,
+    "heatPipes": 4,
+    "powerConnectors": "Dual 8-pin PCIe",
+    "interface": "PCIe 4.0 x16",
+    "ioPorts": ["3x DisplayPort 1.4a", "1x HDMI 2.1"]
+  },
+  "runtimeModule": "frontend/src/components/3D/NepotatoGPU.jsx"
+}
+

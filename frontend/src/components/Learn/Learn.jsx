@@ -1,6 +1,8 @@
+import CourseShell from "./CourseShell";
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useBuild } from "../../contexts/BuildContext";
+import FullscreenGate from "../FullscreenGate/FullscreenGate";
 import "./Learn.css";
 
 // ── COMPREHENSIVE HARDWARE COMPONENTS GUIDE ──
@@ -103,10 +105,10 @@ const componentGuide = [
       { tier: "Enthusiast", cpu: "Ryzen 9 7950X3D / Core i9-14900KS", socket: "AM5 / LGA1700", spec: "Top Binned • Up to 6.2 GHz", tdp: "120W - 253W+" }
     ],
     brands: [
-      { name: "Intel", icon: "🔵", desc: "Core i9/i7/i5 series desktop processors" },
-      { name: "AMD", icon: "🔴", desc: "Ryzen Zen micro-architecture with 3D V-Cache" },
-      { name: "Qualcomm", icon: "🟣", desc: "Snapdragon X Elite ARM silicon for PC" },
-      { name: "NVIDIA", icon: "🟢", desc: "Grace CPU & unified AI computing engines" }
+      { name: "Intel", icon: "INTC", desc: "Core i9/i7/i5 series desktop processors" },
+      { name: "AMD", icon: "AMD", desc: "Ryzen Zen micro-architecture with 3D V-Cache" },
+      { name: "Qualcomm", icon: "QCOM", desc: "Snapdragon X Elite ARM silicon for PC" },
+      { name: "NVIDIA", icon: "NVDA", desc: "Grace CPU & unified AI computing engines" }
     ]
   },
   {
@@ -193,10 +195,10 @@ const componentGuide = [
       { tier: "Enthusiast", cpu: "ROG Maximus / MEG Godlike", socket: "AM5 / LGA1700", spec: "24+2 VRM • Liquid Cooling Ready", tdp: "Extreme OC Over 350W" }
     ],
     brands: [
-      { name: "ASUS", icon: "🔴", desc: "ROG, TUF Gaming, and Prime motherboard series" },
-      { name: "MSI", icon: "🐉", desc: "Tomahawk, MPG, and MEG rugged power boards" },
-      { name: "Gigabyte", icon: "🦅", desc: "AORUS lineup with high PCIe lane counts" },
-      { name: "ASRock", icon: "⚙️", desc: "Taichi and Steel Legend feature-rich value boards" }
+      { name: "ASUS", icon: "ASUS", desc: "ROG, TUF Gaming, and Prime motherboard series" },
+      { name: "MSI", icon: "MSI", desc: "Tomahawk, MPG, and MEG rugged power boards" },
+      { name: "Gigabyte", icon: "GIGA", desc: "AORUS lineup with high PCIe lane counts" },
+      { name: "ASRock", icon: "ASR", desc: "Taichi and Steel Legend feature-rich value boards" }
     ]
   },
   {
@@ -282,10 +284,10 @@ const componentGuide = [
       { tier: "Enthusiast", cpu: "32GB (2x16GB) DDR5-7200 CL34", socket: "Dual Channel", spec: "Top Binned Hynix A-Die Silicon", tdp: "1.45V" }
     ],
     brands: [
-      { name: "Corsair", icon: "⛵", desc: "Vengeance & Dominator Titanium RGB series" },
-      { name: "G.Skill", icon: "⚡", desc: "Trident Z5 low-latency Hynix A-die overclocking RAM" },
-      { name: "Kingston", icon: "👑", desc: "Fury Beast & Renegade highly compatible kits" },
-      { name: "Crucial", icon: "🔬", desc: "Micron-backed Pro series with rock-solid JEDEC stability" }
+      { name: "Corsair", icon: "COR", desc: "Vengeance & Dominator Titanium RGB series" },
+      { name: "G.Skill", icon: "GSK", desc: "Trident Z5 low-latency Hynix A-die overclocking RAM" },
+      { name: "Kingston", icon: "KNG", desc: "Fury Beast & Renegade highly compatible kits" },
+      { name: "Crucial", icon: "CRU", desc: "Micron-backed Pro series with rock-solid JEDEC stability" }
     ]
   },
   {
@@ -371,10 +373,10 @@ const componentGuide = [
       { tier: "Enthusiast", cpu: "GeForce RTX 4080 Super / 7900 XTX", socket: "PCIe 4.0 x16", spec: "Full 4K Ray Tracing Supremacy", tdp: "320W - 355W" }
     ],
     brands: [
-      { name: "NVIDIA", icon: "🟢", desc: "GeForce RTX series with DLSS 3.5 and Ray Tracing" },
-      { name: "AMD", icon: "🔴", desc: "Radeon RX graphics with generous VRAM buffers" },
-      { name: "Intel", icon: "🔵", desc: "Arc discrete graphics featuring dual AV1 video encoders" },
-      { name: "ASUS ROG", icon: "⚡", desc: "Strix and TUF custom board-partner cooling designs" }
+      { name: "NVIDIA", icon: "NVDA", desc: "GeForce RTX series with DLSS 3.5 and Ray Tracing" },
+      { name: "AMD", icon: "AMD", desc: "Radeon RX graphics with generous VRAM buffers" },
+      { name: "Intel", icon: "INTC", desc: "Arc discrete graphics featuring dual AV1 video encoders" },
+      { name: "ASUS ROG", icon: "ASUS", desc: "Strix and TUF custom board-partner cooling designs" }
     ]
   },
   {
@@ -460,10 +462,10 @@ const componentGuide = [
       { tier: "Enthusiast", cpu: "1200W+ Titanium ATX 3.1", socket: "Fully Modular", spec: "Extreme Overclocking & Multi-GPU", tdp: "Maximum Electrical Isolation" }
     ],
     brands: [
-      { name: "Seasonic", icon: "⚡", desc: "Industry benchmark OEM with 10-12 year manufacturer warranties" },
-      { name: "Corsair", icon: "⛵", desc: "RMx and SF series with silent zero-RPM magnetic levitation fans" },
-      { name: "be quiet!", icon: "🔇", desc: "Dark Power and Pure Power featuring acoustic silence" },
-      { name: "EVGA", icon: "🔋", desc: "SuperNOVA line known for rock-solid stability and customer service" }
+      { name: "Seasonic", icon: "SSN", desc: "Industry benchmark OEM with 10-12 year manufacturer warranties" },
+      { name: "Corsair", icon: "COR", desc: "RMx and SF series with silent zero-RPM magnetic levitation fans" },
+      { name: "be quiet!", icon: "BQT", desc: "Dark Power and Pure Power featuring acoustic silence" },
+      { name: "EVGA", icon: "EVGA", desc: "SuperNOVA line known for rock-solid stability and customer service" }
     ]
   },
   {
@@ -549,602 +551,18 @@ const componentGuide = [
       { tier: "Enthusiast", cpu: "Lian Li O11 Dynamic EVO XL", socket: "Dual-Chamber", spec: "Custom Loop Watercooling Ready", tdp: "Supports Triple 420mm" }
     ],
     brands: [
-      { name: "Fractal Design", icon: "🌲", desc: "Scandinavian aesthetic, real wood accents, and benchmark airflow" },
+      { name: "Fractal Design", icon: "FD", desc: "Scandinavian aesthetic, real wood accents, and benchmark airflow" },
       { name: "NZXT", icon: "⬛", desc: "Clean minimalist design, cable management bar, and tempered glass" },
-      { name: "Lian Li", icon: "✨", desc: "Dual-chamber aquarium chassis (O11 series) and premium aluminum" },
-      { name: "Corsair", icon: "⛵", desc: "4000D / 5000D airflow series with RapidRoute cable channels" }
+      { name: "Lian Li", icon: "LL", desc: "Dual-chamber aquarium chassis (O11 series) and premium aluminum" },
+      { name: "Corsair", icon: "COR", desc: "4000D / 5000D airflow series with RapidRoute cable channels" }
     ]
   }
 ];
 
 export default function Learn() {
-  const navigate = useNavigate();
-  const { addComponent } = useBuild();
-
-  // Active Component Index (0 = CPU, 1 = Motherboard, 2 = RAM, 3 = GPU, 4 = PSU, 5 = Case)
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const selectedComp = componentGuide[currentIndex];
-
-  // Active Sub-tab for scrolling: "overview" | "architecture" | "installation" | "knowledge"
-  const [activeTab, setActiveTab] = useState("overview");
-
-  // Dynamic matcher rows for current component
-  const [matcherRows, setMatcherRows] = useState(selectedComp.matcherRows);
-
-  // Active step in Step-by-Step Installation
-  const [activeStep, setActiveStep] = useState(1);
-
-  // Quiz state
-  const [quizIndex, setQuizIndex] = useState(0);
-  const [quizAnswers, setQuizAnswers] = useState({});
-
-  // Common Mistakes popup detail
-  const [selectedMistake, setSelectedMistake] = useState(null);
-
-  // When selected component changes, reset rows and quiz
-  useEffect(() => {
-    setMatcherRows(selectedComp.matcherRows);
-    setActiveStep(1);
-    setQuizIndex(0);
-    setQuizAnswers({});
-    setSelectedMistake(null);
-  }, [currentIndex]);
-
-  const handleNextComponent = () => {
-    setCurrentIndex((prev) => (prev + 1) % componentGuide.length);
-  };
-
-  const handlePrevComponent = () => {
-    setCurrentIndex((prev) => (prev === 0 ? componentGuide.length - 1 : prev - 1));
-  };
-
-  const handleSelectComponent = (idx) => {
-    setCurrentIndex(idx);
-  };
-
-  const handleTabClick = (tabId, elementId) => {
-    setActiveTab(tabId);
-    const el = document.getElementById(elementId);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  };
-
-  const handleModelChange = (rowId, newModelName) => {
-    const selected = selectedComp.modelOptions.find((c) => c.name === newModelName);
-    if (!selected) return;
-    setMatcherRows((prev) =>
-      prev.map((row) =>
-        row.id === rowId ? { ...row, model: newModelName, socket: selected.socket } : row
-      )
-    );
-  };
-
-  const handleSocketChange = (rowId, newSocket) => {
-    setMatcherRows((prev) =>
-      prev.map((row) =>
-        row.id === rowId ? { ...row, targetSocket: newSocket } : row
-      )
-    );
-  };
-
-  const handleConnectToBuild = (modelName, socketName) => {
-    if (addComponent) {
-      addComponent(selectedComp.id, {
-        name: modelName || selectedComp.name,
-        socket: socketName || "Standard",
-        price: "$299"
-      });
-    }
-    navigate("/build");
-  };
-
-  const currentQuiz = selectedComp.quiz[quizIndex] || selectedComp.quiz[0];
-
   return (
-    <div className="learn-page full-bleed-page">
-      {/* Background Decorative Grid and Ambient Glows */}
-      <div className="bg-glow bg-glow-1" aria-hidden="true" />
-      <div className="bg-glow bg-glow-2" aria-hidden="true" />
-
-      {/* ── TOP BREADCRUMB HEADER BAR ── */}
-      <div className="top-breadcrumb-bar">
-        <div className="breadcrumb-inner">
-          <span className="brand-name">BuildLab</span>
-          <span className="bread-sep">›</span>
-          <span className="bread-link">Learn</span>
-          <span className="bread-sep">›</span>
-          <span className="bread-link">Hardware Deep-Dives</span>
-          <span className="bread-sep">›</span>
-          <span className="bread-active">{selectedComp.name}</span>
-        </div>
-      </div>
-      {/* ── HERO BANNER CAROUSEL SECTION ── */}
-      <div
-        className="cinematic-hero full-bleed-hero"
-        style={{ backgroundImage: `url('${selectedComp.heroImage}')` }}
-      >
-        <div className="hero-gradient-overlay" />
-
-        <div className="hero-content-wrapper">
-          {/* Green Category Badge */}
-          <div className="hero-badge-tag-wrap animate-fade-in">
-            <span className="hero-tech-badge neon-green-badge">
-              <span className="pulse-indicator" />
-              {selectedComp.badge}
-            </span>
-          </div>
-
-          {/* Main Title */}
-          <h1 className="hero-title animate-fade-in">{selectedComp.name}</h1>
-
-          {/* Tag Pills */}
-          <div className="hero-badges animate-fade-in-delayed">
-            {selectedComp.tags.map((tag, idx) => (
-              <span key={idx} className="badge-pill">{tag}</span>
-            ))}
-          </div>
-
-          {/* Description */}
-          <p className="hero-description animate-fade-in-delayed-more">
-            {selectedComp.description}
-          </p>
-
-          {/* Carousel Indicators & Controls */}
-          <div className="hero-controls-wrapper animate-fade-in-delayed-more">
-            <div className="hero-carousel-indicators">
-              {componentGuide.map((comp, idx) => (
-                <button
-                  key={comp.id}
-                  className={`carousel-dot ${currentIndex === idx ? "active" : ""}`}
-                  onClick={() => handleSelectComponent(idx)}
-                  aria-label={comp.name}
-                />
-              ))}
-            </div>
-
-            <div className="hero-nav-buttons">
-              <button
-                onClick={handlePrevComponent}
-                className="nav-btn"
-                aria-label="Previous component"
-                title="Previous component"
-              >
-                ‹
-              </button>
-              <button
-                onClick={handleNextComponent}
-                className="nav-btn"
-                aria-label="Next component"
-                title="Next component"
-              >
-                ›
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Floating Circular SCROLL Button */}
-        <div
-          className="hero-scroll-guide"
-          onClick={() => {
-            const target = document.getElementById("sub-tab-bar");
-            if (target) {
-              target.scrollIntoView({ behavior: "smooth" });
-            }
-          }}
-        >
-          <span className="scroll-guide-text">SCROLL</span>
-          <div className="scroll-chevron-bounce">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="m6 9 6 6 6-6" />
-            </svg>
-          </div>
-        </div>
-      </div>
-
-      {/* ── HORIZONTAL SUB-TAB SYSTEM BAR ── */}
-      <div id="sub-tab-bar" className="horizontal-subtab-bar">
-        <div className="subtab-bar-container">
-          <div className="subtab-pills-wrap">
-            <button
-              className={`subtab-btn ${activeTab === "overview" ? "active" : ""}`}
-              onClick={() => handleTabClick("overview", "key-specs-section")}
-            >
-              Overview
-            </button>
-            <button
-              className={`subtab-btn ${activeTab === "architecture" ? "active" : ""}`}
-              onClick={() => handleTabClick("architecture", "naming-decoder-section")}
-            >
-              Architecture
-            </button>
-            <button
-              className={`subtab-btn ${activeTab === "installation" ? "active" : ""}`}
-              onClick={() => handleTabClick("installation", "installation-section")}
-            >
-              Installation Guide
-            </button>
-            <button
-              className={`subtab-btn ${activeTab === "knowledge" ? "active" : ""}`}
-              onClick={() => handleTabClick("knowledge", "recommendation-matrix-section")}
-            >
-              Knowledge Check
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* ── MAIN CONTENT CONTAINER (VERTICAL CARDS STACK) ── */}
-      <div className="learn-content-flow">
-        <div className="learn-container">
-
-          {/* ══════════════════════════════════════════════════
-              CARD 1: KEY SPECIFICATIONS (8 TILES)
-             ══════════════════════════════════════════════════ */}
-          <div id="key-specs-section" className="mockup-card key-specs-card">
-            <div className="mockup-card-header">
-              <h3 className="mockup-card-title">Key Specifications</h3>
-              <span className="caret-icon">^</span>
-            </div>
-            <div className="specs-8grid">
-              {selectedComp.specs.map((spec, idx) => (
-                <div key={idx} className="spec-tile">
-                  <span className="spec-tile-label">{spec.label}</span>
-                  <span className="spec-tile-value">{spec.value}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* ══════════════════════════════════════════════════
-              CARD 2: TRY IT YOURSELF (COMPATIBILITY MATCHER)
-             ══════════════════════════════════════════════════ */}
-          <div id="matcher-section" className="mockup-card try-it-yourself-card">
-            <div className="mockup-card-header">
-              <h3 className="mockup-card-title">Try It Yourself</h3>
-              <span className="caret-icon">^</span>
-            </div>
-
-            <div className="matcher-table-wrapper">
-              <div className="matcher-table-head">
-                <span className="col-head col-tier">Profile Tier</span>
-                <span className="col-head col-model">Component Model</span>
-                <span className="col-head col-socket">Interface / Socket Target</span>
-                <span className="col-head col-status">Status &amp; Action</span>
-              </div>
-
-              <div className="matcher-table-rows">
-                {matcherRows.map((row) => {
-                  const isMatch = row.socket === row.targetSocket;
-                  return (
-                    <div key={row.id} className={`matcher-row ${isMatch ? "match-ok" : "match-err"}`}>
-                      {/* Tier */}
-                      <div className="col-cell col-tier">
-                        <span className="tier-tag-text">{row.tier}</span>
-                      </div>
-
-                      {/* Model Dropdown */}
-                      <div className="col-cell col-model">
-                        <select
-                          className="mockup-select"
-                          value={row.model}
-                          onChange={(e) => handleModelChange(row.id, e.target.value)}
-                        >
-                          {selectedComp.modelOptions.map((opt, i) => (
-                            <option key={i} value={opt.name}>
-                              {opt.name} ({opt.socket})
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-
-                      {/* Interface / Socket Dropdown */}
-                      <div className="col-cell col-socket">
-                        <select
-                          className="mockup-select"
-                          value={row.targetSocket}
-                          onChange={(e) => handleSocketChange(row.id, e.target.value)}
-                        >
-                          {selectedComp.targetSockets.map((sock, i) => (
-                            <option key={i} value={sock}>
-                              {sock}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-
-                      {/* Status / Action */}
-                      <div className="col-cell col-status">
-                        {isMatch ? (
-                          <div className="status-cell-wrap">
-                            <span className="match-badge-success">✓ Compatible</span>
-                            <button
-                              className="btn-cell-builder"
-                              onClick={() => handleConnectToBuild(row.model, row.targetSocket)}
-                            >
-                              Load
-                            </button>
-                          </div>
-                        ) : (
-                          <div className="status-cell-wrap">
-                            <span className="match-badge-error">✕ Incompatible</span>
-                            <button
-                              className="btn-cell-fix"
-                              onClick={() => handleSocketChange(row.id, row.socket)}
-                            >
-                              Fix
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-
-          {/* ══════════════════════════════════════════════════
-              CARD 3: DETAILED NAMING & SUFFIX DECODER
-             ══════════════════════════════════════════════════ */}
-          <div id="naming-decoder-section" className="mockup-card naming-decoder-card">
-            <div className="mockup-card-header">
-              <h3 className="mockup-card-title">Detailed Naming &amp; Suffix Decoder</h3>
-              <span className="caret-icon">^</span>
-            </div>
-
-            <div className="decoder-2col-grid">
-              {/* Left Column Guide */}
-              <div className="decoder-table-panel intel-table-panel">
-                <div className={`decoder-panel-head ${selectedComp.namingLeft.colorClass}`}>
-                  <span>{selectedComp.namingLeft.title}</span>
-                </div>
-                <div className="decoder-rows-stack">
-                  {selectedComp.namingLeft.rows.map((r, i) => (
-                    <div key={i} className="decoder-spec-row">
-                      <span className="d-label">{r.label}</span>
-                      <span className="d-val">{r.val}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Right Column Guide */}
-              <div className="decoder-table-panel amd-table-panel">
-                <div className={`decoder-panel-head ${selectedComp.namingRight.colorClass}`}>
-                  <span>{selectedComp.namingRight.title}</span>
-                </div>
-                <div className="decoder-rows-stack">
-                  {selectedComp.namingRight.rows.map((r, i) => (
-                    <div key={i} className="decoder-spec-row">
-                      <span className="d-label">{r.label}</span>
-                      <span className="d-val">{r.val}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* ══════════════════════════════════════════════════
-              CARD 4: 2-COLUMN SECTION (INSTALLATION & QUIZ/MISTAKES)
-             ══════════════════════════════════════════════════ */}
-          <div id="installation-section" className="split-2col-layout">
-            {/* LEFT COLUMN: STEP-BY-STEP INSTALLATION */}
-            <div className="mockup-card installation-card">
-              <div className="mockup-card-header">
-                <h3 className="mockup-card-title">Step-by-Step Installation</h3>
-                <span className="caret-icon">^</span>
-              </div>
-
-              <div className="installation-steps-stack">
-                {selectedComp.steps.map((item) => (
-                  <div
-                    key={item.step}
-                    className={`step-interactive-row ${activeStep === item.step ? "active-step" : ""}`}
-                    onClick={() => setActiveStep(item.step)}
-                  >
-                    <div className="step-left-content">
-                      <span className="step-tag-bold">Step {item.step}</span>
-                      <p className="step-title-text">{item.title}</p>
-                      <p className="step-desc-text">{item.desc}</p>
-                    </div>
-
-                    <div className="step-icon-graphic">
-                      {item.step === 1 && "🖥️"}
-                      {item.step === 2 && "📐"}
-                      {item.step === 3 && "⚡"}
-                      {item.step === 4 && "🔒"}
-                      {item.step === 5 && "❄️"}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* COMMON ERRORS BOX */}
-              <div className="common-errors-alert">
-                <div className="errors-header-line">
-                  <span className="error-title-text">Common Errors</span>
-                  <span className="error-badge-pill">Danger</span>
-                </div>
-                <p className="error-body-text">{selectedComp.commonErrors}</p>
-              </div>
-            </div>
-
-            {/* RIGHT COLUMN: QUIZ & COMMON MISTAKES */}
-            <div className="right-subcolumn">
-              {/* QUIZ CARD */}
-              <div className="mockup-card quiz-card">
-                <div className="mockup-card-header">
-                  <h3 className="mockup-card-title">Quiz</h3>
-                  <span className="caret-icon">^</span>
-                </div>
-
-                <div className="quiz-card-body">
-                  <p className="quiz-prompt">{currentQuiz.question}</p>
-
-                  <div className="quiz-options-vertical">
-                    {currentQuiz.options.map((opt, i) => {
-                      const answered = quizAnswers[quizIndex];
-                      const isSelected = answered === i;
-                      const showResult = answered !== undefined;
-
-                      let optClass = "";
-                      if (showResult) {
-                        if (opt.correct) optClass = "opt-correct";
-                        else if (isSelected) optClass = "opt-wrong";
-                      }
-
-                      return (
-                        <button
-                          key={i}
-                          className={`quiz-choice-btn ${isSelected ? "selected" : ""} ${optClass}`}
-                          onClick={() => setQuizAnswers((prev) => ({ ...prev, [quizIndex]: i }))}
-                        >
-                          <span className="choice-bullet">{isSelected ? "●" : "○"}</span>
-                          <span className="choice-text">{opt.text}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-
-                  {quizAnswers[quizIndex] !== undefined && (
-                    <div className="quiz-feedback-box animate-fade-in">
-                      <strong>Takeaway:</strong> {currentQuiz.explanation}
-                    </div>
-                  )}
-
-                  <div className="quiz-footer-actions">
-                    <span className="quiz-progress-text">
-                      Question {quizIndex + 1} of {selectedComp.quiz.length}
-                    </span>
-                    <button
-                      className="quiz-action-btn"
-                      onClick={() => {
-                        if (quizIndex < selectedComp.quiz.length - 1) {
-                          setQuizIndex((prev) => prev + 1);
-                        } else {
-                          setQuizIndex(0);
-                        }
-                      }}
-                    >
-                      {quizIndex < selectedComp.quiz.length - 1 ? "Next" : "Restart ↺"}
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* COMMON MISTAKES TO AVOID CARD */}
-              <div className="mockup-card common-mistakes-card">
-                <div className="mockup-card-header">
-                  <h3 className="mockup-card-title red-title">Common Mistakes to Avoid</h3>
-                </div>
-
-                <div className="mistakes-2x2-grid">
-                  {selectedComp.mistakes.map((m, idx) => (
-                    <div
-                      key={idx}
-                      className="mistake-badge-btn"
-                      onClick={() => setSelectedMistake(selectedMistake === m.name ? null : m.name)}
-                    >
-                      <span className="m-icon">⚠️</span>
-                      <span className="m-name">{m.name}</span>
-                    </div>
-                  ))}
-                </div>
-
-                {selectedMistake && (
-                  <div className="mistake-details-drawer animate-fade-in">
-                    {selectedComp.mistakes.find((m) => m.name === selectedMistake)?.desc}
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* ══════════════════════════════════════════════════
-              CARD 5: RECOMMENDATION MATRIX (NO APPLE)
-             ══════════════════════════════════════════════════ */}
-          <div id="recommendation-matrix-section" className="mockup-card matrix-card">
-            <div className="mockup-card-header">
-              <h3 className="mockup-card-title">{selectedComp.name} Recommendation Matrix</h3>
-              <a href="#matcher-section" className="view-specs-link">View specs</a>
-            </div>
-
-            <div className="matrix-table-responsive">
-              <table className="matrix-table">
-                <thead>
-                  <tr>
-                    <th>Build tier</th>
-                    <th>Recommended Hardware</th>
-                    <th>Interface / Target</th>
-                    <th>Target Spec</th>
-                    <th>Release / TDP</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {selectedComp.matrix.map((row, idx) => (
-                    <tr key={idx} className={row.highlight ? "highlight-green-row" : ""}>
-                      <td><span className="matrix-tier-name">{row.tier}</span></td>
-                      <td><strong>{row.cpu}</strong></td>
-                      <td>{row.socket}</td>
-                      <td>{row.spec}</td>
-                      <td>{row.tdp}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* ══════════════════════════════════════════════════
-              CARD 6: POPULAR MANUFACTURERS (NO APPLE)
-             ══════════════════════════════════════════════════ */}
-          <div className="mockup-card popular-manufacturers-card">
-            <div className="mockup-card-header">
-              <h3 className="mockup-card-title">Popular Manufacturers</h3>
-            </div>
-
-            <div className="manufacturers-4col-grid">
-              {selectedComp.brands.map((brand, idx) => (
-                <div key={idx} className="mfg-card-tile">
-                  <span className="mfg-logo-icon">{brand.icon}</span>
-                  <div className="mfg-text-wrap">
-                    <span className="mfg-title">{brand.name}</span>
-                    <span className="mfg-sub">{brand.desc}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* ══════════════════════════════════════════════════
-              CARD 7: ACTION BAR ("READY TO BUILD YOUR DREAM PC?")
-             ══════════════════════════════════════════════════ */}
-          <div className="mockup-card action-bar-card">
-            <div className="action-left-text">
-              <h4 className="action-main-title">Ready to build your dream PC?</h4>
-              <p className="action-sub-text">
-                Put your hardware knowledge to work with real-time socket matching, power estimation, and 3D component fitting.
-              </p>
-            </div>
-
-            <div className="action-right-buttons">
-              <button
-                className="btn-connect-build"
-                onClick={() => handleConnectToBuild(selectedComp.matcherRows[0]?.model, selectedComp.matcherRows[0]?.socket)}
-              >
-                ⚡ Connect to Build
-              </button>
-              <Link to="/brands" className="btn-add-charts">
-                + Add Spec Charts
-              </Link>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
+    <FullscreenGate requireFullscreen>
+      <CourseShell componentGuide={componentGuide} />
+    </FullscreenGate>
   );
 }

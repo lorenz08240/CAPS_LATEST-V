@@ -1,23 +1,34 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
+const { exec } = require("child_process");
 const db = require("./config/db");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
+// ── Admin Authentication Middleware ──
+const adminAuth = (req, res, next) => {
+  const adminKey = req.headers["x-admin-key"] || req.query.admin_key;
+  const expectedKey = process.env.ADMIN_API_KEY || "admin123";
+
+  if (!adminKey || adminKey !== expectedKey) {
+    return res.status(401).json({ error: "Unauthorized: Admin authorization required" });
+  }
+  next();
+};
+
 // API to get all parts grouped by category
 app.get("/api/parts", async (req, res) => {
   try {
-    const [rows] = await db.query("SELECT * FROM pc_parts ORDER BY created_at DESC, id DESC");
+    const [rows] = await db.query("SELECT * FROM pc_parts ORDER BY id DESC");
     const componentsData = {};
     rows.forEach(row => {
       if (!componentsData[row.category]) {
         componentsData[row.category] = [];
       }
       
-      // Map the DB row to the frontend format
       const item = { ...row };
       item.desc = item.desc || "";
       item.name = item.name || "";
@@ -32,14 +43,15 @@ app.get("/api/parts", async (req, res) => {
     });
     res.json(componentsData);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("GET /api/parts error:", err);
+    res.status(500).json({ error: "Failed to fetch components" });
   }
 });
 
 // API to get parts by category
 app.get("/api/parts/:category", async (req, res) => {
   try {
-    const [rows] = await db.query("SELECT * FROM pc_parts WHERE category = ? ORDER BY created_at DESC, id DESC", [
+    const [rows] = await db.query("SELECT * FROM pc_parts WHERE category = ? ORDER BY id DESC", [
       req.params.category,
     ]);
     res.json(rows.map(row => {
@@ -54,114 +66,8 @@ app.get("/api/parts/:category", async (req, res) => {
       return item;
     }));
   } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-// API to insert or update a part
-app.post("/api/parts", async (req, res) => {
-  try {
-    const {
-      id, category, img, brand, name, desc, price, tags,
-      socket_type, ddr_type, form_factor, power_required,
-      wattage, capacity, speed, type, efficiency
-    } = req.body;
-
-    const tagsJson = JSON.stringify(tags || []);
-
-    const query = `
-      INSERT INTO pc_parts 
-      (id, category, img, brand, name, \`desc\`, price, tags, socket_type, ddr_type, form_factor, power_required, wattage, capacity, speed, type, efficiency, created_at) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
-      ON DUPLICATE KEY UPDATE
-      category=VALUES(category), img=VALUES(img), brand=VALUES(brand), name=VALUES(name), \`desc\`=VALUES(\`desc\`), price=VALUES(price), tags=VALUES(tags),
-      socket_type=VALUES(socket_type), ddr_type=VALUES(ddr_type), form_factor=VALUES(form_factor), power_required=VALUES(power_required),
-      wattage=VALUES(wattage), capacity=VALUES(capacity), speed=VALUES(speed), type=VALUES(type), efficiency=VALUES(efficiency)
-    `;
-
-    const values = [
-      id, category, img || null, brand || null, name || null, desc || null, price || null, tagsJson,
-      socket_type || null, ddr_type || null, form_factor || null, power_required || null,
-      wattage || null, capacity || null, speed || null, type || null, efficiency || null
-    ];
-
-    await db.query(query, values);
-    res.json({ success: true, message: "Part added successfully" });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// API to delete a part
-app.delete("/api/parts/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    await db.query("DELETE FROM pc_parts WHERE id = ?", [id]);
-    res.json({ success: true, message: "Part deleted successfully" });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// API to update a part
-app.put("/api/parts/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const {
-      category, img, brand, name, desc, price, tags,
-      socket_type, ddr_type, form_factor, power_required,
-      wattage, capacity, speed, type, efficiency
-    } = req.body;
-
-    const tagsJson = JSON.stringify(tags || []);
-
-    const query = `
-      UPDATE pc_parts SET
-      category = ?, img = ?, brand = ?, name = ?, \`desc\` = ?, price = ?, tags = ?,
-      socket_type = ?, ddr_type = ?, form_factor = ?, power_required = ?,
-      wattage = ?, capacity = ?, speed = ?, type = ?, efficiency = ?
-      WHERE id = ?
-    `;
-
-    const values = [
-      category, img || null, brand || null, name || null, desc || null, price || null, tagsJson,
-      socket_type || null, ddr_type || null, form_factor || null, power_required || null,
-      wattage || null, capacity || null, speed || null, type || null, efficiency || null,
-      id
-    ];
-
-    await db.query(query, values);
-    res.json({ success: true, message: "Part updated successfully" });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// API to get saved builds
-app.get("/api/builds", async (req, res) => {
-  try {
-    const [rows] = await db.query("SELECT * FROM saved_builds");
-    const builds = [null, null, null];
-    rows.forEach(row => {
-      builds[row.slot_id] = typeof row.build_data === 'string' ? JSON.parse(row.build_data) : row.build_data;
-    });
-    res.json(builds);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// API to save a build
-app.post("/api/builds/:slot", async (req, res) => {
-  try {
-    const slot = parseInt(req.params.slot, 10);
-    const buildData = JSON.stringify(req.body);
-    await db.query(
-      "INSERT INTO saved_builds (slot_id, build_data) VALUES (?, ?) ON DUPLICATE KEY UPDATE build_data = VALUES(build_data)",
-      [slot, buildData]
-    );
-    res.json({ success: true });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(`GET /api/parts/${req.params.category} error:`, err);
+    res.status(500).json({ error: "Failed to fetch category components" });
   }
 });
 
@@ -181,12 +87,49 @@ app.get("/api/parts/item/:id", async (req, res) => {
     }
     res.json(item);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(`GET /api/parts/item/${req.params.id} error:`, err);
+    res.status(500).json({ error: "Failed to fetch component" });
   }
 });
 
-// API to delete a part
-app.delete("/api/parts/:id", async (req, res) => {
+// API to insert a part (Admin Protected)
+app.post("/api/parts", adminAuth, async (req, res) => {
+  try {
+    const {
+      id, category, img, brand, name, desc, price, tags,
+      socket_type, ddr_type, form_factor, power_required,
+      wattage, capacity, speed, type, efficiency
+    } = req.body;
+
+    const tagsJson = JSON.stringify(tags || []);
+
+    const query = `
+      INSERT INTO pc_parts 
+      (id, category, img, brand, name, \`desc\`, price, tags, socket_type, ddr_type, form_factor, power_required, wattage, capacity, speed, type, efficiency) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ON DUPLICATE KEY UPDATE 
+      category=VALUES(category), img=VALUES(img), brand=VALUES(brand), name=VALUES(name), \`desc\`=VALUES(\`desc\`), 
+      price=VALUES(price), tags=VALUES(tags), socket_type=VALUES(socket_type), ddr_type=VALUES(ddr_type), 
+      form_factor=VALUES(form_factor), power_required=VALUES(power_required), wattage=VALUES(wattage), 
+      capacity=VALUES(capacity), speed=VALUES(speed), type=VALUES(type), efficiency=VALUES(efficiency)
+    `;
+
+    const values = [
+      id, category, img || null, brand || null, name || null, desc || null, price || null, tagsJson,
+      socket_type || null, ddr_type || null, form_factor || null, power_required || null,
+      wattage || null, capacity || null, speed || null, type || null, efficiency || null
+    ];
+
+    await db.query(query, values);
+    res.json({ success: true, message: "Part created/updated successfully" });
+  } catch (err) {
+    console.error("POST /api/parts error:", err);
+    res.status(500).json({ error: "Failed to save component" });
+  }
+});
+
+// API to delete a part (Admin Protected, with 404 validation)
+app.delete("/api/parts/:id", adminAuth, async (req, res) => {
   try {
     const [result] = await db.query("DELETE FROM pc_parts WHERE id = ?", [req.params.id]);
     if (result.affectedRows === 0) {
@@ -194,12 +137,13 @@ app.delete("/api/parts/:id", async (req, res) => {
     }
     res.json({ success: true, message: "Component deleted successfully" });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(`DELETE /api/parts/${req.params.id} error:`, err);
+    res.status(500).json({ error: "Failed to delete component" });
   }
 });
 
-// API to update a part
-app.put("/api/parts/:id", async (req, res) => {
+// API to update a part (Admin Protected, with 404 validation)
+app.put("/api/parts/:id", adminAuth, async (req, res) => {
   try {
     const {
       category, img, brand, name, desc, price, tags,
@@ -230,7 +174,39 @@ app.put("/api/parts/:id", async (req, res) => {
     }
     res.json({ success: true, message: "Component updated successfully" });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(`PUT /api/parts/${req.params.id} error:`, err);
+    res.status(500).json({ error: "Failed to update component" });
+  }
+});
+
+// API to get saved builds
+app.get("/api/builds", async (req, res) => {
+  try {
+    const [rows] = await db.query("SELECT * FROM saved_builds");
+    const builds = [null, null, null];
+    rows.forEach(row => {
+      builds[row.slot_id] = typeof row.build_data === 'string' ? JSON.parse(row.build_data) : row.build_data;
+    });
+    res.json(builds);
+  } catch (err) {
+    console.error("GET /api/builds error:", err);
+    res.status(500).json({ error: "Failed to fetch saved builds" });
+  }
+});
+
+// API to save a build
+app.post("/api/builds/:slot", async (req, res) => {
+  try {
+    const slot = parseInt(req.params.slot, 10);
+    const buildData = JSON.stringify(req.body);
+    await db.query(
+      "INSERT INTO saved_builds (slot_id, build_data) VALUES (?, ?) ON DUPLICATE KEY UPDATE build_data = VALUES(build_data)",
+      [slot, buildData]
+    );
+    res.json({ success: true });
+  } catch (err) {
+    console.error(`POST /api/builds/${req.params.slot} error:`, err);
+    res.status(500).json({ error: "Failed to save build" });
   }
 });
 
@@ -256,12 +232,13 @@ app.get("/api/admin/stats", async (req, res) => {
       timestamp: new Date().toISOString()
     });
   } catch (err) {
-    res.status(500).json({ success: false, dbConnected: false, error: err.message });
+    console.error("GET /api/admin/stats error:", err);
+    res.status(500).json({ success: false, dbConnected: false, error: "Failed to fetch telemetry" });
   }
 });
 
-// Admin database sanitization endpoint (Clean noisy crawler data)
-app.post("/api/admin/clean-db", async (req, res) => {
+// Admin database sanitization endpoint (Clean noisy crawler data, Admin Protected)
+app.post("/api/admin/clean-db", adminAuth, async (req, res) => {
   try {
     const queries = [
       "DELETE FROM pc_parts WHERE LOWER(name) LIKE '%laptop%' OR LOWER(name) LIKE '%notebook%' OR LOWER(name) LIKE '%vivobook%' OR LOWER(name) LIKE '%ideapad%' OR LOWER(name) LIKE '%aspire%' OR LOWER(name) LIKE '%nitro%' OR LOWER(name) LIKE '%cyborg%' OR LOWER(name) LIKE '%modern 14%' OR LOWER(name) LIKE '%zenbook%' OR LOWER(name) LIKE '%macbook%' OR LOWER(name) LIKE '%thinkpad%' OR LOWER(name) LIKE '%fhd ips%' OR LOWER(name) LIKE '%14.0\"%' OR LOWER(name) LIKE '%15.6\"%'",
@@ -272,8 +249,8 @@ app.post("/api/admin/clean-db", async (req, res) => {
 
     let totalDeleted = 0;
     for (const q of queries) {
-      const [res] = await db.query(q);
-      totalDeleted += res.affectedRows || 0;
+      const [resQuery] = await db.query(q);
+      totalDeleted += resQuery.affectedRows || 0;
     }
 
     res.json({
@@ -282,7 +259,8 @@ app.post("/api/admin/clean-db", async (req, res) => {
       deletedCount: totalDeleted
     });
   } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    console.error("POST /api/admin/clean-db error:", err);
+    res.status(500).json({ success: false, error: "Failed to sanitize database" });
   }
 });
 
@@ -292,84 +270,54 @@ app.get("/api/health", async (req, res) => {
     await db.query("SELECT 1");
     res.json({ status: "healthy", database: "connected" });
   } catch (err) {
-    res.status(503).json({ status: "degraded", database: "disconnected", error: err.message });
+    res.status(503).json({ status: "degraded", database: "disconnected" });
   }
 });
 
-// ==========================================
+// ══════════════════════════════════════════
 // SCRAPED DATA REVIEW QUEUE ENDPOINTS
-// ==========================================
-const initScrapedQueueTable = async () => {
-  try {
-    await db.query(`
-      CREATE TABLE IF NOT EXISTS scraped_queue (
-        id VARCHAR(255) PRIMARY KEY,
-        source VARCHAR(100) DEFAULT 'Source: EasyPC',
-        source_name VARCHAR(100) DEFAULT 'EasyPC',
-        date VARCHAR(50),
-        scraped_name TEXT NOT NULL,
-        category VARCHAR(50) DEFAULT 'case',
-        brand VARCHAR(100),
-        form_factor VARCHAR(50),
-        socket_type VARCHAR(50),
-        ddr_type VARCHAR(50),
-        wattage VARCHAR(50),
-        power_required VARCHAR(50),
-        capacity VARCHAR(50),
-        speed VARCHAR(50),
-        type VARCHAR(50),
-        efficiency VARCHAR(50),
-        price VARCHAR(50),
-        img TEXT,
-        \`desc\` TEXT,
-        tags TEXT,
-        approved TINYINT(1) DEFAULT 0,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-  } catch (err) {
-    console.error("Scraped queue table check error:", err.message);
-  }
-};
-initScrapedQueueTable();
+// ══════════════════════════════════════════
 
-// API to get all queued scraped items
+// API to get all unverified scraped components
 app.get("/api/scraped-queue", async (req, res) => {
   try {
-    const [rows] = await db.query("SELECT * FROM scraped_queue ORDER BY created_at DESC");
+    const [rows] = await db.query("SELECT * FROM scraped_queue ORDER BY id DESC");
     res.json(rows.map(row => ({
       ...row,
       tags: typeof row.tags === 'string' ? JSON.parse(row.tags || "[]") : (row.tags || []),
       approved: Boolean(row.approved)
     })));
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("GET /api/scraped-queue error:", err);
+    res.status(500).json({ error: "Failed to fetch review queue" });
   }
 });
 
-// API to toggle approval of a scraped item
-app.post("/api/scraped-queue/approve/:id", async (req, res) => {
+// API to toggle approval of a scraped item (Admin Protected)
+app.post("/api/scraped-queue/approve/:id", adminAuth, async (req, res) => {
   try {
     await db.query("UPDATE scraped_queue SET approved = NOT approved WHERE id = ?", [req.params.id]);
     const [updated] = await db.query("SELECT * FROM scraped_queue WHERE id = ?", [req.params.id]);
     res.json({ success: true, item: updated[0] });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(`POST /api/scraped-queue/approve/${req.params.id} error:`, err);
+    res.status(500).json({ error: "Failed to toggle component approval" });
   }
 });
 
-// API to discard / delete a scraped item from the review queue
-app.delete("/api/scraped-queue/:id", async (req, res) => {
+// API to discard / delete a scraped item from the review queue (Admin Protected)
+app.delete("/api/scraped-queue/:id", adminAuth, async (req, res) => {
   try {
     await db.query("DELETE FROM scraped_queue WHERE id = ?", [req.params.id]);
     res.json({ success: true, message: "Scraped component discarded from queue." });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(`DELETE /api/scraped-queue/${req.params.id} error:`, err);
+    res.status(500).json({ error: "Failed to discard item" });
   }
 });
 
-// API to merge all approved scraped items into production pc_parts table
-app.post("/api/scraped-queue/merge", async (req, res) => {
+// API to merge all approved scraped items into production pc_parts table (Admin Protected)
+app.post("/api/scraped-queue/merge", adminAuth, async (req, res) => {
   try {
     const [approvedItems] = await db.query("SELECT * FROM scraped_queue WHERE approved = 1");
     if (!approvedItems || approvedItems.length === 0) {
@@ -379,7 +327,6 @@ app.post("/api/scraped-queue/merge", async (req, res) => {
     let mergedCount = 0;
     for (const item of approvedItems) {
       let prodId = item.id.startsWith("easypc-") ? item.id : `prod-${item.id}`;
-      // Check if prodId already exists in pc_parts; if so, append unique suffix to make it a distinct added component
       const [existingPart] = await db.query("SELECT id FROM pc_parts WHERE id = ?", [prodId]);
       if (existingPart && existingPart.length > 0) {
         prodId = `${prodId}-${Date.now().toString().slice(-4)}`;
@@ -407,7 +354,6 @@ app.post("/api/scraped-queue/merge", async (req, res) => {
       mergedCount++;
     }
 
-    // Delete merged items from queue
     await db.query("DELETE FROM scraped_queue WHERE approved = 1");
 
     res.json({
@@ -417,13 +363,12 @@ app.post("/api/scraped-queue/merge", async (req, res) => {
     });
   } catch (err) {
     console.error("Scraped queue merge error:", err);
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: "Failed to merge verified components" });
   }
 });
 
-// API to trigger crawler (scraping EasyPC or Bermor Techzone to Review Queue)
-const { exec } = require("child_process");
-app.post("/api/crawl", (req, res) => {
+// API to trigger crawler (scraping EasyPC or Bermor Techzone to Review Queue, Admin Protected)
+app.post("/api/crawl", adminAuth, (req, res) => {
   const store = req.body?.store || "EasyPC";
   const category = req.body?.category || "all";
   const maxPages = req.body?.maxPages || 1;

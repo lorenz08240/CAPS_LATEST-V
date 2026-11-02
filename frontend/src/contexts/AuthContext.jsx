@@ -8,6 +8,7 @@ export function useAuth() {
 
 const SESSION_AUTH_KEY = "buildlab_admin_session";
 const SESSION_TIMESTAMP_KEY = "buildlab_admin_timestamp";
+const SESSION_TOKEN_KEY = "buildlab_admin_token";
 
 export function AuthProvider({ children }) {
   // Session Security: store active credentials strictly in sessionStorage.
@@ -16,6 +17,7 @@ export function AuthProvider({ children }) {
     // Purge legacy persistent localStorage to prevent security bypass
     try {
       localStorage.removeItem("buildlab_admin");
+      localStorage.removeItem("buildlab_admin_token");
     } catch (e) {}
 
     try {
@@ -31,6 +33,7 @@ export function AuthProvider({ children }) {
       try {
         sessionStorage.setItem(SESSION_AUTH_KEY, "true");
         sessionStorage.setItem(SESSION_TIMESTAMP_KEY, Date.now().toString());
+        sessionStorage.setItem(SESSION_TOKEN_KEY, password);
       } catch (e) {}
       return true;
     }
@@ -42,10 +45,14 @@ export function AuthProvider({ children }) {
     try {
       sessionStorage.removeItem(SESSION_AUTH_KEY);
       sessionStorage.removeItem(SESSION_TIMESTAMP_KEY);
+      sessionStorage.removeItem(SESSION_TOKEN_KEY);
       // Clean up session drafts upon explicit logout
       sessionStorage.removeItem("buildlab_admin_drawer_draft");
       sessionStorage.removeItem("buildlab_admin_crawler_draft");
       sessionStorage.removeItem("buildlab_admin_terminal_logs");
+      // Clean up legacy localStorage if present
+      localStorage.removeItem("buildlab_admin");
+      localStorage.removeItem("buildlab_admin_token");
     } catch (e) {}
   };
 

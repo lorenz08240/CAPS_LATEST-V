@@ -1,15 +1,16 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { OFFLINE_COMPONENTS, DEMO_GAMING_RIG } from "../utilities/offlineParts";
+import { apiFetch } from "../utilities/api";
 
 // Build Context for managing selected components
 const BuildContext = createContext();
-
 
 // Build Provider component
 export const BuildProvider = ({ children }) => {
   const [currentBuild, setCurrentBuild] = useState(() => {
     try {
-      const saved = localStorage.getItem("buildlab_current_build");
+      localStorage.removeItem("buildlab_current_build");
+      const saved = sessionStorage.getItem("buildlab_current_build");
       if (saved) return JSON.parse(saved);
     } catch {}
     return {
@@ -34,10 +35,10 @@ export const BuildProvider = ({ children }) => {
   });
   const [selectedSaveSlot, setSelectedSaveSlot] = useState(0);
 
-  // Sync current build to localStorage
+  // Sync current build to sessionStorage (automatically resets when frontend/tab is closed)
   useEffect(() => {
     try {
-      localStorage.setItem("buildlab_current_build", JSON.stringify(currentBuild));
+      sessionStorage.setItem("buildlab_current_build", JSON.stringify(currentBuild));
     } catch {}
   }, [currentBuild]);
 
@@ -71,6 +72,7 @@ export const BuildProvider = ({ children }) => {
     setCurrentBuild(emptyBuild);
     setCompatibilityResults([]);
     try {
+      sessionStorage.removeItem("buildlab_current_build");
       localStorage.removeItem("buildlab_current_build");
     } catch {}
   };
@@ -81,7 +83,7 @@ export const BuildProvider = ({ children }) => {
 
   // Fetch all components and saved builds from backend on load
   useEffect(() => {
-    fetch("http://localhost:5000/api/parts")
+    apiFetch("/api/parts")
       .then(res => res.json())
       .then(data => {
         if (data && typeof data === 'object' && Object.keys(data).length > 0) {
@@ -115,7 +117,7 @@ export const BuildProvider = ({ children }) => {
         console.warn("Backend API offline or database disconnected; using offline fallback parts.", err);
       });
 
-    fetch("http://localhost:5000/api/builds")
+    apiFetch("/api/builds")
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) setSavedBuilds(data);
@@ -134,7 +136,7 @@ export const BuildProvider = ({ children }) => {
     });
 
     // Save to database
-    fetch(`http://localhost:5000/api/builds/${slotIndex}`, {
+    apiFetch(`/api/builds/${slotIndex}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

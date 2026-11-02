@@ -188,12 +188,34 @@
   min-height: 100vh;
 }
 
+/* Strict single-screen landscape lock for BuildLab workstation */
+.app-layout:has(.build-page),
+.app-layout:has(.home-page),
+.app-layout:has(.course-shell-root) {
+  height: 100vh;
+  height: 100dvh;
+  width: 100vw;
+  max-height: 100vh;
+  max-height: 100dvh;
+  overflow: hidden;
+}
+
 .main-content {
   flex-grow: 1;
   margin-left: 0; /* Default: sidebar auto-hides */
   display: flex;
   flex-direction: column;
   transition: margin-left 300ms ease-in-out;
+}
+
+.app-layout:has(.build-page) .main-content,
+.app-layout:has(.home-page) .main-content,
+.app-layout:has(.course-shell-root) .main-content {
+  height: 100%;
+  width: 100%;
+  max-height: 100vh;
+  max-height: 100dvh;
+  overflow: hidden;
 }
 
 .app-layout.sidebar-pinned .main-content {
