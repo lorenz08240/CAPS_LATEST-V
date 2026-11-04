@@ -326,10 +326,12 @@
   margin-top: 10px;
   padding-top: 10px;
   flex-shrink: 0;
+  display: flex;
+  gap: 8px;
 }
 
 .reset-build-btn {
-  width: 100%;
+  flex: 1;
   background: rgba(244, 63, 94, 0.08);
   color: var(--cyber-rose-light);
   border: 1px solid rgba(244, 63, 94, 0.25);
@@ -356,6 +358,28 @@
   border-color: var(--cyber-border-subtle);
   color: var(--cyber-text-dim);
 }
+.sidebar-starter-btn {
+  flex: 1;
+  background: rgba(0, 229, 255, 0.08);
+  color: #00e5ff;
+  border: 1px solid rgba(0, 229, 255, 0.35);
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.sidebar-starter-btn:hover {
+  background: rgba(0, 229, 255, 0.2);
+  border-color: #00e5ff;
+  box-shadow: 0 0 14px rgba(0, 229, 255, 0.4);
+  color: #ffffff;
+}
+
 
 /* ── RIGHT MAIN PANEL: Content ── */
 .build-content {

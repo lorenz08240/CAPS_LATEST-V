@@ -3,17 +3,17 @@ import HardwareIcon from "./HardwareIcon";
 
 /**
  * Thumbnail component:
- * 48x48px container with rounded-md and border border-white/10.
- * Centers the hardware image with object-contain.
- * Fallback to clean HardwareIcon SVG (no awkward camera icon text overlay).
- * Floating z-50 popover preview with safe bounding offsets.
+ * Bounded thumbnail container with strict dimensions & overflow clipping to prevent layout blowout.
+ * Centers the hardware image with object-fit: contain.
+ * Fallback to clean HardwareIcon SVG if image missing/errored.
+ * Floating popover preview with safe positioning on hover.
  */
 export const HoverImagePreview = memo(({
   category,
   imageUrl,
   name,
   brand,
-  size = 48,
+  size = 44,
   previewSize = 160
 }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -23,26 +23,33 @@ export const HoverImagePreview = memo(({
 
   return (
     <div
-      className="hw-thumb-box"
+      className="hw-thumb-wrapper"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       title={`Preview ${name || category}`}
-      style={{ width: `${size}px`, height: `${size}px` }}
+      style={{
+        width: `${size}px`,
+        height: `${size}px`,
+        minWidth: `${size}px`,
+        minHeight: `${size}px`
+      }}
     >
-      {/* 48x48 Center Image Thumbnail */}
-      {hasValidImage ? (
-        <img
-          src={imageUrl}
-          alt={name || "Hardware"}
-          className="hw-thumb-img"
-          onError={() => setImageError(true)}
-          loading="lazy"
-        />
-      ) : (
-        <div className={`hw-fallback-icon hw-thumb-${category || "generic"}`}>
-          <HardwareIcon category={category} size={Math.round(size * 0.5)} />
-        </div>
-      )}
+      {/* Strictly bounded thumbnail box */}
+      <div className="hw-thumb-box">
+        {hasValidImage ? (
+          <img
+            src={imageUrl}
+            alt={name || "Hardware"}
+            className="hw-thumb-img"
+            onError={() => setImageError(true)}
+            loading="lazy"
+          />
+        ) : (
+          <div className={`hw-fallback-icon hw-thumb-${category || "generic"}`}>
+            <HardwareIcon category={category} size={Math.round(size * 0.52)} />
+          </div>
+        )}
+      </div>
 
       {/* Popover Preview with z-50 & safe positioning */}
       {isHovered && hasValidImage && (

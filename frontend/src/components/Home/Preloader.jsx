@@ -15,6 +15,9 @@ export default function Preloader({ onComplete }) {
   // If already seen in this session and not forced, bypass
   const [shouldRender, setShouldRender] = useState(() => {
     if (typeof window === 'undefined') return false;
+    try {
+      if (sessionStorage.getItem('buildlab_preloader_seen') === 'true') return false;
+    } catch (e) {}
     return !hasLoadedOnceInSession;
   });
 
@@ -98,6 +101,9 @@ export default function Preloader({ onComplete }) {
     }
 
     hasLoadedOnceInSession = true;
+    try {
+      sessionStorage.setItem('buildlab_preloader_seen', 'true');
+    } catch (e) {}
     setIsExiting(true);
 
     // Wait for the smooth CSS curtain slide-up animation (0.85s)

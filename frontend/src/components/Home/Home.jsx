@@ -119,6 +119,16 @@ function Home() {
               <button 
                 type="button" 
                 className="cyber-nav-link" 
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleScrollToBuild("smooth");
+                }}
+              >
+                BUILD
+              </button>
+              <button 
+                type="button" 
+                className="cyber-nav-link" 
                 onClick={handleLaunch3DStudio}
               >
                 3D STUDIO

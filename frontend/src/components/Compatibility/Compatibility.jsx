@@ -5,6 +5,7 @@ import { useBuild } from "../../contexts/BuildContext";
 import { getCompatibilitySummary } from "../../utilities/rules";
 import soundManager from "../../utilities/soundManager";
 import FullscreenGate from "../FullscreenGate/FullscreenGate";
+import GlobalHeader from "../Navigation/GlobalHeader";
 import "./Compatibility.css";
 
 function CompatibilityView({ isIntegrated = false }) {
@@ -16,6 +17,7 @@ function CompatibilityView({ isIntegrated = false }) {
     setSelectedSaveSlot,
     saveBuildSnapshot,
     allComponents,
+    loadDemoBuild,
   } = useBuild();
 
   const getSavedBuild = (slot) => {
@@ -336,6 +338,7 @@ function CompatibilityView({ isIntegrated = false }) {
         )}
 
       <div className={`compat-page ${isIntegrated ? "integrated-view" : ""}`}>
+        {!isIntegrated && <GlobalHeader />}
         {/* Organic layered waves and mesh background */}
         {!isIntegrated && (
           <>
@@ -390,9 +393,22 @@ function CompatibilityView({ isIntegrated = false }) {
                   Head to the Component Picker and begin assembling your PC. Real-time compatibility
                   checks and performance telemetry will appear here instantly.
                 </p>
-                <Link to="/build" className="btn-resolve-cta" style={{ maxWidth: "260px", margin: "16px auto 0" }}>
-                  Go to Component Picker
-                </Link>
+                <div style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap", marginTop: "16px" }}>
+                  <Link to="/build" className="btn-resolve-cta" style={{ maxWidth: "240px", margin: 0 }}>
+                    Go to Component Picker
+                  </Link>
+                  <button 
+                    type="button" 
+                    className="btn-resolve-cta"
+                    style={{ maxWidth: "240px", margin: 0, background: "rgba(0, 229, 255, 0.15)", borderColor: "#00e5ff", color: "#00e5ff", cursor: "pointer" }}
+                    onClick={() => {
+                      try { soundManager.click(); } catch(e) {}
+                      if (loadDemoBuild) loadDemoBuild();
+                    }}
+                  >
+                    Load Sample Rig (Test Demo)
+                  </button>
+                </div>
               </div>
             </div>
           )}

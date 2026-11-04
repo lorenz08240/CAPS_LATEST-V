@@ -1142,6 +1142,91 @@
   vertical-align: middle;
 }
 
+/* Component Tiny Thumbnail in list & HoverImagePreview */
+.hw-thumb-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  max-width: 44px;
+  max-height: 44px;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+.hw-thumb-box {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 8px;
+  background: #090d16;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  padding: 3px;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+.hw-thumb-box:hover {
+  border-color: rgba(0, 242, 254, 0.6);
+  box-shadow: 0 0 12px rgba(0, 242, 254, 0.35);
+}
+
+.hw-thumb-img {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain !important;
+  border-radius: 4px;
+  display: block;
+}
+
+.hw-fallback-icon {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Brand badge pill */
+.part-brand-cell {
+  white-space: nowrap;
+}
+
+.brand-badge-pill,
+.part-brand-badge {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #94a3b8;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+.part-submeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 3px;
+  flex-wrap: wrap;
+}
+
 /* Component Tiny Thumbnail in list */
 .component-list-thumb {
   width: 44px;
@@ -5286,3 +5371,135 @@
   cursor: not-allowed;
 }
 
+
+/* ==========================================================================
+   MOBILE & TABLET RESPONSIVE FIXES FOR ADMIN WORKSPACE
+   ========================================================================== */
+@media (max-width: 1024px) {
+  .admin-layout-container {
+    flex-direction: column !important;
+  }
+
+  .admin-sidebar {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    position: relative !important;
+    top: 0 !important;
+    border-right: none !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    padding: 14px 18px !important;
+  }
+
+  .admin-sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+  }
+
+  .admin-category-list {
+    display: flex !important;
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    gap: 8px !important;
+    padding-bottom: 6px !important;
+    scrollbar-width: none;
+  }
+  .admin-category-list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .admin-cat-card {
+    min-width: 130px !important;
+    margin-bottom: 0 !important;
+    flex-shrink: 0 !important;
+  }
+
+  .admin-sidebar-footer {
+    display: none !important;
+  }
+
+  .admin-main-content {
+    padding: 16px 16px 60px !important;
+    width: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  .inventory-top-action-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+  }
+
+  .search-filter-controls {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .inventory-search-box {
+    max-width: 100% !important;
+    min-width: 100% !important;
+  }
+
+  .inventory-primary-action {
+    width: 100%;
+  }
+
+  .btn-add-component-neon {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .table-container {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  .admin-table {
+    min-width: 780px !important;
+  }
+
+  .admin-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+  }
+
+  .admin-header-actions {
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 10px !important;
+  }
+
+  .admin-route-nav {
+    display: flex !important;
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+    scrollbar-width: none !important;
+    max-width: calc(100% - 85px) !important;
+    padding: 3px !important;
+    flex-shrink: 1 !important;
+  }
+
+  .admin-route-nav::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .admin-nav-tab {
+    padding: 6px 12px !important;
+    font-size: 0.76rem !important;
+    white-space: nowrap !important;
+  }
+
+  .btn-glass-logout {
+    padding: 6px 14px !important;
+    font-size: 0.76rem !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+  }
+}

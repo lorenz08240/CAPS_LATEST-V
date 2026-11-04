@@ -151,7 +151,8 @@ export function SingleDDR4RAM({
 
 /**
  * Motherboard DIMM Slots RAM Kit (Supports Option A: 2 Sticks Dual Channel & Option B: 4 Sticks All Slots)
- * Properly oriented vertically along Y, seated flush inside DIMM sockets with heatspreader facing outward.
+ * Properly oriented vertically along Y, golden connector pins inserted directly INTO the motherboard socket,
+ * with anodized heatspreader and RGB top edge facing outwards towards the glass panel.
  */
 export function MotherboardDDR4Kit({ 
   part,
@@ -170,16 +171,16 @@ export function MotherboardDDR4Kit({
                  (part?.sticks === 4);
 
   const slotOffsets = isQuad 
-    ? [-0.4, -0.2, 0.0, 0.2]   // Option B: 4 sticks in all 4 slots
-    : [-0.2, 0.2];             // Option A: 2 sticks in dual channel slots 2 and 4
+    ? [-0.3, -0.1, 0.1, 0.3]   // Option B: 4 sticks in all 4 DIMM slots
+    : [-0.1, 0.1];             // Option A: 2 sticks in dual channel slots 2 and 4
 
   return (
     <group>
       {slotOffsets.map((zOff, idx) => (
         <group
           key={idx}
-          position={[-0.14, 0, zOff]}
-          rotation={[-Math.PI / 2, -Math.PI / 2, 0]}
+          position={[-0.05, 0, zOff]}
+          rotation={[-Math.PI / 2, Math.PI / 2, 0]}
         >
           <SingleDDR4RAM
             scale={stickScale}

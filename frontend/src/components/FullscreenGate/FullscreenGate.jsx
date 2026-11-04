@@ -17,22 +17,41 @@ import "./FullscreenGate.css";
  *
  * Two independent overlays, whichever blocks first:
  *  1. ROTATION — phones/tablets in portrait: "Rotate your device to begin"
- *  2. FULLSCREEN — when fullscreen is required (or was once engaged and
- *     then exited via Esc), a banner asks the user to re-enter fullscreen.
+ *  2. FULLSCREEN — when fullscreen is required, prompts user with
+ *     an option to enter fullscreen or continue in windowed view.
  *
- * Never traps anyone: if the browser has no Fullscreen API (iPhone Safari),
- * the fullscreen overlay is skipped entirely and only rotation applies.
+ * Never traps the student: windowed mode is always accessible.
  */
 export default function FullscreenGate({ children, requireFullscreen = false }) {
   const [fullscreenActive, setFullscreenActive] = useState(isFullscreenActive());
   const [engaged, setEngaged] = useState(hasEngagedFullscreen());
   const [rotateNeeded, setRotateNeeded] = useState(needsRotation());
+  const [windowedMode, setWindowedMode] = useState(() => {
+    try {
+      return sessionStorage.getItem("buildlab_windowed_mode") === "true";
+    } catch {
+      return false;
+    }
+  });
+
+  const handleDismissToWindowed = useCallback(() => {
+    setWindowedMode(true);
+    try {
+      sessionStorage.setItem("buildlab_windowed_mode", "true");
+    } catch {}
+  }, []);
 
   useEffect(() => {
     const sync = () => {
       const active = isFullscreenActive();
       setFullscreenActive(active);
       setRotateNeeded(needsRotation());
+      if (active) {
+        setWindowedMode(false);
+        try {
+          sessionStorage.removeItem("buildlab_windowed_mode");
+        } catch {}
+      }
       if (active && !hasEngagedFullscreen()) {
         markFullscreenEngaged();
         setEngaged(true);
@@ -45,6 +64,7 @@ export default function FullscreenGate({ children, requireFullscreen = false }) 
 
   const showRotation = rotateNeeded;
   const showFullscreen =
+    !windowedMode &&
     !showRotation &&
     isFullscreenSupported() &&
     !fullscreenActive &&
@@ -105,7 +125,7 @@ export default function FullscreenGate({ children, requireFullscreen = false }) 
               bounce={35}
               follow={70}
             />
-            <div className="fs-gate-badge">IMMERSIVE MODE REQUIRED</div>
+            <div className="fs-gate-badge">IMMERSIVE WORKSPACE</div>
             <h1 className="fs-gate-title">
               {engaged ? "Return to Full Screen" : "Enter Full Screen"}
             </h1>
@@ -124,6 +144,22 @@ export default function FullscreenGate({ children, requireFullscreen = false }) 
             <p className="fs-gate-hint">
               Press <kbd>Esc</kbd> at any time to leave (your build is saved)
             </p>
+            <button
+              type="button"
+              className="fs-gate-btn-secondary"
+              onClick={handleDismissToWindowed}
+              style={{
+                marginTop: "12px",
+                background: "transparent",
+                border: "none",
+                color: "#94a3b8",
+                fontSize: "0.82rem",
+                cursor: "pointer",
+                textDecoration: "underline",
+              }}
+            >
+              Continue in windowed view →
+            </button>
           </div>
         </div>
       )}
