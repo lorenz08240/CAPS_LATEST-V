@@ -314,19 +314,18 @@ export default function GenericPCCase({
         >
           {/* Glass Door Assembly positioned relative to rear hinge pivot at Z = 0 */}
           <group position={[0, 0, 4.4]}>
-            {/* Main Tempered Glass Pane */}
+            {/* Main Tempered Glass Pane (Non-glare PBR tinted glass; zero transmission FBO blowout) */}
             <mesh>
               <boxGeometry args={[0.08, 8.8, 8.8]} />
               <meshPhysicalMaterial 
-                color={glassColor} 
-                transmission={0.93} 
-                opacity={glassOpacity} 
+                color={isWhite ? '#d8dee9' : '#0b0f19'} 
+                opacity={isWhite ? 0.32 : 0.38} 
                 transparent={true} 
-                roughness={0.03} 
-                metalness={0.1}
+                roughness={0.06} 
+                metalness={0.15}
                 clearcoat={1}
-                clearcoatRoughness={0.03}
-                reflectivity={0.7}
+                clearcoatRoughness={0.04}
+                reflectivity={0.65}
               />
             </mesh>
 

@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import ProceduralSickleFan from './ProceduralSickleFan';
 import NepotatoGPU from './NepotatoGPU';
 import { MotherboardDDR4Kit } from './DDR4RAMModel';
+import { MotherboardNVMeSSD } from './NVMeSSDModel';
 
 // Procedural high-detail 3D models for all PC components (Clean Generic Models per Panel Specs)
 export default function ComponentModels3D({ 
@@ -478,40 +479,15 @@ export default function ComponentModels3D({
       )}
 
       {/* ───────────────────────────────────────────────────────────── */}
-      {/* 6. STORAGE (M.2 NVMe SSD SEATED IN DEDICATED MOTHERBOARD SLOT)*/}
+      {/* 6. STORAGE (HIGH-FIDELITY M.2 NVMe SSD SEATED IN MOTHERBOARD) */}
       {/* ───────────────────────────────────────────────────────────── */}
       {category === 'storage' && (
-        <group>
-          {/* M.2 2280 PCB Board */}
-          <mesh position={[0, 0, 0]}>
-            <boxGeometry args={[0.04, 0.35, 1.7]} />
-            <meshStandardMaterial color="#0f172a" roughness={0.7} />
-          </mesh>
-
-          {/* Brushed Aluminum Thermal Heatshield */}
-          <mesh position={[-0.03, 0, 0]}>
-            <boxGeometry args={[0.03, 0.32, 1.5]} />
-            <meshStandardMaterial color="#64748b" metalness={0.9} roughness={0.2} />
-          </mesh>
-
-          {/* Cyan High-Tech Accent Groove */}
-          <mesh position={[-0.048, 0, 0]}>
-            <boxGeometry args={[0.005, 0.08, 1.2]} />
-            <meshStandardMaterial color="#00e5ff" emissive="#00e5ff" emissiveIntensity={1.5} />
-          </mesh>
-
-          {/* Gold Connector Pins (Slotted into M.2 Socket) */}
-          <mesh position={[0, 0, 0.88]}>
-            <boxGeometry args={[0.035, 0.3, 0.08]} />
-            <meshStandardMaterial color="#f59e0b" metalness={0.95} />
-          </mesh>
-
-          {/* Chrome M.2 Standoff Retention Screw */}
-          <mesh position={[-0.04, 0, -0.84]} rotation={[0, 0, Math.PI / 2]}>
-            <cylinderGeometry args={[0.07, 0.07, 0.04, 16]} />
-            <meshStandardMaterial color="#f1f5f9" metalness={1.0} />
-          </mesh>
-        </group>
+        <MotherboardNVMeSSD 
+          rgbColor={rgbColor}
+          isSelected={isSelected}
+          isHovered={effectiveHover}
+          enableHighlight={enableHighlight}
+        />
       )}
 
       {/* Tooltip on hover (Optional, default false) */}

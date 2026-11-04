@@ -1,22 +1,11 @@
-import React, { useRef, Suspense } from 'react';
+import React, { useRef, Suspense, Component } from 'react';
 import { useGLTF } from '@react-three/drei';
-import * as THREE from 'three';
-
-const GLB_URL = '/assets/models/random_access_memory_ram_ddr4.glb';
-
-/**
- * Preload model so it is immediately cached
- */
-try {
-  useGLTF.preload(GLB_URL);
-} catch (e) {
-  console.warn('Preload notice:', e);
-}
+import { RAM_MODEL_URL } from '../../utilities/modelPreloader';
 
 /**
  * Fallback procedural RAM stick used while GLTF parses
  */
-function ProceduralRAMFallback({ rgbColor = '#f43f5e' }) {
+export function ProceduralRAMFallback({ rgbColor = '#f43f5e' }) {
   return (
     <group>
       {/* PCB substrate */}
@@ -44,10 +33,35 @@ function ProceduralRAMFallback({ rgbColor = '#f43f5e' }) {
 }
 
 /**
+ * Robust Error Boundary for RAM 3D mesh rendering
+ */
+export class RAMModelErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, info) {
+    console.warn('RAM GLTF load warning, falling back to procedural model:', error, info);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback || null;
+    }
+    return this.props.children;
+  }
+}
+
+/**
  * Photorealistic DDR4 RAM Stick loaded from user-supplied Sketchfab GLB
  */
 function DDR4StickMesh({ rgbColor = '#f43f5e', isSelected = false, isHovered = false, enableHighlight = true }) {
-  const { nodes, materials } = useGLTF(GLB_URL);
+  const { nodes, materials } = useGLTF(RAM_MODEL_URL);
 
   return (
     <group dispose={null}>
@@ -109,7 +123,7 @@ function DDR4StickMesh({ rgbColor = '#f43f5e', isSelected = false, isHovered = f
 }
 
 /**
- * Single DDR4 Stick with Suspense Guard
+ * Single DDR4 Stick with Suspense Guard & Error Boundary
  */
 export function SingleDDR4RAM({ 
   scale = 1, 
@@ -121,14 +135,16 @@ export function SingleDDR4RAM({
 }) {
   return (
     <group {...props} scale={[scale, scale, scale]}>
-      <Suspense fallback={<ProceduralRAMFallback rgbColor={rgbColor} />}>
-        <DDR4StickMesh 
-          rgbColor={rgbColor} 
-          isSelected={isSelected} 
-          isHovered={isHovered} 
-          enableHighlight={enableHighlight}
-        />
-      </Suspense>
+      <RAMModelErrorBoundary fallback={<ProceduralRAMFallback rgbColor={rgbColor} />}>
+        <Suspense fallback={<ProceduralRAMFallback rgbColor={rgbColor} />}>
+          <DDR4StickMesh 
+            rgbColor={rgbColor} 
+            isSelected={isSelected} 
+            isHovered={isHovered} 
+            enableHighlight={enableHighlight}
+          />
+        </Suspense>
+      </RAMModelErrorBoundary>
     </group>
   );
 }
@@ -141,28 +157,12 @@ export function MotherboardDDR4Kit({
   part,
   rgbColor = '#f43f5e', 
   isSelected = false, 
-  isHovered = false,
+  isHovered = false, 
   enableHighlight = true,
   stickCount
 }) {
-  // DIMM slot is vertical along Y with height 2.4.
-  // RAM stick raw length is 7.2 along X, height is 1.68 along Z, thickness is ~0.1 along Y.
-  // Euler rotation [-Math.PI/2, -Math.PI/2, 0] precisely maps:
-  // - Model Length 7.2 -> World Vertical Y (2.3 units with 0.32 scale, fitting perfectly inside 2.4 slot)
-  // - Model Height 1.68 -> World -X (pointing outward from motherboard towards glass side panel)
-  // - Model Pins -> World +X (inserted flush into motherboard DIMM socket)
-  // - Model Thickness -> World Z (matching narrow DIMM channel)
   const stickScale = 0.32;
 
-  // Motherboard has 4 slots at relative Z:
-  // Slot 1 (A1): -0.4
-  // Slot 2 (A2): -0.2 (Primary Dual Channel)
-  // Slot 3 (B1):  0.0
-  // Slot 4 (B2): +0.2 (Secondary Dual Channel)
-  //
-  // Option A (Default for 2 sticks): Dual-channel installation into Slots 2 and 4 (A2 & B2)
-  //   as recommended by motherboard manufacturers and shown in reference image.
-  // Option B: 4 sticks installed across all 4 slots (Slots 1, 2, 3, and 4).
   const partName = (part?.name || '').toLowerCase();
   const isQuad = stickCount === 4 || 
                  partName.includes('4x') || 

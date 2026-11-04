@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Navigate } from "react-router-dom";
+import { useSearchParams, Link, Navigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-import AdminLogin from "./AdminLogin";
+import { apiFetch } from "../../utilities/api";
 import AdminHeader from "./AdminHeader";
+import AdminSidebar from "./AdminSidebar";
 import EditComponentDrawer from "./EditComponentDrawer";
 import HoverImagePreview from "./HoverImagePreview";
 import "./Admin.css";
@@ -74,21 +75,29 @@ const formatDate = (dateStr) => {
     const d = new Date(dateStr);
     if (isNaN(d.getTime())) return dateStr;
     return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
-  } catch (e) {
+  } catch {
     return dateStr;
   }
 };
 
 export const AdminInventory = () => {
   const { isAdmin } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [scrapedQueueCount, setScrapedQueueCount] = useState(0);
 
-  // Inventory parts state
-  const [parts, setParts] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [notification, setNotification] = useState({ text: "", type: "info" });
+  // Directly derive active category from URL search parameters
+  const rawCat = (searchParams.get("category") || "all").toLowerCase();
+  const activeCategory = CATEGORIES.includes(rawCat) ? rawCat : "all";
 
-  // Filtering & Sorting state
-  const [activeCategory, setActiveCategory] = useState("all");
+  const handleSelectCategory = (cat) => {
+    setCurrentPage(1);
+    if (cat === "all") {
+      setSearchParams({});
+    } else {
+      setSearchParams({ category: cat });
+    }
+  };
+
   const [searchTerm, setSearchTerm] = useState("");
   const [quickFilter, setQuickFilter] = useState("all"); // "all", "recent24h", "recent7d"
   const [sortBy, setSortBy] = useState("newest"); // "newest", "oldest", "name_asc", "name_desc"
@@ -101,29 +110,51 @@ export const AdminInventory = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [drawerInitialData, setDrawerInitialData] = useState(null);
 
-  // Fetch parts from backend
-  const fetchParts = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch("http://localhost:5000/api/parts");
-      if (!res.ok) throw new Error("Failed to fetch inventory");
-      const data = await res.json();
-      const flattened = [];
-      for (const cat in data) {
-        if (Array.isArray(data[cat])) {
-          flattened.push(...data[cat]);
-        }
-      }
-      setParts(flattened);
-    } catch (err) {
-      console.warn("Could not fetch remote parts, using local state:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Inventory parts state
+  const [parts, setParts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [notification, setNotification] = useState({ text: "", type: "info" });
 
+  // Fetch pending review count for the sidebar badge
   useEffect(() => {
-    fetchParts();
+    let ignore = false;
+    apiFetch("/api/scraped-queue")
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data) => {
+        if (!ignore && Array.isArray(data)) setScrapedQueueCount(data.length);
+      })
+      .catch(() => {});
+    return () => {
+      ignore = true;
+    };
+  }, []);
+
+  // Fetch parts from backend
+  useEffect(() => {
+    let ignore = false;
+    apiFetch("/api/parts")
+      .then((res) => (res.ok ? res.json() : {}))
+      .then((data) => {
+        if (ignore) return;
+        const flattened = [];
+        for (const cat in data) {
+          if (Array.isArray(data[cat])) {
+            flattened.push(...data[cat]);
+          }
+        }
+        setParts(flattened);
+        setLoading(false);
+      })
+      .catch((err) => {
+        if (!ignore) {
+          console.warn("Could not fetch remote parts, using local state:", err);
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      ignore = true;
+    };
   }, []);
 
   // Filtered & Sorted list
@@ -178,17 +209,14 @@ export const AdminInventory = () => {
     return result;
   }, [parts, activeCategory, searchTerm, quickFilter, sortBy]);
 
-  // Reset page when filters change
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [activeCategory, searchTerm, quickFilter, sortBy]);
-
-  // Strict Pagination calculations
+  // Strict Pagination calculations with automatic clamp (no cascading render effect)
   const totalPages = Math.max(1, Math.ceil(filteredParts.length / PAGE_SIZE));
+  const safeCurrentPage = Math.min(currentPage, totalPages);
+
   const paginatedParts = useMemo(() => {
-    const start = (currentPage - 1) * PAGE_SIZE;
+    const start = (safeCurrentPage - 1) * PAGE_SIZE;
     return filteredParts.slice(start, start + PAGE_SIZE);
-  }, [filteredParts, currentPage, PAGE_SIZE]);
+  }, [filteredParts, safeCurrentPage, PAGE_SIZE]);
 
   // Category counts
   const categoryCounts = useMemo(() => {
@@ -204,12 +232,12 @@ export const AdminInventory = () => {
   // Handle Save from Drawer
   const handleSaveComponent = async (componentData) => {
     const isEdit = Boolean(drawerInitialData && drawerInitialData.id);
-    const url = isEdit
-      ? `http://localhost:5000/api/parts/${encodeURIComponent(componentData.id)}`
-      : "http://localhost:5000/api/parts";
+    const endpoint = isEdit
+      ? `/api/parts/${encodeURIComponent(componentData.id)}`
+      : "/api/parts";
     const method = isEdit ? "PUT" : "POST";
 
-    const res = await fetch(url, {
+    const res = await apiFetch(endpoint, {
       method,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(componentData)
@@ -236,107 +264,27 @@ export const AdminInventory = () => {
     });
   };
 
-  // Handle Delete
-  const handleDeleteComponent = async (part) => {
-    const confirmed = window.confirm(
-      `Are you sure you want to permanently delete "${part.name}" (${part.brand}) from hardware inventory?`
-    );
-    if (!confirmed) return;
-
-    try {
-      const res = await fetch(`http://localhost:5000/api/parts/${encodeURIComponent(part.id)}`, {
-        method: "DELETE"
-      });
-      if (!res.ok) {
-        console.warn("Delete API returned error status:", res.status);
-      }
-      setParts((prev) => prev.filter((p) => p.id !== part.id));
-      setNotification({
-        text: `Component "${part.name}" removed from inventory.`,
-        type: "success"
-      });
-    } catch (err) {
-      setParts((prev) => prev.filter((p) => p.id !== part.id));
-      setNotification({
-        text: `Removed "${part.name}" locally.`,
-        type: "info"
-      });
-    }
-  };
-
-  // Brand prefix and model name formatting helper
-  const formatBrandAndModel = (brand, name) => {
-    const brandRaw = (brand || "").trim();
-    let modelRaw = (name || "").trim();
-
-    // If model name starts with brand prefix, strip it so brand is not duplicated
-    if (brandRaw && modelRaw.toLowerCase().startsWith(brandRaw.toLowerCase())) {
-      modelRaw = modelRaw.slice(brandRaw.length).trim();
-    }
-
-    return {
-      brandPrefix: brandRaw ? brandRaw.toUpperCase() : "GENERIC",
-      modelName: modelRaw || name || "Component"
-    };
-  };
-
-  // Spec tags helper returning concise horizontal matrix values
-  const getSpecsTags = (part) => {
+  // Spec column helper
+  const renderSpecData = (part) => {
     const cat = (part.category || "").toLowerCase();
-    const tags = [];
-
     switch (cat) {
-      case "gpu":
-        tags.push(part.power_required ? `${part.power_required}W TDP` : "PCIe GPU");
-        tags.push(
-          part.interface ||
-            (Array.isArray(part.tags) && part.tags.find((t) => typeof t === "string" && t.toLowerCase().includes("pcie"))) ||
-            "PCIe 5.0"
-        );
-        break;
       case "cpu":
-        if (part.socket_type) tags.push(part.socket_type);
-        if (part.wattage || part.power_required) {
-          tags.push(`${part.wattage || part.power_required}W TDP`);
-        } else if (tags.length === 0) {
-          tags.push("Desktop CPU");
-        }
-        break;
+        return `${part.socket_type || "Socket —"} / ${part.wattage ? `${part.wattage}W` : "TDP —"}`;
       case "motherboard":
-        if (part.socket_type) tags.push(part.socket_type);
-        if (part.ddr_type) tags.push(part.ddr_type);
-        else if (part.form_factor) tags.push(part.form_factor);
-        break;
+        return `${part.socket_type || "Socket —"} / ${part.ddr_type || "DDR —"}`;
       case "ram":
-        if (part.ddr_type) tags.push(part.ddr_type);
-        if (part.capacity) tags.push(part.capacity);
-        else if (part.speed) tags.push(part.speed);
-        break;
+        return `${part.ddr_type || "DDR"} ${part.capacity || "—"} ${part.speed ? `(${part.speed})` : ""}`;
       case "storage":
-        if (part.capacity) tags.push(part.capacity);
-        if (part.type) tags.push(part.type);
-        else tags.push("NVMe M.2");
-        break;
+        return `${part.capacity || "Storage"} ${part.type ? `(${part.type})` : ""}`;
+      case "gpu":
+        return part.power_required ? `${part.power_required}W TDP` : "PCIe GPU";
       case "psu":
-        if (part.wattage) tags.push(`${part.wattage}W`);
-        if (part.efficiency) tags.push(part.efficiency);
-        else tags.push("80+ Certified");
-        break;
+        return `${part.wattage ? `${part.wattage}W` : "PSU"} ${part.efficiency ? `(${part.efficiency})` : ""}`;
       case "case":
-        if (part.form_factor) tags.push(part.form_factor);
-        if (part.type) tags.push(part.type);
-        else tags.push("Mid Tower");
-        break;
+        return part.form_factor || "ATX Mid Tower";
       default:
-        if (part.socket_type) tags.push(part.socket_type);
-        if (part.wattage) tags.push(`${part.wattage}W`);
+        return "—";
     }
-
-    if (tags.length === 0) {
-      tags.push("Standard");
-    }
-
-    return tags.slice(0, 2);
   };
 
   if (!isAdmin) {
@@ -345,14 +293,20 @@ export const AdminInventory = () => {
 
   return (
     <div className="admin-page-wrapper">
-      <div className="organic-waves-overlay" aria-hidden="true">
-        <div className="wave-glow wave-glow-gold"></div>
-        <div className="wave-glow wave-glow-burgundy"></div>
-        <div className="wave-glow wave-glow-cyan"></div>
-      </div>
+      <div className="admin-layout-container">
+        <AdminSidebar
+          activeCategory={activeCategory}
+          onSelectCategory={handleSelectCategory}
+          categoryCounts={categoryCounts}
+          onOpenAddDrawer={() => {
+            setDrawerInitialData(null);
+            setIsDrawerOpen(true);
+          }}
+          scrapedQueueCount={scrapedQueueCount}
+        />
 
-      <div className="admin-page">
-        {/* Top Header & Breadcrumbs */}
+        <main className="admin-main-content">
+          {/* Top Header & Breadcrumbs */}
         <AdminHeader breadcrumbCurrent="Hardware Inventory" />
 
         {/* Notification Toast */}
@@ -376,7 +330,7 @@ export const AdminInventory = () => {
             <div className="search-filter-controls">
               {/* Search Input */}
               <div className="inventory-search-box">
-                <span className="search-icon">🔍</span>
+                <span className="search-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
                 <input
                   type="text"
                   placeholder={`Search ${activeCategory === "all" ? "entire inventory" : activeCategory.toUpperCase()}...`}
@@ -440,164 +394,105 @@ export const AdminInventory = () => {
 
             {/* + Add New Component Primary Action */}
             <div className="inventory-primary-action">
-              <button
-                type="button"
+              <Link
+                to="/admin/add"
                 className="btn-add-component-neon"
-                onClick={() => {
-                  setDrawerInitialData(null);
-                  setIsDrawerOpen(true);
-                }}
+                title="Open dedicated Add Component screen"
               >
                 <span className="btn-plus-icon">+</span>
                 <span>Add New Component</span>
-              </button>
+              </Link>
             </div>
           </div>
 
-          {/* CATEGORY FILTER PILLS */}
-          <div className="category-tabs-wrapper">
-            {CATEGORIES.map((cat) => {
-              const count = categoryCounts[cat] || 0;
-              const isActive = activeCategory === cat;
-              return (
-                <button
-                  key={cat}
-                  type="button"
-                  className={`category-tab-btn ${isActive ? "active" : ""}`}
-                  onClick={() => setActiveCategory(cat)}
-                >
-                  {CATEGORY_DISPLAY[cat]} ({count})
-                </button>
-              );
-            })}
-          </div>
-
-          {/* FULL-BLEED INVENTORY TABLE PANEL */}
-          <div className="admin-panel glass-card-panel inventory-table-panel">
-            <div className="table-meta-bar">
-              <div className="table-meta-title">
-                <h2>
-                  Component Inventory{" "}
-                  <span className="count-tag">
-                    {filteredParts.length} {filteredParts.length === 1 ? "Item" : "Items"}
-                  </span>
-                </h2>
-              </div>
-              <div className="table-meta-range">
-                Showing {filteredParts.length === 0 ? 0 : (currentPage - 1) * PAGE_SIZE + 1}–
-                {Math.min(currentPage * PAGE_SIZE, filteredParts.length)} of {filteredParts.length}
-              </div>
-            </div>
+          {/* Category filtering handled directly via left AdminSidebar */}
 
             <div className="table-container fullbleed-scroll">
               <table className="admin-table">
                 <thead>
                   <tr>
-                    <th style={{ width: "60px", minWidth: "60px", paddingLeft: "16px" }}>THUMB</th>
-                    <th style={{ textAlign: "left" }}>BRAND & MODEL</th>
-                    <th style={{ width: "90px", textAlign: "center" }}>CATEGORY</th>
-                    <th style={{ width: "170px", textAlign: "left" }}>SPECS / MATRIX</th>
-                    <th style={{ width: "90px", textAlign: "center" }}>ADDED</th>
-                    <th style={{ width: "130px", textAlign: "right", paddingRight: "16px" }}>ACTIONS</th>
+                    <th style={{ width: "52px", textAlign: "center" }}>ICON</th>
+                    <th style={{ width: "13%" }}>BRAND</th>
+                    <th style={{ width: "30%" }}>NAME / MODEL</th>
+                    <th style={{ width: "23%" }}>SPECS / MATRIX</th>
+                    <th style={{ width: "16%", textAlign: "center" }}>AGE TIER</th>
+                    <th style={{ width: "18%", textAlign: "center" }}>ACTIONS</th>
                   </tr>
                 </thead>
                 <tbody>
                   {paginatedParts.map((part) => {
                     const ageInfo = getComponentAgeInfo(part.created_at);
                     const cat = (part.category || "case").toLowerCase();
-                    const { brandPrefix, modelName } = formatBrandAndModel(part.brand, part.name);
-                    const specTags = getSpecsTags(part);
 
                     return (
                       <tr
                         key={part.id}
-                        className={`inventory-table-row ${ageInfo.isRecent24h ? "row-highlight-new" : ""}`}
+                        className={ageInfo.isRecent24h ? "row-highlight-new" : ""}
                       >
-                        {/* Col 1: THUMB (60px) */}
-                        <td className="cell-thumb" style={{ width: "60px", paddingLeft: "16px" }}>
+                        {/* ICON / LAZY HOVER THUMBNAIL */}
+                        <td style={{ textAlign: "center" }}>
                           <HoverImagePreview
                             category={cat}
                             imageUrl={part.img}
                             name={part.name}
                             brand={part.brand}
-                            size={48}
+                            size={36}
                           />
                         </td>
 
-                        {/* Col 2: BRAND & MODEL (Flex-1) */}
-                        <td className="cell-brand-model">
-                          <div className="part-title-line" title={`${brandPrefix} ${modelName}`}>
-                            <span className="brand-highlight">{brandPrefix}</span>
-                            <span className="model-name-text">{modelName}</span>
+                        {/* BRAND */}
+                        <td className="part-brand-cell">
+                          <span className="brand-badge-pill">
+                            {part.brand ? part.brand.toUpperCase() : "GENERIC"}
+                          </span>
+                        </td>
+
+                        {/* NAME & CATEGORY TAG */}
+                        <td className="part-name-cell">
+                          <div className="part-name-text" title={part.name}>
+                            {part.name}
                           </div>
-                          <div className="part-subtitle-line" title={part.desc || ""}>
-                            {part.desc ? (
-                              part.desc.toLowerCase().includes("scraped") ? (
-                                <>
-                                  <span className="scraped-cat-tag">{cat.toUpperCase()}</span>
-                                  <span className="scraped-desc-text">
-                                    {part.desc.replace(/^Scraped from\s*/i, "Scraped from ").slice(0, 68)}
-                                  </span>
-                                </>
-                              ) : (
-                                <span className="clean-desc-text">{part.desc}</span>
-                              )
-                            ) : (
-                              <span className="clean-desc-text">Hardware component</span>
+                          <div className="part-submeta">
+                            <span className={`cat-inline-badge cat-${cat}`}>
+                              {cat.toUpperCase()}
+                            </span>
+                            {part.desc && (
+                              <span className="desc-snippet" title={part.desc}>
+                                {part.desc.slice(0, 48)}
+                                {part.desc.length > 48 ? "…" : ""}
+                              </span>
                             )}
                           </div>
                         </td>
 
-                        {/* Col 3: CATEGORY (90px) */}
-                        <td className="cell-category" style={{ width: "90px", textAlign: "center" }}>
-                          <span className={`category-pill-badge cat-badge-${cat}`}>
-                            [ {cat.toUpperCase()} ]
-                          </span>
+                        {/* SPECS */}
+                        <td className="spec-cell">
+                          <span className="spec-pill">{renderSpecData(part)}</span>
                         </td>
 
-                        {/* Col 4: SPECS / MATRIX (170px) */}
-                        <td className="cell-specs" style={{ width: "170px" }}>
-                          <div className="spec-matrix-tags">
-                            {specTags.map((tag, idx) => (
-                              <span key={idx} className="spec-matrix-pill">
-                                {tag}
-                              </span>
-                            ))}
+                        {/* AGE BADGE */}
+                        <td className="part-age-cell">
+                          <div className="age-badge-wrapper">
+                            <span
+                              className={`badge-age badge-age-${ageInfo.type}`}
+                              title={`Added: ${formatDate(part.created_at)}`}
+                            >
+                              {ageInfo.badgeText}
+                            </span>
+                            <span className="age-sublabel">{ageInfo.fullLabel}</span>
                           </div>
                         </td>
 
-                        {/* Col 5: ADDED (90px) */}
-                        <td className="cell-added" style={{ width: "90px", textAlign: "center" }}>
-                          <span
-                            className="added-minimal-text"
-                            title={`Added: ${formatDate(part.created_at)}`}
-                          >
-                            {ageInfo.badgeText.toLowerCase() === "new" ? "Just added" : ageInfo.badgeText}
-                          </span>
-                        </td>
-
-                        {/* Col 6: ACTIONS (130px) */}
-                        <td className="cell-actions" style={{ width: "130px", textAlign: "right", paddingRight: "16px" }}>
-                          <div className="compact-action-group">
-                            <button
-                              type="button"
-                              className="compact-action-btn btn-edit-compact"
-                              title={`Edit ${part.name}`}
-                              onClick={() => {
-                                setDrawerInitialData(part);
-                                setIsDrawerOpen(true);
-                              }}
+                        {/* ACTIONS (EDIT) */}
+                        <td style={{ textAlign: "center" }}>
+                          <div className="table-actions">
+                            <Link
+                              to={`/admin/edit?id=${encodeURIComponent(part.id)}`}
+                              className="sleek-block-action-btn edit-block-btn"
+                              title={`Open editor and specs for ${part.name}`}
                             >
-                              Edit
-                            </button>
-                            <button
-                              type="button"
-                              className="compact-action-btn btn-delete-compact"
-                              title={`Delete ${part.name}`}
-                              onClick={() => handleDeleteComponent(part)}
-                            >
-                              Delete
-                            </button>
+                              <span className="btn-label">Edit</span>
+                            </Link>
                           </div>
                         </td>
                       </tr>
@@ -659,7 +554,7 @@ export const AdminInventory = () => {
               </div>
             )}
           </div>
-        </div>
+        </main>
       </div>
 
       {/* SLIDING RIGHT DRAWER (Rendered via React Portal in document.body) */}

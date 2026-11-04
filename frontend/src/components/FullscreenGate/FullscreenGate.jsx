@@ -9,6 +9,7 @@ import {
   onViewportChange,
 } from "../../utilities/fullscreen";
 import soundManager from "../../utilities/soundManager";
+import EyeTracker from "../EyeTracker";
 import "./FullscreenGate.css";
 
 /**
@@ -97,11 +98,13 @@ export default function FullscreenGate({ children, requireFullscreen = false }) 
           aria-live="polite"
         >
           <div className="fs-gate-panel">
-            <div className="fs-gate-expands">
-              <span className="fs-gate-frame fs-gate-frame-small" />
-              <span className="fs-gate-arrows">⤢</span>
-              <span className="fs-gate-frame fs-gate-frame-large" />
-            </div>
+            <EyeTracker
+              size={92}
+              shape="Cube"
+              eyes="Squares"
+              bounce={35}
+              follow={70}
+            />
             <div className="fs-gate-badge">IMMERSIVE MODE REQUIRED</div>
             <h1 className="fs-gate-title">
               {engaged ? "Return to Full Screen" : "Enter Full Screen"}

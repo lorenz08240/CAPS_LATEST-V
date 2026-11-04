@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "./Home.css";
 import Build from "../Build/Build";
 import FullscreenGate from "../FullscreenGate/FullscreenGate";
+import Preloader from "./Preloader";
 import Home3DHero from "./Home3DHero";
 import { enterFullscreen } from "../../utilities/fullscreen";
 import soundManager from "../../utilities/soundManager";
@@ -77,8 +78,10 @@ function Home() {
   };
 
   return (
-    <FullscreenGate>
-      <div className="home-page">
+    <>
+      <Preloader />
+      <FullscreenGate>
+        <div className="home-page">
         {/* ══════════════════════════════════════════════════════════════════════ */}
         {/* FULL-BLEED CYBERPUNK 3D HERO SECTION (Inspired by Cyber Metaverse Ref) */}
         {/* ══════════════════════════════════════════════════════════════════════ */}
@@ -319,6 +322,7 @@ function Home() {
         </section>
       </div>
     </FullscreenGate>
+  </>
   );
 }
 

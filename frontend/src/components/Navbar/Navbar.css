@@ -443,6 +443,86 @@ body.theme-light .theme-toggle-label,
   box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
 }
 
+/* ── ADMIN CAPABILITY LINKS & STAGES ── */
+.admin-sidebar-nav-group {
+  margin-top: 0.85rem;
+  margin-bottom: 0.85rem;
+}
+
+.admin-group-title {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 1.4px;
+  color: #d4a34b;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+  padding-left: 0.4rem;
+  opacity: 0.85;
+}
+
+.admin-capability-links {
+  gap: 0.25rem;
+}
+
+.admin-capability-links .sidebar-link {
+  padding: 0.65rem 1rem;
+  font-size: 0.82rem;
+  border-radius: 6px;
+  border-left: 2px solid transparent;
+}
+
+.admin-capability-links .sidebar-link.active {
+  background: rgba(212, 163, 75, 0.16);
+  border-left-color: #d4a34b;
+  color: #ffffff;
+  font-weight: 800;
+}
+
+.admin-stage-quick-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 0.2rem 0.4rem;
+}
+
+.admin-stage-pill {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(212, 163, 75, 0.2);
+  color: #c4af98;
+  text-decoration: none;
+  transition: all 0.18s ease;
+}
+
+.admin-stage-pill:hover {
+  background: rgba(212, 163, 75, 0.18);
+  border-color: #d4a34b;
+  color: #f7d28b;
+}
+
+.sidebar-return-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #94a3b8;
+  text-decoration: none;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  padding: 0.5rem 0.4rem;
+  transition: color 0.2s ease;
+}
+
+.sidebar-return-link:hover {
+  color: #e2ba6f;
+}
+
 /* Mobile Responsive */
 @media (max-width: 900px) {
   .sidebar {

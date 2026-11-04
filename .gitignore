@@ -12,6 +12,7 @@ pc_screen.png
 .env
 .env.local
 *.log
+tunnel.bat
 
 # Python virtual environment & cache
 .venv/

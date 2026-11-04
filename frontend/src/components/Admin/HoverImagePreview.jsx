@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, memo } from "react";
 import HardwareIcon from "./HardwareIcon";
 
 /**
@@ -8,7 +8,7 @@ import HardwareIcon from "./HardwareIcon";
  * Fallback to clean HardwareIcon SVG (no awkward camera icon text overlay).
  * Floating z-50 popover preview with safe bounding offsets.
  */
-export const HoverImagePreview = ({
+export const HoverImagePreview = memo(({
   category,
   imageUrl,
   name,
@@ -65,6 +65,6 @@ export const HoverImagePreview = ({
       )}
     </div>
   );
-};
+});
 
 export default HoverImagePreview;

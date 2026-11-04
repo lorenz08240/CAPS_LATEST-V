@@ -8,6 +8,21 @@
   position: relative;
   overflow-x: hidden;
   box-sizing: border-box;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.home-page,
+.home-page * {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.home-page::-webkit-scrollbar,
+.home-page *::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
 /* General styles for the hero section */
@@ -681,7 +696,7 @@
 /* 3. GIGANTIC BACKGROUND TYPOGRAPHY (Layered behind 3D Canvas) */
 .cyber-giant-text-backdrop {
   position: absolute;
-  top: 36%;
+  top: 35%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 2;
@@ -704,8 +719,8 @@
   letter-spacing: -0.015em;
   text-transform: uppercase;
   color: transparent;
-  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.18);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.44) 0%, rgba(255, 255, 255, 0.05) 100%);
+  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.22);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.52) 0%, rgba(255, 255, 255, 0.08) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   margin: 0;
@@ -713,7 +728,7 @@
   -webkit-user-select: none;
   user-select: none;
   white-space: nowrap;
-  text-shadow: 0 0 60px rgba(244, 63, 94, 0.28);
+  text-shadow: 0 0 60px rgba(244, 63, 94, 0.32);
 }
 
 /* 4. CENTERPIECE 3D HARDWARE CANVAS STAGE */
@@ -741,6 +756,53 @@
   height: 100%;
 }
 
+.hero-3d-fallback-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.hero-fallback-circuit {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 1px solid rgba(212, 163, 75, 0.25);
+  border-top-color: #d4a34b;
+  animation: heroFallbackSpin 1.4s linear infinite;
+}
+
+@keyframes heroFallbackSpin {
+  to { transform: rotate(360deg); }
+}
+
+.hero-fallback-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  color: #94a3b8;
+}
+
+.fallback-pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #d4a34b;
+  box-shadow: 0 0 8px rgba(212, 163, 75, 0.6);
+  animation: pulseDot 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes pulseDot {
+  from { opacity: 0.4; }
+  to { opacity: 1; }
+}
+
 /* 5. EDITORIAL FLANKING OVERLAYS */
 .cyber-editorial-grid {
   position: relative;
@@ -748,12 +810,12 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
   pointer-events: none;
   width: 100%;
   margin-top: auto;
-  margin-bottom: auto;
-  padding: 0 2rem;
+  margin-bottom: 0.8rem;
+  padding: 0 1.5rem;
 }
 
 .cyber-editorial-col {
@@ -816,7 +878,7 @@
 }
 
 .cyber-col-title {
-  font-size: 2.6rem;
+  font-size: 2.35rem;
   font-weight: 900;
   letter-spacing: -0.02em;
   line-height: 1.1;

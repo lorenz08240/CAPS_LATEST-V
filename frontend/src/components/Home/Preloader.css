@@ -1,0 +1,416 @@
+/* ═════════════════════════════════════════════════════════════════════════════
+   BUILDLAB // AWWWARDS-INSPIRED SPYLT MILK MINIMAL PRELOADER
+   Cyberpunk Hardware Lab Aesthetic • 0-100% Counter • Fullscreen Gate Protocol
+   ═════════════════════════════════════════════════════════════════════════════ */
+
+.buildlab-preloader-root {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: #06080e;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 2.5rem 3rem;
+  overflow: hidden;
+  box-sizing: border-box;
+  -webkit-user-select: none;
+  user-select: none;
+  will-change: transform;
+  transition: transform 0.85s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.75s ease;
+}
+
+.buildlab-preloader-root.exiting {
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Ambient Cyber Lighting Gradients */
+.preloader-ambient-grid {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 48px 48px;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.preloader-ambient-glow {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 75vw;
+  height: 60vh;
+  background: radial-gradient(
+    circle, 
+    rgba(244, 63, 94, 0.14) 0%, 
+    rgba(56, 189, 248, 0.06) 45%, 
+    transparent 70%
+  );
+  filter: blur(80px);
+  pointer-events: none;
+}
+
+/* 1. TOP STATUS BAR */
+.preloader-top-bar {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.preloader-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.preloader-logo-box {
+  width: 32px;
+  height: 32px;
+  border-radius: 7px;
+  background: rgba(244, 63, 94, 0.12);
+  border: 1px solid rgba(244, 63, 94, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #f43f5e;
+  font-size: 0.85rem;
+  font-weight: 900;
+}
+
+.preloader-brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.preloader-brand-title {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 0.95rem;
+  letter-spacing: 0.14em;
+  color: #ffffff;
+}
+
+.preloader-brand-sub {
+  font-family: 'JetBrains Mono', monospace, sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  color: #38bdf8;
+}
+
+.preloader-status-ticker {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.4rem 0.9rem;
+  border-radius: 9999px;
+  font-family: 'JetBrains Mono', monospace, sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: #94a3b8;
+}
+
+.preloader-pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #f43f5e;
+  box-shadow: 0 0 10px #f43f5e;
+  animation: preloaderDotPulse 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes preloaderDotPulse {
+  0% { transform: scale(0.85); opacity: 0.6; }
+  100% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 14px #f43f5e; }
+}
+
+/* 2. CENTER CONTENT (The Spylt Milk Minimal Counter & Fullscreen Protocol) */
+.preloader-center-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  max-width: 880px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Giant Minimalist Typography Counter */
+.preloader-counter-wrap {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  line-height: 0.88;
+  margin-bottom: 1.5rem;
+}
+
+.preloader-giant-number {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(6.5rem, 16vw, 13.5rem);
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  background: linear-gradient(180deg, #ffffff 20%, rgba(255, 255, 255, 0.4) 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 70px rgba(244, 63, 94, 0.22);
+  font-variant-numeric: tabular-nums;
+}
+
+.preloader-percent-symbol {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(2rem, 5vw, 4.2rem);
+  font-weight: 800;
+  color: #f43f5e;
+  margin-left: 0.35rem;
+  letter-spacing: -0.02em;
+}
+
+/* Minimalist Progress Track */
+.preloader-track-container {
+  width: 100%;
+  max-width: 620px;
+  margin-bottom: 2rem;
+}
+
+.preloader-track-bar {
+  width: 100%;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  position: relative;
+  overflow: visible;
+}
+
+.preloader-track-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, #f43f5e 0%, #fb7185 60%, #38bdf8 100%);
+  border-radius: 2px;
+  box-shadow: 0 0 16px rgba(244, 63, 94, 0.8), 0 0 8px rgba(56, 189, 248, 0.8);
+  transition: width 0.08s linear;
+}
+
+.preloader-track-cursor {
+  position: absolute;
+  right: -3px;
+  top: -3px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 12px #38bdf8, 0 0 20px #f43f5e;
+}
+
+/* Dynamic Live Telemetry Status Readout */
+.preloader-telemetry-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 0.75rem;
+  font-family: 'JetBrains Mono', monospace, sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: #64748b;
+}
+
+.preloader-stage-name {
+  color: #38bdf8;
+  font-weight: 600;
+}
+
+/* 3. FULLSCREEN INSTRUCTION & LAUNCH ACTIONS */
+.preloader-fullscreen-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+  margin-top: 1rem;
+  padding: 1.5rem 2rem;
+  border-radius: 18px;
+  background: rgba(15, 23, 42, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  max-width: 620px;
+  width: 100%;
+  box-sizing: border-box;
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+.preloader-fs-tag {
+  font-family: 'JetBrains Mono', monospace, sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: #f43f5e;
+  background: rgba(244, 63, 94, 0.1);
+  padding: 0.25rem 0.65rem;
+  border-radius: 4px;
+  border: 1px solid rgba(244, 63, 94, 0.25);
+}
+
+.preloader-fs-headline {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(1rem, 2.2vw, 1.35rem);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: #ffffff;
+  margin: 0;
+  line-height: 1.25;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.6);
+}
+
+.preloader-fs-desc {
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: #94a3b8;
+  margin: 0;
+  max-width: 520px;
+}
+
+/* 4. PRIMARY LAUNCH CTA BUTTON */
+.preloader-actions-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+  width: 100%;
+}
+
+.preloader-launch-btn {
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  padding: 0.95rem 2.5rem;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+  color: #ffffff;
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 0.92rem;
+  letter-spacing: 0.08em;
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  box-shadow: 0 0 32px rgba(244, 63, 94, 0.65), inset 0 1px 2px rgba(255, 255, 255, 0.4);
+  transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  text-decoration: none;
+}
+
+/* Shimmer Sweep Effect */
+.preloader-launch-btn::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -70%;
+  width: 45%;
+  height: 200%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.45) 50%,
+    transparent 100%
+  );
+  transform: rotate(25deg);
+  transition: all 0.65s cubic-bezier(0.2, 0.8, 0.2, 1);
+  pointer-events: none;
+}
+
+.preloader-launch-btn:hover::before {
+  left: 135%;
+}
+
+.preloader-launch-btn:hover {
+  background: linear-gradient(135deg, #fb7185 0%, #f43f5e 100%);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 0 45px rgba(244, 63, 94, 0.85), inset 0 1px 2px rgba(255, 255, 255, 0.6);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.preloader-launch-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.preloader-launch-btn .btn-fs-icon {
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+.preloader-launch-btn .btn-arrow {
+  font-size: 1.15rem;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.preloader-launch-btn:hover .btn-arrow {
+  transform: translateX(4px);
+}
+
+.preloader-secondary-link {
+  background: none;
+  border: none;
+  color: #64748b;
+  font-family: 'JetBrains Mono', monospace, sans-serif;
+  font-size: 0.74rem;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  padding: 0.4rem 0.8rem;
+  transition: color 0.2s ease;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.preloader-secondary-link:hover {
+  color: #cbd5e1;
+}
+
+/* 5. BOTTOM BAR */
+.preloader-bottom-bar {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  font-family: 'JetBrains Mono', monospace, sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  color: #475569;
+}
+
+.preloader-bottom-right {
+  color: #64748b;
+}
+
+@media (max-width: 768px) {
+  .buildlab-preloader-root {
+    padding: 1.5rem 1.25rem;
+  }
+  .preloader-fullscreen-box {
+    padding: 1.25rem 1rem;
+  }
+  .preloader-launch-btn {
+    padding: 0.85rem 1.6rem;
+    font-size: 0.85rem;
+  }
+}
+

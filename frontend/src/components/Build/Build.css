@@ -50,6 +50,21 @@
   color: var(--cyber-text-main);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   position: relative;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.build-page,
+.build-page * {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.build-page::-webkit-scrollbar,
+.build-page *::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
 /* Integrated inside Homepage Section */
@@ -92,11 +107,8 @@
 }
 
 .build-sidebar::-webkit-scrollbar {
-  width: 4px;
-}
-.build-sidebar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.12);
-  border-radius: 4px;
+  display: none !important;
+  width: 0 !important;
 }
 
 .sidebar-card {
@@ -189,11 +201,8 @@
 }
 
 .step-list::-webkit-scrollbar {
-  width: 4px;
-}
-.step-list::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
+  display: none !important;
+  width: 0 !important;
 }
 
 .step-item {
@@ -513,18 +522,8 @@
 }
 
 .components-grid-wrapper::-webkit-scrollbar {
-  width: 5px;
-}
-.components-grid-wrapper::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 4px;
-}
-.components-grid-wrapper::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.14);
-  border-radius: 4px;
-}
-.components-grid-wrapper::-webkit-scrollbar-thumb:hover {
-  background: var(--cyber-rose);
+  display: none !important;
+  width: 0 !important;
 }
 
 /* ── 4-COLUMN / 3-COLUMN COMPONENT GRID ── */
@@ -671,11 +670,8 @@
 }
 
 .specifications-panel::-webkit-scrollbar {
-  width: 4px;
-}
-.specifications-panel::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.12);
-  border-radius: 4px;
+  display: none !important;
+  width: 0 !important;
 }
 
 .spec-header-tag {
