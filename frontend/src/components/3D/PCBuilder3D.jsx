@@ -35,15 +35,66 @@ const STAGE_REQUIREMENTS = {
   psu: ['motherboard', 'gpu']
 };
 
-// Camera views dictionary
-const CAMERA_PRESETS = {
+// Camera views dictionaries adapted dynamically for Tower vs Workbench Stance
+const CAMERA_PRESETS_TOWER = {
   isometric: { position: [-12, 6, 12], target: [0, 0, 0] },
   whole: { position: [-14, 4.5, 14], target: [0, 0, 0] },
   interior: { position: [-7.5, 0.6, -0.6], target: [1.4, 0.4, -0.6] },
   gpu: { position: [-6.5, -0.8, 0.5], target: [0.6, -0.8, -0.2] },
   front: { position: [0, 0, 14], target: [0, 0, 0] },
   top: { position: [0, 15, 0.1], target: [0, 0, 0] },
-  pov: { position: [0.5, 9.5, 2.0], target: [0.5, -2.0, 0.2] }
+  pov: { position: [0.0, 7.2, 7.8], target: [0.0, -2.6, 0.2] }
+};
+
+const CAMERA_PRESETS_WORKBENCH = {
+  isometric: { position: [-9.5, 8.5, 9.5], target: [0, -2.6, 0.2] },
+  whole: { position: [-11.0, 10.0, 10.0], target: [0, -2.6, 0.2] },
+  interior: { position: [0.0, 6.2, 4.5], target: [0.0, -2.6, -0.8] },
+  gpu: { position: [0.0, 4.8, 4.5], target: [0.0, -2.6, 0.8] },
+  front: { position: [0.0, 1.5, 12.0], target: [0.0, -2.6, 0.0] },
+  top: { position: [0.0, 13.0, 0.01], target: [0.0, -2.6, 0.0] },
+  pov: { position: [0.0, 8.6, 5.8], target: [0.0, -2.6, -0.2] }
+};
+
+const CAMERA_PRESETS = CAMERA_PRESETS_TOWER;
+
+// Stage-specific camera targets for guided student learning
+const STAGE_CAMERA_FOCUS = {
+  case: {
+    tower: { position: [-13, 5.5, 13], target: [0, 0, 0] },
+    workbench: { position: [-9.5, 8.5, 9.5], target: [0, -2.6, 0.2] },
+    tip: 'Stage 01: Chassis Setup — Review outer chassis, dust filters, and motherboard standoffs'
+  },
+  motherboard: {
+    tower: { position: [-7.5, 0.6, -0.6], target: [1.4, 0.4, -0.6] },
+    workbench: { position: [0.0, 6.2, 4.5], target: [0.0, -2.6, -0.8] },
+    tip: 'Stage 02: Motherboard — Align standoff screws on the interior mounting tray'
+  },
+  cpu: {
+    tower: { position: [-4.2, 2.2, 0.5], target: [1.32, 1.6, -1.2] },
+    workbench: { position: [-0.6, 4.2, 2.0], target: [-0.6, -2.6, -1.2] },
+    tip: 'Stage 03: CPU (Processor) — Align the gold triangle indicator with socket pin 1'
+  },
+  ram: {
+    tower: { position: [-4.2, 2.2, 2.0], target: [1.32, 1.6, 0.3] },
+    workbench: { position: [0.8, 4.2, 2.0], target: [0.8, -2.6, -1.2] },
+    tip: 'Stage 04: RAM — Align memory notch with DIMM retention clips and press firmly'
+  },
+  storage: {
+    tower: { position: [-4.2, 1.0, 0.5], target: [1.33, 0.55, -1.2] },
+    workbench: { position: [0.0, 4.0, 1.5], target: [0.0, -2.6, -0.4] },
+    tip: 'Stage 05: Storage — Insert M.2 NVMe at 30° angle, then secure with standoff screw'
+  },
+  gpu: {
+    tower: { position: [-6.5, -0.8, 0.5], target: [0.6, -0.8, -0.2] },
+    workbench: { position: [0.0, 4.8, 4.5], target: [0.0, -2.6, 0.8] },
+    tip: 'Stage 06: GPU — Remove rear PCIe slot covers and click card firmly into latch'
+  },
+  psu: {
+    tower: { position: [-7.0, -3.2, 3.5], target: [0, -3.5, -2.6] },
+    workbench: { position: [0.0, 4.8, 6.5], target: [0.0, -2.6, 2.5] },
+    tip: 'Stage 07: PSU — Slide power supply into basement compartment and route modular cables'
+  }
 };
 
 // Smooth Camera Controller that transitions on preset click and releases control completely to OrbitControls
@@ -196,6 +247,28 @@ function PCBuilder3DWorkspace() {
     return requirements.some((reqCat) => !currentBuild[reqCat]);
   };
 
+  // Focus camera dynamically on the stage component area with student guidance
+  const focusStageCamera = (stageKey) => {
+    const focusData = STAGE_CAMERA_FOCUS[stageKey];
+    if (!focusData) return;
+    const isWorkbench = rigStance === 'workbench';
+    const preset = isWorkbench ? focusData.workbench : focusData.tower;
+    
+    // Automatically open side panel if focusing inside the case
+    if (stageKey !== 'case' && glassMode === 'closed') {
+      setGlassMode('removed');
+    }
+
+    setCameraTarget({
+      position: preset.position,
+      target: preset.target
+    });
+
+    if (focusData.tip) {
+      showToast(focusData.tip);
+    }
+  };
+
   // Handle stage selection in vertical progression rail
   const handleSelectStage = (idx) => {
     const step = buildSteps[idx];
@@ -208,12 +281,20 @@ function PCBuilder3DWorkspace() {
     }
     setActiveStep(idx);
     playSound('click');
+    focusStageCamera(step.key);
   };
 
-  // Trigger camera view preset
+  // Trigger camera view preset adapting to stance
   const handleCameraPreset = (presetName) => {
-    const preset = CAMERA_PRESETS[presetName] || CAMERA_PRESETS.isometric;
+    const presets = rigStance === 'workbench' ? CAMERA_PRESETS_WORKBENCH : CAMERA_PRESETS_TOWER;
+    const preset = presets[presetName] || presets.isometric;
     setCameraPreset(presetName);
+    
+    // If entering interior/gpu/pov view, ensure glass is not blocking
+    if ((presetName === 'interior' || presetName === 'gpu' || presetName === 'pov') && glassMode === 'closed') {
+      setGlassMode('removed');
+    }
+
     setCameraTarget({
       position: preset.position,
       target: preset.target
@@ -245,11 +326,14 @@ function PCBuilder3DWorkspace() {
 
     setInspectedPart({ ...part, category, targetPosition: TARGET_POSITIONS[category] });
 
-    // In guided mode, automatically advance to next unlocked unplaced step
+    // In guided mode, automatically advance to next unlocked unplaced step & focus camera
     if (buildMode === 'guided') {
       const nextIdx = buildSteps.findIndex((s, idx) => idx > activeStep && !currentBuild[s.key]);
       if (nextIdx !== -1) {
         setActiveStep(nextIdx);
+        setTimeout(() => {
+          focusStageCamera(buildSteps[nextIdx]?.key);
+        }, 1200);
       }
     }
   };
@@ -686,9 +770,9 @@ function PCBuilder3DWorkspace() {
                 onClick={() => {
                   setRigStance('tower');
                   setCameraPreset('isometric');
-                  setCameraTarget(CAMERA_PRESETS.isometric);
+                  setCameraTarget(CAMERA_PRESETS_TOWER.isometric);
                   playSound('click');
-                  showToast('Tower Stance: Upright Chassis');
+                  showToast('Tower Stance: Upright Chassis Orientation');
                 }}
                 title="Upright Tower Stance"
               >
@@ -699,10 +783,10 @@ function PCBuilder3DWorkspace() {
                 onClick={() => {
                   setRigStance('workbench');
                   setCameraPreset('pov');
-                  setCameraTarget(CAMERA_PRESETS.pov);
+                  setCameraTarget(CAMERA_PRESETS_WORKBENCH.pov);
                   if (glassMode === 'closed') setGlassMode('removed');
                   playSound('slide');
-                  showToast('Workbench Stance: Flat Laying Rig for Builder POV');
+                  showToast('Builder POV Mode: Rig lying flat on workbench (Restricted eye movement)');
                 }}
                 title="Workbench Flat Laying Stance (Builder POV)"
               >
@@ -848,17 +932,21 @@ function PCBuilder3DWorkspace() {
 
             <Environment preset="studio" />
 
-            {/* Camera Controller & OrbitControls with Free Dragging, Damping, and Auto-Rotate */}
+            {/* Camera Controller & OrbitControls with Adaptive POV Eye-Movement Restrictions */}
             <CameraController cameraTarget={cameraTarget} orbitRef={orbitRef} />
             <OrbitControls 
               ref={orbitRef}
               enablePan={true}
+              panSpeed={rigStance === 'workbench' ? 0.35 : 0.8}
               enableDamping={true}
-              dampingFactor={0.06}
-              minDistance={3.0} 
-              maxDistance={28}
-              maxPolarAngle={Math.PI / 2 + 0.05}
-              autoRotate={autoRotate}
+              dampingFactor={0.08}
+              minDistance={rigStance === 'workbench' ? 3.8 : 3.0} 
+              maxDistance={rigStance === 'workbench' ? 12.0 : 28}
+              minPolarAngle={rigStance === 'workbench' ? Math.PI / 4.2 : 0}
+              maxPolarAngle={rigStance === 'workbench' ? Math.PI / 2.3 : Math.PI / 2 + 0.05}
+              minAzimuthAngle={rigStance === 'workbench' ? -Math.PI / 5.5 : -Infinity}
+              maxAzimuthAngle={rigStance === 'workbench' ? Math.PI / 5.5 : Infinity}
+              autoRotate={autoRotate && rigStance !== 'workbench'}
               autoRotateSpeed={2.2}
             />
 
@@ -982,10 +1070,10 @@ function PCBuilder3DWorkspace() {
               />
 
               <Suspense fallback={null}>
-                {/* Unified PC Rig Group - Adapts between Tower and Workbench (Flat POV) Stance */}
+                {/* Unified PC Rig Group - Rotated 90° so PSU faces student (Image 2 POV) */}
                 <group 
                   position={rigStance === 'workbench' ? [0, -2.60, 0] : [0, 0, 0]} 
-                  rotation={rigStance === 'workbench' ? [0, 0, -Math.PI / 2] : [0, 0, 0]}
+                  rotation={rigStance === 'workbench' ? [0, Math.PI / 2, -Math.PI / 2] : [0, 0, 0]}
                 >
                   {/* 1. PC Case Chassis (Rendered ONLY once chosen and placed by user) */}
                   {currentBuild.case && (
