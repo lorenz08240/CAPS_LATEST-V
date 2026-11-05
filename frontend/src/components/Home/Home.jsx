@@ -6,6 +6,7 @@ import FullscreenGate from "../FullscreenGate/FullscreenGate";
 import Home3DHero from "./Home3DHero";
 import { enterFullscreen } from "../../utilities/fullscreen";
 import soundManager from "../../utilities/soundManager";
+import systemLogo from "../../assets/system_logo.png";
 
 function Home() {
   const navigate = useNavigate();
@@ -92,12 +93,12 @@ function Home() {
             <div className="cyber-brand" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
               <div className="cyber-logo-box">
                 <img 
-                  src="/assets/system_logo.png" 
+                  src={systemLogo}
                   alt="BuildLab Logo" 
                   className="cyber-logo-img" 
-                  onError={(e) => { e.currentTarget.style.display = 'none'; }} 
+                  draggable={false}
                 />
-                <span className="cyber-logo-fallback">▲</span>
+
               </div>
               <div className="cyber-brand-text">
                 <span className="cyber-brand-title">BUILDLAB</span>
