@@ -9,6 +9,7 @@ import CyberBrand from "../Navigation/CyberBrand";
 import { useSidebar } from "../../contexts/SidebarContext";
 import { enterFullscreen } from "../../utilities/fullscreen";
 import soundManager from "../../utilities/soundManager";
+import systemLogo from "../../assets/system_logo.png";
 
 function Home() {
   const navigate = useNavigate();

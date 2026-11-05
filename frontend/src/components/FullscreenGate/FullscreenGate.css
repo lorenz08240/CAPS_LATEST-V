@@ -1,4 +1,10 @@
-/* FullscreenGate — immersive mode & orientation overlays */
+/* ==========================================================================
+   FullscreenGate — Refined Dark-Glassmorphism Immersive Workstation Modal
+   Theme: Semi-transparent dark slate (rgba(15, 23, 42, 0.78)) with
+          subtle cyan/teal border and cyan-to-emerald gradient accents
+   ========================================================================== */
+
+/* ---------- Fullscreen Blurred Backdrop Overlay ---------- */
 
 .fs-gate-overlay {
   position: fixed;
@@ -7,241 +13,351 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
-  text-align: center;
-  color: #e5e7eb;
-  background:
-    radial-gradient(ellipse at 20% 20%, rgba(244, 63, 94, 0.12), transparent 50%),
-    radial-gradient(ellipse at 80% 80%, rgba(56, 189, 248, 0.08), transparent 50%),
-    rgba(6, 8, 14, 0.94);
-  -webkit-backdrop-filter: blur(14px);
-  backdrop-filter: blur(14px);
-  animation: fs-gate-fade-in 0.35s ease both;
+  padding: 20px;
+  overflow-y: auto;
+  user-select: none;
+  animation: fs-gate-fade-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 @keyframes fs-gate-fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
-.fs-gate-panel {
-  max-width: 520px;
-  padding: 48px 40px;
-  border-radius: 20px;
-  background: linear-gradient(160deg, rgba(15, 23, 42, 0.9), rgba(6, 8, 14, 0.95));
-  border: 1px solid rgba(244, 63, 94, 0.35);
+.fs-gate-fullscreen {
+  background-color: rgba(0, 0, 0, 0.75);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+}
+
+/* ---------- Centered Dark-Glassmorphic Modal Card ---------- */
+
+.fs-gate-card {
+  position: relative;
+  width: 100%;
+  max-width: 530px;
+  padding: 38px 38px 30px;
+  border-radius: 1.25rem; /* rounded-2xl */
+  background: rgba(15, 23, 42, 0.78); /* sleek semi-transparent dark slate */
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(56, 189, 248, 0.25); /* refined subtle cyan border */
   box-shadow:
-    0 0 60px rgba(244, 63, 94, 0.18),
-    0 24px 60px rgba(0, 0, 0, 0.6);
+    0 10px 30px -10px rgba(0, 0, 0, 0.8),
+    0 0 20px -5px rgba(6, 182, 212, 0.15); /* soft ambient glow/shadow */
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
+  text-align: center;
+  animation: fs-card-pop 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* ---------- Shared typography (mirrors Home hero) ---------- */
-
-.fs-gate-badge {
-  font-family: 'JetBrains Mono', monospace, sans-serif;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 3px;
-  color: #f43f5e;
-  text-transform: uppercase;
+@keyframes fs-card-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
-.fs-gate-title {
-  margin: 0;
-  font-family: 'Syne', sans-serif;
-  font-size: clamp(28px, 4.5vw, 40px);
-  font-weight: 800;
-  color: #ffffff;
-  line-height: 1.15;
-}
+/* ---------- Top & Header Row (Side-by-Side Hero Layout) ---------- */
 
-.fs-gate-desc {
-  margin: 0;
-  font-size: 15px;
-  line-height: 1.65;
-  color: rgba(229, 231, 235, 0.75);
-}
-
-.fs-gate-status {
-  display: flex;
-  gap: 18px;
-  flex-wrap: wrap;
-  justify-content: center;
-  margin-top: 18px;
-  font-family: "Consolas", "Courier New", monospace;
-  font-size: 10px;
-  letter-spacing: 1.5px;
-  color: rgba(255, 255, 255, 0.25);
-}
-
-/* ---------- Fullscreen prompt ---------- */
-
-.fs-gate-panel .eyt {
-  width: auto;
-  height: auto;
-  margin-bottom: 2px;
-}
-
-.fs-gate-expands {
-  position: relative;
+.fs-card-hero {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 14px;
-  margin-bottom: 6px;
+  gap: 24px;
+  width: 100%;
 }
 
-.fs-gate-frame {
-  border: 2px solid rgba(244, 63, 94, 0.55);
-  border-radius: 8px;
-  display: inline-block;
+/* Left Column: BuildLab Flask/Chip Logo */
+.fs-hero-logo-col {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.fs-gate-frame-small {
-  width: 26px;
-  height: 18px;
-  opacity: 0.45;
+.fs-hero-logo {
+  width: clamp(88px, 11vw, 104px);
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 0 16px rgba(34, 211, 238, 0.35));
+  transition: transform 0.3s ease;
 }
 
-.fs-gate-frame-large {
-  width: 52px;
-  height: 34px;
-  animation: fs-gate-pulse 2.2s ease-in-out infinite;
+.fs-hero-logo:hover {
+  transform: scale(1.04) rotate(-1.5deg);
 }
 
-.fs-gate-arrows {
-  font-size: 22px;
-  color: #38bdf8;
-  animation: fs-gate-pulse 2.2s ease-in-out infinite;
+/* Subtle Vertical Divider */
+.fs-hero-divider {
+  width: 1px;
+  height: 84px;
+  background-color: rgba(255, 255, 255, 0.1); /* border-r border-white/10 */
+  flex-shrink: 0;
 }
 
-@keyframes fs-gate-pulse {
-  0%, 100% { transform: scale(1); opacity: 0.85; }
-  50% { transform: scale(1.12); opacity: 1; }
+/* Right Column: Title & Fullscreen Info */
+.fs-hero-text-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  flex: 1;
 }
 
-.fs-gate-btn {
-  margin-top: 14px;
-  padding: 16px 42px;
-  font-family: 'Syne', sans-serif;
-  font-size: 14px;
+/* Subtitle / Header Tag: IMMERSIVE MODE REQUIRED */
+.fs-hero-subtitle {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em; /* tracking-wider */
+  color: rgba(45, 212, 191, 0.85); /* text-teal-400/80 */
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+/* Bold Heading */
+.fs-hero-title {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  letter-spacing: -0.025em;
+}
+
+.fs-title-white {
+  font-size: clamp(26px, 3.2vw, 34px);
   font-weight: 800;
-  letter-spacing: 2px;
+  line-height: 1.1;
   color: #ffffff;
-  background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
-  border: 1.5px solid rgba(255, 255, 255, 0.25);
-  border-radius: 999px;
+}
+
+.fs-title-gradient {
+  font-size: clamp(26px, 3.2vw, 34px);
+  font-weight: 800;
+  line-height: 1.1;
+  background: linear-gradient(to right, #22d3ee, #34d399); /* cyan-to-emerald gradient */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 14px rgba(34, 211, 238, 0.22));
+}
+
+/* ---------- Body Text & Primary Action ---------- */
+
+/* Subtext */
+.fs-card-subtext {
+  margin: 20px auto 24px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #94a3b8; /* soft slate gray text-slate-400 */
+  max-width: 440px;
+  text-align: center;
+}
+
+/* Action Button: CTA Pill with Vibrant Cyan-to-Emerald Gradient */
+.fs-card-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 370px;
+  padding: 13.5px 28px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #020617; /* dark/slate text-slate-950 font-semibold */
+  background: linear-gradient(to right, #22d3ee, #34d399); /* from-cyan-400 to-emerald-400 */
+  border: none;
+  border-radius: 9999px;
   cursor: pointer;
-  box-shadow:
-    0 0 28px rgba(244, 63, 94, 0.55),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+  box-shadow: 0 0 16px rgba(45, 212, 191, 0.35); /* controlled tight glow */
+  transition:
+    transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.2s ease;
+  outline: none;
 }
 
-.fs-gate-btn:hover {
-  transform: translateY(-2px);
-  background: linear-gradient(135deg, #fb7185 0%, #f43f5e 100%);
-  box-shadow: 0 0 38px rgba(244, 63, 94, 0.85);
-  border-color: rgba(255, 255, 255, 0.5);
+.fs-card-btn-arrow {
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
 }
 
-.fs-gate-btn:active {
+.fs-card-btn:hover {
+  transform: translateY(-1.5px);
+  box-shadow: 0 0 24px rgba(45, 212, 191, 0.55);
+  filter: brightness(1.05);
+}
+
+.fs-card-btn:hover .fs-card-btn-arrow {
+  transform: translate(2px, -2px);
+}
+
+.fs-card-btn:active {
   transform: translateY(0);
 }
 
-.fs-gate-btn:focus-visible {
-  outline: 2px solid #34d399;
+.fs-card-btn:focus-visible {
+  outline: 2px solid #22d3ee;
   outline-offset: 3px;
 }
 
-.fs-gate-hint {
-  margin: 10px 0 0;
-  font-size: 12px;
-  color: rgba(229, 231, 235, 0.45);
+/* Keyboard Shortcut Note Footer */
+.fs-card-esc-hint {
+  margin: 18px 0 0;
+  font-size: 12.5px;
+  color: #94a3b8; /* text-slate-400 */
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
-.fs-gate-hint kbd {
-  padding: 2px 7px;
-  font-size: 10px;
-  border-radius: 5px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.06);
-  font-family: inherit;
+/* Distinct <kbd> Element for F11 */
+.fs-kbd-f11 {
+  display: inline-block;
+  padding: 1.5px 6.5px; /* rounded px-1.5 py-0.5 */
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #e2e8f0; /* text-slate-200 */
+  background: #1e293b; /* bg-slate-800 */
+  border: 1px solid #334155; /* border border-slate-700 */
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; /* font-mono */
 }
 
-/* ---------- Rotate your device ---------- */
+/* ---------- Device Rotation Overlay (Mobile Portrait) ---------- */
+
+.fs-gate-rotation {
+  background-color: rgba(0, 0, 0, 0.85);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+}
+
+.fs-gate-rotation-panel {
+  max-width: 440px;
+  padding: 40px 30px;
+  border-radius: 1.25rem;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  box-shadow:
+    0 10px 30px -10px rgba(0, 0, 0, 0.8),
+    0 0 20px -5px rgba(6, 182, 212, 0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 14px;
+}
 
 .fs-gate-phone {
   position: relative;
-  width: 58px;
-  height: 104px;
-  border: 3px solid rgba(52, 211, 153, 0.7);
+  width: 52px;
+  height: 94px;
+  border: 3px solid #22d3ee;
   border-radius: 12px;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
+  box-shadow: 0 0 18px rgba(34, 211, 238, 0.35);
   animation: fs-gate-rotate-device 3s ease-in-out infinite;
 }
 
 .fs-gate-phone-notch {
   position: absolute;
-  top: 6px;
+  top: 5px;
   left: 50%;
   transform: translateX(-50%);
-  width: 18px;
-  height: 4px;
-  border-radius: 999px;
-  background: rgba(52, 211, 153, 0.6);
+  width: 16px;
+  height: 3.5px;
+  border-radius: 9999px;
+  background: #22d3ee;
 }
 
 @keyframes fs-gate-rotate-device {
-  0%, 12% { transform: rotate(0deg); }
-  48%, 78% { transform: rotate(-90deg); }
-  100% { transform: rotate(-90deg); }
-}
-
-/* ---------- Light theme variant ------------------------------------------ */
-
-.theme-light .fs-gate-overlay {
-  background:
-    radial-gradient(ellipse at 20% 20%, rgba(16, 185, 129, 0.1), transparent 50%),
-    radial-gradient(ellipse at 80% 80%, rgba(59, 130, 246, 0.08), transparent 50%),
-    rgba(248, 250, 252, 0.94);
-  color: #1e293b;
-}
-
-.theme-light .fs-gate-panel {
-  background: linear-gradient(160deg, #ffffff, #f1f5f9);
-  border-color: rgba(16, 185, 129, 0.35);
-  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.15);
-}
-
-.theme-light .fs-gate-badge { color: #059669; }
-
-.theme-light .fs-gate-title { color: #0f172a; }
-
-.theme-light .fs-gate-desc {
-  color: rgba(30, 41, 59, 0.75);
-}
-
-.theme-light .fs-gate-hint {
-  color: rgba(30, 41, 59, 0.5);
-}
-
-.theme-light .fs-gate-status {
-  color: rgba(30, 41, 59, 0.35);
-}
-
-/* ---------- Smaller phones ---------- */
-
-@media (max-width: 480px) {
-  .fs-gate-panel {
-    padding: 36px 22px;
-    gap: 10px;
+  0%, 12% {
+    transform: rotate(0deg);
   }
-  .fs-gate-desc {
+  48%, 78% {
+    transform: rotate(-90deg);
+  }
+  100% {
+    transform: rotate(-90deg);
+  }
+}
+
+.fs-gate-badge {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #22d3ee;
+  text-transform: uppercase;
+}
+
+.fs-gate-rot-title {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.15;
+}
+
+.fs-gate-rot-desc {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #94a3b8;
+}
+
+.fs-gate-status {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 10px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 10.5px;
+  letter-spacing: 1.5px;
+  color: rgba(45, 212, 191, 0.7);
+}
+
+/* ---------- Responsive Adjustments ---------- */
+
+@media (max-width: 560px) {
+  .fs-gate-card {
+    padding: 30px 20px 24px;
+  }
+  .fs-card-hero {
+    gap: 16px;
+  }
+  .fs-hero-logo {
+    width: 78px;
+  }
+  .fs-hero-divider {
+    height: 72px;
+  }
+  .fs-title-white,
+  .fs-title-gradient {
+    font-size: 24px;
+  }
+  .fs-card-subtext {
+    font-size: 13px;
+    margin: 16px auto 20px;
+  }
+  .fs-card-btn {
+    padding: 12px 24px;
     font-size: 13.5px;
   }
 }

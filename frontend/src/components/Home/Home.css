@@ -443,7 +443,7 @@
 .cyber-ambient-grid {
   position: absolute;
   inset: 0;
-  background-image: 
+  background-image:
     linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
   background-size: 60px 60px;
@@ -475,18 +475,22 @@
   width: 38px;
   height: 38px;
   border-radius: 8px;
-  background: rgba(244, 63, 94, 0.12);
-  border: 1.5px solid #f43f5e;
+  background: #020b0b;
+  overflow: hidden;
+  border: 1px solid rgba(0, 242, 254, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 16px rgba(244, 63, 94, 0.45);
+
+  box-shadow: 0 0 14px rgba(0, 242, 254, 0.35);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .cyber-brand:hover .cyber-logo-box {
-  transform: scale(1.05);
-  box-shadow: 0 0 22px rgba(244, 63, 94, 0.7);
+  transform: scale(1.08);
+  box-shadow: 0 0 20px rgba(0, 242, 254, 0.6);
+  border-color: #00f2fe;
+
 }
 
 .cyber-logo-img {
@@ -674,8 +678,17 @@
 }
 
 @keyframes cyberPulse {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.4); opacity: 0.6; }
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.4);
+    opacity: 0.6;
+  }
 }
 
 .scroll-v-text {
@@ -884,10 +897,10 @@
   line-height: 1.1;
   color: #ffffff;
   margin-bottom: 0.8rem;
-  text-shadow: 
-    0 2px 4px rgba(0, 0, 0, 0.98), 
-    0 4px 14px rgba(0, 0, 0, 0.95), 
-    0 8px 32px rgba(0, 0, 0, 0.98), 
+  text-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.98),
+    0 4px 14px rgba(0, 0, 0, 0.95),
+    0 8px 32px rgba(0, 0, 0, 0.98),
     0 0 40px rgba(0, 0, 0, 0.92);
 }
 
@@ -896,9 +909,9 @@
   line-height: 1.55;
   color: #e2e8f0;
   margin-bottom: 1.3rem;
-  text-shadow: 
-    0 1px 3px rgba(0, 0, 0, 0.98), 
-    0 3px 10px rgba(0, 0, 0, 0.95), 
+  text-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.98),
+    0 3px 10px rgba(0, 0, 0, 0.95),
     0 6px 20px rgba(0, 0, 0, 0.98);
 }
 
@@ -917,7 +930,7 @@
   gap: 0.85rem;
   padding: 0.85rem 2rem;
   background: rgba(15, 23, 42, 0.85);
-  border: 1.5px solid #f43f5e;
+  border: 1px solid rgba(0, 242, 254, 0.4);
   color: #ffffff;
   font-weight: 800;
   font-size: 0.86rem;
@@ -1031,8 +1044,13 @@
 }
 
 @keyframes radarSpin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .hud-radar-dial .radar-core-dot {
@@ -1065,8 +1083,15 @@
 }
 
 @keyframes pulseOut {
-  0% { transform: scale(0.9); opacity: 1; }
-  100% { transform: scale(1.4); opacity: 0; }
+  0% {
+    transform: scale(0.9);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
 }
 
 .hud-status-pulse .pulse-center {
@@ -1159,12 +1184,10 @@
   left: -70%;
   width: 45%;
   height: 200%;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.4) 50%,
-    transparent 100%
-  );
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.4) 50%,
+      transparent 100%);
   transform: rotate(25deg);
   transition: all 0.65s cubic-bezier(0.2, 0.8, 0.2, 1);
   pointer-events: none;
