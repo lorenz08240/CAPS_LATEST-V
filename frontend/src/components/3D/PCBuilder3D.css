@@ -279,9 +279,10 @@
    3. LEFT HARDWARE DRAWER & VERTICAL PROGRESSION (PATAYO)
    ───────────────────────────────────────────────────────────── */
 .hardware-drawer {
-  width: clamp(380px, 35vw, 520px); /* responsive — never cramps the catalog panel */
-  min-width: 380px;
-  background: rgba(14, 19, 31, 0.95);
+  width: 480px;
+  min-width: 460px;
+  max-width: 520px;
+  background: rgba(14, 19, 31, 0.96);
   -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
   border-right: 1px solid rgba(255, 255, 255, 0.08);
@@ -290,11 +291,13 @@
   z-index: 20;
   transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 6px 0 28px rgba(0, 0, 0, 0.5);
+  flex-shrink: 0;
 }
 
 .hardware-drawer.collapsed {
-  width: 52px;
-  min-width: 52px;
+  width: 54px !important;
+  min-width: 54px !important;
+  max-width: 54px !important;
   overflow: hidden;
 }
 
@@ -305,6 +308,10 @@
 .hardware-drawer.collapsed .drawer-header {
   padding: 0.75rem 0;
   justify-content: center;
+}
+
+.hardware-drawer.collapsed .drawer-split-layout {
+  display: none !important;
 }
 
 .drawer-header {
@@ -358,7 +365,9 @@
 
 /* VERTICAL PROGRESSION RAIL (PATAYO) */
 .vertical-stages-rail {
-  width: clamp(140px, 12vw, 175px);
+  width: 155px;
+  min-width: 155px;
+  max-width: 155px;
   background: rgba(8, 12, 20, 0.7);
   border-right: 1px solid rgba(255, 255, 255, 0.06);
   display: flex;
@@ -471,8 +480,9 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  min-width: 0;
+  min-width: 305px;
   background: rgba(14, 19, 31, 0.5);
+  overflow: hidden;
 }
 
 .stage-panel-header {
@@ -544,35 +554,7 @@
   font-size: 0.75rem;
 }
 
-.drawer-tier-pills {
-  display: flex;
-  gap: 0.35rem;
-  padding: 0.3rem 0.8rem 0.5rem 0.8rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-}
 
-.tier-pill {
-  flex: 1;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  color: #94a3b8;
-  padding: 3px 0;
-  border-radius: 4px;
-  font-size: 0.65rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.tier-pill:hover {
-  color: #cbd5e1;
-}
-
-.tier-pill.active {
-  background: rgba(250, 204, 21, 0.12);
-  border-color: #facc15;
-  color: #facc15;
-}
 
 /* Catalog Cards List */
 .catalog-cards-container {
@@ -887,32 +869,71 @@
 .aesthetics-hud {
   top: 1rem;
   left: 1.25rem;
-  flex-wrap: wrap;          /* never let the RGB toolbar overflow/overlap */
+  background: rgba(10, 15, 26, 0.94);
+  border: 1px solid rgba(0, 229, 255, 0.4);
+  box-shadow: 0 4px 20px rgba(0, 229, 255, 0.18), 0 8px 32px rgba(0, 0, 0, 0.65);
+  padding: 0.45rem 0.8rem;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
   max-width: calc(100vw - 3rem);
+}
+
+.aesthetics-hud .hud-title {
+  color: #00e5ff;
+  font-weight: 800;
+  font-size: 0.68rem;
+  letter-spacing: 1.2px;
+  text-shadow: 0 0 10px rgba(0, 229, 255, 0.6);
 }
 
 .color-swatches {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   align-items: center;
 }
 
 .color-dot {
-  width: 16px;
-  height: 16px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
-  border: 2px solid transparent;
+  border: 2px solid rgba(255, 255, 255, 0.35);
   cursor: pointer;
-  transition: transform 0.2s;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
 }
 
 .color-dot:hover {
-  transform: scale(1.2);
+  transform: scale(1.22);
+  border-color: #ffffff;
 }
 
 .color-dot.active {
   border-color: #ffffff;
-  transform: scale(1.25);
+  transform: scale(1.28);
+}
+
+/* POV Camera Mode Button */
+.hud-btn.pov-cam-btn {
+  background: rgba(0, 229, 255, 0.12);
+  border-color: rgba(0, 229, 255, 0.45);
+  color: #00e5ff;
+  font-weight: 700;
+}
+
+.hud-btn.pov-cam-btn:hover {
+  background: rgba(0, 229, 255, 0.25);
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.35);
+  color: #ffffff;
+}
+
+.hud-btn.pov-cam-btn.active {
+  background: #00e5ff;
+  border-color: #00e5ff;
+  color: #090d16;
+  box-shadow: 0 0 16px rgba(0, 229, 255, 0.5);
 }
 
 /* Drop Indicator Badge inside Canvas */
@@ -1148,7 +1169,7 @@
 /* Workspace Toast Notification */
 .workspace-toast {
   position: absolute;
-  top: 1.25rem;
+  top: 4.25rem;
   left: 50%;
   transform: translateX(-50%);
   background: rgba(14, 19, 31, 0.95);
@@ -1161,6 +1182,7 @@
   box-shadow: 0 4px 20px rgba(0, 230, 118, 0.3);
   z-index: 100;
   animation: popIn 0.2s ease-out;
+  pointer-events: none;
 }
 
 @keyframes popIn {
