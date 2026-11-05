@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import GlobalHeader from "../Navigation/GlobalHeader";
 import { useBuild } from "../../contexts/BuildContext";
 import CourseVideoPlayer from "./CourseVideoPlayer";
+import BobCompanion from "../BobCompanion/BobCompanion";
 import soundManager from "../../utilities/soundManager";
 import "./CourseShell.css";
 
@@ -572,13 +573,31 @@ const ARTICLE_LESSONS = {
   },
 };
 
+/* ─────────────────────── B.O.B. LESSON WISDOM & INTEL ─────────────────────── */
+
+const BOB_LESSON_WISDOM = {
+  "components-of-a-computer": "Welcome to Module 1! Let's master the Core Four: CPU, RAM, Storage, and Motherboard. Poke me anytime!",
+  "how-parts-talk": "Data highways called buses! PCIe lanes, memory channels, and chipsets follow strict protocols.",
+  "cpu": "Module 2: Processor silicon! Dropping the CPU into the socket requires Zero Insertion Force. Test it in our 3D Lab!",
+  "motherboard": "The foundation! Always verify your brass chassis standoffs to prevent short circuits on the PCB.",
+  "ram": "Module 3: Memory speed! Install a 2-stick kit into slots 2 and 4 for maximum dual-channel bandwidth.",
+  "compatibility-chain": "Run the 5-point compatibility chain before buying: socket, memory, board size, GPU length, and cooler clearance.",
+  "gpu": "Module 4: Graphics power! Listen for the PCIe x16 retention click and plug the 12V-2x6 power cable completely flush.",
+  "psu": "Clean power delivery! Never mix modular cables across different power supply units.",
+  "case": "Airflow dynamics! Perforated mesh front panels provide cold intake air for peak GPU boost clocks.",
+  "full-build-order": "Module 5: The grand assembly! Follow the 12-step protocol or practice directly in 3D Studio.",
+  "first-boot": "First boot POST! Remember: plug your monitor display cable into the GPU, never the motherboard!",
+  "purpose-and-budget": "Plan backwards: define your workload first, split the budget by performance, and brand last.",
+};
+
 /* ─────────────────────── COURSE STRUCTURE ─────────────────────── */
 
 const COURSE = [
   {
     id: "m1",
     label: "Module 1",
-    title: "Computer Fundamentals",
+    title: "Computer Architecture & Fundamentals",
+    badge: "VIDEO & TEXT · B.O.B. QUIZ",
     lessons: [
       { type: "article", ref: "components-of-a-computer", minutes: 10 },
       { type: "article", ref: "how-parts-talk", minutes: 8 },
@@ -587,32 +606,43 @@ const COURSE = [
   {
     id: "m2",
     label: "Module 2",
-    title: "Planning Your Build",
+    title: "Core Processing & Platform",
+    badge: "HARDWARE DEEP-DIVE · 3D LAB",
     lessons: [
-      { type: "article", ref: "purpose-and-budget", minutes: 12 },
-      { type: "article", ref: "compatibility-chain", minutes: 9 },
+      { type: "component", key: "cpu", minutes: 25 },
+      { type: "component", key: "motherboard", minutes: 25 },
     ],
   },
   {
     id: "m3",
     label: "Module 3",
-    title: "Component Deep Dives",
+    title: "High-Speed Memory & Expansion",
+    badge: "HARDWARE DEEP-DIVE · 3D LAB",
     lessons: [
-      { type: "component", key: "cpu", minutes: 25 },
-      { type: "component", key: "motherboard", minutes: 25 },
       { type: "component", key: "ram", minutes: 20 },
+      { type: "article", ref: "compatibility-chain", minutes: 12 },
+    ],
+  },
+  {
+    id: "m4",
+    label: "Module 4",
+    title: "Graphics, Power & Airflow Dynamics",
+    badge: "HARDWARE DEEP-DIVE · 3D LAB",
+    lessons: [
       { type: "component", key: "gpu", minutes: 22 },
       { type: "component", key: "psu", minutes: 18 },
       { type: "component", key: "case", minutes: 15 },
     ],
   },
   {
-    id: "m4",
-    label: "Module 4",
-    title: "Assembly & First Boot",
+    id: "m5",
+    label: "Module 5",
+    title: "Full PC Assembly & POST Diagnostics",
+    badge: "CAPSTONE 2 SIMULATION · 3D LAB",
     lessons: [
       { type: "article", ref: "full-build-order", minutes: 14 },
       { type: "article", ref: "first-boot", minutes: 10 },
+      { type: "article", ref: "purpose-and-budget", minutes: 10 },
     ],
   },
 ];
@@ -627,18 +657,23 @@ export default function CourseShell({ componentGuide }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [completed, setCompleted] = useState(readProgress);
 
-  /* Right Sidebar Pin & Hover states — mouse hover triggered by default (matching Left Sidebar) */
+  /* Right Sidebar Syllabus Panel — EXPANDED/SHOWN by default, togglable */
   const [isPinned, setIsPinned] = useState(() => {
     try {
       const saved = localStorage.getItem("buildlab.course.sidebar.pinned");
       if (saved !== null) return JSON.parse(saved);
-      return false; // Default: unpinned and mouse-hover triggered!
+      return true; // Default: EXPANDED/SHOWN by default per user requirement!
     } catch {
-      return false;
+      return true;
     }
   });
   const [isHovered, setIsHovered] = useState(false);
   const isVisible = isPinned || isHovered;
+
+  /* B.O.B. Companion live speech state */
+  const [bobSpeech, setBobSpeech] = useState(
+    "Hi! I'm B.O.B., your BuildLab companion. Let's master computer architecture together!"
+  );
 
   useEffect(() => {
     try {
@@ -727,6 +762,7 @@ export default function CourseShell({ componentGuide }) {
     setQuizAnswers({});
     setSelectedMistake(null);
     setVideoToast(null);
+    setBobSpeech(BOB_LESSON_WISDOM[current.id] || "Hi! I'm B.O.B., your BuildLab companion. Let's master this hardware together!");
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [current.id]);
@@ -742,7 +778,8 @@ export default function CourseShell({ componentGuide }) {
     soundManager.click();
     setCurrentIndex(idx);
     if (typeof window !== "undefined" && window.matchMedia("(max-width: 960px)").matches) {
-      setOutlineOpen(false);
+      setIsPinned(false);
+      setIsHovered(false);
     }
   };
 
@@ -812,67 +849,81 @@ export default function CourseShell({ componentGuide }) {
 
   /* ── Shared renderers ── */
 
-  const renderQuiz = (quiz) => (
-    <>
-      <p className="quiz-prompt">{quiz[quizIndex].question}</p>
+  const renderQuiz = (quiz) => {
+    const activeQ = quiz[quizIndex];
+    if (!activeQ) return null;
+    const answered = quizAnswers[quizIndex];
 
-      <div className="quiz-options-vertical">
-        {quiz[quizIndex].options.map((opt, i) => {
-          const answered = quizAnswers[quizIndex];
-          const isSelected = answered === i;
-          const showResult = answered !== undefined;
+    const handleQuizOption = (opt, i) => {
+      setQuizAnswers((prev) => ({ ...prev, [quizIndex]: i }));
+      if (opt.correct) {
+        soundManager.complete();
+        const cheers = [
+          "Spot on! Brilliant hardware analysis!",
+          "Correct! You nailed the architecture standard!",
+          "Exact match! You're building solid engineering instincts!",
+        ];
+        setBobSpeech(cheers[Math.floor(Math.random() * cheers.length)]);
+      } else {
+        soundManager.error();
+        setBobSpeech("Careful! Read the takeaway note to see why that was incorrect.");
+      }
+    };
 
-          let optClass = "";
-          if (showResult) {
-            if (opt.correct) optClass = "opt-correct";
-            else if (isSelected) optClass = "opt-wrong";
-          }
+    return (
+      <div className="clean-quiz-wrap">
+        <p className="quiz-prompt">{activeQ.question}</p>
 
-          return (
-            <button
-              key={i}
-              className={`quiz-choice-btn ${isSelected ? "selected" : ""} ${optClass}`}
-              onClick={() => {
-                setQuizAnswers((prev) => ({ ...prev, [quizIndex]: i }));
-                if (opt.correct) {
-                  soundManager.complete();
-                } else {
-                  soundManager.error();
-                }
-              }}
-            >
-              <span className="choice-bullet">{isSelected ? "●" : "○"}</span>
-              <span className="choice-text">{opt.text}</span>
-            </button>
-          );
-        })}
-      </div>
+        <div className="quiz-options-vertical">
+          {activeQ.options.map((opt, i) => {
+            const isSelected = answered === i;
+            const showResult = answered !== undefined;
 
-      {quizAnswers[quizIndex] !== undefined && (
-        <div className="quiz-feedback-box animate-fade-in">
-          <strong>Takeaway:</strong> {quiz[quizIndex].explanation}
-        </div>
-      )}
-
-      <div className="quiz-footer-actions">
-        <span className="quiz-progress-text">
-          Question {quizIndex + 1} of {quiz.length}
-        </span>
-        <button
-          className="quiz-action-btn"
-          onClick={() => {
-            if (quizIndex < quiz.length - 1) {
-              setQuizIndex((prev) => prev + 1);
-            } else {
-              setQuizIndex(0);
+            let optClass = "";
+            if (showResult) {
+              if (opt.correct) optClass = "opt-correct";
+              else if (isSelected) optClass = "opt-wrong";
             }
-          }}
-        >
-          {quizIndex < quiz.length - 1 ? "Next" : "Restart ↺"}
-        </button>
+
+            return (
+              <button
+                key={i}
+                className={`quiz-choice-btn ${isSelected ? "selected" : ""} ${optClass}`}
+                onClick={() => handleQuizOption(opt, i)}
+              >
+                <span className="choice-bullet">{isSelected ? "●" : "○"}</span>
+                <span className="choice-text">{opt.text}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {answered !== undefined && (
+          <div className="quiz-feedback-box animate-fade-in">
+            <strong>Takeaway:</strong> {activeQ.explanation}
+          </div>
+        )}
+
+        <div className="quiz-footer-actions">
+          <span className="quiz-progress-text">
+            {answered !== undefined && activeQ.options[answered]?.correct ? "✓ Validated" : "Awaiting response"}
+          </span>
+          <button
+            className="quiz-action-btn"
+            onClick={() => {
+              if (quizIndex < quiz.length - 1) {
+                setQuizIndex((prev) => prev + 1);
+              } else {
+                setQuizIndex(0);
+              }
+            }}
+          >
+            {quizIndex < quiz.length - 1 ? "Next Question →" : "Restart Quiz ↺"}
+          </button>
+        </div>
       </div>
-    </>
-  );
+    );
+  };
 
   const renderTable = (table) => (
     <div className="lesson-table-wrap">
@@ -1055,6 +1106,63 @@ export default function CourseShell({ componentGuide }) {
             <h3 className="mockup-card-title">Knowledge Check</h3>
           </div>
           <div className="quiz-card-body">{renderQuiz(art.quiz)}</div>
+        </div>
+      )}
+
+      {/* 3D Practical Activity for Module 3 & 5 Article Lessons */}
+      {(current.id === "full-build-order" || current.id === "compatibility-chain") && (
+        <div className="mockup-card practical-3d-lab-card">
+          <div className="lab-card-header">
+            <div className="lab-badge-row">
+              <span className="lab-chip-tag">CAPSTONE 2 SIMULATION LAB</span>
+              <span className="lab-live-indicator">● Hands-on 3D Studio Integration</span>
+            </div>
+            <h3 className="lab-card-title">
+              {current.id === "full-build-order"
+                ? "Interactive 3D Assembly: Complete 12-Step Build"
+                : "Interactive 3D Workshop: Compatibility & Clearance Check"}
+            </h3>
+            <p className="lab-card-desc">
+              {current.id === "full-build-order"
+                ? "Rehearse the complete PC assembly workflow in 3D. Install every subsystem in proper physical order before building real hardware."
+                : "Test component physical clearances, PCIe lane bandwidths, and cooler heights inside the 3D Studio."}
+            </p>
+          </div>
+
+          <div className="lab-challenge-grid">
+            <div className="lab-objectives-box">
+              <span className="lab-tasks-head">Simulation Goals</span>
+              <div className="lab-task-list">
+                <div className="lab-task-item">
+                  <span className="lab-task-check">01</span>
+                  <span>{current.id === "full-build-order" ? "Pre-assemble motherboard tray outside the chassis" : "Verify CPU socket to board matching"}</span>
+                </div>
+                <div className="lab-task-item">
+                  <span className="lab-task-check">02</span>
+                  <span>{current.id === "full-build-order" ? "Seat graphics card, route power harnesses, and fasten thumb screws" : "Check GPU length against case radiator clearance"}</span>
+                </div>
+                <div className="lab-task-item">
+                  <span className="lab-task-check">03</span>
+                  <span>{current.id === "full-build-order" ? "Inspect 360° turntable spin for unseated connectors" : "Verify twin-tower cooler height against tempered glass"}</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="lab-action-box">
+              <button
+                className="btn-launch-3d-lab-primary"
+                onClick={() => {
+                  soundManager.install();
+                  navigate('/3d-builder?mode=full&learn=true');
+                }}
+              >
+                <span>🚀 Launch Full 3D Assembly Simulator</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </>
@@ -1345,6 +1453,64 @@ export default function CourseShell({ componentGuide }) {
         </div>
       </div>
 
+      {/* 4.5 CAPSTONE 2 PRACTICAL LAB — Interactive 3D Studio Workshop */}
+      <div className="mockup-card practical-3d-lab-card">
+        <div className="lab-card-header">
+          <div className="lab-badge-row">
+            <span className="lab-chip-tag">CAPSTONE 2 PRACTICAL ACTIVITY</span>
+            <span className="lab-live-indicator">● 3D Studio Real-Time Integration</span>
+          </div>
+          <h3 className="lab-card-title">Interactive 3D Assembly Challenge: {comp.name}</h3>
+          <p className="lab-card-desc">
+            Put theory into practice inside BuildLab's 3D Studio. Orient the {comp.name}, verify mechanical socket/slot alignment, and test retention latch tolerances before physical assembly.
+          </p>
+        </div>
+
+        <div className="lab-challenge-grid">
+          <div className="lab-objectives-box">
+            <span className="lab-tasks-head">Hands-On Milestones</span>
+            <div className="lab-task-list">
+              <div className="lab-task-item">
+                <span className="lab-task-check">01</span>
+                <div>
+                  <strong>Mechanical Key Inspection:</strong>
+                  <p>Examine notch positions, golden triangle alignment, or retention latch orientation.</p>
+                </div>
+              </div>
+              <div className="lab-task-item">
+                <span className="lab-task-check">02</span>
+                <div>
+                  <strong>Zero-Strain Insertion:</strong>
+                  <p>Seat the component flat into its designated socket or slot in full 3D orbital view.</p>
+                </div>
+              </div>
+              <div className="lab-task-item">
+                <span className="lab-task-check">03</span>
+                <div>
+                  <strong>Thermal &amp; Power Clearances:</strong>
+                  <p>Verify cooler, cable harness, and side panel clearances from every angle.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="lab-action-box">
+            <button
+              className="btn-launch-3d-lab-primary"
+              onClick={() => {
+                soundManager.install();
+                navigate(`/3d-builder?stage=${comp.id}&learn=true`);
+              }}
+            >
+              <span>🚀 Launch 3D Studio {comp.name} Lab</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
       {/* 5. KNOWLEDGE CHECK — quiz + mistakes (merged into one card) */}
       <div className="mockup-card knowledge-check-card">
         <div className="mockup-card-header">
@@ -1481,6 +1647,38 @@ export default function CourseShell({ componentGuide }) {
         {/* ═══ MAIN LESSON COLUMN ═══ */}
         <div className="course-main">
           <div className="course-stream">
+            {/* ═══ COURSERA / GOOGLE AI CERTIFICATE STYLE HUB & COMPANION DECK ═══ */}
+            <div className="course-hub-master-banner">
+              <div className="course-hub-left-info">
+                <div className="course-hub-eyebrow-row">
+                  <span className="course-academy-badge">BUILDLAB ACADEMY · PROFESSIONAL SPECIALIZATION</span>
+                  <button
+                    className={`course-syllabus-toggle-btn ${isPinned ? "is-open" : "is-collapsed"}`}
+                    onClick={() => {
+                      soundManager.snap();
+                      setIsPinned(!isPinned);
+                    }}
+                    title={isPinned ? "Collapse Syllabus Navigation Panel" : "Expand Syllabus Navigation Panel"}
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: '6px' }}>
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                      <line x1="15" y1="3" x2="15" y2="21" />
+                    </svg>
+                    <span>{isPinned ? "Syllabus (Expanded)" : "Syllabus (Show Panel)"}</span>
+                  </button>
+                </div>
+                <h2 className="course-hub-program-title">PC Architecture &amp; System Engineering Masterclass</h2>
+                <div className="course-hub-progress-track">
+                  <div className="hub-progress-bar-container">
+                    <div className="hub-progress-bar-fill" style={{ width: `${progressPct}%` }} />
+                  </div>
+                  <span className="hub-progress-label">
+                    {progressPct}% Mastered · {doneCount} of {FLAT.length} Topics Verified
+                  </span>
+                </div>
+              </div>
+            </div>
+
             {/* Lesson header strip (compact) */}
             <header
               className={`lesson-header ${current.type === "component" ? "has-hero" : ""}`}
@@ -1687,6 +1885,18 @@ export default function CourseShell({ componentGuide }) {
           </div>
         </aside>
       </div>
+
+      {/* ═══ FLOATING B.O.B. COMPANION (Always floating on screen, full-range mouse tracking) ═══ */}
+      <BobCompanion
+        context="learn"
+        activeTopic={current.type === "component" ? lesson.name : lesson.title}
+        externalSpeech={bobSpeech}
+        dockRight={isPinned ? 345 : 24}
+        onLaunchLab={() => {
+          soundManager.install();
+          navigate(`/3d-builder?stage=${current.type === 'component' ? current.id : 'cpu'}&learn=true`);
+        }}
+      />
     </div>
   );
 }

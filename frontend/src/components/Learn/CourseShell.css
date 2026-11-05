@@ -59,9 +59,11 @@ body.theme-light .course-main::-webkit-scrollbar-thumb,
 }
 
 .course-stream {
-  max-width: 1150px;
-  margin: 0 auto;
-  padding: 1.5rem 1.75rem 3.5rem;
+  max-width: 1060px;
+  margin: 0;
+  margin-left: 2.25rem;
+  margin-right: auto;
+  padding: 1.5rem 1.75rem 6.5rem 0.5rem;
   display: flex;
   flex-direction: column;
 }
@@ -1262,4 +1264,266 @@ body.theme-light .outline-collapse-btn:hover,
   background-image: radial-gradient(rgba(212, 163, 75, 0.04) 1px, transparent 1px);
   background-size: 16px 16px;
   pointer-events: none;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   COURSERA / GOOGLE AI CERTIFICATE STYLE HUB & COMPANION DECK
+   ══════════════════════════════════════════════════════════════ */
+.course-hub-master-banner {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  background: linear-gradient(135deg, rgba(14, 20, 34, 0.94) 0%, rgba(8, 12, 22, 0.98) 100%);
+  border: 1px solid rgba(0, 229, 160, 0.25);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.65), 0 0 20px rgba(0, 229, 160, 0.08);
+  border-radius: 14px;
+  padding: 1.5rem 1.75rem;
+  margin-bottom: 1.5rem;
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+
+.course-hub-left-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.course-hub-eyebrow-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.course-academy-badge {
+  font-family: 'JetBrains Mono', 'Consolas', monospace;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #00e5a0;
+  text-transform: uppercase;
+  background: rgba(0, 229, 160, 0.1);
+  border: 1px solid rgba(0, 229, 160, 0.3);
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.course-syllabus-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(212, 163, 75, 0.35);
+  color: #f7d28b;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.course-syllabus-toggle-btn:hover {
+  background: rgba(212, 163, 75, 0.2);
+  border-color: #d4a34b;
+  color: #ffffff;
+}
+
+.course-syllabus-toggle-btn.is-open {
+  border-color: rgba(0, 229, 160, 0.4);
+  color: #00e5a0;
+  background: rgba(0, 229, 160, 0.12);
+}
+
+.course-hub-program-title {
+  font-size: 1.55rem;
+  font-weight: 900;
+  letter-spacing: -0.4px;
+  line-height: 1.25;
+  color: #ffffff;
+  margin: 0;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.course-hub-progress-track {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 0.2rem;
+}
+
+.hub-progress-bar-container {
+  flex: 1;
+  max-width: 220px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.hub-progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00e5a0, #38bdf8);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+  box-shadow: 0 0 8px rgba(0, 229, 160, 0.5);
+}
+
+.hub-progress-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #94a3b8;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   CAPSTONE 2 PRACTICAL LAB · 3D BUILDER INTEGRATION CARD
+   ══════════════════════════════════════════════════════════════ */
+.practical-3d-lab-card {
+  background: linear-gradient(135deg, rgba(14, 22, 38, 0.96) 0%, rgba(9, 14, 25, 0.98) 100%) !important;
+  border: 1.5px solid rgba(56, 189, 248, 0.35) !important;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.7), 0 0 22px rgba(56, 189, 248, 0.12) !important;
+  border-radius: 14px;
+  padding: 1.75rem 2rem;
+}
+
+.lab-card-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 1.1rem;
+  margin-bottom: 1.25rem;
+}
+
+.lab-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 0.5rem;
+}
+
+.lab-chip-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  padding: 3px 9px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.lab-live-indicator {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #00e5a0;
+  letter-spacing: 0.5px;
+}
+
+.lab-card-title {
+  font-size: 1.45rem;
+  font-weight: 900;
+  color: #ffffff;
+  margin: 0 0 0.4rem 0;
+  letter-spacing: -0.3px;
+}
+
+.lab-card-desc {
+  font-size: 0.95rem;
+  color: #cbd5e1;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.lab-challenge-grid {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  gap: 1.75rem;
+  align-items: center;
+}
+
+.lab-objectives-box {
+  background: rgba(10, 16, 28, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  padding: 1.25rem;
+}
+
+.lab-tasks-head {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #94a3b8;
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+.lab-task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.lab-task-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.88rem;
+  color: #e2e8f0;
+  line-height: 1.45;
+}
+
+.lab-task-check {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 900;
+  color: #00e5a0;
+  background: rgba(0, 229, 160, 0.12);
+  border: 1px solid rgba(0, 229, 160, 0.3);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.lab-action-box {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.btn-launch-3d-lab-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 0.95rem 1.4rem;
+  background: linear-gradient(135deg, #00e5a0 0%, #00b478 100%);
+  border: none;
+  border-radius: 10px;
+  color: #06080e;
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(0, 229, 160, 0.35);
+  transition: all 0.25s ease;
+}
+
+.btn-launch-3d-lab-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(0, 229, 160, 0.5);
+  background: linear-gradient(135deg, #22f8b5 0%, #00e5a0 100%);
+}
+
+@media (max-width: 960px) {
+  .course-hub-master-banner {
+    grid-template-columns: 1fr;
+    padding: 1.25rem;
+  }
+  .lab-challenge-grid {
+    grid-template-columns: 1fr;
+  }
 }

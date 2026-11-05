@@ -144,6 +144,13 @@ class SynthAudio {
     this.playTone(880, "sine", 0.08, vol, 920);
   }
 
+  typewriter(vol = 0.04) {
+    // Subtle, delightful retro computer terminal / typewriter speech blip
+    // Randomize pitch slightly around 760-1100 Hz for natural conversational rhythm
+    const baseFreq = 760 + Math.random() * 260;
+    this.playTone(baseFreq, "triangle", 0.016, vol, baseFreq * 0.82);
+  }
+
   warning(vol = 0.18) {
     // Two-tone warning
     this.playTone(550, "triangle", 0.08, vol);
@@ -310,6 +317,12 @@ class SoundManager {
 
   warning() {
     this.play("warning", 0.35);
+  }
+
+  typewriter(customVol = null) {
+    if (!this.enabled) return;
+    const vol = customVol !== null ? customVol : (this.volume * 0.18);
+    this.synth.typewriter(vol);
   }
 
   // Global UI Click Interaction Listener

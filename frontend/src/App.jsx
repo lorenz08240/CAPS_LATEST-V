@@ -9,6 +9,7 @@ import {
 import { BuildProvider } from "./contexts/BuildContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ThemeProvider, useTheme } from "./contexts/ThemeContext";
+import { SidebarProvider, useSidebar } from "./contexts/SidebarContext";
 import { AnimatePresence } from "motion/react";
 import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
@@ -16,6 +17,7 @@ import Home from "./components/Home/Home";
 import Build from "./components/Build/Build";
 import Compatibility from "./components/Compatibility/Compatibility";
 import Learn from "./components/Learn/Learn";
+import HelpSupport from "./components/HelpSupport/HelpSupport";
 import Brands from "./components/Brands/Brands";
 import PCBuilder3D from "./components/3D/PCBuilder3D";
 import {
@@ -40,13 +42,13 @@ const ScrollToTop = () => {
 };
 
 function AppContent() {
-  const [isSidebarPinned, setIsSidebarPinned] = useState(false);
+  const { isPinned, isSidebarOpen } = useSidebar();
   const { theme } = useTheme();
   const location = useLocation();
 
   return (
-    <div className={`min-h-screen app-layout ${theme === 'dark' ? 'theme-dark' : 'theme-light'} ${isSidebarPinned ? 'sidebar-pinned' : ''}`}>
-      <Navbar isPinned={isSidebarPinned} setIsPinned={setIsSidebarPinned} />
+    <div className={`min-h-screen app-layout ${theme === 'dark' ? 'theme-dark' : 'theme-light'} ${isPinned ? 'sidebar-pinned' : ''} ${isSidebarOpen ? 'sidebar-open' : ''}`}>
+      <Navbar />
       <main className="main-content">
         <AnimatePresence mode="wait" initial={false}>
           <Routes location={location} key={location.pathname}>
@@ -68,6 +70,9 @@ function AppContent() {
 
             {/* 3D Builder Page */}
             <Route path="/3d-builder" element={<MotionPage routeKey="/3d-builder"><PCBuilder3D /></MotionPage>} />
+
+            {/* Help & Support Deck */}
+            <Route path="/help" element={<MotionPage routeKey="/help"><HelpSupport /></MotionPage>} />
 
             {/* Dedicated Admin Login Route */}
             <Route path="/admin/login" element={<MotionPage routeKey="/admin/login"><AdminLogin /></MotionPage>} />
@@ -160,10 +165,12 @@ function App() {
     <ThemeProvider>
       <AuthProvider>
         <BuildProvider>
-          <Router>
-            <ScrollToTop />
-            <AppContent />
-          </Router>
+          <SidebarProvider>
+            <Router>
+              <ScrollToTop />
+              <AppContent />
+            </Router>
+          </SidebarProvider>
         </BuildProvider>
       </AuthProvider>
     </ThemeProvider>

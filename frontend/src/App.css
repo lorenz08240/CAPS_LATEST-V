@@ -216,8 +216,12 @@
   overflow: hidden;
 }
 
+.main-content {
+  transition: margin-left 320ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 .app-layout.sidebar-pinned .main-content {
-  margin-left: 260px; /* Width of the pinned sidebar */
+  margin-left: 275px; /* Matches width of the pinned sidebar */
 }
 
 @media (max-width: 900px) {

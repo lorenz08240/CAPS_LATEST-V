@@ -5,11 +5,14 @@ import Build from "../Build/Build";
 import FullscreenGate from "../FullscreenGate/FullscreenGate";
 import Preloader from "./Preloader";
 import Home3DHero from "./Home3DHero";
+import CyberBrand from "../Navigation/CyberBrand";
+import { useSidebar } from "../../contexts/SidebarContext";
 import { enterFullscreen } from "../../utilities/fullscreen";
 import soundManager from "../../utilities/soundManager";
 
 function Home() {
   const navigate = useNavigate();
+  const { toggleSidebar } = useSidebar();
   const [activeModel, setActiveModel] = useState('case');
   const [scrollProgress, setScrollProgress] = useState(0);
 
@@ -92,21 +95,7 @@ function Home() {
 
           {/* 1. TOP HIGH-TECH NAVIGATION BAR */}
           <header className="cyber-top-nav">
-            <div className="cyber-brand" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-              <div className="cyber-logo-box">
-                <img 
-                  src="/assets/system_logo.png" 
-                  alt="BuildLab Logo" 
-                  className="cyber-logo-img" 
-                  onError={(e) => { e.currentTarget.style.display = 'none'; }} 
-                />
-                <span className="cyber-logo-fallback">▲</span>
-              </div>
-              <div className="cyber-brand-text">
-                <span className="cyber-brand-title">BUILDLAB</span>
-                <span className="cyber-brand-badge">SYSTEM V2.4</span>
-              </div>
-            </div>
+            <CyberBrand onNavigateHome={() => window.scrollTo({ top: 0, behavior: "smooth" })} />
 
             <nav className="cyber-nav-links">
               <button 
@@ -176,7 +165,7 @@ function Home() {
 
           {/* 2. LEFT VERTICAL UTILITY & SCROLL RAIL */}
           <aside className="cyber-left-rail">
-            <div className="rail-top-icon">
+            <div className="rail-top-icon" onClick={toggleSidebar} title="Toggle Command Deck [ [ ]" style={{ cursor: "pointer" }}>
               <span className="cyber-square-icon" />
             </div>
             <div className="rail-vertical-label">BUILDLAB // HARDWARE LAB</div>

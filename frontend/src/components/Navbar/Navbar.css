@@ -97,86 +97,359 @@ body.theme-light .sidebar,
 }
 
 /* Header */
+/* ── 100X COOLER HIGH-TECH SIDEBAR HEADER ── */
 .sidebar-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 1.5rem;
-  margin-bottom: 2rem;
-  border-bottom: 1px solid rgba(212, 163, 75, 0.15);
-  padding-bottom: 1.25rem;
+  padding: 0 1.25rem;
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(212, 163, 75, 0.18);
+  padding-bottom: 1.15rem;
+  position: relative;
 }
 
-.sidebar-logo {
-  font-size: 1.35rem;
-  font-weight: 900;
-  letter-spacing: 2.5px;
-  color: #e2ba6f;
-  text-decoration: none;
+.sidebar-brand-group {
   display: flex;
   align-items: center;
-  gap: 8px;
-  text-shadow: 0 2px 10px rgba(212, 163, 75, 0.25);
-  transition: color 0.2s ease;
+  gap: 10px;
 }
 
-.sidebar-logo:hover {
+/* ── INTERACTIVE QUANTUM REACTOR CORE EMBLEM ── */
+.sidebar-reactor-core {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: radial-gradient(circle, rgba(212, 163, 75, 0.25) 0%, rgba(31, 17, 11, 0.8) 80%);
+  border: 1px solid rgba(212, 163, 75, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #f7d28b;
+  box-shadow: 0 0 16px rgba(212, 163, 75, 0.3), inset 0 0 8px rgba(212, 163, 75, 0.2);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  user-select: none;
+}
+
+.sidebar-reactor-core:hover {
+  transform: scale(1.08);
+  border-color: #f7d28b;
+  box-shadow: 0 0 24px rgba(212, 163, 75, 0.6), inset 0 0 12px rgba(212, 163, 75, 0.4);
+}
+
+.sidebar-reactor-core:active {
+  transform: scale(0.94);
+}
+
+.reactor-pulse-halo {
+  position: absolute;
+  inset: -3px;
+  border-radius: 13px;
+  border: 1px dashed rgba(212, 163, 75, 0.35);
+  pointer-events: none;
+  animation: orbitalSpin 18s linear infinite;
+}
+
+.core-orbital-ring {
+  transform-origin: center;
+  animation: orbitalSpin 12s linear infinite;
+  color: #e2ba6f;
+}
+
+.sidebar-reactor-core:hover .core-orbital-ring {
+  animation-duration: 3s;
   color: #f7d28b;
 }
 
-body.theme-light .sidebar-logo,
-.theme-light .sidebar-logo {
-  color: #8c5222;
-  text-shadow: none;
+.core-hex-ring {
+  color: rgba(212, 163, 75, 0.4);
+  transform-origin: center;
 }
 
-.logo-admin-text {
+.core-inner-delta {
+  color: #e2ba6f;
+  filter: drop-shadow(0 0 4px rgba(212, 163, 75, 0.8));
+  animation: corePulseGlow 2.5s ease-in-out infinite;
+}
+
+.core-center-eye {
+  fill: #fff;
+  filter: drop-shadow(0 0 3px #fff);
+}
+
+/* Calibration ripple wave on click */
+.reactor-wave-emitter {
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+  border: 2px solid #f7d28b;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.sidebar-reactor-core.calibrating .reactor-wave-emitter {
+  animation: calibrationRipple 0.8s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+}
+
+@keyframes calibrationRipple {
+  0% {
+    transform: scale(0.8);
+    opacity: 1;
+    border-color: #f7d28b;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+    border-color: #10b981;
+  }
+}
+
+@keyframes orbitalSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes corePulseGlow {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.06);
+    opacity: 1;
+    filter: drop-shadow(0 0 8px rgba(212, 163, 75, 1));
+  }
+}
+
+/* ── BRAND META & TYPOGRAPHY ── */
+.sidebar-logo-v2 {
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-brand-meta {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.brand-title-row {
   display: flex;
   align-items: center;
   gap: 6px;
 }
 
-.admin-tag {
-  background: rgba(212, 163, 75, 0.2);
-  border: 1px solid rgba(212, 163, 75, 0.5);
+.brand-title-main {
+  font-size: 1.25rem;
+  font-weight: 900;
+  letter-spacing: 2px;
   color: #f7d28b;
-  font-size: 0.65rem;
-  font-weight: 800;
-  padding: 2px 6px;
+  text-shadow: 0 2px 10px rgba(212, 163, 75, 0.35);
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+.sidebar-logo-v2:hover .brand-title-main {
+  color: #fff;
+  text-shadow: 0 0 12px rgba(247, 210, 139, 0.8);
+}
+
+.admin-tag-v2 {
+  background: rgba(212, 163, 75, 0.25);
+  border: 1px solid rgba(212, 163, 75, 0.6);
+  color: #f7d28b;
+  font-size: 0.58rem;
+  font-weight: 900;
+  padding: 1px 5px;
   border-radius: 4px;
-  letter-spacing: 1px;
+  letter-spacing: 0.08em;
 }
 
-body.theme-light .admin-tag,
-.theme-light .admin-tag {
-  background: rgba(162, 115, 60, 0.15);
-  border-color: rgba(162, 115, 60, 0.4);
-  color: #7a4115;
+.brand-status-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 2px;
 }
 
-.sidebar-pin-btn {
+.status-live-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 6px #10b981;
+  animation: pingLiveDot 1.8s infinite;
+}
+
+.status-live-text {
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: #c4a480;
+  font-family: monospace;
+}
+
+.status-live-ping {
+  font-size: 0.55rem;
+  font-weight: 700;
+  color: #8c7255;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 1px 4px;
+  border-radius: 3px;
+  border: 1px solid rgba(212, 163, 75, 0.15);
+  font-family: monospace;
+}
+
+@keyframes pingLiveDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.8); }
+}
+
+/* ── TACTILE MAGNETIC DOCK LATCH (PIN BUTTON) ── */
+.sidebar-dock-latch {
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(212, 163, 75, 0.2);
+  border: 1px solid rgba(212, 163, 75, 0.25);
   color: #c4a480;
   cursor: pointer;
-  padding: 7px;
+  padding: 6px 8px;
   border-radius: 8px;
   display: flex;
   align-items: center;
+  gap: 4px;
+  position: relative;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  outline: none;
+}
+
+.sidebar-dock-latch:hover {
+  background: rgba(212, 163, 75, 0.15);
+  color: #f7d28b;
+  border-color: rgba(212, 163, 75, 0.55);
+  box-shadow: 0 0 12px rgba(212, 163, 75, 0.25);
+}
+
+.sidebar-dock-latch.docked {
+  color: #f7d28b;
+  background: rgba(212, 163, 75, 0.25);
+  border-color: #d4a34b;
+  box-shadow: 0 0 14px rgba(212, 163, 75, 0.35), inset 0 0 6px rgba(212, 163, 75, 0.2);
+}
+
+.latch-icon-wrap {
+  display: flex;
+  align-items: center;
   justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.sidebar-dock-latch.docked .latch-icon-wrap {
+  transform: rotate(-8deg);
+}
+
+.latch-status-indicator {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #c4a480;
   transition: all 0.2s ease;
 }
 
-.sidebar-pin-btn:hover {
-  background: rgba(212, 163, 75, 0.12);
-  color: #f3d498;
-  border-color: rgba(212, 163, 75, 0.45);
+.sidebar-dock-latch.docked .latch-status-indicator {
+  background: #10b981;
+  box-shadow: 0 0 6px #10b981;
 }
 
-.sidebar-pin-btn.active {
+/* ── SUB-HEADER TELEMETRY RIBBON ── */
+.sidebar-telemetry-ribbon {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 1.25rem 1.4rem 1.25rem;
+  padding: 5px 10px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(212, 163, 75, 0.15);
+  border-radius: 6px;
+  font-family: monospace;
+}
+
+.ribbon-pill {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.62rem;
+}
+
+.ribbon-label {
+  color: #8c7255;
+  font-weight: 700;
+}
+
+.ribbon-val {
+  font-weight: 800;
+  letter-spacing: 0.05em;
+}
+
+.val-ok {
+  color: #10b981;
+}
+
+.val-active {
   color: #f7d28b;
-  background: rgba(212, 163, 75, 0.22);
-  border-color: #d4a34b;
+}
+
+.val-live {
+  color: #06b6d4;
+}
+
+.val-muted {
+  color: #ef4444;
+}
+
+.ribbon-divider {
+  color: rgba(212, 163, 75, 0.2);
+  font-size: 0.6rem;
+}
+
+.ribbon-pill.sfx-toggle {
+  cursor: pointer;
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.ribbon-pill.sfx-toggle:hover {
+  background: rgba(212, 163, 75, 0.15);
+  border-color: rgba(212, 163, 75, 0.3);
+}
+
+/* ── LIGHT MODE STYLING ── */
+body.theme-light .brand-title-main {
+  color: #8c5222;
+  text-shadow: none;
+}
+
+body.theme-light .sidebar-reactor-core {
+  background: radial-gradient(circle, rgba(162, 115, 60, 0.25) 0%, rgba(247, 241, 231, 0.8) 80%);
+  border-color: rgba(162, 115, 60, 0.45);
+  color: #8c5222;
+}
+
+body.theme-light .status-live-text {
+  color: #7a4115;
+}
+
+body.theme-light .sidebar-dock-latch {
+  border-color: rgba(162, 115, 60, 0.3);
+  color: #7a4115;
+}
+
+body.theme-light .sidebar-telemetry-ribbon {
+  background: rgba(162, 115, 60, 0.08);
+  border-color: rgba(162, 115, 60, 0.25);
 }
 
 /* Indicator Arrow when closed */

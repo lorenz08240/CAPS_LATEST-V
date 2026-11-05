@@ -2,20 +2,41 @@ import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { useTheme } from "../../contexts/ThemeContext";
+import { useSidebar } from "../../contexts/SidebarContext";
 import { enterFullscreen } from "../../utilities/fullscreen";
 import soundManager from "../../utilities/soundManager";
 import "./Navbar.css";
 
-function Navbar({ isPinned, setIsPinned }) {
+function Navbar({ isPinned: propsIsPinned, setIsPinned: propsSetIsPinned }) {
   const { isAdmin, logoutAdmin } = useAuth();
   const { theme, toggleTheme, isDark } = useTheme();
+  const sidebarCtx = useSidebar();
+
+  // Prefer context state, falling back to props if provided
+  const isPinned = propsIsPinned !== undefined ? propsIsPinned : sidebarCtx.isPinned;
+  const setIsPinned = propsSetIsPinned !== undefined ? propsSetIsPinned : sidebarCtx.setIsPinned;
+  const togglePin = sidebarCtx.togglePin;
+  const isHovered = sidebarCtx.isHovered;
+  const setIsHovered = sidebarCtx.setIsHovered;
+  const isOpenManual = sidebarCtx.isOpenManual;
+  const closeSidebar = sidebarCtx.closeSidebar;
+
   const [soundActive, setSoundActive] = useState(() => soundManager.enabled);
-  const [isHovered, setIsHovered] = useState(false);
+  const [isCalibrating, setIsCalibrating] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
   const isAdminRoute = location.pathname.startsWith("/admin");
-  const isVisible = isPinned || isHovered;
+  const isVisible = isPinned || isHovered || isOpenManual;
+
+  const handleCoreClick = (e) => {
+    e.stopPropagation();
+    setIsCalibrating(true);
+    try {
+      soundManager.play("snap");
+    } catch {}
+    setTimeout(() => setIsCalibrating(false), 800);
+  };
 
   const scrollToBuild = (e) => {
     e.preventDefault();
@@ -55,7 +76,7 @@ function Navbar({ isPinned, setIsPinned }) {
       {/* Soft Backdrop Overlay */}
       <div 
         className={`sidebar-backdrop ${isHovered && !isPinned ? "active" : ""}`} 
-        onClick={() => setIsHovered(false)} 
+        onClick={closeSidebar} 
       />
 
       <nav 
@@ -74,24 +95,95 @@ function Navbar({ isPinned, setIsPinned }) {
         )}
 
         <div className="sidebar-container">
+          {/* ════ 100X COOLER HIGH-TECH SIDEBAR HEADER ════ */}
           <div className="sidebar-header">
-            <Link to={isAdminRoute ? "/admin/inventory" : "/"} className="sidebar-logo">
-              {isAdminRoute ? (
-                <span className="logo-admin-text">BUILDLAB <span className="admin-tag">ADMIN</span></span>
-              ) : (
-                <span>BUILDLAB</span>
-              )}
-            </Link>
+            <div className="sidebar-brand-group">
+              {/* Interactive BuildLab Quantum Reactor Core */}
+              <div 
+                className={`sidebar-reactor-core ${isCalibrating ? 'calibrating' : ''}`}
+                onClick={handleCoreClick}
+                title="BuildLab Quantum Core // Click to Re-calibrate System Matrix"
+              >
+                <div className="reactor-pulse-halo" />
+                <svg className="reactor-core-svg" viewBox="0 0 40 40" width="34" height="34">
+                  {/* Outer rotating orbital alignment ring */}
+                  <circle className="core-orbital-ring" cx="20" cy="20" r="17" fill="none" stroke="currentColor" strokeWidth="1.2" strokeDasharray="3 3" />
+                  {/* Middle hex alignment bracket */}
+                  <polygon className="core-hex-ring" points="20,5 33,12.5 33,27.5 20,35 7,27.5 7,12.5" fill="none" stroke="currentColor" strokeWidth="1.2" />
+                  {/* Inner glowing delta/core */}
+                  <polygon className="core-inner-delta" points="20,10 29,26 11,26" fill="currentColor" />
+                  {/* Center energy point */}
+                  <circle className="core-center-eye" cx="20" cy="21" r="2.5" />
+                </svg>
+                <span className="reactor-wave-emitter" />
+              </div>
+
+              {/* Dynamic Brand Typography */}
+              <Link to={isAdminRoute ? "/admin/inventory" : "/"} className="sidebar-logo-v2" onClick={() => { try { soundManager.click(); } catch(e) {} }}>
+                <div className="sidebar-brand-meta">
+                  <div className="brand-title-row">
+                    <span className="brand-title-main">BUILDLAB</span>
+                    {isAdminRoute && <span className="admin-tag-v2">ROOT LVL 4</span>}
+                  </div>
+                  <div className="brand-status-row">
+                    <span className="status-live-dot" />
+                    <span className="status-live-text">{isAdminRoute ? "COMMAND MATRIX" : "SYSTEM V2.4"}</span>
+                    <span className="status-live-ping">12ms</span>
+                  </div>
+                </div>
+              </Link>
+            </div>
+
+            {/* Tactile Magnetic Dock Latch (Upgraded from standard pushpin) */}
             <button 
-              className={`sidebar-pin-btn ${isPinned ? 'active' : ''}`}
-              onClick={() => setIsPinned(!isPinned)}
-              title={isPinned ? "Unpin Sidebar" : "Pin Sidebar"}
+              className={`sidebar-dock-latch ${isPinned ? 'docked' : 'floating'}`}
+              onClick={togglePin}
+              title={isPinned ? "Undock Command Deck (Auto-hide on exit)" : "Dock Command Deck to Workspace"}
+              aria-label={isPinned ? "Undock Deck" : "Dock Deck"}
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill={isPinned ? "#d4a34b" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="12" y1="17" x2="12" y2="22"></line>
-                <path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"></path>
-              </svg>
+              <div className="latch-icon-wrap">
+                {isPinned ? (
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                    <circle cx="12" cy="16" r="1.5" fill="currentColor" />
+                  </svg>
+                ) : (
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                    <path d="M7 11V7a5 5 0 0 1 9.9-1" />
+                  </svg>
+                )}
+              </div>
+              <span className="latch-status-indicator" />
             </button>
+          </div>
+
+          {/* Ultra-Cool Mini Telemetry HUD Ribbon */}
+          <div className="sidebar-telemetry-ribbon">
+            <div className="ribbon-pill">
+              <span className="ribbon-label">CORE</span>
+              <span className="ribbon-val val-ok">NOMINAL</span>
+            </div>
+            <div className="ribbon-divider">/</div>
+            <div className="ribbon-pill">
+              <span className="ribbon-label">RIG</span>
+              <span className="ribbon-val val-active">ACTIVE</span>
+            </div>
+            <div className="ribbon-divider">/</div>
+            <div 
+              className="ribbon-pill sfx-toggle" 
+              onClick={() => {
+                const next = soundManager.toggleSound();
+                setSoundActive(next);
+              }}
+              title={soundActive ? "SFX Active - Click to mute" : "SFX Muted - Click to unmute"}
+            >
+              <span className="ribbon-label">AUDIO</span>
+              <span className={`ribbon-val ${soundActive ? "val-live" : "val-muted"}`}>
+                {soundActive ? "LIVE" : "MUTED"}
+              </span>
+            </div>
           </div>
           
           {/* ── ADMIN PANEL SIDEBAR VIEW ── */}
@@ -273,6 +365,19 @@ function Navbar({ isPinned, setIsPinned }) {
                 </Link>
                 <Link to="/learn" className="sidebar-link">
                   Learn
+                </Link>
+
+                {/* Support & Diagnostics Category */}
+                <div className="sidebar-group-label" style={{ marginTop: '1.2rem', marginBottom: '0.25rem', padding: '0 0.5rem', fontSize: '0.66rem', fontWeight: '800', letterSpacing: '1.5px', textTransform: 'uppercase', color: '#d4a34b', opacity: 0.85 }}>
+                  Support &amp; Intel
+                </div>
+                <Link to="/help" className="sidebar-link support-entry-link" style={{ display: 'flex', alignItems: 'center' }}>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: '6px' }}>
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                  </svg>
+                  Help &amp; Support
                 </Link>
                 <Link to="/admin" className="sidebar-link admin-entry-link">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: '6px' }}><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>

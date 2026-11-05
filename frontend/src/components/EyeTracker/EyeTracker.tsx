@@ -1,4 +1,5 @@
 import React, { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
+import soundManager from "../../utilities/soundManager";
 import "./EyeTracker.css";
 
 /* ══ Eye tracker ═══════════════════════════════════════════
@@ -92,11 +93,11 @@ const LINES = [
   "Hey, I see you.",
   "Boop.",
   "That tickles.",
-  "Hi there!",
+  "Hi there! I'm B.O.B.",
   "Stop poking me.",
-  "I'm watching you.",
+  "I'm watching you build.",
   "Again? Okay.",
-  "You found me.",
+  "You found B.O.B.!",
 ];
 const TINTS = ["#3b5bff", "#179c52", "#e0307f"];
 const KEY_MS = 38;
@@ -197,6 +198,16 @@ export function EyeTracker({
   /* the box it watches inside, as a selector; left unset it is the
      card, stage or board it sits in */
   within,
+  /* custom body/slab fill color override (e.g. RGB AURA color) */
+  bodyColor,
+  /* custom eye/pupil fill color override */
+  eyeColor,
+  /* custom dialogue lines pool for contextual speech */
+  speechLines,
+  /* externally requested phrase to speak */
+  externalSpeech,
+  className = "",
+  style,
 }: {
   follow?: number;
   bounce?: number;
@@ -209,6 +220,12 @@ export function EyeTracker({
   eyeHeight?: number;
   idle?: boolean;
   within?: string;
+  bodyColor?: string;
+  eyeColor?: string;
+  speechLines?: string[];
+  externalSpeech?: string | null;
+  className?: string;
+  style?: React.CSSProperties;
 } = {}) {
   const still = stillness();
   const box = useRef<HTMLDivElement>(null);
@@ -218,26 +235,50 @@ export function EyeTracker({
   const turn = useRef(0);
   const lastLine = useRef(-1);
   useEffect(() => () => { turn.current++; }, []);
-  const poke = async () => {
-    if (idle) return;
+
+  const speakText = async (text: string) => {
     const mine = ++turn.current;
-    const pool = LINES.map((_, i) => i).filter((i) => i !== lastLine.current);
-    const i = pool[Math.floor(Math.random() * pool.length)];
-    lastLine.current = i;
-    const line = LINES[i];
     const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
     setTint(TINTS[Math.floor(Math.random() * TINTS.length)]);
     setTyped("");
     setTalking(true);
-    for (let k = 1; k <= line.length; k++) {
-      await wait(KEY_MS + Math.random() * 30);
+    for (let k = 1; k <= text.length; k++) {
+      await wait(KEY_MS + Math.random() * 24);
       if (mine !== turn.current) return;
-      setTyped(line.slice(0, k));
+      const char = text[k - 1];
+      if (char && char.trim()) {
+        try {
+          soundManager.typewriter();
+        } catch {}
+      }
+      setTyped(text.slice(0, k));
     }
-    await wait(HOLD_MS);
+    await wait(HOLD_MS + 400);
     if (mine !== turn.current) return;
     setTalking(false);
   };
+
+  const poke = async () => {
+    if (idle) return;
+    const activeLines = speechLines && speechLines.length > 0 ? speechLines : LINES;
+    let i: number;
+    // On first interaction, always introduce himself cleanly!
+    if (lastLine.current === -1) {
+      const introIdx = activeLines.findIndex(l => l.toLowerCase().includes("b.o.b"));
+      i = introIdx !== -1 ? introIdx : 0;
+    } else {
+      const pool = activeLines.map((_, idx) => idx).filter((idx) => idx !== lastLine.current);
+      i = pool.length > 0 ? pool[Math.floor(Math.random() * pool.length)] : 0;
+    }
+    lastLine.current = i;
+    await speakText(activeLines[i]);
+  };
+
+  useEffect(() => {
+    if (externalSpeech) {
+      speakText(externalSpeech);
+    }
+  }, [externalSpeech]);
   const eyes = useRef<(SVGGElement | null)[]>([]);
   const knobs = useRef({ follow, bounce, eyeScale });
   knobs.current = { follow, bounce, eyeScale };
@@ -361,27 +402,33 @@ export function EyeTracker({
        further away you are — so on top of it the face is dead
        centre, and off in a corner it is out by that corner's
        rim, turned, one eye smaller and the pair leaning. */
-    /* ── only while you are in its card ─────────────────────
-       It watches the pointer while the pointer is inside the
-       card, stage or board it sits in, and faces front again the
-       moment you leave — a wall of these all turning after a
-       cursor crossing the page read as noise. The reach is
-       measured against that card, so the eyes arrive at the rim
-       as you arrive at its edge. */
-    const frame = el.closest<HTMLElement>(within ?? ".bench-card, .dtl-block, .board, .sf-thumb, .fs-gate-panel, .buildlab-preloader-root") ?? el;
+    /* ── the face follows your cursor across the entire screen ──
+       A spot out along the pointer's direction, smoothly turning
+       wherever your mouse travels on the page. Only constrained if
+       an explicit container selector is supplied. */
     const aim = (e: PointerEvent) => {
-      const f = frame.getBoundingClientRect();
-      if (e.clientX < f.left || e.clientX > f.right || e.clientY < f.top || e.clientY > f.bottom) {
-        t.tx = 0;
-        t.ty = 0;
-        return;
+      // If a specific container selector is explicitly provided (and not "window"), constrain to it
+      if (within && within !== "window") {
+        const frame = el.closest<HTMLElement>(within);
+        if (frame) {
+          const f = frame.getBoundingClientRect();
+          if (e.clientX < f.left || e.clientX > f.right || e.clientY < f.top || e.clientY > f.bottom) {
+            t.tx = 0;
+            t.ty = 0;
+            return;
+          }
+        }
       }
+
       const r = el.getBoundingClientRect();
       const dx = e.clientX - (r.left + r.width / 2);
       const dy = e.clientY - (r.top + r.height / 2);
       const d = Math.hypot(dx, dy) || 1;
-      const reach = Math.max(60, Math.min(f.width, f.height) * 0.28);
-      const far = Math.min(0.85, Math.tanh(d / reach) * (clamp(knobs.current.follow, 0, 100) / 100) * 1.5);
+      // Broad comfortable reach across viewport dimensions for natural full-screen tracking:
+      const vw = typeof window !== "undefined" ? window.innerWidth : 1200;
+      const vh = typeof window !== "undefined" ? window.innerHeight : 800;
+      const reach = Math.max(160, Math.min(vw, vh) * 0.45);
+      const far = Math.min(0.92, Math.tanh(d / reach) * (clamp(knobs.current.follow, 0, 100) / 100) * 1.5);
       t.tx = (dx / d) * far;
       t.ty = (dy / d) * far;
     };
@@ -465,9 +512,14 @@ export function EyeTracker({
   }, [shape, still]);
   return (
     <div
-      className="eyt"
+      className={`eyt ${className}`.trim()}
       ref={box}
-      style={{ "--eyt-size": `${s}px` } as React.CSSProperties}
+      style={{
+        "--eyt-size": `${s}px`,
+        ...(bodyColor ? { "--fill-slab": bodyColor } : {}),
+        ...(eyeColor ? { "--fill-on": eyeColor } : {}),
+        ...style,
+      } as React.CSSProperties}
       role="img"
       aria-label="A ball with two eyes that follows the cursor"
     >
@@ -499,15 +551,17 @@ export function EyeTracker({
         </g>
       </svg>
       {idle ? null : (
-        <span
+        <div
           className="eyt-say"
           data-on={talking || undefined}
           aria-live="polite"
           style={{ "--tint": tint } as React.CSSProperties}
         >
-          <span>{typed}</span>
-          <span className="eyt-caret" />
-        </span>
+          <span className="eyt-say-body">
+            <span className="eyt-say-text">{typed}</span>
+            <span className="eyt-caret" />
+          </span>
+        </div>
       )}
     </div>
   );

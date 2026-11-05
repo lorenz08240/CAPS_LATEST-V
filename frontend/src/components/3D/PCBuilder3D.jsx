@@ -9,6 +9,7 @@ import { calculateScores } from '../../utilities/scoringEngine';
 import { checkCompatibility } from '../../utilities/compatibilityEngine';
 import FullscreenGate from '../FullscreenGate/FullscreenGate';
 import soundManager from '../../utilities/soundManager';
+import EyeTracker from '../EyeTracker';
 import GenericPCCase from './GenericPCCase';
 import ComponentModels3D from './ComponentModels3D';
 import './PCBuilder3D.css';
@@ -747,17 +748,50 @@ function PCBuilder3DWorkspace() {
 
             <div className="hud-divider"></div>
 
-            {/* 360° Turntable Auto-Rotate Button */}
-            <button 
-              className={`hud-btn ${autoRotate ? 'active' : ''}`}
-              onClick={() => {
-                setAutoRotate(!autoRotate);
-                playSound('click');
-              }}
-              title="Toggle Constant 360° Turntable Auto-Rotation"
-            >
-              {autoRotate ? 'Stop Spin' : 'Auto-Rotate'}
-            </button>
+            {/* 360° Turntable Auto-Rotate Button with B.O.B. Companion Dock */}
+            <div className="auto-rotate-bob-group">
+              <button 
+                className={`hud-btn ${autoRotate ? 'active' : ''}`}
+                onClick={() => {
+                  setAutoRotate(!autoRotate);
+                  playSound('click');
+                }}
+                title="Toggle Constant 360° Turntable Auto-Rotation"
+              >
+                {autoRotate ? 'Stop Spin' : 'Auto-Rotate'}
+              </button>
+
+              {/* B.O.B. Companion Dock (matching RGB AURA color, poke him to speak!) */}
+              <div 
+                className="bob-companion-dock" 
+                title="B.O.B. — Your 3D Studio Companion (Poke him!)"
+                style={{
+                  '--bob-rgb-color': rgbColor,
+                  '--bob-rgb-glow': `${rgbColor}44`,
+                }}
+              >
+                <div className="bob-coin-pedestal">
+                  <EyeTracker
+                    size={42}
+                    shape="Cube"
+                    eyes="Squares"
+                    bodyColor={rgbColor}
+                    eyeColor="#06080e"
+                    bounce={45}
+                    follow={80}
+                    speechLines={[
+                      "Hi! I'm B.O.B.",
+                      "Loving the RGB Aura color!",
+                      "Nice airflow orientation!",
+                      "Cable management looking clean.",
+                      "Click auto-rotate to inspect all angles!",
+                      "That tickles!",
+                      "Poke me anytime while building!"
+                    ]}
+                  />
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* 2. Chassis & Assembly Toolset */}

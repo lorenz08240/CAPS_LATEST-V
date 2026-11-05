@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import soundManager from '../../utilities/soundManager';
+import CyberBrand from './CyberBrand';
 import './GlobalHeader.css';
 
 export default function GlobalHeader({ onSearchClick }) {
@@ -24,21 +25,10 @@ export default function GlobalHeader({ onSearchClick }) {
 
   return (
     <header className="global-cyber-nav">
-      <Link to="/" className="global-brand-link" onClick={() => { try { soundManager.click(); } catch (e) {} }}>
-        <div className="global-logo-box">
-          <img 
-            src="/assets/system_logo.png" 
-            alt="BuildLab Logo" 
-            className="global-logo-img" 
-            onError={(e) => { e.currentTarget.style.display = 'none'; }} 
-          />
-          <span className="global-logo-fallback">▲</span>
-        </div>
-        <div className="global-brand-text">
-          <span className="global-brand-title">BUILDLAB</span>
-          <span className="global-brand-badge">SYSTEM V2.4</span>
-        </div>
-      </Link>
+      <CyberBrand onNavigateHome={() => {
+        try { soundManager.click(); } catch (e) {}
+        navigate('/');
+      }} />
 
       <nav className="global-nav-links">
         {navItems.map((item) => {
