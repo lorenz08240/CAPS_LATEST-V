@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSidebar } from "../../contexts/SidebarContext";
 import soundManager from "../../utilities/soundManager";
+import systemLogo from "../../assets/system_logo.png";
 import "./CyberBrand.css";
 
 const TELEMETRY_METRICS = [
@@ -71,9 +72,10 @@ export default function CyberBrand({ onNavigateHome }) {
           /* Standard BuildLab Triangle / Logo when Closed */
           <div className="deck-closed-logo">
             <img
-              src="/assets/system_logo.png"
+              src={systemLogo}
               alt="BuildLab Logo"
               className="cyber-logo-img"
+              draggable={false}
               onError={(e) => {
                 e.currentTarget.style.display = "none";
               }}

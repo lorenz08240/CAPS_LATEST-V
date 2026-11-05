@@ -203,8 +203,12 @@ export const AdminCrawler = () => {
           });
         }
 
+        if (selectedCategory && selectedCategory !== "all") {
+          setQueueFilterCategory(selectedCategory);
+        }
+
         setToast({
-          text: `Crawl complete! New ${selectedStore} components populated in Review Queue.`,
+          text: `Crawl complete! ${selectedStore} (${selectedCategory === "all" ? "All Categories" : selectedCategory.toUpperCase()}) components staged in Review Queue.`,
           type: "success"
         });
         await fetchScrapedQueue();

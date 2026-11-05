@@ -1011,7 +1011,10 @@ body.theme-light .course-sidebar-foot,
   }
 
   .course-stream {
-    padding: 1.25rem 1.1rem 3rem;
+    margin-left: 0;
+    margin-right: 0;
+    max-width: 100%;
+    padding: 1.25rem 1.1rem 5rem;
   }
 
   .lesson-title {

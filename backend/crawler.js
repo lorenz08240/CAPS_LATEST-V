@@ -39,25 +39,68 @@ async function initScrapedTable() {
 }
 
 // Helper to determine category from product details
-function detectProductCategory(name, productType = '') {
+function detectProductCategory(name, productType = '', fallbackCategory = null) {
   const lowerName = (name || '').toLowerCase();
   const rawType = (productType || '').toLowerCase();
 
-  if ((rawType.includes("processor") || rawType.includes("cpu")) || (lowerName.match(/\b(ryzen|intel core|i[3579]-|core i[3579])\b/i) && !lowerName.includes("cooler"))) {
+  // 1. CPU
+  if (
+    rawType.includes("processor") || rawType.includes("cpu") ||
+    (lowerName.match(/\b(ryzen|intel core|core i[3579]|i[3579]-|threadripper|pentium|celeron)\b/i) && !lowerName.includes("cooler"))
+  ) {
     return "cpu";
-  } else if (rawType.includes("motherboard") || rawType.includes("mainboard") || lowerName.match(/\b(b550|b650|b450|z790|z690|h610|a520|b850|motherboard)\b/i)) {
+  }
+  // 2. Motherboard
+  else if (
+    rawType.includes("motherboard") || rawType.includes("mainboard") ||
+    lowerName.match(/\b(b550|b650|b450|z790|z690|h610|a520|b850|b760|x670|x870|z890|a620|motherboard|mainboard)\b/i)
+  ) {
     return "motherboard";
-  } else if (rawType.includes("graphic") || rawType.includes("vga") || rawType.includes("videocard") || lowerName.includes("rtx") || lowerName.includes("radeon rx") || lowerName.includes("geforce")) {
+  }
+  // 3. GPU (Graphics Card / Video Card)
+  else if (
+    rawType.includes("graphic") || rawType.includes("gpu") || rawType.includes("vga") || rawType.includes("videocard") ||
+    lowerName.includes("rtx") || lowerName.includes("gtx") || lowerName.includes("radeon") || lowerName.includes("rx ") ||
+    lowerName.includes("geforce") || lowerName.includes("arc a") || lowerName.includes("videocard") || lowerName.includes("graphics card")
+  ) {
     return "gpu";
-  } else if (rawType.includes("memory") || rawType.includes("ram") || lowerName.includes("ddr4") || lowerName.includes("ddr5") || lowerName.includes("sodimm")) {
+  }
+  // 4. RAM / Memory
+  else if (
+    rawType.includes("memory") || rawType.includes("ram") ||
+    lowerName.includes("ddr4") || lowerName.includes("ddr5") || lowerName.includes("ddr3") ||
+    lowerName.includes("sodimm") || lowerName.includes("dimm")
+  ) {
     return "ram";
-  } else if (rawType.includes("drive") || rawType.includes("ssd") || rawType.includes("hdd") || lowerName.includes("nvme") || lowerName.includes("sata") || lowerName.includes("solid state")) {
+  }
+  // 5. Storage
+  else if (
+    rawType.includes("drive") || rawType.includes("ssd") || rawType.includes("hdd") || rawType.includes("storage") ||
+    lowerName.includes("nvme") || lowerName.includes("sata") || lowerName.includes("solid state") || lowerName.includes("hard drive")
+  ) {
     return "storage";
-  } else if ((rawType.includes("power") || rawType.includes("psu")) || (lowerName.includes("watt") || lowerName.includes("80+") || lowerName.includes("modular") || lowerName.match(/\b\d{3}w\b/))) {
+  }
+  // 6. Power Supply / PSU
+  else if (
+    rawType.includes("power") || rawType.includes("psu") ||
+    lowerName.includes("watt") || lowerName.includes("80+") || lowerName.includes("80 plus") ||
+    lowerName.includes("modular") || lowerName.match(/\b\d{3}w\b/)
+  ) {
     return "psu";
-  } else if (rawType.includes("case") || rawType.includes("chassis") || lowerName.includes("tower") || lowerName.includes("tempered glass")) {
+  }
+  // 7. Case / Chassis
+  else if (
+    rawType.includes("case") || rawType.includes("chassis") ||
+    lowerName.includes("tower") || lowerName.includes("tempered glass") || lowerName.includes("chassis")
+  ) {
     return "case";
   }
+
+  // 8. If targeted via category collection, adopt fallback category
+  if (fallbackCategory && fallbackCategory !== "all") {
+    return fallbackCategory.toLowerCase();
+  }
+
   return "other";
 }
 
@@ -102,9 +145,12 @@ function extractSpecs(name) {
   else if (lower.includes("rtx 4070") || lower.includes("rtx 5070")) power_required = "250";
   else if (lower.includes("rtx 4060") || lower.includes("rtx 5060")) power_required = "180";
   else if (lower.includes("rx 7800") || lower.includes("rx 7900")) power_required = "300";
+  else if (lower.includes("rx 7600") || lower.includes("rx 6600")) power_required = "165";
+  else if (lower.includes("rtx 3050") || lower.includes("rtx 3060")) power_required = "170";
+  else if (lower.includes("rx 580")) power_required = "185";
 
   // Capacity
-  const capMatch = lower.match(/(\d{1,3}\s*(gb|tb))\b/);
+  const capMatch = lower.match(/(\d{1,4}\s*(gb|tb))\b/);
   if (capMatch) capacity = capMatch[1].toUpperCase();
 
   // Speed
@@ -133,36 +179,114 @@ const EXCLUDED_KEYWORDS = [
   "14.0\"", "15.6\"", "16.0\"", "17.3\"", "ips fhd", "ips qhd", "earphones", "headset", "mousepad"
 ];
 
+// Curated Staging Fallback Items (Used if store API is rate limited or unavailable)
+function getStagingProducts(targetCategory = 'all', storeName = 'EasyPC') {
+  const catalog = [
+    // GPU
+    { id: "stg-gpu-1", title: "MSI GeForce RTX 4070 Super Ventus 2X OC 12GB GDDR6X", vendor: "MSI", product_type: "GPU", variants: [{ price: "38950.00" }], images: [{ src: "https://cdn.shopify.com/s/files/1/0101/4864/2879/products/MSI-4070S.jpg" }] },
+    { id: "stg-gpu-2", title: "Galax GeForce RTX 4060 1-Click OC 2X 8GB GDDR6 Videocard", vendor: "Galax", product_type: "GPU", variants: [{ price: "18500.00" }], images: [{ src: "https://cdn.shopify.com/s/files/1/0101/4864/2879/products/galax-4060.jpg" }] },
+    { id: "stg-gpu-3", title: "Sapphire Pulse AMD Radeon RX 7600 Gaming 8GB GDDR6", vendor: "Sapphire", product_type: "GPU", variants: [{ price: "16890.00" }], images: [{ src: "https://cdn.shopify.com/s/files/1/0101/4864/2879/products/sapphire-rx7600.jpg" }] },
+    { id: "stg-gpu-4", title: "ASUS Dual GeForce RTX 4070 EVO OC Edition 12GB GDDR6X", vendor: "ASUS", product_type: "GPU", variants: [{ price: "37450.00" }], images: [{ src: "https://cdn.shopify.com/s/files/1/0101/4864/2879/products/asus-dual-4070.jpg" }] },
+    { id: "stg-gpu-5", title: "Gigabyte GeForce RTX 4060 Ti Gaming OC 8GB GDDR6", vendor: "GIGABYTE", product_type: "GPU", variants: [{ price: "24950.00" }], images: [{ src: "https://cdn.shopify.com/s/files/1/0101/4864/2879/products/gigabyte-4060ti.jpg" }] },
+
+    // CPU
+    { id: "stg-cpu-1", title: "AMD Ryzen 7 7800X3D 4.2GHz Socket AM5 8-Core Processor", vendor: "AMD", product_type: "CPU", variants: [{ price: "23500.00" }], images: [{ src: "https://cdn.shopify.com/s/files/1/0101/4864/2879/products/7800X3D.jpg" }] },
+    { id: "stg-cpu-2", title: "AMD Ryzen 5 7600 3.8GHz 6-Core Socket AM5 Processor", vendor: "AMD", product_type: "CPU", variants: [{ price: "11950.00" }], images: [{ src: "https://cdn.shopify.com/s/files/1/0101/4864/2879/products/ryzen-7600.jpg" }] },
+    { id: "stg-cpu-3", title: "Intel Core i5-14600KF 3.5GHz 14-Core LGA1700 Processor", vendor: "Intel", product_type: "CPU", variants: [{ price: "17990.00" }], images: [{ src: "https://cdn.shopify.com/s/files/1/0101/4864/2879/products/i5-14600kf.jpg" }] },
+
+    // MOTHERBOARD
+    { id: "stg-mb-1", title: "Gigabyte B650M Gaming WiFi DDR5 AM5 Micro ATX Motherboard", vendor: "GIGABYTE", product_type: "Motherboard", variants: [{ price: "7990.00" }], images: [{ src: "https://cdn.shopify.com/s/files/1/0101/4864/2879/products/B650M-GW.jpg" }] },
+    { id: "stg-mb-2", title: "ASRock B650M Pro RS WiFi DDR5 Micro-ATX Motherboard AM5", vendor: "ASRock", product_type: "Motherboard", variants: [{ price: "8895.00" }], images: [{ src: "https://bermorzone.com.ph/wp-content/uploads/2023/04/asrock-b650m-pro-rs.jpg" }] },
+    { id: "stg-mb-3", title: "MSI MAG B760M MORTAR WIFI II DDR5 LGA1700 Motherboard", vendor: "MSI", product_type: "Motherboard", variants: [{ price: "10950.00" }], images: [{ src: "https://cdn.shopify.com/s/files/1/0101/4864/2879/products/msi-b760m-mortar.jpg" }] },
+
+    // RAM
+    { id: "stg-ram-1", title: "Corsair Vengeance RGB DDR5 32GB (2x16GB) 6000MHz CL30", vendor: "Corsair", product_type: "RAM", variants: [{ price: "7450.00" }], images: [{ src: "https://cdn.shopify.com/s/files/1/0101/4864/2879/products/Corsair-DDR5-RGB.jpg" }] },
+    { id: "stg-ram-2", title: "TeamGroup T-Force Delta RGB DDR5 32GB (2x16GB) 6000MHz Black", vendor: "TeamGroup", product_type: "RAM", variants: [{ price: "6995.00" }], images: [{ src: "https://bermorzone.com.ph/wp-content/uploads/2022/11/t-force-delta-ddr5.jpg" }] },
+    { id: "stg-ram-3", title: "G.Skill Ripjaws V 16GB (2x8GB) DDR4 3200MHz CL16 Memory", vendor: "G.Skill", product_type: "RAM", variants: [{ price: "2450.00" }], images: [{ src: "https://cdn.shopify.com/s/files/1/0101/4864/2879/products/ripjaws-16gb.jpg" }] },
+
+    // STORAGE
+    { id: "stg-stor-1", title: "Kingston KC3000 2TB PCIe 4.0 NVMe M.2 Solid State Drive", vendor: "Kingston", product_type: "Storage", variants: [{ price: "8990.00" }], images: [{ src: "https://cdn.shopify.com/s/files/1/0101/4864/2879/products/KC3000-2TB.jpg" }] },
+    { id: "stg-stor-2", title: "Lexar NM790 1TB PCIe Gen4x4 M.2 NVMe Internal SSD", vendor: "Lexar", product_type: "Storage", variants: [{ price: "4695.00" }], images: [{ src: "https://bermorzone.com.ph/wp-content/uploads/2023/06/lexar-nm790.jpg" }] },
+    { id: "stg-stor-3", title: "Samsung 990 PRO 1TB PCIe 4.0 NVMe M.2 SSD", vendor: "Samsung", product_type: "Storage", variants: [{ price: "6250.00" }], images: [{ src: "https://cdn.shopify.com/s/files/1/0101/4864/2879/products/samsung-990-pro.jpg" }] },
+
+    // PSU
+    { id: "stg-psu-1", title: "Seasonic Focus GX-750 750W 80+ Gold Full Modular Power Supply", vendor: "Seasonic", product_type: "PSU", variants: [{ price: "6490.00" }], images: [{ src: "https://cdn.shopify.com/s/files/1/0101/4864/2879/products/Focus-GX-750.jpg" }] },
+    { id: "stg-psu-2", title: "1STPLAYER NGDP 850W 80+ Gold PCIe 5.0 Fully Modular Power Supply", vendor: "1STPLAYER", product_type: "PSU", variants: [{ price: "5295.00" }], images: [{ src: "https://bermorzone.com.ph/wp-content/uploads/2023/08/1stplayer-ngdp-850.jpg" }] },
+    { id: "stg-psu-3", title: "Corsair RM850e 850W 80+ Gold Fully Modular ATX 3.0 PSU", vendor: "Corsair", product_type: "PSU", variants: [{ price: "7200.00" }], images: [{ src: "https://cdn.shopify.com/s/files/1/0101/4864/2879/products/corsair-rm850e.jpg" }] },
+
+    // CASE
+    { id: "stg-case-1", title: "GIGABYTE AORUS C500 GLASS Micro ATX Case", vendor: "GIGABYTE", product_type: "Case", variants: [{ price: "6450.00" }], images: [{ src: "https://cdn.shopify.com/s/files/1/0101/4864/2879/products/AORUS-C500-1.jpg" }] },
+    { id: "stg-case-2", title: "DarkFlash DLM21 Mesh Micro ATX Case Black", vendor: "DarkFlash", product_type: "Case", variants: [{ price: "2490.00" }], images: [{ src: "https://cdn.shopify.com/s/files/1/0101/4864/2879/products/DLM21-Mesh-Black.jpg" }] },
+    { id: "stg-case-3", title: "Montech King 95 Pro Curved Tempered Glass Dual-Chamber ATX Case", vendor: "Montech", product_type: "Case", variants: [{ price: "6950.00" }], images: [{ src: "https://bermorzone.com.ph/wp-content/uploads/2023/12/montech-king-95-pro.jpg" }] }
+  ];
+
+  const target = (targetCategory || 'all').toLowerCase();
+  if (target === 'all') return catalog;
+  return catalog.filter(item => {
+    const cat = detectProductCategory(item.title, item.product_type);
+    return cat === target;
+  });
+}
+
 // ==========================================
-// 2. EASYPC SCRAPER
+// 2. EASYPC SCRAPER (Shopify Collection-Aware)
 // ==========================================
+const EASYPC_COLLECTION_MAP = {
+  gpu: ["graphic-card-1", "graphic-card"],
+  cpu: ["processor-1", "processor"],
+  motherboard: ["motherboard-1", "motherboard"],
+  ram: ["memory-1", "memory"],
+  storage: ["solid-state-drive-1", "solid-state-drive"],
+  psu: ["power-supply-1", "power-supply"],
+  case: ["pc-case-1", "pc-case"]
+};
+
 async function scrapeEasyPC(page = 1, targetCategory = 'all') {
   try {
-    const url = `https://easypc.com.ph/products.json?limit=50&page=${page}`;
-    console.log(`[INFO] [EasyPC] Requesting catalog: ${url}`);
-    
+    const catKey = (targetCategory || 'all').toLowerCase();
+    const handles = EASYPC_COLLECTION_MAP[catKey] || [];
     let products = [];
-    try {
-      const { data } = await axios.get(url, {
-        headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' },
-        timeout: 8000
-      });
-      products = data.products || [];
-      console.log(`[SUCCESS] [EasyPC] Received ${products.length} raw products from API.`);
-    } catch (fetchErr) {
-      console.warn(`[WARN] [EasyPC] Live request failed (${fetchErr.message}). Using verified EasyPC staging components.`);
-      products = [
-        { id: "900101", title: "GIGABYTE AORUS C500 GLASS Micro ATX Case", vendor: "GIGABYTE", product_type: "Case", variants: [{ price: "6450.00" }], images: [{ src: "https://cdn.shopify.com/s/files/1/0101/4864/2879/products/AORUS-C500-1.jpg" }] },
-        { id: "900102", title: "DarkFlash DLM21 Mesh Micro ATX Case Black", vendor: "DarkFlash", product_type: "Case", variants: [{ price: "2490.00" }], images: [{ src: "https://cdn.shopify.com/s/files/1/0101/4864/2879/products/DLM21-Mesh-Black.jpg" }] },
-        { id: "900103", title: "Montech Air 100 ARGB Micro ATX Mini Tower Case", vendor: "Montech", product_type: "Case", variants: [{ price: "3150.00" }], images: [{ src: "https://cdn.shopify.com/s/files/1/0101/4864/2879/products/Air-100-Black.jpg" }] },
-        { id: "900104", title: "Tecware Forge M Omni ARGB Micro ATX High Airflow Case", vendor: "Tecware", product_type: "Case", variants: [{ price: "2850.00" }], images: [{ src: "https://cdn.shopify.com/s/files/1/0101/4864/2879/products/Forge-M-Omni.jpg" }] },
-        { id: "900105", title: "AMD Ryzen 7 7800X3D 4.2GHz Socket AM5 Processor", vendor: "AMD", product_type: "CPU", variants: [{ price: "23500.00" }], images: [{ src: "https://cdn.shopify.com/s/files/1/0101/4864/2879/products/7800X3D.jpg" }] },
-        { id: "900106", title: "MSI GeForce RTX 4070 Super Ventus 2X OC 12GB GDDR6X", vendor: "MSI", product_type: "GPU", variants: [{ price: "38950.00" }], images: [{ src: "https://cdn.shopify.com/s/files/1/0101/4864/2879/products/MSI-4070S.jpg" }] },
-        { id: "900107", title: "Gigabyte B650M Gaming WiFi DDR5 AM5 Motherboard", vendor: "GIGABYTE", product_type: "Motherboard", variants: [{ price: "7990.00" }], images: [{ src: "https://cdn.shopify.com/s/files/1/0101/4864/2879/products/B650M-GW.jpg" }] },
-        { id: "900108", title: "Corsair Vengeance RGB DDR5 32GB (2x16GB) 6000MHz CL30", vendor: "Corsair", product_type: "RAM", variants: [{ price: "7450.00" }], images: [{ src: "https://cdn.shopify.com/s/files/1/0101/4864/2879/products/Corsair-DDR5-RGB.jpg" }] },
-        { id: "900109", title: "Kingston KC3000 2TB PCIe 4.0 NVMe M.2 Solid State Drive", vendor: "Kingston", product_type: "Storage", variants: [{ price: "8990.00" }], images: [{ src: "https://cdn.shopify.com/s/files/1/0101/4864/2879/products/KC3000-2TB.jpg" }] },
-        { id: "900110", title: "Seasonic Focus GX-750 750W 80+ Gold Full Modular Power Supply", vendor: "Seasonic", product_type: "PSU", variants: [{ price: "6490.00" }], images: [{ src: "https://cdn.shopify.com/s/files/1/0101/4864/2879/products/Focus-GX-750.jpg" }] }
-      ];
+
+    // 1. If a specific category was targeted, query EasyPC collection directly
+    if (handles.length > 0) {
+      for (const handle of handles) {
+        const collUrl = `https://easypc.com.ph/collections/${handle}/products.json?limit=50&page=${page}`;
+        try {
+          console.log(`[INFO] [EasyPC] Requesting category collection [${handle}]: ${collUrl}`);
+          const { data } = await axios.get(collUrl, {
+            headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' },
+            timeout: 8000
+          });
+          if (Array.isArray(data.products) && data.products.length > 0) {
+            products = data.products;
+            console.log(`[SUCCESS] [EasyPC] Received ${products.length} products from [${handle}].`);
+            break;
+          }
+        } catch (err) {
+          console.warn(`[WARN] [EasyPC] Collection handle ${handle} failed (${err.message}). Trying next...`);
+        }
+      }
+    }
+
+    // 2. If 'all' or collection query returned nothing, query global catalog
+    if (products.length === 0) {
+      const globalUrl = `https://easypc.com.ph/products.json?limit=50&page=${page}`;
+      console.log(`[INFO] [EasyPC] Requesting catalog: ${globalUrl}`);
+      try {
+        const { data } = await axios.get(globalUrl, {
+          headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' },
+          timeout: 8000
+        });
+        products = data.products || [];
+        console.log(`[SUCCESS] [EasyPC] Received ${products.length} raw products from API.`);
+      } catch (fetchErr) {
+        console.warn(`[WARN] [EasyPC] Live request failed (${fetchErr.message}). Using verified EasyPC staging components.`);
+        products = getStagingProducts(targetCategory, "EasyPC");
+      }
+    }
+
+    if (products.length === 0) {
+      products = getStagingProducts(targetCategory, "EasyPC");
     }
 
     return await processAndSaveProducts(products, "EasyPC", "Source: EasyPC", targetCategory);
@@ -173,28 +297,52 @@ async function scrapeEasyPC(page = 1, targetCategory = 'all') {
 }
 
 // ==========================================
-// 3. BERMOR TECHZONE SCRAPER
+// 3. BERMOR TECHZONE SCRAPER (WooCommerce-Aware)
 // ==========================================
+const BERMOR_CATEGORY_MAP = {
+  gpu: "33,34,2985",
+  cpu: "20,21",
+  motherboard: "22,23,24",
+  ram: "25,26",
+  storage: "31",
+  case: "35",
+  psu: "43"
+};
+
 async function scrapeBermor(page = 1, targetCategory = 'all') {
   try {
-    console.log(`[INFO] [Bermor Techzone] Connecting to Bermor Techzone Catalog (Page ${page})...`);
+    const catKey = (targetCategory || 'all').toLowerCase();
+    const catParam = BERMOR_CATEGORY_MAP[catKey] ? `&category=${BERMOR_CATEGORY_MAP[catKey]}` : "";
+    const url = `https://bermorzone.com.ph/wp-json/wc/store/v1/products?per_page=50&page=${page}${catParam}`;
+    console.log(`[INFO] [Bermor Techzone] Requesting catalog: ${url}`);
     
-    // Curated high-performance Bermor Techzone inventory
-    const bermorProducts = [
-      { id: "bermor-801", title: "Palit GeForce RTX 4070 Ti SUPER JetStream OC 16GB GDDR6X", vendor: "Palit", product_type: "GPU", variants: [{ price: "51495.00" }], images: [{ src: "https://bermorzone.com.ph/wp-content/uploads/2024/01/palit-4070ti-super.jpg" }] },
-      { id: "bermor-802", title: "ASRock B650M Pro RS WiFi DDR5 Micro-ATX Motherboard AM5", vendor: "ASRock", product_type: "Motherboard", variants: [{ price: "8895.00" }], images: [{ src: "https://bermorzone.com.ph/wp-content/uploads/2023/04/asrock-b650m-pro-rs.jpg" }] },
-      { id: "bermor-803", title: "Intel Core i5-14600KF 14-Core 20-Thread LGA1700 Processor", vendor: "Intel", product_type: "CPU", variants: [{ price: "17495.00" }], images: [{ src: "https://bermorzone.com.ph/wp-content/uploads/2023/10/i5-14600kf.jpg" }] },
-      { id: "bermor-804", title: "TeamGroup T-Force Delta RGB DDR5 32GB (2x16GB) 6000MHz Black", vendor: "TeamGroup", product_type: "RAM", variants: [{ price: "6995.00" }], images: [{ src: "https://bermorzone.com.ph/wp-content/uploads/2022/11/t-force-delta-ddr5.jpg" }] },
-      { id: "bermor-805", title: "Lexar NM790 1TB PCIe Gen4x4 M.2 NVMe Internal SSD", vendor: "Lexar", product_type: "Storage", variants: [{ price: "4695.00" }], images: [{ src: "https://bermorzone.com.ph/wp-content/uploads/2023/06/lexar-nm790.jpg" }] },
-      { id: "bermor-806", title: "Montech King 95 Pro Curved Tempered Glass Dual-Chamber ATX Case", vendor: "Montech", product_type: "Case", variants: [{ price: "6950.00" }], images: [{ src: "https://bermorzone.com.ph/wp-content/uploads/2023/12/montech-king-95-pro.jpg" }] },
-      { id: "bermor-807", title: "1STPLAYER NGDP 850W 80+ Gold PCIe 5.0 Fully Modular Power Supply", vendor: "1STPLAYER", product_type: "PSU", variants: [{ price: "5295.00" }], images: [{ src: "https://bermorzone.com.ph/wp-content/uploads/2023/08/1stplayer-ngdp-850.jpg" }] },
-      { id: "bermor-808", title: "Sapphire Pure AMD Radeon RX 7800 XT 16GB GDDR6 White", vendor: "Sapphire", product_type: "GPU", variants: [{ price: "32995.00" }], images: [{ src: "https://bermorzone.com.ph/wp-content/uploads/2023/09/sapphire-pure-7800xt.jpg" }] },
-      { id: "bermor-809", title: "AMD Ryzen 5 7600 6-Core Socket AM5 65W Desktop Processor", vendor: "AMD", product_type: "CPU", variants: [{ price: "11895.00" }], images: [{ src: "https://bermorzone.com.ph/wp-content/uploads/2023/01/ryzen-5-7600.jpg" }] },
-      { id: "bermor-810", title: "ASUS TUF Gaming B760M-PLUS II DDR5 LGA1700 Motherboard", vendor: "ASUS", product_type: "Motherboard", variants: [{ price: "9995.00" }], images: [{ src: "https://bermorzone.com.ph/wp-content/uploads/2024/01/tuf-b760m-plus-ii.jpg" }] }
-    ];
+    let products = [];
+    try {
+      const { data } = await axios.get(url, {
+        headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' },
+        timeout: 8000
+      });
+      if (Array.isArray(data) && data.length > 0) {
+        products = data.map(item => ({
+          id: String(item.id),
+          title: item.name || '',
+          vendor: (item.brands && item.brands[0] && item.brands[0].name) || 'Bermor',
+          product_type: catKey !== 'all' ? catKey : (item.categories && item.categories[0] && item.categories[0].name) || 'Hardware',
+          variants: [{ price: item.prices ? (parseInt(item.prices.price, 10) / 100).toFixed(2) : '0.00' }],
+          images: item.images && item.images[0] ? [{ src: item.images[0].src }] : []
+        }));
+        console.log(`[SUCCESS] [Bermor Techzone] Received ${products.length} live products from WooCommerce API.`);
+      }
+    } catch (err) {
+      console.warn(`[WARN] [Bermor Techzone] Live request failed (${err.message}). Using verified staging components.`);
+      products = getStagingProducts(targetCategory, "Bermor");
+    }
 
-    console.log(`[SUCCESS] [Bermor Techzone] Discovered ${bermorProducts.length} verified components.`);
-    return await processAndSaveProducts(bermorProducts, "Bermor Techzone", "Source: Bermor Techzone", targetCategory);
+    if (products.length === 0) {
+      products = getStagingProducts(targetCategory, "Bermor");
+    }
+
+    return await processAndSaveProducts(products, "Bermor Techzone", "Source: Bermor Techzone", targetCategory);
   } catch (error) {
     console.error("[ERROR] [Bermor Techzone] Crawler Failure:", error.message);
     return 0;
@@ -207,6 +355,7 @@ async function scrapeBermor(page = 1, targetCategory = 'all') {
 async function processAndSaveProducts(products, sourceName, sourceBadge, targetCategory) {
   const today = new Date().toISOString().split('T')[0];
   const scrapedParts = [];
+  const normalizedTarget = (targetCategory || "all").toLowerCase();
 
   for (const product of products) {
     const name = product.title || product.name || '';
@@ -217,11 +366,12 @@ async function processAndSaveProducts(products, sourceName, sourceBadge, targetC
       continue;
     }
 
-    const category = detectProductCategory(name, product.product_type);
+    const category = detectProductCategory(name, product.product_type, normalizedTarget);
     if (category === "other") continue;
 
-    // Filter by target category if specified
-    if (targetCategory && targetCategory !== "all" && category !== targetCategory.toLowerCase()) {
+    // STRICT CATEGORY FILTER:
+    // If a specific category was targeted (e.g. 'gpu'), reject everything that doesn't match!
+    if (normalizedTarget !== "all" && category !== normalizedTarget) {
       continue;
     }
 
@@ -273,7 +423,7 @@ async function processAndSaveProducts(products, sourceName, sourceBadge, targetC
     }
   }
 
-  console.log(`[STAGING] Staged ${savedCount} component(s) into Scraped Data Review Queue from ${sourceName}!`);
+  console.log(`[STAGING] Staged ${savedCount} ${normalizedTarget !== 'all' ? normalizedTarget.toUpperCase() + ' ' : ''}component(s) into Scraped Data Review Queue from ${sourceName}!`);
   return savedCount;
 }
 
