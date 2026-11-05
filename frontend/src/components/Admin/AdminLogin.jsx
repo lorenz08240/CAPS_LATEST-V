@@ -30,19 +30,14 @@ export const AdminLogin = () => {
 
   return (
     <div className="admin-page-wrapper">
-      <div className="organic-waves-overlay" aria-hidden="true">
-        <div className="wave-glow wave-glow-gold"></div>
-        <div className="wave-glow wave-glow-burgundy"></div>
-        <div className="wave-glow wave-glow-cyan"></div>
-      </div>
-
       <div className="admin-page admin-login-wrapper">
         <div className="admin-login-left">
           <div className="login-graphic">
-            <div className="deck-tag">RESTRICTED COMMAND CENTER</div>
+            <div className="deck-tag">[ RESTRICTED COMMAND CENTER ]</div>
             <h1>BuildLab Control Deck</h1>
             <p>Administrative hardware inventory control, crawler orchestration, and compatibility matrix engineering.</p>
             <div className="session-security-pill">
+              <span className="security-status-indicator"></span>
               <span>Non-persistent session: Credentials automatically expire on window close</span>
             </div>
             <div className="cyber-circuit"></div>
@@ -79,7 +74,17 @@ export const AdminLogin = () => {
                     tabIndex="-1"
                     title={showPassword ? "Hide password" : "Show password"}
                   >
-                    {showPassword ? "👁️" : "👁️‍🗨️"}
+                    {showPassword ? (
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                      </svg>
+                    ) : (
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
+                    )}
                   </button>
                 </div>
               </div>

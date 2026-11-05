@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import GlobalHeader from "../Navigation/GlobalHeader";
 import { useBuild } from "../../contexts/BuildContext";
 import CourseVideoPlayer from "./CourseVideoPlayer";
 import soundManager from "../../utilities/soundManager";
@@ -1456,6 +1457,7 @@ export default function CourseShell({ componentGuide }) {
 
   return (
     <div className="learn-page full-bleed-page course-shell-root">
+      <GlobalHeader />
       <div className="bg-glow bg-glow-1" aria-hidden="true" />
       <div className="bg-glow bg-glow-2" aria-hidden="true" />
 
@@ -1491,9 +1493,9 @@ export default function CourseShell({ componentGuide }) {
               <div className="lesson-header-overlay" />
               <div className="lesson-header-inner">
                 <nav className="lesson-eyebrow" aria-label="Course breadcrumb">
-                  <Link to="/learn" className="eyebrow-link">BuildLab</Link>
+                  <Link to="/" className="eyebrow-link">Home</Link>
                   <span className="eyebrow-sep">›</span>
-                  <span>Learn</span>
+                  <Link to="/learn" className="eyebrow-link">Learn</Link>
                   <span className="eyebrow-sep">›</span>
                   <span className="eyebrow-module">{current.moduleLabel} · {current.moduleTitle}</span>
                 </nav>

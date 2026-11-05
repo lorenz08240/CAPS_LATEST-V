@@ -22,12 +22,32 @@ export default function FullscreenGate({ children, requireFullscreen = false }) 
   const [fullscreenActive, setFullscreenActive] = useState(isFullscreenActive());
   const [engaged, setEngaged] = useState(hasEngagedFullscreen());
   const [rotateNeeded, setRotateNeeded] = useState(needsRotation());
+  const [windowedMode, setWindowedMode] = useState(() => {
+    try {
+      return sessionStorage.getItem("buildlab_windowed_mode") === "true";
+    } catch {
+      return false;
+    }
+  });
+
+  const handleDismissToWindowed = useCallback(() => {
+    setWindowedMode(true);
+    try {
+      sessionStorage.setItem("buildlab_windowed_mode", "true");
+    } catch {}
+  }, []);
 
   useEffect(() => {
     const sync = () => {
       const active = isFullscreenActive();
       setFullscreenActive(active);
       setRotateNeeded(needsRotation());
+      if (active) {
+        setWindowedMode(false);
+        try {
+          sessionStorage.removeItem("buildlab_windowed_mode");
+        } catch {}
+      }
       if (active && !hasEngagedFullscreen()) {
         markFullscreenEngaged();
         setEngaged(true);
@@ -40,6 +60,7 @@ export default function FullscreenGate({ children, requireFullscreen = false }) 
 
   const showRotation = rotateNeeded;
   const showFullscreen =
+    !windowedMode &&
     !showRotation &&
     isFullscreenSupported() &&
     !fullscreenActive &&
@@ -186,6 +207,24 @@ export default function FullscreenGate({ children, requireFullscreen = false }) 
             <p className="fs-card-esc-hint">
               Press <kbd className="fs-kbd-f11">F11</kbd> at any time to leave (your build is saved).
             </p>
+
+            {/* Secondary Windowed Link */}
+            <button
+              type="button"
+              className="fs-gate-btn-secondary"
+              onClick={handleDismissToWindowed}
+              style={{
+                marginTop: "12px",
+                background: "transparent",
+                border: "none",
+                color: "#94a3b8",
+                fontSize: "0.82rem",
+                cursor: "pointer",
+                textDecoration: "underline",
+              }}
+            >
+              Continue in windowed view →
+            </button>
           </div>
         </div>
       )}

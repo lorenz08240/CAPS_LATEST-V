@@ -5,11 +5,18 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
+    allowedHosts: true,
     // Don't watch static SFX assets — new mp3/wav files landing in this
     // folder are locked mid-copy on Windows (EBUSY) and would crash the
     // whole dev server. No HMR is needed for these files.
     watch: {
       ignored: ['**/public/sfx/**'],
+    },
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+      },
     },
   },
 })

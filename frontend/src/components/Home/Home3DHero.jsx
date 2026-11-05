@@ -7,6 +7,8 @@ import ProceduralSickleFan from '../3D/ProceduralSickleFan';
 import GenericPCCase from '../3D/GenericPCCase';
 import ComponentModels3D from '../3D/ComponentModels3D';
 import { HeroFloatingRAM } from '../3D/DDR4RAMModel';
+import { HeroFloatingSSD } from '../3D/NVMeSSDModel';
+import { preloadRAMModel, preloadNVMeSSDModel } from '../../utilities/modelPreloader';
 
 const HERO_STAGES = [
   { id: 'case', name: 'ATX Chassis', stageNum: 1, desc: 'Precision Airflow Chassis' },
@@ -171,16 +173,7 @@ function HardwareStageModel({ stageId, rgbColor }) {
     case 'ram':
       return <HeroFloatingRAM rgbColor={rgbColor} enableHighlight={false} />;
     case 'storage':
-      return (
-        <group scale={[1.65, 1.65, 1.65]} rotation={[0, Math.PI / 2, 0]}>
-          <ComponentModels3D
-            part={{ category: 'storage', name: 'M.2 NVMe SSD' }}
-            rgbColor={rgbColor}
-            showTooltip={false}
-            enableHighlight={false}
-          />
-        </group>
-      );
+      return <HeroFloatingSSD rgbColor={rgbColor} enableHighlight={false} />;
     case 'gpu':
       return (
         <group scale={[0.80, 0.80, 0.80]}>
@@ -227,6 +220,15 @@ function FluidScene({ onStageChange, rgbColor, scrollProgress = 0 }) {
 
   const [currentStageId, setCurrentStageId] = useState(HERO_STAGES[0].id);
   const [landingProgress, setLandingProgress] = useState(0);
+
+  // Sequential background prefetching: pre-caches next heavy asset before transition
+  useEffect(() => {
+    if (currentStageId === 'cpu') {
+      preloadRAMModel('idle');
+    } else if (currentStageId === 'ram') {
+      preloadNVMeSSDModel('idle');
+    }
+  }, [currentStageId]);
 
   // High-precision 60fps animation state ref
   const animRef = useRef({
@@ -428,8 +430,6 @@ export default function Home3DHero({
           <directionalLight position={[8, -4, -6]} intensity={2.2} color="#f43f5e" />
           <pointLight position={[0, 0, 4]} intensity={2.4} color={rgbColor} distance={12} />
           
-          <Environment preset="night" />
-
           {/* Orbit Controls with Damping: user can freely drag to inspect from any angle */}
           <OrbitControls 
             enableZoom={false} 
@@ -449,6 +449,7 @@ export default function Home3DHero({
           />
 
           <Suspense fallback={null}>
+            <Environment preset="night" />
             <FluidScene 
               onStageChange={setActiveModel}
               rgbColor={rgbColor} 

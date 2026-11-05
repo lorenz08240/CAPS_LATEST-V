@@ -15,12 +15,6 @@ function Navbar({ isPinned, setIsPinned }) {
   const navigate = useNavigate();
 
   const isAdminRoute = location.pathname.startsWith("/admin");
-
-  // Disable Sidebar completely in Admin panel (user uses Back to Component Picker button)
-  if (isAdminRoute) {
-    return null;
-  }
-
   const isVisible = isPinned || isHovered;
 
   const scrollToBuild = (e) => {
@@ -41,6 +35,12 @@ function Navbar({ isPinned, setIsPinned }) {
     logoutAdmin();
     navigate("/");
   };
+
+  const currentPath = location.pathname;
+  const isInventory = currentPath.includes("/admin/inventory") || currentPath === "/admin";
+  const isAdd = currentPath.includes("/admin/add");
+  const isEdit = currentPath.includes("/admin/edit");
+  const isCrawler = currentPath.includes("/admin/crawler");
 
   return (
     <>
@@ -75,7 +75,7 @@ function Navbar({ isPinned, setIsPinned }) {
 
         <div className="sidebar-container">
           <div className="sidebar-header">
-            <Link to="/" className="sidebar-logo">
+            <Link to={isAdminRoute ? "/admin/inventory" : "/"} className="sidebar-logo">
               {isAdminRoute ? (
                 <span className="logo-admin-text">BUILDLAB <span className="admin-tag">ADMIN</span></span>
               ) : (
@@ -100,12 +100,99 @@ function Navbar({ isPinned, setIsPinned }) {
               <div className="sidebar-admin-card">
                 <div className="admin-status-badge">
                   <span className="status-dot"></span>
-                  <span>ADMIN SESSION</span>
+                  <span>ADMIN SESSION ONLINE</span>
                 </div>
-                <p className="admin-status-sub">Control matrix & component catalog</p>
+                <p className="admin-status-sub">Control matrix & catalog operations</p>
+              </div>
+
+              {/* Categorized Admin Capability Links */}
+              <div className="admin-sidebar-nav-group">
+                <div className="admin-group-title">ADMIN CAPABILITIES</div>
+                <div className="sidebar-links admin-capability-links">
+                  <Link
+                    to="/admin/inventory"
+                    className={`sidebar-link ${isInventory ? "active" : ""}`}
+                    title="Hardware component catalog and matrix"
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                      <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                      <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                    </svg>
+                    <span>Inventory</span>
+                  </Link>
+
+                  <Link
+                    to="/admin/add"
+                    className={`sidebar-link ${isAdd ? "active" : ""}`}
+                    title="Onboard a new hardware component"
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <line x1="12" y1="5" x2="12" y2="19"></line>
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    <span>Add Component</span>
+                  </Link>
+
+                  <Link
+                    to="/admin/edit"
+                    className={`sidebar-link ${isEdit ? "active" : ""}`}
+                    title="Modify hardware specifications and assets"
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M12 20h9"></path>
+                      <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                    </svg>
+                    <span>Edit Components</span>
+                  </Link>
+
+                  <Link
+                    to="/admin/crawler"
+                    className={`sidebar-link ${isCrawler ? "active" : ""}`}
+                    title="Automated headless crawler and review queue"
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="3"></circle>
+                      <path d="M12 2v3m0 14v3M2 12h3m14 0h3m-3.5-6.5l-2.1 2.1m-8.8 8.8l-2.1 2.1m0-13l2.1 2.1m8.8 8.8l2.1 2.1"></path>
+                    </svg>
+                    <span>Crawler Hub</span>
+                  </Link>
+                </div>
+              </div>
+
+              {/* Hardware Stages Quick Navigation */}
+              <div className="admin-sidebar-nav-group">
+                <div className="admin-group-title">HARDWARE STAGES</div>
+                <div className="admin-stage-quick-links">
+                  {[
+                    { key: "gpu", label: "GPU" },
+                    { key: "motherboard", label: "Motherboard" },
+                    { key: "cpu", label: "CPU" },
+                    { key: "ram", label: "RAM" },
+                    { key: "storage", label: "Storage" },
+                    { key: "case", label: "Case" },
+                    { key: "psu", label: "PSU" }
+                  ].map((s) => (
+                    <Link
+                      key={s.key}
+                      to={`/admin/inventory?category=${s.key}`}
+                      className="admin-stage-pill"
+                    >
+                      {s.label}
+                    </Link>
+                  ))}
+                </div>
               </div>
 
               <div className="sidebar-admin-controls">
+                {/* Return to Public Builder */}
+                <Link to="/" className="sidebar-return-link" title="Return to Public PC Builder">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                  </svg>
+                  <span>Public Builder</span>
+                </Link>
+
                 {/* Dark / Light Mode Toggle */}
                 <div className="theme-toggle-row">
                   <span className="theme-toggle-label">
@@ -123,6 +210,32 @@ function Navbar({ isPinned, setIsPinned }) {
                           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
                         ) : (
                           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                        )}
+                      </span>
+                    </div>
+                  </button>
+                </div>
+
+                {/* Sound FX Toggle */}
+                <div className="theme-toggle-row">
+                  <span className="theme-toggle-label">
+                    {soundActive ? "Sound FX" : "SFX Muted"}
+                  </span>
+                  <button 
+                    type="button" 
+                    className={`theme-toggle-switch ${soundActive ? "dark" : "light"}`}
+                    onClick={() => {
+                      const next = soundManager.toggleSound();
+                      setSoundActive(next);
+                    }}
+                    title={soundActive ? "Mute Sound Effects" : "Enable Sound Effects"}
+                  >
+                    <div className="theme-toggle-slider">
+                      <span className="theme-icon">
+                        {soundActive ? (
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                        ) : (
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
                         )}
                       </span>
                     </div>

@@ -1,10 +1,10 @@
-import React from "react";
+import React, { memo } from "react";
 
 /**
  * High-performance, zero-network SVG hardware category icons.
  * Eliminates memory leaks and CDN image decoding bottlenecks on low-end systems.
  */
-export const HardwareIcon = ({ category, className = "", size = 20, color = "currentColor" }) => {
+export const HardwareIcon = memo(({ category, className = "", size = 20, color = "currentColor" }) => {
   const cat = (category || "").toLowerCase().trim();
 
   switch (cat) {
@@ -221,6 +221,6 @@ export const HardwareIcon = ({ category, className = "", size = 20, color = "cur
         </svg>
       );
   }
-};
+});
 
 export default HardwareIcon;

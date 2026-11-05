@@ -12,6 +12,7 @@ pc_screen.png
 .env
 .env.local
 *.log
+tunnel.bat
 
 # Python virtual environment & cache
 .venv/
@@ -21,4 +22,5 @@ __pycache__/
 # Node dependencies
 node_modules/
 dist/
-build/
+/build/
+frontend/build/

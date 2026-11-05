@@ -2,20 +2,28 @@ import React from "react";
 import { Navigate } from "react-router-dom";
 import AdminInventory from "./AdminInventory";
 import AdminCrawler from "./AdminCrawler";
+import AdminAddComponent from "./AdminAddComponent";
+import AdminEditComponent from "./AdminEditComponent";
+import AdminDeleteComponent from "./AdminDeleteComponent";
 import EditComponentDrawer from "./EditComponentDrawer";
 import AdminHeader from "./AdminHeader";
 import AdminLogin from "./AdminLogin";
 import AdminAuthGuard from "./AdminAuthGuard";
+import AdminSidebar from "./AdminSidebar";
 import HardwareIcon from "./HardwareIcon";
 import HoverImagePreview from "./HoverImagePreview";
 
 export {
   AdminInventory,
   AdminCrawler,
+  AdminAddComponent,
+  AdminEditComponent,
+  AdminDeleteComponent,
   EditComponentDrawer,
   AdminHeader,
   AdminLogin,
   AdminAuthGuard,
+  AdminSidebar,
   HardwareIcon,
   HoverImagePreview
 };

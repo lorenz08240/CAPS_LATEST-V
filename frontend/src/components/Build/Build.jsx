@@ -4,6 +4,7 @@ import { useBuild } from "../../contexts/BuildContext";
 import { checkCompatibility } from "../../utilities/compatibilityEngine";
 import soundManager from "../../utilities/soundManager";
 import FullscreenGate from "../FullscreenGate/FullscreenGate";
+import GlobalHeader from "../Navigation/GlobalHeader";
 import "./Build.css";
 
 export const buildSteps = [
@@ -109,6 +110,7 @@ function BuildPage({ isIntegrated = false }) {
     removeComponent,
     getSelectedComponents,
     resetBuild,
+    loadDemoBuild,
   } = useBuild();
   const location = useLocation();
   const [currentStep, setCurrentStep] = useState(() => {
@@ -118,7 +120,9 @@ function BuildPage({ isIntegrated = false }) {
     }
     return 0;
   });
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(() => {
+    return new URLSearchParams(location.search).get("search") || "";
+  });
   const [activeFilter, setActiveFilter] = useState("ALL");
   const [viewedComponent, setViewedComponent] = useState(null);
 
@@ -216,6 +220,7 @@ function BuildPage({ isIntegrated = false }) {
 
   return (
     <div className={`build-page ${isIntegrated ? 'integrated-home' : 'standalone'}`}>
+      {!isIntegrated && <GlobalHeader />}
       {/* Main Build Area */}
       <div className="build-main" id="build-main-area">
         <div className="build-sidebar">
@@ -284,6 +289,17 @@ function BuildPage({ isIntegrated = false }) {
                 title="Clear all selected components"
               >
                 <span>RESET BUILD</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  try { soundManager.click(); } catch(e) {}
+                  if (loadDemoBuild) loadDemoBuild();
+                }}
+                className="load-starter-btn sidebar-starter-btn"
+                title="Load a balanced, fully-compatible starter PC build"
+              >
+                <span>STARTER RIG</span>
               </button>
             </div>
           </div>

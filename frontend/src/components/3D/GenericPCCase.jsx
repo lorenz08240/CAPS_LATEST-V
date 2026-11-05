@@ -25,20 +25,21 @@ export default function GenericPCCase({
   const isWhite = caseColor === 'white';
 
   // Dynamic engineering materials for Black vs White finishes (calibrated for ambient occlusion & non-glare)
-  const chassisColor = isWhite ? '#d8dee9' : '#1e2533';
-  const chassisMetalness = isWhite ? 0.15 : 0.65;
-  const chassisRoughness = isWhite ? 0.52 : 0.55;
+  // Arctic White uses an off-white matte titanium powder coat with dark charcoal interior frame & grommets for deep ambient occlusion
+  const chassisColor = isWhite ? '#b8c2cc' : '#1e2533';
+  const chassisMetalness = isWhite ? 0.12 : 0.65;
+  const chassisRoughness = isWhite ? 0.72 : 0.55;
 
-  const interiorColor = isWhite ? '#94a3b8' : '#2d3748';
-  const meshColor = isWhite ? '#475569' : '#0f172a';
-  const accentColor = isWhite ? '#64748b' : '#475569';
-  const psuShroudColor = isWhite ? '#cbd5e1' : '#1f2937';
-  const backPanelColor = isWhite ? '#94a3b8' : '#242c3d';
-  const glassBorderColor = isWhite ? '#cbd5e1' : '#0f172a';
-  const glassColor = isWhite ? '#f8fafc' : '#0f172a';
-  const glassOpacity = isWhite ? 0.18 : 0.32;
-  const rubberGrommetColor = isWhite ? '#1e293b' : '#111827';
-  const structuralFrameColor = isWhite ? '#475569' : '#0b0f19';
+  const interiorColor = isWhite ? '#273142' : '#2d3748';
+  const meshColor = isWhite ? '#334155' : '#0f172a';
+  const accentColor = isWhite ? '#475569' : '#475569';
+  const psuShroudColor = isWhite ? '#3b4759' : '#1f2937';
+  const backPanelColor = isWhite ? '#334155' : '#242c3d';
+  const glassBorderColor = isWhite ? '#334155' : '#0f172a';
+  const glassColor = isWhite ? '#e2e8f0' : '#0f172a';
+  const glassOpacity = isWhite ? 0.16 : 0.32;
+  const rubberGrommetColor = isWhite ? '#0f172a' : '#111827';
+  const structuralFrameColor = isWhite ? '#1e293b' : '#0b0f19';
 
   // Selection / Hover Emissive highlights
   const highlightEmissive = activeSelected ? '#00e5ff' : effectiveHover ? '#38bdf8' : '#000000';
@@ -314,19 +315,18 @@ export default function GenericPCCase({
         >
           {/* Glass Door Assembly positioned relative to rear hinge pivot at Z = 0 */}
           <group position={[0, 0, 4.4]}>
-            {/* Main Tempered Glass Pane */}
+            {/* Main Tempered Glass Pane (Non-glare PBR tinted glass; zero transmission FBO blowout) */}
             <mesh>
               <boxGeometry args={[0.08, 8.8, 8.8]} />
               <meshPhysicalMaterial 
-                color={glassColor} 
-                transmission={0.93} 
-                opacity={glassOpacity} 
+                color={isWhite ? '#d8dee9' : '#0b0f19'} 
+                opacity={isWhite ? 0.32 : 0.38} 
                 transparent={true} 
-                roughness={0.03} 
-                metalness={0.1}
+                roughness={0.06} 
+                metalness={0.15}
                 clearcoat={1}
-                clearcoatRoughness={0.03}
-                reflectivity={0.7}
+                clearcoatRoughness={0.04}
+                reflectivity={0.65}
               />
             </mesh>
 

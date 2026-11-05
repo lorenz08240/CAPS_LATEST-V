@@ -18,7 +18,14 @@ import Compatibility from "./components/Compatibility/Compatibility";
 import Learn from "./components/Learn/Learn";
 import Brands from "./components/Brands/Brands";
 import PCBuilder3D from "./components/3D/PCBuilder3D";
-import { AdminInventory, AdminCrawler, AdminLogin, AdminAuthGuard } from "./components/Admin/Admin";
+import {
+  AdminInventory,
+  AdminCrawler,
+  AdminAddComponent,
+  AdminEditComponent,
+  AdminLogin,
+  AdminAuthGuard
+} from "./components/Admin/Admin";
 import MotionPage from "./utilities/pageTransitions";
 import soundManager from "./utilities/soundManager";
 
@@ -81,6 +88,45 @@ function AppContent() {
                   <MotionPage routeKey="/admin/inventory">
                     <AdminInventory />
                   </MotionPage>
+                </AdminAuthGuard>
+              }
+            />
+            <Route
+              path="/admin/add"
+              element={
+                <AdminAuthGuard>
+                  <MotionPage routeKey="/admin/add">
+                    <AdminAddComponent />
+                  </MotionPage>
+                </AdminAuthGuard>
+              }
+            />
+            <Route
+              path="/admin/edit"
+              element={
+                <AdminAuthGuard>
+                  <MotionPage routeKey="/admin/edit">
+                    <AdminEditComponent />
+                  </MotionPage>
+                </AdminAuthGuard>
+              }
+            />
+            <Route
+              path="/admin/edit/:componentId"
+              element={
+                <AdminAuthGuard>
+                  <MotionPage routeKey="/admin/edit-id">
+                    <AdminEditComponent />
+                  </MotionPage>
+                </AdminAuthGuard>
+              }
+            />
+            {/* Dedicated delete page now routed to centralized Edit page */}
+            <Route
+              path="/admin/delete"
+              element={
+                <AdminAuthGuard>
+                  <Navigate to="/admin/edit" replace />
                 </AdminAuthGuard>
               }
             />

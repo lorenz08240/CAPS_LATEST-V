@@ -316,6 +316,44 @@ app.delete("/api/scraped-queue/:id", adminAuth, async (req, res) => {
   }
 });
 
+// API to clear reviewed-item checkboxes (multi-selected) from the review queue (Admin Protected)
+app.post("/api/scraped-queue/clear-selected", adminAuth, async (req, res) => {
+  try {
+    const ids = Array.isArray(req.body?.ids) ? req.body.ids.filter(Boolean) : [];
+    if (ids.length === 0) {
+      return res.status(400).json({ error: "No items selected for clearing." });
+    }
+    const placeholders = ids.map(() => "?").join(", ");
+    const [result] = await db.query(
+      `DELETE FROM scraped_queue WHERE id IN (${placeholders})`,
+      ids
+    );
+    res.json({
+      success: true,
+      deleted: result.affectedRows,
+      message: `Cleared ${result.affectedRows} selected scraped item(s) from the queue.`
+    });
+  } catch (err) {
+    console.error("POST /api/scraped-queue/clear-selected error:", err);
+    res.status(500).json({ error: "Failed to clear selected items" });
+  }
+});
+
+// API to clear the entire recently scraped review queue (Admin Protected)
+app.delete("/api/scraped-queue", adminAuth, async (req, res) => {
+  try {
+    const [result] = await db.query("DELETE FROM scraped_queue");
+    res.json({
+      success: true,
+      deleted: result.affectedRows,
+      message: `Review queue cleared — removed ${result.affectedRows} recently scraped item(s).`
+    });
+  } catch (err) {
+    console.error("DELETE /api/scraped-queue error:", err);
+    res.status(500).json({ error: "Failed to clear the review queue" });
+  }
+});
+
 // API to merge all approved scraped items into production pc_parts table (Admin Protected)
 app.post("/api/scraped-queue/merge", adminAuth, async (req, res) => {
   try {

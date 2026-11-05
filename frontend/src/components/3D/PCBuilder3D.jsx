@@ -35,14 +35,66 @@ const STAGE_REQUIREMENTS = {
   psu: ['motherboard', 'gpu']
 };
 
-// Camera views dictionary
-const CAMERA_PRESETS = {
+// Camera views dictionaries adapted dynamically for Tower vs Workbench Stance
+const CAMERA_PRESETS_TOWER = {
   isometric: { position: [-12, 6, 12], target: [0, 0, 0] },
   whole: { position: [-14, 4.5, 14], target: [0, 0, 0] },
   interior: { position: [-7.5, 0.6, -0.6], target: [1.4, 0.4, -0.6] },
   gpu: { position: [-6.5, -0.8, 0.5], target: [0.6, -0.8, -0.2] },
   front: { position: [0, 0, 14], target: [0, 0, 0] },
-  top: { position: [0, 15, 0.1], target: [0, 0, 0] }
+  top: { position: [0, 15, 0.1], target: [0, 0, 0] },
+  pov: { position: [0.0, 7.2, 7.8], target: [0.0, -2.6, 0.2] }
+};
+
+const CAMERA_PRESETS_WORKBENCH = {
+  isometric: { position: [-9.5, 8.5, 9.5], target: [0, -2.6, 0.2] },
+  whole: { position: [-11.0, 10.0, 10.0], target: [0, -2.6, 0.2] },
+  interior: { position: [0.0, 6.2, 4.5], target: [0.0, -2.6, -0.8] },
+  gpu: { position: [0.0, 4.8, 4.5], target: [0.0, -2.6, 0.8] },
+  front: { position: [0.0, 1.5, 12.0], target: [0.0, -2.6, 0.0] },
+  top: { position: [0.0, 13.0, 0.01], target: [0.0, -2.6, 0.0] },
+  pov: { position: [0.0, 8.6, 5.8], target: [0.0, -2.6, -0.2] }
+};
+
+const CAMERA_PRESETS = CAMERA_PRESETS_TOWER;
+
+// Stage-specific camera targets for guided student learning
+const STAGE_CAMERA_FOCUS = {
+  case: {
+    tower: { position: [-13, 5.5, 13], target: [0, 0, 0] },
+    workbench: { position: [-9.5, 8.5, 9.5], target: [0, -2.6, 0.2] },
+    tip: 'Stage 01: Chassis Setup — Review outer chassis, dust filters, and motherboard standoffs'
+  },
+  motherboard: {
+    tower: { position: [-7.5, 0.6, -0.6], target: [1.4, 0.4, -0.6] },
+    workbench: { position: [0.0, 6.2, 4.5], target: [0.0, -2.6, -0.8] },
+    tip: 'Stage 02: Motherboard — Align standoff screws on the interior mounting tray'
+  },
+  cpu: {
+    tower: { position: [-4.2, 2.2, 0.5], target: [1.32, 1.6, -1.2] },
+    workbench: { position: [-0.6, 4.2, 2.0], target: [-0.6, -2.6, -1.2] },
+    tip: 'Stage 03: CPU (Processor) — Align the gold triangle indicator with socket pin 1'
+  },
+  ram: {
+    tower: { position: [-4.2, 2.2, 2.0], target: [1.32, 1.6, 0.3] },
+    workbench: { position: [0.8, 4.2, 2.0], target: [0.8, -2.6, -1.2] },
+    tip: 'Stage 04: RAM — Align memory notch with DIMM retention clips and press firmly'
+  },
+  storage: {
+    tower: { position: [-4.2, 1.0, 0.5], target: [1.33, 0.55, -1.2] },
+    workbench: { position: [0.0, 4.0, 1.5], target: [0.0, -2.6, -0.4] },
+    tip: 'Stage 05: Storage — Insert M.2 NVMe at 30° angle, then secure with standoff screw'
+  },
+  gpu: {
+    tower: { position: [-6.5, -0.8, 0.5], target: [0.6, -0.8, -0.2] },
+    workbench: { position: [0.0, 4.8, 4.5], target: [0.0, -2.6, 0.8] },
+    tip: 'Stage 06: GPU — Remove rear PCIe slot covers and click card firmly into latch'
+  },
+  psu: {
+    tower: { position: [-7.0, -3.2, 3.5], target: [0, -3.5, -2.6] },
+    workbench: { position: [0.0, 4.8, 6.5], target: [0.0, -2.6, 2.5] },
+    tip: 'Stage 07: PSU — Slide power supply into basement compartment and route modular cables'
+  }
 };
 
 // Smooth Camera Controller that transitions on preset click and releases control completely to OrbitControls
@@ -126,13 +178,13 @@ function PCBuilder3DWorkspace() {
   const [isExploded, setIsExploded] = useState(false);
   const [rgbColor, setRgbColor] = useState('#00e5ff');
   const [caseColor, setCaseColor] = useState('black'); // 'black' | 'white'
+  const [rigStance, setRigStance] = useState('tower'); // 'tower' | 'workbench' (flat POV)
   const [soundEnabled, setSoundEnabled] = useState(soundManager.enabled);
   const [buildMode, setBuildMode] = useState('guided'); // 'guided' or 'free'
   const [activeStep, setActiveStep] = useState(0);
 
-  // Search & Filter in drawer
+  // Search in drawer
   const [searchQuery, setSearchQuery] = useState('');
-  const [tierFilter, setTierFilter] = useState('');
   const [drawerOpen, setDrawerOpen] = useState(true);
 
   // Selected & Hovered 3D Component Inspection
@@ -195,6 +247,28 @@ function PCBuilder3DWorkspace() {
     return requirements.some((reqCat) => !currentBuild[reqCat]);
   };
 
+  // Focus camera dynamically on the stage component area with student guidance
+  const focusStageCamera = (stageKey) => {
+    const focusData = STAGE_CAMERA_FOCUS[stageKey];
+    if (!focusData) return;
+    const isWorkbench = rigStance === 'workbench';
+    const preset = isWorkbench ? focusData.workbench : focusData.tower;
+    
+    // Automatically open side panel if focusing inside the case
+    if (stageKey !== 'case' && glassMode === 'closed') {
+      setGlassMode('removed');
+    }
+
+    setCameraTarget({
+      position: preset.position,
+      target: preset.target
+    });
+
+    if (focusData.tip) {
+      showToast(focusData.tip);
+    }
+  };
+
   // Handle stage selection in vertical progression rail
   const handleSelectStage = (idx) => {
     const step = buildSteps[idx];
@@ -207,12 +281,20 @@ function PCBuilder3DWorkspace() {
     }
     setActiveStep(idx);
     playSound('click');
+    focusStageCamera(step.key);
   };
 
-  // Trigger camera view preset
+  // Trigger camera view preset adapting to stance
   const handleCameraPreset = (presetName) => {
-    const preset = CAMERA_PRESETS[presetName] || CAMERA_PRESETS.isometric;
+    const presets = rigStance === 'workbench' ? CAMERA_PRESETS_WORKBENCH : CAMERA_PRESETS_TOWER;
+    const preset = presets[presetName] || presets.isometric;
     setCameraPreset(presetName);
+    
+    // If entering interior/gpu/pov view, ensure glass is not blocking
+    if ((presetName === 'interior' || presetName === 'gpu' || presetName === 'pov') && glassMode === 'closed') {
+      setGlassMode('removed');
+    }
+
     setCameraTarget({
       position: preset.position,
       target: preset.target
@@ -244,11 +326,14 @@ function PCBuilder3DWorkspace() {
 
     setInspectedPart({ ...part, category, targetPosition: TARGET_POSITIONS[category] });
 
-    // In guided mode, automatically advance to next unlocked unplaced step
+    // In guided mode, automatically advance to next unlocked unplaced step & focus camera
     if (buildMode === 'guided') {
       const nextIdx = buildSteps.findIndex((s, idx) => idx > activeStep && !currentBuild[s.key]);
       if (nextIdx !== -1) {
         setActiveStep(nextIdx);
+        setTimeout(() => {
+          focusStageCamera(buildSteps[nextIdx]?.key);
+        }, 1200);
       }
     }
   };
@@ -295,14 +380,7 @@ function PCBuilder3DWorkspace() {
   const currentCategoryComponents = allComponents[activeCategory] || [];
   const filteredComponents = currentCategoryComponents.filter((comp) => {
     const s = searchQuery.toLowerCase();
-    const matchName = (comp.name || '').toLowerCase().includes(s) || (comp.brand || '').toLowerCase().includes(s);
-    if (!matchName) return false;
-    if (!tierFilter) return true;
-    const combined = `${comp.name} ${comp.brand} ${comp.desc || ''}`.toLowerCase();
-    if (tierFilter === 'budget') return combined.includes('i3') || combined.includes('ryzen 3') || combined.includes('a520') || combined.includes('h610') || combined.includes('1650') || combined.includes('500w');
-    if (tierFilter === 'mid') return combined.includes('i5') || combined.includes('ryzen 5') || combined.includes('b550') || combined.includes('b760') || combined.includes('4060') || combined.includes('650w');
-    if (tierFilter === 'high') return combined.includes('i7') || combined.includes('i9') || combined.includes('ryzen 7') || combined.includes('ryzen 9') || combined.includes('4080') || combined.includes('4090') || combined.includes('850w');
-    return true;
+    return (comp.name || '').toLowerCase().includes(s) || (comp.brand || '').toLowerCase().includes(s);
   });
 
   // RGB Palette presets
@@ -522,12 +600,7 @@ function PCBuilder3DWorkspace() {
                   )}
                 </div>
 
-                <div className="drawer-tier-pills">
-                  <button className={`tier-pill ${tierFilter === '' ? 'active' : ''}`} onClick={() => setTierFilter('')}>ALL</button>
-                  <button className={`tier-pill ${tierFilter === 'budget' ? 'active' : ''}`} onClick={() => setTierFilter('budget')}>BUDGET</button>
-                  <button className={`tier-pill ${tierFilter === 'mid' ? 'active' : ''}`} onClick={() => setTierFilter('mid')}>MID-TIER</button>
-                  <button className={`tier-pill ${tierFilter === 'high' ? 'active' : ''}`} onClick={() => setTierFilter('high')}>HIGH-END</button>
-                </div>
+
 
                 {/* Component Cards Grid */}
                 <div className="catalog-cards-container">
@@ -657,6 +730,20 @@ function PCBuilder3DWorkspace() {
             >
               Top
             </button>
+            <button 
+              className={`hud-btn pov-cam-btn ${cameraPreset === 'pov' ? 'active' : ''}`}
+              onClick={() => {
+                handleCameraPreset('pov');
+                if (rigStance !== 'workbench') {
+                  setRigStance('workbench');
+                  if (glassMode === 'closed') setGlassMode('removed');
+                  showToast('Switched to Workbench Builder POV');
+                }
+              }}
+              title="YouTube Shorts Builder POV (Over-the-shoulder looking into workbench)"
+            >
+              Builder POV
+            </button>
 
             <div className="hud-divider"></div>
 
@@ -675,6 +762,67 @@ function PCBuilder3DWorkspace() {
 
           {/* 2. Chassis & Assembly Toolset */}
           <div className="hud-toolbar tools-hud">
+            {/* Rig Stance Toggle (Tower vs Workbench Flat POV) */}
+            <div className="tool-pill-group">
+              <span className="hud-title">STANCE</span>
+              <button 
+                className={`hud-btn ${rigStance === 'tower' ? 'active' : ''}`}
+                onClick={() => {
+                  setRigStance('tower');
+                  setCameraPreset('isometric');
+                  setCameraTarget(CAMERA_PRESETS_TOWER.isometric);
+                  playSound('click');
+                  showToast('Tower Stance: Upright Chassis Orientation');
+                }}
+                title="Upright Tower Stance"
+              >
+                Tower
+              </button>
+              <button 
+                className={`hud-btn ${rigStance === 'workbench' ? 'active' : ''}`}
+                onClick={() => {
+                  setRigStance('workbench');
+                  setCameraPreset('pov');
+                  setCameraTarget(CAMERA_PRESETS_WORKBENCH.pov);
+                  if (glassMode === 'closed') setGlassMode('removed');
+                  playSound('slide');
+                  showToast('Builder POV Mode: Rig lying flat on workbench (Restricted eye movement)');
+                }}
+                title="Workbench Flat Laying Stance (Builder POV)"
+              >
+                Workbench (Flat)
+              </button>
+            </div>
+
+            <div className="hud-divider"></div>
+
+            {/* Chassis Finish Toggle (Stealth Black vs Arctic White) */}
+            <div className="tool-pill-group">
+              <span className="hud-title">CHASSIS</span>
+              <button 
+                className={`hud-btn ${caseColor === 'black' ? 'active' : ''}`}
+                onClick={() => {
+                  setCaseColor('black');
+                  playSound('click');
+                }}
+                title="Stealth Black Finish"
+              >
+                Black
+              </button>
+              <button 
+                className={`hud-btn ${caseColor === 'white' ? 'active' : ''}`}
+                onClick={() => {
+                  setCaseColor('white');
+                  playSound('click');
+                }}
+                title="Arctic White Finish"
+              >
+                White
+              </button>
+            </div>
+
+            <div className="hud-divider"></div>
+
             <div className="tool-pill-group">
               <span className="hud-title">SIDE PANEL</span>
               <button 
@@ -746,30 +894,34 @@ function PCBuilder3DWorkspace() {
               }
             }}
           >
-            <color attach="background" args={['#141a26']} />
-            <fog attach="fog" args={['#141a26', 32, 85]} />
+            <color attach="background" args={['#0e1420']} />
+            <fog attach="fog" args={['#0e1420', 30, 80]} />
 
-            {/* Calibrated Studio Lighting with Rich Ambient Occlusion Contrast */}
-            <ambientLight intensity={0.9} color="#e2e8f0" />
+            {/* Calibrated Studio Lighting with Warm Window Sunlight & Sky Daylight Fill */}
+            <ambientLight intensity={0.85} color="#e2e8f0" />
+            {/* Natural warm sunlight entering at a builder's studio window angle */}
             <directionalLight 
-              position={[-14, 20, 16]} 
-              intensity={2.0} 
+              position={[-16, 22, 16]} 
+              intensity={2.4} 
               castShadow 
-              color="#ffffff"
+              color="#fff8ed"
             />
+            {/* Cool sky daylight fill balancing the shadows */}
             <directionalLight 
-              position={[16, 14, -14]} 
-              intensity={1.5} 
+              position={[16, 16, -14]} 
+              intensity={1.1} 
               color="#93c5fd"
             />
+            {/* Warm table bounce light reflecting upwards onto the chassis underside */}
             <directionalLight 
-              position={[0, -8, 0]} 
-              intensity={0.8} 
-              color="#cbd5e1"
+              position={[0, -6, 0]} 
+              intensity={0.6} 
+              color="#fed7aa"
             />
+            {/* Studio rim light defining metal chamfers and top edges */}
             <directionalLight 
-              position={[0, 6, 18]} 
-              intensity={1.1} 
+              position={[0, 8, 18]} 
+              intensity={1.0} 
               color="#f8fafc"
             />
             
@@ -780,24 +932,65 @@ function PCBuilder3DWorkspace() {
 
             <Environment preset="studio" />
 
-            {/* Camera Controller & OrbitControls with Free Dragging and Auto-Rotate */}
+            {/* Camera Controller & OrbitControls with Adaptive POV Eye-Movement Restrictions */}
             <CameraController cameraTarget={cameraTarget} orbitRef={orbitRef} />
             <OrbitControls 
               ref={orbitRef}
               enablePan={true}
-              minDistance={5} 
-              maxDistance={28}
-              maxPolarAngle={Math.PI / 2 + 0.05}
-              autoRotate={autoRotate}
+              panSpeed={rigStance === 'workbench' ? 0.35 : 0.8}
+              enableDamping={true}
+              dampingFactor={0.08}
+              minDistance={rigStance === 'workbench' ? 3.8 : 3.0} 
+              maxDistance={rigStance === 'workbench' ? 12.0 : 28}
+              minPolarAngle={rigStance === 'workbench' ? Math.PI / 4.2 : 0}
+              maxPolarAngle={rigStance === 'workbench' ? Math.PI / 2.3 : Math.PI / 2 + 0.05}
+              minAzimuthAngle={rigStance === 'workbench' ? -Math.PI / 5.5 : -Infinity}
+              maxAzimuthAngle={rigStance === 'workbench' ? Math.PI / 5.5 : Infinity}
+              autoRotate={autoRotate && rigStance !== 'workbench'}
               autoRotateSpeed={2.2}
             />
 
-            {/* 3D Scene Root */}
+            {/* Low-Poly Studio Window / Office Backdrop (Zero-lag aesthetic context) */}
+            <group position={[0, 5, -24]}>
+              <mesh position={[0, 2, 0]}>
+                <planeGeometry args={[70, 28]} />
+                <meshStandardMaterial color="#0c101a" roughness={0.9} />
+              </mesh>
+              <group position={[-16, 6, 0.2]}>
+                <mesh position={[0, 0, 0]}>
+                  <planeGeometry args={[14, 18]} />
+                  <meshBasicMaterial color="#1e293b" />
+                </mesh>
+                <mesh position={[0, 0, 0.05]}>
+                  <boxGeometry args={[0.2, 18, 0.1]} />
+                  <meshBasicMaterial color="#0f172a" />
+                </mesh>
+                <mesh position={[0, 0, 0.05]}>
+                  <boxGeometry args={[14, 0.2, 0.1]} />
+                  <meshBasicMaterial color="#0f172a" />
+                </mesh>
+                <mesh position={[0, 0, 0.02]}>
+                  <planeGeometry args={[13.6, 17.6]} />
+                  <meshBasicMaterial color="#e0f2fe" transparent opacity={0.12} />
+                </mesh>
+              </group>
+              <group position={[18, 6, 0.2]}>
+                <mesh position={[0, 0, 0]}>
+                  <boxGeometry args={[16, 0.3, 1.5]} />
+                  <meshStandardMaterial color="#1e293b" roughness={0.7} />
+                </mesh>
+                <mesh position={[0, -5, 0]}>
+                  <boxGeometry args={[16, 0.3, 1.5]} />
+                  <meshStandardMaterial color="#1e293b" roughness={0.7} />
+                </mesh>
+              </group>
+            </group>
+
+            {/* 3D Scene Environment & Studio Workbench */}
             <group position={[0, 0, 0]}>
-              {/* Studio Turntable Platform under the PC at Y = -4.898 (Click deselects) */}
+              {/* Workbench Surface (Warm technical matte desk, Y = -5.5) */}
               <mesh 
-                position={[0, -4.898, 0]} 
-                rotation={[-Math.PI / 2, 0, 0]}
+                position={[0, -5.5, 0]}
                 onClick={(e) => {
                   e.stopPropagation();
                   setInspectedPart(null);
@@ -805,77 +998,123 @@ function PCBuilder3DWorkspace() {
                   document.body.style.cursor = 'auto';
                 }}
               >
-                <circleGeometry args={[11.5, 64]} />
-                <meshStandardMaterial color="#1a2333" roughness={0.7} metalness={0.35} />
-              </mesh>
-              {/* Turntable Outer Chamfer Accent Ring */}
-              <mesh position={[0, -4.895, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-                <ringGeometry args={[11.3, 11.5, 64]} />
-                <meshBasicMaterial color="#38bdf8" transparent opacity={0.45} />
+                <boxGeometry args={[48, 1.2, 38]} />
+                <meshStandardMaterial color="#181f2c" roughness={0.65} metalness={0.2} />
               </mesh>
 
-              {/* High-Contrast Technical Ground Grid */}
+              {/* Workbench Chamfered Edge Accent Line */}
+              <mesh position={[0, -4.89, 0]}>
+                <boxGeometry args={[48.3, 0.04, 38.3]} />
+                <meshBasicMaterial color="#38bdf8" transparent opacity={0.25} />
+              </mesh>
+
+              {/* Antistatic Silicone PC Builder Mat (Under rig, Y = -4.88) */}
+              <mesh 
+                position={[0, -4.88, 0]}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setInspectedPart(null);
+                  setHoveredPart(null);
+                  document.body.style.cursor = 'auto';
+                }}
+              >
+                <boxGeometry args={[28, 0.04, 22]} />
+                <meshStandardMaterial color="#1e283a" roughness={0.88} metalness={0.1} />
+              </mesh>
+
+              {/* Mat Outer Border Accent */}
+              <mesh position={[0, -4.87, 0]}>
+                <boxGeometry args={[28.2, 0.02, 22.2]} />
+                <meshBasicMaterial color="#38bdf8" transparent opacity={0.4} />
+              </mesh>
+
+              {/* Mat Corner Magnetic Screw Trays */}
+              {[
+                [-12.5, -4.86, 9.5],
+                [12.5, -4.86, 9.5],
+                [-12.5, -4.86, -9.5],
+                [12.5, -4.86, -9.5]
+              ].map((pos, idx) => (
+                <group key={`tray-${idx}`} position={pos}>
+                  <mesh>
+                    <boxGeometry args={[2.2, 0.05, 2.2]} />
+                    <meshStandardMaterial color="#0f172a" roughness={0.9} />
+                  </mesh>
+                  <mesh position={[0, 0.03, 0]}>
+                    <boxGeometry args={[2.0, 0.02, 2.0]} />
+                    <meshBasicMaterial color="#38bdf8" transparent opacity={0.35} />
+                  </mesh>
+                </group>
+              ))}
+
+              {/* High-Contrast Technical Grid Overlay on Mat */}
               <Grid 
-                position={[0, -4.89, 0]}
-                args={[50, 50]} 
+                position={[0, -4.85, 0]}
+                args={[48, 38]} 
                 cellSize={1} 
-                cellThickness={1.2} 
-                cellColor="#334155" 
+                cellThickness={1.0} 
+                cellColor="#2e3e58" 
                 sectionSize={5} 
-                sectionThickness={2} 
-                sectionColor="#60a5fa" 
-                fadeDistance={45} 
+                sectionThickness={1.8} 
+                sectionColor="#38bdf8" 
+                fadeDistance={36} 
                 fadeStrength={1.2} 
               />
               <ContactShadows 
-                position={[0, -4.88, 0]} 
-                opacity={0.75} 
-                scale={26} 
-                blur={2.2} 
+                position={[0, -4.84, 0]} 
+                opacity={0.8} 
+                scale={28} 
+                blur={2.0} 
                 far={12} 
                 color="#060911" 
               />
 
               <Suspense fallback={null}>
-                {/* 1. PC Case Chassis (Rendered ONLY once chosen and placed by user) */}
-                {currentBuild.case && (
-                  <GenericPCCase 
-                    part={currentBuild.case}
-                    rgbColor={rgbColor}
-                    caseColor={caseColor}
-                    glassMode={glassMode}
-                    explodedProgress={isExploded ? 1 : 0}
-                    isSelected={inspectedPart?.category === 'case'}
-                    isHovered={hoveredPart?.category === 'case'}
-                    onSelect={handleSelect3DPart}
-                    onHover={(p, h) => setHoveredPart(h ? p : null)}
-                  />
-                )}
+                {/* Unified PC Rig Group - Rotated 90° so PSU faces student (Image 2 POV) */}
+                <group 
+                  position={rigStance === 'workbench' ? [0, -2.60, 0] : [0, 0, 0]} 
+                  rotation={rigStance === 'workbench' ? [0, Math.PI / 2, -Math.PI / 2] : [0, 0, 0]}
+                >
+                  {/* 1. PC Case Chassis (Rendered ONLY once chosen and placed by user) */}
+                  {currentBuild.case && (
+                    <GenericPCCase 
+                      part={currentBuild.case}
+                      rgbColor={rgbColor}
+                      caseColor={caseColor}
+                      glassMode={glassMode}
+                      explodedProgress={isExploded ? 1 : 0}
+                      isSelected={inspectedPart?.category === 'case'}
+                      isHovered={hoveredPart?.category === 'case'}
+                      onSelect={handleSelect3DPart}
+                      onHover={(p, h) => setHoveredPart(h ? p : null)}
+                    />
+                  )}
 
-                {/* 2. Active Drop Zone Indicators */}
-                {buildSteps.map((step) => (
-                  <DropIndicator 
-                    key={step.key}
-                    activeCategory={activeCategory}
-                    category={step.key}
-                    position={TARGET_POSITIONS[step.key]}
-                    isPlaced={!!currentBuild[step.key]}
-                  />
-                ))}
+                  {/* 2. Active Drop Zone Indicators */}
+                  {buildSteps.map((step) => (
+                    <DropIndicator 
+                      key={step.key}
+                      activeCategory={activeCategory}
+                      category={step.key}
+                      position={TARGET_POSITIONS[step.key]}
+                      isPlaced={!!currentBuild[step.key]}
+                    />
+                  ))}
 
-                {/* 3. Installed Internal 3D Components */}
-                {placedParts.filter(part => part.category !== 'case').map((part) => (
-                  <ComponentModels3D 
-                    key={part.category} 
-                    part={part}
-                    rgbColor={rgbColor}
-                    explodedProgress={isExploded ? 1 : 0}
-                    isSelected={inspectedPart?.category === part.category}
-                    isHovered={hoveredPart?.category === part.category}
-                    onSelect={handleSelect3DPart}
-                    onHover={(p, h) => setHoveredPart(h ? p : null)}
-                  />
-                ))}
+                  {/* 3. Installed Internal 3D Components */}
+                  {placedParts.filter(part => part.category !== 'case').map((part) => (
+                    <ComponentModels3D 
+                      key={part.category} 
+                      part={part}
+                      rgbColor={rgbColor}
+                      explodedProgress={isExploded ? 1 : 0}
+                      isSelected={inspectedPart?.category === part.category}
+                      isHovered={hoveredPart?.category === part.category}
+                      onSelect={handleSelect3DPart}
+                      onHover={(p, h) => setHoveredPart(h ? p : null)}
+                    />
+                  ))}
+                </group>
               </Suspense>
             </group>
           </Canvas>
