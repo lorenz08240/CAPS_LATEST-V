@@ -23,52 +23,28 @@ function Home() {
   // back up into the hero section until they have clicked BUILD in their page session.
   const [hasClickedBuild, setHasClickedBuild] = useState(() => {
     try {
-      return (
-        sessionStorage.getItem("buildlab_has_clicked_build") === "true" ||
-        sessionStorage.getItem("buildlab_start_build_intent") === "true"
-      );
+      return sessionStorage.getItem("buildlab_home_build_clicked") === "true";
     } catch {
       return false;
     }
   });
-  const [isLockedAtBuild, setIsLockedAtBuild] = useState(false);
-  const [lockAlertPulse, setLockAlertPulse] = useState(false);
-  const [justUnlocked, setJustUnlocked] = useState(false);
 
   const hasClickedBuildRef = useRef(hasClickedBuild);
-  const enteredBuildRef = useRef(false);
-  const lastAlertTimeRef = useRef(0);
+  const isLockedRef = useRef(false);
 
   useEffect(() => {
     hasClickedBuildRef.current = hasClickedBuild;
   }, [hasClickedBuild]);
 
   const unlockBuildScroll = useCallback(() => {
-    if (!hasClickedBuildRef.current) {
-      setHasClickedBuild(true);
-      hasClickedBuildRef.current = true;
-      setIsLockedAtBuild(false);
-      setJustUnlocked(true);
-      try {
-        sessionStorage.setItem("buildlab_has_clicked_build", "true");
-        sessionStorage.setItem("buildlab_start_build_intent", "true");
-        soundManager.granted();
-      } catch {}
-      setTimeout(() => setJustUnlocked(false), 2600);
-    }
-  }, []);
-
-  const triggerLockAlert = useCallback(() => {
-    const now = Date.now();
-    if (now - lastAlertTimeRef.current > 1000) {
-      lastAlertTimeRef.current = now;
-      try { soundManager.denied(); } catch {}
-      if (typeof navigator !== "undefined" && navigator.vibrate) {
-        try { navigator.vibrate(40); } catch {}
-      }
-    }
-    setLockAlertPulse(true);
-    setTimeout(() => setLockAlertPulse(false), 600);
+    setHasClickedBuild(true);
+    hasClickedBuildRef.current = true;
+    isLockedRef.current = false;
+    try {
+      sessionStorage.setItem("buildlab_home_build_clicked", "true");
+    } catch {}
+    document.documentElement.style.overflow = "";
+    document.body.style.overflow = "";
   }, []);
 
   const STAGE_META = {
@@ -80,31 +56,6 @@ function Home() {
     gpu: { num: '06', name: 'DEDICATED TRIPLE GPU' },
     psu: { num: '07', name: 'MODULAR POWER SUPPLY' },
   };
-
-  // Track window scroll progress across the hero section
-  useEffect(() => {
-    const handleScroll = () => {
-      const hero = document.getElementById("cyber-hero");
-      if (hero) {
-        const heroHeight = hero.offsetHeight || window.innerHeight;
-        const currentScroll = window.scrollY || window.pageYOffset;
-        const progress = Math.min(1, Math.max(0, currentScroll / (heroHeight * 0.85)));
-        setScrollProgress(progress);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-
-    // Support direct hash navigation (e.g. /#build-station)
-    if (window.location.hash === "#build-station" || window.location.search.includes("scroll=build")) {
-      setTimeout(() => {
-        handleScrollToBuild("instant");
-      }, 400);
-    }
-
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   const handleScrollToBuild = (behavior = "smooth") => {
     unlockBuildScroll();
@@ -123,7 +74,7 @@ function Home() {
       try {
         buildStation.scrollIntoView({ behavior: scrollBehavior, block: "start" });
       } catch {
-        const top = window.pageYOffset + buildStation.getBoundingClientRect().top;
+        const top = (window.pageYOffset || 0) + buildStation.getBoundingClientRect().top;
         window.scrollTo({ top, behavior: scrollBehavior });
       }
     }
@@ -140,7 +91,7 @@ function Home() {
     navigate('/compatibility');
   };
 
-  // Intercept scroll-up when locked at build station
+  // Intercept START BUILD click events across the app
   useEffect(() => {
     const handleBuildClickedEvent = () => {
       unlockBuildScroll();
@@ -149,6 +100,7 @@ function Home() {
     return () => window.removeEventListener("buildlab:start-build-clicked", handleBuildClickedEvent);
   }, [unlockBuildScroll]);
 
+  // Clean, robust scroll-down lock
   useEffect(() => {
     const getBuildStationTop = () => {
       const el = document.getElementById("build-station");
@@ -157,49 +109,52 @@ function Home() {
       return (window.pageYOffset || window.scrollY || 0) + rect.top;
     };
 
-    const handleScrollCheck = () => {
+    const handleScroll = () => {
+      const hero = document.getElementById("cyber-hero");
+      if (hero) {
+        const heroHeight = hero.offsetHeight || window.innerHeight;
+        const currentScroll = window.scrollY || window.pageYOffset || 0;
+        const progress = Math.min(1, Math.max(0, currentScroll / (heroHeight * 0.85)));
+        setScrollProgress(progress);
+      }
+
       if (hasClickedBuildRef.current) {
-        if (isLockedAtBuild) setIsLockedAtBuild(false);
+        if (isLockedRef.current) {
+          isLockedRef.current = false;
+          document.documentElement.style.overflow = "";
+          document.body.style.overflow = "";
+        }
         return;
       }
+
       const buildTop = getBuildStationTop();
       if (buildTop === null) return;
-
       const currentY = window.scrollY || window.pageYOffset || 0;
 
-      // Track when user enters the build station
-      if (currentY >= buildTop - 50) {
-        enteredBuildRef.current = true;
-        setIsLockedAtBuild(true);
-      } else if (currentY < buildTop - 150) {
-        if (!enteredBuildRef.current) {
-          setIsLockedAtBuild(false);
+      // Lock activates once the user scrolls down into the build station
+      if (currentY >= buildTop - 5) {
+        if (!isLockedRef.current) {
+          isLockedRef.current = true;
+          window.scrollTo(0, buildTop);
+          document.documentElement.style.overflow = "hidden";
+          document.body.style.overflow = "hidden";
         }
-      }
-
-      // Hard clamp: prevent scrolling up past the build station if not unlocked
-      if (enteredBuildRef.current && !hasClickedBuildRef.current) {
-        if (currentY < buildTop - 2) {
-          window.scrollTo({ top: buildTop, behavior: "instant" });
-          triggerLockAlert();
-        }
+      } else if (isLockedRef.current) {
+        // If locked, immediately clamp back to buildTop
+        window.scrollTo(0, buildTop);
       }
     };
 
-    // Intercept wheel (mouse/trackpad) scrolling up
+    // Wheel listener to prevent scrolling up when locked
     const handleWheel = (e) => {
-      if (hasClickedBuildRef.current || !enteredBuildRef.current) return;
-      const buildTop = getBuildStationTop();
-      if (buildTop === null) return;
-      const currentY = window.scrollY || window.pageYOffset || 0;
-
-      if (e.deltaY < 0 && currentY <= buildTop + 15) {
+      if (hasClickedBuildRef.current) return;
+      if (isLockedRef.current && e.deltaY < 0) {
         e.preventDefault();
-        triggerLockAlert();
+        e.stopPropagation();
       }
     };
 
-    // Intercept touch drag down to scroll up
+    // Touch listeners to prevent dragging down to scroll up on touchscreens
     let touchStartY = 0;
     const handleTouchStart = (e) => {
       if (e.touches && e.touches.length > 0) {
@@ -208,98 +163,64 @@ function Home() {
     };
 
     const handleTouchMove = (e) => {
-      if (hasClickedBuildRef.current || !enteredBuildRef.current) return;
-      const buildTop = getBuildStationTop();
-      if (buildTop === null) return;
-      const currentY = window.scrollY || window.pageYOffset || 0;
-
-      if (e.touches && e.touches.length > 0) {
+      if (hasClickedBuildRef.current) return;
+      if (isLockedRef.current && e.touches && e.touches.length > 0) {
         const deltaY = e.touches[0].clientY - touchStartY;
-        if (deltaY > 6 && currentY <= buildTop + 20) {
+        if (deltaY > 0) {
           if (e.cancelable) e.preventDefault();
-          triggerLockAlert();
+          e.stopPropagation();
         }
       }
     };
 
-    // Intercept arrow/navigation keys
+    // Navigation keys (ArrowUp, PageUp, Home)
     const handleKeyDown = (e) => {
-      if (hasClickedBuildRef.current || !enteredBuildRef.current) return;
-      const buildTop = getBuildStationTop();
-      if (buildTop === null) return;
-      const currentY = window.scrollY || window.pageYOffset || 0;
-
-      if (["ArrowUp", "PageUp", "Home"].includes(e.key) && currentY <= buildTop + 20) {
+      if (hasClickedBuildRef.current) return;
+      if (isLockedRef.current && ["ArrowUp", "PageUp", "Home"].includes(e.key)) {
         e.preventDefault();
-        triggerLockAlert();
+        e.stopPropagation();
       }
     };
 
-    window.addEventListener("scroll", handleScrollCheck, { passive: true });
+    window.addEventListener("scroll", handleScroll, { passive: true });
     window.addEventListener("wheel", handleWheel, { passive: false });
     window.addEventListener("touchstart", handleTouchStart, { passive: true });
     window.addEventListener("touchmove", handleTouchMove, { passive: false });
     window.addEventListener("keydown", handleKeyDown);
 
+    // Initial check
+    handleScroll();
+
+    // Support direct hash navigation (e.g. /#build-station)
+    if (window.location.hash === "#build-station" || window.location.search.includes("scroll=build")) {
+      setTimeout(() => {
+        handleScrollToBuild("instant");
+      }, 400);
+    }
+
     return () => {
-      window.removeEventListener("scroll", handleScrollCheck);
+      window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("wheel", handleWheel);
       window.removeEventListener("touchstart", handleTouchStart);
       window.removeEventListener("touchmove", handleTouchMove);
       window.removeEventListener("keydown", handleKeyDown);
+      document.documentElement.style.overflow = "";
+      document.body.style.overflow = "";
     };
-  }, [isLockedAtBuild, triggerLockAlert]);
+  }, [unlockBuildScroll]);
 
   const handleNavigateHome = () => {
-    if (enteredBuildRef.current && !hasClickedBuildRef.current) {
-      triggerLockAlert();
+    if (isLockedRef.current && !hasClickedBuildRef.current) {
       return;
     }
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
-
 
   return (
     <>
       <Preloader />
       <FullscreenGate>
         <div className="home-page">
-        {/* ════ SCROLL-DOWN LOCK MECHANISM NOTIFICATION PILL ════ */}
-        {isLockedAtBuild && !hasClickedBuild && (
-          <div className={`cyber-scroll-lock-pill ${lockAlertPulse ? "alert-pulse" : ""}`}>
-            <div className="lock-icon-wrap">
-              <span className="lock-icon">🔒</span>
-            </div>
-            <div className="lock-text-wrap">
-              <span className="lock-title">SCROLL-UP LOCKED</span>
-              <span className="lock-desc">Click BUILD to unlock full page scrolling</span>
-            </div>
-            <button 
-              type="button" 
-              className="lock-unlock-btn" 
-              onClick={(e) => {
-                e.preventDefault();
-                handleScrollToBuild("smooth");
-              }}
-              title="Unlock full page navigation"
-            >
-              <span>BUILD / UNLOCK</span>
-              <span className="unlock-arrow">&rarr;</span>
-            </button>
-          </div>
-        )}
-
-        {justUnlocked && (
-          <div className="cyber-scroll-lock-pill unlocked">
-            <div className="lock-icon-wrap">
-              <span className="lock-icon">🔓</span>
-            </div>
-            <div className="lock-text-wrap">
-              <span className="lock-title">NAVIGATION UNLOCKED</span>
-              <span className="lock-desc">You can now freely scroll up and down</span>
-            </div>
-          </div>
-        )}
         <section id="cyber-hero" className="cyber-hero-section">
           <div className="cyber-ambient-pink-spot" />
           <div className="cyber-ambient-grid" />
