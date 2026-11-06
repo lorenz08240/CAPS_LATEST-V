@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Home.css";
 import Build from "../Build/Build";
@@ -17,6 +17,59 @@ function Home() {
   const [activeModel, setActiveModel] = useState('case');
   const [scrollProgress, setScrollProgress] = useState(0);
   const [startBuildRequested, setStartBuildRequested] = useState(false);
+
+  // ── Scroll-down lock mechanism:
+  // Once the user scrolls down into the build station, they are locked from scrolling
+  // back up into the hero section until they have clicked BUILD in their page session.
+  const [hasClickedBuild, setHasClickedBuild] = useState(() => {
+    try {
+      return (
+        sessionStorage.getItem("buildlab_has_clicked_build") === "true" ||
+        sessionStorage.getItem("buildlab_start_build_intent") === "true"
+      );
+    } catch {
+      return false;
+    }
+  });
+  const [isLockedAtBuild, setIsLockedAtBuild] = useState(false);
+  const [lockAlertPulse, setLockAlertPulse] = useState(false);
+  const [justUnlocked, setJustUnlocked] = useState(false);
+
+  const hasClickedBuildRef = useRef(hasClickedBuild);
+  const enteredBuildRef = useRef(false);
+  const lastAlertTimeRef = useRef(0);
+
+  useEffect(() => {
+    hasClickedBuildRef.current = hasClickedBuild;
+  }, [hasClickedBuild]);
+
+  const unlockBuildScroll = useCallback(() => {
+    if (!hasClickedBuildRef.current) {
+      setHasClickedBuild(true);
+      hasClickedBuildRef.current = true;
+      setIsLockedAtBuild(false);
+      setJustUnlocked(true);
+      try {
+        sessionStorage.setItem("buildlab_has_clicked_build", "true");
+        sessionStorage.setItem("buildlab_start_build_intent", "true");
+        soundManager.granted();
+      } catch {}
+      setTimeout(() => setJustUnlocked(false), 2600);
+    }
+  }, []);
+
+  const triggerLockAlert = useCallback(() => {
+    const now = Date.now();
+    if (now - lastAlertTimeRef.current > 1000) {
+      lastAlertTimeRef.current = now;
+      try { soundManager.denied(); } catch {}
+      if (typeof navigator !== "undefined" && navigator.vibrate) {
+        try { navigator.vibrate(40); } catch {}
+      }
+    }
+    setLockAlertPulse(true);
+    setTimeout(() => setLockAlertPulse(false), 600);
+  }, []);
 
   const STAGE_META = {
     case: { num: '01', name: 'ATX CHASSIS' },
@@ -54,6 +107,7 @@ function Home() {
   }, []);
 
   const handleScrollToBuild = (behavior = "smooth") => {
+    unlockBuildScroll();
     try {
       setStartBuildRequested(true);
       window.dispatchEvent(new CustomEvent("buildlab:start-build-clicked"));
@@ -86,23 +140,178 @@ function Home() {
     navigate('/compatibility');
   };
 
+  // Intercept scroll-up when locked at build station
+  useEffect(() => {
+    const handleBuildClickedEvent = () => {
+      unlockBuildScroll();
+    };
+    window.addEventListener("buildlab:start-build-clicked", handleBuildClickedEvent);
+    return () => window.removeEventListener("buildlab:start-build-clicked", handleBuildClickedEvent);
+  }, [unlockBuildScroll]);
+
+  useEffect(() => {
+    const getBuildStationTop = () => {
+      const el = document.getElementById("build-station");
+      if (!el) return null;
+      const rect = el.getBoundingClientRect();
+      return (window.pageYOffset || window.scrollY || 0) + rect.top;
+    };
+
+    const handleScrollCheck = () => {
+      if (hasClickedBuildRef.current) {
+        if (isLockedAtBuild) setIsLockedAtBuild(false);
+        return;
+      }
+      const buildTop = getBuildStationTop();
+      if (buildTop === null) return;
+
+      const currentY = window.scrollY || window.pageYOffset || 0;
+
+      // Track when user enters the build station
+      if (currentY >= buildTop - 50) {
+        enteredBuildRef.current = true;
+        setIsLockedAtBuild(true);
+      } else if (currentY < buildTop - 150) {
+        if (!enteredBuildRef.current) {
+          setIsLockedAtBuild(false);
+        }
+      }
+
+      // Hard clamp: prevent scrolling up past the build station if not unlocked
+      if (enteredBuildRef.current && !hasClickedBuildRef.current) {
+        if (currentY < buildTop - 2) {
+          window.scrollTo({ top: buildTop, behavior: "instant" });
+          triggerLockAlert();
+        }
+      }
+    };
+
+    // Intercept wheel (mouse/trackpad) scrolling up
+    const handleWheel = (e) => {
+      if (hasClickedBuildRef.current || !enteredBuildRef.current) return;
+      const buildTop = getBuildStationTop();
+      if (buildTop === null) return;
+      const currentY = window.scrollY || window.pageYOffset || 0;
+
+      if (e.deltaY < 0 && currentY <= buildTop + 15) {
+        e.preventDefault();
+        triggerLockAlert();
+      }
+    };
+
+    // Intercept touch drag down to scroll up
+    let touchStartY = 0;
+    const handleTouchStart = (e) => {
+      if (e.touches && e.touches.length > 0) {
+        touchStartY = e.touches[0].clientY;
+      }
+    };
+
+    const handleTouchMove = (e) => {
+      if (hasClickedBuildRef.current || !enteredBuildRef.current) return;
+      const buildTop = getBuildStationTop();
+      if (buildTop === null) return;
+      const currentY = window.scrollY || window.pageYOffset || 0;
+
+      if (e.touches && e.touches.length > 0) {
+        const deltaY = e.touches[0].clientY - touchStartY;
+        if (deltaY > 6 && currentY <= buildTop + 20) {
+          if (e.cancelable) e.preventDefault();
+          triggerLockAlert();
+        }
+      }
+    };
+
+    // Intercept arrow/navigation keys
+    const handleKeyDown = (e) => {
+      if (hasClickedBuildRef.current || !enteredBuildRef.current) return;
+      const buildTop = getBuildStationTop();
+      if (buildTop === null) return;
+      const currentY = window.scrollY || window.pageYOffset || 0;
+
+      if (["ArrowUp", "PageUp", "Home"].includes(e.key) && currentY <= buildTop + 20) {
+        e.preventDefault();
+        triggerLockAlert();
+      }
+    };
+
+    window.addEventListener("scroll", handleScrollCheck, { passive: true });
+    window.addEventListener("wheel", handleWheel, { passive: false });
+    window.addEventListener("touchstart", handleTouchStart, { passive: true });
+    window.addEventListener("touchmove", handleTouchMove, { passive: false });
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("scroll", handleScrollCheck);
+      window.removeEventListener("wheel", handleWheel);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isLockedAtBuild, triggerLockAlert]);
+
+  const handleNavigateHome = () => {
+    if (enteredBuildRef.current && !hasClickedBuildRef.current) {
+      triggerLockAlert();
+      return;
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+
   return (
     <>
       <Preloader />
       <FullscreenGate>
         <div className="home-page">
+        {/* ════ SCROLL-DOWN LOCK MECHANISM NOTIFICATION PILL ════ */}
+        {isLockedAtBuild && !hasClickedBuild && (
+          <div className={`cyber-scroll-lock-pill ${lockAlertPulse ? "alert-pulse" : ""}`}>
+            <div className="lock-icon-wrap">
+              <span className="lock-icon">🔒</span>
+            </div>
+            <div className="lock-text-wrap">
+              <span className="lock-title">SCROLL-UP LOCKED</span>
+              <span className="lock-desc">Click BUILD to unlock full page scrolling</span>
+            </div>
+            <button 
+              type="button" 
+              className="lock-unlock-btn" 
+              onClick={(e) => {
+                e.preventDefault();
+                handleScrollToBuild("smooth");
+              }}
+              title="Unlock full page navigation"
+            >
+              <span>BUILD / UNLOCK</span>
+              <span className="unlock-arrow">&rarr;</span>
+            </button>
+          </div>
+        )}
+
+        {justUnlocked && (
+          <div className="cyber-scroll-lock-pill unlocked">
+            <div className="lock-icon-wrap">
+              <span className="lock-icon">🔓</span>
+            </div>
+            <div className="lock-text-wrap">
+              <span className="lock-title">NAVIGATION UNLOCKED</span>
+              <span className="lock-desc">You can now freely scroll up and down</span>
+            </div>
+          </div>
+        )}
         <section id="cyber-hero" className="cyber-hero-section">
           <div className="cyber-ambient-pink-spot" />
           <div className="cyber-ambient-grid" />
 
           <header className="cyber-top-nav">
-            <CyberBrand onNavigateHome={() => window.scrollTo({ top: 0, behavior: "smooth" })} />
+            <CyberBrand onNavigateHome={handleNavigateHome} />
 
             <nav className="cyber-nav-links">
               <button 
                 type="button" 
                 className="cyber-nav-link active" 
-                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                onClick={handleNavigateHome}
               >
                 HOME
               </button>
@@ -311,7 +520,7 @@ function Home() {
         </section>
 
         <section id="build-station" className="home-integrated-section">
-          <Build isIntegrated={true} startBuildRequested={startBuildRequested} />
+          <Build isIntegrated={true} startBuildRequested={startBuildRequested} onBuildInteracted={unlockBuildScroll} />
         </section>
       </div>
     </FullscreenGate>

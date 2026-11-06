@@ -329,6 +329,7 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false }) {
   }, [location.state]);
 
   const handleComponentSelect = (component) => {
+    onBuildInteracted?.();
     const category = buildSteps[currentStep].key;
     addComponent(category, component);
     soundManager.install();
@@ -354,6 +355,7 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false }) {
   };
 
   const handleCardClick = (component) => {
+    onBuildInteracted?.();
     soundManager.snap();
     setViewedComponent(component);
   };
@@ -828,7 +830,7 @@ export default Build;
  * standalone build experience always runs in immersive fullscreen mode.
  * The instance integrated into the Home page is gated by Home instead.
  */
-function Build({ isIntegrated = false, startBuildRequested = false }) {
+function Build({ isIntegrated = false, startBuildRequested = false, onBuildInteracted }) {
   const page = <BuildPage isIntegrated={isIntegrated} startBuildRequested={startBuildRequested} />;
   return isIntegrated ? page : <FullscreenGate requireFullscreen>{page}</FullscreenGate>;
 }
