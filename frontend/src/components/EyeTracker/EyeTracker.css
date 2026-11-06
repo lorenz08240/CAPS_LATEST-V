@@ -45,46 +45,46 @@
 
 .eyt-say {
   position: absolute;
-  bottom: calc(100% + 18px);
+  bottom: calc(100% + 14px);
   right: 0;
   display: block;
-  min-height: 44px;
   width: max-content;
-  min-width: 240px;
-  max-width: min(460px, 86vw);
-  padding: 16px 22px;
-  border-radius: 18px 18px 4px 18px;
-  background: rgba(8, 14, 26, 0.96);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  backdrop-filter: blur(24px) saturate(180%);
+  min-width: 0;
+  max-width: min(520px, calc(100vw - 48px));
+  padding: 12px 20px;
+  border-radius: 14px 14px 4px 14px;
+  background: rgba(10, 16, 28, 0.78);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
   border: 1.5px solid var(--tint, #00e5a0);
-  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.88), 0 0 28px rgba(0, 229, 160, 0.22), inset 0 1px 1px rgba(255, 255, 255, 0.15);
-  color: #f8fafc;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.85), 0 0 20px rgba(0, 229, 160, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
   font-family: var(--font-ui);
   font-size: 15.5px;
   font-weight: 500;
-  line-height: 1.6;
+  line-height: 1.55;
   white-space: normal;
   overflow-wrap: break-word;
   word-break: normal;
   text-wrap: pretty;
   transform-origin: bottom right;
   opacity: 0;
-  transform: translateY(8px) scale(0.94);
+  transform: translateY(6px) scale(0.95);
   pointer-events: none;
-  transition: opacity 180ms ease, transform 240ms cubic-bezier(0.16, 1, 0.3, 1), border-color 200ms ease;
-  letter-spacing: 0.015em;
+  transition: opacity 160ms ease, transform 200ms cubic-bezier(0.16, 1, 0.3, 1), border-color 200ms ease;
+  letter-spacing: 0.012em;
   z-index: 10000;
 }
 
 .eyt-say::after {
   content: "";
   position: absolute;
-  bottom: -7px;
-  right: 32px;
-  width: 12px;
-  height: 12px;
-  background: rgba(8, 14, 26, 0.96);
+  bottom: -6px;
+  right: 28px;
+  width: 10px;
+  height: 10px;
+  background: rgba(10, 16, 28, 0.78);
   border-right: 1.5px solid var(--tint, #00e5a0);
   border-bottom: 1.5px solid var(--tint, #00e5a0);
   transform: rotate(45deg);

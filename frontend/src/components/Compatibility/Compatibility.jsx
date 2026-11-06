@@ -1,4 +1,5 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect, useCallback, useRef } from "react";
+import EyeTracker from "../EyeTracker/EyeTracker";
 import { createPortal } from "react-dom";
 import { Link } from "react-router-dom";
 import { useBuild } from "../../contexts/BuildContext";
@@ -7,6 +8,45 @@ import soundManager from "../../utilities/soundManager";
 import FullscreenGate from "../FullscreenGate/FullscreenGate";
 import GlobalHeader from "../Navigation/GlobalHeader";
 import "./Compatibility.css";
+
+
+const COMPAT_BOB_PHRASES = [
+  "Hi there! I'm B.O.B., your compatibility inspector.",
+  "Hover over any component or metric to inspect it!",
+  "Pro-tip: Always leave 20-30% PSU wattage headroom for transient spikes.",
+  "Never force a CPU! Look for the golden triangle alignment.",
+  "Dual-channel RAM belongs in slots 2 and 4.",
+  "Check GPU length clearance against your chosen PC case!",
+  "Everything looks well-balanced here!"
+];
+
+const getComponentBobHint = (comp) => {
+  if (!comp) return "Hardware component slot.";
+  const cat = (comp.category || "").toLowerCase();
+  const name = `${comp.brand || ""} ${comp.name || ""}`.trim();
+  if (cat.includes("cpu")) {
+    return `Inspecting CPU (${name}): Checking socket pinout and thermal TDP demand.`;
+  }
+  if (cat.includes("motherboard")) {
+    return `Inspecting Motherboard (${name}): Validating CPU socket, RAM slots, and form factor.`;
+  }
+  if (cat.includes("gpu")) {
+    return `Inspecting GPU (${name}): Checking PCIe x16 power draw and physical case clearance.`;
+  }
+  if (cat.includes("ram")) {
+    return `Inspecting RAM (${name}): Validating DDR generation and channel frequency.`;
+  }
+  if (cat.includes("storage")) {
+    return `Inspecting Storage (${name}): Checking M.2 NVMe protocol and motherboard lane speeds.`;
+  }
+  if (cat.includes("psu")) {
+    return `Inspecting Power Supply (${name}): Verifying total wattage buffer for transient spikes.`;
+  }
+  if (cat.includes("case")) {
+    return `Inspecting PC Case (${name}): Checking motherboard standoffs and airflow volume.`;
+  }
+  return `Inspecting ${name}: Verified in system hardware configuration.`;
+};
 
 function CompatibilityView({ isIntegrated = false }) {
   const {
@@ -36,6 +76,61 @@ function CompatibilityView({ isIntegrated = false }) {
   const [bottleneckDismissed, setBottleneckDismissed] = useState(false);
   const [issueModal, setIssueModal] = useState(null); // { slot, issues[] }
   const [radarProfileMode, setRadarProfileMode] = useState(false);
+  const [bobSpeech, setBobSpeech] = useState(null);
+  const lastSpeechRef = useRef({ text: "", time: 0 });
+
+  const triggerBobHint = useCallback((text) => {
+    if (!text) return;
+    try { soundManager.click(); } catch (_) {}
+    if (typeof navigator !== "undefined" && navigator.vibrate) {
+      try { navigator.vibrate(30); } catch (_) {}
+    }
+    // Briefly clear speech to allow re-triggering same hint and re-render speech bubble
+    setBobSpeech(null);
+    setTimeout(() => {
+      setBobSpeech(text);
+    }, 40);
+  }, []);
+
+  const bindBobInteract = useCallback((hintText) => {
+    let touchTimer = null;
+    let startPos = null;
+
+    return {
+      title: "Right-click or hold (touchscreen) to ask B.O.B.",
+      onContextMenu: (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        triggerBobHint(hintText);
+      },
+      onTouchStart: (e) => {
+        if (!e.touches || e.touches.length !== 1) return;
+        const touch = e.touches[0];
+        startPos = { x: touch.clientX, y: touch.clientY };
+        clearTimeout(touchTimer);
+        touchTimer = setTimeout(() => {
+          triggerBobHint(hintText);
+        }, 450);
+      },
+      onTouchMove: (e) => {
+        if (!startPos || !e.touches || e.touches.length !== 1) return;
+        const dx = Math.abs(e.touches[0].clientX - startPos.x);
+        const dy = Math.abs(e.touches[0].clientY - startPos.y);
+        if (dx > 12 || dy > 12) {
+          clearTimeout(touchTimer);
+          touchTimer = null;
+        }
+      },
+      onTouchEnd: () => {
+        clearTimeout(touchTimer);
+        touchTimer = null;
+      },
+      onTouchCancel: () => {
+        clearTimeout(touchTimer);
+        touchTimer = null;
+      },
+    };
+  }, [triggerBobHint]);
 
   /* ── Saved build helpers ── */
   const savedComponents = useMemo(() => {
@@ -241,7 +336,7 @@ function CompatibilityView({ isIntegrated = false }) {
       } else if (selectedComponents.length >= 2) {
         soundManager.granted();
       }
-    }, 280);
+    }, 400);
 
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -359,12 +454,16 @@ function CompatibilityView({ isIntegrated = false }) {
               <p className="compat-hero-desc">
                 Every component is instantly verified against your existing choices.
               </p>
+              <div className="compat-bob-guide-pill" title="Hardware Interactive Guide">
+                <span className="bob-guide-icon">🤖</span>
+                <span>Right-click or hold (touchscreen) any component or metric to inspect with B.O.B.</span>
+              </div>
             </header>
           )}
 
           {/* ════ TOP ALERT BANNER ════ */}
           {compatibilityIssues.length > 0 && (
-            <aside className="compat-top-banner" role="alert">
+            <aside className="compat-top-banner" role="alert" {...bindBobInteract("Critical Warning: Compatibility issues found between your components!")}>
               <div className="compat-banner-info">
                 <span className="banner-alert-badge">COMPATIBILITY WARNING:</span>
                 <span className="banner-alert-desc">
@@ -377,7 +476,7 @@ function CompatibilityView({ isIntegrated = false }) {
           {/* ── Empty State ── */}
           {selectedComponents.length === 0 && (
             <div className="empty-wrap">
-              <div className="empty-card glass-panel">
+              <div className="empty-card glass-panel" {...bindBobInteract("Workspace empty! Pick at least a CPU and Motherboard to begin checking.")}>
                 <div className="empty-img-wrap">
                   <img
                     src="/assets/component_picker_image_bg.png"
@@ -439,6 +538,7 @@ function CompatibilityView({ isIntegrated = false }) {
                         <div
                           key={i}
                           className={`component-row-card ${isOk ? "card-status-ready" : "card-status-issue"}`}
+                          {...bindBobInteract(getComponentBobHint(comp))}
                         >
                           {/* Brand Monogram Tag */}
                           <div
@@ -486,7 +586,7 @@ function CompatibilityView({ isIntegrated = false }) {
 
                 {/* Bottleneck Analysis Card */}
                 {compatibilityIssues.length > 0 && !bottleneckDismissed ? (
-                  <div className="bottleneck-darkred-card">
+                  <div className="bottleneck-darkred-card" {...bindBobInteract("Bottleneck Analysis: Hardware mismatch detected! Review recommendations to resolve.")}>
                     <div className="bottleneck-card-header">
                       <h3 className="bottleneck-card-title">Bottleneck Analysis</h3>
                     </div>
@@ -518,7 +618,7 @@ function CompatibilityView({ isIntegrated = false }) {
                     </Link>
                   </div>
                 ) : compatibilityIssues.length === 0 ? (
-                  <div className="compatibility-all-clear-card glass-panel">
+                  <div className="compatibility-all-clear-card glass-panel" {...bindBobInteract("100% Hardware Compatibility! Pinouts, DDR generation, and power rails are verified.")}>
                     <span className="all-clear-icon">
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
                     </span>
@@ -533,6 +633,7 @@ function CompatibilityView({ isIntegrated = false }) {
                 <div className="sub-diagnostics-row">
                   <div
                     className={`sub-diag-card ${hasSocketIssue ? "diag-issue" : "diag-ready"}`}
+                    {...bindBobInteract("Socket Matching: Verifying pin-level socket compatibility between CPU and Motherboard.")}
                   >
                     <div className="diag-header">
                       <span className="diag-icon">
@@ -547,6 +648,7 @@ function CompatibilityView({ isIntegrated = false }) {
 
                   <div
                     className={`sub-diag-card ${hasRamIssue ? "diag-issue" : "diag-ready"}`}
+                    {...bindBobInteract("RAM Compatibility: Ensuring DDR4 vs DDR5 standard matches your motherboard slots.")}
                   >
                     <div className="diag-header">
                       <span className="diag-icon">
@@ -561,6 +663,7 @@ function CompatibilityView({ isIntegrated = false }) {
 
                   <div
                     className={`sub-diag-card ${hasPowerIssue ? "diag-issue" : "diag-ready"}`}
+                    {...bindBobInteract(`Power Requirements: System estimated at ${estWattage}W. 20-30% PSU headroom is recommended.`)}
                   >
                     <div className="diag-header">
                       <span className="diag-icon">
@@ -583,7 +686,7 @@ function CompatibilityView({ isIntegrated = false }) {
 
                   <div className="kpi-grid-2x2">
                     {/* Est. Wattage */}
-                    <div className="kpi-tile-box">
+                    <div className="kpi-tile-box" {...bindBobInteract(`Est. Wattage (${estWattage}W): Combined peak draw of your CPU, GPU, and system baseline.`)}>
                       <span className="kpi-icon-symbol kpi-icon-red">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
                       </span>
@@ -594,7 +697,7 @@ function CompatibilityView({ isIntegrated = false }) {
                     </div>
 
                     {/* Components Count */}
-                    <div className="kpi-tile-box">
+                    <div className="kpi-tile-box" {...bindBobInteract(`Hardware Stages: ${selectedComponents.length} of 7 core components selected so far.`)}>
                       <span className="kpi-icon-symbol kpi-icon-green">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
                       </span>
@@ -605,7 +708,7 @@ function CompatibilityView({ isIntegrated = false }) {
                     </div>
 
                     {/* Gaming Score */}
-                    <div className="kpi-tile-box">
+                    <div className="kpi-tile-box" {...bindBobInteract("Gaming Score: Evaluates GPU rendering capabilities and frame throughput.")}>
                       <span className="kpi-icon-symbol kpi-icon-purple">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="8" cy="12" r="1.5"/><circle cx="16" cy="12" r="1.5"/></svg>
                       </span>
@@ -618,7 +721,7 @@ function CompatibilityView({ isIntegrated = false }) {
                     </div>
 
                     {/* Productivity Score */}
-                    <div className="kpi-tile-box">
+                    <div className="kpi-tile-box" {...bindBobInteract("Productivity Score: Evaluates multi-threaded processing power and memory bandwidth.")}>
                       <span className="kpi-icon-symbol kpi-icon-cyan">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
                       </span>
@@ -639,7 +742,7 @@ function CompatibilityView({ isIntegrated = false }) {
                     <span className="section-subcaption">Radar Performance Chart</span>
                   </div>
 
-                  <div className="radar-canvas-container">
+                  <div className="radar-canvas-container" {...bindBobInteract("5-Axis Balance Radar: Visualizing the performance equilibrium across all subsystems.")}>
                     <svg className="radar-svg-canvas" viewBox="-25 -25 310 310">
                       {/* Gradient & Glow Definitions */}
                       <defs>
@@ -771,6 +874,7 @@ function CompatibilityView({ isIntegrated = false }) {
 
                   <button
                     className="btn-convert-profile"
+                    {...bindBobInteract("Convert Profile: Toggles between standard baseline and boosted performance profiles.")}
                     onClick={() => setRadarProfileMode(!radarProfileMode)}
                   >
                     {radarProfileMode ? "Standard Profile" : "Convert Profile"}
@@ -805,7 +909,7 @@ function CompatibilityView({ isIntegrated = false }) {
 
                   {/* Side-by-Side Comparison Tables */}
                   {compareMode && (
-                    <div className="side-by-side-matrix">
+                    <div className="side-by-side-matrix" {...bindBobInteract("Comparison Matrix: Comparing technical specs between Build 1 and Build 2 side-by-side.")}>
                       {/* Column BUILD 1 */}
                       <div className="matrix-column col-left">
                         <div className="matrix-column-title">BUILD 1</div>
@@ -907,6 +1011,7 @@ function CompatibilityView({ isIntegrated = false }) {
                     <button
                       onClick={() => handleSave(selectedSaveSlot)}
                       className="btn-save-slot-trigger"
+                      {...bindBobInteract(`Save Snapshot: Stores your current build into Slot ${selectedSaveSlot + 1}.`)}
                     >
                       Save Current Build to Slot {selectedSaveSlot + 1}
                     </button>
@@ -916,6 +1021,25 @@ function CompatibilityView({ isIntegrated = false }) {
               </section>
             </div>
           )}
+        </div>
+
+        {/* ── B.O.B. Interactive Compatibility Inspector (Fixed Lower-Left Overlay) ── */}
+        <div
+          className="compat-bob-overlay"
+          title="B.O.B. — Compatibility Inspector (Right-click or hold to poke!)"
+          {...bindBobInteract("B.O.B. online! Right-click or hold any hardware item to inspect compatibility.")}
+        >
+          <EyeTracker
+            size={94}
+            shape="Cube"
+            eyes="Squares"
+            bodyColor="#00e5a0"
+            eyeColor="#06080e"
+            follow={90}
+            bounce={55}
+            speechLines={COMPAT_BOB_PHRASES}
+            externalSpeech={bobSpeech}
+          />
         </div>
       </div>
     </>

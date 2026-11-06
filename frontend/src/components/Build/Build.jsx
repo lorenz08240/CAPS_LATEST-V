@@ -5,7 +5,65 @@ import { checkCompatibility } from "../../utilities/compatibilityEngine";
 import soundManager from "../../utilities/soundManager";
 import FullscreenGate from "../FullscreenGate/FullscreenGate";
 import GlobalHeader from "../Navigation/GlobalHeader";
+import EyeTracker from "../EyeTracker/EyeTracker";
 import "./Build.css";
+
+const BOB_STAGE_TIPS = {
+  case: [
+    "Hi there! I'm B.O.B.",
+    "Pick a roomy case for good airflow!",
+    "Mesh front panels keep components cool.",
+    "Mid-towers fit standard ATX motherboards.",
+    "Check GPU length clearance before mounting!",
+  ],
+  motherboard: [
+    "Hi there! I'm B.O.B.",
+    "Match the motherboard socket to your CPU!",
+    "Check for M.2 NVMe slots for fast storage.",
+    "Verify DDR4 vs DDR5 RAM compatibility.",
+    "ATX and mATX are standard reliable form factors.",
+  ],
+  cpu: [
+    "Hi there! I'm B.O.B.",
+    "The brain of your PC! Check core counts and speeds.",
+    "Align the gold triangle when installing the CPU.",
+    "Pair high-end CPUs with adequate thermal cooling.",
+  ],
+  ram: [
+    "Hi there! I'm B.O.B.",
+    "Dual-channel memory: remember slots 2 and 4!",
+    "16GB is great for gaming, 32GB for creator workflows.",
+    "Enable XMP/EXPO in BIOS for maximum rated speed.",
+  ],
+  storage: [
+    "Hi there! I'm B.O.B.",
+    "NVMe M.2 SSDs give you instant boot times.",
+    "Install your OS on your fastest M.2 drive.",
+    "Mount the SSD in the top slot connected to the CPU.",
+  ],
+  gpu: [
+    "Hi there! I'm B.O.B.",
+    "The graphics engine! Check case clearance.",
+    "Remember: plug your monitor directly into the GPU!",
+    "Use dedicated power cables from the PSU.",
+  ],
+  psu: [
+    "Hi there! I'm B.O.B.",
+    "Leave 20-30% wattage headroom for power spikes.",
+    "80+ Gold certification ensures efficiency and cool runs.",
+    "Never mix modular cables from different power supplies!",
+  ],
+};
+
+const BOB_GENERAL_BUILD_LINES = [
+  "Hi there! I'm B.O.B.",
+  "Hey, I see you!",
+  "Take your time picking parts!",
+  "Looking good so far!",
+  "Click STARTER RIG below for a balanced preset!",
+  "That tickles!",
+  "Poke me anytime for build advice!"
+];
 
 export const buildSteps = [
   {
@@ -102,7 +160,7 @@ const CATEGORY_FILTERS = {
   ]
 };
 
-function BuildPage({ isIntegrated = false }) {
+function BuildPage({ isIntegrated = false, startBuildRequested = false }) {
   const {
     currentBuild,
     allComponents,
@@ -125,17 +183,128 @@ function BuildPage({ isIntegrated = false }) {
   });
   const [activeFilter, setActiveFilter] = useState("ALL");
   const [viewedComponent, setViewedComponent] = useState(null);
+  const [bobSpeech, setBobSpeech] = useState(null);
+
+  // Bob appearance and entrance dialogue state:
+  // Must NOT trigger automatically when entering the site/page.
+  // Must ONLY trigger when user clicked START BUILD AND is currently looking/staying on the build/component picker.
+  const [hasStartedBuild, setHasStartedBuild] = useState(() => {
+    if (startBuildRequested) return true;
+    if (!isIntegrated) {
+      try {
+        return sessionStorage.getItem("buildlab_start_build_intent") === "true";
+      } catch {
+        return false;
+      }
+    }
+    return false;
+  });
+
+  const [isViewingBuild, setIsViewingBuild] = useState(false);
+  const entranceGreetedRef = useRef(false);
+  const initialMountRef = useRef(true);
+
+  // Sync external startBuildRequested prop
+  useEffect(() => {
+    if (startBuildRequested) {
+      setHasStartedBuild(true);
+    }
+  }, [startBuildRequested]);
+
+  // Listen for START BUILD click events across the app
+  useEffect(() => {
+    const handleStartBuild = () => {
+      setHasStartedBuild(true);
+      try {
+        sessionStorage.setItem("buildlab_start_build_intent", "true");
+      } catch {}
+    };
+
+    window.addEventListener("buildlab:start-build-clicked", handleStartBuild);
+
+    // If explicit hash or scroll param on navigation
+    if (
+      typeof window !== "undefined" &&
+      (window.location.hash === "#build-station" ||
+       window.location.search.includes("scroll=build") ||
+       location.state?.scrollTo === "build-station")
+    ) {
+      handleStartBuild();
+    }
+
+    return () => {
+      window.removeEventListener("buildlab:start-build-clicked", handleStartBuild);
+    };
+  }, [location]);
+
+  // Track whether the user is actively viewing / staying on the build workstation
+  useEffect(() => {
+    const el = document.getElementById("build-main-area");
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        if (entry) {
+          // User is staying on the build picker if it's comfortably visible in viewport
+          const inView = entry.isIntersecting && entry.intersectionRatio >= 0.2;
+          setIsViewingBuild(inView);
+        }
+      },
+      { threshold: [0, 0.2, 0.5] }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   const selectedComponents = getSelectedComponents();
 
-  // Completion toast: fires once the rig selection is considered "done"
-  // (every step slot filled) — nudges the user to the Compatibility Checker.
+  // Entrance Dialogue Trigger:
+  // ONLY fires when user clicked START BUILD AND is currently looking/staying on the build picker
+  useEffect(() => {
+    if (!hasStartedBuild || !isViewingBuild || entranceGreetedRef.current) {
+      return;
+    }
+
+    // Short settle delay (450ms) so smooth scroll brings BOB completely into view before he greets
+    const timer = setTimeout(() => {
+      if (entranceGreetedRef.current) return;
+
+      const el = document.getElementById("build-main-area");
+      if (el) {
+        const rect = el.getBoundingClientRect();
+        if (rect.top >= window.innerHeight || rect.bottom <= 0) return;
+      }
+
+      entranceGreetedRef.current = true;
+
+      if (selectedComponents.length === buildSteps.length) {
+        setBobSpeech("All 7 hardware stages armed! Rig is ready to verify!");
+      } else if (selectedComponents.length > 0) {
+        setBobSpeech(`Welcome back! ${selectedComponents.length} of 7 stages locked in. Let's finish your rig!`);
+      } else {
+        setBobSpeech("Hi there! I'm B.O.B., your hardware companion. Select a PC Case to begin!");
+      }
+    }, 450);
+
+    return () => clearTimeout(timer);
+  }, [hasStartedBuild, isViewingBuild, selectedComponents.length]);
+
+  // Completion toast: fires once the rig selection is completed DURING build activity,
+  // NEVER on initial mount / page entrance.
   const [showCompleteToast, setShowCompleteToast] = useState(false);
 
   useEffect(() => {
+    if (initialMountRef.current) {
+      initialMountRef.current = false;
+      return;
+    }
+
     if (selectedComponents.length === buildSteps.length) {
       soundManager.complete();
       setShowCompleteToast(true);
+      setBobSpeech("All 7 hardware stages armed! Rig is ready to verify!");
       const timer = setTimeout(() => setShowCompleteToast(false), 9000);
       return () => clearTimeout(timer);
     }
@@ -163,6 +332,7 @@ function BuildPage({ isIntegrated = false }) {
     const category = buildSteps[currentStep].key;
     addComponent(category, component);
     soundManager.install();
+    setBobSpeech(`Locked in ${component.name}!`);
 
     // Automatically move to the next step
     if (currentStep < buildSteps.length - 1) {
@@ -191,6 +361,7 @@ function BuildPage({ isIntegrated = false }) {
   const handleReset = () => {
     soundManager.modalClose();
     resetBuild();
+    setBobSpeech("Workspace cleared. Let's start fresh with a PC Case!");
     setCurrentStep(0); // Reset to Step 1 (PC Case)
   };
 
@@ -281,6 +452,23 @@ function BuildPage({ isIntegrated = false }) {
               })}
             </div>
 
+            {/* B.O.B. Interactive Hardware Companion (Positioned in Left Sidebar Yellow Indicator Zone) */}
+            {hasStartedBuild && (
+              <div className="build-bob-dock" title="B.O.B. (Poke me for build tips!)">
+                <EyeTracker
+                  size={86}
+                  shape="Cube"
+                  eyes="Squares"
+                  bodyColor="#00e5a0"
+                  eyeColor="#06080e"
+                  follow={90}
+                  bounce={55}
+                  speechLines={BOB_STAGE_TIPS[currentStepData.key] || BOB_GENERAL_BUILD_LINES}
+                  externalSpeech={bobSpeech}
+                />
+              </div>
+            )}
+
             <div className="sidebar-foot-row">
               <button
                 onClick={handleReset}
@@ -294,6 +482,7 @@ function BuildPage({ isIntegrated = false }) {
                 type="button"
                 onClick={() => {
                   try { soundManager.click(); } catch(e) {}
+                  setBobSpeech("Starter Rig loaded! Balanced specs and verified compatibility.");
                   if (loadDemoBuild) loadDemoBuild();
                 }}
                 className="load-starter-btn sidebar-starter-btn"
@@ -649,7 +838,7 @@ export default Build;
  * standalone build experience always runs in immersive fullscreen mode.
  * The instance integrated into the Home page is gated by Home instead.
  */
-function Build({ isIntegrated = false }) {
-  const page = <BuildPage isIntegrated={isIntegrated} />;
+function Build({ isIntegrated = false, startBuildRequested = false }) {
+  const page = <BuildPage isIntegrated={isIntegrated} startBuildRequested={startBuildRequested} />;
   return isIntegrated ? page : <FullscreenGate requireFullscreen>{page}</FullscreenGate>;
 }

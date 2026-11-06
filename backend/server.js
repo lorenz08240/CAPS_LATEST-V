@@ -427,5 +427,16 @@ app.post("/api/crawl", adminAuth, (req, res) => {
   });
 });
 
+// ── Serve Built Frontend (Production SPA) ──
+const path = require("path");
+const distPath = path.join(__dirname, "../frontend/dist");
+app.use(express.static(distPath));
+app.use((req, res, next) => {
+  if (req.path.startsWith("/api")) return next();
+  res.sendFile(path.join(distPath, "index.html"), (err) => {
+    if (err) next();
+  });
+});
+
 const PORT = 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

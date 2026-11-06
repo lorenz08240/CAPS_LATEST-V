@@ -66,7 +66,10 @@ export default function GlobalHeader({ onSearchClick }) {
           <Link
             to="/build"
             className="global-build-pill"
-            onClick={() => { try { soundManager.click(); } catch (e) {} }}
+            onClick={() => {
+              try { soundManager.click(); } catch (e) {}
+              try { sessionStorage.setItem("buildlab_start_build_intent", "true"); } catch (e) {}
+            }}
             title="Open PC Builder Station"
           >
             <span>START BUILD</span>

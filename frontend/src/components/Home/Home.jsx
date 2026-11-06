@@ -16,6 +16,7 @@ function Home() {
   const { toggleSidebar } = useSidebar();
   const [activeModel, setActiveModel] = useState('case');
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [startBuildRequested, setStartBuildRequested] = useState(false);
 
   const STAGE_META = {
     case: { num: '01', name: 'ATX CHASSIS' },
@@ -53,6 +54,10 @@ function Home() {
   }, []);
 
   const handleScrollToBuild = (behavior = "smooth") => {
+    try {
+      setStartBuildRequested(true);
+      window.dispatchEvent(new CustomEvent("buildlab:start-build-clicked"));
+    } catch {}
     try {
       soundManager.click();
     } catch {
@@ -318,7 +323,7 @@ function Home() {
         {/* TIER 2: Active Build Station Framework (Smooth Scroll Target)         */}
         {/* ══════════════════════════════════════════════════════════════════════ */}
         <section id="build-station" className="home-integrated-section">
-          <Build isIntegrated={true} />
+          <Build isIntegrated={true} startBuildRequested={startBuildRequested} />
         </section>
       </div>
     </FullscreenGate>
