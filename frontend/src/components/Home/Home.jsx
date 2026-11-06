@@ -18,9 +18,10 @@ function Home() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [startBuildRequested, setStartBuildRequested] = useState(false);
 
-  // ── Scroll-down lock mechanism:
-  // Once the user scrolls down into the build station, they are locked from scrolling
-  // back up into the hero section until they have clicked BUILD in their page session.
+  // ── Hero Section Scroll-Down Lock Mechanism:
+  // When the user enters the Hero section, scrolling down is locked until they press START BUILD.
+  // Once they press START BUILD, the page unlocks, smoothly scrolls to the build station (so B.O.B.
+  // gets his proper introduction), and the user can freely scroll up and down for the rest of the session.
   const [hasClickedBuild, setHasClickedBuild] = useState(() => {
     try {
       return sessionStorage.getItem("buildlab_home_build_clicked") === "true";
@@ -30,7 +31,6 @@ function Home() {
   });
 
   const hasClickedBuildRef = useRef(hasClickedBuild);
-  const isLockedRef = useRef(false);
 
   useEffect(() => {
     hasClickedBuildRef.current = hasClickedBuild;
@@ -39,7 +39,6 @@ function Home() {
   const unlockBuildScroll = useCallback(() => {
     setHasClickedBuild(true);
     hasClickedBuildRef.current = true;
-    isLockedRef.current = false;
     try {
       sessionStorage.setItem("buildlab_home_build_clicked", "true");
     } catch {}
@@ -71,12 +70,14 @@ function Home() {
     const scrollBehavior = typeof behavior === "string" ? behavior : "smooth";
     const buildStation = document.getElementById("build-station");
     if (buildStation) {
-      try {
-        buildStation.scrollIntoView({ behavior: scrollBehavior, block: "start" });
-      } catch {
-        const top = (window.pageYOffset || 0) + buildStation.getBoundingClientRect().top;
-        window.scrollTo({ top, behavior: scrollBehavior });
-      }
+      setTimeout(() => {
+        try {
+          buildStation.scrollIntoView({ behavior: scrollBehavior, block: "start" });
+        } catch {
+          const top = (window.pageYOffset || 0) + buildStation.getBoundingClientRect().top;
+          window.scrollTo({ top, behavior: scrollBehavior });
+        }
+      }, 30);
     }
   };
 
@@ -100,14 +101,22 @@ function Home() {
     return () => window.removeEventListener("buildlab:start-build-clicked", handleBuildClickedEvent);
   }, [unlockBuildScroll]);
 
-  // Clean, robust scroll-down lock
+  // Lock scrolling down until user presses START BUILD
   useEffect(() => {
-    const getBuildStationTop = () => {
-      const el = document.getElementById("build-station");
-      if (!el) return null;
-      const rect = el.getBoundingClientRect();
-      return (window.pageYOffset || window.scrollY || 0) + rect.top;
+    const applyInitialLock = () => {
+      if (!hasClickedBuildRef.current) {
+        document.documentElement.style.overflow = "hidden";
+        document.body.style.overflow = "hidden";
+        if (window.scrollY > 0) {
+          window.scrollTo(0, 0);
+        }
+      } else {
+        document.documentElement.style.overflow = "";
+        document.body.style.overflow = "";
+      }
     };
+
+    applyInitialLock();
 
     const handleScroll = () => {
       const hero = document.getElementById("cyber-hero");
@@ -118,43 +127,23 @@ function Home() {
         setScrollProgress(progress);
       }
 
-      if (hasClickedBuildRef.current) {
-        if (isLockedRef.current) {
-          isLockedRef.current = false;
-          document.documentElement.style.overflow = "";
-          document.body.style.overflow = "";
+      if (!hasClickedBuildRef.current) {
+        const currentY = window.scrollY || window.pageYOffset || 0;
+        if (currentY > 0) {
+          window.scrollTo(0, 0);
         }
-        return;
-      }
-
-      const buildTop = getBuildStationTop();
-      if (buildTop === null) return;
-      const currentY = window.scrollY || window.pageYOffset || 0;
-
-      // Lock activates once the user scrolls down into the build station
-      if (currentY >= buildTop - 5) {
-        if (!isLockedRef.current) {
-          isLockedRef.current = true;
-          window.scrollTo(0, buildTop);
-          document.documentElement.style.overflow = "hidden";
-          document.body.style.overflow = "hidden";
-        }
-      } else if (isLockedRef.current) {
-        // If locked, immediately clamp back to buildTop
-        window.scrollTo(0, buildTop);
       }
     };
 
-    // Wheel listener to prevent scrolling up when locked
+    // Intercept wheel scrolling down
     const handleWheel = (e) => {
-      if (hasClickedBuildRef.current) return;
-      if (isLockedRef.current && e.deltaY < 0) {
+      if (!hasClickedBuildRef.current && e.deltaY > 0) {
         e.preventDefault();
         e.stopPropagation();
       }
     };
 
-    // Touch listeners to prevent dragging down to scroll up on touchscreens
+    // Intercept touch swiping up (which scrolls page down)
     let touchStartY = 0;
     const handleTouchStart = (e) => {
       if (e.touches && e.touches.length > 0) {
@@ -163,20 +152,18 @@ function Home() {
     };
 
     const handleTouchMove = (e) => {
-      if (hasClickedBuildRef.current) return;
-      if (isLockedRef.current && e.touches && e.touches.length > 0) {
+      if (!hasClickedBuildRef.current && e.touches && e.touches.length > 0) {
         const deltaY = e.touches[0].clientY - touchStartY;
-        if (deltaY > 0) {
+        if (deltaY < 0) {
           if (e.cancelable) e.preventDefault();
           e.stopPropagation();
         }
       }
     };
 
-    // Navigation keys (ArrowUp, PageUp, Home)
+    // Intercept navigation keys that scroll down (ArrowDown, PageDown, Space)
     const handleKeyDown = (e) => {
-      if (hasClickedBuildRef.current) return;
-      if (isLockedRef.current && ["ArrowUp", "PageUp", "Home"].includes(e.key)) {
+      if (!hasClickedBuildRef.current && ["ArrowDown", "PageDown", "Space", " "].includes(e.key)) {
         e.preventDefault();
         e.stopPropagation();
       }
@@ -187,9 +174,6 @@ function Home() {
     window.addEventListener("touchstart", handleTouchStart, { passive: true });
     window.addEventListener("touchmove", handleTouchMove, { passive: false });
     window.addEventListener("keydown", handleKeyDown);
-
-    // Initial check
-    handleScroll();
 
     // Support direct hash navigation (e.g. /#build-station)
     if (window.location.hash === "#build-station" || window.location.search.includes("scroll=build")) {
@@ -210,9 +194,6 @@ function Home() {
   }, [unlockBuildScroll]);
 
   const handleNavigateHome = () => {
-    if (isLockedRef.current && !hasClickedBuildRef.current) {
-      return;
-    }
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
