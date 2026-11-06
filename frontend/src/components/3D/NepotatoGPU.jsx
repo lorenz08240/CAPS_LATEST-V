@@ -155,11 +155,6 @@ function buildNepotatoCard() {
     metalness: 0.9,
     roughness: 0.22,
   });
-  const ledRecessMaterial = new THREE.MeshStandardMaterial({
-    color: 0x020617,
-    metalness: 0.2,
-    roughness: 0.5,
-  });
   const ledCoreMaterial = new THREE.MeshPhysicalMaterial({
     color: 0x00e5ff,
     emissive: 0x00e5ff,
@@ -523,18 +518,6 @@ export default function NepotatoGPU({
 
   return (
     <group ref={groupRef}>
-      {/* 
-        Standard ATX Horizontal Mounting Calibration (Matching real-world PCIe installation):
-         - Local X (card length) maps to World +Z (I/O bracket at rear -Z, front end at +Z)
-         - Local Y (PCIe connector to power sockets) maps to World -X:
-             * Gold PCIe pins at local -Y point into +X (plugging directly into motherboard PCIe armor slot)
-             * Power sockets and side edge branding at local +Y face outward into -X (towards glass side panel)
-         - Local Z (fans to backplate) maps to World -Y:
-             * Triple fans at local +Z face downwards (-Y) towards PSU shroud
-             * Brushed backplate at local -Z faces upwards (+Y) towards CPU socket
-         - Exact alignment offset: [-0.27, -0.048, 0.432] locks PCIe pins into Motherboard slot at [1.32, -0.5, -0.9]
-         - When isStandalone is true (e.g. Home 3D Hero), render centered with an isometric tilt showcasing fans and shroud.
-      */}
       <group
         position={isStandalone ? [0.1, 0, 0] : [-0.27, -0.048, 0.432]}
         rotation={isStandalone ? [0.15, 0.35, -0.05] : [Math.PI / 2, 0, Math.PI / 2]}

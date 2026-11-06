@@ -36,8 +36,6 @@ export default function GenericPCCase({
   const psuShroudColor = isWhite ? '#3b4759' : '#1f2937';
   const backPanelColor = isWhite ? '#334155' : '#242c3d';
   const glassBorderColor = isWhite ? '#334155' : '#0f172a';
-  const glassColor = isWhite ? '#e2e8f0' : '#0f172a';
-  const glassOpacity = isWhite ? 0.16 : 0.32;
   const rubberGrommetColor = isWhite ? '#0f172a' : '#111827';
   const structuralFrameColor = isWhite ? '#1e293b' : '#0b0f19';
 
@@ -76,7 +74,6 @@ export default function GenericPCCase({
         onSelect(part || { category: 'case', name: 'ATX Mid-Tower Chassis', brand: 'Generic', form_factor: 'ATX' });
       }}
     >
-      {/* ── Selection / Hover Indicator Ring at Chassis Base (Only when highlights enabled) ── */}
       {enableHighlight && (activeSelected || effectiveHover) && (
         <group position={[0, -4.85, 0]} rotation={[-Math.PI / 2, 0, 0]}>
           <mesh>
@@ -91,9 +88,6 @@ export default function GenericPCCase({
         </group>
       )}
 
-      {/* ── Outer Metal Chassis (Dynamic Powder-Coated Materials) ── */}
-
-      {/* Top Panel & Magnetic Dust Filter */}
       <group position={[0, expYTop, 0]}>
         <mesh>
           <boxGeometry args={[4.5, 0.2, 9]} />
@@ -105,17 +99,14 @@ export default function GenericPCCase({
             emissiveIntensity={highlightIntensity}
           />
         </mesh>
-        {/* Top Vent Mesh */}
         <mesh position={[0, 0.11, 0]}>
           <boxGeometry args={[3.8, 0.02, 7.8]} />
           <meshStandardMaterial color={meshColor} roughness={0.8} wireframe={explodedProgress > 0.1} />
         </mesh>
-        {/* Front I/O Ports on Top Panel */}
         <mesh position={[1.5, 0.12, 3.8]}>
           <boxGeometry args={[0.3, 0.05, 0.3]} />
           <meshStandardMaterial color="#64748b" metalness={0.9} roughness={0.2} />
         </mesh>
-        {/* Power Button with LED Ring */}
         <mesh position={[1.5, 0.13, 3.8]}>
           <cylinderGeometry args={[0.1, 0.1, 0.05, 16]} />
           <meshStandardMaterial color={rgbColor} emissive={rgbColor} emissiveIntensity={2.0} />
@@ -126,7 +117,6 @@ export default function GenericPCCase({
         </mesh>
       </group>
 
-      {/* Bottom Panel & Rubber Feet (Ground plane touches base of feet at Y = -4.9) */}
       <group position={[0, expYBottom, 0]}>
         <mesh>
           <boxGeometry args={[4.5, 0.2, 9]} />
@@ -138,7 +128,6 @@ export default function GenericPCCase({
             emissiveIntensity={highlightIntensity}
           />
         </mesh>
-        {/* 4 Rubber/Chrome Feet extending down 0.4 units to Y = -4.9 */}
         {[[-1.8, -0.2, -3.8], [1.8, -0.2, -3.8], [-1.8, -0.2, 3.8], [1.8, -0.2, 3.8]].map((pos, idx) => (
           <mesh key={idx} position={pos}>
             <cylinderGeometry args={[0.35, 0.4, 0.4, 16]} />
@@ -147,9 +136,7 @@ export default function GenericPCCase({
         ))}
       </group>
 
-      {/* Front Panel (Bezel & Mesh Intake) */}
       <group position={[0, 0, expZFront]}>
-        {/* Outer Frame */}
         <mesh>
           <boxGeometry args={[4.5, 9, 0.3]} />
           <meshStandardMaterial 
@@ -160,19 +147,16 @@ export default function GenericPCCase({
             emissiveIntensity={highlightIntensity}
           />
         </mesh>
-        {/* Mesh Intake Center */}
         <mesh position={[0, 0, 0.16]}>
           <boxGeometry args={[3.8, 8.2, 0.05]} />
           <meshStandardMaterial color={meshColor} roughness={0.9} wireframe={explodedProgress > 0.2} />
         </mesh>
-        {/* Front Edge Bevel Accent */}
         <mesh position={[-2.15, 0, 0.1]}>
           <boxGeometry args={[0.1, 8.8, 0.2]} />
           <meshStandardMaterial color={accentColor} metalness={0.8} />
         </mesh>
       </group>
 
-      {/* Back Panel (I/O Cutout & Expansion Slots) */}
       <group position={[0, 0, expZBack]}>
         <mesh>
           <boxGeometry args={[4.5, 9, 0.2]} />
@@ -184,24 +168,20 @@ export default function GenericPCCase({
             emissiveIntensity={highlightIntensity}
           />
         </mesh>
-        {/* PCIe Expansion Slot Brackets (Vertical Grille) */}
         <mesh position={[0.6, -1.0, 0.11]}>
           <boxGeometry args={[1.5, 2.5, 0.02]} />
           <meshStandardMaterial color={accentColor} metalness={0.9} roughness={0.2} />
         </mesh>
-        {/* Motherboard I/O Shield Cutout */}
         <mesh position={[1.4, 1.4, 0.11]}>
           <boxGeometry args={[1.2, 2.0, 0.02]} />
           <meshStandardMaterial color="#0f172a" roughness={0.9} />
         </mesh>
-        {/* PSU Intake Hole at Bottom */}
         <mesh position={[0, -3.5, 0.11]}>
           <boxGeometry args={[2.8, 1.6, 0.02]} />
           <meshStandardMaterial color="#0f172a" roughness={0.9} />
         </mesh>
       </group>
 
-      {/* Right Panel (Solid Metal) */}
       <group position={[expXRight, 0, 0]}>
         <mesh>
           <boxGeometry args={[0.15, 8.8, 8.8]} />
@@ -215,13 +195,11 @@ export default function GenericPCCase({
         </mesh>
       </group>
 
-      {/* ── Internal Motherboard Tray ── */}
       <group position={[1.5, 0, -0.6]}>
         <mesh>
           <boxGeometry args={[0.08, 6.8, 6.2]} />
           <meshStandardMaterial color={interiorColor} roughness={0.7} metalness={0.5} />
         </mesh>
-        {/* Rubber Grommets */}
         <mesh position={[0.05, 0.5, 2.2]}>
           <boxGeometry args={[0.04, 1.8, 0.5]} />
           <meshStandardMaterial color={rubberGrommetColor} roughness={0.95} />
@@ -236,7 +214,6 @@ export default function GenericPCCase({
         </mesh>
       </group>
 
-      {/* ── PSU Shroud (Basement Cover with Cable Cutouts) ── */}
       <group position={[0, -3.5, 0]}>
         <mesh>
           <boxGeometry args={[4.2, 1.8, 8.8]} />
@@ -248,19 +225,16 @@ export default function GenericPCCase({
             emissiveIntensity={highlightIntensity}
           />
         </mesh>
-        {/* Top PSU Shroud Ventilation plate */}
         <mesh position={[-0.8, 0.91, 0]}>
           <boxGeometry args={[2.0, 0.02, 6.0]} />
           <meshStandardMaterial color={meshColor} roughness={0.9} />
         </mesh>
-        {/* Cable Pass-Through Hole */}
         <mesh position={[0.8, 0.91, 0.5]}>
           <boxGeometry args={[0.4, 0.03, 1.0]} />
           <meshStandardMaterial color="#0b0f19" roughness={0.95} />
         </mesh>
       </group>
 
-      {/* ── Front Triple RGB Intake Fans (Interlocking Lian Li Uni-Fan style) ── */}
       <group position={[0, 0, 4.1]}>
         {[2.45, 0, -2.45].map((yPos, idx) => (
           <ProceduralSickleFan 
@@ -275,7 +249,6 @@ export default function GenericPCCase({
         ))}
       </group>
 
-      {/* ── Rear RGB Exhaust Fan ── */}
       <ProceduralSickleFan 
         position={[0.2, 1.4, -4.1]} 
         rgbColor={rgbColor}
@@ -285,9 +258,7 @@ export default function GenericPCCase({
         isExhaust={true}
       />
 
-      {/* ── Internal Ambient Occlusion Corner Posts & Junction Shadow Crevices ── */}
       <group>
-        {/* 4 Corner Structural Posts creating natural corner ambient occlusion */}
         {[
           [-2.15, 0, 4.3],
           [2.15, 0, 4.3],
@@ -300,22 +271,18 @@ export default function GenericPCCase({
           </mesh>
         ))}
 
-        {/* Crevice Shadow Joint between Motherboard Tray and PSU Shroud */}
         <mesh position={[1.46, -2.59, -0.6]}>
           <boxGeometry args={[0.08, 0.04, 6.2]} />
           <meshBasicMaterial color="#090d16" />
         </mesh>
       </group>
 
-      {/* ── Left Side Panel (Tempered Glass Door with Rear Hinge) ── */}
       {glassMode !== 'removed' && (
         <group 
           position={[-2.2 - (explodedProgress * 4.5), 0, -4.4]} 
           rotation={[0, glassMode === 'open' ? -0.85 : 0, 0]}
         >
-          {/* Glass Door Assembly positioned relative to rear hinge pivot at Z = 0 */}
           <group position={[0, 0, 4.4]}>
-            {/* Main Tempered Glass Pane (Non-glare PBR tinted glass; zero transmission FBO blowout) */}
             <mesh>
               <boxGeometry args={[0.08, 8.8, 8.8]} />
               <meshPhysicalMaterial 
@@ -330,35 +297,28 @@ export default function GenericPCCase({
               />
             </mesh>
 
-            {/* 4-Edge Silk-Screened Ceramic Bezel Border */}
-            {/* Top Border */}
             <mesh position={[0.042, 4.15, 0]}>
               <boxGeometry args={[0.005, 0.5, 8.8]} />
               <meshStandardMaterial color={glassBorderColor} roughness={0.9} />
             </mesh>
-            {/* Bottom Border */}
             <mesh position={[0.042, -4.15, 0]}>
               <boxGeometry args={[0.005, 0.5, 8.8]} />
               <meshStandardMaterial color={glassBorderColor} roughness={0.9} />
             </mesh>
-            {/* Front Border */}
             <mesh position={[0.042, 0, 4.15]}>
               <boxGeometry args={[0.005, 7.8, 0.5]} />
               <meshStandardMaterial color={glassBorderColor} roughness={0.9} />
             </mesh>
-            {/* Rear Border */}
             <mesh position={[0.042, 0, -4.15]}>
               <boxGeometry args={[0.005, 7.8, 0.5]} />
               <meshStandardMaterial color={glassBorderColor} roughness={0.9} />
             </mesh>
 
-            {/* Front Magnetic Pull Tab / Handle */}
             <mesh position={[-0.08, 0, 4.3]}>
               <boxGeometry args={[0.1, 1.2, 0.2]} />
               <meshStandardMaterial color="#64748b" metalness={0.95} roughness={0.2} />
             </mesh>
 
-            {/* Rear Precision Steel Hinges (2x) */}
             {[2.5, -2.5].map((yHinge, idx) => (
               <mesh key={`hinge-${idx}`} position={[0.02, yHinge, -4.4]} rotation={[0, 0, 0]}>
                 <cylinderGeometry args={[0.1, 0.1, 0.6, 16]} />
@@ -369,7 +329,6 @@ export default function GenericPCCase({
         </group>
       )}
 
-      {/* ── Tooltip on Hover (Optional, default false) ── */}
       {showTooltip && effectiveHover && (
         <Html center position={[0, expYTop + 0.6, 0]} distanceFactor={15}>
           <div style={{

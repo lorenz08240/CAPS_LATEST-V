@@ -1,7 +1,6 @@
 import CourseShell from "./CourseShell";
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useBuild } from "../../contexts/BuildContext";
+import React from "react";
+import { Link } from "react-router-dom";
 import FullscreenGate from "../FullscreenGate/FullscreenGate";
 import "./Learn.css";
 

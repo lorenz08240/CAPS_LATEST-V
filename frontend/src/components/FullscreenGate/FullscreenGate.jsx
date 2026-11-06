@@ -103,7 +103,6 @@ export default function FullscreenGate({ children, requireFullscreen = false }) 
 
   return (
     <>
-      {/* Device Rotation Gate (portrait mobile/tablets) */}
       {showRotation && (
         <div
           className="fs-gate-overlay fs-gate-rotation"
@@ -129,7 +128,6 @@ export default function FullscreenGate({ children, requireFullscreen = false }) 
         </div>
       )}
 
-      {/* Return to Full Screen Modal Dialog */}
       {showFullscreen && (
         <div
           className="fs-gate-overlay fs-gate-fullscreen"
@@ -139,9 +137,7 @@ export default function FullscreenGate({ children, requireFullscreen = false }) 
           aria-describedby="fs-gate-desc"
         >
           <div className="fs-gate-card">
-            {/* Top & Header Row: Side-by-Side Hero Layout */}
             <div className="fs-card-hero">
-              {/* Left Column: BuildLab Flask/Chip Logo */}
               <div className="fs-hero-logo-col">
                 <img
                   src="/assets/buildlab_logo_tight.png"
@@ -151,17 +147,13 @@ export default function FullscreenGate({ children, requireFullscreen = false }) 
                 />
               </div>
 
-              {/* Subtle Vertical Divider */}
               <div className="fs-hero-divider" aria-hidden="true" />
 
-              {/* Right Column: Title & Fullscreen Info */}
               <div className="fs-hero-text-col">
-                {/* Header Tag */}
                 <div className="fs-hero-subtitle">
                   IMMERSIVE MODE REQUIRED
                 </div>
 
-                {/* Bold Heading */}
                 <h1 className="fs-hero-title" id="fs-gate-title">
                   <span className="fs-title-white">
                     {engaged ? "Return to" : "Enter"}
@@ -171,14 +163,12 @@ export default function FullscreenGate({ children, requireFullscreen = false }) 
               </div>
             </div>
 
-            {/* Body Text / Subtext */}
             <p className="fs-card-subtext" id="fs-gate-desc">
               {engaged
                 ? "You left full screen mode — your workstation is paused. Hop back in for the complete interactive experience."
                 : "BuildLab is designed as an immersive hardware workstation. Enter full screen for the complete interactive experience."}
             </p>
 
-            {/* Action Button: CTA Pill with Vibrant Cyan-to-Emerald Gradient */}
             <button
               type="button"
               className="fs-card-btn"
@@ -203,12 +193,10 @@ export default function FullscreenGate({ children, requireFullscreen = false }) 
               <span>ENTER FULL SCREEN</span>
             </button>
 
-            {/* Keyboard Shortcut Note */}
             <p className="fs-card-esc-hint">
               Press <kbd className="fs-kbd-f11">F11</kbd> at any time to leave (your build is saved).
             </p>
 
-            {/* Secondary Windowed Link */}
             <button
               type="button"
               className="fs-gate-btn-secondary"

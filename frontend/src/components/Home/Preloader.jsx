@@ -17,7 +17,7 @@ export default function Preloader({ onComplete }) {
     if (typeof window === 'undefined') return false;
     try {
       if (sessionStorage.getItem('buildlab_preloader_seen') === 'true') return false;
-    } catch (e) {}
+    } catch {}
     return !hasLoadedOnceInSession;
   });
 
@@ -103,7 +103,7 @@ export default function Preloader({ onComplete }) {
     hasLoadedOnceInSession = true;
     try {
       sessionStorage.setItem('buildlab_preloader_seen', 'true');
-    } catch (e) {}
+    } catch {}
     setIsExiting(true);
 
     // Wait for the smooth CSS curtain slide-up animation (0.85s)
@@ -145,7 +145,6 @@ export default function Preloader({ onComplete }) {
       <div className="preloader-ambient-grid" />
       <div className="preloader-ambient-glow" />
 
-      {/* 1. TOP STATUS BAR */}
       <header className="preloader-top-bar">
         <div className="preloader-brand">
           <div className="preloader-logo-box">▲</div>
@@ -161,15 +160,12 @@ export default function Preloader({ onComplete }) {
         </div>
       </header>
 
-      {/* 2. CENTER CONTENT (Giant Counter & Fullscreen Protocol Prompt) */}
       <main className="preloader-center-content">
-        {/* Giant Typographic Counter */}
         <div className="preloader-counter-wrap">
           <span className="preloader-giant-number">{formattedNumber}</span>
           <span className="preloader-percent-symbol">%</span>
         </div>
 
-        {/* Minimalist Progress Track */}
         <div className="preloader-track-container">
           <div className="preloader-track-bar">
             <div
@@ -186,7 +182,6 @@ export default function Preloader({ onComplete }) {
           </div>
         </div>
 
-        {/* Fullscreen Requirement Notice Box */}
         <div className="preloader-fullscreen-box">
           <span className="preloader-fs-tag">
             [ IMMERSIVE WORKSTATION PROTOCOL ]
@@ -229,7 +224,6 @@ export default function Preloader({ onComplete }) {
         </div>
       </main>
 
-      {/* 3. BOTTOM TELEMETRY FOOTER */}
       <footer className="preloader-bottom-bar">
         <span>EST. 2026 // ADVANCED PC HARDWARE LAB</span>
         <span className="preloader-bottom-right">PHYSICALLY BASED SIMULATION ENGINE</span>

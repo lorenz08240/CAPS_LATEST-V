@@ -657,7 +657,7 @@ export default function CourseShell({ componentGuide }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [completed, setCompleted] = useState(readProgress);
 
-  /* Right Sidebar Syllabus Panel — EXPANDED/SHOWN by default, togglable */
+  /* Right Sidebar Syllabus Panel — EXPANDED/SHOWN by default, strictly toggleable via click */
   const [isPinned, setIsPinned] = useState(() => {
     try {
       const saved = localStorage.getItem("buildlab.course.sidebar.pinned");
@@ -667,8 +667,8 @@ export default function CourseShell({ componentGuide }) {
       return true;
     }
   });
-  const [isHovered, setIsHovered] = useState(false);
-  const isVisible = isPinned || isHovered;
+  // Sidebar visibility is strictly driven by toggle/click, not mouse hover!
+  const isVisible = isPinned;
 
   /* B.O.B. Companion live speech state */
   const [bobSpeech, setBobSpeech] = useState(
@@ -680,6 +680,9 @@ export default function CourseShell({ componentGuide }) {
       localStorage.setItem("buildlab.course.sidebar.pinned", JSON.stringify(isPinned));
     } catch {}
   }, [isPinned]);
+
+  /* In-page video player maximized / theater mode state */
+  const [isVideoMaximized, setIsVideoMaximized] = useState(false);
 
   /* Video prerequisite gating state */
   const [watchedVideos, setWatchedVideos] = useState(() => {
@@ -779,7 +782,6 @@ export default function CourseShell({ componentGuide }) {
     setCurrentIndex(idx);
     if (typeof window !== "undefined" && window.matchMedia("(max-width: 960px)").matches) {
       setIsPinned(false);
-      setIsHovered(false);
     }
   };
 
@@ -844,8 +846,6 @@ export default function CourseShell({ componentGuide }) {
     }
     navigate("/build");
   };
-
-  const currentQuiz = lesson.quiz ? lesson.quiz[quizIndex] || lesson.quiz[0] : null;
 
   /* ── Shared renderers ── */
 
@@ -970,10 +970,18 @@ export default function CourseShell({ componentGuide }) {
 
   const renderArticleLesson = (art) => (
     <>
-      {/* Video Tutorial Player (HERO) & Architecture Blueprint (COMPANION) */}
-      <div className="mockup-card article-media-card">
+      <div id="syllabus-art-1" className="mockup-card article-media-card">
+        <div className="syllabus-unit-ribbon">
+          <div className="syllabus-unit-lead">
+            <span className="unit-number-tag">§ 1.1</span>
+            <span className="unit-type-label">Foundational Video Lecture &amp; System Architecture Blueprint</span>
+          </div>
+          <div className="syllabus-unit-meta">
+            <span className="unit-badge video-badge">📺 Instructional Media</span>
+            <span className="unit-badge req-badge">{watchedVideos.includes(current.id) ? "✓ Lecture Verified" : "⏳ Prerequisite"}</span>
+          </div>
+        </div>
         <div className="article-media-grid">
-          {/* Dominant Video Spotlight — First & Autoplaying */}
           <div className="article-video-col">
             <div className="lesson-video-topbar">
               <div className="video-gate-status">
@@ -1000,7 +1008,11 @@ export default function CourseShell({ componentGuide }) {
                 <CourseVideoPlayer
                   key={`artvideo-${art.youtubeId}`}
                   videoId={art.youtubeId}
+                  lessonId={current.id}
                   title={`${art.title} Tutorial Video`}
+                  isAlreadyFinished={watchedVideos.includes(current.id)}
+                  onFinished={() => markVideoWatched(current.id)}
+                  onMaximizeChange={setIsVideoMaximized}
                 />
               ) : (
                 <img src={art.heroImage} alt={art.title} className="lesson-video-fallback" />
@@ -1028,7 +1040,6 @@ export default function CourseShell({ componentGuide }) {
             )}
           </div>
 
-          {/* Topic Blueprint Companion Card */}
           <div className="article-visual-col">
             <span className="media-section-subhead">Topic Architecture Blueprint</span>
             <div className="article-img-frame">
@@ -1061,8 +1072,16 @@ export default function CourseShell({ componentGuide }) {
         </div>
       </div>
 
-      {/* Objectives + optional table */}
-      <div className="mockup-card article-objectives-card">
+      <div id="syllabus-art-2" className="mockup-card article-objectives-card">
+        <div className="syllabus-unit-ribbon">
+          <div className="syllabus-unit-lead">
+            <span className="unit-number-tag">§ 1.2</span>
+            <span className="unit-type-label">Syllabus Learning Objectives &amp; Required Lab Equipment</span>
+          </div>
+          <div className="syllabus-unit-meta">
+            <span className="unit-badge specs-badge">🎯 Curriculum Benchmarks</span>
+          </div>
+        </div>
         <span className="know-part-subhead">What you'll learn</span>
         <ul className="lesson-objectives">
           {art.objectives.map((o, i) => (
@@ -1078,9 +1097,19 @@ export default function CourseShell({ componentGuide }) {
         {art.table && renderTable(art.table)}
       </div>
 
-      {/* Sections */}
       {art.sections.map((sec, si) => (
-        <div className="mockup-card article-section-card" key={si}>
+        <div id={si === 0 ? "syllabus-art-3" : undefined} className="mockup-card article-section-card" key={si}>
+          {si === 0 && (
+            <div className="syllabus-unit-ribbon">
+              <div className="syllabus-unit-lead">
+                <span className="unit-number-tag">§ 1.3</span>
+                <span className="unit-type-label">Curriculum Technical Reading &amp; Architectural Deep Dive</span>
+              </div>
+              <div className="syllabus-unit-meta">
+                <span className="unit-badge lab-badge">📖 Specialization Material</span>
+              </div>
+            </div>
+          )}
           <h4 className="article-section-heading">{sec.heading}</h4>
           {sec.body &&
             (Array.isArray(sec.body) ? sec.body : [sec.body]).map((p, i) => (
@@ -1099,9 +1128,17 @@ export default function CourseShell({ componentGuide }) {
         </div>
       ))}
 
-      {/* Article quiz */}
       {art.quiz && (
-        <div className="mockup-card quiz-card">
+        <div id="syllabus-art-4" className="mockup-card quiz-card">
+          <div className="syllabus-unit-ribbon">
+            <div className="syllabus-unit-lead">
+              <span className="unit-number-tag">§ 1.4</span>
+              <span className="unit-type-label">Formative Knowledge Check &amp; Certification Assessment</span>
+            </div>
+            <div className="syllabus-unit-meta">
+              <span className="unit-badge exam-badge">📝 Evaluated Assessment</span>
+            </div>
+          </div>
           <div className="mockup-card-header">
             <h3 className="mockup-card-title">Knowledge Check</h3>
           </div>
@@ -1109,7 +1146,6 @@ export default function CourseShell({ componentGuide }) {
         </div>
       )}
 
-      {/* 3D Practical Activity for Module 3 & 5 Article Lessons */}
       {(current.id === "full-build-order" || current.id === "compatibility-chain") && (
         <div className="mockup-card practical-3d-lab-card">
           <div className="lab-card-header">
@@ -1172,10 +1208,18 @@ export default function CourseShell({ componentGuide }) {
 
   const renderComponentLesson = (comp) => (
     <>
-      {/* 1. REQUIRED VIDEO PLAYER (HERO) & HARDWARE SPECIMEN (COMPANION) */}
-      <div className="mockup-card lesson-brief-card">
+      <div id="syllabus-sec-1" className="mockup-card lesson-brief-card">
+        <div className="syllabus-unit-ribbon">
+          <div className="syllabus-unit-lead">
+            <span className="unit-number-tag">§ 1.1</span>
+            <span className="unit-type-label">Core Instructional Lecture &amp; Hardware Specimen</span>
+          </div>
+          <div className="syllabus-unit-meta">
+            <span className="unit-badge video-badge">📺 Interactive Lecture Film</span>
+            <span className="unit-badge req-badge">{watchedVideos.includes(comp.id) ? "✓ Lecture Verified" : "⏳ Prerequisite"}</span>
+          </div>
+        </div>
         <div className="lesson-brief-grid">
-          {/* Dominant Video Spotlight — First & Autoplaying */}
           <div className="lesson-video-col">
             <div className="lesson-video-topbar">
               <div className="video-gate-status">
@@ -1203,7 +1247,11 @@ export default function CourseShell({ componentGuide }) {
                 <CourseVideoPlayer
                   key={`lessonvideo-${comp.id}-${comp.youtubeId}`}
                   videoId={comp.youtubeId}
+                  lessonId={comp.id}
                   title={`${comp.name} Lesson Film`}
+                  isAlreadyFinished={watchedVideos.includes(comp.id)}
+                  onFinished={() => markVideoWatched(comp.id)}
+                  onMaximizeChange={setIsVideoMaximized}
                 />
               ) : (
                 <img src={comp.heroImage} alt={comp.name} className="lesson-video-fallback" />
@@ -1229,7 +1277,6 @@ export default function CourseShell({ componentGuide }) {
           </div>
 
           <aside className="lesson-brief-side">
-            {/* Hardware Part Image Inspection Specimen Card */}
             <div className="hardware-specimen-header">
               <div className="specimen-badge-row">
                 <span className="specimen-badge-pill">Hardware Specimen</span>
@@ -1269,8 +1316,16 @@ export default function CourseShell({ componentGuide }) {
         </div>
       </div>
 
-      {/* 2. KNOW YOUR PART — specs + naming decoder (merged) */}
-      <div className="mockup-card know-part-card">
+      <div id="syllabus-sec-2" className="mockup-card know-part-card">
+        <div className="syllabus-unit-ribbon">
+          <div className="syllabus-unit-lead">
+            <span className="unit-number-tag">§ 1.2</span>
+            <span className="unit-type-label">Technical Architecture, Specifications &amp; Suffix Decoder</span>
+          </div>
+          <div className="syllabus-unit-meta">
+            <span className="unit-badge specs-badge">📋 Standard Data Sheet</span>
+          </div>
+        </div>
         <div className="mockup-card-header">
           <h3 className="mockup-card-title">Know Your Part</h3>
         </div>
@@ -1318,8 +1373,16 @@ export default function CourseShell({ componentGuide }) {
         </div>
       </div>
 
-      {/* 3. TRY IT YOURSELF — compatibility matcher */}
-      <div id="matcher-section" className="mockup-card try-it-yourself-card">
+      <div id="syllabus-sec-3" className="mockup-card try-it-yourself-card">
+        <div className="syllabus-unit-ribbon">
+          <div className="syllabus-unit-lead">
+            <span className="unit-number-tag">§ 1.3</span>
+            <span className="unit-type-label">Hands-On Laboratory Practicum: Interface &amp; Socket Compatibility</span>
+          </div>
+          <div className="syllabus-unit-meta">
+            <span className="unit-badge lab-badge">🔬 Interactive Lab Workbench</span>
+          </div>
+        </div>
         <div className="mockup-card-header">
           <h3 className="mockup-card-title">Try It Yourself</h3>
           <span className="try-it-hint">Match the interface target to see a green check</span>
@@ -1395,8 +1458,16 @@ export default function CourseShell({ componentGuide }) {
         </div>
       </div>
 
-      {/* 4. BUILD IT STEP BY STEP — process list + BIG step video (video side dominant) */}
-      <div className="mockup-card assembly-card">
+      <div id="syllabus-sec-4" className="mockup-card assembly-card">
+        <div className="syllabus-unit-ribbon">
+          <div className="syllabus-unit-lead">
+            <span className="unit-number-tag">§ 1.4</span>
+            <span className="unit-type-label">Procedural Assembly Protocol &amp; Synced Video Demonstration</span>
+          </div>
+          <div className="syllabus-unit-meta">
+            <span className="unit-badge protocol-badge">🛠️ Standard Assembly Procedure</span>
+          </div>
+        </div>
         <div className="mockup-card-header">
           <h3 className="mockup-card-title">Build It: Step by Step</h3>
           <span className="try-it-hint">Click a step to sync the film</span>
@@ -1434,10 +1505,14 @@ export default function CourseShell({ componentGuide }) {
             <div className="step-preview-video-wrapper">
               {comp.youtubeId ? (
                 <CourseVideoPlayer
-                  key={`${comp.id}-stepfilm-${comp.youtubeId}`}
+                  key={`${comp.id}-stepfilm-${comp.youtubeId}-${activeStep}`}
                   videoId={comp.youtubeId}
+                  lessonId={`${comp.id}-step-${activeStep}`}
                   title={`${comp.name} Step ${activeStep} Demonstration`}
                   compact
+                  isAlreadyFinished={watchedVideos.includes(`${comp.id}-step-${activeStep}`)}
+                  onFinished={() => markVideoWatched(`${comp.id}-step-${activeStep}`)}
+                  onMaximizeChange={setIsVideoMaximized}
                 />
               ) : (
                 <div className="step-preview-placeholder">
@@ -1453,8 +1528,16 @@ export default function CourseShell({ componentGuide }) {
         </div>
       </div>
 
-      {/* 4.5 CAPSTONE 2 PRACTICAL LAB — Interactive 3D Studio Workshop */}
-      <div className="mockup-card practical-3d-lab-card">
+      <div id="syllabus-sec-5" className="mockup-card practical-3d-lab-card">
+        <div className="syllabus-unit-ribbon">
+          <div className="syllabus-unit-lead">
+            <span className="unit-number-tag">§ 1.5</span>
+            <span className="unit-type-label">Capstone 2 Virtual Workshop: 3D Studio CAD Simulation</span>
+          </div>
+          <div className="syllabus-unit-meta">
+            <span className="unit-badge workshop-badge">🚀 3D CAD Orbit Workshop</span>
+          </div>
+        </div>
         <div className="lab-card-header">
           <div className="lab-badge-row">
             <span className="lab-chip-tag">CAPSTONE 2 PRACTICAL ACTIVITY</span>
@@ -1511,8 +1594,16 @@ export default function CourseShell({ componentGuide }) {
         </div>
       </div>
 
-      {/* 5. KNOWLEDGE CHECK — quiz + mistakes (merged into one card) */}
-      <div className="mockup-card knowledge-check-card">
+      <div id="syllabus-sec-6" className="mockup-card knowledge-check-card">
+        <div className="syllabus-unit-ribbon">
+          <div className="syllabus-unit-lead">
+            <span className="unit-number-tag">§ 1.6</span>
+            <span className="unit-type-label">Formative Unit Evaluation: Mastery Quiz &amp; Pitfall Diagnostics</span>
+          </div>
+          <div className="syllabus-unit-meta">
+            <span className="unit-badge exam-badge">📝 Evaluated Assessment</span>
+          </div>
+        </div>
         <div className="mockup-card-header">
           <h3 className="mockup-card-title">Knowledge Check</h3>
           {quizAnswers[quizIndex] !== undefined && comp.quiz[quizIndex] && (
@@ -1548,8 +1639,16 @@ export default function CourseShell({ componentGuide }) {
         </div>
       </div>
 
-      {/* 6. RECOMMENDATION MATRIX + manufacturers (merged into one card) */}
-      <div className="mockup-card matrix-card">
+      <div id="syllabus-sec-7" className="mockup-card matrix-card">
+        <div className="syllabus-unit-ribbon">
+          <div className="syllabus-unit-lead">
+            <span className="unit-number-tag">§ 1.7</span>
+            <span className="unit-type-label">Industry Recommendation Matrix &amp; Vendor Qualification Guide</span>
+          </div>
+          <div className="syllabus-unit-meta">
+            <span className="unit-badge matrix-badge">📊 Benchmarked Standards</span>
+          </div>
+        </div>
         <div className="mockup-card-header">
           <h3 className="mockup-card-title">{comp.name} Recommendation Matrix</h3>
           <a href="#matcher-section" className="view-specs-link">Try it yourself ↑</a>
@@ -1594,7 +1693,6 @@ export default function CourseShell({ componentGuide }) {
         </div>
       </div>
 
-      {/* 7. ACTION BAR */}
       <div className="mockup-card action-bar-card">
         <div className="action-left-text">
           <h4 className="action-main-title">Ready to build your dream PC?</h4>
@@ -1623,31 +1721,37 @@ export default function CourseShell({ componentGuide }) {
 
   return (
     <div className="learn-page full-bleed-page course-shell-root">
-      <GlobalHeader />
+      <GlobalHeader hideBuildPill={true} />
       <div className="bg-glow bg-glow-1" aria-hidden="true" />
       <div className="bg-glow bg-glow-2" aria-hidden="true" />
 
-      {/* Invisible Trigger Zone on right edge when unpinned */}
-      {!isPinned && (
-        <div 
-          className="course-sidebar-trigger-zone" 
-          onMouseEnter={() => setIsHovered(true)} 
-          onClick={() => setIsHovered(true)}
-          title="Hover to view Course Outline"
-        />
+      {!isPinned && !isVideoMaximized && (
+        <button 
+          className="course-sidebar-edge-tab"
+          onClick={() => {
+            soundManager.snap();
+            setIsPinned(true);
+          }}
+          aria-label="Expand Course Syllabus"
+          title="Open Course Syllabus (Click to expand)"
+        >
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+            <line x1="9" y1="3" x2="9" y2="21" />
+          </svg>
+          <span className="edge-tab-label">Syllabus</span>
+          <span className="edge-tab-arrow">‹</span>
+        </button>
       )}
 
-      {/* Soft Backdrop Overlay (when hovered & unpinned) */}
       <div 
-        className={`course-sidebar-backdrop ${isHovered && !isPinned ? "active" : ""}`} 
-        onClick={() => setIsHovered(false)} 
+        className={`course-sidebar-backdrop ${isPinned && !isVideoMaximized ? "mobile-active" : ""}`} 
+        onClick={() => setIsPinned(false)} 
       />
 
       <div className={`course-shell ${isPinned ? "right-pinned" : ""}`}>
-        {/* ═══ MAIN LESSON COLUMN ═══ */}
         <div className="course-main">
           <div className="course-stream">
-            {/* ═══ COURSERA / GOOGLE AI CERTIFICATE STYLE HUB & COMPANION DECK ═══ */}
             <div className="course-hub-master-banner">
               <div className="course-hub-left-info">
                 <div className="course-hub-eyebrow-row">
@@ -1679,7 +1783,6 @@ export default function CourseShell({ componentGuide }) {
               </div>
             </div>
 
-            {/* Lesson header strip (compact) */}
             <header
               className={`lesson-header ${current.type === "component" ? "has-hero" : ""}`}
               style={
@@ -1690,22 +1793,28 @@ export default function CourseShell({ componentGuide }) {
             >
               <div className="lesson-header-overlay" />
               <div className="lesson-header-inner">
-                <nav className="lesson-eyebrow" aria-label="Course breadcrumb">
-                  <Link to="/" className="eyebrow-link">Home</Link>
-                  <span className="eyebrow-sep">›</span>
-                  <Link to="/learn" className="eyebrow-link">Learn</Link>
-                  <span className="eyebrow-sep">›</span>
-                  <span className="eyebrow-module">{current.moduleLabel} · {current.moduleTitle}</span>
-                </nav>
+                <div className="lesson-header-top-row">
+                  <nav className="lesson-eyebrow" aria-label="Course breadcrumb">
+                    <Link to="/" className="eyebrow-link">Home</Link>
+                    <span className="eyebrow-sep">›</span>
+                    <Link to="/learn" className="eyebrow-link">Learn</Link>
+                    <span className="eyebrow-sep">›</span>
+                    <span className="eyebrow-module">{current.moduleLabel} · {current.moduleTitle}</span>
+                  </nav>
+                  <span className="academic-course-code">COURSE CS-102 · UNIT {currentIndex + 1} OF {FLAT.length}</span>
+                </div>
 
                 <h1 className="lesson-title">
                   {current.type === "component" ? lesson.name : lesson.title}
                 </h1>
 
                 <div className="lesson-meta-chips">
-                  <span className="meta-chip minutes-chip">◷ {current.minutes} min</span>
-                  {completed.includes(current.id) && (
-                    <span className="meta-chip done-chip">✓ Completed</span>
+                  <span className="meta-chip minutes-chip">◷ {current.minutes} min syllabus load</span>
+                  <span className="meta-chip academic-level-chip">🎓 Professional Specialization</span>
+                  {completed.includes(current.id) ? (
+                    <span className="meta-chip done-chip">✓ Verified Complete</span>
+                  ) : (
+                    <span className="meta-chip in-progress-chip">⏳ In Progress</span>
                   )}
                   {(current.type === "article" ? lesson.tags : []).map((tag, i) => (
                     <span key={i} className="meta-chip">{tag}</span>
@@ -1716,12 +1825,37 @@ export default function CourseShell({ componentGuide }) {
               </div>
             </header>
 
-            {/* Lesson body */}
+            <nav className="syllabus-anchor-bar" aria-label="Syllabus Unit Navigation">
+              <div className="syllabus-anchor-label">
+                <span className="anchor-dot">●</span>
+                <span>Syllabus Topics:</span>
+              </div>
+              <div className="syllabus-anchor-scroll">
+                {current.type === "component" ? (
+                  <>
+                    <a href="#syllabus-sec-1" className="syllabus-anchor-pill">§ 1.1 Lecture &amp; Specimen</a>
+                    <a href="#syllabus-sec-2" className="syllabus-anchor-pill">§ 1.2 Specs &amp; Suffixes</a>
+                    <a href="#syllabus-sec-3" className="syllabus-anchor-pill">§ 1.3 Compatibility Lab</a>
+                    <a href="#syllabus-sec-4" className="syllabus-anchor-pill">§ 1.4 Assembly Protocol</a>
+                    <a href="#syllabus-sec-5" className="syllabus-anchor-pill">§ 1.5 3D Simulation Lab</a>
+                    <a href="#syllabus-sec-6" className="syllabus-anchor-pill">§ 1.6 Assessment &amp; Pitfalls</a>
+                    <a href="#syllabus-sec-7" className="syllabus-anchor-pill">§ 1.7 Field Matrix</a>
+                  </>
+                ) : (
+                  <>
+                    <a href="#syllabus-art-1" className="syllabus-anchor-pill">§ 1.1 Foundational Lecture</a>
+                    <a href="#syllabus-art-2" className="syllabus-anchor-pill">§ 1.2 Curriculum Objectives</a>
+                    <a href="#syllabus-art-3" className="syllabus-anchor-pill">§ 1.3 Core Reading</a>
+                    <a href="#syllabus-art-4" className="syllabus-anchor-pill">§ 1.4 Unit Assessment</a>
+                  </>
+                )}
+              </div>
+            </nav>
+
             <div className="course-lesson-body">
               {current.type === "component" ? renderComponentLesson(lesson) : renderArticleLesson(lesson)}
             </div>
 
-            {/* Video gating toast reminder */}
             {videoToast && (
               <div className="video-toast-banner animate-fade-in">
                 <span className="toast-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
@@ -1738,7 +1872,6 @@ export default function CourseShell({ componentGuide }) {
               </div>
             )}
 
-            {/* Lesson footer nav */}
             <div className="lesson-footer-nav">
               <button
                 className="lesson-nav-btn prev"
@@ -1775,62 +1908,58 @@ export default function CourseShell({ componentGuide }) {
           </div>
         </div>
 
-        {/* ═══ RIGHT COURSE OUTLINE (Matching Left Sidebar architecture & luxury wood theme) ═══ */}
         <aside 
-          className={`course-outline wood-mahogany ${isVisible ? "open" : "closed"} ${isPinned ? "pinned" : ""}`}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
+          className={`course-outline cyber-syllabus-panel ${isPinned && !isVideoMaximized ? "open pinned" : "closed"}`}
           aria-label="Course Outline Sidebar"
         >
-          {/* Subtle wood grain texture layer matching Left Sidebar */}
-          <div className="sidebar-wood-overlay" aria-hidden="true" />
-
-          {/* Indicator Pull-Tab when closed */}
-          {!isVisible && (
-            <div 
-              className="course-sidebar-indicator"
-              onClick={() => setIsHovered(true)}
-              title="Open Course Outline"
-            >
-              <span className="indicator-arrow">‹</span>
-            </div>
-          )}
 
           <div className="course-sidebar-container">
             <div className="course-sidebar-header">
               <div className="sidebar-header-left">
-                <span className="course-sidebar-eyebrow">QUICK COURSE</span>
-                <h2 className="course-sidebar-title">BUILD YOUR OWN PC</h2>
+                <span className="course-sidebar-eyebrow">ACADEMIC CURRICULUM</span>
+                <h2 className="course-sidebar-title">COURSE SYLLABUS</h2>
               </div>
-              <button 
-                className={`sidebar-pin-btn ${isPinned ? 'active' : ''}`}
-                onClick={() => setIsPinned(!isPinned)}
-                title={isPinned ? "Unpin Course Sidebar" : "Pin Course Sidebar"}
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill={isPinned ? "#d4a34b" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="12" y1="17" x2="12" y2="22"></line>
-                  <path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"></path>
-                </svg>
-              </button>
+              <div className="sidebar-header-actions">
+                <button 
+                  className="sidebar-close-btn"
+                  onClick={() => {
+                    soundManager.snap();
+                    setIsPinned(false);
+                  }}
+                  title="Collapse Syllabus Navigation"
+                  aria-label="Collapse Syllabus Navigation"
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
+              </div>
             </div>
 
-            {/* Progress Card */}
             <div className="course-sidebar-progress-card">
               <div className="outline-progress">
                 <div className="outline-progress-fill" style={{ width: `${progressPct}%` }} />
               </div>
-              <span className="outline-progress-text">
-                {doneCount === FLAT.length
-                  ? "Course complete. You're build-ready!"
-                  : `${doneCount} of ${FLAT.length} lessons · ${progressPct}%`}
-              </span>
+              <div className="outline-progress-stats">
+                <span className="outline-progress-text">
+                  {doneCount === FLAT.length ? (
+                    <span className="progress-complete-badge">✓ CURRICULUM COMPLETED</span>
+                  ) : (
+                    <>
+                      <span className="progress-highlight">{doneCount}</span> of <span className="progress-highlight">{FLAT.length}</span> lessons
+                    </>
+                  )}
+                </span>
+                <span className="progress-pct-badge">{progressPct}%</span>
+              </div>
             </div>
 
             <div className="outline-scroll">
-              {COURSE.map((mod) => (
+              {COURSE.map((mod, modIdx) => (
                 <div className="outline-module-group" key={mod.id}>
                   <div className="outline-module-head">
-                    <span className="outline-module-label">{mod.label}</span>
+                    <span className="outline-module-badge">CH {String(modIdx + 1).padStart(2, "0")}</span>
                     <span className="outline-module-title">{mod.title}</span>
                   </div>
                   {mod.lessons.map((l) => {
@@ -1854,7 +1983,12 @@ export default function CourseShell({ componentGuide }) {
                         <span className={`lesson-dot ${isDone ? "dot-done" : ""} ${isActive ? "dot-now" : ""}`}>
                           {isDone ? "✓" : isActive ? "▶" : ""}
                         </span>
-                        <span className="outline-lesson-name">{lessonTitle}</span>
+                        <div className="outline-lesson-info">
+                          <span className={`outline-lesson-type-tag ${l.type === "component" ? "tag-lecture" : "tag-guide"}`}>
+                            {l.type === "component" ? "LECTURE & LAB" : "MODULE GUIDE"}
+                          </span>
+                          <span className="outline-lesson-name">{lessonTitle}</span>
+                        </div>
                         <span className="outline-lesson-min">{l.minutes}m</span>
                       </button>
                     );
@@ -1866,19 +2000,25 @@ export default function CourseShell({ componentGuide }) {
             <div className="course-sidebar-foot">
               {firstIncomplete >= 0 ? (
                 <button
-                  className="outline-continue-btn"
+                  className="outline-continue-btn cyber-cta-btn"
                   onClick={() => goLesson(firstIncomplete)}
+                  title={FLAT[firstIncomplete].type === "article" ? FLAT[firstIncomplete].lesson.title : FLAT[firstIncomplete].lesson.name}
                 >
-                  ▶ Continue: {FLAT[firstIncomplete].type === "article"
-                    ? FLAT[firstIncomplete].lesson.title
-                    : FLAT[firstIncomplete].lesson.name}
+                  <span className="cta-icon">▶</span>
+                  <span className="cta-label">
+                    Continue: {FLAT[firstIncomplete].type === "article"
+                      ? FLAT[firstIncomplete].lesson.title
+                      : FLAT[firstIncomplete].lesson.name}
+                  </span>
+                  <span className="cta-arrow">→</span>
                 </button>
               ) : (
                 <button
-                  className="outline-continue-btn done-btn"
+                  className="outline-continue-btn done-btn cyber-cta-btn"
                   onClick={() => navigate("/build")}
                 >
-                  Start your first build
+                  <span>Start your first build</span>
+                  <span className="cta-arrow">→</span>
                 </button>
               )}
             </div>
@@ -1886,7 +2026,6 @@ export default function CourseShell({ componentGuide }) {
         </aside>
       </div>
 
-      {/* ═══ FLOATING B.O.B. COMPANION (Always floating on screen, full-range mouse tracking) ═══ */}
       <BobCompanion
         context="learn"
         activeTopic={current.type === "component" ? lesson.name : lesson.title}

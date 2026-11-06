@@ -274,9 +274,7 @@ app.get("/api/health", async (req, res) => {
   }
 });
 
-// ══════════════════════════════════════════
 // SCRAPED DATA REVIEW QUEUE ENDPOINTS
-// ══════════════════════════════════════════
 
 // API to get all unverified scraped components
 app.get("/api/scraped-queue", async (req, res) => {

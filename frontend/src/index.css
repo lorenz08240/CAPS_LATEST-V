@@ -57,7 +57,6 @@ body::-webkit-scrollbar,
   height: 0 !important;
 }
 
-/* Light mode specific component overrides */
 [data-theme="light"] .build-page {
   background-color: #f7f3ee !important;
   color: #1c1917 !important;

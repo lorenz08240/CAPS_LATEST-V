@@ -147,7 +147,6 @@ export default function AdminAddComponent() {
         <AdminHeader breadcrumbCurrent="Add Hardware Component" />
 
         <div className="admin-screen-content">
-          {/* Header Banner */}
           <div className="screen-header-banner">
             <div>
               <div className="screen-tag-row">
@@ -177,7 +176,6 @@ export default function AdminAddComponent() {
             </div>
           </div>
 
-          {/* Toast Notification */}
           {statusMsg.text && (
             <div className={`message-toast ${statusMsg.type}`}>
               <span>{statusMsg.text}</span>
@@ -191,9 +189,7 @@ export default function AdminAddComponent() {
             </div>
           )}
 
-          {/* Main Form Layout */}
           <form onSubmit={handleSubmit} className="admin-add-form-layout">
-            {/* Step 1: Category Picker */}
             <section className="form-card-panel">
               <div className="form-card-header">
                 <span className="step-num">01</span>
@@ -222,7 +218,6 @@ export default function AdminAddComponent() {
               </div>
             </section>
 
-            {/* Step 2: Primary Identity & Image */}
             <div className="form-split-grid">
               <section className="form-card-panel">
                 <div className="form-card-header">
@@ -282,7 +277,6 @@ export default function AdminAddComponent() {
                 </div>
               </section>
 
-              {/* Image Preview & URL */}
               <section className="form-card-panel image-preview-panel">
                 <div className="form-card-header">
                   <span className="step-num">03</span>
@@ -321,7 +315,6 @@ export default function AdminAddComponent() {
               </section>
             </div>
 
-            {/* Step 3: Category-Specific Hardware Matrix */}
             <section className="form-card-panel">
               <div className="form-card-header">
                 <span className="step-num">04</span>
@@ -536,7 +529,6 @@ export default function AdminAddComponent() {
               </div>
             </section>
 
-            {/* Action Bar */}
             <div className="form-action-bar">
               <Link to="/admin/inventory" className="btn-cancel">
                 Cancel & Return

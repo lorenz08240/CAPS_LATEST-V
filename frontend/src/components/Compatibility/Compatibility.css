@@ -68,7 +68,6 @@
   /* Replaced by the high-res layered paper wallpaper */
 }
 
-/* Container Shell */
 .compat-container-wrap {
   position: relative;
   z-index: 1;
@@ -76,7 +75,6 @@
   margin: 0 auto;
 }
 
-/* ════ HERO TITLE HEADER (As in Screenshot 2) ════ */
 .compat-hero-title-header {
   text-align: center;
   margin-bottom: 24px;
@@ -117,6 +115,7 @@
   font-weight: 500;
   color: var(--color-green-neon, #00e5a0);
   box-shadow: 0 2px 10px rgba(0, 229, 160, 0.1);
+  -webkit-user-select: none;
   user-select: none;
 }
 
@@ -124,7 +123,6 @@
   font-size: 14px;
 }
 
-/* ════ TOP ALERT BANNER ════ */
 .compat-top-banner {
   display: flex;
   align-items: center;
@@ -187,7 +185,6 @@
   transform: translateY(-1px);
 }
 
-/* ════ DASHBOARD 2-COLUMN GRID (60 / 40 SPLIT) ════ */
 .dashboard-layout-v2 {
   display: grid;
   grid-template-columns: 1.45fr 1fr;
@@ -202,11 +199,10 @@
   }
 }
 
-/* Glass Panel Baseline */
 .glass-panel {
   background: var(--color-glass-panel);
-  backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
   border: 1px solid var(--color-glass-border);
   border-radius: 16px;
   box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5);
@@ -220,7 +216,6 @@
   color: #f8fafc;
 }
 
-/* ════ LEFT COLUMN: SELECTED COMPONENTS ════ */
 .components-container-card {
   padding: 20px;
   margin-bottom: 20px;
@@ -236,7 +231,6 @@
   gap: 12px;
 }
 
-/* Individual Component Card */
 .component-row-card {
   display: grid;
   grid-template-columns: 58px 1fr auto 56px;
@@ -263,7 +257,6 @@
   transform: translateY(-1px);
 }
 
-/* Brand Monogram Tag */
 .brand-monogram-pill {
   height: 38px;
   display: flex;
@@ -290,7 +283,6 @@
   border: 1px solid rgba(255, 77, 109, 0.45);
 }
 
-/* Text Meta */
 .component-text-meta {
   display: flex;
   flex-direction: column;
@@ -315,7 +307,6 @@
   margin-top: 2px;
 }
 
-/* Status Pill */
 .status-pill {
   padding: 4px 12px;
   border-radius: 9999px;
@@ -342,7 +333,6 @@
   box-shadow: 0 0 10px rgba(255, 77, 109, 0.2);
 }
 
-/* Hardware Thumbnail Preview */
 .component-thumb-wrap {
   width: 48px;
   height: 48px;
@@ -366,13 +356,12 @@
   font-size: 20px;
 }
 
-/* ════ BOTTLENECK ANALYSIS CARD ════ */
 .bottleneck-darkred-card {
   padding: 20px;
   margin-bottom: 20px;
   background: rgba(70, 12, 18, 0.85);
-  backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 77, 109, 0.45);
   border-radius: 16px;
   box-shadow: 0 12px 32px -4px rgba(255, 77, 109, 0.2);
@@ -441,7 +430,6 @@
   color: #ffe4e6;
 }
 
-/* Vibrant Mint / Cyan CTA Button */
 .btn-resolve-cta {
   display: block;
   width: 100%;
@@ -467,7 +455,6 @@
   transform: translateY(-1px);
 }
 
-/* All Clear Card */
 .compatibility-all-clear-card {
   padding: 18px 22px;
   margin-bottom: 20px;
@@ -492,7 +479,6 @@
   color: var(--color-text-muted);
 }
 
-/* Sub-system Diagnostic Cards Row */
 .sub-diagnostics-row {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -561,14 +547,12 @@
   color: #fecdd3;
 }
 
-/* ════ RIGHT COLUMN (40%) ════ */
 .column-right-40 {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-/* 1. Performance Analytics */
 .performance-analytics-panel {
   padding: 20px;
 }
@@ -632,7 +616,6 @@
   margin-top: 2px;
 }
 
-/* 2. Performance Profile (Radar Chart) */
 .performance-profile-panel {
   padding: 20px;
   text-align: center;
@@ -763,7 +746,6 @@
   color: #d8b4fe;
 }
 
-/* Purple Pill Evaluation Button */
 .btn-toggle-evaluation {
   width: 100%;
   padding: 10px 16px;
@@ -786,7 +768,6 @@
   box-shadow: 0 6px 18px rgba(124, 58, 237, 0.5);
 }
 
-/* Side-by-Side Comparison Tables */
 .side-by-side-matrix {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -850,7 +831,6 @@
   font-weight: 700;
 }
 
-/* Quick Slot Save Footer */
 .slot-action-footer {
   margin-top: 14px;
   text-align: center;
@@ -882,7 +862,6 @@
   font-weight: 600;
 }
 
-/* ════ EMPTY STATE ════ */
 .empty-wrap {
   display: flex;
   align-items: center;
@@ -923,7 +902,6 @@
   line-height: 1.5;
 }
 
-/* ════ MODAL PORTAL ════ */
 .compat-modal-overlay {
   position: fixed;
   inset: 0;
@@ -1037,14 +1015,12 @@
   cursor: pointer;
 }
 
-/* ══════════════════════════════════════════════════════════════
-   B.O.B. INTERACTIVE COMPATIBILITY INSPECTOR (Fixed Lower-Left Overlay)
-   ══════════════════════════════════════════════════════════════ */
 .compat-bob-overlay {
   position: fixed;
   bottom: 28px;
   left: 32px;
   z-index: 9999;
+  -webkit-user-select: none;
   user-select: none;
   pointer-events: auto;
   cursor: pointer;

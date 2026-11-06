@@ -28,19 +28,16 @@ function FloatingCooler({ rgbColor }) {
 
   return (
     <group ref={groupRef} scale={[0.78, 0.78, 0.78]}>
-      {/* Aluminum Fin Tower */}
       <mesh position={[0, 0, 0]}>
         <boxGeometry args={[2.2, 2.4, 1.4]} />
         <meshStandardMaterial color="#94a3b8" metalness={0.9} roughness={0.25} />
       </mesh>
-      {/* Copper Heatpipe Ends on Top */}
       {[-0.7, -0.25, 0.25, 0.7].map((x, idx) => (
         <mesh key={idx} position={[x, 1.25, 0]}>
           <cylinderGeometry args={[0.08, 0.08, 0.2, 16]} />
           <meshStandardMaterial color="#b45309" metalness={0.95} roughness={0.2} />
         </mesh>
       ))}
-      {/* Front High-Static Fan */}
       <group position={[0, 0, 0.8]}>
         <ProceduralSickleFan
           size={2.2}
@@ -86,7 +83,6 @@ function HolographicShockwave({ trigger, rgbColor }) {
 
   return (
     <group ref={ringGroupRef} position={[0, -2.1, 0]} rotation={[-Math.PI / 2, 0, 0]} visible={false}>
-      {/* Primary Expanding Laser Shockwave Ring */}
       <mesh>
         <ringGeometry args={[0.98, 1.04, 64]} />
         <meshBasicMaterial 
@@ -96,7 +92,6 @@ function HolographicShockwave({ trigger, rgbColor }) {
           side={THREE.DoubleSide} 
         />
       </mesh>
-      {/* Secondary Inner Pulse Ring */}
       <mesh>
         <ringGeometry args={[0.98, 1.02, 64]} />
         <meshBasicMaterial 
@@ -269,9 +264,7 @@ function FluidScene({ onStageChange, rgbColor, scrollProgress = 0 }) {
 
     if (!motionGroupRef.current) return;
 
-    // ─────────────────────────────────────────────────────────────────────────
     // PHASE 1: RESTING & INSPECTION (3.6s)
-    // ─────────────────────────────────────────────────────────────────────────
     if (anim.phase === 'rest') {
       motionGroupRef.current.visible = true;
       motionGroupRef.current.position.set(0, 0, 0);
@@ -283,10 +276,8 @@ function FluidScene({ onStageChange, rgbColor, scrollProgress = 0 }) {
         anim.timer = 0;
       }
     } 
-    // ─────────────────────────────────────────────────────────────────────────
     // PHASE 2: OUTGOING GLIDE-OUT (0.8s)
     // Current model smoothly accelerates to screen-left and dives into depth.
-    // ─────────────────────────────────────────────────────────────────────────
     else if (anim.phase === 'exit') {
       const t = Math.min(1.0, anim.timer / 0.8);
       const ease = Math.pow(t, 2.2);
@@ -314,10 +305,8 @@ function FluidScene({ onStageChange, rgbColor, scrollProgress = 0 }) {
         motionGroupRef.current.visible = false;
       }
     } 
-    // ─────────────────────────────────────────────────────────────────────────
     // PHASE 3: STAGE CLEARANCE PAUSE (0.18s)
     // Stage is completely clear of all models! Zero overlap guaranteed.
-    // ─────────────────────────────────────────────────────────────────────────
     else if (anim.phase === 'pause') {
       motionGroupRef.current.visible = false;
 
@@ -344,10 +333,8 @@ function FluidScene({ onStageChange, rgbColor, scrollProgress = 0 }) {
         motionGroupRef.current.visible = true;
       }
     } 
-    // ─────────────────────────────────────────────────────────────────────────
     // PHASE 4: INCOMING ROTATIONAL REVEAL SWOOP (1.15s)
     // Swoops in from screen-right with 270° spin unroll and lands with specular flash.
-    // ─────────────────────────────────────────────────────────────────────────
     else if (anim.phase === 'enter') {
       const t = Math.min(1.0, anim.timer / 1.15);
       const ease = t === 1.0 ? 1.0 : 1.0 - Math.pow(2, -8 * t);
@@ -385,13 +372,10 @@ function FluidScene({ onStageChange, rgbColor, scrollProgress = 0 }) {
 
   return (
     <group ref={rootRef}>
-      {/* Holographic Laser Shockwave Grid on Arrival */}
       <HolographicShockwave trigger={landingProgress} rgbColor={rgbColor} />
 
-      {/* Dynamic Specular Gleam Point Light */}
       <SpecularFlashLight trigger={landingProgress} rgbColor={rgbColor} />
 
-      {/* Single Dedicated Hardware Stage Model Group (Never overlaps!) */}
       <group ref={motionGroupRef}>
         <HardwareStageModel stageId={currentStageId} rgbColor={rgbColor} />
       </group>
@@ -424,13 +408,11 @@ export default function Home3DHero({
             toneMappingExposure: 1.15
           }}
         >
-          {/* Cyberpunk Lighting Suite */}
           <ambientLight intensity={1.3} color="#f8fafc" />
           <directionalLight position={[-8, 12, 10]} intensity={2.8} color="#ffffff" />
           <directionalLight position={[8, -4, -6]} intensity={2.2} color="#f43f5e" />
           <pointLight position={[0, 0, 4]} intensity={2.4} color={rgbColor} distance={12} />
           
-          {/* Orbit Controls with Damping: user can freely drag to inspect from any angle */}
           <OrbitControls 
             enableZoom={false} 
             enablePan={false} 
@@ -438,7 +420,6 @@ export default function Home3DHero({
             dampingFactor={0.08} 
           />
 
-          {/* Drifting Cyber Micro-Particles */}
           <Sparkles
             count={60}
             scale={16}

@@ -8,22 +8,18 @@ import { RAM_MODEL_URL } from '../../utilities/modelPreloader';
 export function ProceduralRAMFallback({ rgbColor = '#f43f5e' }) {
   return (
     <group>
-      {/* PCB substrate */}
       <mesh position={[0, 0, 0]}>
         <boxGeometry args={[3.6, 0.08, 0.9]} />
         <meshStandardMaterial color="#0f172a" roughness={0.8} />
       </mesh>
-      {/* Heatspreader plate */}
       <mesh position={[0, 0.05, 0]}>
         <boxGeometry args={[3.5, 0.04, 0.85]} />
         <meshStandardMaterial color="#1e293b" metalness={0.85} roughness={0.25} />
       </mesh>
-      {/* RGB Diffuser bar */}
       <mesh position={[0, 0.06, 0.42]}>
         <boxGeometry args={[3.4, 0.06, 0.08]} />
         <meshStandardMaterial color={rgbColor} emissive={rgbColor} emissiveIntensity={3.2} />
       </mesh>
-      {/* Gold pins */}
       <mesh position={[0, 0, -0.44]}>
         <boxGeometry args={[3.4, 0.02, 0.08]} />
         <meshStandardMaterial color="#f59e0b" metalness={0.95} roughness={0.15} />
@@ -65,9 +61,7 @@ function DDR4StickMesh({ rgbColor = '#f43f5e', isSelected = false, isHovered = f
 
   return (
     <group dispose={null}>
-      {/* Centered GLTF Node Tree */}
       <group position={[0, 0, -0.3]}>
-        {/* Detail Pins & Clips Mesh */}
         {nodes['Object003_Material_#20_0'] && (
           <group position={[0, -0.095, 0]} rotation={[Math.PI / 2, 0, -Math.PI]}>
             <mesh
@@ -80,7 +74,6 @@ function DDR4StickMesh({ rgbColor = '#f43f5e', isSelected = false, isHovered = f
           </group>
         )}
 
-        {/* Main DDR4 Heatspreader & Integrated PCB */}
         {nodes['RAM_LP_Material_#21_0'] && (
           <mesh
             castShadow
@@ -92,7 +85,6 @@ function DDR4StickMesh({ rgbColor = '#f43f5e', isSelected = false, isHovered = f
           />
         )}
 
-        {/* Cyber RGB Diffuser Top Accent Strip */}
         <mesh position={[0, 0.03, 1.14]} rotation={[0, 0, 0]}>
           <boxGeometry args={[6.8, 0.12, 0.1]} />
           <meshStandardMaterial
@@ -105,7 +97,6 @@ function DDR4StickMesh({ rgbColor = '#f43f5e', isSelected = false, isHovered = f
           />
         </mesh>
 
-        {/* Selection / Hover Glow Accent Edge (Only when highlights are enabled) */}
         {enableHighlight && (isSelected || isHovered) && (
           <mesh position={[0, 0, 0.3]}>
             <boxGeometry args={[7.25, 0.22, 1.8]} />
@@ -203,7 +194,6 @@ export function HeroFloatingRAM({ rgbColor = '#f43f5e', enableHighlight = false 
 
   return (
     <group ref={groupRef} scale={[0.55, 0.55, 0.55]}>
-      {/* Front Module */}
       <group position={[0, -0.2, 0.45]} rotation={[-0.15, 0.25, 0]}>
         <SingleDDR4RAM
           scale={1}
@@ -214,7 +204,6 @@ export function HeroFloatingRAM({ rgbColor = '#f43f5e', enableHighlight = false 
         />
       </group>
 
-      {/* Rear Module (Staggered elevation for depth and perspective) */}
       <group position={[0.2, 0.35, -0.45]} rotation={[-0.15, 0.25, 0]}>
         <SingleDDR4RAM
           scale={1}

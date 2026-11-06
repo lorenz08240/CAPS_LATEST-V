@@ -152,7 +152,7 @@ export const BuildProvider = ({ children }) => {
   // Function to get selected components as array
   const getSelectedComponents = () => {
     return Object.entries(currentBuild)
-      .filter(([key, value]) => value !== null)
+      .filter(([, value]) => value !== null)
       .map(([category, component]) => ({
         category,
         ...component,

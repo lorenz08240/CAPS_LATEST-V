@@ -36,7 +36,6 @@ export const AdminSidebar = ({
 
   return (
     <aside className="admin-sidebar" aria-label="Admin Navigation Sidebar">
-      {/* 1. BRAND / CONTROL DECK HEADER */}
       <div className="admin-sidebar-header">
         <div className="sidebar-brand-box">
           <span className="brand-dot" />
@@ -52,7 +51,6 @@ export const AdminSidebar = ({
         </div>
       </div>
 
-      {/* 2. CATEGORY STAGES (Parity with User-End Builder Stages) */}
       <div className="admin-sidebar-section categories-section">
         <div className="admin-section-tag">
           <span className="tag-bracket">[</span>
@@ -94,7 +92,6 @@ export const AdminSidebar = ({
         </div>
       </div>
 
-      {/* 3. FOOTER CONTROLS */}
       <div className="admin-sidebar-footer">
         <Link to="/" className="sidebar-foot-link" title="Return to Public Student Builder">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

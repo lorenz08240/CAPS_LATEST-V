@@ -22,12 +22,6 @@
   --green: #22c55e;
 }
 
-/* ─────────────────────────────────────────────────────────────
-   BUILDLAB PC BUILDER — HIGH-TECH CYBERPUNK HARDWARE WORKBENCH
-   Matches the Hero Section's obsidian, cyber rose, and tech sky identity.
-   Strict 100vh × 100vw desktop landscape layout without page scrollbars.
-   Preserves 3-column architecture (Sidebar 280px | Grid 1fr | Spec 320px).
-   ───────────────────────────────────────────────────────────── */
 
 .build-page {
   background-color: var(--cyber-bg);
@@ -67,7 +61,6 @@
   height: 0 !important;
 }
 
-/* Integrated inside Homepage Section */
 .home-integrated-section .build-page {
   background: transparent !important;
   background-image: none !important;
@@ -148,7 +141,6 @@
   text-transform: uppercase;
 }
 
-/* Cyber Tag Badge */
 .cyber-tag-badge.mini {
   display: inline-flex;
   align-items: center;
@@ -201,9 +193,6 @@
   padding-right: 2px;
 }
 
-/* ══════════════════════════════════════════════════════════════
-   B.O.B. INTERACTIVE BUILD COMPANION (In Left Sidebar Yellow Zone)
-   ══════════════════════════════════════════════════════════════ */
 @keyframes bobFadeSpring {
   0% {
     opacity: 0;
@@ -223,6 +212,7 @@
   justify-content: center;
   position: relative;
   margin: 10px 0 6px;
+  -webkit-user-select: none;
   user-select: none;
   cursor: pointer;
   filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.75)) drop-shadow(0 0 16px rgba(0, 229, 160, 0.35));
@@ -696,7 +686,6 @@
   box-shadow: 0 0 16px rgba(34, 197, 94, 0.25);
 }
 
-/* Dark Hardware Presentation Bay */
 .component-card.compact-card .component-image {
   margin-bottom: 8px;
   height: 90px;
@@ -885,7 +874,6 @@
   box-shadow: 0 0 20px var(--cyber-rose-glow), inset 0 1px 2px rgba(255, 255, 255, 0.4);
 }
 
-/* Liquid Light Shimmer Sweep */
 .btn-select-component::before {
   content: '';
   position: absolute;
@@ -1128,7 +1116,6 @@
   color: #4ade80;
 }
 
-/* Secondary CTA pair inside Build Overview */
 .overview-cta-row {
   display: flex;
   flex-direction: column;

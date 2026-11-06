@@ -164,14 +164,14 @@ export const EditComponentDrawer = ({
           updatedAt: Date.now()
         })
       );
-    } catch (err) {}
+    } catch {}
   };
 
   // Discard draft and revert to initial state
   const handleDiscardDraft = () => {
     try {
       sessionStorage.removeItem(DRAFT_STORAGE_KEY);
-    } catch (e) {}
+    } catch {}
     setRestoredDraft(false);
 
     if (initialData) {
@@ -224,7 +224,7 @@ export const EditComponentDrawer = ({
   const handleCancelAndClear = () => {
     try {
       sessionStorage.removeItem(DRAFT_STORAGE_KEY);
-    } catch (e) {}
+    } catch {}
     setRestoredDraft(false);
     onClose();
   };
@@ -266,7 +266,7 @@ export const EditComponentDrawer = ({
       // Clean up session draft on successful commit
       try {
         sessionStorage.removeItem(DRAFT_STORAGE_KEY);
-      } catch (e) {}
+      } catch {}
 
       onClose();
     } catch (err) {
@@ -280,14 +280,12 @@ export const EditComponentDrawer = ({
 
   const drawerContent = (
     <div className="drawer-portal-root">
-      {/* Backdrop overlay with blur */}
       <div
         className="drawer-backdrop-overlay"
         onClick={handleCloseWithPrompt}
         aria-hidden="true"
       />
 
-      {/* Sliding Right Drawer Panel */}
       <aside
         className="drawer-panel"
         ref={drawerRef}
@@ -295,7 +293,6 @@ export const EditComponentDrawer = ({
         aria-modal="true"
         aria-labelledby="drawer-heading"
       >
-        {/* Top Header */}
         <div className="drawer-header">
           <div className="drawer-title-group">
             <div className="drawer-tag">
@@ -329,9 +326,7 @@ export const EditComponentDrawer = ({
           </button>
         </div>
 
-        {/* Drawer Body Form */}
         <div className="drawer-scroll-body">
-          {/* Draft Restored Banner */}
           {restoredDraft && (
             <div className="drawer-draft-banner">
               <div className="draft-banner-text">
@@ -352,7 +347,6 @@ export const EditComponentDrawer = ({
           {errorMsg && <div className="drawer-error-alert">{errorMsg}</div>}
 
           <form className="drawer-form" onSubmit={handleSubmit}>
-            {/* ROW 1: CATEGORY & BRAND */}
             <div className="drawer-form-row">
               <div className="drawer-form-group">
                 <label htmlFor="drawer-category">Category</label>
@@ -385,7 +379,6 @@ export const EditComponentDrawer = ({
               </div>
             </div>
 
-            {/* ROW 2: NAME / MODEL */}
             <div className="drawer-form-group">
               <label htmlFor="drawer-name">Name / Model</label>
               <input
@@ -399,7 +392,6 @@ export const EditComponentDrawer = ({
               />
             </div>
 
-            {/* ROW 3: IMAGE URL & LAZY PREVIEW CONTAINER */}
             <div className="drawer-form-group">
               <label htmlFor="drawer-img">Image URL</label>
               <div className="img-input-with-preview">
@@ -412,7 +404,6 @@ export const EditComponentDrawer = ({
                   placeholder="https://example.com/component.jpg"
                 />
 
-                {/* Lazy Preview Container (Only active & rendered inside drawer) */}
                 <div className="drawer-lazy-preview-container">
                   <div className="preview-box" title="Lazy Image Preview">
                     {imgLoading && (
@@ -441,7 +432,6 @@ export const EditComponentDrawer = ({
               </div>
             </div>
 
-            {/* ROW 4: DESCRIPTION */}
             <div className="drawer-form-group">
               <label htmlFor="drawer-desc">Description</label>
               <textarea
@@ -454,7 +444,6 @@ export const EditComponentDrawer = ({
               />
             </div>
 
-            {/* ROW 5: TAGS */}
             <div className="drawer-form-group">
               <label htmlFor="drawer-tags">Tags (Comma-Separated)</label>
               <input
@@ -467,7 +456,6 @@ export const EditComponentDrawer = ({
               />
             </div>
 
-            {/* ROW 6: COMPATIBILITY MATRIX TAGS (Crucial for Compatibility Engine) */}
             <div className="matrix-tags-section">
               <div className="matrix-header">
                 <span className="matrix-accent-dot"></span>
@@ -479,7 +467,6 @@ export const EditComponentDrawer = ({
               </p>
 
               <div className="matrix-fields-grid">
-                {/* FORM FACTOR */}
                 {(["case", "motherboard"].includes(formData.category)) && (
                   <div className="drawer-form-group">
                     <label>Form Factor (ATX, Micro-ATX, Mini-ITX)</label>
@@ -493,7 +480,6 @@ export const EditComponentDrawer = ({
                   </div>
                 )}
 
-                {/* SOCKET TYPE */}
                 {(["cpu", "motherboard"].includes(formData.category)) && (
                   <div className="drawer-form-group">
                     <label>Socket Type (AM4, AM5, LGA1700, LGA1851)</label>
@@ -507,7 +493,6 @@ export const EditComponentDrawer = ({
                   </div>
                 )}
 
-                {/* DDR TYPE */}
                 {(["motherboard", "ram"].includes(formData.category)) && (
                   <div className="drawer-form-group">
                     <label>DDR Memory Type (DDR4, DDR5)</label>
@@ -521,7 +506,6 @@ export const EditComponentDrawer = ({
                   </div>
                 )}
 
-                {/* WATTAGE */}
                 {(["cpu", "psu"].includes(formData.category)) && (
                   <div className="drawer-form-group">
                     <label>Wattage (TDP or Power Delivery in Watts)</label>
@@ -535,7 +519,6 @@ export const EditComponentDrawer = ({
                   </div>
                 )}
 
-                {/* POWER REQUIRED */}
                 {formData.category === "gpu" && (
                   <div className="drawer-form-group">
                     <label>Power Required (GPU TDP / Watts)</label>
@@ -549,7 +532,6 @@ export const EditComponentDrawer = ({
                   </div>
                 )}
 
-                {/* CAPACITY */}
                 {(["ram", "storage"].includes(formData.category)) && (
                   <div className="drawer-form-group">
                     <label>Capacity (e.g., 16GB, 32GB, 1TB, 2TB)</label>
@@ -563,7 +545,6 @@ export const EditComponentDrawer = ({
                   </div>
                 )}
 
-                {/* SPEED */}
                 {formData.category === "ram" && (
                   <div className="drawer-form-group">
                     <label>Speed (e.g., 3200MHz, 6000MHz)</label>
@@ -577,7 +558,6 @@ export const EditComponentDrawer = ({
                   </div>
                 )}
 
-                {/* STORAGE TYPE */}
                 {formData.category === "storage" && (
                   <div className="drawer-form-group">
                     <label>Drive Type (NVMe M.2, 2.5" SATA)</label>
@@ -591,7 +571,6 @@ export const EditComponentDrawer = ({
                   </div>
                 )}
 
-                {/* PSU EFFICIENCY */}
                 {formData.category === "psu" && (
                   <div className="drawer-form-group">
                     <label>Efficiency Rating (80+ Gold, Bronze)</label>
@@ -607,7 +586,6 @@ export const EditComponentDrawer = ({
               </div>
             </div>
 
-            {/* ACTION BUTTONS ROW */}
             <div className="drawer-actions-row">
               <button
                 type="submit"

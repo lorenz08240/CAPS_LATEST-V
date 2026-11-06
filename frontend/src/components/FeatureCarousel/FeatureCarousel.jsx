@@ -107,7 +107,6 @@ export default function FeatureCarousel() {
         </div>
       </div>
 
-      {/* Floating indicator module */}
       <div className="carousel-control-module-new">
         <div className="carousel-indicators-new">
           {featureSlides.map((_, idx) => (

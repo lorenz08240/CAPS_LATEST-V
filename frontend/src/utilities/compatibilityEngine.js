@@ -1,7 +1,5 @@
-// ═══════════════════════════════════════════════════════════════
 // BUILDLAB UNIFIED COMPATIBILITY ENGINE & RULES MATRIX
 // Single Source of Truth for 2D Build Station, 3D Studio & Compatibility Page
-// ═══════════════════════════════════════════════════════════════
 
 // Helper to normalize socket strings (e.g. "LGA 1700", "LGA1700", "lga-1700" -> "lga1700")
 export const normalizeSocket = (socket) => {
@@ -222,7 +220,7 @@ export const checkCompatibility = (arg1, arg2) => {
 };
 
 // Summary for all components in the build
-export const getCompatibilitySummary = (build = {}, allComponents = {}) => {
+export const getCompatibilitySummary = (build = {}, _allComponents = {}) => {
   const issues = [];
   const components = Object.entries(build).filter(
     ([, value]) => value !== null

@@ -28,6 +28,7 @@ function Footer() {
             <Link to="/build">Build PC</Link>
             <Link to="/compatibility">Compatibility</Link>
             <Link to="/learn">Learn Components</Link>
+            <Link to="/about">About Us</Link>
           </div>
           <div className="footer-column">
             <h3>Resources</h3>

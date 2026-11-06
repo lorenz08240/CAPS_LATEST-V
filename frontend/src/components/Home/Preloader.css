@@ -1,7 +1,3 @@
-/* ═════════════════════════════════════════════════════════════════════════════
-   BUILDLAB // AWWWARDS-INSPIRED SPYLT MILK MINIMAL PRELOADER
-   Cyberpunk Hardware Lab Aesthetic • 0-100% Counter • Fullscreen Gate Protocol
-   ═════════════════════════════════════════════════════════════════════════════ */
 
 .buildlab-preloader-root {
   position: fixed;
@@ -27,7 +23,6 @@
   pointer-events: none;
 }
 
-/* Ambient Cyber Lighting Gradients */
 .preloader-ambient-grid {
   position: absolute;
   inset: 0;
@@ -56,7 +51,6 @@
   pointer-events: none;
 }
 
-/* 1. TOP STATUS BAR */
 .preloader-top-bar {
   position: relative;
   z-index: 2;
@@ -148,7 +142,6 @@
   width: 100%;
 }
 
-/* Giant Minimalist Typography Counter */
 .preloader-counter-wrap {
   position: relative;
   display: flex;
@@ -180,7 +173,6 @@
   letter-spacing: -0.02em;
 }
 
-/* Minimalist Progress Track */
 .preloader-track-container {
   width: 100%;
   max-width: 620px;
@@ -218,7 +210,6 @@
   box-shadow: 0 0 12px #38bdf8, 0 0 20px #f43f5e;
 }
 
-/* Dynamic Live Telemetry Status Readout */
 .preloader-telemetry-status {
   display: flex;
   align-items: center;
@@ -236,7 +227,6 @@
   font-weight: 600;
 }
 
-/* 3. FULLSCREEN INSTRUCTION & LAUNCH ACTIONS */
 .preloader-fullscreen-box {
   display: flex;
   flex-direction: column;
@@ -285,7 +275,6 @@
   max-width: 520px;
 }
 
-/* 4. PRIMARY LAUNCH CTA BUTTON */
 .preloader-actions-row {
   display: flex;
   flex-direction: column;
@@ -317,7 +306,6 @@
   text-decoration: none;
 }
 
-/* Shimmer Sweep Effect */
 .preloader-launch-btn::before {
   content: '';
   position: absolute;
@@ -383,7 +371,6 @@
   color: #cbd5e1;
 }
 
-/* 5. BOTTOM BAR */
 .preloader-bottom-bar {
   position: relative;
   z-index: 2;

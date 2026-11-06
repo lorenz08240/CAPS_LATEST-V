@@ -25,13 +25,11 @@
   height: 0 !important;
 }
 
-/* General styles for the hero section */
 .home-hero {
   background-color: #0b0f1a;
   color: white;
   text-align: center;
   padding: 1rem 2rem 3rem 2rem;
-  /* Reduced top padding */
   position: relative;
   background-image: url("https://images.unsplash.com/photo-1591488320449-011701bb6704?w=1600&q=80");
   background-size: cover;
@@ -67,7 +65,6 @@
 .btn-secondary,
 .btn-outline {
   background-color: #facc15;
-  /* Yellow */
   color: #0f172a;
   padding: 0.75rem 1.5rem;
   border-radius: 0.5rem;
@@ -81,10 +78,8 @@
 .btn-secondary:hover,
 .btn-outline:hover {
   background-color: #facc15;
-  /* Darker yellow */
 }
 
-/* Background Ambient Glow for Sections */
 .section-with-glow {
   position: relative;
   z-index: 1;
@@ -158,12 +153,9 @@
 
 .tech-logos-wrapper {
   margin-top: 0.5rem;
-  /* Reduced top margin */
   border-top: 1px solid rgba(255, 255, 255, 0.05);
   padding-top: 1rem;
-  /* Reduced top padding */
   margin-bottom: 3.5rem;
-  /* Space for scroll indicator */
   width: 100%;
   max-width: 800px;
 }
@@ -217,7 +209,6 @@
   color: #94a3b8;
 }
 
-/* Hero arrow */
 .hero-arrow {
   font-size: 2rem;
   color: #9ca3af;
@@ -373,7 +364,6 @@
   font-weight: 600;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .home-hero {
     padding: 2rem 1rem;
@@ -407,9 +397,6 @@
   }
 }
 
-/* ══════════════════════════════════════════════════════════════════════════ */
-/* FULL-BLEED CYBERPUNK 3D HERO SECTION (Direct Match to Cyber Metaverse Ref) */
-/* ══════════════════════════════════════════════════════════════════════════ */
 
 .cyber-hero-section {
   position: relative;
@@ -426,7 +413,6 @@
   padding: 1.4rem 3.5rem 1.8rem 4.5rem;
 }
 
-/* Ambient Radial Cyber Glows */
 .cyber-ambient-pink-spot {
   position: absolute;
   top: 35%;
@@ -451,7 +437,6 @@
   z-index: 1;
 }
 
-/* 1. TOP HIGH-TECH NAV BAR */
 .cyber-top-nav {
   position: relative;
   z-index: 25;
@@ -612,7 +597,6 @@
   box-shadow: 0 0 30px rgba(244, 63, 94, 0.75);
 }
 
-/* 2. LEFT VERTICAL RAIL */
 .cyber-left-rail {
   position: absolute;
   left: 1.4rem;
@@ -744,7 +728,6 @@
   text-shadow: 0 0 60px rgba(244, 63, 94, 0.32);
 }
 
-/* 4. CENTERPIECE 3D HARDWARE CANVAS STAGE */
 .cyber-canvas-stage {
   position: absolute;
   inset: 0;
@@ -816,7 +799,6 @@
   to { opacity: 1; }
 }
 
-/* 5. EDITORIAL FLANKING OVERLAYS */
 .cyber-editorial-grid {
   position: relative;
   z-index: 10;
@@ -1176,7 +1158,6 @@
   user-select: none;
 }
 
-/* Fluid Liquid Light Shimmer Sweep */
 .hud-start-build-btn::before {
   content: '';
   position: absolute;
@@ -1228,7 +1209,6 @@
 
 
 
-/* Integrated Sections Styling */
 .home-integrated-section {
   background-color: transparent !important;
   background-image: none !important;
@@ -1298,7 +1278,6 @@
   margin-left: 0;
 }
 
-/* Left Column */
 .hero-left-col {
   position: relative;
   z-index: 20;
@@ -1386,24 +1365,18 @@
   flex-direction: column;
   transform: translateY(-7rem);
 
-  /* Lock structural height to match left text */
   height: 450px;
 
-  /* KEY TO SNAP CAROUSEL TO RIGHT */
   overflow: visible;
   /* Papayagan nating lumabas ang cards papuntang right monitor edge */
   margin-right: -6rem;
-  /* Pull right to hit screen edge */
   margin-left: auto;
-  /* Force push entire box right from center */
 }
 
 .hero-carousel-container-new {
   position: relative;
   width: 100%;
-  /* Lock width for even containment */
   height: 450px;
-  /* Ito ang solid na limitasyon ng taas */
   flex: none;
   animation: hyperFloat 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   transform-style: preserve-3d;
@@ -1598,7 +1571,6 @@
   left: 32px;
   bottom: 24px;
   right: auto;
-  /* Tanggalin ang right anchoring */
   display: flex;
   align-items: center;
   gap: 2rem;
@@ -1709,7 +1681,6 @@
   opacity: 0.8;
 }
 
-/* Bottom Footer */
 .hero-footer-new {
   width: 100%;
   max-width: 1200px;
@@ -1789,7 +1760,6 @@
   /* Reduce brand logo space to prevent right overflow */
 }
 
-/* Why Build leads to Learn styles */
 .benefit-learn-link {
   display: inline-block;
   margin-top: 14px;

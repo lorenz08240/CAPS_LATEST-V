@@ -14,7 +14,6 @@ export const AdminHeader = ({ breadcrumbCurrent = "Hardware Inventory" }) => {
 
   return (
     <header className="admin-header">
-      {/* Top Breadcrumb Navigation */}
       <div className="admin-breadcrumbs">
         <Link to="/" className="breadcrumb-root">BuildLab</Link>
         <span className="breadcrumb-sep">/</span>
@@ -24,7 +23,6 @@ export const AdminHeader = ({ breadcrumbCurrent = "Hardware Inventory" }) => {
       </div>
 
       <div className="admin-header-actions">
-        {/* Route Navigation Switcher Pills */}
         <nav className="admin-route-nav" aria-label="Admin Route Switcher">
           <Link
             to="/admin/inventory"
@@ -84,7 +82,6 @@ export const AdminHeader = ({ breadcrumbCurrent = "Hardware Inventory" }) => {
           </Link>
         </nav>
 
-        {/* Logout Action */}
         <button
           type="button"
           className="btn-glass-logout"

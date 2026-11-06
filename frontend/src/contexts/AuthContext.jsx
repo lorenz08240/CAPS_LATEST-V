@@ -18,11 +18,11 @@ export function AuthProvider({ children }) {
     try {
       localStorage.removeItem("buildlab_admin");
       localStorage.removeItem("buildlab_admin_token");
-    } catch (e) {}
+    } catch {}
 
     try {
       return sessionStorage.getItem(SESSION_AUTH_KEY) === "true";
-    } catch (e) {
+    } catch {
       return false;
     }
   });
@@ -34,7 +34,7 @@ export function AuthProvider({ children }) {
         sessionStorage.setItem(SESSION_AUTH_KEY, "true");
         sessionStorage.setItem(SESSION_TIMESTAMP_KEY, Date.now().toString());
         sessionStorage.setItem(SESSION_TOKEN_KEY, password);
-      } catch (e) {}
+      } catch {}
       return true;
     }
     return false;
@@ -53,7 +53,7 @@ export function AuthProvider({ children }) {
       // Clean up legacy localStorage if present
       localStorage.removeItem("buildlab_admin");
       localStorage.removeItem("buildlab_admin_token");
-    } catch (e) {}
+    } catch {}
   };
 
   // Cross-tab synchronization within the same session or storage changes
@@ -62,7 +62,7 @@ export function AuthProvider({ children }) {
       try {
         const sessionActive = sessionStorage.getItem(SESSION_AUTH_KEY) === "true";
         setIsAdmin(sessionActive);
-      } catch (e) {}
+      } catch {}
     };
 
     window.addEventListener("storage", handleStorageChange);

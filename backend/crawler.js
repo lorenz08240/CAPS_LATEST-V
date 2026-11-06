@@ -1,9 +1,7 @@
 const axios = require('axios');
 const db = require('./config/db'); 
 
-// ==========================================
 // 1. INITIALIZE SCRAPED REVIEW QUEUE TABLE
-// ==========================================
 async function initScrapedTable() {
   try {
     await db.query(`
@@ -228,9 +226,7 @@ function getStagingProducts(targetCategory = 'all', storeName = 'EasyPC') {
   });
 }
 
-// ==========================================
 // 2. EASYPC SCRAPER (Shopify Collection-Aware)
-// ==========================================
 const EASYPC_COLLECTION_MAP = {
   gpu: ["graphic-card-1", "graphic-card"],
   cpu: ["processor-1", "processor"],
@@ -296,9 +292,7 @@ async function scrapeEasyPC(page = 1, targetCategory = 'all') {
   }
 }
 
-// ==========================================
 // 3. BERMOR TECHZONE SCRAPER (WooCommerce-Aware)
-// ==========================================
 const BERMOR_CATEGORY_MAP = {
   gpu: "33,34,2985",
   cpu: "20,21",
@@ -349,9 +343,7 @@ async function scrapeBermor(page = 1, targetCategory = 'all') {
   }
 }
 
-// ==========================================
 // 4. COMMON INGESTION & PIPELINE ENGINE
-// ==========================================
 async function processAndSaveProducts(products, sourceName, sourceBadge, targetCategory) {
   const today = new Date().toISOString().split('T')[0];
   const scrapedParts = [];
@@ -427,9 +419,7 @@ async function processAndSaveProducts(products, sourceName, sourceBadge, targetC
   return savedCount;
 }
 
-// ==========================================
 // 5. RUNNER CLI WITH ARGS SUPPORT
-// ==========================================
 async function runCrawler() {
   const args = process.argv.slice(2);
   let store = "EasyPC";

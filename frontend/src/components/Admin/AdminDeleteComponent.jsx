@@ -166,7 +166,6 @@ export default function AdminDeleteComponent() {
         <AdminHeader breadcrumbCurrent="Hardware Deletion & Lifecycle" />
 
         <div className="admin-screen-content">
-          {/* Header Banner */}
           <div className="screen-header-banner">
             <div>
               <div className="screen-tag-row">
@@ -185,7 +184,6 @@ export default function AdminDeleteComponent() {
             </div>
           </div>
 
-          {/* Toast Notification */}
           {notification.text && (
             <div className={`message-toast ${notification.type}`}>
               <span>{notification.text}</span>
@@ -199,7 +197,6 @@ export default function AdminDeleteComponent() {
             </div>
           )}
 
-          {/* Controls Bar: Search, Category Filter, Batch Action */}
           <div className="delete-control-deck">
             <div className="delete-search-group">
               <div className="delete-search-box">
@@ -222,7 +219,6 @@ export default function AdminDeleteComponent() {
                 )}
               </div>
 
-              {/* Category Pills */}
               <div className="delete-cat-filter-pills">
                 {CATEGORIES.map((c) => (
                   <button
@@ -237,7 +233,6 @@ export default function AdminDeleteComponent() {
               </div>
             </div>
 
-            {/* Batch Action Section */}
             <div className="delete-batch-actions">
               {selectedIds.length > 0 && (
                 <div className="batch-counter-box">
@@ -263,7 +258,6 @@ export default function AdminDeleteComponent() {
             </div>
           </div>
 
-          {/* Main Layout: Parts Table + Session Audit Sidebar */}
           <div className="delete-main-grid">
             <div className="delete-table-wrapper">
               <table className="admin-table delete-table">
@@ -348,7 +342,6 @@ export default function AdminDeleteComponent() {
               </table>
             </div>
 
-            {/* Right: Session Audit Log */}
             <aside className="delete-audit-sidebar">
               <div className="audit-header">
                 <span className="audit-title">Session Deletion Log</span>
@@ -381,7 +374,6 @@ export default function AdminDeleteComponent() {
         </div>
       </div>
 
-      {/* Confirmation Modal */}
       {isConfirmModalOpen && (
         <div className="modal-backdrop-layer">
           <div className="confirm-modal-box">

@@ -394,11 +394,9 @@ export default function AdminEditComponent() {
   return (
     <div className="admin-page-wrapper">
       <div className="admin-dedicated-screen-container">
-        {/* Top unified Admin Header with route pills and logout */}
         <AdminHeader breadcrumbCurrent="Edit Component Specifications" />
 
         <div className="admin-screen-content edit-screen-optimized">
-          {/* Toast Notification */}
           {notification.text && (
             <div className={`message-toast ${notification.type}`}>
               <span>{notification.text}</span>
@@ -412,16 +410,13 @@ export default function AdminEditComponent() {
             </div>
           )}
 
-          {/* Two-Column Editor Layout: Left Catalog Browser with Multi-Select Delete, Right Form */}
           <div className="admin-editor-workspace-grid">
-            {/* Left Column: Component Selector & Batch Deletion */}
             <aside className="editor-picker-column">
               <div className="picker-header">
                 <span className="picker-title">Catalog Browser</span>
                 <span className="picker-count">{filteredParts.length} parts</span>
               </div>
 
-              {/* Search in picker */}
               <div className="picker-search-box">
                 <input
                   type="text"
@@ -431,7 +426,6 @@ export default function AdminEditComponent() {
                 />
               </div>
 
-              {/* Category pills */}
               <div className="picker-category-row">
                 {CATEGORIES.map((c) => (
                   <button
@@ -445,7 +439,6 @@ export default function AdminEditComponent() {
                 ))}
               </div>
 
-              {/* Multi-Select Batch Deletion Toolbar */}
               <div className="picker-batch-toolbar">
                 <label className="picker-batch-select-label">
                   <input
@@ -483,7 +476,6 @@ export default function AdminEditComponent() {
                 )}
               </div>
 
-              {/* Parts list */}
               <div className="picker-parts-scroll">
                 {loadingParts && <div className="picker-loading">Loading catalog...</div>}
                 {!loadingParts && filteredParts.length === 0 && (
@@ -498,7 +490,6 @@ export default function AdminEditComponent() {
                       className={`picker-part-card ${isSelected ? "selected" : ""} ${isMarkedDelete ? "marked-for-delete" : ""}`}
                       onClick={() => handleSelectPartToEdit(part)}
                     >
-                      {/* Checkbox for batch deletion */}
                       <label
                         className="picker-card-checkbox"
                         onClick={(e) => e.stopPropagation()}
@@ -526,7 +517,6 @@ export default function AdminEditComponent() {
               </div>
             </aside>
 
-            {/* Right Column: Active Form Editor */}
             <main className="editor-form-column">
               {!selectedPart ? (
                 <div className="editor-empty-state">
@@ -572,7 +562,6 @@ export default function AdminEditComponent() {
                     </div>
                   </div>
 
-                  {/* Primary Details */}
                   <div className="form-card-panel">
                     <div className="form-card-header">
                       <span className="step-num">01</span>
@@ -639,7 +628,6 @@ export default function AdminEditComponent() {
                     </div>
                   </div>
 
-                  {/* Visual Asset */}
                   <div className="form-card-panel">
                     <div className="form-card-header">
                       <span className="step-num">02</span>
@@ -676,7 +664,6 @@ export default function AdminEditComponent() {
                     </div>
                   </div>
 
-                  {/* Dynamic Technical Specs Matrix */}
                   <div className="form-card-panel">
                     <div className="form-card-header">
                       <span className="step-num">03</span>
@@ -886,7 +873,6 @@ export default function AdminEditComponent() {
                     </div>
                   </div>
 
-                  {/* Action Bar */}
                   <div className="form-action-bar">
                     <button
                       type="button"
@@ -921,7 +907,6 @@ export default function AdminEditComponent() {
         </div>
       </div>
 
-      {/* Confirmation Modal for One-Click Execution with Confirm */}
       {confirmModal.isOpen && (
         <div className="admin-confirm-modal-backdrop" onClick={() => !deleting && setConfirmModal({ ...confirmModal, isOpen: false })}>
           <div className="admin-confirm-modal-box" onClick={(e) => e.stopPropagation()}>

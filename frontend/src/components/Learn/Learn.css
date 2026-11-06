@@ -200,7 +200,6 @@
   gap: 3rem;
 }
 
-/* Quick Hero Action CTAs */
 .hero-actions-row {
   display: flex;
   align-items: center;
@@ -495,7 +494,6 @@
   border-color: #00ff87;
 }
 
-/* Floating Circular SCROLL button */
 .hero-scroll-guide {
   position: absolute;
   bottom: 2rem;
@@ -876,7 +874,6 @@
   }
 }
 
-/* Step-by-Step Installation */
 .installation-steps-stack {
   display: flex;
   flex-direction: column;
@@ -944,7 +941,6 @@
   flex-shrink: 0;
 }
 
-/* Common Errors Alert */
 .common-errors-alert {
   background: rgba(239, 68, 68, 0.08);
   border: 1px solid rgba(239, 68, 68, 0.25);
@@ -982,14 +978,12 @@
   margin: 0;
 }
 
-/* Right subcolumn */
 .right-subcolumn {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
 
-/* Quiz Card */
 .quiz-prompt {
   font-size: 0.88rem;
   font-weight: 700;
@@ -1086,7 +1080,6 @@
   background: #5effca;
 }
 
-/* Common Mistakes 2x2 Grid */
 .common-mistakes-card {
   background: rgba(26, 12, 16, 0.75);
   border-color: rgba(239, 68, 68, 0.25);

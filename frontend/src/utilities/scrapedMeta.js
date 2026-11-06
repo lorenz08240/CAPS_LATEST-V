@@ -1,9 +1,7 @@
-// ═══════════════════════════════════════════════════════════════
 // SCRAPED PRODUCT NAME / MODEL / QUICK-SPEC PARSERS
 // Turns raw catalog titles ("GIGABYTE GP-P750GM 750W 80+ Gold
 // Power Supply") into review-queue friendly metadata:
 //   { brand, model, productName }  →  "GIGABYTE" / "GP-P750GM"
-// ═══════════════════════════════════════════════════════════════
 
 const KNOWN_BRANDS = [
   "Gigabyte", "ASUS", "ASRock", "MSI", "Intel", "AMD", "Palit", "Sapphire",

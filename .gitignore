@@ -5,7 +5,6 @@ event_dispatcher.py
 notify_telegram.py
 .webui_secret_key
 logs/
-graphify-out/
 pc_screen.png
 
 # Environment & Local Secrets

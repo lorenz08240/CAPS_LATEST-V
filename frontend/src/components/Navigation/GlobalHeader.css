@@ -19,6 +19,7 @@
   gap: 0.85rem;
   text-decoration: none;
   cursor: pointer;
+  -webkit-user-select: none;
   user-select: none;
 }
 

@@ -34,7 +34,6 @@ export const HoverImagePreview = memo(({
         minHeight: `${size}px`
       }}
     >
-      {/* Strictly bounded thumbnail box */}
       <div className="hw-thumb-box">
         {hasValidImage ? (
           <img
@@ -51,7 +50,6 @@ export const HoverImagePreview = memo(({
         )}
       </div>
 
-      {/* Popover Preview with z-50 & safe positioning */}
       {isHovered && hasValidImage && (
         <div className="hover-popover-card" style={{ width: `${previewSize}px` }}>
           <div className="hover-popover-media">

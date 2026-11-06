@@ -1,5 +1,5 @@
 import React from "react";
-import { motion } from "motion/react";
+import { motion as Motion } from "motion/react";
 
 /**
  * Page transition choreography (motion / framer-motion).
@@ -77,8 +77,8 @@ export default function MotionPage({ routeKey, children }) {
   const spec = MOTION_PROPS[routeKey] || MOTION_PROPS.default;
   const { style, ...props } = spec;
   return (
-    <motion.div {...props} style={style}>
+    <Motion.div {...props} style={style}>
       {children}
-    </motion.div>
+    </Motion.div>
   );
 }

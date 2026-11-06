@@ -1,6 +1,3 @@
-/* ═══════════════════════════════════════════════════════════════
-   BUILDLAB 3D WORKSTATION STUDIO STYLESHEET (REFINED)
-   ═══════════════════════════════════════════════════════════════ */
 
 .pc-builder-workspace {
   position: fixed;
@@ -24,9 +21,6 @@
   background: radial-gradient(circle at 60% 40%, #111a2e 0%, #080b12 85%);
 }
 
-/* ─────────────────────────────────────────────────────────────
-   1. TOP WORKSPACE HEADER BAR
-   ───────────────────────────────────────────────────────────── */
 .workspace-header {
   height: 64px;
   background: rgba(14, 19, 31, 0.92);
@@ -129,7 +123,6 @@
   -webkit-text-fill-color: transparent;
 }
 
-/* Center Metrics Row */
 .header-center-metrics {
   display: flex;
   align-items: center;
@@ -190,7 +183,6 @@
   font-weight: 800;
 }
 
-/* Right Actions */
 .header-right-actions {
   display: flex;
   align-items: center;
@@ -265,9 +257,6 @@
   cursor: not-allowed;
 }
 
-/* ─────────────────────────────────────────────────────────────
-   2. MAIN WORKSPACE LAYOUT
-   ───────────────────────────────────────────────────────────── */
 .workspace-main {
   flex: 1;
   display: flex;
@@ -275,9 +264,6 @@
   overflow: hidden;
 }
 
-/* ─────────────────────────────────────────────────────────────
-   3. LEFT HARDWARE DRAWER & VERTICAL PROGRESSION (PATAYO)
-   ───────────────────────────────────────────────────────────── */
 .hardware-drawer {
   width: 480px;
   min-width: 460px;
@@ -356,14 +342,12 @@
   color: #d4a34b;
 }
 
-/* Split Layout inside Drawer */
 .drawer-split-layout {
   flex: 1;
   display: flex;
   overflow: hidden;
 }
 
-/* VERTICAL PROGRESSION RAIL (PATAYO) */
 .vertical-stages-rail {
   width: 155px;
   min-width: 155px;
@@ -519,7 +503,6 @@
   white-space: nowrap;
 }
 
-/* Search & Tier Pills */
 .drawer-search-bar {
   padding: 0.6rem 0.8rem 0.3rem 0.8rem;
   position: relative;
@@ -556,7 +539,6 @@
 
 
 
-/* Catalog Cards List */
 .catalog-cards-container {
   flex: 1;
   overflow-y: auto;
@@ -770,9 +752,6 @@
   font-size: 0.85rem;
 }
 
-/* ─────────────────────────────────────────────────────────────
-   4. 3D VIEWPORT CANVAS AREA & FLOATING HUD
-   ───────────────────────────────────────────────────────────── */
 .viewport-area {
   flex: 1;
   position: relative;
@@ -788,7 +767,6 @@
   cursor: grabbing;
 }
 
-/* Floating HUD Toolbars */
 .hud-toolbar {
   position: absolute;
   z-index: 15;
@@ -848,7 +826,6 @@
   color: #facc15;
 }
 
-/* Specific Positions */
 .camera-hud {
   top: 1rem;
   right: 1.25rem;
@@ -876,6 +853,7 @@
   cursor: pointer;
   z-index: 20;
   transition: transform 0.2s ease;
+  -webkit-user-select: none;
   user-select: none;
 }
 
@@ -987,7 +965,6 @@
   transform: scale(1.28);
 }
 
-/* POV Camera Mode Button */
 .hud-btn.pov-cam-btn {
   background: rgba(0, 229, 255, 0.12);
   border-color: rgba(0, 229, 255, 0.45);
@@ -1008,7 +985,6 @@
   box-shadow: 0 0 16px rgba(0, 229, 255, 0.5);
 }
 
-/* Drop Indicator Badge inside Canvas */
 .drop-indicator-badge {
   background: rgba(8, 11, 18, 0.9);
   border: 1px solid #d4a34b;
@@ -1034,9 +1010,6 @@
   50% { opacity: 0.3; }
 }
 
-/* ─────────────────────────────────────────────────────────────
-   5. ACTIVE INSPECTOR HUD POPUP
-   ───────────────────────────────────────────────────────────── */
 .inspector-card {
   position: absolute;
   bottom: 4.5rem;
@@ -1175,7 +1148,6 @@
   color: #ffffff;
 }
 
-/* Inspector Case Finish Picker */
 .inspector-case-color-row {
   margin: 0.85rem 0 0.5rem 0;
   padding: 0.65rem;
@@ -1238,7 +1210,6 @@
   border: 1px solid #94a3b8;
 }
 
-/* Workspace Toast Notification */
 .workspace-toast {
   position: absolute;
   top: 4.25rem;
@@ -1262,11 +1233,6 @@
   to { opacity: 1; transform: translate(-50%, 0); }
 }
 
-/* ─────────────────────────────────────────────────────────────
-   IN-APP CONFIRM DIALOG
-   (replaces native window.confirm — native dialogs steal focus
-   and force the browser out of fullscreen mode)
-   ───────────────────────────────────────────────────────────── */
 .builder-confirm-overlay {
   position: fixed;
   inset: 0;
@@ -1377,9 +1343,6 @@
   outline-offset: 2px;
 }
 
-/* ─────────────────────────────────────────────────────────────
-   6. RESPONSIVE REFINEMENTS
-   ───────────────────────────────────────────────────────────── */
 @media (max-width: 960px) {
   .workspace-header {
     height: auto;

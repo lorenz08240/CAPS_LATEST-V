@@ -1,0 +1,9 @@
+{
+  "0": "backend/package.json",
+  "1": "frontend/package.json",
+  "3": "PCBuilder3D.jsx",
+  "7": "SynthAudio",
+  "11": "compatibility.test.js",
+  "12": "tailwind.config.js",
+  "13": "postcss.config.js"
+}

@@ -95,16 +95,13 @@ export default function ProceduralSickleFan({
 
   return (
     <group position={position} rotation={rotation} scale={scale}>
-      {/* ── 1. MODULAR SQUARE HOUSING / FRAME ── */}
       {showFrame && (
         <group>
-          {/* Inner Circular Tunnel Bore (Blades spin inside this tunnel) */}
           <mesh rotation={[Math.PI / 2, 0, 0]}>
             <cylinderGeometry args={[radius + 0.03, radius + 0.03, frameDepth, 36, 1, true]} />
             <meshStandardMaterial color="#1a202c" roughness={0.7} metalness={0.4} />
           </mesh>
 
-          {/* Glowing Inner Halo Diffuser Ring */}
           <mesh position={[0, 0, frameDepth / 2 - 0.02]}>
             <torusGeometry args={[radius + 0.015, 0.035, 16, 36]} />
             <meshStandardMaterial 
@@ -114,15 +111,12 @@ export default function ProceduralSickleFan({
             />
           </mesh>
 
-          {/* 4 Outer Edge Enclosure Bars */}
-          {/* Top & Bottom Bars */}
           {[-1, 1].map((sign) => (
             <mesh key={`h-bar-${sign}`} position={[0, sign * (size / 2 - 0.08), 0]}>
               <boxGeometry args={[size - 0.4, 0.16, frameDepth]} />
               <meshStandardMaterial color="#1e293b" roughness={0.65} metalness={0.5} />
             </mesh>
           ))}
-          {/* Left & Right Bars */}
           {[-1, 1].map((sign) => (
             <mesh key={`v-bar-${sign}`} position={[sign * (size / 2 - 0.08), 0, 0]}>
               <boxGeometry args={[0.16, size - 0.4, frameDepth]} />
@@ -130,7 +124,6 @@ export default function ProceduralSickleFan({
             </mesh>
           ))}
 
-          {/* 4 Interlocking Corner Mounting Tabs with Rubber Pads & Screw Holes */}
           {[
             [-cornerOffset, cornerOffset],
             [cornerOffset, cornerOffset],
@@ -138,17 +131,14 @@ export default function ProceduralSickleFan({
             [cornerOffset, -cornerOffset]
           ].map(([cx, cy], idx) => (
             <group key={`corner-${idx}`} position={[cx, cy, 0]}>
-              {/* Outer Corner Block */}
               <mesh>
                 <boxGeometry args={[0.42, 0.42, frameDepth]} />
                 <meshStandardMaterial color="#0f172a" roughness={0.8} />
               </mesh>
-              {/* Anti-Vibration Dark Silicone Corner Damper Pad */}
               <mesh position={[0, 0, frameDepth / 2 + 0.005]}>
                 <boxGeometry args={[0.34, 0.34, 0.02]} />
                 <meshStandardMaterial color="#111827" roughness={0.95} />
               </mesh>
-              {/* Recessed Metal Screw Mounting Eyelet */}
               <mesh position={[0, 0, frameDepth / 2 + 0.01]} rotation={[Math.PI / 2, 0, 0]}>
                 <cylinderGeometry args={[0.07, 0.07, 0.04, 16]} />
                 <meshStandardMaterial color="#475569" metalness={0.9} roughness={0.2} />
@@ -156,7 +146,6 @@ export default function ProceduralSickleFan({
             </group>
           ))}
 
-          {/* Side Outer LED Diffuser Lightbars (Lian Li Uni Fan aesthetic) */}
           <mesh position={[-size / 2 - 0.005, 0, 0]}>
             <boxGeometry args={[0.02, size * 0.72, 0.09]} />
             <meshStandardMaterial color={rgbColor} emissive={rgbColor} emissiveIntensity={3.6} />
@@ -166,7 +155,6 @@ export default function ProceduralSickleFan({
             <meshStandardMaterial color={rgbColor} emissive={rgbColor} emissiveIntensity={3.6} />
           </mesh>
 
-          {/* 4 Rear Stator Support Struts (Aerodynamic Support Vanes at the Back) */}
           {[0.785, 2.356, 3.927, 5.498].map((vAngle, vIdx) => (
             <group key={`vane-${vIdx}`} position={[0, 0, -frameDepth / 2 + 0.02]} rotation={[0, 0, vAngle]}>
               <mesh position={[(radius + hubRadius) / 2, 0, 0]}>
@@ -178,21 +166,17 @@ export default function ProceduralSickleFan({
         </group>
       )}
 
-      {/* ── 2. SPINNING ROTOR & SICKLE BLADE ASSEMBLY ── */}
       <group ref={rotorRef}>
-        {/* Center Motor Hub Body */}
         <mesh rotation={[Math.PI / 2, 0, 0]}>
           <cylinderGeometry args={[hubRadius, hubRadius, 0.24, 32]} />
           <meshStandardMaterial color="#090d16" roughness={0.3} metalness={0.8} />
         </mesh>
 
-        {/* Diamond-Cut Chrome Outer Chamfer Ring on Hub Face */}
         <mesh position={[0, 0, 0.125]} rotation={[Math.PI / 2, 0, 0]}>
           <cylinderGeometry args={[hubRadius, hubRadius, 0.02, 32]} />
           <meshStandardMaterial color="#e2e8f0" metalness={0.98} roughness={0.08} />
         </mesh>
 
-        {/* Center Illuminated RGB Emblem Disc */}
         <mesh position={[0, 0, 0.136]} rotation={[Math.PI / 2, 0, 0]}>
           <cylinderGeometry args={[hubRadius * 0.62, hubRadius * 0.62, 0.015, 32]} />
           <meshStandardMaterial 
@@ -203,12 +187,10 @@ export default function ProceduralSickleFan({
           />
         </mesh>
 
-        {/* 7 Swept Sickle Aerofoil Blades with 100% Exact Radial Symmetry */}
         {Array.from({ length: numBlades }).map((_, i) => {
           const bladeAngle = (i * Math.PI * 2) / numBlades;
           return (
             <group key={`blade-${i}`} rotation={[0, 0, bladeAngle]}>
-              {/* Pitch Angle of Attack (tilted around radial span to scoop and accelerate air) */}
               <group position={[0, 0, -0.01]} rotation={[-0.38, 0, 0]}>
                 <mesh geometry={bladeGeometry}>
                   <meshStandardMaterial

@@ -40,6 +40,14 @@ export const SidebarProvider = ({ children }) => {
     setIsPinned((prev) => !prev);
   }, [setIsPinned]);
 
+  const closeSidebar = useCallback(() => {
+    try {
+      soundManager.play("modal_close");
+    } catch {}
+    setIsOpenManual(false);
+    setIsHovered(false);
+  }, []);
+
   const toggleSidebar = useCallback(() => {
     try {
       soundManager.play("interact");
@@ -47,18 +55,17 @@ export const SidebarProvider = ({ children }) => {
     if (isPinned) {
       // If pinned, unpin and close
       setIsPinned(false);
-      setIsOpenManual(false);
-      setIsHovered(false);
+      closeSidebar();
     } else {
-      // If not pinned, toggle manual open
-      setIsOpenManual((prev) => !prev);
+      setIsOpenManual((prev) => {
+        const next = !prev;
+        if (!next) {
+          setIsHovered(false);
+        }
+        return next;
+      });
     }
-  }, [isPinned, setIsPinned]);
-
-  const closeSidebar = useCallback(() => {
-    setIsOpenManual(false);
-    setIsHovered(false);
-  }, []);
+  }, [isPinned, setIsPinned, closeSidebar]);
 
   const openSidebar = useCallback(() => {
     setIsOpenManual(true);
@@ -76,6 +83,13 @@ export const SidebarProvider = ({ children }) => {
         e.target.isContentEditable
       ) {
         return;
+      }
+
+      if (e.key === "Escape") {
+        if (isSidebarOpen && !isPinned) {
+          e.preventDefault();
+          closeSidebar();
+        }
       }
 
       if (e.key === "[" || (e.ctrlKey && e.key.toLowerCase() === "b")) {

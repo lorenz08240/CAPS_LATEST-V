@@ -77,12 +77,12 @@ function Brands() {
   const [selectedBrand, setSelectedBrand] = useState(null);
 
   const handleBrandClick = (brand) => {
-    try { soundManager.click(); } catch (e) {}
+    try { soundManager.click(); } catch {}
     setSelectedBrand(brand);
   };
 
   const handleJumpToBuilder = (brandName) => {
-    try { soundManager.click(); } catch (e) {}
+    try { soundManager.click(); } catch {}
     navigate(`/build?search=${encodeURIComponent(brandName)}`);
   };
 
@@ -109,7 +109,6 @@ function Brands() {
           </div>
         </header>
 
-        {/* Grid of brands */}
         <div className="brands-showcase-grid">
           {brandData.map((brand) => (
             <div 
@@ -140,7 +139,6 @@ function Brands() {
           ))}
         </div>
 
-        {/* Interactive Brand Detail Pop-Out Panel */}
         {selectedBrand && (
           <div className="brand-inspect-modal">
             <div className="brand-inspect-content">
@@ -178,7 +176,6 @@ function Brands() {
           </div>
         )}
 
-        {/* Global Nav Bottom Action Bar */}
         <div className="brands-footer">
           <Link to="/build" className="btn-brand-primary">
             <span>START PC BUILD</span>

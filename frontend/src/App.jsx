@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -18,6 +18,7 @@ import Build from "./components/Build/Build";
 import Compatibility from "./components/Compatibility/Compatibility";
 import Learn from "./components/Learn/Learn";
 import HelpSupport from "./components/HelpSupport/HelpSupport";
+import AboutUs from "./components/AboutUs/AboutUs";
 import Brands from "./components/Brands/Brands";
 import PCBuilder3D from "./components/3D/PCBuilder3D";
 import {
@@ -29,7 +30,6 @@ import {
   AdminAuthGuard
 } from "./components/Admin/Admin";
 import MotionPage from "./utilities/pageTransitions";
-import soundManager from "./utilities/soundManager";
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -63,32 +63,25 @@ function AppContent() {
       <main className="main-content">
         <AnimatePresence mode="wait" initial={false}>
           <Routes location={location} key={location.pathname}>
-            {/* Main Landing Page */}
             <Route path="/" element={<MotionPage routeKey="/"><Home /></MotionPage>} />
 
-            {/* Build Page */}
             <Route path="/build" element={<MotionPage routeKey="/build"><Build /></MotionPage>} />
 
-            {/* Compatibility Page */}
             <Route path="/compatibility" element={<MotionPage routeKey="/compatibility"><Compatibility /></MotionPage>} />
 
-            {/* Learn Page & Component Deep-Dives */}
             <Route path="/learn" element={<MotionPage routeKey="/learn"><Learn /></MotionPage>} />
             <Route path="/learn/:componentId" element={<MotionPage routeKey="/learn"><Learn /></MotionPage>} />
 
-            {/* Brands Page */}
             <Route path="/brands" element={<MotionPage routeKey="/brands"><Brands /></MotionPage>} />
 
-            {/* 3D Builder Page */}
             <Route path="/3d-builder" element={<MotionPage routeKey="/3d-builder"><PCBuilder3D /></MotionPage>} />
 
-            {/* Help & Support Deck */}
             <Route path="/help" element={<MotionPage routeKey="/help"><HelpSupport /></MotionPage>} />
 
-            {/* Dedicated Admin Login Route */}
+            <Route path="/about" element={<MotionPage routeKey="/about"><AboutUs /></MotionPage>} />
+
             <Route path="/admin/login" element={<MotionPage routeKey="/admin/login"><AdminLogin /></MotionPage>} />
 
-            {/* Protected Admin Routes (Session Auth Guard redirects to /admin/login on expiry/close) */}
             <Route
               path="/admin"
               element={
@@ -137,7 +130,6 @@ function AppContent() {
                 </AdminAuthGuard>
               }
             />
-            {/* Dedicated delete page now routed to centralized Edit page */}
             <Route
               path="/admin/delete"
               element={
@@ -159,7 +151,6 @@ function AppContent() {
 
           </Routes>
         </AnimatePresence>
-        {/* Footer suppressed on immersive fullscreen workstations & admin decks */}
         {location.pathname !== "/" &&
           location.pathname !== "/build" &&
           location.pathname !== "/compatibility" &&

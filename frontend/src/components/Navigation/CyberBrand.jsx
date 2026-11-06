@@ -48,7 +48,6 @@ export default function CyberBrand({ onNavigateHome }) {
 
   return (
     <div className={`cyber-brand-wrapper ${isSidebarOpen ? "sidebar-open-mode" : "standard-mode"}`}>
-      {/* 100x Cooler Interactive Deck Trigger / Logo Box */}
       <button
         type="button"
         className={`cyber-deck-trigger ${isSidebarOpen ? "deck-active" : ""}`}
@@ -85,7 +84,6 @@ export default function CyberBrand({ onNavigateHome }) {
         )}
       </button>
 
-      {/* Dynamic Brand Text: Morphs from BUILDLAB to Live Hardware Telemetry HUD */}
       <div className="cyber-brand-info" onClick={handleBrandTextClick}>
         {isSidebarOpen ? (
           /* 100x Cooler Telemetry HUD Readout (Replaces Redundant Logo) */

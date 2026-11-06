@@ -4,10 +4,11 @@ import soundManager from '../../utilities/soundManager';
 import CyberBrand from './CyberBrand';
 import './GlobalHeader.css';
 
-export default function GlobalHeader({ onSearchClick }) {
+export default function GlobalHeader({ onSearchClick, hideBuildPill = false }) {
   const location = useLocation();
   const navigate = useNavigate();
   const currentPath = location.pathname;
+  const shouldHideBuildPill = hideBuildPill || currentPath.startsWith('/learn');
 
   const navItems = [
     { label: 'HOME', path: '/' },
@@ -15,18 +16,19 @@ export default function GlobalHeader({ onSearchClick }) {
     { label: '3D STUDIO', path: '/3d-builder' },
     { label: 'COMPATIBILITY', path: '/compatibility' },
     { label: 'LEARN', path: '/learn' },
-    { label: 'BRANDS', path: '/brands' }
+    { label: 'BRANDS', path: '/brands' },
+    { label: 'ABOUT US', path: '/about' }
   ];
 
   const handleNavClick = (path) => {
-    try { soundManager.click(); } catch (e) {}
+    try { soundManager.click(); } catch {}
     navigate(path);
   };
 
   return (
     <header className="global-cyber-nav">
       <CyberBrand onNavigateHome={() => {
-        try { soundManager.click(); } catch (e) {}
+        try { soundManager.click(); } catch {}
         navigate('/');
       }} />
 
@@ -62,20 +64,20 @@ export default function GlobalHeader({ onSearchClick }) {
               <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg>
           </button>
-        ) : (
+        ) : !shouldHideBuildPill ? (
           <Link
             to="/build"
             className="global-build-pill"
             onClick={() => {
-              try { soundManager.click(); } catch (e) {}
-              try { sessionStorage.setItem("buildlab_start_build_intent", "true"); } catch (e) {}
+              try { soundManager.click(); } catch {}
+              try { sessionStorage.setItem("buildlab_start_build_intent", "true"); } catch {}
             }}
             title="Open PC Builder Station"
           >
             <span>START BUILD</span>
             <span className="pill-arrow">&rarr;</span>
           </Link>
-        )}
+        ) : null}
       </div>
     </header>
   );

@@ -81,9 +81,9 @@ function CompatibilityView({ isIntegrated = false }) {
 
   const triggerBobHint = useCallback((text) => {
     if (!text) return;
-    try { soundManager.click(); } catch (_) {}
+    try { soundManager.click(); } catch {}
     if (typeof navigator !== "undefined" && navigator.vibrate) {
-      try { navigator.vibrate(30); } catch (_) {}
+      try { navigator.vibrate(30); } catch {}
     }
     // Briefly clear speech to allow re-triggering same hint and re-render speech bubble
     setBobSpeech(null);
@@ -396,7 +396,6 @@ function CompatibilityView({ isIntegrated = false }) {
 
   return (
     <>
-      {/* ── Compatibility Issues Modal (Portaled) ── */}
       {issueModal &&
         createPortal(
           <div className="compat-modal-overlay" onClick={() => setIssueModal(null)}>
@@ -434,7 +433,6 @@ function CompatibilityView({ isIntegrated = false }) {
 
       <div className={`compat-page ${isIntegrated ? "integrated-view" : ""}`}>
         {!isIntegrated && <GlobalHeader />}
-        {/* Organic layered waves and mesh background */}
         {!isIntegrated && (
           <>
             <div className="bg-grid" aria-hidden="true" />
@@ -445,7 +443,6 @@ function CompatibilityView({ isIntegrated = false }) {
         )}
 
         <div className="compat-container-wrap">
-          {/* ════ HERO TITLE HEADER ════ */}
           {!isIntegrated && (
             <header className="compat-hero-title-header">
               <h1 className="compat-hero-title">
@@ -461,7 +458,6 @@ function CompatibilityView({ isIntegrated = false }) {
             </header>
           )}
 
-          {/* ════ TOP ALERT BANNER ════ */}
           {compatibilityIssues.length > 0 && (
             <aside className="compat-top-banner" role="alert" {...bindBobInteract("Critical Warning: Compatibility issues found between your components!")}>
               <div className="compat-banner-info">
@@ -473,7 +469,6 @@ function CompatibilityView({ isIntegrated = false }) {
             </aside>
           )}
 
-          {/* ── Empty State ── */}
           {selectedComponents.length === 0 && (
             <div className="empty-wrap">
               <div className="empty-card glass-panel" {...bindBobInteract("Workspace empty! Pick at least a CPU and Motherboard to begin checking.")}>
@@ -501,7 +496,7 @@ function CompatibilityView({ isIntegrated = false }) {
                     className="btn-resolve-cta"
                     style={{ maxWidth: "240px", margin: 0, background: "rgba(0, 229, 255, 0.15)", borderColor: "#00e5ff", color: "#00e5ff", cursor: "pointer" }}
                     onClick={() => {
-                      try { soundManager.click(); } catch(e) {}
+                      try { soundManager.click(); } catch {}
                       if (loadDemoBuild) loadDemoBuild();
                     }}
                   >
@@ -512,12 +507,9 @@ function CompatibilityView({ isIntegrated = false }) {
             </div>
           )}
 
-          {/* ════ 2-COLUMN DASHBOARD (60 / 40 SPLIT) ════ */}
           {selectedComponents.length > 0 && (
             <div className="dashboard-layout-v2">
-              {/* ════ LEFT COLUMN (60%) ════ */}
               <section className="column-left-60">
-                {/* Selected Components Panel */}
                 <div className="glass-panel components-container-card">
                   <div className="components-card-header">
                     <h3 className="section-title">
@@ -540,14 +532,12 @@ function CompatibilityView({ isIntegrated = false }) {
                           className={`component-row-card ${isOk ? "card-status-ready" : "card-status-issue"}`}
                           {...bindBobInteract(getComponentBobHint(comp))}
                         >
-                          {/* Brand Monogram Tag */}
                           <div
                             className={`brand-monogram-pill ${isOk ? "brand-ready" : "brand-issue"}`}
                           >
                             {brandTag}
                           </div>
 
-                          {/* Component Details */}
                           <div className="component-text-meta">
                             <span className="component-category-tag">
                               {comp.category.toUpperCase()}
@@ -557,14 +547,12 @@ function CompatibilityView({ isIntegrated = false }) {
                             </h4>
                           </div>
 
-                          {/* Status Pill Badge */}
                           <div className="status-badge-wrap">
                             <span className={`status-pill ${isOk ? "pill-ready" : "pill-issue"}`}>
                               {isOk ? "READY" : "ISSUE"}
                             </span>
                           </div>
 
-                          {/* Thumbnail Image */}
                           <div className="component-thumb-wrap">
                             {comp.img ? (
                               <img
@@ -584,7 +572,6 @@ function CompatibilityView({ isIntegrated = false }) {
                   </div>
                 </div>
 
-                {/* Bottleneck Analysis Card */}
                 {compatibilityIssues.length > 0 && !bottleneckDismissed ? (
                   <div className="bottleneck-darkred-card" {...bindBobInteract("Bottleneck Analysis: Hardware mismatch detected! Review recommendations to resolve.")}>
                     <div className="bottleneck-card-header">
@@ -629,7 +616,6 @@ function CompatibilityView({ isIntegrated = false }) {
                   </div>
                 ) : null}
 
-                {/* Sub-system Diagnostic Cards */}
                 <div className="sub-diagnostics-row">
                   <div
                     className={`sub-diag-card ${hasSocketIssue ? "diag-issue" : "diag-ready"}`}
@@ -678,14 +664,11 @@ function CompatibilityView({ isIntegrated = false }) {
                 </div>
               </section>
 
-              {/* ════ RIGHT COLUMN (40%) ════ */}
               <section className="column-right-40">
-                {/* 1. Performance Analytics (2x2 KPI Grid) */}
                 <div className="glass-panel performance-analytics-panel">
                   <h3 className="section-title">Performance Analytics</h3>
 
                   <div className="kpi-grid-2x2">
-                    {/* Est. Wattage */}
                     <div className="kpi-tile-box" {...bindBobInteract(`Est. Wattage (${estWattage}W): Combined peak draw of your CPU, GPU, and system baseline.`)}>
                       <span className="kpi-icon-symbol kpi-icon-red">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
@@ -696,7 +679,6 @@ function CompatibilityView({ isIntegrated = false }) {
                       </div>
                     </div>
 
-                    {/* Components Count */}
                     <div className="kpi-tile-box" {...bindBobInteract(`Hardware Stages: ${selectedComponents.length} of 7 core components selected so far.`)}>
                       <span className="kpi-icon-symbol kpi-icon-green">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
@@ -707,7 +689,6 @@ function CompatibilityView({ isIntegrated = false }) {
                       </div>
                     </div>
 
-                    {/* Gaming Score */}
                     <div className="kpi-tile-box" {...bindBobInteract("Gaming Score: Evaluates GPU rendering capabilities and frame throughput.")}>
                       <span className="kpi-icon-symbol kpi-icon-purple">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="8" cy="12" r="1.5"/><circle cx="16" cy="12" r="1.5"/></svg>
@@ -720,7 +701,6 @@ function CompatibilityView({ isIntegrated = false }) {
                       </div>
                     </div>
 
-                    {/* Productivity Score */}
                     <div className="kpi-tile-box" {...bindBobInteract("Productivity Score: Evaluates multi-threaded processing power and memory bandwidth.")}>
                       <span className="kpi-icon-symbol kpi-icon-cyan">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
@@ -735,7 +715,6 @@ function CompatibilityView({ isIntegrated = false }) {
                   </div>
                 </div>
 
-                {/* 2. Performance Profile (5-Axis Radar Chart) */}
                 <div className="glass-panel performance-profile-panel">
                   <div className="panel-headline-group">
                     <h3 className="section-title">Performance Profile</h3>
@@ -744,7 +723,6 @@ function CompatibilityView({ isIntegrated = false }) {
 
                   <div className="radar-canvas-container" {...bindBobInteract("5-Axis Balance Radar: Visualizing the performance equilibrium across all subsystems.")}>
                     <svg className="radar-svg-canvas" viewBox="-25 -25 310 310">
-                      {/* Gradient & Glow Definitions */}
                       <defs>
                         <radialGradient id="radarAuraWarm" cx="65%" cy="35%" r="60%">
                           <stop offset="0%" stopColor="rgba(239, 68, 68, 0.28)" />
@@ -759,17 +737,15 @@ function CompatibilityView({ isIntegrated = false }) {
                         <filter id="radarGlowFilter" x="-20%" y="-20%" width="140%" height="140%">
                           <feGaussianBlur stdDeviation="2.5" result="glow" />
                           <feMerge>
-                            <feMergeNode in="glow" />
-                            <feMergeNode in="SourceGraphic" />
+                            <feMergeNode in={"glow"} />
+                            <feMergeNode in={"SourceGraphic"} />
                           </feMerge>
                         </filter>
                       </defs>
 
-                      {/* Atmospheric Dual-Tone Glow Behind Grid */}
                       <circle cx="155" cy="105" r="95" fill="url(#radarAuraWarm)" />
                       <circle cx="105" cy="155" r="95" fill="url(#radarAuraCool)" />
 
-                      {/* Concentric Pentagonal Web Rings */}
                       {[100, 75, 50, 25].map((r, i) => (
                         <polygon
                           key={i}
@@ -786,7 +762,6 @@ function CompatibilityView({ isIntegrated = false }) {
                         />
                       ))}
 
-                      {/* Radial Spoke Lines */}
                       {metrics.map((_, i) => {
                         const angle = -Math.PI / 2 + ((Math.PI * 2) / metrics.length) * i;
                         return (
@@ -802,7 +777,6 @@ function CompatibilityView({ isIntegrated = false }) {
                         );
                       })}
 
-                      {/* Outer Grid Vertex Dots (Matching Screenshot) */}
                       {metrics.map((_, i) => {
                         const angle = -Math.PI / 2 + ((Math.PI * 2) / metrics.length) * i;
                         const gx = 130 + Math.cos(angle) * 100;
@@ -820,7 +794,6 @@ function CompatibilityView({ isIntegrated = false }) {
                         );
                       })}
 
-                      {/* Glowing Radar Active Data Polygon */}
                       <polygon
                         points={currentPoints}
                         className="radar-polygon-glow"
@@ -830,7 +803,6 @@ function CompatibilityView({ isIntegrated = false }) {
                         filter="url(#radarGlowFilter)"
                       />
 
-                      {/* Active Mint Nodes on Polygon */}
                       {metrics.map((m, i) => {
                         let score = metricScore(currentBuild, m);
                         if (radarProfileMode) {
@@ -849,7 +821,6 @@ function CompatibilityView({ isIntegrated = false }) {
                         );
                       })}
 
-                      {/* Axis Label Tags */}
                       {radarLabels.map(({ metric, x, y }) => {
                         const dx = x - 130;
                         const dy = y - 130;
@@ -881,11 +852,9 @@ function CompatibilityView({ isIntegrated = false }) {
                   </button>
                 </div>
 
-                {/* 3. Saved Configurations & Comparison */}
                 <div className="glass-panel saved-configurations-panel">
                   <h3 className="section-title">Saved Configurations</h3>
 
-                  {/* Preset Selector Tabs (BUILD 1 and BUILD 2 only) */}
                   <div className="preset-tabs-row">
                     {[0, 1].map((slot) => (
                       <button
@@ -899,7 +868,6 @@ function CompatibilityView({ isIntegrated = false }) {
                     ))}
                   </div>
 
-                  {/* Toggle Comparison Button */}
                   <button
                     className="btn-toggle-evaluation"
                     onClick={() => setCompareMode(!compareMode)}
@@ -907,10 +875,8 @@ function CompatibilityView({ isIntegrated = false }) {
                     {compareMode ? "Hide Performance Evaluation" : "Show Performance Evaluation"}
                   </button>
 
-                  {/* Side-by-Side Comparison Tables */}
                   {compareMode && (
                     <div className="side-by-side-matrix" {...bindBobInteract("Comparison Matrix: Comparing technical specs between Build 1 and Build 2 side-by-side.")}>
-                      {/* Column BUILD 1 */}
                       <div className="matrix-column col-left">
                         <div className="matrix-column-title">BUILD 1</div>
                         <div className="matrix-item-row">
@@ -957,7 +923,6 @@ function CompatibilityView({ isIntegrated = false }) {
                         </div>
                       </div>
 
-                      {/* Column BUILD 2 */}
                       <div className="matrix-column col-right">
                         <div className="matrix-column-title">BUILD 2</div>
                         <div className="matrix-item-row">
@@ -1006,7 +971,6 @@ function CompatibilityView({ isIntegrated = false }) {
                     </div>
                   )}
 
-                  {/* Save build to current slot CTA */}
                   <div className="slot-action-footer">
                     <button
                       onClick={() => handleSave(selectedSaveSlot)}
@@ -1023,7 +987,6 @@ function CompatibilityView({ isIntegrated = false }) {
           )}
         </div>
 
-        {/* ── B.O.B. Interactive Compatibility Inspector (Fixed Lower-Left Overlay) ── */}
         <div
           className="compat-bob-overlay"
           title="B.O.B. — Compatibility Inspector (Right-click or hold to poke!)"

@@ -91,15 +91,10 @@ function Home() {
       <Preloader />
       <FullscreenGate>
         <div className="home-page">
-        {/* ══════════════════════════════════════════════════════════════════════ */}
-        {/* FULL-BLEED CYBERPUNK 3D HERO SECTION (Inspired by Cyber Metaverse Ref) */}
-        {/* ══════════════════════════════════════════════════════════════════════ */}
         <section id="cyber-hero" className="cyber-hero-section">
-          {/* Ambient Lighting Gradients */}
           <div className="cyber-ambient-pink-spot" />
           <div className="cyber-ambient-grid" />
 
-          {/* 1. TOP HIGH-TECH NAVIGATION BAR */}
           <header className="cyber-top-nav">
             <CyberBrand onNavigateHome={() => window.scrollTo({ top: 0, behavior: "smooth" })} />
 
@@ -149,6 +144,13 @@ function Home() {
               >
                 BRANDS
               </button>
+              <button 
+                type="button" 
+                className="cyber-nav-link" 
+                onClick={() => { soundManager.click(); navigate('/about'); }}
+              >
+                ABOUT US
+              </button>
             </nav>
 
             <div className="cyber-nav-actions">
@@ -169,7 +171,6 @@ function Home() {
             </div>
           </header>
 
-          {/* 2. LEFT VERTICAL UTILITY & SCROLL RAIL */}
           <aside className="cyber-left-rail">
             <div className="rail-top-icon" onClick={toggleSidebar} title="Toggle Command Deck [ [ ]" style={{ cursor: "pointer" }}>
               <span className="cyber-square-icon" />
@@ -189,7 +190,6 @@ function Home() {
             </div>
           </aside>
 
-          {/* 3. GIGANTIC BACKGROUND TYPOGRAPHY (Layered Behind 3D Canvas) */}
           <div 
             className="cyber-giant-text-backdrop"
             style={{ 
@@ -200,7 +200,6 @@ function Home() {
             <h1 className="giant-bg-text">BUILDLAB</h1>
           </div>
 
-          {/* 4. CENTERPIECE INTERACTIVE & SCROLL-TRIGGERED 3D HARDWARE STAGE */}
           <div className="cyber-canvas-stage">
             <Home3DHero 
               activeModel={activeModel}
@@ -210,9 +209,7 @@ function Home() {
             />
           </div>
 
-          {/* 5. EDITORIAL FLANKING OVERLAYS */}
           <div className="cyber-editorial-grid">
-            {/* Left Editorial Column (Tailored for Students & Hardware Learning) */}
             <div className="cyber-editorial-col cyber-col-left">
               <div className="cyber-tag-badge">
                 <span className="tag-bracket">[</span>
@@ -236,7 +233,6 @@ function Home() {
               </div>
             </div>
 
-            {/* Right Editorial Column (BuildLab Web App Introduction & Description Hook) */}
             <div className="cyber-editorial-col cyber-col-right">
               <div className="cyber-meta-header">
                 <span className="meta-kicker">{STAGE_META[activeModel]?.name || 'NEXT-GEN HARDWARE SIMULATOR'}</span>
@@ -259,9 +255,7 @@ function Home() {
             </div>
           </div>
 
-          {/* 6. FLOATING BOTTOM GLASSMORPHIC TELEMETRY HUD BAR */}
           <div className="cyber-hud-bar">
-            {/* Left Metric: Active Hardware Stages */}
             <div className="hud-metric-item">
               <div className="hud-radar-dial">
                 <div className="radar-sweep" />
@@ -276,7 +270,6 @@ function Home() {
 
             <div className="hud-divider" />
 
-            {/* Center Metric: Compatibility Engine */}
             <div className="hud-metric-item">
               <div className="hud-status-pulse">
                 <span className="pulse-ring" />
@@ -291,7 +284,6 @@ function Home() {
 
             <div className="hud-divider" />
 
-            {/* Right Metric: Simulation Engine */}
             <div className="hud-metric-item">
               <div className="hud-chip-badge">
                 <span>3D</span>
@@ -303,7 +295,6 @@ function Home() {
               </div>
             </div>
 
-            {/* START BUILD Action Button in place of the scroll circle */}
             <button 
               type="button" 
               className="hud-start-build-btn"
@@ -319,9 +310,6 @@ function Home() {
           </div>
         </section>
 
-        {/* ══════════════════════════════════════════════════════════════════════ */}
-        {/* TIER 2: Active Build Station Framework (Smooth Scroll Target)         */}
-        {/* ══════════════════════════════════════════════════════════════════════ */}
         <section id="build-station" className="home-integrated-section">
           <Build isIntegrated={true} startBuildRequested={startBuildRequested} />
         </section>

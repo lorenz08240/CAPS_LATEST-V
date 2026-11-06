@@ -22,7 +22,7 @@ export const AdminCrawler = () => {
     try {
       const draft = JSON.parse(sessionStorage.getItem("buildlab_admin_crawler_draft") || "{}");
       return draft.store || "EasyPC";
-    } catch (e) {
+    } catch {
       return "EasyPC";
     }
   });
@@ -30,7 +30,7 @@ export const AdminCrawler = () => {
     try {
       const draft = JSON.parse(sessionStorage.getItem("buildlab_admin_crawler_draft") || "{}");
       return draft.category || "all";
-    } catch (e) {
+    } catch {
       return "all";
     }
   });
@@ -38,7 +38,7 @@ export const AdminCrawler = () => {
     try {
       const draft = JSON.parse(sessionStorage.getItem("buildlab_admin_crawler_draft") || "{}");
       return draft.maxPages || 1;
-    } catch (e) {
+    } catch {
       return 1;
     }
   });
@@ -52,7 +52,7 @@ export const AdminCrawler = () => {
         "buildlab_admin_crawler_draft",
         JSON.stringify({ store: selectedStore, category: selectedCategory, maxPages })
       );
-    } catch (e) {}
+    } catch {}
   }, [selectedStore, selectedCategory, maxPages]);
 
   // Terminal Log Monitor State with Session Storage Retention
@@ -62,7 +62,7 @@ export const AdminCrawler = () => {
     try {
       const savedLogs = JSON.parse(sessionStorage.getItem("buildlab_admin_terminal_logs") || "[]");
       if (Array.isArray(savedLogs) && savedLogs.length > 0) return savedLogs;
-    } catch (e) {}
+    } catch {}
     return [
       {
         time: new Date().toLocaleTimeString(),
@@ -100,9 +100,7 @@ export const AdminCrawler = () => {
   // Notification Toast
   const [toast, setToast] = useState({ text: "", type: "info" });
 
-  // -------------------------------------------------------------
   // BATCHED LOG UPDATES (Prevents continuous component re-rendering)
-  // -------------------------------------------------------------
   const appendLog = (text, type = "info") => {
     const timestamp = new Date().toLocaleTimeString();
     logBufferRef.current.push({ time: timestamp, text, type });
@@ -118,7 +116,7 @@ export const AdminCrawler = () => {
           const updated = [...prev, ...batch].slice(-150);
           try {
             sessionStorage.setItem("buildlab_admin_terminal_logs", JSON.stringify(updated));
-          } catch (e) {}
+          } catch {}
           return updated;
         });
       }
@@ -134,9 +132,7 @@ export const AdminCrawler = () => {
     }
   }, [logs, autoScroll]);
 
-  // -------------------------------------------------------------
   // SCRAPED QUEUE DATA FETCHING
-  // -------------------------------------------------------------
   const fetchScrapedQueue = async () => {
     setQueueLoading(true);
     try {
@@ -166,9 +162,7 @@ export const AdminCrawler = () => {
     fetchScrapedQueue();
   }, []);
 
-  // -------------------------------------------------------------
   // CRAWLER JOB TRIGGER
-  // -------------------------------------------------------------
   const handleRunCrawler = async () => {
     if (isCrawling) return;
 
@@ -230,9 +224,7 @@ export const AdminCrawler = () => {
     }
   };
 
-  // -------------------------------------------------------------
   // REVIEW QUEUE ACTIONS
-  // -------------------------------------------------------------
   const handleApprove = async (id) => {
     try {
       const res = await apiFetch(`/api/scraped-queue/approve/${encodeURIComponent(id)}`, {
@@ -242,7 +234,7 @@ export const AdminCrawler = () => {
       setScrapedQueue((prev) =>
         prev.map((item) => (item.id === id ? { ...item, approved: !item.approved } : item))
       );
-    } catch (e) {
+    } catch {
       setToast({ text: "Could not update approval — server rejected the request.", type: "error" });
     }
   };
@@ -300,7 +292,7 @@ export const AdminCrawler = () => {
         await apiFetch(`/api/scraped-queue/${encodeURIComponent(editingItem.id)}`, {
           method: "DELETE"
         });
-      } catch (e) {}
+      } catch {}
       setScrapedQueue((prev) => prev.filter((item) => item.id !== editingItem.id));
     }
 
@@ -311,9 +303,7 @@ export const AdminCrawler = () => {
     appendLog(`[VERIFY] Scraped component "${formData.name}" verified & pushed to production inventory.`, "success");
   };
 
-  // -------------------------------------------------------------
   // METRICS & STRICT PAGINATION
-  // -------------------------------------------------------------
   const todayStr = new Date().toISOString().slice(0, 10);
   const totalInQueue = scrapedQueue.length;
   const crawledToday = scrapedQueue.filter((i) => (i.date || "").startsWith(todayStr)).length;
@@ -339,11 +329,9 @@ export const AdminCrawler = () => {
     return filteredQueue.slice(start, start + QUEUE_PAGE_SIZE);
   }, [filteredQueue, activeQueuePage, QUEUE_PAGE_SIZE]);
 
-  // -------------------------------------------------------------
   // MULTI-SELECT & CLEAR (Recently Scraped Exclusion Flow)
   //   • No selection  → "Clear All" wipes the whole staging queue
   //   • With selection → "Clear All Selected (n)" wipes checked rows
-  // -------------------------------------------------------------
   const toggleSelect = (id) => {
     setSelectedIds((prev) => {
       const next = new Set(prev);
@@ -472,7 +460,7 @@ export const AdminCrawler = () => {
           setSelectedIds(new Set());
           await fetchScrapedQueue();
         } catch (fallbackErr) {
-          setToast({ text: `Clear selected failed: ${err.message}`, type: "error" });
+          setToast({ text: `Clear selected failed: ${fallbackErr.message}`, type: "error" });
         }
       } finally {
         setClearing(false);
@@ -513,13 +501,10 @@ export const AdminCrawler = () => {
 
   return (
     <div className="admin-page-wrapper">
-      {/* Sidebar removed for this screen — full-width workspace */}
       <div className="admin-layout-container crawler-full-width">
         <main className="admin-main-content">
-          {/* Top Header & Breadcrumbs */}
           <AdminHeader breadcrumbCurrent="Crawler & Ingestion Hub" />
 
-          {/* Notification Toast */}
           {toast.text && (
             <div className={`message-toast ${toast.type}`}>
               <span>{toast.text}</span>
@@ -534,11 +519,7 @@ export const AdminCrawler = () => {
           )}
 
           <div className="crawler-page-layout">
-            {/* ========================================================= */}
-            {/* 1. CRAWLER CONTROL CONSOLE & TERMINAL ROW */}
-            {/* ========================================================= */}
             <div className="crawler-top-deck-grid">
-              {/* CRAWLER CONTROL CONSOLE */}
               <div className="admin-panel glass-card-panel crawler-console-panel">
                 <div className="console-deck-header">
                   <div className="console-deck-titles">
@@ -552,7 +533,6 @@ export const AdminCrawler = () => {
                 </div>
 
                 <div className="console-form-grid">
-                  {/* Store Selector */}
                   <div className="console-field">
                     <label htmlFor="store-select">Target Store</label>
                     <select
@@ -570,7 +550,6 @@ export const AdminCrawler = () => {
                     </select>
                   </div>
 
-                  {/* Target Category */}
                   <div className="console-field">
                     <label htmlFor="category-select">Target Category</label>
                     <select
@@ -588,7 +567,6 @@ export const AdminCrawler = () => {
                     </select>
                   </div>
 
-                  {/* Max Pages */}
                   <div className="console-field">
                     <label htmlFor="pages-select">Max Pages to Ingest</label>
                     <select
@@ -606,7 +584,6 @@ export const AdminCrawler = () => {
                   </div>
                 </div>
 
-                {/* Primary Action Button */}
                 <div className="console-actions">
                   <button
                     type="button"
@@ -629,7 +606,6 @@ export const AdminCrawler = () => {
                 </div>
               </div>
 
-              {/* TERMINAL LOG MONITOR */}
               <div className={`admin-panel glass-card-panel terminal-monitor-panel ${isTerminalCollapsed ? "collapsed" : ""}`}>
                 <div className="terminal-header-bar">
                   <div className="terminal-left-meta">
@@ -655,7 +631,7 @@ export const AdminCrawler = () => {
                       onClick={() => {
                         const resetLog = [{ time: new Date().toLocaleTimeString(), text: "[SYSTEM] Terminal buffer cleared.", type: "system" }];
                         setLogs(resetLog);
-                        try { sessionStorage.removeItem("buildlab_admin_terminal_logs"); } catch (e) {}
+                        try { sessionStorage.removeItem("buildlab_admin_terminal_logs"); } catch {}
                       }}
                       title="Clear terminal buffer"
                     >
@@ -702,9 +678,6 @@ export const AdminCrawler = () => {
               </div>
             </div>
 
-            {/* ========================================================= */}
-            {/* 2. SCRAPED DATA REVIEW QUEUE */}
-            {/* ========================================================= */}
             <div className="scraped-review-card glass-card-panel review-queue-section">
               <div className="scraped-review-header">
                 <div className="scraped-review-title">
@@ -718,7 +691,6 @@ export const AdminCrawler = () => {
                 </div>
 
                 <div className="review-header-actions">
-                  {/* Category Filter Dropdown */}
                   <div className="queue-category-filter">
                     <label htmlFor="queue-cat-select" className="queue-filter-label">Filter:</label>
                     <select
@@ -735,7 +707,6 @@ export const AdminCrawler = () => {
                     </select>
                   </div>
 
-                  {/* Bulk Merge Action */}
                   <button
                     type="button"
                     className="btn-merge-all"
@@ -747,7 +718,6 @@ export const AdminCrawler = () => {
                     <span>Merge All Approved ({approvedCount})</span>
                   </button>
 
-                  {/* CLEAR / CLEAR ALL SELECTED (recently scraped) */}
                   <button
                     type="button"
                     className={`btn-clear-scraped ${clearButtonArmed ? "armed" : ""}`}
@@ -774,7 +744,6 @@ export const AdminCrawler = () => {
                 </div>
               </div>
 
-              {/* QUEUE STATUS — single restrained meta line (no stat cards) */}
               <div className="queue-meta-line">
                 <span className="queue-meta-item">{totalInQueue} in queue</span>
                 <span className="queue-meta-sep">/</span>
@@ -785,7 +754,6 @@ export const AdminCrawler = () => {
                 <span className="queue-meta-item meta-pending">{pendingCount} pending</span>
               </div>
 
-              {/* REVIEW QUEUE TABLE CONTAINER */}
               <div
                 className="table-container queue-table-container"
                 onContextMenu={(e) => {
@@ -834,7 +802,6 @@ export const AdminCrawler = () => {
                           onContextMenu={(e) => handleRowContextMenu(e, item)}
                           title="Click to toggle selection • Right-click for BuildLab Command Panel"
                         >
-                          {/* MULTI-SELECT (drives Clear All Selected) */}
                           <td className="queue-select-cell">
                             <input
                               type="checkbox"
@@ -846,7 +813,6 @@ export const AdminCrawler = () => {
                             />
                           </td>
 
-                          {/* SOURCE */}
                           <td className="source-cell">
                             <span className={`source-pill ${item.source_name === "Bermor Techzone" ? "source-bermor" : "source-easypc"}`}>
                               {item.source_name || "EasyPC"}
@@ -854,14 +820,12 @@ export const AdminCrawler = () => {
                             {isApproved && <span className="approved-inline-tick"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg></span>}
                           </td>
 
-                          {/* CATEGORY BADGE */}
                           <td className="category-cell">
                             <span className={`scraped-category-pill badge-cat-${cat}`}>
                               {cat.toUpperCase()}
                             </span>
                           </td>
 
-                          {/* PRODUCT NAME (brand + model only) */}
                           <td className="product-name-cell" title={item.scrapedName}>
                             <div className="queue-product-title">{meta.productName || item.scrapedName}</div>
                             <div className="queue-product-brand">
@@ -869,14 +833,12 @@ export const AdminCrawler = () => {
                             </div>
                           </td>
 
-                          {/* MODEL (parsed model designation) */}
                           <td className="model-cell">
                             <span className="model-tag-pill" title={item.scrapedName}>
                               {meta.model || "—"}
                             </span>
                           </td>
 
-                          {/* PRODUCT SPECS (quick specs) */}
                           <td className="product-specs-cell">
                             <div className="specs-pill-row">
                               <span className="spec-tag-pill">
@@ -885,7 +847,6 @@ export const AdminCrawler = () => {
                             </div>
                           </td>
 
-                          {/* ACTIONS (compact: Approve toggle • Quick Edit) */}
                           <td style={{ textAlign: "center" }}>
                             <div className="queue-actions-cluster">
                               <button
@@ -933,7 +894,6 @@ export const AdminCrawler = () => {
                 </table>
               </div>
 
-              {/* STRICT CLIENT-SIDE PAGINATION (Limit to 10 rows per page) */}
               {queueTotalPages > 1 && (
                 <div className="pagination-bar">
                   <button
@@ -975,7 +935,6 @@ export const AdminCrawler = () => {
         </main>
       </div>
 
-      {/* DEDICATED BUILDLAB CONTEXT MENU (Replaces default browser context menu) */}
       {contextMenu.isOpen && contextMenu.item && (
         <div
           className="buildlab-context-menu"
@@ -990,7 +949,6 @@ export const AdminCrawler = () => {
           </div>
 
           <div className="ctx-menu-actions">
-            {/* 1. Toggle Approve */}
             <button
               type="button"
               className="ctx-menu-item"
@@ -1005,7 +963,6 @@ export const AdminCrawler = () => {
               <span>{contextMenu.item.approved ? "Revoke Approval" : "Approve for Production"}</span>
             </button>
 
-            {/* 2. Quick Edit */}
             <button
               type="button"
               className="ctx-menu-item"
@@ -1022,7 +979,6 @@ export const AdminCrawler = () => {
               <span>Quick Edit Specs</span>
             </button>
 
-            {/* 3. Toggle Selection */}
             <button
               type="button"
               className="ctx-menu-item"
@@ -1038,7 +994,6 @@ export const AdminCrawler = () => {
               <span>{selectedIds.has(contextMenu.item.id) ? "Deselect Component" : "Select Component"}</span>
             </button>
 
-            {/* 4. Select All Visible */}
             <button
               type="button"
               className="ctx-menu-item"
@@ -1056,7 +1011,6 @@ export const AdminCrawler = () => {
 
             <div className="ctx-menu-divider" />
 
-            {/* 5. Copy Model / Title */}
             <button
               type="button"
               className="ctx-menu-item"
@@ -1074,7 +1028,6 @@ export const AdminCrawler = () => {
               <span>Copy Component Title</span>
             </button>
 
-            {/* 6. Search on Google */}
             <button
               type="button"
               className="ctx-menu-item"
@@ -1093,7 +1046,6 @@ export const AdminCrawler = () => {
 
             <div className="ctx-menu-divider" />
 
-            {/* 7. Discard Single Item */}
             <button
               type="button"
               className="ctx-menu-item ctx-item-danger"
@@ -1112,7 +1064,6 @@ export const AdminCrawler = () => {
         </div>
       )}
 
-      {/* QUICK EDIT / VERIFICATION DRAWER */}
       <EditComponentDrawer
         isOpen={drawerOpen}
         onClose={() => {

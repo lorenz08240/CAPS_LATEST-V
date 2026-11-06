@@ -8,34 +8,28 @@ import { SSD_MODEL_URL } from '../../utilities/modelPreloader';
 export function ProceduralSSDFallback({ rgbColor = '#f43f5e' }) {
   return (
     <group>
-      {/* Matte black PCB substrate */}
       <mesh position={[0, 0, 0]}>
         <boxGeometry args={[1.9, 0.42, 0.08]} />
         <meshStandardMaterial color="#0b0f19" roughness={0.7} metalness={0.1} />
       </mesh>
-      {/* Aluminum heatsink / label plate */}
       <mesh position={[0, 0, 0.06]}>
         <boxGeometry args={[1.8, 0.38, 0.04]} />
         <meshStandardMaterial color="#1e293b" metalness={0.85} roughness={0.25} />
       </mesh>
-      {/* Precision controller chip */}
       <mesh position={[0.2, 0, 0.085]}>
         <boxGeometry args={[0.35, 0.3, 0.02]} />
         <meshStandardMaterial color="#090d16" metalness={0.9} roughness={0.2} />
       </mesh>
-      {/* NAND flash memory modules */}
       {[-0.45, -0.1].map((x, i) => (
         <mesh key={i} position={[x, 0, 0.085]}>
           <boxGeometry args={[0.3, 0.32, 0.02]} />
           <meshStandardMaterial color="#111827" metalness={0.8} roughness={0.3} />
         </mesh>
       ))}
-      {/* RGB Tracer line */}
       <mesh position={[0, 0.19, 0.08]}>
         <boxGeometry args={[1.7, 0.03, 0.02]} />
         <meshStandardMaterial color={rgbColor} emissive={rgbColor} emissiveIntensity={2.5} />
       </mesh>
-      {/* Golden M.2 connector edge */}
       <mesh position={[-0.92, 0, 0]}>
         <boxGeometry args={[0.08, 0.36, 0.04]} />
         <meshStandardMaterial color="#f59e0b" metalness={0.95} roughness={0.15} />
@@ -134,10 +128,8 @@ function NVMeSSDMesh({
 
   return (
     <group dispose={null}>
-      {/* Centered Single NVMe SSD Model */}
       <primitive object={clonedScene} />
 
-      {/* Cyber RGB Accent Edge Strip */}
       <mesh position={[0, 0.21, 0.06]}>
         <boxGeometry args={[1.82, 0.03, 0.02]} />
         <meshStandardMaterial
@@ -150,7 +142,6 @@ function NVMeSSDMesh({
         />
       </mesh>
 
-      {/* Selection / Hover Glow Accent (Rendered only when highlighted) */}
       {enableHighlight && (isSelected || isHovered) && (
         <mesh position={[0, 0, 0]}>
           <boxGeometry args={[1.96, 0.48, 0.25]} />

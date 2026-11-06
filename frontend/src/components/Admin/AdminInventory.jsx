@@ -306,10 +306,8 @@ export const AdminInventory = () => {
         />
 
         <main className="admin-main-content">
-          {/* Top Header & Breadcrumbs */}
         <AdminHeader breadcrumbCurrent="Hardware Inventory" />
 
-        {/* Notification Toast */}
         {notification.text && (
           <div className={`message-toast ${notification.type}`}>
             <span>{notification.text}</span>
@@ -323,12 +321,9 @@ export const AdminInventory = () => {
           </div>
         )}
 
-        {/* FULL-BLEED 100% WIDTH TABLE LAYOUT CONTAINER */}
         <div className="inventory-fullbleed-wrapper">
-          {/* TOP ACTION ROW */}
           <div className="inventory-top-action-row">
             <div className="search-filter-controls">
-              {/* Search Input */}
               <div className="inventory-search-box">
                 <span className="search-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
                 <input
@@ -350,7 +345,6 @@ export const AdminInventory = () => {
                 )}
               </div>
 
-              {/* Sort Dropdown */}
               <div className="inventory-sort-dropdown">
                 <label htmlFor="inv-sort" className="sort-label">Sort:</label>
                 <select
@@ -366,7 +360,6 @@ export const AdminInventory = () => {
                 </select>
               </div>
 
-              {/* Quick Age Filters */}
               <div className="quick-filter-pills">
                 <button
                   type="button"
@@ -392,7 +385,6 @@ export const AdminInventory = () => {
               </div>
             </div>
 
-            {/* + Add New Component Primary Action */}
             <div className="inventory-primary-action">
               <Link
                 to="/admin/add"
@@ -404,8 +396,6 @@ export const AdminInventory = () => {
               </Link>
             </div>
           </div>
-
-          {/* Category filtering handled directly via left AdminSidebar */}
 
             <div className="table-container fullbleed-scroll">
               <table className="admin-table">
@@ -429,7 +419,6 @@ export const AdminInventory = () => {
                         key={part.id}
                         className={ageInfo.isRecent24h ? "row-highlight-new" : ""}
                       >
-                        {/* ICON / LAZY HOVER THUMBNAIL */}
                         <td style={{ textAlign: "center" }}>
                           <HoverImagePreview
                             category={cat}
@@ -440,14 +429,12 @@ export const AdminInventory = () => {
                           />
                         </td>
 
-                        {/* BRAND */}
                         <td className="part-brand-cell">
                           <span className="brand-badge-pill">
                             {part.brand ? part.brand.toUpperCase() : "GENERIC"}
                           </span>
                         </td>
 
-                        {/* NAME & CATEGORY TAG */}
                         <td className="part-name-cell">
                           <div className="part-name-text" title={part.name}>
                             {part.name}
@@ -465,12 +452,10 @@ export const AdminInventory = () => {
                           </div>
                         </td>
 
-                        {/* SPECS */}
                         <td className="spec-cell">
                           <span className="spec-pill">{renderSpecData(part)}</span>
                         </td>
 
-                        {/* AGE BADGE */}
                         <td className="part-age-cell">
                           <div className="age-badge-wrapper">
                             <span
@@ -483,7 +468,6 @@ export const AdminInventory = () => {
                           </div>
                         </td>
 
-                        {/* ACTIONS (EDIT) */}
                         <td style={{ textAlign: "center" }}>
                           <div className="table-actions">
                             <Link
@@ -516,7 +500,6 @@ export const AdminInventory = () => {
               </table>
             </div>
 
-            {/* STRICT CLIENT-SIDE PAGINATION CONTROLS */}
             {totalPages > 1 && (
               <div className="pagination-bar">
                 <button
@@ -557,7 +540,6 @@ export const AdminInventory = () => {
         </main>
       </div>
 
-      {/* SLIDING RIGHT DRAWER (Rendered via React Portal in document.body) */}
       <EditComponentDrawer
         isOpen={isDrawerOpen}
         onClose={() => {

@@ -243,13 +243,11 @@ export default function HelpSupport() {
 
   return (
     <div className="help-support-page">
-      {/* ── BACKGROUND CYBERNETIC GRID & GLOW ── */}
       <div className="help-bg-grid" aria-hidden="true" />
       <div className="help-glow-orb help-glow-1" aria-hidden="true" />
       <div className="help-glow-orb help-glow-2" aria-hidden="true" />
 
       <div className="help-container">
-        {/* ── HERO BANNER WITH B.O.B. ── */}
         <section className="help-hero-card">
           <div className="help-hero-content">
             <div className="help-hero-eyebrow">
@@ -265,7 +263,6 @@ export default function HelpSupport() {
               troubleshooting guides.
             </p>
 
-            {/* Quick Diagnostic Chips that trigger B.O.B. speech */}
             <div className="help-chips-wrap">
               <span className="help-chips-label">Common Queries:</span>
               <div className="help-chips-list">
@@ -284,7 +281,6 @@ export default function HelpSupport() {
           </div>
         </section>
 
-        {/* ── INTERACTIVE SYSTEM TRIAGE MATRIX ── */}
         <section className="help-triage-section">
           <div className="section-head-bar">
             <div className="section-title-group">
@@ -355,7 +351,6 @@ export default function HelpSupport() {
           </div>
         </section>
 
-        {/* ── FAQ ACCORDIONS WITH CATEGORY TABS ── */}
         <section id="faq-knowledge-base" className="help-faq-section">
           <div className="section-head-bar">
             <div className="section-title-group">
@@ -364,7 +359,6 @@ export default function HelpSupport() {
             </div>
           </div>
 
-          {/* Category Tabs */}
           <div className="faq-category-tabs">
             {SUPPORT_CATEGORIES.map((cat) => (
               <button
@@ -382,7 +376,6 @@ export default function HelpSupport() {
             ))}
           </div>
 
-          {/* Accordion Questions */}
           <div className="faq-accordion-list">
             {currentCategory.items.map((item, index) => {
               const isOpen = !!openAccordions[index];
@@ -411,7 +404,6 @@ export default function HelpSupport() {
           </div>
         </section>
 
-        {/* ── SYSTEM EXPLORATION NAVIGATION CARDS ── */}
         <section className="help-nav-cards-section">
           <div className="help-nav-card">
             <div className="nav-card-icon-wrap emerald">
@@ -464,7 +456,6 @@ export default function HelpSupport() {
         </section>
       </div>
 
-      {/* ── FLOATING B.O.B. COMPANION (Follows user throughout diagnostic deck) ── */}
       <BobCompanion
         speechLines={BOB_HELP_PHRASES}
         externalSpeech={bobSpeech}

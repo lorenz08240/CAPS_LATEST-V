@@ -1,8 +1,6 @@
-/* ═══════════════════════════════════════════════════════════
-   CourseVideoPlayer — scoped under .cvp-* (no coupling with
-   CourseShell.css or Learn.css; safe while Learn page work
-   continues in parallel).
-   ═══════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════════
+   CourseVideoPlayer Styles — Cyberpunk Hardware Lab HUD Player
+   ═══════════════════════════════════════════════════════════════════ */
 
 .cvp-shell {
   display: flex;
@@ -12,18 +10,26 @@
   background: #000;
   border-radius: 12px;
   overflow: hidden;
+  position: relative;
+  transition: all 0.24s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.cvp-shell:fullscreen {
-  border-radius: 0;
+.cvp-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background: #000;
 }
 
-/* ── Stage (video area) ── */
+/* ── Stage (Video Area) ── */
 .cvp-stage {
   position: relative;
   flex: 1;
   min-height: 0;
   background: #000;
+  cursor: pointer;
 }
 
 .cvp-host,
@@ -36,8 +42,7 @@
   border: none;
 }
 
-/* Fill mode for the assembly step-demonstration container
-   (padding-bottom ratio box in Learn.css) */
+/* Fill mode for the assembly step-demonstration container */
 .step-preview-video-wrapper > .cvp-shell {
   position: absolute;
   top: 0;
@@ -53,42 +58,46 @@
   justify-content: center;
   font-size: 0.8rem;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgba(247, 210, 139, 0.75);
+  color: rgba(56, 189, 248, 0.8);
+  font-family: "JetBrains Mono", monospace;
+  background: radial-gradient(circle at center, rgba(14, 23, 42, 0.95), #020408);
 }
 
 /* ── Tap-to-unmute chip ── */
 .cvp-unmute-chip {
   position: absolute;
-  top: 12px;
-  right: 12px;
-  z-index: 4;
+  top: 14px;
+  right: 14px;
+  z-index: 6;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 7px 14px;
-  font-size: 0.78rem;
+  gap: 7px;
+  padding: 8px 16px;
+  font-size: 0.76rem;
   font-weight: 800;
-  color: #0d1220;
-  background: #f7d28b;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #030712;
+  background: linear-gradient(135deg, #38bdf8, #0284c7);
   border: none;
   border-radius: 999px;
   cursor: pointer;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.55), 0 0 14px rgba(247, 210, 139, 0.35);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6), 0 0 16px rgba(56, 189, 248, 0.45);
   transition: transform 0.18s ease, box-shadow 0.18s ease;
-  animation: cvp-chip-in 0.35s ease;
+  animation: cvp-chip-in 0.32s ease;
 }
 
 .cvp-unmute-chip:hover {
   transform: scale(1.05);
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.6), 0 0 20px rgba(247, 210, 139, 0.5);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7), 0 0 24px rgba(56, 189, 248, 0.65);
 }
 
 @keyframes cvp-chip-in {
   from {
     opacity: 0;
-    transform: translateY(-6px);
+    transform: translateY(-8px);
   }
   to {
     opacity: 1;
@@ -96,15 +105,16 @@
   }
 }
 
-/* ── Control deck ── */
+/* ── Cyberpunk Custom Media Deck ── */
 .cvp-deck {
   flex: none;
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
-  background: linear-gradient(180deg, rgba(13, 18, 31, 0.92), rgba(6, 9, 16, 0.97));
-  border-top: 1px solid rgba(212, 163, 75, 0.35);
+  gap: 7px;
+  padding: 8px 12px;
+  background: linear-gradient(180deg, rgba(11, 17, 30, 0.95), rgba(4, 7, 14, 0.98));
+  border-top: 1px solid rgba(56, 189, 248, 0.22);
+  z-index: 5;
 }
 
 .cvp-btn {
@@ -112,28 +122,46 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 30px;
-  height: 28px;
-  padding: 0 7px;
-  font-size: 0.85rem;
+  min-width: 32px;
+  height: 30px;
+  padding: 0 8px;
+  font-size: 0.86rem;
   line-height: 1;
-  color: #e7e9ee;
+  color: #e2e8f0;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 7px;
   cursor: pointer;
-  transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+  transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
 }
 
-.cvp-btn:hover {
-  background: rgba(212, 163, 75, 0.22);
-  border-color: rgba(212, 163, 75, 0.55);
-  color: #f7d28b;
+.cvp-btn:hover:not(:disabled) {
+  background: rgba(56, 189, 248, 0.18);
+  border-color: rgba(56, 189, 248, 0.55);
+  color: #38bdf8;
   transform: translateY(-1px);
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.25);
 }
 
-.cvp-btn:active {
+.cvp-btn:active:not(:disabled) {
   transform: translateY(0);
+}
+
+/* Gated Forward Button */
+.cvp-btn-locked {
+  opacity: 0.45;
+  cursor: not-allowed;
+  border-color: rgba(244, 63, 94, 0.35);
+  color: #fda4af;
+  background: rgba(244, 63, 94, 0.08);
+}
+
+.cvp-btn-locked:hover {
+  transform: none !important;
+  background: rgba(244, 63, 94, 0.12) !important;
+  border-color: rgba(244, 63, 94, 0.45) !important;
+  color: #fda4af !important;
+  box-shadow: none !important;
 }
 
 .cvp-btn-muted {
@@ -142,73 +170,294 @@
   background: rgba(248, 113, 113, 0.12);
 }
 
+.cvp-btn-expand.is-active {
+  color: #38bdf8;
+  border-color: rgba(56, 189, 248, 0.5);
+  background: rgba(56, 189, 248, 0.15);
+}
+
 .cvp-time {
   flex: none;
   font-family: "JetBrains Mono", "Courier New", monospace;
-  font-size: 0.68rem;
-  letter-spacing: 0.03em;
-  color: rgba(231, 233, 238, 0.85);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: rgba(203, 213, 225, 0.9);
   white-space: nowrap;
 }
 
-/* ── Seek bar ── */
+/* ── Custom Seek Bar ── */
 .cvp-bar {
   flex: 1;
   display: flex;
   align-items: center;
-  height: 22px;
+  height: 24px;
   cursor: pointer;
   touch-action: none;
+  position: relative;
 }
 
 .cvp-bar-track {
   position: relative;
   width: 100%;
-  height: 5px;
-  border-radius: 4px;
-  background: rgba(255, 255, 255, 0.16);
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
   overflow: visible;
+}
+
+/* Unlocked watched range preview */
+.cvp-bar-watched-zone {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  border-radius: 999px;
+  background: rgba(56, 189, 248, 0.24);
+  box-shadow: inset 0 0 4px rgba(56, 189, 248, 0.3);
 }
 
 .cvp-bar-fill {
   position: absolute;
   inset: 0 auto 0 0;
-  border-radius: 4px;
-  background: linear-gradient(90deg, rgba(212, 163, 75, 0.75), #f7d28b);
-  box-shadow: 0 0 8px rgba(247, 210, 139, 0.45);
+  border-radius: 999px;
+  background: linear-gradient(90deg, #0284c7, #38bdf8);
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.55);
 }
 
 .cvp-bar-knob {
   position: absolute;
   top: 50%;
-  width: 11px;
-  height: 11px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
-  background: #f7d28b;
-  border: 2px solid #0d1220;
-  box-shadow: 0 0 8px rgba(247, 210, 139, 0.6);
+  background: #ffffff;
+  border: 2px solid #0284c7;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.8);
   transform: translate(-50%, -50%);
   transition: transform 0.15s ease;
 }
 
 .cvp-bar:hover .cvp-bar-knob {
-  transform: translate(-50%, -50%) scale(1.25);
+  transform: translate(-50%, -50%) scale(1.3);
 }
 
-/* ── Compact (assembly step-demonstration) mode ── */
-.cvp-compact .cvp-deck {
-  gap: 4px;
-  padding: 4px 8px;
+/* ── Lock Toast Alert ── */
+.cvp-lock-alert {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 25;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 18px;
+  background: rgba(15, 23, 42, 0.94);
+  border: 1px solid rgba(244, 63, 94, 0.55);
+  border-radius: 10px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.75), 0 0 24px rgba(244, 63, 94, 0.25);
+  color: #fecdd3;
+  font-size: 0.78rem;
+  font-weight: 600;
+  animation: cvp-alert-in 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
 }
 
-.cvp-compact .cvp-btn {
-  min-width: 24px;
-  height: 24px;
+.cvp-lock-alert-icon {
+  font-size: 0.9rem;
+}
+
+@keyframes cvp-alert-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -10px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   IN-PAGE MAXIMIZED / THEATER OVERLAY MODE
+   • Overlays page and fits to screen with space padding
+   • Preserves custom media deck
+   • Avoids browser requestFullscreen (no FullscreenGate conflicts)
+   ═══════════════════════════════════════════════════════════════════ */
+
+.cvp-shell.cvp-maximized {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  z-index: 999999 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: rgba(3, 6, 14, 0.9) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  backdrop-filter: blur(24px) !important;
+  padding: clamp(16px, 3.5vw, 42px) !important;
+  box-sizing: border-box !important;
+  cursor: zoom-out;
+  border-radius: 0 !important;
+  margin: 0 !important;
+}
+
+.cvp-shell.cvp-maximized .cvp-container {
+  width: 100% !important;
+  max-width: 1440px !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  background: #000 !important;
+  border-radius: 14px !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(56, 189, 248, 0.35) !important;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.95), 0 0 45px rgba(56, 189, 248, 0.16) !important;
+  cursor: default;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Theater Top Header Bar */
+.cvp-theater-bar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 10px 18px;
+  background: linear-gradient(90deg, rgba(8, 14, 26, 0.98), rgba(15, 23, 42, 0.98));
+  border-bottom: 1px solid rgba(56, 189, 248, 0.22);
+}
+
+.cvp-theater-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.cvp-theater-pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #38bdf8;
+  box-shadow: 0 0 10px #38bdf8;
+  animation: cvp-pulse 1.8s infinite ease-in-out;
+}
+
+@keyframes cvp-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.85); }
+}
+
+.cvp-theater-badge {
+  font-family: "JetBrains Mono", monospace;
   font-size: 0.72rem;
-  padding: 0 5px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: #38bdf8;
+  text-transform: uppercase;
+}
+
+.cvp-theater-divider {
+  color: rgba(255, 255, 255, 0.25);
+  font-size: 0.8rem;
+}
+
+.cvp-theater-title {
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: #f1f5f9;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cvp-theater-minimize-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 14px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #e2e8f0;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cvp-theater-minimize-btn:hover {
+  background: rgba(56, 189, 248, 0.2);
+  border-color: rgba(56, 189, 248, 0.55);
+  color: #38bdf8;
+  transform: translateY(-1px);
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.3);
+}
+
+/* ── Compact mode overrides (for step demo) ── */
+.cvp-compact:not(.cvp-maximized) .cvp-deck {
+  gap: 5px;
+  padding: 5px 8px;
+}
+
+.cvp-compact:not(.cvp-maximized) .cvp-btn {
+  min-width: 26px;
+  height: 25px;
+  font-size: 0.75rem;
+  padding: 0 6px;
   border-radius: 6px;
 }
 
-.cvp-compact .cvp-time {
-  font-size: 0.6rem;
+.cvp-compact:not(.cvp-maximized) .cvp-time {
+  font-size: 0.64rem;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   GLOBAL SIDEBAR & BACKGROUND ISOLATION WHEN MAXIMIZED
+   • Disables all sidebars, edge tabs, backdrops, and global headers
+   • Neutralizes motion transforms and margins so fixed overlay fits
+   ═══════════════════════════════════════════════════════════════════ */
+
+body.cvp-maximized-active {
+  overflow: hidden !important;
+}
+
+body.cvp-maximized-active .main-content,
+body.cvp-maximized-active .main-content > div,
+body.cvp-maximized-active .course-shell-root,
+body.cvp-maximized-active .course-shell,
+body.cvp-maximized-active .lesson-brief-grid,
+body.cvp-maximized-active .installation-step-preview-container {
+  transform: none !important;
+  filter: none !important;
+  perspective: none !important;
+  margin-left: 0 !important;
+}
+
+/* Make sure container overflow doesn't clip fixed child */
+body.cvp-maximized-active .lesson-video-frame,
+body.cvp-maximized-active .step-preview-video-wrapper {
+  overflow: visible !important;
+  z-index: 99999 !important;
+}
+
+/* Completely disable and hide all sidebars & overlays */
+body.cvp-maximized-active .navbar-sidebar,
+body.cvp-maximized-active .navbar-backdrop,
+body.cvp-maximized-active .navbar-toggle-btn,
+body.cvp-maximized-active .course-outline,
+body.cvp-maximized-active .course-sidebar-edge-tab,
+body.cvp-maximized-active .course-sidebar-backdrop,
+body.cvp-maximized-active .course-syllabus-toggle-btn,
+body.cvp-maximized-active .global-header {
+  display: none !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
 }

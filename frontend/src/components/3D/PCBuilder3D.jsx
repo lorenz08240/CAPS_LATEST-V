@@ -396,7 +396,6 @@ function PCBuilder3DWorkspace() {
 
   return (
     <div className="pc-builder-workspace cyber">
-      {/* ── TOP HUD HEADER BAR ── */}
       <header className="workspace-header">
         <div className="header-left">
           <button className="back-build-btn" onClick={() => navigate('/build')} title="Return to 2D Component Configurator">
@@ -436,7 +435,6 @@ function PCBuilder3DWorkspace() {
           </div>
         </div>
 
-        {/* Live Metrics Badge Row */}
         <div className="header-center-metrics">
           <div className="metric-badge">
             <span className="metric-label">ASSEMBLY</span>
@@ -473,7 +471,6 @@ function PCBuilder3DWorkspace() {
         </div>
 
         <div className="header-right-actions">
-          {/* Sound FX Toggle */}
           <button 
             className={`tool-icon-btn ${soundEnabled ? 'active' : ''}`} 
             onClick={() => {
@@ -489,7 +486,6 @@ function PCBuilder3DWorkspace() {
             )}
           </button>
 
-          {/* Load Demo Rig */}
           <button 
             className="header-action-btn demo-btn" 
             onClick={() => {
@@ -502,7 +498,6 @@ function PCBuilder3DWorkspace() {
             Load Demo Rig
           </button>
 
-          {/* Quick Compatibility Link */}
           <button 
             className="header-action-btn compat-btn" 
             onClick={() => navigate('/compatibility')}
@@ -511,7 +506,6 @@ function PCBuilder3DWorkspace() {
             Compatibility
           </button>
 
-          {/* Disassemble / Clear */}
           <button 
             className="header-action-btn clear-btn" 
             onClick={() => {
@@ -526,9 +520,7 @@ function PCBuilder3DWorkspace() {
         </div>
       </header>
 
-      {/* ── MAIN WORKSPACE CONTENT ── */}
       <div className="workspace-main">
-        {/* ── LEFT HARDWARE DRAWER WITH VERTICAL PROGRESSION (PATAYO) ── */}
         <aside className={`hardware-drawer ${drawerOpen ? 'open' : 'collapsed'}`}>
           <div className="drawer-header">
             <div className="drawer-title-group">
@@ -546,7 +538,6 @@ function PCBuilder3DWorkspace() {
 
           {drawerOpen && (
             <div className="drawer-split-layout">
-              {/* VERTICAL STAGE PROGRESSION RAIL (PATAYO) */}
               <div className="vertical-stages-rail">
                 {buildSteps.map((step, idx) => {
                   const isInstalled = !!currentBuild[step.key];
@@ -575,7 +566,6 @@ function PCBuilder3DWorkspace() {
                 })}
               </div>
 
-              {/* ACTIVE CATEGORY INVENTORY & CARDS */}
               <div className="stage-catalog-panel">
                 <div className="stage-panel-header">
                   <div className="active-stage-title-wrap">
@@ -587,7 +577,6 @@ function PCBuilder3DWorkspace() {
                   </span>
                 </div>
 
-                {/* Search & Tier Filter Bar */}
                 <div className="drawer-search-bar">
                   <input
                     type="text"
@@ -603,7 +592,6 @@ function PCBuilder3DWorkspace() {
 
 
 
-                {/* Component Cards Grid */}
                 <div className="catalog-cards-container">
                   {filteredComponents.length === 0 ? (
                     <div className="drawer-empty-state">
@@ -678,15 +666,11 @@ function PCBuilder3DWorkspace() {
           )}
         </aside>
 
-        {/* ── 3D VIEWPORT CANVAS AREA ── */}
         <section 
           className="viewport-area" 
           onDragOver={handleDragOver} 
           onDrop={handleDrop}
         >
-          {/* ── FLOATING VIEWPORT HUD CONTROLS ── */}
-
-          {/* 1. Camera View Angle Presets & Turntable */}
           <div className="hud-toolbar camera-hud">
             <span className="hud-title">CAMERA</span>
             <button 
@@ -748,7 +732,6 @@ function PCBuilder3DWorkspace() {
 
             <div className="hud-divider"></div>
 
-            {/* 360° Turntable Auto-Rotate Button with B.O.B. Companion Dock */}
             <div className="auto-rotate-bob-group">
               <button 
                 className={`hud-btn ${autoRotate ? 'active' : ''}`}
@@ -761,7 +744,6 @@ function PCBuilder3DWorkspace() {
                 {autoRotate ? 'Stop Spin' : 'Auto-Rotate'}
               </button>
 
-              {/* B.O.B. Companion Dock (matching RGB AURA color, poke him to speak!) */}
               <div 
                 className="bob-companion-dock" 
                 title="B.O.B. — Your 3D Studio Companion (Poke him!)"
@@ -794,9 +776,7 @@ function PCBuilder3DWorkspace() {
             </div>
           </div>
 
-          {/* 2. Chassis & Assembly Toolset */}
           <div className="hud-toolbar tools-hud">
-            {/* Rig Stance Toggle (Tower vs Workbench Flat POV) */}
             <div className="tool-pill-group">
               <span className="hud-title">STANCE</span>
               <button 
@@ -830,7 +810,6 @@ function PCBuilder3DWorkspace() {
 
             <div className="hud-divider"></div>
 
-            {/* Chassis Finish Toggle (Stealth Black vs Arctic White) */}
             <div className="tool-pill-group">
               <span className="hud-title">CHASSIS</span>
               <button 
@@ -884,7 +863,6 @@ function PCBuilder3DWorkspace() {
 
             <div className="hud-divider"></div>
 
-            {/* Exploded View Toggle */}
             <button 
               className={`hud-btn explode-btn ${isExploded ? 'active' : ''}`}
               onClick={() => setIsExploded(!isExploded)}
@@ -894,7 +872,6 @@ function PCBuilder3DWorkspace() {
             </button>
           </div>
 
-          {/* 3. RGB Theme & Studio Lighting */}
           <div className="hud-toolbar aesthetics-hud">
             <span className="hud-title">RGB AURA</span>
             <div className="color-swatches">
@@ -910,7 +887,6 @@ function PCBuilder3DWorkspace() {
             </div>
           </div>
 
-          {/* ── 3D CANVAS SCENE (With High-Clarity Studio Lighting & Ground Plane) ── */}
           <Canvas 
             camera={{ position: CAMERA_PRESETS.isometric.position, fov: 42 }}
             gl={{ 
@@ -931,42 +907,35 @@ function PCBuilder3DWorkspace() {
             <color attach="background" args={['#0e1420']} />
             <fog attach="fog" args={['#0e1420', 30, 80]} />
 
-            {/* Calibrated Studio Lighting with Warm Window Sunlight & Sky Daylight Fill */}
             <ambientLight intensity={0.85} color="#e2e8f0" />
-            {/* Natural warm sunlight entering at a builder's studio window angle */}
             <directionalLight 
               position={[-16, 22, 16]} 
               intensity={2.4} 
               castShadow 
               color="#fff8ed"
             />
-            {/* Cool sky daylight fill balancing the shadows */}
             <directionalLight 
               position={[16, 16, -14]} 
               intensity={1.1} 
               color="#93c5fd"
             />
-            {/* Warm table bounce light reflecting upwards onto the chassis underside */}
             <directionalLight 
               position={[0, -6, 0]} 
               intensity={0.6} 
               color="#fed7aa"
             />
-            {/* Studio rim light defining metal chamfers and top edges */}
             <directionalLight 
               position={[0, 8, 18]} 
               intensity={1.0} 
               color="#f8fafc"
             />
             
-            {/* Direct Internal Case Illumination */}
             <pointLight position={[0.5, 1.5, 0]} intensity={2.0} color="#ffffff" distance={12} />
             <pointLight position={[-0.5, -1.5, 0]} intensity={1.5} color="#ffffff" distance={10} />
             <pointLight position={[0, 0, 3.5]} intensity={1.8} color={rgbColor} distance={8} />
 
             <Environment preset="studio" />
 
-            {/* Camera Controller & OrbitControls with Adaptive POV Eye-Movement Restrictions */}
             <CameraController cameraTarget={cameraTarget} orbitRef={orbitRef} />
             <OrbitControls 
               ref={orbitRef}
@@ -984,7 +953,6 @@ function PCBuilder3DWorkspace() {
               autoRotateSpeed={2.2}
             />
 
-            {/* Low-Poly Studio Window / Office Backdrop (Zero-lag aesthetic context) */}
             <group position={[0, 5, -24]}>
               <mesh position={[0, 2, 0]}>
                 <planeGeometry args={[70, 28]} />
@@ -1020,9 +988,7 @@ function PCBuilder3DWorkspace() {
               </group>
             </group>
 
-            {/* 3D Scene Environment & Studio Workbench */}
             <group position={[0, 0, 0]}>
-              {/* Workbench Surface (Warm technical matte desk, Y = -5.5) */}
               <mesh 
                 position={[0, -5.5, 0]}
                 onClick={(e) => {
@@ -1036,13 +1002,11 @@ function PCBuilder3DWorkspace() {
                 <meshStandardMaterial color="#181f2c" roughness={0.65} metalness={0.2} />
               </mesh>
 
-              {/* Workbench Chamfered Edge Accent Line */}
               <mesh position={[0, -4.89, 0]}>
                 <boxGeometry args={[48.3, 0.04, 38.3]} />
                 <meshBasicMaterial color="#38bdf8" transparent opacity={0.25} />
               </mesh>
 
-              {/* Antistatic Silicone PC Builder Mat (Under rig, Y = -4.88) */}
               <mesh 
                 position={[0, -4.88, 0]}
                 onClick={(e) => {
@@ -1056,13 +1020,11 @@ function PCBuilder3DWorkspace() {
                 <meshStandardMaterial color="#1e283a" roughness={0.88} metalness={0.1} />
               </mesh>
 
-              {/* Mat Outer Border Accent */}
               <mesh position={[0, -4.87, 0]}>
                 <boxGeometry args={[28.2, 0.02, 22.2]} />
                 <meshBasicMaterial color="#38bdf8" transparent opacity={0.4} />
               </mesh>
 
-              {/* Mat Corner Magnetic Screw Trays */}
               {[
                 [-12.5, -4.86, 9.5],
                 [12.5, -4.86, 9.5],
@@ -1081,7 +1043,6 @@ function PCBuilder3DWorkspace() {
                 </group>
               ))}
 
-              {/* High-Contrast Technical Grid Overlay on Mat */}
               <Grid 
                 position={[0, -4.85, 0]}
                 args={[48, 38]} 
@@ -1104,12 +1065,10 @@ function PCBuilder3DWorkspace() {
               />
 
               <Suspense fallback={null}>
-                {/* Unified PC Rig Group - Rotated 90° so PSU faces student (Image 2 POV) */}
                 <group 
                   position={rigStance === 'workbench' ? [0, -2.60, 0] : [0, 0, 0]} 
                   rotation={rigStance === 'workbench' ? [0, Math.PI / 2, -Math.PI / 2] : [0, 0, 0]}
                 >
-                  {/* 1. PC Case Chassis (Rendered ONLY once chosen and placed by user) */}
                   {currentBuild.case && (
                     <GenericPCCase 
                       part={currentBuild.case}
@@ -1124,7 +1083,6 @@ function PCBuilder3DWorkspace() {
                     />
                   )}
 
-                  {/* 2. Active Drop Zone Indicators */}
                   {buildSteps.map((step) => (
                     <DropIndicator 
                       key={step.key}
@@ -1135,7 +1093,6 @@ function PCBuilder3DWorkspace() {
                     />
                   ))}
 
-                  {/* 3. Installed Internal 3D Components */}
                   {placedParts.filter(part => part.category !== 'case').map((part) => (
                     <ComponentModels3D 
                       key={part.category} 
@@ -1153,7 +1110,6 @@ function PCBuilder3DWorkspace() {
             </group>
           </Canvas>
 
-          {/* ── ACTIVE INSPECTOR HUD POPUP ── */}
           {inspectedPart && (
             <div className="inspector-card">
               <div className="inspector-header">
@@ -1216,7 +1172,6 @@ function PCBuilder3DWorkspace() {
             </div>
           )}
 
-          {/* ── TOAST ALERT ── */}
           {toastMessage && (
             <div className="workspace-toast">
               {toastMessage}
@@ -1225,8 +1180,6 @@ function PCBuilder3DWorkspace() {
         </section>
       </div>
 
-      {/* ── DISASSEMBLE CONFIRM (in-app overlay — native browser prompts
-             would kick the user out of fullscreen mode) ── */}
       {confirmDisassemble && (
         <div
           className="builder-confirm-overlay"

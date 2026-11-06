@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useBuild } from "../../contexts/BuildContext";
 import { checkCompatibility } from "../../utilities/compatibilityEngine";
@@ -392,7 +392,6 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false }) {
   return (
     <div className={`build-page ${isIntegrated ? 'integrated-home' : 'standalone'}`}>
       {!isIntegrated && <GlobalHeader />}
-      {/* Main Build Area */}
       <div className="build-main" id="build-main-area">
         <div className="build-sidebar">
           <div className="sidebar-card">
@@ -452,7 +451,6 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false }) {
               })}
             </div>
 
-            {/* B.O.B. Interactive Hardware Companion (Positioned in Left Sidebar Yellow Indicator Zone) */}
             {hasStartedBuild && (
               <div className="build-bob-dock" title="B.O.B. (Poke me for build tips!)">
                 <EyeTracker
@@ -481,7 +479,7 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false }) {
               <button
                 type="button"
                 onClick={() => {
-                  try { soundManager.click(); } catch(e) {}
+                  try { soundManager.click(); } catch {}
                   setBobSpeech("Starter Rig loaded! Balanced specs and verified compatibility.");
                   if (loadDemoBuild) loadDemoBuild();
                 }}
@@ -585,7 +583,6 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false }) {
                     <h3 className="spec-component-title">{viewedComponent.name}</h3>
                   </div>
 
-                  {/* Primary Select Action right at the top so it is always above the fold */}
                   <div className="spec-action-top">
                     <button
                       className={`btn-select-component ${selectedComponent?.id === viewedComponent.id ? "is-selected" : ""}`}
@@ -599,7 +596,6 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false }) {
                   </div>
 
                   <div className="spec-details-list">
-                    {/* ALL categories have these first four fields */}
                     <div className="spec-row">
                       <span className="spec-label">BRAND</span>
                       <span className="spec-value">{viewedComponent.brand || "N/A"}</span>
@@ -622,7 +618,7 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false }) {
                               try {
                                 const parsedTags = JSON.parse(viewedComponent.tags);
                                 return Array.isArray(parsedTags) ? parsedTags.join(', ') : viewedComponent.tags;
-                              } catch (e) {
+                              } catch {
                                 return viewedComponent.tags;
                               }
                             })()
@@ -630,7 +626,6 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false }) {
                       </span>
                     </div>
 
-                    {/* DYNAMIC MATRIX TAGS DEPENDING ON CATEGORY */}
                     {viewedComponent.category === 'case' && (
                       <div className="spec-row">
                         <span className="spec-label">FORM FACTOR</span>
@@ -715,7 +710,6 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false }) {
                     <h3 className="spec-overview-title">ASSEMBLY OVERVIEW</h3>
                   </div>
 
-                  {/* Total Selected Progress */}
                   <div className="build-progress-box">
                     <div className="progress-top-row">
                       <span className="progress-label">HARDWARE CAPACITY</span>
@@ -736,7 +730,6 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false }) {
                     </span>
                   </div>
 
-                  {/* Next Step Instruction */}
                   <div className="next-step-prompt">
                     <div className="next-step-badge">
                       <span className="next-step-icon">
@@ -753,7 +746,6 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false }) {
                     </div>
                   </div>
 
-                  {/* Compatibility status pill */}
                   <div className="spec-compat-banner">
                     <span className="compat-shield">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
@@ -765,7 +757,6 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false }) {
                     </span>
                   </div>
 
-                  {/* Secondary actions */}
                   <div className="overview-cta-row">
                     <Link to="/compatibility" className="sidebar-cta-btn sidebar-cta-compat">
                       <span className="sidebar-cta-icon">
@@ -798,7 +789,6 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false }) {
         </div>
       </div>
 
-      {/* Build-complete toast — full-screen safe (in-app DOM, no native dialogs) */}
       {showCompleteToast && (
         <div className="build-complete-toast" role="status">
           <span className="bct-icon">

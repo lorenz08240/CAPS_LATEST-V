@@ -4,6 +4,23 @@ All notable project changes, UI/UX refinements, and compatibility fixes will be 
 
 ---
 
+## [2026-11-06] - Codebase Audit, CSS Compatibility, Comment Optimization & Graphify Sync
+- **Codebase Audit & Hygiene**:
+  - Removed unused boilerplate markdown (frontend/README.md) and legacy scratch instructions (.agents/rules/cleanse.md).
+  - Purged redundant daily snapshots in graphify-out/ (2026-11-01 to 2026-11-06) saving over 2MB of storage.
+- **CSS & Cross-Browser Compatibility (/clean)**:
+  - Enforced Safari/WebKit prefixing and ordering (-webkit-backdrop-filter preceding backdrop-filter, -webkit-user-select, -webkit-appearance, position: -webkit-sticky).
+  - Resolved 29 CSS prefix inconsistencies across all styling modules.
+- **Line Count & Comment Reduction**:
+  - Stripped 892 lines of redundant banner dividers, ASCII art borders, and trivial inline labels across 52 frontend and backend files.
+  - Resolved unused imports and variables in App.jsx, Learn.jsx, Navbar.jsx, AdminCrawler.jsx, and BuildContext.jsx.
+  - Fixed tree-sitter SVG attribute parsing in Compatibility.jsx (in={'glow'}).
+- **Knowledge Graph Synchronization**:
+  - Incremental AST rebuild via graphify update . (465 nodes, 953 edges, 17 communities) with zero syntax errors.
+  - Frontend production build (vite build) and backend compatibility test suite verified passing 100%.
+
+---
+
 ## [2026-10-31] - Security Hardening & Architecture Consolidation (OpenCode Audit)
 - **Security & Vulnerability Remediation**:
   - Permanently removed insecure remote shell listener (`event_dispatcher.py`).
