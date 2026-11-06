@@ -19,6 +19,19 @@ const adminAuth = (req, res, next) => {
   next();
 };
 
+// ── System Audit Logging Helper ──
+const logSystemActivity = async ({ actionType, adminUser = "Admin", details = "", targetId = null, targetCategory = null, status = "SUCCESS", req = null }) => {
+  try {
+    const ip = req ? (req.headers["x-forwarded-for"] || req.socket?.remoteAddress || req.ip || "127.0.0.1") : "127.0.0.1";
+    await db.query(
+      "INSERT INTO system_logs (action_type, admin_user, details, target_id, target_category, status, ip_address) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      [actionType, adminUser, details, targetId, targetCategory, status, String(ip)]
+    );
+  } catch (logErr) {
+    console.error("Failed to write to system_logs:", logErr.message);
+  }
+};
+
 // API to get all parts grouped by category
 app.get("/api/parts", async (req, res) => {
   try {
@@ -121,9 +134,27 @@ app.post("/api/parts", adminAuth, async (req, res) => {
     ];
 
     await db.query(query, values);
+    logSystemActivity({
+      actionType: "ADD_COMPONENT",
+      adminUser: "Admin",
+      details: `Created or upserted component "${name}" (${brand || "Generic"}) in [${category.toUpperCase()}].`,
+      targetId: id,
+      targetCategory: category,
+      status: "SUCCESS",
+      req
+    });
     res.json({ success: true, message: "Part created/updated successfully" });
   } catch (err) {
     console.error("POST /api/parts error:", err);
+    logSystemActivity({
+      actionType: "ADD_COMPONENT_FAILED",
+      adminUser: "Admin",
+      details: `Failed to save component: ${err.message}`,
+      targetId: req.body?.id || null,
+      targetCategory: req.body?.category || null,
+      status: "ERROR",
+      req
+    });
     res.status(500).json({ error: "Failed to save component" });
   }
 });
@@ -131,10 +162,21 @@ app.post("/api/parts", adminAuth, async (req, res) => {
 // API to delete a part (Admin Protected, with 404 validation)
 app.delete("/api/parts/:id", adminAuth, async (req, res) => {
   try {
+    const [existing] = await db.query("SELECT name, category, brand FROM pc_parts WHERE id = ?", [req.params.id]);
     const [result] = await db.query("DELETE FROM pc_parts WHERE id = ?", [req.params.id]);
     if (result.affectedRows === 0) {
       return res.status(404).json({ error: "Component not found" });
     }
+    const partInfo = existing[0] ? `"${existing[0].name}" (${existing[0].brand || "Generic"})` : req.params.id;
+    logSystemActivity({
+      actionType: "DELETE_COMPONENT",
+      adminUser: "Admin",
+      details: `Permanently removed component ${partInfo}.`,
+      targetId: req.params.id,
+      targetCategory: existing[0]?.category || null,
+      status: "SUCCESS",
+      req
+    });
     res.json({ success: true, message: "Component deleted successfully" });
   } catch (err) {
     console.error(`DELETE /api/parts/${req.params.id} error:`, err);
@@ -172,6 +214,15 @@ app.put("/api/parts/:id", adminAuth, async (req, res) => {
     if (result.affectedRows === 0) {
       return res.status(404).json({ error: "Component not found" });
     }
+    logSystemActivity({
+      actionType: "UPDATE_COMPONENT",
+      adminUser: "Admin",
+      details: `Updated specifications & attributes for "${name}" (${brand || "Generic"}).`,
+      targetId: req.params.id,
+      targetCategory: category,
+      status: "SUCCESS",
+      req
+    });
     res.json({ success: true, message: "Component updated successfully" });
   } catch (err) {
     console.error(`PUT /api/parts/${req.params.id} error:`, err);
@@ -253,6 +304,16 @@ app.post("/api/admin/clean-db", adminAuth, async (req, res) => {
       totalDeleted += resQuery.affectedRows || 0;
     }
 
+    logSystemActivity({
+      actionType: "SANITIZE_DATABASE",
+      adminUser: "Admin",
+      details: `Executed database sanitization routine: purged ${totalDeleted} invalid/miscategorized items.`,
+      targetId: "CLEAN_DB",
+      targetCategory: "system",
+      status: "SUCCESS",
+      req
+    });
+
     res.json({
       success: true,
       message: `Database cleaned: ${totalDeleted} invalid/miscategorized items removed.`,
@@ -271,6 +332,108 @@ app.get("/api/health", async (req, res) => {
     res.json({ status: "healthy", database: "connected" });
   } catch (err) {
     res.status(503).json({ status: "degraded", database: "disconnected" });
+  }
+});
+
+// ── Admin System Logs & Telemetry Endpoints ──
+app.get("/api/admin/logs", adminAuth, async (req, res) => {
+  try {
+    const limit = Math.min(200, Math.max(10, parseInt(req.query.limit || "100", 10)));
+    const filterType = req.query.type;
+    let query = "SELECT * FROM system_logs";
+    const params = [];
+
+    if (filterType && filterType !== "all") {
+      query += " WHERE action_type = ? OR target_category = ?";
+      params.push(filterType, filterType);
+    }
+
+    query += " ORDER BY id DESC LIMIT ?";
+    params.push(limit);
+
+    const [rows] = await db.query(query, params);
+    res.json({ success: true, logs: rows });
+  } catch (err) {
+    console.error("GET /api/admin/logs error:", err);
+    res.status(500).json({ success: false, error: "Failed to fetch system logs" });
+  }
+});
+
+// System Status endpoint (Detailed status for System Logs page)
+app.get("/api/admin/system-status", adminAuth, async (req, res) => {
+  try {
+    const startTime = Date.now();
+    let dbStatus = "operational";
+    let dbLatencyMs = 0;
+    try {
+      await db.query("SELECT 1");
+      dbLatencyMs = Date.now() - startTime;
+    } catch (e) {
+      dbStatus = "down";
+    }
+
+    const [partsCount] = await db.query("SELECT COUNT(*) as count FROM pc_parts");
+    const [scrapedCount] = await db.query("SELECT COUNT(*) as count FROM scraped_queue");
+    const [logsCount] = await db.query("SELECT COUNT(*) as count FROM system_logs");
+    const [lastLog] = await db.query("SELECT created_at FROM system_logs ORDER BY id DESC LIMIT 1");
+
+    const uptimeSec = Math.floor(process.uptime());
+    const memoryUsage = process.memoryUsage();
+
+    res.json({
+      success: true,
+      system: {
+        engine: "ONLINE // SECURE",
+        version: "V2.4",
+        environment: process.env.NODE_ENV || "development",
+        serverTime: new Date().toISOString(),
+        uptimeSeconds: uptimeSec,
+        memoryHeapUsedMB: Math.round(memoryUsage.heapUsed / 1024 / 1024 * 100) / 100,
+        memoryRssMB: Math.round(memoryUsage.rss / 1024 / 1024 * 100) / 100
+      },
+      services: {
+        database: {
+          name: "MySQL (buildlab_db)",
+          status: dbStatus,
+          latencyMs: dbLatencyMs,
+          totalParts: partsCount[0]?.count || 0,
+          pendingScrapes: scrapedCount[0]?.count || 0
+        },
+        apiServer: {
+          status: "operational",
+          port: process.env.PORT || 5000,
+          totalAuditEntries: logsCount[0]?.count || 0,
+          lastActivityAt: lastLog[0]?.created_at || new Date().toISOString()
+        },
+        crawlerEngine: {
+          status: "standby / ready",
+          targets: ["EasyPC", "Bermor Techzone"]
+        }
+      }
+    });
+  } catch (err) {
+    console.error("GET /api/admin/system-status error:", err);
+    res.status(500).json({ success: false, error: "Failed to inspect system status" });
+  }
+});
+
+// Clear or purge old system logs (Admin Protected)
+app.delete("/api/admin/logs", adminAuth, async (req, res) => {
+  try {
+    const [result] = await db.query("DELETE FROM system_logs");
+    await logSystemActivity({
+      actionType: "PURGE_LOGS",
+      adminUser: "Admin",
+      details: `Purged system logs audit history (${result.affectedRows} entries cleared).`,
+      targetId: "SYSTEM_LOGS",
+      targetCategory: "system",
+      status: "SUCCESS",
+      req
+    });
+    res.json({ success: true, message: `Cleared ${result.affectedRows} log entries.` });
+  } catch (err) {
+    console.error("DELETE /api/admin/logs error:", err);
+    res.status(500).json({ success: false, error: "Failed to clear logs" });
   }
 });
 
@@ -392,6 +555,16 @@ app.post("/api/scraped-queue/merge", adminAuth, async (req, res) => {
 
     await db.query("DELETE FROM scraped_queue WHERE approved = 1");
 
+    logSystemActivity({
+      actionType: "MERGE_SCRAPED_DATA",
+      adminUser: "Admin",
+      details: `Merged ${mergedCount} approved scraped components from review queue into production inventory.`,
+      targetId: "QUEUE_MERGE",
+      targetCategory: "all",
+      status: "SUCCESS",
+      req
+    });
+
     res.json({
       success: true,
       mergedCount,
@@ -408,8 +581,9 @@ app.post("/api/crawl", adminAuth, (req, res) => {
   const store = req.body?.store || "EasyPC";
   const category = req.body?.category || "all";
   const maxPages = req.body?.maxPages || 1;
-  const cmd = `node crawler.js --store="${store}" --category="${category}" --pages=${maxPages}`;
-  exec(cmd, (error, stdout, stderr) => {
+  const scriptPath = path.join(__dirname, "crawler.js");
+  const cmd = `node "${scriptPath}" --store="${store}" --category="${category}" --pages=${maxPages}`;
+  exec(cmd, { cwd: __dirname }, (error, stdout, stderr) => {
     if (error) {
       console.error(`Crawler execution error: ${error.message}`);
       return res.status(500).json({ error: error.message, stderr, output: stdout });

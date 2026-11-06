@@ -240,11 +240,34 @@ const EASYPC_COLLECTION_MAP = {
 async function scrapeEasyPC(page = 1, targetCategory = 'all') {
   try {
     const catKey = (targetCategory || 'all').toLowerCase();
-    const handles = EASYPC_COLLECTION_MAP[catKey] || [];
     let products = [];
 
-    // 1. If a specific category was targeted, query EasyPC collection directly
-    if (handles.length > 0) {
+    // 1. If 'all', query each core component collection so every category is populated
+    if (catKey === 'all') {
+      const coreCategories = ['cpu', 'gpu', 'motherboard', 'ram', 'storage', 'case', 'psu'];
+      for (const cat of coreCategories) {
+        const handles = EASYPC_COLLECTION_MAP[cat] || [];
+        for (const handle of handles) {
+          const collUrl = `https://easypc.com.ph/collections/${handle}/products.json?limit=15&page=${page}`;
+          try {
+            console.log(`[INFO] [EasyPC] Requesting collection [${handle}]: ${collUrl}`);
+            const { data } = await axios.get(collUrl, {
+              headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' },
+              timeout: 8000
+            });
+            if (Array.isArray(data.products) && data.products.length > 0) {
+              products.push(...data.products);
+              console.log(`[SUCCESS] [EasyPC] Received ${data.products.length} products from [${handle}].`);
+              break;
+            }
+          } catch (err) {
+            console.warn(`[WARN] [EasyPC] Collection handle ${handle} failed (${err.message}). Trying next...`);
+          }
+        }
+      }
+    } else {
+      // Specific category targeted
+      const handles = EASYPC_COLLECTION_MAP[catKey] || [];
       for (const handle of handles) {
         const collUrl = `https://easypc.com.ph/collections/${handle}/products.json?limit=50&page=${page}`;
         try {
@@ -264,24 +287,9 @@ async function scrapeEasyPC(page = 1, targetCategory = 'all') {
       }
     }
 
-    // 2. If 'all' or collection query returned nothing, query global catalog
+    // Fallback if network blocked
     if (products.length === 0) {
-      const globalUrl = `https://easypc.com.ph/products.json?limit=50&page=${page}`;
-      console.log(`[INFO] [EasyPC] Requesting catalog: ${globalUrl}`);
-      try {
-        const { data } = await axios.get(globalUrl, {
-          headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' },
-          timeout: 8000
-        });
-        products = data.products || [];
-        console.log(`[SUCCESS] [EasyPC] Received ${products.length} raw products from API.`);
-      } catch (fetchErr) {
-        console.warn(`[WARN] [EasyPC] Live request failed (${fetchErr.message}). Using verified EasyPC staging components.`);
-        products = getStagingProducts(targetCategory, "EasyPC");
-      }
-    }
-
-    if (products.length === 0) {
+      console.warn(`[WARN] [EasyPC] Live request yielded 0 products. Using verified EasyPC staging components.`);
       products = getStagingProducts(targetCategory, "EasyPC");
     }
 
@@ -306,30 +314,60 @@ const BERMOR_CATEGORY_MAP = {
 async function scrapeBermor(page = 1, targetCategory = 'all') {
   try {
     const catKey = (targetCategory || 'all').toLowerCase();
-    const catParam = BERMOR_CATEGORY_MAP[catKey] ? `&category=${BERMOR_CATEGORY_MAP[catKey]}` : "";
-    const url = `https://bermorzone.com.ph/wp-json/wc/store/v1/products?per_page=50&page=${page}${catParam}`;
-    console.log(`[INFO] [Bermor Techzone] Requesting catalog: ${url}`);
-    
     let products = [];
-    try {
-      const { data } = await axios.get(url, {
-        headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' },
-        timeout: 8000
-      });
-      if (Array.isArray(data) && data.length > 0) {
-        products = data.map(item => ({
-          id: String(item.id),
-          title: item.name || '',
-          vendor: (item.brands && item.brands[0] && item.brands[0].name) || 'Bermor',
-          product_type: catKey !== 'all' ? catKey : (item.categories && item.categories[0] && item.categories[0].name) || 'Hardware',
-          variants: [{ price: item.prices ? (parseInt(item.prices.price, 10) / 100).toFixed(2) : '0.00' }],
-          images: item.images && item.images[0] ? [{ src: item.images[0].src }] : []
-        }));
-        console.log(`[SUCCESS] [Bermor Techzone] Received ${products.length} live products from WooCommerce API.`);
+
+    if (catKey === 'all') {
+      const coreCategories = ['cpu', 'gpu', 'motherboard', 'ram', 'storage', 'case', 'psu'];
+      for (const cat of coreCategories) {
+        const catId = BERMOR_CATEGORY_MAP[cat];
+        if (!catId) continue;
+        const url = `https://bermorzone.com.ph/wp-json/wc/store/v1/products?per_page=15&page=${page}&category=${catId}`;
+        try {
+          console.log(`[INFO] [Bermor Techzone] Requesting category [${cat.toUpperCase()}]: ${url}`);
+          const { data } = await axios.get(url, {
+            headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' },
+            timeout: 8000
+          });
+          if (Array.isArray(data) && data.length > 0) {
+            const mapped = data.map(item => ({
+              id: String(item.id),
+              title: item.name || '',
+              vendor: (item.brands && item.brands[0] && item.brands[0].name) || 'Bermor',
+              product_type: cat,
+              variants: [{ price: item.prices ? (parseInt(item.prices.price, 10) / 100).toFixed(2) : '0.00' }],
+              images: item.images && item.images[0] ? [{ src: item.images[0].src }] : []
+            }));
+            products.push(...mapped);
+            console.log(`[SUCCESS] [Bermor Techzone] Received ${mapped.length} products for [${cat.toUpperCase()}].`);
+          }
+        } catch (err) {
+          console.warn(`[WARN] [Bermor Techzone] Category ${cat} failed (${err.message}).`);
+        }
       }
-    } catch (err) {
-      console.warn(`[WARN] [Bermor Techzone] Live request failed (${err.message}). Using verified staging components.`);
-      products = getStagingProducts(targetCategory, "Bermor");
+    } else {
+      const catParam = BERMOR_CATEGORY_MAP[catKey] ? `&category=${BERMOR_CATEGORY_MAP[catKey]}` : "";
+      const url = `https://bermorzone.com.ph/wp-json/wc/store/v1/products?per_page=50&page=${page}${catParam}`;
+      console.log(`[INFO] [Bermor Techzone] Requesting catalog: ${url}`);
+      try {
+        const { data } = await axios.get(url, {
+          headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' },
+          timeout: 8000
+        });
+        if (Array.isArray(data) && data.length > 0) {
+          products = data.map(item => ({
+            id: String(item.id),
+            title: item.name || '',
+            vendor: (item.brands && item.brands[0] && item.brands[0].name) || 'Bermor',
+            product_type: catKey,
+            variants: [{ price: item.prices ? (parseInt(item.prices.price, 10) / 100).toFixed(2) : '0.00' }],
+            images: item.images && item.images[0] ? [{ src: item.images[0].src }] : []
+          }));
+          console.log(`[SUCCESS] [Bermor Techzone] Received ${products.length} live products from WooCommerce API.`);
+        }
+      } catch (err) {
+        console.warn(`[WARN] [Bermor Techzone] Live request failed (${err.message}). Using verified staging components.`);
+        products = getStagingProducts(targetCategory, "Bermor");
+      }
     }
 
     if (products.length === 0) {
