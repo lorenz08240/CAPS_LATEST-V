@@ -1,10 +1,9 @@
 {
   ".vscode/settings.json": {
-    "mtime": 1792087741.322497,
-    "seen": 1793457744.9668858,
-    "ast_hash": "21d07bd14b06d0eb8de77e36f6515adc",
-    "semantic_hash": "21d07bd14b06d0eb8de77e36f6515adc",
-    "ast_empty": true
+    "mtime": 1794040098.7926526,
+    "seen": 1794042133.0699086,
+    "ast_hash": "f919620e82d411af98772bd225a3a0f5",
+    "semantic_hash": ""
   },
   "backend/config/db.js": {
     "mtime": 1791808420.539456,
@@ -13,9 +12,9 @@
     "semantic_hash": "78986ce84cbf1477b2022d11497b9fb1"
   },
   "backend/crawler.js": {
-    "mtime": 1793931234.240618,
-    "seen": 1793931275.165551,
-    "ast_hash": "43a32196b916b63ff5fa79e93afdf797",
+    "mtime": 1794008850.813315,
+    "seen": 1794008964.0393112,
+    "ast_hash": "a17fdc1f7f7101e9e9f3cd680e6d8f89",
     "semantic_hash": ""
   },
   "backend/package.json": {
@@ -25,9 +24,9 @@
     "semantic_hash": "56334efb046e514b2ae0f7347d921bc3"
   },
   "backend/server.js": {
-    "mtime": 1793931234.240618,
-    "seen": 1793931275.166242,
-    "ast_hash": "41409ca4c5520b1f270017d2e15302f1",
+    "mtime": 1794009906.0654347,
+    "seen": 1794009966.2302725,
+    "ast_hash": "8636b8efeec6a43d3df72f7b5814ac82",
     "semantic_hash": ""
   },
   "backend/tests/compatibility.test.js": {
@@ -55,9 +54,9 @@
     "semantic_hash": "8e5f2021f5b1721b527c842f43f78c73"
   },
   "frontend/src/App.jsx": {
-    "mtime": 1793931565.5775466,
-    "seen": 1793931638.0699382,
-    "ast_hash": "56eb50eadcdf101f51695e6213482cdc",
+    "mtime": 1794039085.319677,
+    "seen": 1794042133.0717185,
+    "ast_hash": "1efabd9dc5cfb1ce4a3a6c6ef873067e",
     "semantic_hash": ""
   },
   "frontend/src/components/3D/ComponentModels3D.jsx": {
@@ -85,9 +84,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/Admin.jsx": {
-    "mtime": 1793826369.0426967,
-    "seen": 1793826495.5973854,
-    "ast_hash": "f50012cabba3782cbbed38d00f149b07",
+    "mtime": 1794009029.05317,
+    "seen": 1794009108.9831302,
+    "ast_hash": "98780e56db78f7d464a77b72ca3fc47d",
     "semantic_hash": ""
   },
   "frontend/src/components/Brands/Brands.jsx": {
@@ -97,9 +96,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Build/Build.jsx": {
-    "mtime": 1793931234.190646,
-    "seen": 1793931275.1695027,
-    "ast_hash": "99da9c8650ccae13acae5ee630888127",
+    "mtime": 1793933327.0987787,
+    "seen": 1793933385.6927686,
+    "ast_hash": "915488364fed54892ca0c468de2029a6",
     "semantic_hash": ""
   },
   "frontend/src/components/Compatibility/Compatibility.jsx": {
@@ -127,21 +126,21 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Home/Home.jsx": {
-    "mtime": 1793931593.6939206,
-    "seen": 1793931638.0747468,
-    "ast_hash": "abbaafa923d1477aa37f31e94cfbb5f7",
+    "mtime": 1793953042.4771838,
+    "seen": 1793953364.6396196,
+    "ast_hash": "83034e0997664a7ff36fc39ff24afde5",
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/CourseShell.jsx": {
-    "mtime": 1793932649.4084163,
-    "seen": 1793932676.61311,
-    "ast_hash": "476df3dfa82b75dfb6c8d9d2bce76786",
+    "mtime": 1793932969.4140768,
+    "seen": 1793933082.0645573,
+    "ast_hash": "e9f3beb996199dbf966eda616b5436ec",
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/CourseVideoPlayer.jsx": {
-    "mtime": 1793932570.3338983,
-    "seen": 1793932676.6131127,
-    "ast_hash": "92a05538211f8385e5d4d12f916041b5",
+    "mtime": 1793933029.6342788,
+    "seen": 1793933082.0645602,
+    "ast_hash": "ee460cfd90d4fd81fc48153b9635d780",
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/Learn.jsx": {
@@ -151,9 +150,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Navbar/Navbar.jsx": {
-    "mtime": 1793932713.073946,
-    "seen": 1793932752.9334981,
-    "ast_hash": "66217dec99cafc2b2005824c56d3a519",
+    "mtime": 1794039100.2535992,
+    "seen": 1794042133.077914,
+    "ast_hash": "eadac8e6a4662cc6e708b632811ee60f",
     "semantic_hash": ""
   },
   "frontend/src/contexts/AuthContext.jsx": {
@@ -517,15 +516,15 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/AdminHeader.jsx": {
-    "mtime": 1793931234.1815825,
-    "seen": 1793931275.168635,
-    "ast_hash": "17c8435e18c9a090ce7316e34004329f",
+    "mtime": 1794038981.2684197,
+    "seen": 1794042133.0741916,
+    "ast_hash": "3d68d37aba3898454e472085b97c640b",
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/AdminInventory.jsx": {
-    "mtime": 1793931234.1839423,
-    "seen": 1793931275.1686382,
-    "ast_hash": "5da172228f49b1e3bf35c42e0ed6a5e4",
+    "mtime": 1794040278.6644862,
+    "seen": 1794042133.0741942,
+    "ast_hash": "99b745c5720fef09c44572c541aa1ec6",
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/AdminLogin.jsx": {
@@ -535,9 +534,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/EditComponentDrawer.jsx": {
-    "mtime": 1793931234.1871407,
-    "seen": 1793931275.1691,
-    "ast_hash": "4956640fbff079d036f9e9c0d70c1f76",
+    "mtime": 1794039059.3946624,
+    "seen": 1794042133.0746937,
+    "ast_hash": "bf1f294115978d16d3cbc4f46026a232",
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/HardwareIcon.jsx": {
@@ -559,9 +558,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/AdminSidebar.jsx": {
-    "mtime": 1793931234.1861343,
-    "seen": 1793931275.1690965,
-    "ast_hash": "55ce719e8ba55b3311faf620e1a27188",
+    "mtime": 1794009868.8958404,
+    "seen": 1794009966.2534573,
+    "ast_hash": "457ffc05e851db3cdf431f90cb720e59",
     "semantic_hash": ""
   },
   "frontend/src/components/3D/NVMeSSDModel.jsx": {
@@ -690,15 +689,21 @@
     "ast_hash": "b1b8885a92a4dcdf9b6de167aee3bc89",
     "semantic_hash": ""
   },
+  "frontend/src/components/Admin/AdminLogs.jsx": {
+    "mtime": 1794009897.2226436,
+    "seen": 1794009966.2534504,
+    "ast_hash": "636adbd04ad27eb6965284c640bf172d",
+    "semantic_hash": ""
+  },
   "backend/package-lock.json": {
     "mtime": 1791800606.1768937,
-    "seen": 1793930330.0552042,
+    "seen": 1794009108.998351,
     "ast_hash": "661be6875e353b32cc107be3856a3c63",
     "semantic_hash": ""
   },
   "frontend/package-lock.json": {
     "mtime": 1793613485.6023724,
-    "seen": 1793930330.0552065,
+    "seen": 1794009108.998354,
     "ast_hash": "a47763d1ffd4e827c99335e63647a7c5",
     "semantic_hash": ""
   }

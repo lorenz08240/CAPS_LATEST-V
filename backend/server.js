@@ -383,8 +383,8 @@ app.get("/api/admin/system-status", adminAuth, async (req, res) => {
     res.json({
       success: true,
       system: {
-        engine: "ONLINE // SECURE",
-        version: "V2.4",
+        engine: "ONLINE",
+        version: "v1.0.4",
         environment: process.env.NODE_ENV || "development",
         serverTime: new Date().toISOString(),
         uptimeSeconds: uptimeSec,

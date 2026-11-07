@@ -681,9 +681,6 @@ export default function CourseShell({ componentGuide }) {
     } catch {}
   }, [isPinned]);
 
-  /* In-page video player maximized / theater mode state */
-  const [isVideoMaximized, setIsVideoMaximized] = useState(false);
-
   /* Video prerequisite gating state */
   const [watchedVideos, setWatchedVideos] = useState(() => {
     try {
@@ -1012,8 +1009,7 @@ export default function CourseShell({ componentGuide }) {
                   title={`${art.title} Tutorial Video`}
                   isAlreadyFinished={watchedVideos.includes(current.id)}
                   onFinished={() => markVideoWatched(current.id)}
-                  onMaximizeChange={setIsVideoMaximized}
-                />
+                                  />
               ) : (
                 <img src={art.heroImage} alt={art.title} className="lesson-video-fallback" />
               )}
@@ -1251,8 +1247,7 @@ export default function CourseShell({ componentGuide }) {
                   title={`${comp.name} Lesson Film`}
                   isAlreadyFinished={watchedVideos.includes(comp.id)}
                   onFinished={() => markVideoWatched(comp.id)}
-                  onMaximizeChange={setIsVideoMaximized}
-                />
+                                  />
               ) : (
                 <img src={comp.heroImage} alt={comp.name} className="lesson-video-fallback" />
               )}
@@ -1512,8 +1507,7 @@ export default function CourseShell({ componentGuide }) {
                   compact
                   isAlreadyFinished={watchedVideos.includes(`${comp.id}-step-${activeStep}`)}
                   onFinished={() => markVideoWatched(`${comp.id}-step-${activeStep}`)}
-                  onMaximizeChange={setIsVideoMaximized}
-                />
+                                  />
               ) : (
                 <div className="step-preview-placeholder">
                   <img src={comp.heroImage} alt={comp.name} />
@@ -1725,7 +1719,7 @@ export default function CourseShell({ componentGuide }) {
       <div className="bg-glow bg-glow-1" aria-hidden="true" />
       <div className="bg-glow bg-glow-2" aria-hidden="true" />
 
-      {!isPinned && !isVideoMaximized && (
+      {!isPinned && (
         <button 
           className="course-sidebar-edge-tab"
           onClick={() => {
@@ -1745,7 +1739,7 @@ export default function CourseShell({ componentGuide }) {
       )}
 
       <div 
-        className={`course-sidebar-backdrop ${isPinned && !isVideoMaximized ? "mobile-active" : ""}`} 
+        className={`course-sidebar-backdrop ${isPinned ? "mobile-active" : ""}`} 
         onClick={() => setIsPinned(false)} 
       />
 
@@ -1909,7 +1903,7 @@ export default function CourseShell({ componentGuide }) {
         </div>
 
         <aside 
-          className={`course-outline cyber-syllabus-panel ${isPinned && !isVideoMaximized ? "open pinned" : "closed"}`}
+          className={`course-outline cyber-syllabus-panel ${isPinned ? "open pinned" : "closed"}`}
           aria-label="Course Outline Sidebar"
         >
 

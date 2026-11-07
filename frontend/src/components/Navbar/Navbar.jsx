@@ -51,9 +51,8 @@ function Navbar({ isPinned: propsIsPinned }) {
 
   const currentPath = location.pathname;
   const isInventory = currentPath.includes("/admin/inventory") || currentPath === "/admin";
-  const isAdd = currentPath.includes("/admin/add");
-  const isEdit = currentPath.includes("/admin/edit");
   const isCrawler = currentPath.includes("/admin/crawler");
+  const isLogs = currentPath.includes("/admin/logs");
 
   return (
     <>
@@ -171,29 +170,6 @@ function Navbar({ isPinned: propsIsPinned }) {
                       <span>Inventory</span>
                     </Link>
 
-                    <Link
-                      to="/admin/add"
-                      onClick={handleLinkClick}
-                      className={`sidebar-link ${isAdd ? "active" : ""}`}
-                    >
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                      </svg>
-                      <span>Add Component</span>
-                    </Link>
-
-                    <Link
-                      to="/admin/edit"
-                      onClick={handleLinkClick}
-                      className={`sidebar-link ${isEdit ? "active" : ""}`}
-                    >
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M12 20h9"></path>
-                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-                      </svg>
-                      <span>Edit Components</span>
-                    </Link>
 
                     <Link
                       to="/admin/crawler"
@@ -205,6 +181,21 @@ function Navbar({ isPinned: propsIsPinned }) {
                         <path d="M12 2v3m0 14v3M2 12h3m14 0h3m-3.5-6.5l-2.1 2.1m-8.8 8.8l-2.1 2.1m0-13l2.1 2.1m8.8 8.8l2.1 2.1"></path>
                       </svg>
                       <span>Crawler Hub</span>
+                    </Link>
+
+                    <Link
+                      to="/admin/logs"
+                      onClick={handleLinkClick}
+                      className={`sidebar-link ${isLogs ? "active" : ""}`}
+                    >
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                      </svg>
+                      <span>System Logs</span>
                     </Link>
                   </div>
                 </div>

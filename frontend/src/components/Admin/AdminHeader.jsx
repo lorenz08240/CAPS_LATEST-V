@@ -8,9 +8,8 @@ export const AdminHeader = ({ breadcrumbCurrent = "Hardware Inventory" }) => {
   const currentPath = location.pathname;
 
   const isInventory = currentPath.includes("/admin/inventory") || currentPath === "/admin";
-  const isAdd = currentPath.includes("/admin/add");
-  const isEdit = currentPath.includes("/admin/edit");
   const isCrawler = currentPath.includes("/admin/crawler");
+  const isLogs = currentPath.includes("/admin/logs");
 
   return (
     <header className="admin-header">
@@ -39,33 +38,6 @@ export const AdminHeader = ({ breadcrumbCurrent = "Hardware Inventory" }) => {
             <span className="nav-tab-label">Inventory</span>
           </Link>
 
-          <Link
-            to="/admin/add"
-            className={`admin-nav-tab ${isAdd ? "active" : ""}`}
-            title="Add a new hardware component to catalog"
-          >
-            <span className="nav-tab-icon">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-              </svg>
-            </span>
-            <span className="nav-tab-label">+ Add Component</span>
-          </Link>
-
-          <Link
-            to="/admin/edit"
-            className={`admin-nav-tab ${isEdit ? "active" : ""}`}
-            title="Edit specs and manage component deletions"
-          >
-            <span className="nav-tab-icon">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M12 20h9"></path>
-                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-              </svg>
-            </span>
-            <span className="nav-tab-label">Edit Specs</span>
-          </Link>
 
           <Link
             to="/admin/crawler"
@@ -79,6 +51,23 @@ export const AdminHeader = ({ breadcrumbCurrent = "Hardware Inventory" }) => {
               </svg>
             </span>
             <span className="nav-tab-label">Crawler Hub</span>
+          </Link>
+
+          <Link
+            to="/admin/logs"
+            className={`admin-nav-tab ${isLogs ? "active" : ""}`}
+            title="System logs, audit trails, and live engine status"
+          >
+            <span className="nav-tab-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+            </span>
+            <span className="nav-tab-label">System Logs</span>
           </Link>
         </nav>
 

@@ -3,5 +3,6 @@
   "python.terminal.useEnvFile": true,
   "git.ignoredRepositories": [
     "d:/Capstone Project/BACKUP!/CAPS_LATEST-V_GitSnapshot_20261015_234241"
-  ]
+  ],
+  "vscode-edge-devtools.webhint": false
 }

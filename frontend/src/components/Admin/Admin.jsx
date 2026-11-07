@@ -10,6 +10,7 @@ import AdminHeader from "./AdminHeader";
 import AdminLogin from "./AdminLogin";
 import AdminAuthGuard from "./AdminAuthGuard";
 import AdminSidebar from "./AdminSidebar";
+import AdminLogs from "./AdminLogs";
 import HardwareIcon from "./HardwareIcon";
 import HoverImagePreview from "./HoverImagePreview";
 
@@ -24,6 +25,7 @@ export {
   AdminLogin,
   AdminAuthGuard,
   AdminSidebar,
+  AdminLogs,
   HardwareIcon,
   HoverImagePreview
 };

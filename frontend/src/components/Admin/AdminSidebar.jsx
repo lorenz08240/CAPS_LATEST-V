@@ -37,17 +37,25 @@ export const AdminSidebar = ({
   return (
     <aside className="admin-sidebar" aria-label="Admin Navigation Sidebar">
       <div className="admin-sidebar-header">
-        <div className="sidebar-brand-box">
-          <span className="brand-dot" />
-          <span className="brand-subtag">[ ADMIN CONTROL DECK ]</span>
-        </div>
-        <div className="admin-sidebar-title-row">
-          <h2 className="admin-sidebar-title">COMMAND LAB</h2>
-          <span className="admin-version-tag">V2.4</span>
-        </div>
-        <div className="admin-engine-status">
-          <span className="status-live-pulse" />
-          <span className="status-live-text">ENGINE ONLINE // SECURE</span>
+        <div className="admin-sidebar-brand-group">
+          <div className="admin-sidebar-brand-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 2L2 7l10 5 10-5-10-5z" />
+              <path d="M2 17l10 5 10-5" />
+              <path d="M2 12l10 5 10-5" />
+            </svg>
+          </div>
+          <div className="admin-sidebar-brand-text">
+            <div className="admin-brand-title-row">
+              <span className="admin-brand-title-main">BUILDLAB</span>
+              <span className="admin-brand-role-tag">ADMIN</span>
+              <span className="admin-brand-version-tag">v1.0.4</span>
+            </div>
+            <div className="admin-brand-status-row">
+              <span className="admin-brand-status-dot" />
+              <span className="admin-brand-status-text">CONTROL PANEL</span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -92,28 +100,7 @@ export const AdminSidebar = ({
         </div>
       </div>
 
-      <div className="admin-sidebar-footer">
-        <Link to="/" className="sidebar-foot-link" title="Return to Public Student Builder">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <polyline points="15 18 9 12 15 6"></polyline>
-          </svg>
-          <span>Return to Builder</span>
-        </Link>
-
-        <button
-          type="button"
-          className="sidebar-logout-btn"
-          onClick={logoutAdmin}
-          title="Sign out of Admin Deck"
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-            <polyline points="16 17 21 12 16 7"></polyline>
-            <line x1="21" y1="12" x2="9" y2="12"></line>
-          </svg>
-          <span>Logout</span>
-        </button>
-      </div>
+      {/* Footer Return & Logout navigation removed per UI specs */}
     </aside>
   );
 };

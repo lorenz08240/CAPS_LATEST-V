@@ -1,24 +1,25 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
+import { createPortal } from "react-dom";
 import soundManager from "../../utilities/soundManager";
 import "./CourseVideoPlayer.css";
 
 /* ═══════════════════════════════════════════════════════════════════
    CourseVideoPlayer — Learn Page Video Player (YouTube IFrame API)
-
-   • Autoplay: starts muted (browser autoplay policy) behind a
-     "Tap to unmute" chip; full audio after one click.
-   • Custom Cyberpunk HUD Control Deck:
-     - Play / Pause (▶ / ❚❚)
-     - ⏪ 10s Rewind (always unrestricted)
-     - ⏩ 10s Forward (GATED: restricted until finished once)
-     - Custom Scrub Bar: shows playback progress, furthest watched
-       point, and locked timeline section if not finished.
-     - Audio / Mute toggle.
-     - Theater / In-Page Maximize overlay toggle (fits to screen with
-       space padding, no browser requestFullscreen to prevent
-       FullscreenGate conflict).
-   • Sidebar lock: while maximized, sidebars are safely disabled.
-   • Escape key / backdrop click: safely minimizes the player.
+   
+   • TRUE OVERLAY METHOD:
+     - Normal mode stays perfectly intact inside the lesson container.
+     - Expanding opens a dedicated floating Modal Overlay via React
+       Portal into document.body.
+     - The underlying page and sidebars remain 100% undisturbed and
+       intact (zero layout reflows or crumbling).
+     - The overlay modal covers the entire screen, disabling sidebars
+       underneath until minimized.
+     - Centered with space padding and preserved 16:9 aspect ratio.
+     - Custom cyberpunk HUD media controls on both inline & overlay.
+     - Restricts fast-forwarding until video is completed once.
+       Rewind is always permitted.
+     - Safe minimization via Minimize button, ESC key, or backdrop click.
+     - No browser requestFullscreen -> No FullscreenGate conflict.
    ═══════════════════════════════════════════════════════════════════ */
 
 let ytApiPromise = null;
@@ -47,6 +48,393 @@ const fmtTime = (s) => {
   return `${m}:${String(t % 60).padStart(2, "0")}`;
 };
 
+/* ═══════════════════════════════════════════════════════════════════
+   VideoOverlayModal Component (Portaled to document.body)
+   ═══════════════════════════════════════════════════════════════════ */
+function VideoOverlayModal({
+  videoId,
+  title,
+  initialTime = 0,
+  isFinished,
+  onClose,
+  triggerParentFinish,
+}) {
+  const stageRef = useRef(null);
+  const barRef = useRef(null);
+  const playerRef = useRef(null);
+  const draggingRef = useRef(false);
+  const maxWatchedRef = useRef(initialTime);
+  const lockTimerRef = useRef(null);
+
+  const [ready, setReady] = useState(false);
+  const [playing, setPlaying] = useState(false);
+  const [muted, setMuted] = useState(false);
+  const [time, setTime] = useState(initialTime);
+  const [duration, setDuration] = useState(0);
+  const [lockNotice, setLockNotice] = useState(false);
+  const [localFinished, setLocalFinished] = useState(isFinished);
+
+  useEffect(() => {
+    if (isFinished) {
+      setLocalFinished(true);
+      maxWatchedRef.current = Infinity;
+    }
+  }, [isFinished]);
+
+  const handleCompleted = useCallback(() => {
+    setLocalFinished(true);
+    maxWatchedRef.current = Infinity;
+    triggerParentFinish?.();
+    try {
+      soundManager.play("granted");
+    } catch {}
+  }, [triggerParentFinish]);
+
+  const triggerLockAlert = useCallback(() => {
+    setLockNotice(true);
+    try {
+      soundManager.play("denied");
+    } catch {}
+    if (lockTimerRef.current) clearTimeout(lockTimerRef.current);
+    lockTimerRef.current = setTimeout(() => {
+      setLockNotice(false);
+    }, 2800);
+  }, []);
+
+  // Lock body scroll while overlay is open
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+      if (lockTimerRef.current) clearTimeout(lockTimerRef.current);
+    };
+  }, []);
+
+  const handleClose = useCallback(() => {
+    const cur = playerRef.current?.getCurrentTime?.() || time || 0;
+    try {
+      soundManager.play("modal_close");
+    } catch {}
+    onClose(cur, playing);
+  }, [time, playing, onClose]);
+
+  // Escape key closes overlay
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        e.stopPropagation();
+        handleClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [handleClose]);
+
+  // YouTube player initialization in overlay
+  useEffect(() => {
+    if (!videoId) return undefined;
+    const stage = stageRef.current;
+    if (!stage) return undefined;
+
+    let dead = false;
+    const host = document.createElement("div");
+    host.className = "cvp-host";
+    const holder = document.createElement("div");
+    host.appendChild(holder);
+    stage.appendChild(host);
+
+    loadYouTubeApi().then((YT) => {
+      if (dead) return;
+      playerRef.current = new YT.Player(holder, {
+        videoId,
+        width: "100%",
+        height: "100%",
+        playerVars: {
+          autoplay: 1,
+          start: Math.max(0, Math.floor(initialTime)),
+          mute: 0,
+          controls: 0,
+          rel: 0,
+          modestbranding: 1,
+          playsinline: 1,
+          iv_load_policy: 3,
+          disablekb: 1,
+          fs: 0,
+          origin: window.location.origin,
+        },
+        events: {
+          onReady: (e) => {
+            if (dead) return;
+            e.target.setVolume(80);
+            e.target.playVideo();
+            const dur = e.target.getDuration() || 0;
+            setDuration(dur);
+            setReady(true);
+          },
+          onStateChange: (e) => {
+            if (dead) return;
+            setPlaying(e.data === 1 || e.data === 3);
+            if (e.data === 0) {
+              handleCompleted();
+            }
+          },
+        },
+      });
+    });
+
+    return () => {
+      dead = true;
+      try {
+        playerRef.current?.destroy?.();
+      } catch {}
+      playerRef.current = null;
+      host.remove();
+    };
+  }, [videoId, initialTime, handleCompleted]);
+
+  // Progress ticker
+  useEffect(() => {
+    if (!ready) return undefined;
+    const tick = setInterval(() => {
+      const p = playerRef.current;
+      if (!p?.getCurrentTime) return;
+      try {
+        const cur = p.getCurrentTime() || 0;
+        setTime(cur);
+        const d = p.getDuration();
+        if (d && Math.abs(d - duration) > 0.5) setDuration(d);
+
+        if (cur > maxWatchedRef.current) {
+          maxWatchedRef.current = cur;
+        }
+
+        if (d > 0 && cur >= d - 1.5) {
+          handleCompleted();
+        }
+      } catch {}
+    }, 250);
+    return () => clearInterval(tick);
+  }, [ready, duration, handleCompleted]);
+
+  const seekBy = (delta) => {
+    const p = playerRef.current;
+    if (!p?.getCurrentTime) return;
+    const cur = p.getCurrentTime() || 0;
+    if (delta < 0) {
+      p.seekTo(Math.max(0, cur + delta), true);
+      if (!playing) p.playVideo();
+      try { soundManager.play("click"); } catch {}
+    } else {
+      if (!localFinished) {
+        triggerLockAlert();
+        return;
+      }
+      p.seekTo(Math.min(duration || Infinity, cur + delta), true);
+      if (!playing) p.playVideo();
+      try { soundManager.play("click"); } catch {}
+    }
+  };
+
+  const seekToFrac = (frac) => {
+    const p = playerRef.current;
+    if (!p?.getDuration) return;
+    const dur = duration || p.getDuration() || 0;
+    const target = Math.max(0, Math.min(1, frac)) * dur;
+    const cur = p.getCurrentTime() || time || 0;
+
+    if (localFinished) {
+      p.seekTo(target, true);
+      return;
+    }
+
+    if (target <= cur + 0.5) {
+      p.seekTo(target, true);
+    } else {
+      if (target <= maxWatchedRef.current) {
+        p.seekTo(target, true);
+      } else {
+        if (maxWatchedRef.current > cur + 1) {
+          p.seekTo(maxWatchedRef.current, true);
+        }
+        triggerLockAlert();
+      }
+    }
+  };
+
+  const togglePlay = () => {
+    const p = playerRef.current;
+    if (!p) return;
+    if (playing) p.pauseVideo();
+    else p.playVideo();
+  };
+
+  const toggleMute = () => {
+    const p = playerRef.current;
+    if (!p) return;
+    if (muted) {
+      p.unMute();
+      p.setVolume(80);
+      setMuted(false);
+    } else {
+      p.mute();
+      setMuted(true);
+    }
+  };
+
+  const dragSeek = (e) => {
+    if (!barRef.current) return;
+    const rect = barRef.current.getBoundingClientRect();
+    if (rect.width <= 0) return;
+    seekToFrac((e.clientX - rect.left) / rect.width);
+  };
+
+  const onBarPointerDown = (e) => {
+    draggingRef.current = true;
+    barRef.current?.setPointerCapture?.(e.pointerId);
+    dragSeek(e);
+  };
+  const onBarPointerMove = (e) => {
+    if (draggingRef.current) dragSeek(e);
+  };
+  const onBarPointerUp = (e) => {
+    draggingRef.current = false;
+    try { barRef.current?.releasePointerCapture?.(e.pointerId); } catch {}
+  };
+
+  const pct = duration ? Math.min(100, (time / duration) * 100) : 0;
+  const watchedPct = duration ? Math.min(100, (maxWatchedRef.current / duration) * 100) : 0;
+
+  return (
+    <div
+      className="cvp-overlay-backdrop"
+      onClick={handleClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label={title || "Video Player Overlay"}
+    >
+      <div className="cvp-overlay-dialog" onClick={(e) => e.stopPropagation()}>
+        {/* Overlay Top Header */}
+        <div className="cvp-overlay-header">
+          <div className="cvp-overlay-meta">
+            <span className="cvp-overlay-pulse" aria-hidden="true" />
+            <span className="cvp-overlay-eyebrow">VIDEO OVERLAY</span>
+            <span className="cvp-overlay-divider">/</span>
+            <span className="cvp-overlay-title">{title || "Course Video"}</span>
+          </div>
+          <button
+            className="cvp-overlay-close-btn"
+            onClick={handleClose}
+            title="Minimize video player (Esc)"
+            type="button"
+          >
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <path d="M4 14h6v6M20 10h-6V4M14 10l7-7M10 14l-7 7" />
+            </svg>
+            <span>Minimize [ESC]</span>
+          </button>
+        </div>
+
+        {/* Lock Notice */}
+        {lockNotice && (
+          <div className="cvp-lock-alert" role="status" aria-live="polite">
+            <span className="cvp-lock-alert-icon">🔒</span>
+            <span className="cvp-lock-alert-text">
+              Fast-forwarding is restricted. Finish watching this lesson once to unlock full timeline seeking.
+            </span>
+          </div>
+        )}
+
+        {/* Stage Container */}
+        <div className="cvp-overlay-stage-wrapper">
+          <div className="cvp-stage" ref={stageRef}>
+            {!ready && <div className="cvp-loading">Loading video…</div>}
+          </div>
+        </div>
+
+        {/* Custom Cyberpunk Media Deck */}
+        <div className="cvp-deck">
+          <button
+            className="cvp-btn cvp-btn-play"
+            onClick={togglePlay}
+            title={playing ? "Pause" : "Play"}
+            type="button"
+          >
+            {playing ? "❚❚" : "▶"}
+          </button>
+          <button
+            className="cvp-btn cvp-btn-rewind"
+            onClick={() => seekBy(-10)}
+            title="Rewind 10 seconds"
+            type="button"
+          >
+            ⏪
+          </button>
+          <button
+            className={`cvp-btn cvp-btn-forward ${!localFinished ? "cvp-btn-locked" : ""}`}
+            onClick={() => {
+              if (!localFinished) triggerLockAlert();
+              else seekBy(10);
+            }}
+            disabled={!localFinished}
+            title={localFinished ? "Forward 10 seconds" : "Forwarding locked until lesson finished once"}
+            type="button"
+          >
+            {localFinished ? "⏩" : "🔒"}
+          </button>
+          <span className="cvp-time">
+            {fmtTime(time)} / {fmtTime(duration)}
+          </span>
+          <div
+            className={`cvp-bar ${!localFinished ? "is-gated" : ""}`}
+            ref={barRef}
+            onPointerDown={onBarPointerDown}
+            onPointerMove={onBarPointerMove}
+            onPointerUp={onBarPointerUp}
+            role="slider"
+            aria-label="Seek timeline"
+            aria-valuemin={0}
+            aria-valuemax={Math.floor(duration)}
+            aria-valuenow={Math.floor(time)}
+          >
+            <div className="cvp-bar-track">
+              {!localFinished && duration > 0 && (
+                <div
+                  className="cvp-bar-watched-zone"
+                  style={{ width: `${watchedPct}%` }}
+                  title="Unlocked watched segment"
+                />
+              )}
+              <div className="cvp-bar-fill" style={{ width: `${pct}%` }} />
+              <div className="cvp-bar-knob" style={{ left: `${pct}%` }} />
+            </div>
+          </div>
+          <button
+            className={`cvp-btn ${muted ? "cvp-btn-muted" : ""}`}
+            onClick={toggleMute}
+            title={muted ? "Unmute" : "Mute"}
+            type="button"
+          >
+            {muted ? "Muted" : "Audio"}
+          </button>
+          <button
+            className="cvp-btn cvp-btn-expand is-active"
+            onClick={handleClose}
+            title="Minimize player (Esc)"
+            type="button"
+          >
+            🗗
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Main CourseVideoPlayer Component (Inline + Overlay Portal)
+   ═══════════════════════════════════════════════════════════════════ */
 export default function CourseVideoPlayer({
   videoId,
   lessonId,
@@ -54,7 +442,6 @@ export default function CourseVideoPlayer({
   compact = false,
   isAlreadyFinished = false,
   onFinished,
-  onMaximizeChange,
 }) {
   const stageRef = useRef(null);
   const shellRef = useRef(null);
@@ -69,10 +456,10 @@ export default function CourseVideoPlayer({
   const [muted, setMuted] = useState(true);
   const [time, setTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [isMaximized, setIsMaximized] = useState(false);
   const [lockNotice, setLockNotice] = useState(false);
+  const [isOverlayOpen, setIsOverlayOpen] = useState(false);
+  const [overlayStartTime, setOverlayStartTime] = useState(0);
 
-  /* Determine initial finished state from props or localStorage */
   const [isFinished, setIsFinished] = useState(() => {
     if (isAlreadyFinished) return true;
     try {
@@ -82,7 +469,6 @@ export default function CourseVideoPlayer({
     return false;
   });
 
-  /* Sync with incoming prop if video was completed externally */
   useEffect(() => {
     if (isAlreadyFinished) {
       setIsFinished(true);
@@ -90,7 +476,6 @@ export default function CourseVideoPlayer({
     }
   }, [isAlreadyFinished]);
 
-  /* Reset max watched time when videoId changes */
   useEffect(() => {
     maxWatchedRef.current = 0;
     setLockNotice(false);
@@ -105,7 +490,6 @@ export default function CourseVideoPlayer({
     }
   }, [videoId, lessonId, isAlreadyFinished]);
 
-  /* Mark video as completed */
   const handleVideoCompleted = useCallback(() => {
     setIsFinished((prev) => {
       if (!prev) {
@@ -124,7 +508,6 @@ export default function CourseVideoPlayer({
     });
   }, [videoId, lessonId, onFinished]);
 
-  /* Trigger lock warning toast */
   const triggerLockAlert = useCallback(() => {
     setLockNotice(true);
     try {
@@ -136,7 +519,7 @@ export default function CourseVideoPlayer({
     }, 2800);
   }, []);
 
-  /* Create / destroy the YT player when video changes */
+  // Initialize inline player
   useEffect(() => {
     if (!videoId) return undefined;
     const stage = stageRef.current;
@@ -163,7 +546,7 @@ export default function CourseVideoPlayer({
         height: "100%",
         playerVars: {
           autoplay: 1,
-          mute: 1, // browser autoplay policy
+          mute: 1,
           controls: 0,
           rel: 0,
           modestbranding: 1,
@@ -186,7 +569,6 @@ export default function CourseVideoPlayer({
             if (dead) return;
             setPlaying(e.data === 1 || e.data === 3);
             if (e.data === 0) {
-              // Video ended
               handleVideoCompleted();
             }
           },
@@ -204,9 +586,9 @@ export default function CourseVideoPlayer({
     };
   }, [videoId, handleVideoCompleted]);
 
-  /* Progress ticker while ready */
+  // Inline progress ticker
   useEffect(() => {
-    if (!ready) return undefined;
+    if (!ready || isOverlayOpen) return undefined;
     const tick = setInterval(() => {
       const p = playerRef.current;
       if (!p?.getCurrentTime) return;
@@ -214,98 +596,101 @@ export default function CourseVideoPlayer({
         const cur = p.getCurrentTime() || 0;
         setTime(cur);
         const d = p.getDuration();
-        if (d && Math.abs(d - duration) > 0.5) {
-          setDuration(d);
-        }
+        if (d && Math.abs(d - duration) > 0.5) setDuration(d);
 
-        // Track furthest reached point
         if (cur > maxWatchedRef.current) {
           maxWatchedRef.current = cur;
         }
 
-        // Check completion near end
         if (d > 0 && cur >= d - 1.5) {
           handleVideoCompleted();
         }
       } catch {}
     }, 250);
     return () => clearInterval(tick);
-  }, [ready, duration, handleVideoCompleted]);
+  }, [ready, duration, isOverlayOpen, handleVideoCompleted]);
 
-  /* Seek delta (+10s / -10s) */
-  const seekBy = useCallback(
-    (delta) => {
-      const p = playerRef.current;
-      if (!p?.getCurrentTime) return;
-      const cur = p.getCurrentTime() || 0;
+  // Open overlay
+  const handleOpenOverlay = () => {
+    const cur = playerRef.current?.getCurrentTime?.() || time || 0;
+    try {
+      playerRef.current?.pauseVideo?.();
+    } catch {}
+    setOverlayStartTime(cur);
+    try {
+      soundManager.play("modal_open");
+    } catch {}
+    setIsOverlayOpen(true);
+  };
 
-      if (delta < 0) {
-        // Rewind is always unrestricted
-        p.seekTo(Math.max(0, cur + delta), true);
-        if (!playing) p.playVideo();
-        try {
-          soundManager.play("click");
-        } catch {}
-      } else {
-        // Forwarding restricted until completed once
-        if (!isFinished) {
-          triggerLockAlert();
-          return;
-        }
-        p.seekTo(Math.min(duration || Infinity, cur + delta), true);
-        if (!playing) p.playVideo();
-        try {
-          soundManager.play("click");
-        } catch {}
+  // Close overlay and resume inline
+  const handleCloseOverlay = (resumeTime, wasPlaying) => {
+    setIsOverlayOpen(false);
+    setTime(resumeTime);
+    if (resumeTime > maxWatchedRef.current) {
+      maxWatchedRef.current = resumeTime;
+    }
+    if (playerRef.current?.seekTo) {
+      playerRef.current.seekTo(resumeTime, true);
+      if (wasPlaying) {
+        playerRef.current.playVideo();
       }
-    },
-    [playing, isFinished, duration, triggerLockAlert]
-  );
+    }
+  };
 
-  /* Timeline scrub seek */
-  const seekToFrac = useCallback(
-    (frac) => {
-      const p = playerRef.current;
-      if (!p?.getDuration) return;
-      const dur = duration || p.getDuration() || 0;
-      const target = Math.max(0, Math.min(1, frac)) * dur;
-      const cur = p.getCurrentTime() || time || 0;
-
-      if (isFinished) {
-        // Unrestricted
-        p.seekTo(target, true);
+  const seekBy = (delta) => {
+    const p = playerRef.current;
+    if (!p?.getCurrentTime) return;
+    const cur = p.getCurrentTime() || 0;
+    if (delta < 0) {
+      p.seekTo(Math.max(0, cur + delta), true);
+      if (!playing) p.playVideo();
+      try { soundManager.play("click"); } catch {}
+    } else {
+      if (!isFinished) {
+        triggerLockAlert();
         return;
       }
+      p.seekTo(Math.min(duration || Infinity, cur + delta), true);
+      if (!playing) p.playVideo();
+      try { soundManager.play("click"); } catch {}
+    }
+  };
 
-      // Restrict forwarding when not finished
-      if (target <= cur + 0.5) {
-        // Rewind: always allowed
+  const seekToFrac = (frac) => {
+    const p = playerRef.current;
+    if (!p?.getDuration) return;
+    const dur = duration || p.getDuration() || 0;
+    const target = Math.max(0, Math.min(1, frac)) * dur;
+    const cur = p.getCurrentTime() || time || 0;
+
+    if (isFinished) {
+      p.seekTo(target, true);
+      return;
+    }
+
+    if (target <= cur + 0.5) {
+      p.seekTo(target, true);
+    } else {
+      if (target <= maxWatchedRef.current) {
         p.seekTo(target, true);
       } else {
-        // Forwarding attempt
-        if (target <= maxWatchedRef.current) {
-          // Allowed up to already watched point
-          p.seekTo(target, true);
-        } else {
-          // Block forward seek into unwatched section
-          if (maxWatchedRef.current > cur + 1) {
-            p.seekTo(maxWatchedRef.current, true);
-          }
-          triggerLockAlert();
+        if (maxWatchedRef.current > cur + 1) {
+          p.seekTo(maxWatchedRef.current, true);
         }
+        triggerLockAlert();
       }
-    },
-    [isFinished, duration, time, triggerLockAlert]
-  );
+    }
+  };
 
-  const togglePlay = useCallback(() => {
+  const togglePlay = () => {
     const p = playerRef.current;
     if (!p) return;
     if (playing) p.pauseVideo();
     else p.playVideo();
-  }, [playing]);
+  };
 
-  const toggleMute = useCallback(() => {
+  const toggleMute = () => {
     const p = playerRef.current;
     if (!p) return;
     if (muted) {
@@ -317,52 +702,7 @@ export default function CourseVideoPlayer({
       p.mute();
       setMuted(true);
     }
-  }, [muted, playing]);
-
-  /* In-Page Maximize / Theater Mode (No requestFullscreen -> No FullscreenGate conflict) */
-  const toggleMaximize = useCallback(
-    (forcedState) => {
-      setIsMaximized((prev) => {
-        const next = typeof forcedState === "boolean" ? forcedState : !prev;
-        if (next) {
-          document.body.classList.add("cvp-maximized-active");
-          try {
-            soundManager.play("modal_open");
-          } catch {}
-        } else {
-          document.body.classList.remove("cvp-maximized-active");
-          try {
-            soundManager.play("modal_close");
-          } catch {}
-        }
-        onMaximizeChange?.(next);
-        return next;
-      });
-    },
-    [onMaximizeChange]
-  );
-
-  /* Escape key closes maximized theater overlay */
-  useEffect(() => {
-    if (!isMaximized) return undefined;
-    const handleKeyDown = (e) => {
-      if (e.key === "Escape") {
-        e.preventDefault();
-        e.stopPropagation();
-        toggleMaximize(false);
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isMaximized, toggleMaximize]);
-
-  /* Clean up body class if component unmounts while maximized */
-  useEffect(() => {
-    return () => {
-      document.body.classList.remove("cvp-maximized-active");
-      if (lockTimerRef.current) clearTimeout(lockTimerRef.current);
-    };
-  }, []);
+  };
 
   const dragSeek = (e) => {
     if (!barRef.current) return;
@@ -381,161 +721,159 @@ export default function CourseVideoPlayer({
   };
   const onBarPointerUp = (e) => {
     draggingRef.current = false;
-    try {
-      barRef.current?.releasePointerCapture?.(e.pointerId);
-    } catch {}
+    try { barRef.current?.releasePointerCapture?.(e.pointerId); } catch {}
   };
 
   const pct = duration ? Math.min(100, (time / duration) * 100) : 0;
   const watchedPct = duration ? Math.min(100, (maxWatchedRef.current / duration) * 100) : 0;
 
   return (
-    <div
-      className={`cvp-shell ${compact ? "cvp-compact" : ""} ${isMaximized ? "cvp-maximized" : ""}`}
-      ref={shellRef}
-      onClick={(e) => {
-        // Clicking backdrop padding minimizes the player
-        if (isMaximized && e.target === shellRef.current) {
-          toggleMaximize(false);
-        }
-      }}
-      title={title ? `Video player — ${title}` : undefined}
-    >
-      <div className="cvp-container" onClick={(e) => e.stopPropagation()}>
-        {/* Theater Header (displayed when maximized) */}
-        {isMaximized && (
-          <div className="cvp-theater-bar">
-            <div className="cvp-theater-meta">
-              <span className="cvp-theater-pulse" aria-hidden="true" />
-              <span className="cvp-theater-badge">THEATER MODE</span>
-              <span className="cvp-theater-divider" aria-hidden="true">/</span>
-              <span className="cvp-theater-title">{title || "Course Video"}</span>
+    <>
+      <div
+        className={`cvp-shell ${compact ? "cvp-compact" : ""}`}
+        ref={shellRef}
+        title={title ? `Video player — ${title}` : undefined}
+      >
+        <div className="cvp-container">
+          {lockNotice && (
+            <div className="cvp-lock-alert" role="status" aria-live="polite">
+              <span className="cvp-lock-alert-icon">🔒</span>
+              <span className="cvp-lock-alert-text">
+                Fast-forwarding is restricted. Finish watching this lesson once to unlock full timeline seeking.
+              </span>
             </div>
-            <button
-              className="cvp-theater-minimize-btn"
-              onClick={() => toggleMaximize(false)}
-              title="Minimize player (Esc)"
-              type="button"
-            >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <path d="M4 14h6v6M20 10h-6V4M14 10l7-7M10 14l-7 7" />
-              </svg>
-              <span>Minimize [ESC]</span>
-            </button>
-          </div>
-        )}
-
-        {/* Lock Toast Alert */}
-        {lockNotice && (
-          <div className="cvp-lock-alert" role="status" aria-live="polite">
-            <span className="cvp-lock-alert-icon">🔒</span>
-            <span className="cvp-lock-alert-text">
-              Fast-forwarding is restricted. Finish watching this lesson once to unlock full timeline seeking.
-            </span>
-          </div>
-        )}
-
-        {/* Video Stage */}
-        <div
-          className="cvp-stage"
-          ref={stageRef}
-          onDoubleClick={() => toggleMaximize()}
-          title="Double click to toggle theater mode"
-        >
-          {ready && muted && (
-            <button
-              className="cvp-unmute-chip"
-              onClick={toggleMute}
-              title="Unmute audio"
-              type="button"
-            >
-              Tap to unmute
-            </button>
           )}
-          {!ready && <div className="cvp-loading">Loading video…</div>}
-        </div>
 
-        {/* Cyberpunk Custom Media Deck */}
-        <div className="cvp-deck">
-          <button
-            className="cvp-btn cvp-btn-play"
-            onClick={togglePlay}
-            title={playing ? "Pause" : "Play"}
-            type="button"
-          >
-            {playing ? "❚❚" : "▶"}
-          </button>
-
-          <button
-            className="cvp-btn cvp-btn-rewind"
-            onClick={() => seekBy(-10)}
-            title="Rewind 10 seconds"
-            type="button"
-          >
-            ⏪
-          </button>
-
-          <button
-            className={`cvp-btn cvp-btn-forward ${!isFinished ? "cvp-btn-locked" : ""}`}
-            onClick={() => {
-              if (!isFinished) triggerLockAlert();
-              else seekBy(10);
-            }}
-            disabled={!isFinished}
-            title={isFinished ? "Forward 10 seconds" : "Forwarding locked until lesson finished once"}
-            type="button"
-          >
-            {isFinished ? "⏩" : "🔒"}
-          </button>
-
-          <span className="cvp-time">
-            {fmtTime(time)} / {fmtTime(duration)}
-          </span>
-
+          {/* Stage */}
           <div
-            className={`cvp-bar ${!isFinished ? "is-gated" : ""}`}
-            ref={barRef}
-            onPointerDown={onBarPointerDown}
-            onPointerMove={onBarPointerMove}
-            onPointerUp={onBarPointerUp}
-            role="slider"
-            aria-label="Seek timeline"
-            aria-valuemin={0}
-            aria-valuemax={Math.floor(duration)}
-            aria-valuenow={Math.floor(time)}
+            className="cvp-stage"
+            ref={stageRef}
+            onDoubleClick={handleOpenOverlay}
+            title="Double click to open overlay theater view"
           >
-            <div className="cvp-bar-track">
-              {!isFinished && duration > 0 && (
-                <div
-                  className="cvp-bar-watched-zone"
-                  style={{ width: `${watchedPct}%` }}
-                  title="Unlocked watched segment"
-                />
-              )}
-              <div className="cvp-bar-fill" style={{ width: `${pct}%` }} />
-              <div className="cvp-bar-knob" style={{ left: `${pct}%` }} />
-            </div>
+            {ready && muted && (
+              <button
+                className="cvp-unmute-chip"
+                onClick={toggleMute}
+                title="Unmute audio"
+                type="button"
+              >
+                Tap to unmute
+              </button>
+            )}
+            {!ready && <div className="cvp-loading">Loading video…</div>}
+
+            {/* Indicator when playing in overlay */}
+            {isOverlayOpen && (
+              <div className="cvp-inline-overlay-placeholder">
+                <span className="cvp-overlay-pulse-tag">● PLAYING IN OVERLAY</span>
+                <button
+                  className="cvp-overlay-reopen-btn"
+                  onClick={() => setIsOverlayOpen(true)}
+                  type="button"
+                >
+                  View Overlay
+                </button>
+              </div>
+            )}
           </div>
 
-          <button
-            className={`cvp-btn ${muted ? "cvp-btn-muted" : ""}`}
-            onClick={toggleMute}
-            title={muted ? "Unmute" : "Mute"}
-            type="button"
-          >
-            {muted ? "Muted" : "Audio"}
-          </button>
+          {/* Custom Cyberpunk Media Deck */}
+          <div className="cvp-deck">
+            <button
+              className="cvp-btn cvp-btn-play"
+              onClick={togglePlay}
+              title={playing ? "Pause" : "Play"}
+              type="button"
+            >
+              {playing ? "❚❚" : "▶"}
+            </button>
 
-          <button
-            className={`cvp-btn cvp-btn-expand ${isMaximized ? "is-active" : ""}`}
-            onClick={() => toggleMaximize()}
-            title={isMaximized ? "Minimize player (Esc)" : "Maximize player to fit screen"}
-            type="button"
-          >
-            {isMaximized ? "🗗" : "⛶"}
-          </button>
+            <button
+              className="cvp-btn cvp-btn-rewind"
+              onClick={() => seekBy(-10)}
+              title="Rewind 10 seconds"
+              type="button"
+            >
+              ⏪
+            </button>
+
+            <button
+              className={`cvp-btn cvp-btn-forward ${!isFinished ? "cvp-btn-locked" : ""}`}
+              onClick={() => {
+                if (!isFinished) triggerLockAlert();
+                else seekBy(10);
+              }}
+              disabled={!isFinished}
+              title={isFinished ? "Forward 10 seconds" : "Forwarding locked until lesson finished once"}
+              type="button"
+            >
+              {isFinished ? "⏩" : "🔒"}
+            </button>
+
+            <span className="cvp-time">
+              {fmtTime(time)} / {fmtTime(duration)}
+            </span>
+
+            <div
+              className={`cvp-bar ${!isFinished ? "is-gated" : ""}`}
+              ref={barRef}
+              onPointerDown={onBarPointerDown}
+              onPointerMove={onBarPointerMove}
+              onPointerUp={onBarPointerUp}
+              role="slider"
+              aria-label="Seek timeline"
+              aria-valuemin={0}
+              aria-valuemax={Math.floor(duration)}
+              aria-valuenow={Math.floor(time)}
+            >
+              <div className="cvp-bar-track">
+                {!isFinished && duration > 0 && (
+                  <div
+                    className="cvp-bar-watched-zone"
+                    style={{ width: `${watchedPct}%` }}
+                    title="Unlocked watched segment"
+                  />
+                )}
+                <div className="cvp-bar-fill" style={{ width: `${pct}%` }} />
+                <div className="cvp-bar-knob" style={{ left: `${pct}%` }} />
+              </div>
+            </div>
+
+            <button
+              className={`cvp-btn ${muted ? "cvp-btn-muted" : ""}`}
+              onClick={toggleMute}
+              title={muted ? "Unmute" : "Mute"}
+              type="button"
+            >
+              {muted ? "Muted" : "Audio"}
+            </button>
+
+            <button
+              className="cvp-btn cvp-btn-expand"
+              onClick={handleOpenOverlay}
+              title="Maximize player to overlay modal (Esc to exit)"
+              type="button"
+            >
+              ⛶
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+
+      {/* OVERLAY MODAL: Portaled directly into document.body */}
+      {isOverlayOpen &&
+        createPortal(
+          <VideoOverlayModal
+            videoId={videoId}
+            title={title}
+            initialTime={overlayStartTime}
+            isFinished={isFinished}
+            onClose={handleCloseOverlay}
+            triggerParentFinish={handleVideoCompleted}
+          />,
+          document.body
+        )}
+    </>
   );
 }

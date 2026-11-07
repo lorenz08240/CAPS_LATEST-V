@@ -48,10 +48,23 @@ export const EditComponentDrawer = ({
   const [imgError, setImgError] = useState(false);
   const [restoredDraft, setRestoredDraft] = useState(false);
   const drawerRef = useRef(null);
+  const scrollBodyRef = useRef(null);
 
   // Sync form data or restore draft from sessionStorage when drawer opens
   useEffect(() => {
     if (isOpen) {
+      if (scrollBodyRef.current) {
+        scrollBodyRef.current.scrollTop = 0;
+      }
+      const focusTimer = setTimeout(() => {
+        if (scrollBodyRef.current) {
+          const firstField = scrollBodyRef.current.querySelector("input:not([type=hidden]), select, textarea");
+          if (firstField && typeof firstField.focus === "function") {
+            firstField.focus();
+          }
+        }
+      }, 60);
+
       const currentInitialId = initialData?.id || null;
       let loadedFromDraft = false;
 
@@ -326,7 +339,7 @@ export const EditComponentDrawer = ({
           </button>
         </div>
 
-        <div className="drawer-scroll-body">
+        <div className="drawer-scroll-body" ref={scrollBodyRef}>
           {restoredDraft && (
             <div className="drawer-draft-banner">
               <div className="draft-banner-text">

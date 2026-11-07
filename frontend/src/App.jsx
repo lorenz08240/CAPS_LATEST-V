@@ -4,6 +4,7 @@ import {
   Routes,
   Route,
   useLocation,
+  useParams,
   Navigate,
 } from "react-router-dom";
 import { BuildProvider } from "./contexts/BuildContext";
@@ -27,7 +28,8 @@ import {
   AdminAddComponent,
   AdminEditComponent,
   AdminLogin,
-  AdminAuthGuard
+  AdminAuthGuard,
+  AdminLogs
 } from "./components/Admin/Admin";
 import MotionPage from "./utilities/pageTransitions";
 
@@ -39,6 +41,11 @@ const ScrollToTop = () => {
   }, [pathname]);
 
   return null;
+};
+
+const AdminEditRedirect = () => {
+  const { componentId } = useParams();
+  return <Navigate to={`/admin/inventory${componentId ? `?edit=${encodeURIComponent(componentId)}` : ""}`} replace />;
 };
 
 function AppContent() {
@@ -104,9 +111,7 @@ function AppContent() {
               path="/admin/add"
               element={
                 <AdminAuthGuard>
-                  <MotionPage routeKey="/admin/add">
-                    <AdminAddComponent />
-                  </MotionPage>
+                  <Navigate to="/admin/inventory?action=add" replace />
                 </AdminAuthGuard>
               }
             />
@@ -114,9 +119,7 @@ function AppContent() {
               path="/admin/edit"
               element={
                 <AdminAuthGuard>
-                  <MotionPage routeKey="/admin/edit">
-                    <AdminEditComponent />
-                  </MotionPage>
+                  <Navigate to="/admin/inventory" replace />
                 </AdminAuthGuard>
               }
             />
@@ -124,9 +127,7 @@ function AppContent() {
               path="/admin/edit/:componentId"
               element={
                 <AdminAuthGuard>
-                  <MotionPage routeKey="/admin/edit-id">
-                    <AdminEditComponent />
-                  </MotionPage>
+                  <AdminEditRedirect />
                 </AdminAuthGuard>
               }
             />
@@ -134,7 +135,7 @@ function AppContent() {
               path="/admin/delete"
               element={
                 <AdminAuthGuard>
-                  <Navigate to="/admin/edit" replace />
+                  <Navigate to="/admin/inventory" replace />
                 </AdminAuthGuard>
               }
             />
@@ -144,6 +145,16 @@ function AppContent() {
                 <AdminAuthGuard>
                   <MotionPage routeKey="/admin/crawler">
                     <AdminCrawler />
+                  </MotionPage>
+                </AdminAuthGuard>
+              }
+            />
+            <Route
+              path="/admin/logs"
+              element={
+                <AdminAuthGuard>
+                  <MotionPage routeKey="/admin/logs">
+                    <AdminLogs />
                   </MotionPage>
                 </AdminAuthGuard>
               }

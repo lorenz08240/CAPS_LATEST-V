@@ -115,6 +115,22 @@ export const AdminInventory = () => {
   const [loading, setLoading] = useState(true);
   const [notification, setNotification] = useState({ text: "", type: "info" });
 
+  // Auto-open drawer when deep-linked or redirected with ?action=add or ?edit=id or ?id=id
+  useEffect(() => {
+    const action = searchParams.get("action");
+    const editId = searchParams.get("edit") || searchParams.get("id");
+    if (action === "add") {
+      setDrawerInitialData(null);
+      setIsDrawerOpen(true);
+    } else if (editId && parts.length > 0) {
+      const match = parts.find((p) => String(p.id).toLowerCase() === String(editId).toLowerCase());
+      if (match) {
+        setDrawerInitialData(match);
+        setIsDrawerOpen(true);
+      }
+    }
+  }, [searchParams, parts]);
+
   // Fetch pending review count for the sidebar badge
   useEffect(() => {
     let ignore = false;
@@ -386,14 +402,18 @@ export const AdminInventory = () => {
             </div>
 
             <div className="inventory-primary-action">
-              <Link
-                to="/admin/add"
+              <button
+                type="button"
                 className="btn-add-component-neon"
-                title="Open dedicated Add Component screen"
+                onClick={() => {
+                  setDrawerInitialData(null);
+                  setIsDrawerOpen(true);
+                }}
+                title="Add new hardware component via drawer"
               >
                 <span className="btn-plus-icon">+</span>
                 <span>Add New Component</span>
-              </Link>
+              </button>
             </div>
           </div>
 
@@ -470,13 +490,17 @@ export const AdminInventory = () => {
 
                         <td style={{ textAlign: "center" }}>
                           <div className="table-actions">
-                            <Link
-                              to={`/admin/edit?id=${encodeURIComponent(part.id)}`}
+                            <button
+                              type="button"
                               className="sleek-block-action-btn edit-block-btn"
-                              title={`Open editor and specs for ${part.name}`}
+                              onClick={() => {
+                                setDrawerInitialData(part);
+                                setIsDrawerOpen(true);
+                              }}
+                              title={`Edit specs and matrix rules for ${part.name}`}
                             >
                               <span className="btn-label">Edit</span>
-                            </Link>
+                            </button>
                           </div>
                         </td>
                       </tr>
@@ -545,6 +569,14 @@ export const AdminInventory = () => {
         onClose={() => {
           setIsDrawerOpen(false);
           setDrawerInitialData(null);
+          // If URL had action or edit/id, clean it up without disturbing category
+          if (searchParams.has("action") || searchParams.has("edit") || searchParams.has("id")) {
+            const nextParams = new URLSearchParams(searchParams);
+            nextParams.delete("action");
+            nextParams.delete("edit");
+            nextParams.delete("id");
+            setSearchParams(nextParams, { replace: true });
+          }
         }}
         initialData={drawerInitialData}
         onSave={handleSaveComponent}
