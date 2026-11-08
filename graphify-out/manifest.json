@@ -72,9 +72,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/3D/PCBuilder3D.jsx": {
-    "mtime": 1794172280.7061784,
-    "seen": 1794173179.6529014,
-    "ast_hash": "f39b7428b0d60466b993e17fa12cdc2b",
+    "mtime": 1794173930.6681063,
+    "seen": 1794174121.3672576,
+    "ast_hash": "21a3db793349a84cc75ab183db695f28",
     "semantic_hash": ""
   },
   "frontend/src/components/3D/ProceduralSickleFan.jsx": {
@@ -132,9 +132,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/CourseShell.jsx": {
-    "mtime": 1793932969.4140768,
-    "seen": 1793933082.0645573,
-    "ast_hash": "e9f3beb996199dbf966eda616b5436ec",
+    "mtime": 1794173549.2564645,
+    "seen": 1794173699.550724,
+    "ast_hash": "23f2ba4004eb667af4a2639e709c464e",
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/CourseVideoPlayer.jsx": {
@@ -150,9 +150,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Navbar/Navbar.jsx": {
-    "mtime": 1794039100.2535992,
-    "seen": 1794042133.077914,
-    "ast_hash": "eadac8e6a4662cc6e708b632811ee60f",
+    "mtime": 1794173763.698563,
+    "seen": 1794174121.3733673,
+    "ast_hash": "1a95bca5482e9e137dd73a8323d63d36",
     "semantic_hash": ""
   },
   "frontend/src/contexts/AuthContext.jsx": {
@@ -492,9 +492,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Home/Home3DHero.jsx": {
-    "mtime": 1794172464.6260526,
-    "seen": 1794173179.6568723,
-    "ast_hash": "c27d9f7665119866fae35a8d27c66ec7",
+    "mtime": 1794173873.0280595,
+    "seen": 1794174121.372634,
+    "ast_hash": "e5c8d58d270cf46fa97c25189a33641f",
     "semantic_hash": ""
   },
   "frontend/src/components/3D/DDR4RAMModel.jsx": {
@@ -624,9 +624,9 @@
     "semantic_hash": ""
   },
   "frontend/src/contexts/SidebarContext.jsx": {
-    "mtime": 1793930995.3847184,
-    "seen": 1793931109.0871847,
-    "ast_hash": "6f455bc0bec885c04b634af477a25c56",
+    "mtime": 1794173687.072417,
+    "seen": 1794173699.5517817,
+    "ast_hash": "8f3605400260bdc8b79da8fe50e93d64",
     "semantic_hash": ""
   },
   "frontend/src/components/HelpSupport/HelpSupport.jsx": {
@@ -636,9 +636,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/BobCompanion/BobCompanion.jsx": {
-    "mtime": 1793901224.9369237,
-    "seen": 1793901405.7340717,
-    "ast_hash": "8e59ea66fc4e18dc1ed4e2ff60c9b575",
+    "mtime": 1794173436.051935,
+    "seen": 1794173699.5487993,
+    "ast_hash": "1cb5c1caac5af2cc2100122f9f65601c",
     "semantic_hash": ""
   },
   "frontend/public/assets/banner_left.png": {

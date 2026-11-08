@@ -649,6 +649,38 @@ const COURSE = [
 
 /* ═══════════════════════════ COMPONENT ═══════════════════════════ */
 
+/* ══════════════════════════════════════════════════════════════
+   B.O.B. CASUAL SYLLABUS TOUR & DIALOGUE WISDOM (ANTI-SLOP)
+   Tone: Playful, friendly, casual hardware buddy
+   ══════════════════════════════════════════════════════════════ */
+const BOB_SYLLABUS_GUIDE = {
+  introNew: [
+    "Yo! Welcome to the Course Syllabus. I'm B.O.B., your hardware companion. Let me show you around the lab!",
+    "Hey there! Welcome to the syllabus. I'm B.O.B., your PC building buddy. Ready for a quick tour?",
+  ],
+  introReturning: [
+    "Welcome back to the Course Syllabus! Let's get right into the hardware breakdown.",
+    "Back in the syllabus! Pick up right where you left off, or check out the next chapter.",
+    "Ready for more hardware labs? Pick a topic and let's get into it!",
+  ],
+  center: [
+    "Right here in the center is where the magic happens! Video lessons, interactive hardware breakdowns, and lab demos.",
+    "Center stage! You've got comprehensive lessons, video films, and step-by-step assembly guides right here.",
+  ],
+  topics: [
+    "Up top is your topic quick-jump bar! Jump straight between Foundational Lecture, Objectives, Core Reading, or Unit Quiz.",
+    "Check that sticky bar at the top! It lets you jump to any section of the lesson in one click.",
+  ],
+  syllabus: [
+    "Over on the right is your master syllabus! Track your modules, chapters, and completed lectures. Hit the tab to expand or collapse it.",
+    "The right panel tracks your whole curriculum! You can see all 12 modules and jump between them anytime.",
+  ],
+  done: [
+    "That's the layout! Take your time, soak in the specs, and poke me anytime if you need a tip.",
+    "You're all set! Dive into Chapter 1 whenever you're ready—let's build some PC knowledge!",
+  ],
+};
+
 export default function CourseShell({ componentGuide }) {
   const navigate = useNavigate();
   const { addComponent } = useBuild();
@@ -670,10 +702,139 @@ export default function CourseShell({ componentGuide }) {
   // Sidebar visibility is strictly driven by toggle/click, not mouse hover!
   const isVisible = isPinned;
 
+  // Welcome Banner & Navigation Tour State
+  const [showWelcomeOverlay, setShowWelcomeOverlay] = useState(() => {
+    try {
+      return localStorage.getItem("buildlab_syllabus_intro_seen") !== "true";
+    } catch {
+      return false;
+    }
+  });
+
+  const [isBobCentered, setIsBobCentered] = useState(() => {
+    try {
+      return localStorage.getItem("buildlab_syllabus_intro_seen") !== "true";
+    } catch {
+      return false;
+    }
+  });
+
+  const [guideTarget, setGuideTarget] = useState(null);
+  const guideTimerRef = useRef(null);
+
   /* B.O.B. Companion live speech state */
   const [bobSpeech, setBobSpeech] = useState(
     "Hi! I'm B.O.B., your BuildLab companion. Let's master computer architecture together!"
   );
+
+  // Dismiss guide tour or welcome overlay
+  const dismissGuideTour = useCallback(() => {
+    if (guideTimerRef.current) {
+      clearTimeout(guideTimerRef.current);
+      guideTimerRef.current = null;
+    }
+    setGuideTarget(null);
+    setShowWelcomeOverlay(false);
+    setIsBobCentered(false);
+    try {
+      localStorage.setItem("buildlab_syllabus_intro_seen", "true");
+      soundManager.play("click");
+    } catch {}
+  }, []);
+
+  // Start 3-step navigation highlight tour
+  const startGuideTour = useCallback(() => {
+    if (guideTimerRef.current) {
+      clearTimeout(guideTimerRef.current);
+      guideTimerRef.current = null;
+    }
+    try {
+      localStorage.setItem("buildlab_syllabus_intro_seen", "true");
+    } catch {}
+    setShowWelcomeOverlay(false);
+    setIsBobCentered(false);
+    try {
+      soundManager.play("snap");
+    } catch {}
+
+    const pickRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+    // PHASE 1: Center Lesson Content & Video (6.0s)
+    setGuideTarget("center");
+    setBobSpeech(pickRandom(BOB_SYLLABUS_GUIDE.center));
+    try { soundManager.play("hint"); } catch {}
+
+    guideTimerRef.current = setTimeout(() => {
+      // PHASE 2: Topics Quick Jump Bar (5.5s)
+      setGuideTarget("topics");
+      setBobSpeech(pickRandom(BOB_SYLLABUS_GUIDE.topics));
+      try { soundManager.play("hint"); } catch {}
+
+      guideTimerRef.current = setTimeout(() => {
+        // PHASE 3: Right Sidebar Curriculum Syllabus (6.0s)
+        setIsPinned(true);
+        setGuideTarget("syllabus");
+        setBobSpeech(pickRandom(BOB_SYLLABUS_GUIDE.syllabus));
+        try { soundManager.play("snap"); } catch {}
+
+        guideTimerRef.current = setTimeout(() => {
+          // PHASE 4: Return to normal mode
+          setGuideTarget(null);
+          setBobSpeech(pickRandom(BOB_SYLLABUS_GUIDE.done));
+          try { soundManager.play("complete"); } catch {}
+          guideTimerRef.current = null;
+        }, 6000);
+      }, 5500);
+    }, 6000);
+  }, []);
+
+  // Cleanup tour timer on unmount
+  useEffect(() => {
+    return () => {
+      if (guideTimerRef.current) {
+        clearTimeout(guideTimerRef.current);
+      }
+    };
+  }, []);
+
+  // Initial Entrance Greeting (DO NOT repeat Bob's intro if already seen)
+  useEffect(() => {
+    let introduced = false;
+    try {
+      introduced = localStorage.getItem("buildlab_bob_introduced") === "true";
+    } catch {}
+
+    const pickRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+    if (!introduced) {
+      setBobSpeech(pickRandom(BOB_SYLLABUS_GUIDE.introNew));
+      try {
+        localStorage.setItem("buildlab_bob_introduced", "true");
+      } catch {}
+    } else {
+      setBobSpeech(pickRandom(BOB_SYLLABUS_GUIDE.introReturning));
+    }
+
+    if (showWelcomeOverlay) {
+      try {
+        soundManager.play("modal_open");
+      } catch {}
+    }
+  }, []);
+
+  // Keyboard shortcut: ESC dismisses overlay or tour
+  useEffect(() => {
+    if (!showWelcomeOverlay && !guideTarget) return undefined;
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        e.stopPropagation();
+        dismissGuideTour();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [showWelcomeOverlay, guideTarget, dismissGuideTour]);
 
   useEffect(() => {
     try {
@@ -1750,6 +1911,27 @@ export default function CourseShell({ componentGuide }) {
               <div className="course-hub-left-info">
                 <div className="course-hub-eyebrow-row">
                   <span className="course-academy-badge">BUILDLAB ACADEMY · PROFESSIONAL SPECIALIZATION</span>
+                  {guideTarget ? (
+                    <button
+                      type="button"
+                      className="course-tour-pill-btn active"
+                      onClick={dismissGuideTour}
+                      title="Dismiss highlight guide"
+                    >
+                      <span className="tour-pill-pulse" />
+                      <span>✕ SKIP TOUR</span>
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      className="course-tour-pill-btn"
+                      onClick={startGuideTour}
+                      title="Ask B.O.B. to guide you through the syllabus layout"
+                    >
+                      <span className="tour-pill-icon">💡</span>
+                      <span>GUIDE ME</span>
+                    </button>
+                  )}
                   <button
                     className={`course-syllabus-toggle-btn ${isPinned ? "is-open" : "is-collapsed"}`}
                     onClick={() => {
@@ -1819,7 +2001,26 @@ export default function CourseShell({ componentGuide }) {
               </div>
             </header>
 
-            <nav className="syllabus-anchor-bar" aria-label="Syllabus Unit Navigation">
+            <nav
+              className={`syllabus-anchor-bar bob-highlight-target ${guideTarget === 'topics' ? 'active-guide' : ''}`}
+              id="learn-topics-panel"
+              aria-label="Syllabus Unit Navigation"
+            >
+              {guideTarget === 'topics' && (
+                <>
+                  <div className="bob-guide-indicator-pill">
+                    <span className="tag-bracket">[</span>
+                    <span className="bob-guide-indicator-dot" />
+                    <span>B.O.B. // TOPIC QUICK-JUMP BAR</span>
+                    <span className="tag-bracket">]</span>
+                  </div>
+                  <div className="bob-guide-scanline" />
+                  <div className="bob-guide-corner-tl" />
+                  <div className="bob-guide-corner-tr" />
+                  <div className="bob-guide-corner-bl" />
+                  <div className="bob-guide-corner-br" />
+                </>
+              )}
               <div className="syllabus-anchor-label">
                 <span className="anchor-dot">●</span>
                 <span>Syllabus Topics:</span>
@@ -1846,7 +2047,25 @@ export default function CourseShell({ componentGuide }) {
               </div>
             </nav>
 
-            <div className="course-lesson-body">
+            <div
+              className={`course-lesson-body bob-highlight-target ${guideTarget === 'center' ? 'active-guide' : ''}`}
+              id="learn-center-panel"
+            >
+              {guideTarget === 'center' && (
+                <>
+                  <div className="bob-guide-indicator-pill">
+                    <span className="tag-bracket">[</span>
+                    <span className="bob-guide-indicator-dot" />
+                    <span>B.O.B. // LESSON FILM &amp; LAB CONTENT</span>
+                    <span className="tag-bracket">]</span>
+                  </div>
+                  <div className="bob-guide-scanline" />
+                  <div className="bob-guide-corner-tl" />
+                  <div className="bob-guide-corner-tr" />
+                  <div className="bob-guide-corner-bl" />
+                  <div className="bob-guide-corner-br" />
+                </>
+              )}
               {current.type === "component" ? renderComponentLesson(lesson) : renderArticleLesson(lesson)}
             </div>
 
@@ -1903,10 +2122,26 @@ export default function CourseShell({ componentGuide }) {
         </div>
 
         <aside 
-          className={`course-outline cyber-syllabus-panel ${isPinned ? "open pinned" : "closed"}`}
+          className={`course-outline cyber-syllabus-panel ${isPinned ? "open pinned" : "closed"} bob-highlight-target ${guideTarget === 'syllabus' ? 'active-guide' : ''}`}
+          id="learn-syllabus-panel"
           aria-label="Course Outline Sidebar"
         >
 
+          {guideTarget === 'syllabus' && (
+            <>
+              <div className="bob-guide-indicator-pill">
+                <span className="tag-bracket">[</span>
+                <span className="bob-guide-indicator-dot" />
+                <span>B.O.B. // CURRICULUM SYLLABUS</span>
+                <span className="tag-bracket">]</span>
+              </div>
+              <div className="bob-guide-scanline" />
+              <div className="bob-guide-corner-tl" />
+              <div className="bob-guide-corner-tr" />
+              <div className="bob-guide-corner-bl" />
+              <div className="bob-guide-corner-br" />
+            </>
+          )}
           <div className="course-sidebar-container">
             <div className="course-sidebar-header">
               <div className="sidebar-header-left">
@@ -2020,11 +2255,93 @@ export default function CourseShell({ componentGuide }) {
         </aside>
       </div>
 
+      {/* ── First-Time Enter Welcome Overlay Banner ── */}
+      {showWelcomeOverlay && (
+        <div className="syllabus-welcome-overlay" role="dialog" aria-modal="true" aria-label="Welcome to Course Syllabus">
+          <div className="syllabus-welcome-backdrop" onClick={dismissGuideTour} />
+          <div className="syllabus-welcome-card">
+            <div className="welcome-card-scanline" />
+            <div className="welcome-corner-tl" />
+            <div className="welcome-corner-tr" />
+            <div className="welcome-corner-bl" />
+            <div className="welcome-corner-br" />
+
+            <div className="welcome-card-header">
+              <div className="welcome-eyebrow-badge">
+                <span className="badge-pulse-dot" />
+                <span>BUILDLAB ACADEMY // ONBOARDING</span>
+              </div>
+              <button 
+                type="button"
+                className="welcome-card-close-btn" 
+                onClick={dismissGuideTour}
+                title="Dismiss (Esc)"
+                aria-label="Close welcome banner"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="welcome-card-body">
+              <div className="welcome-title-row">
+                <h1 className="welcome-card-title">WELCOME TO THE COURSE SYLLABUS</h1>
+                <p className="welcome-card-subtitle">
+                  Master PC architecture from component clearances to thermal dynamics. Guided interactive lessons, lab simulations, and live POST diagnostics.
+                </p>
+              </div>
+
+              <div className="welcome-features-grid">
+                <div className="welcome-feat-box">
+                  <span className="feat-box-icon">📽️</span>
+                  <div className="feat-box-info">
+                    <strong>HD Lesson Films</strong>
+                    <p>In-depth hardware walkthroughs with step demonstrations.</p>
+                  </div>
+                </div>
+                <div className="welcome-feat-box">
+                  <span className="feat-box-icon">⚡</span>
+                  <div className="feat-box-info">
+                    <strong>Clearance Labs</strong>
+                    <p>Interactive pinouts, RAM channels, and thermal stats.</p>
+                  </div>
+                </div>
+                <div className="welcome-feat-box">
+                  <span className="feat-box-icon">🤖</span>
+                  <div className="feat-box-info">
+                    <strong>B.O.B. Companion</strong>
+                    <p>Live guidance and build tips as you master each chapter.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="welcome-card-foot">
+              <button
+                type="button"
+                className="welcome-btn-primary"
+                onClick={startGuideTour}
+              >
+                <span>SHOW ME AROUND</span>
+                <span className="btn-arrow">→</span>
+              </button>
+              <button
+                type="button"
+                className="welcome-btn-secondary"
+                onClick={dismissGuideTour}
+              >
+                <span>I GOT THIS (SKIP TOUR)</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <BobCompanion
         context="learn"
         activeTopic={current.type === "component" ? lesson.name : lesson.title}
         externalSpeech={bobSpeech}
         dockRight={isPinned ? 345 : 24}
+        isCenter={isBobCentered}
         onLaunchLab={() => {
           soundManager.install();
           navigate(`/3d-builder?stage=${current.type === 'component' ? current.id : 'cpu'}&learn=true`);

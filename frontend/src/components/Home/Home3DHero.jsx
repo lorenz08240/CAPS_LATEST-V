@@ -204,7 +204,7 @@ function HardwareStageModel({ stageId, rgbColor }) {
  * 
  * Result: 100% mathematically and visually guaranteed that NO TWO MODELS CAN EVER OVERLAP!
  */
-function FluidScene({ onStageChange, rgbColor, scrollProgress = 0 }) {
+function FluidScene({ onStageChange, rgbColor, scrollProgress = 0, isInteractingRef }) {
   const rootRef = useRef();
   const motionGroupRef = useRef();
   const turntableAngleRef = useRef(0);
@@ -241,12 +241,23 @@ function FluidScene({ onStageChange, rgbColor, scrollProgress = 0 }) {
   useFrame((state, rawDelta) => {
     // Clamp delta to protect against tab defocus frame leaps
     const delta = Math.min(rawDelta, 0.08);
+    const isHolding = Boolean(isInteractingRef?.current);
 
-    // Continuous clockwise turntable rotation
-    turntableAngleRef.current -= delta * 0.48;
+    // Continuous clockwise turntable rotation (pauses when user holds / rotates model)
+    if (!isHolding) {
+      turntableAngleRef.current -= delta * 0.48;
+    }
 
     const anim = animRef.current;
-    anim.timer += delta;
+
+    // HOLD-TO-PAUSE: If user is actively holding/rotating the model, pause the auto-transition timer
+    if (isHolding) {
+      if (anim.phase === 'rest') {
+        anim.timer = 0; // Hold at rest indefinitely so model never flies away during inspection
+      }
+    } else {
+      anim.timer += delta;
+    }
 
     // Camera right & forward vectors so flight trajectory is ALWAYS screen-aligned
     const camQuat = state.camera.quaternion;
@@ -402,8 +413,29 @@ export default function Home3DHero({
   rgbColor = '#f43f5e', 
   scrollProgress = 0 
 }) {
+  const isInteractingRef = useRef(false);
+
+  // Global window release failsafe so releasing mouse outside canvas reliably resumes timer
+  useEffect(() => {
+    const handleRelease = () => {
+      isInteractingRef.current = false;
+    };
+    window.addEventListener('pointerup', handleRelease);
+    window.addEventListener('pointercancel', handleRelease);
+    window.addEventListener('blur', handleRelease);
+    return () => {
+      window.removeEventListener('pointerup', handleRelease);
+      window.removeEventListener('pointercancel', handleRelease);
+      window.removeEventListener('blur', handleRelease);
+    };
+  }, []);
+
   return (
-    <div className="home-3d-hero-container">
+    <div 
+      className="home-3d-hero-container"
+      onPointerDown={() => { isInteractingRef.current = true; }}
+      onPointerUp={() => { isInteractingRef.current = false; }}
+    >
       <div className="home-3d-canvas-wrap">
         <Canvas
           camera={{ position: [0, 0.6, 7.2], fov: 42 }}
@@ -424,6 +456,8 @@ export default function Home3DHero({
             enablePan={false} 
             rotateSpeed={0.72} 
             dampingFactor={0.08} 
+            onStart={() => { isInteractingRef.current = true; }}
+            onEnd={() => { isInteractingRef.current = false; }}
           />
 
           <Sparkles
@@ -441,6 +475,7 @@ export default function Home3DHero({
               onStageChange={setActiveModel}
               rgbColor={rgbColor} 
               scrollProgress={scrollProgress} 
+              isInteractingRef={isInteractingRef}
             />
           </Suspense>
         </Canvas>

@@ -4,14 +4,8 @@ import soundManager from "../utilities/soundManager";
 const SidebarContext = createContext(null);
 
 export const SidebarProvider = ({ children }) => {
-  const [isPinned, setIsPinnedState] = useState(() => {
-    try {
-      const stored = localStorage.getItem("buildlab_sidebar_pinned");
-      return stored ? JSON.parse(stored) : false;
-    } catch {
-      return false;
-    }
-  });
+  // Pinning removed per design simplification - drawer mode is primary
+  const [isPinned, setIsPinnedState] = useState(false);
 
   const [isHovered, setIsHovered] = useState(false);
   const [isOpenManual, setIsOpenManual] = useState(false);
@@ -20,58 +14,54 @@ export const SidebarProvider = ({ children }) => {
   const isSidebarOpen = isPinned || isHovered || isOpenManual;
 
   const setIsPinned = useCallback((pinnedOrUpdater) => {
-    setIsPinnedState((prev) => {
-      const next = typeof pinnedOrUpdater === "function" ? pinnedOrUpdater(prev) : pinnedOrUpdater;
-      try {
-        localStorage.setItem("buildlab_sidebar_pinned", JSON.stringify(next));
-      } catch {}
-      try {
-        if (next) {
-          soundManager.play("snap");
-        } else {
-          soundManager.play("click");
-        }
-      } catch {}
-      return next;
-    });
+    setIsPinnedState(false);
+    try {
+      localStorage.removeItem("buildlab_sidebar_pinned");
+    } catch {}
   }, []);
 
   const togglePin = useCallback(() => {
-    setIsPinned((prev) => !prev);
-  }, [setIsPinned]);
+    // No-op - pin button removed
+  }, []);
 
   const closeSidebar = useCallback(() => {
-    try {
-      soundManager.play("modal_close");
-    } catch {}
-    setIsOpenManual(false);
+    setIsOpenManual((prev) => {
+      if (prev) {
+        try {
+          soundManager.modalClose();
+        } catch {}
+      }
+      return false;
+    });
     setIsHovered(false);
   }, []);
 
-  const toggleSidebar = useCallback(() => {
-    try {
-      soundManager.play("interact");
-    } catch {}
-    if (isPinned) {
-      // If pinned, unpin and close
-      setIsPinned(false);
-      closeSidebar();
-    } else {
-      setIsOpenManual((prev) => {
-        const next = !prev;
-        if (!next) {
-          setIsHovered(false);
-        }
-        return next;
-      });
-    }
-  }, [isPinned, setIsPinned, closeSidebar]);
-
   const openSidebar = useCallback(() => {
-    setIsOpenManual(true);
-    try {
-      soundManager.play("interact");
-    } catch {}
+    setIsOpenManual((prev) => {
+      if (!prev) {
+        try {
+          soundManager.modalOpen();
+        } catch {}
+      }
+      return true;
+    });
+  }, []);
+
+  const toggleSidebar = useCallback(() => {
+    setIsOpenManual((prev) => {
+      const next = !prev;
+      try {
+        if (next) {
+          soundManager.modalOpen();
+        } else {
+          soundManager.modalClose();
+        }
+      } catch {}
+      if (!next) {
+        setIsHovered(false);
+      }
+      return next;
+    });
   }, []);
 
   // Keyboard shortcut: Pressing '[' or 'Ctrl+B' toggles the sidebar

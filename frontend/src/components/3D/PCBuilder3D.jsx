@@ -157,30 +157,44 @@ const STAGE_CAMERA_FOCUS = {
   }
 };
 
-// Smooth Camera Controller that transitions on preset click and releases control completely to OrbitControls
-function CameraController({ cameraTarget, orbitRef }) {
+// Smooth Camera Controller that transitions on focus/preset and triggers callbacks the exact millisecond camera settles
+function CameraController({ cameraTarget, orbitRef, onFocusComplete }) {
   const isTransitioningRef = useRef(false);
   const targetPosRef = useRef(new THREE.Vector3(...CAMERA_PRESETS.isometric.position));
   const targetLookRef = useRef(new THREE.Vector3(...CAMERA_PRESETS.isometric.target));
+  const hasFiredFocusCompleteRef = useRef(false);
+  const onFocusCompleteRef = useRef(onFocusComplete);
+  onFocusCompleteRef.current = onFocusComplete;
 
   useEffect(() => {
     if (cameraTarget) {
       targetPosRef.current.set(...cameraTarget.position);
       targetLookRef.current.set(...cameraTarget.target);
       isTransitioningRef.current = true;
+      hasFiredFocusCompleteRef.current = false;
     }
   }, [cameraTarget]);
 
   useFrame((state, delta) => {
     if (!isTransitioningRef.current || !orbitRef.current) return;
 
-    state.camera.position.lerp(targetPosRef.current, delta * 5);
-    orbitRef.current.target.lerp(targetLookRef.current, delta * 5);
+    // Smooth lerp speed: delta * 5.0 gives ~0.65s - 0.75s pleasing cinematic ease-out
+    state.camera.position.lerp(targetPosRef.current, delta * 5.0);
+    orbitRef.current.target.lerp(targetLookRef.current, delta * 5.0);
     orbitRef.current.update();
 
-    // Once close enough, release control so the user can drag freely without snapback!
-    if (state.camera.position.distanceTo(targetPosRef.current) < 0.15) {
+    const camDist = state.camera.position.distanceTo(targetPosRef.current);
+    const targetDist = orbitRef.current.target.distanceTo(targetLookRef.current);
+
+    // The EXACT MOMENT the camera settles and locks focus onto the component:
+    if (camDist < 0.28 && targetDist < 0.22) {
       isTransitioningRef.current = false;
+      if (!hasFiredFocusCompleteRef.current) {
+        hasFiredFocusCompleteRef.current = true;
+        if (onFocusCompleteRef.current) {
+          onFocusCompleteRef.current();
+        }
+      }
     }
   });
 
@@ -269,6 +283,9 @@ function PCBuilder3DWorkspace() {
     setControlsTourStep(null);
     setBobLookTarget(null);
     setBob3DSpeech("Have fun building! Poke me down here anytime you need advice.");
+    try {
+      soundManager.modalClose();
+    } catch {}
   }, []);
 
   const startControlsTour = useCallback(() => {
@@ -276,6 +293,10 @@ function PCBuilder3DWorkspace() {
       clearTimeout(tourTimerRef.current);
       tourTimerRef.current = null;
     }
+
+    try {
+      soundManager.modalOpen();
+    } catch {}
 
     setShowControlsModal(true);
 
@@ -307,27 +328,25 @@ function PCBuilder3DWorkspace() {
     }, 6200);
   }, []);
 
-  // Automatically trigger plane controls guide on first-time entry
+  // Display plane controls guide on entering or refreshing 3D Studio (with dismissal option)
   useEffect(() => {
-    let isFirstVisit = false;
-    try {
-      isFirstVisit = !sessionStorage.getItem('buildlab_3d_controls_shown');
-    } catch {
-      isFirstVisit = true;
-    }
+    const entranceTimer = setTimeout(() => {
+      startControlsTour();
+    }, 600);
 
-    if (isFirstVisit) {
-      try {
-        sessionStorage.setItem('buildlab_3d_controls_shown', 'true');
-      } catch {}
-
-      const entranceTimer = setTimeout(() => {
-        startControlsTour();
-      }, 650);
-
-      return () => clearTimeout(entranceTimer);
-    }
+    return () => clearTimeout(entranceTimer);
   }, [startControlsTour]);
+
+  // Keyboard shortcut: Escape dismisses the 3D controls tour
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && showControlsModal) {
+        dismissControlsTour();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showControlsModal, dismissControlsTour]);
 
   // Cleanup guide tour timer on unmount
   useEffect(() => {
@@ -339,6 +358,79 @@ function PCBuilder3DWorkspace() {
   }, []);
 
   const orbitRef = useRef();
+  const pendingFocusRef = useRef(null);
+  const focusFallbackTimerRef = useRef(null);
+
+  // The exact callback triggered THE MOMENT the 3D camera arrives and locks focus on the component
+  const handleCameraFocusArrived = useCallback(() => {
+    if (focusFallbackTimerRef.current) {
+      clearTimeout(focusFallbackTimerRef.current);
+      focusFallbackTimerRef.current = null;
+    }
+
+    if (!pendingFocusRef.current) return;
+    const focusEvent = pendingFocusRef.current;
+    pendingFocusRef.current = null;
+
+    // 1. The moment camera focuses on a newly placed PC component
+    if (focusEvent.type === 'installed') {
+      const { part, category } = focusEvent;
+      const linesPool = BOB_MOUNT_FOCUS_LINES[category] || BOB_MOUNT_FOCUS_LINES.case;
+      const pickFn = linesPool[Math.floor(Math.random() * linesPool.length)];
+      const speech = pickFn(part.name || 'Component');
+
+      // Steer B.O.B.'s eyes to look directly up at the mounted part on the 3D canvas
+      const centerX = typeof window !== 'undefined' ? window.innerWidth * 0.55 : 600;
+      const centerY = typeof window !== 'undefined' ? window.innerHeight * 0.48 : 400;
+      setBobLookTarget({ x: centerX, y: centerY });
+      setBob3DSpeech(speech);
+
+      // Return gaze to natural cursor tracking after dialogue has been read
+      setTimeout(() => {
+        setBobLookTarget(null);
+      }, 5500);
+
+      // In guided mode, smoothly advance to next unplaced stage after giving user time to appreciate the mount
+      if (buildMode === 'guided') {
+        const nextIdx = buildSteps.findIndex((s, idx) => idx > activeStep && !currentBuild[s.key]);
+        if (nextIdx !== -1) {
+          setTimeout(() => {
+            setActiveStep(nextIdx);
+          }, 3500);
+        }
+      }
+      return;
+    }
+
+    // 2. When camera focuses on a stage selection from the drawer rail
+    if (focusEvent.type === 'stage_select') {
+      const { stageKey } = focusEvent;
+      const focusData = STAGE_CAMERA_FOCUS[stageKey];
+      if (focusData?.tip) {
+        const centerX = typeof window !== 'undefined' ? window.innerWidth * 0.55 : 600;
+        const centerY = typeof window !== 'undefined' ? window.innerHeight * 0.48 : 400;
+        setBobLookTarget({ x: centerX, y: centerY });
+        setBob3DSpeech(focusData.tip);
+        setTimeout(() => {
+          setBobLookTarget(null);
+        }, 5000);
+      }
+      return;
+    }
+
+    // 3. When camera focuses on an inspected part
+    if (focusEvent.type === 'inspect') {
+      const { part } = focusEvent;
+      const centerX = typeof window !== 'undefined' ? window.innerWidth * 0.55 : 600;
+      const centerY = typeof window !== 'undefined' ? window.innerHeight * 0.48 : 400;
+      setBobLookTarget({ x: centerX, y: centerY });
+      setBob3DSpeech(`Focusing in on ${part.name}! Check out that craftsmanship.`);
+      setTimeout(() => {
+        setBobLookTarget(null);
+      }, 4500);
+      return;
+    }
+  }, [activeStep, buildMode, currentBuild]);
 
   // Play audio safely via central soundManager
   const playSound = (type) => {
@@ -430,6 +522,17 @@ function PCBuilder3DWorkspace() {
     }
     setActiveStep(idx);
     playSound('click');
+
+    pendingFocusRef.current = {
+      type: 'stage_select',
+      stageKey: step.key
+    };
+
+    if (focusFallbackTimerRef.current) clearTimeout(focusFallbackTimerRef.current);
+    focusFallbackTimerRef.current = setTimeout(() => {
+      handleCameraFocusArrived();
+    }, 1100);
+
     focusStageCamera(step.key);
   };
 
@@ -453,6 +556,16 @@ function PCBuilder3DWorkspace() {
   // Focus camera on inspected component
   const handleFocusComponent = (part) => {
     if (part.targetPosition) {
+      pendingFocusRef.current = {
+        type: 'inspect',
+        part
+      };
+
+      if (focusFallbackTimerRef.current) clearTimeout(focusFallbackTimerRef.current);
+      focusFallbackTimerRef.current = setTimeout(() => {
+        handleCameraFocusArrived();
+      }, 1100);
+
       setCameraTarget({
         position: [part.targetPosition[0] - 5.5, part.targetPosition[1] + 0.8, part.targetPosition[2] + 4],
         target: part.targetPosition
@@ -475,16 +588,21 @@ function PCBuilder3DWorkspace() {
 
     setInspectedPart({ ...part, category, targetPosition: TARGET_POSITIONS[category] });
 
-    // In guided mode, automatically advance to next unlocked unplaced step & focus camera
-    if (buildMode === 'guided') {
-      const nextIdx = buildSteps.findIndex((s, idx) => idx > activeStep && !currentBuild[s.key]);
-      if (nextIdx !== -1) {
-        setActiveStep(nextIdx);
-        setTimeout(() => {
-          focusStageCamera(buildSteps[nextIdx]?.key);
-        }, 1200);
-      }
-    }
+    // Queue the focus event for B.O.B. to react THE MOMENT camera settles on the part
+    pendingFocusRef.current = {
+      type: 'installed',
+      part,
+      category
+    };
+
+    // Fallback timer (1100ms) to ensure B.O.B. triggers even if camera delta is paused
+    if (focusFallbackTimerRef.current) clearTimeout(focusFallbackTimerRef.current);
+    focusFallbackTimerRef.current = setTimeout(() => {
+      handleCameraFocusArrived();
+    }, 1100);
+
+    // The moment the part is placed, immediately steer camera toward it!
+    focusStageCamera(category);
   };
 
   // Handle Component Removal
@@ -640,6 +758,8 @@ function PCBuilder3DWorkspace() {
               loadDemoBuild();
               playSound('install');
               showToast('Demo Gaming Rig Loaded (7/7 Parts Assembled)');
+              handleCameraPreset('whole');
+              setBob3DSpeech("Boom! Fully assembled demo gaming rig loaded up. Take her for a spin in 360°!");
             }}
             title="Instantly assemble full demo PC"
           >
@@ -1069,7 +1189,7 @@ function PCBuilder3DWorkspace() {
 
             <Environment preset="studio" />
 
-            <CameraController cameraTarget={cameraTarget} orbitRef={orbitRef} />
+            <CameraController cameraTarget={cameraTarget} orbitRef={orbitRef} onFocusComplete={handleCameraFocusArrived} />
             <OrbitControls 
               ref={orbitRef}
               enablePan={true}

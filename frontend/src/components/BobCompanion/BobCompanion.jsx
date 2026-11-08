@@ -18,12 +18,13 @@ export default function BobCompanion({
   externalSpeech,
   dockRight = 32,
   size = 112,
+  isCenter = false,
 }) {
   const activePool = speechLines && speechLines.length > 0 ? speechLines : BOB_PHRASES;
 
   return (
     <div
-      className="bob-floating-free"
+      className={`bob-floating-free ${isCenter ? "bob-centered" : ""}`}
       style={{
         "--bob-right": `${dockRight}px`,
       }}

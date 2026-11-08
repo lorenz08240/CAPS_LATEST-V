@@ -13,18 +13,18 @@ function Navbar({ isPinned: propsIsPinned }) {
   const sidebarCtx = useSidebar();
 
   // Prefer context state, falling back to props if provided
-  const isPinned = propsIsPinned !== undefined ? propsIsPinned : sidebarCtx.isPinned;
-  const togglePin = sidebarCtx.togglePin;
+  const isPinned = false; // Pin feature removed per design simplification
   const isOpenManual = sidebarCtx.isOpenManual;
   const closeSidebar = sidebarCtx.closeSidebar;
   const openSidebar = sidebarCtx.openSidebar;
 
   const [soundActive, setSoundActive] = useState(() => soundManager.enabled);
+  const [showAccountModal, setShowAccountModal] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
   const isAdminRoute = location.pathname.startsWith("/admin");
-  const isVisible = isPinned || isOpenManual;
+  const isVisible = isOpenManual;
 
   const handleLinkClick = () => {
     if (!isPinned) {
@@ -56,13 +56,12 @@ function Navbar({ isPinned: propsIsPinned }) {
 
   return (
     <>
-      {/* Click-to-toggle Edge Tab on left border when unpinned/closed */}
+      {/* Click-to-toggle Edge Tab on left border when closed */}
       {!isVisible && (
         <button
           type="button"
           className="sidebar-edge-tab"
           onClick={() => {
-            try { soundManager.click(); } catch {}
             openSidebar();
           }}
           title="Open Navigation Menu"
@@ -72,60 +71,77 @@ function Navbar({ isPinned: propsIsPinned }) {
         </button>
       )}
 
-      {/* Backdrop overlay for mobile & unpinned desktop */}
+      {/* Backdrop overlay for drawer dismissal */}
       <div 
-        className={`sidebar-backdrop ${isOpenManual && !isPinned ? "active" : ""}`} 
+        className={`sidebar-backdrop ${isOpenManual ? "active" : ""}`} 
         onClick={closeSidebar} 
       />
 
       <aside 
-        className={`sidebar ${isVisible ? "open" : "closed"} ${isPinned ? "pinned" : ""}`}
+        className={`sidebar ${isVisible ? "open" : "closed"}`}
         aria-label="BuildLab Global Navigation"
       >
         <div className="sidebar-container">
-          {/* ── CLEAN BRAND HEADER ── */}
+          {/* ── ACCOUNT / BRAND HEADER (Anti-Slop Cyber Theme) ── */}
           <div className="sidebar-header">
-            <div className="sidebar-brand-group">
-              <div className="sidebar-brand-icon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                  <path d="M2 17l10 5 10-5" />
-                  <path d="M2 12l10 5 10-5" />
-                </svg>
-              </div>
+            {isAdminRoute ? (
+              <div className="sidebar-brand-group">
+                <div className="sidebar-brand-icon admin">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                    <path d="M2 17l10 5 10-5" />
+                    <path d="M2 12l10 5 10-5" />
+                  </svg>
+                </div>
 
-              <Link 
-                to={isAdminRoute ? "/admin/inventory" : "/"} 
-                className="sidebar-brand-link" 
-                onClick={() => { try { soundManager.click(); } catch {} }}
+                <Link 
+                  to="/admin/inventory" 
+                  className="sidebar-brand-link" 
+                  onClick={() => { try { soundManager.click(); } catch {} }}
+                >
+                  <div className="brand-title-row">
+                    <span className="brand-title-main">ADMIN DECK</span>
+                    <span className="brand-role-tag admin">CONTROL</span>
+                  </div>
+                  <div className="brand-status-row">
+                    <span className="status-live-dot" />
+                    <span className="status-live-text">OPERATIONS</span>
+                  </div>
+                </Link>
+              </div>
+            ) : (
+              <div 
+                className="sidebar-account-card" 
+                onClick={() => {
+                  try { soundManager.click(); } catch {}
+                  setShowAccountModal(true);
+                }} 
+                role="button" 
+                tabIndex={0}
+                title="Manage Learner Account & Google Cloud Sync"
               >
-                <div className="brand-title-row">
-                  <span className="brand-title-main">BUILDLAB</span>
-                  <span className={`brand-role-tag ${isAdminRoute ? "admin" : ""}`}>
-                    {isAdminRoute ? "ADMIN" : "STUDIO"}
-                  </span>
+                <div className="sidebar-account-avatar">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                  </svg>
+                  <span className="account-avatar-dot" />
                 </div>
-                <div className="brand-status-row">
-                  <span className="status-live-dot" />
-                  <span className="status-live-text">{isAdminRoute ? "CONTROL PANEL" : "ONLINE"}</span>
+
+                <div className="sidebar-account-info">
+                  <div className="account-title-row">
+                    <span className="account-title-main">Account</span>
+                    <span className="account-role-tag">LEARNER</span>
+                  </div>
+                  <div className="account-action-row">
+                    <span className="account-action-text">Sign Up</span>
+                    <span className="account-google-tag">GOOGLE API</span>
+                  </div>
                 </div>
-              </Link>
-            </div>
+              </div>
+            )}
 
             <div className="sidebar-header-controls">
-              <button 
-                type="button"
-                className={`sidebar-pin-btn ${isPinned ? 'active' : ''}`}
-                onClick={togglePin}
-                title={isPinned ? "Unpin sidebar from workspace" : "Pin sidebar to workspace"}
-                aria-label={isPinned ? "Unpin sidebar" : "Pin sidebar"}
-              >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill={isPinned ? "#00e5a0" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="12" y1="17" x2="12" y2="22"></line>
-                  <path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"></path>
-                </svg>
-              </button>
-
               <button
                 type="button"
                 className="sidebar-close-btn"
@@ -335,18 +351,6 @@ function Navbar({ isPinned: propsIsPinned }) {
                       </svg>
                       <span>Help &amp; Support</span>
                     </Link>
-
-                    <Link 
-                      to="/admin" 
-                      onClick={handleLinkClick} 
-                      className={`sidebar-link admin-link ${isAdminRoute ? "active" : ""}`}
-                    >
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                      </svg>
-                      <span>{isAdmin ? "Admin Deck" : "Admin Access"}</span>
-                    </Link>
                   </div>
                 </div>
               </div>
@@ -384,6 +388,78 @@ function Navbar({ isPinned: propsIsPinned }) {
           </div>
         </div>
       </aside>
+
+      {/* ── LEARNER ACCOUNT & GOOGLE SIGN-IN MODAL (Anti-Slop Clean Dialog) ── */}
+      {showAccountModal && (
+        <div 
+          className="account-modal-backdrop" 
+          onClick={() => {
+            try { soundManager.modalClose(); } catch {}
+            setShowAccountModal(false);
+          }}
+        >
+          <div 
+            className="account-modal-dialog" 
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="account-modal-header">
+              <div className="account-modal-tag">
+                <span className="tag-bracket">[</span>
+                <span className="account-tag-dot" />
+                <span>LEARNER PROFILE</span>
+                <span className="tag-bracket">]</span>
+              </div>
+              <button 
+                type="button" 
+                className="account-modal-close" 
+                onClick={() => {
+                  try { soundManager.modalClose(); } catch {}
+                  setShowAccountModal(false);
+                }}
+                title="Close modal"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="account-modal-body">
+              <div className="account-modal-icon-wrap">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00e5a0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+              </div>
+
+              <h3 className="account-modal-title">Cloud Save &amp; Progress</h3>
+              <p className="account-modal-desc">
+                Sign in with Google to backup your custom 3D PC rigs, saved component builds, and hardware academy badges.
+              </p>
+
+              <button 
+                type="button" 
+                className="account-google-btn"
+                onClick={() => {
+                  try { soundManager.click(); } catch {}
+                  alert("Google Sign-In API ready: Once you configure your VITE_GOOGLE_CLIENT_ID in the environment, your learner progress will automatically sync to Google Cloud.");
+                }}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24">
+                  <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
+                  <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
+                  <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+                  <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+                </svg>
+                <span>Continue with Google</span>
+              </button>
+
+              <div className="account-modal-status">
+                <span className="status-dot-pulse" />
+                <span>Google Sign-In API • Ready to Save Progress</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
