@@ -96,9 +96,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Build/Build.jsx": {
-    "mtime": 1794176319.6407957,
-    "seen": 1794176494.1566546,
-    "ast_hash": "1ca81851d912ae024340e4de03ea4b81",
+    "mtime": 1794180893.7698762,
+    "seen": 1794181421.701298,
+    "ast_hash": "60c62a9c8955d7364eede76e5dd3443f",
     "semantic_hash": ""
   },
   "frontend/src/components/Compatibility/Compatibility.jsx": {
@@ -126,15 +126,15 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Home/Home.jsx": {
-    "mtime": 1794176258.6336625,
-    "seen": 1794176494.1576083,
-    "ast_hash": "312c4c326ae899b1c0bd8cab256a2120",
+    "mtime": 1794181139.2526124,
+    "seen": 1794181421.7023118,
+    "ast_hash": "0c477f358bea7eaaa9d4f3a97d18ddca",
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/CourseShell.jsx": {
-    "mtime": 1794176599.2653155,
-    "seen": 1794176664.1133888,
-    "ast_hash": "510bc9981e0cacb2c9bb961113904f2a",
+    "mtime": 1794181117.596237,
+    "seen": 1794181421.7026243,
+    "ast_hash": "c744738d6887663f67b4075df96c311e",
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/CourseVideoPlayer.jsx": {
@@ -474,9 +474,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Home/Preloader.jsx": {
-    "mtime": 1793931234.1976628,
-    "seen": 1793931275.1704402,
-    "ast_hash": "2b7fdab34afc06a6f8b927fa3b09a407",
+    "mtime": 1794180627.4914234,
+    "seen": 1794181421.7024584,
+    "ast_hash": "4c7d7c5786abe55c052c4adcd46b76c5",
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/AdminSidebar.jsx": {
@@ -714,9 +714,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Home/AccountSetupModal.jsx": {
-    "mtime": 1794176166.8777058,
-    "seen": 1794176494.1576052,
-    "ast_hash": "56aacb37fc3b1b73ad05e6a9fecaa324",
+    "mtime": 1794180587.7233486,
+    "seen": 1794181421.7023094,
+    "ast_hash": "cc1152282f62288db7f4b6e65a30f374",
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/CertificationPage.jsx": {
@@ -726,15 +726,15 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Navigation/CookieConsent.jsx": {
-    "mtime": 1794175763.551589,
-    "seen": 1794176494.158528,
-    "ast_hash": "fad128a6b723bdd61a2a32322f4d8236",
+    "mtime": 1794180675.4019346,
+    "seen": 1794181421.7030518,
+    "ast_hash": "39d59f90ff45cb0046da38fa91d7f937",
     "semantic_hash": ""
   },
   "frontend/src/components/Navigation/LearnModeGuard.jsx": {
-    "mtime": 1794175813.9861095,
-    "seen": 1794176494.158994,
-    "ast_hash": "fba6c8835c1ea9b548b49ee474eb1db2",
+    "mtime": 1794181127.1699898,
+    "seen": 1794181421.703366,
+    "ast_hash": "62a138ff6b6ba4d0b3e87f5d4358697a",
     "semantic_hash": ""
   },
   "frontend/src/components/Navigation/StageUnlockBanner.jsx": {
@@ -744,9 +744,9 @@
     "semantic_hash": ""
   },
   "frontend/src/contexts/LearnModeContext.jsx": {
-    "mtime": 1794176875.152237,
-    "seen": 1794177141.5311847,
-    "ast_hash": "fdbcb61a769d1dd4a5ed05c025362426",
+    "mtime": 1794180729.6991372,
+    "seen": 1794181421.7038007,
+    "ast_hash": "6b9f399e49f03921b696f3bcbdc0f6a2",
     "semantic_hash": ""
   },
   "backend/uploads/profiles/photo-1794176073655-f3qzal.gif": {
@@ -765,12 +765,6 @@
     "mtime": 1794176086.4874146,
     "seen": 1794176494.1616364,
     "ast_hash": "0fb67551fd8e2c455fe60c43b2680717",
-    "semantic_hash": ""
-  },
-  "frontend/test_learn_flow.js": {
-    "mtime": 1794177091.199627,
-    "seen": 1794177141.5341518,
-    "ast_hash": "fde8e4cddc836387721903e0031c2365",
     "semantic_hash": ""
   },
   "frontend/public/sfx/audio/Error1.mp3": {
@@ -819,6 +813,18 @@
     "mtime": 1791789343.572685,
     "seen": 1794176837.127829,
     "ast_hash": "bf209b766d154b2f20e9c5dd5fc49f03",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Common/PixelCanvas.jsx": {
+    "mtime": 1794180505.390667,
+    "seen": 1794181421.7013016,
+    "ast_hash": "00c54b6bd8d04d2e269f14834f9a551d",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Home/ModeSelectionCards.jsx": {
+    "mtime": 1794180534.151946,
+    "seen": 1794181421.702456,
+    "ast_hash": "371b0604384c6647a98bc4e920ba6b3e",
     "semantic_hash": ""
   }
 }

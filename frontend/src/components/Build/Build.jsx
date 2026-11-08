@@ -497,6 +497,22 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
   }, [currentStep]);
 
   // Entrance Dialogue Trigger:
+  // Listen for learner onboarding confirmation to deliver personalized B.O.B. welcome
+  useEffect(() => {
+    const handleLearnerWelcome = (e) => {
+      const learnerName = e.detail?.name || "Builder";
+      setTimeout(() => {
+        setHasStartedBuild(true);
+        entranceGreetedRef.current = true;
+        setBobSpeech(`Welcome, ${learnerName}! I'm B.O.B., your hardware companion. Select a PC Case over on the left to begin Stage 01!`);
+        startGuideTour("case");
+      }, 600);
+    };
+
+    window.addEventListener("buildlab:learner-onboarding-welcome", handleLearnerWelcome);
+    return () => window.removeEventListener("buildlab:learner-onboarding-welcome", handleLearnerWelcome);
+  }, [startGuideTour]);
+
   // ONLY fires when user clicked START BUILD AND is currently looking/staying on the build picker
   useEffect(() => {
     if (!hasStartedBuild || !isViewingBuild || entranceGreetedRef.current) {

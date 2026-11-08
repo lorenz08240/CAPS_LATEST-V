@@ -689,19 +689,6 @@ export default function CourseShell({ componentGuide }) {
   const { mode, seenBanners, markBannerSeen, unlockStage } = useLearnMode();
   const [showUnlockBanner, setShowUnlockBanner] = useState(() => mode === "learn" && !seenBanners?.learn);
 
-  const handleUnlockBannerComplete = useCallback(() => {
-    setShowUnlockBanner(false);
-    markBannerSeen("learn");
-    try {
-      const syllabusSeen = localStorage.getItem("buildlab_syllabus_intro_seen") === "true";
-      if (!syllabusSeen) {
-        setShowWelcomeOverlay(true);
-        setIsBobCentered(true);
-      }
-    } catch {}
-    setBobSpeech("Welcome to the BuildLab Hardware Academy! I'm B.O.B., and I'll guide you through each topic toward your certification.");
-  }, [markBannerSeen]);
-
   /* Course navigation */
   const [currentIndex, setCurrentIndex] = useState(0);
   const [completed, setCompleted] = useState(readProgress);
@@ -729,6 +716,9 @@ export default function CourseShell({ componentGuide }) {
     }
   });
 
+  const [isWelcomeExiting, setIsWelcomeExiting] = useState(false);
+  const welcomeExitTimerRef = useRef(null);
+
   const [isBobCentered, setIsBobCentered] = useState(() => {
     try {
       if (mode === "learn" && !seenBanners?.learn) return false;
@@ -746,79 +736,149 @@ export default function CourseShell({ componentGuide }) {
     "Hi! I'm B.O.B., your BuildLab companion. Let's master computer architecture together!"
   );
 
-  // Dismiss guide tour or welcome overlay
-  const dismissGuideTour = useCallback(() => {
+  // Triggered when StageUnlockBanner completes its entrance + exit animation
+  const handleUnlockBannerComplete = useCallback(() => {
+    setShowUnlockBanner(false);
+    markBannerSeen("learn");
+
+    // Once unlock banner is completely faded away, show the BOB Welcome Banner
+    setTimeout(() => {
+      setShowWelcomeOverlay(true);
+      setIsBobCentered(true);
+      let introduced = false;
+      try {
+        introduced = localStorage.getItem("buildlab_bob_introduced") === "true";
+      } catch {}
+      const pickRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
+      setBobSpeech(
+        introduced
+          ? pickRandom(BOB_SYLLABUS_GUIDE.introReturning)
+          : pickRandom(BOB_SYLLABUS_GUIDE.introNew)
+      );
+      try {
+        localStorage.setItem("buildlab_bob_introduced", "true");
+        soundManager.play("modal_open");
+      } catch {}
+    }, 200);
+  }, [markBannerSeen]);
+
+  // Launch the 3-step navigation highlight sequence
+  const executeGuideSequence = useCallback(() => {
     if (guideTimerRef.current) {
       clearTimeout(guideTimerRef.current);
       guideTimerRef.current = null;
     }
-    setGuideTarget(null);
-    setShowWelcomeOverlay(false);
-    setIsBobCentered(false);
-    try {
-      localStorage.setItem("buildlab_syllabus_intro_seen", "true");
-      soundManager.play("modal_close");
-    } catch {}
-    setBobSpeech(BOB_SYLLABUS_GUIDE.done[0]);
-  }, []);
-
-  // Start 3-step navigation highlight tour
-  const startGuideTour = useCallback(() => {
-    if (guideTimerRef.current) {
-      clearTimeout(guideTimerRef.current);
-      guideTimerRef.current = null;
-    }
-    try {
-      localStorage.setItem("buildlab_syllabus_intro_seen", "true");
-    } catch {}
-    setShowWelcomeOverlay(false);
-    setIsBobCentered(false);
-    try {
-      soundManager.play("snap");
-    } catch {}
-
     const pickRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
     // PHASE 1: Center Lesson Content & Video (6.0s)
     setGuideTarget("center");
     setBobSpeech(pickRandom(BOB_SYLLABUS_GUIDE.center));
-    try { soundManager.play("hint"); } catch {}
+    try {
+      soundManager.play("hint");
+    } catch {}
 
     guideTimerRef.current = setTimeout(() => {
       // PHASE 2: Topics Quick Jump Bar (5.5s)
       setGuideTarget("topics");
       setBobSpeech(pickRandom(BOB_SYLLABUS_GUIDE.topics));
-      try { soundManager.play("hint"); } catch {}
+      try {
+        soundManager.play("hint");
+      } catch {}
 
       guideTimerRef.current = setTimeout(() => {
         // PHASE 3: Right Sidebar Curriculum Syllabus (6.0s)
         setIsPinned(true);
         setGuideTarget("syllabus");
         setBobSpeech(pickRandom(BOB_SYLLABUS_GUIDE.syllabus));
-        try { soundManager.play("snap"); } catch {}
+        try {
+          soundManager.play("snap");
+        } catch {}
 
         guideTimerRef.current = setTimeout(() => {
           // PHASE 4: Return to normal mode
           setGuideTarget(null);
           setBobSpeech(pickRandom(BOB_SYLLABUS_GUIDE.done));
-          try { soundManager.play("complete"); } catch {}
+          try {
+            soundManager.play("complete");
+          } catch {}
           guideTimerRef.current = null;
         }, 6000);
       }, 5500);
     }, 6000);
   }, []);
 
-  // Cleanup tour timer on unmount
+  // Trigger guide tour: ONLY when the welcome banner is completely faded away!
+  const startGuideTour = useCallback(() => {
+    try {
+      localStorage.setItem("buildlab_syllabus_intro_seen", "true");
+    } catch {}
+
+    if (showWelcomeOverlay) {
+      // 1. Fade away the welcome banner first
+      setIsWelcomeExiting(true);
+      try {
+        soundManager.play("snap");
+      } catch {}
+
+      // 2. ONLY when banner is completely faded away (420ms), unmount banner and start navigation guide
+      if (welcomeExitTimerRef.current) clearTimeout(welcomeExitTimerRef.current);
+      welcomeExitTimerRef.current = setTimeout(() => {
+        setShowWelcomeOverlay(false);
+        setIsWelcomeExiting(false);
+        setIsBobCentered(false); // B.O.B. animates / glides to the lower-right corner
+        executeGuideSequence();
+      }, 420);
+    } else {
+      setIsBobCentered(false);
+      executeGuideSequence();
+    }
+  }, [showWelcomeOverlay, executeGuideSequence]);
+
+  // Dismiss guide tour or welcome overlay
+  const dismissGuideTour = useCallback(() => {
+    if (guideTimerRef.current) {
+      clearTimeout(guideTimerRef.current);
+      guideTimerRef.current = null;
+    }
+    try {
+      localStorage.setItem("buildlab_syllabus_intro_seen", "true");
+    } catch {}
+
+    if (showWelcomeOverlay) {
+      setIsWelcomeExiting(true);
+      try {
+        soundManager.play("modal_close");
+      } catch {}
+
+      if (welcomeExitTimerRef.current) clearTimeout(welcomeExitTimerRef.current);
+      welcomeExitTimerRef.current = setTimeout(() => {
+        setShowWelcomeOverlay(false);
+        setIsWelcomeExiting(false);
+        setIsBobCentered(false);
+        setGuideTarget(null);
+        const pickRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
+        setBobSpeech(pickRandom(BOB_SYLLABUS_GUIDE.done));
+      }, 420);
+    } else {
+      setGuideTarget(null);
+      setIsBobCentered(false);
+      const pickRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
+      setBobSpeech(pickRandom(BOB_SYLLABUS_GUIDE.done));
+    }
+  }, [showWelcomeOverlay]);
+
+  // Clean up all timers on unmount
   useEffect(() => {
     return () => {
-      if (guideTimerRef.current) {
-        clearTimeout(guideTimerRef.current);
-      }
+      if (guideTimerRef.current) clearTimeout(guideTimerRef.current);
+      if (welcomeExitTimerRef.current) clearTimeout(welcomeExitTimerRef.current);
     };
   }, []);
 
   // Initial Entrance Greeting (DO NOT repeat Bob's intro if already seen)
   useEffect(() => {
+    if (showUnlockBanner) return; // Wait until unlock banner finishes!
+
     let introduced = false;
     try {
       introduced = localStorage.getItem("buildlab_bob_introduced") === "true";
@@ -840,7 +900,7 @@ export default function CourseShell({ componentGuide }) {
         soundManager.play("modal_open");
       } catch {}
     }
-  }, []);
+  }, [showUnlockBanner, showWelcomeOverlay]);
 
   // Keyboard shortcut: ESC dismisses overlay or tour
   useEffect(() => {
@@ -995,10 +1055,11 @@ export default function CourseShell({ componentGuide }) {
   const doneCount = completed.filter((id) => FLAT.some((l) => l.id === id)).length;
   const progressPct = Math.round((doneCount / FLAT.length) * 100);
 
-  // When curriculum reaches 100%, unlock Stage 4 (Certification)
+  // When curriculum reaches 100%, unlock Stage 4 (Certification & 3D Studio)
   useEffect(() => {
     if (progressPct === 100) {
       unlockStage("certificate");
+      unlockStage("studio");
     }
   }, [progressPct, unlockStage]);
 
@@ -2004,6 +2065,7 @@ export default function CourseShell({ componentGuide }) {
                       onClick={() => {
                         try { soundManager.granted(); } catch {}
                         unlockStage("certificate");
+                        unlockStage("studio");
                         navigate("/certificate");
                       }}
                     >
@@ -2328,7 +2390,12 @@ export default function CourseShell({ componentGuide }) {
 
       {/* ── First-Time Enter Welcome Overlay Banner ── */}
       {showWelcomeOverlay && !showUnlockBanner && (
-        <div className="syllabus-welcome-overlay" role="dialog" aria-modal="true" aria-label="Welcome to Course Syllabus">
+        <div 
+          className={`syllabus-welcome-overlay ${isWelcomeExiting ? "exiting" : ""}`} 
+          role="dialog" 
+          aria-modal="true" 
+          aria-label="Welcome to Course Syllabus"
+        >
           <div className="syllabus-welcome-backdrop" onClick={dismissGuideTour} />
           <div className="syllabus-welcome-card">
             <div className="welcome-card-scanline" />
@@ -2346,6 +2413,7 @@ export default function CourseShell({ componentGuide }) {
                 type="button"
                 className="welcome-card-close-btn" 
                 onClick={dismissGuideTour}
+                disabled={isWelcomeExiting}
                 title="Dismiss (Esc)"
                 aria-label="Close welcome banner"
               >
@@ -2391,6 +2459,7 @@ export default function CourseShell({ componentGuide }) {
                 type="button"
                 className="welcome-btn-primary"
                 onClick={startGuideTour}
+                disabled={isWelcomeExiting}
               >
                 <span>SHOW ME AROUND</span>
                 <span className="btn-arrow">→</span>
@@ -2399,6 +2468,7 @@ export default function CourseShell({ componentGuide }) {
                 type="button"
                 className="welcome-btn-secondary"
                 onClick={dismissGuideTour}
+                disabled={isWelcomeExiting}
               >
                 <span>I GOT THIS (SKIP TOUR)</span>
               </button>
@@ -2424,7 +2494,7 @@ export default function CourseShell({ componentGuide }) {
         activeTopic={current.type === "component" ? lesson.name : lesson.title}
         externalSpeech={bobSpeech}
         dockRight={isPinned ? 345 : 24}
-        isCenter={isBobCentered}
+        isCenter={isBobCentered && !showUnlockBanner}
         onLaunchLab={() => {
           soundManager.install();
           navigate(`/3d-builder?stage=${current.type === 'component' ? current.id : 'cpu'}&learn=true`);

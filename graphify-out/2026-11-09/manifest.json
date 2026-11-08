@@ -132,9 +132,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/CourseShell.jsx": {
-    "mtime": 1794176599.2653155,
-    "seen": 1794176664.1133888,
-    "ast_hash": "510bc9981e0cacb2c9bb961113904f2a",
+    "mtime": 1794178303.7488678,
+    "seen": 1794178387.6162832,
+    "ast_hash": "5c5c7197ed667f3964b5deea5afd260a",
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/CourseVideoPlayer.jsx": {
@@ -744,9 +744,9 @@
     "semantic_hash": ""
   },
   "frontend/src/contexts/LearnModeContext.jsx": {
-    "mtime": 1794175801.8461168,
-    "seen": 1794176494.1593184,
-    "ast_hash": "354c25c1c2eb7fe5b8801f79df143fa2",
+    "mtime": 1794176875.152237,
+    "seen": 1794177141.5311847,
+    "ast_hash": "fdbcb61a769d1dd4a5ed05c025362426",
     "semantic_hash": ""
   },
   "backend/uploads/profiles/photo-1794176073655-f3qzal.gif": {
@@ -765,18 +765,6 @@
     "mtime": 1794176086.4874146,
     "seen": 1794176494.1616364,
     "ast_hash": "0fb67551fd8e2c455fe60c43b2680717",
-    "semantic_hash": ""
-  },
-  "frontend/test_learn_flow.js": {
-    "mtime": 1794176810.9384265,
-    "seen": 1794176837.0984187,
-    "ast_hash": "786edeeb66eb33f17de1059ac91089e9",
-    "semantic_hash": ""
-  },
-  "frontend/test_quick.js": {
-    "mtime": 1794176787.6871994,
-    "seen": 1794176837.098423,
-    "ast_hash": "980063bc9fcf0e2111f9063238000cea",
     "semantic_hash": ""
   },
   "frontend/public/sfx/audio/Error1.mp3": {
@@ -829,13 +817,13 @@
   },
   "backend/package-lock.json": {
     "mtime": 1791800606.1768937,
-    "seen": 1794175564.8892753,
+    "seen": 1794178387.627715,
     "ast_hash": "661be6875e353b32cc107be3856a3c63",
     "semantic_hash": ""
   },
   "frontend/package-lock.json": {
     "mtime": 1794176728.843809,
-    "seen": 1794176837.1282456,
+    "seen": 1794178387.6277175,
     "ast_hash": "f4d6919a6221545e6c013e409c685cf6",
     "semantic_hash": ""
   }

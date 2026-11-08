@@ -7,16 +7,24 @@ import Preloader from "./Preloader";
 import Home3DHero from "./Home3DHero";
 import CyberBrand from "../Navigation/CyberBrand";
 import AccountSetupModal from "./AccountSetupModal";
+import ModeSelectionCards from "./ModeSelectionCards";
 import { useSidebar } from "../../contexts/SidebarContext";
 import { useLearnMode } from "../../contexts/LearnModeContext";
 import { enterFullscreen } from "../../utilities/fullscreen";
 import soundManager from "../../utilities/soundManager";
 import systemLogo from "../../assets/system_logo.png";
 
+// Module-level in-memory lock state:
+// The home/hero section is strictly locked until the user clicks START BUILD for the first time.
+// Persists across internal page navigation (e.g. Home -> About -> Home),
+// but resets to false whenever the user reloads the website with CTRL+R.
+let hasSessionUnlockedBuild = false;
+
 function Home() {
   const navigate = useNavigate();
   const { toggleSidebar } = useSidebar();
   const { mode, setAppMode, userProfile, unlockedStages } = useLearnMode();
+  const [showModeCards, setShowModeCards] = useState(false);
   const [showAccountModal, setShowAccountModal] = useState(false);
   const [activeModel, setActiveModel] = useState('case');
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -25,27 +33,18 @@ function Home() {
   // ── Hero Section Scroll-Down Lock Mechanism:
   // When the user enters the Hero section, scrolling down is locked until they press START BUILD.
   // Once they press START BUILD, the page unlocks, smoothly scrolls to the build station (so B.O.B.
-  // gets his proper introduction), and the user can freely scroll up and down for the rest of the session.
-  const [hasClickedBuild, setHasClickedBuild] = useState(() => {
-    try {
-      return sessionStorage.getItem("buildlab_home_build_clicked") === "true";
-    } catch {
-      return false;
-    }
-  });
-
-  const hasClickedBuildRef = useRef(hasClickedBuild);
+  // gets his proper introduction), and the user can freely scroll up and down until CTRL+R reload.
+  const [hasClickedBuild, setHasClickedBuild] = useState(() => hasSessionUnlockedBuild);
+  const hasClickedBuildRef = useRef(hasSessionUnlockedBuild);
 
   useEffect(() => {
     hasClickedBuildRef.current = hasClickedBuild;
   }, [hasClickedBuild]);
 
   const unlockBuildScroll = useCallback(() => {
+    hasSessionUnlockedBuild = true;
     setHasClickedBuild(true);
     hasClickedBuildRef.current = true;
-    try {
-      sessionStorage.setItem("buildlab_home_build_clicked", "true");
-    } catch {}
     document.documentElement.style.overflow = "";
     document.body.style.overflow = "";
   }, []);
@@ -66,15 +65,15 @@ function Home() {
   };
 
   const handleStartBuildTrigger = () => {
-    // If Learn Mode is active and profile not setup, prompt Google setup modal
-    if (mode === "learn" && !userProfile?.setupCompleted) {
-      soundManager.click();
-      setShowAccountModal(true);
+    // If no operating mode has been selected yet, present the 2 Mode Selection Cards
+    if (!mode) {
+      try { soundManager.click(); } catch {}
+      setShowModeCards(true);
       return;
     }
-    // If no mode is selected yet, prompt user with modal so they can choose
-    if (!mode) {
-      soundManager.click();
+    // If Learn Mode is active and profile not setup, prompt Google setup modal
+    if (mode === "learn" && !userProfile?.setupCompleted) {
+      try { soundManager.click(); } catch {}
       setShowAccountModal(true);
       return;
     }
@@ -118,9 +117,9 @@ function Home() {
   };
 
   const handleLaunch3DStudio = () => {
-    if (mode === "learn") {
+    if (mode === "learn" && !unlockedStages.includes("studio") && !unlockedStages.includes("3d")) {
       soundManager.warning();
-      alert("3D Studio is locked during Learn Mode. Switch to Explore Mode from the top bar to access.");
+      alert("3D Studio unlocks as the final engineering milestone in Learn Mode! Complete your 2D build, compatibility, and lessons first, or switch to Explore Mode.");
       return;
     }
     soundManager.click();
@@ -432,89 +431,11 @@ function Home() {
             </div>
           </div>
 
-          {/* Mode Selector Dock */}
-          <div className="cyber-hero-mode-dock">
-            <div className="mode-dock-inner">
-              <div className="mode-dock-tag">
-                <span className="dock-pulse-dot" />
-                <span>CHOOSE OPERATING MODE</span>
-              </div>
-
-              <div className="mode-dock-tabs">
-                <button
-                  type="button"
-                  className={`mode-dock-pill ${mode === 'learn' ? 'active learn' : ''}`}
-                  onClick={() => handleSelectMode('learn')}
-                  title="Guided track: 2D Builder -> Compatibility Matrix -> Hardware Academy -> Verified Certificate"
-                >
-                  <span className="dock-pill-icon">🎓</span>
-                  <div className="dock-pill-text">
-                    <span className="dock-pill-title">LEARN MODE</span>
-                    <span className="dock-pill-sub">Guided Certification Track</span>
-                  </div>
-                  {mode === 'learn' && <span className="dock-pill-tag">ACTIVE TRACK</span>}
-                </button>
-
-                <button
-                  type="button"
-                  className={`mode-dock-pill ${mode === 'explore' ? 'active explore' : ''}`}
-                  onClick={() => handleSelectMode('explore')}
-                  title="Browse freely without lockouts: 3D Studio, Matrix, and Academy are all unlocked"
-                >
-                  <span className="dock-pill-icon">🚀</span>
-                  <div className="dock-pill-text">
-                    <span className="dock-pill-title">EXPLORE MODE</span>
-                    <span className="dock-pill-sub">Free Browsing &amp; 3D Sandbox</span>
-                  </div>
-                  {mode === 'explore' && <span className="dock-pill-tag">ACTIVE LAB</span>}
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div className="cyber-hud-bar">
-            <div className="hud-metric-item">
-              <div className="hud-radar-dial">
-                <div className="radar-sweep" />
-                <div className="radar-core-dot" />
-              </div>
-              <div className="hud-metric-text">
-                <span className="hud-metric-label">ACTIVE RIG</span>
-                <span className="hud-metric-val">+7 HARDWARE STAGES</span>
-                <span className="hud-metric-sub">Modular snap-fit validation</span>
-              </div>
-            </div>
-
-            <div className="hud-divider" />
-
-            <div className="hud-metric-item">
-              <div className="hud-status-pulse">
-                <span className="pulse-ring" />
-                <span className="pulse-center" />
-              </div>
-              <div className="hud-metric-text">
-                <span className="hud-metric-label">COMPATIBILITY</span>
-                <span className="hud-metric-val val-green">100% VERIFIED</span>
-                <span className="hud-metric-sub">Zero socket or TDP conflicts</span>
-              </div>
-            </div>
-
-            <div className="hud-divider" />
-
-            <div className="hud-metric-item">
-              <div className="hud-chip-badge">
-                <span>3D</span>
-              </div>
-              <div className="hud-metric-text">
-                <span className="hud-metric-label">SIMULATION ENGINE</span>
-                <span className="hud-metric-val">THREE.JS WEBGL</span>
-                <span className="hud-metric-sub">Physically based rendering</span>
-              </div>
-            </div>
-
+          {/* Centered START BUILD Action Button (Green Box, Metrics & Dock Removed) */}
+          <div className="cyber-hero-center-action">
             <button 
               type="button" 
-              className="hud-start-build-btn"
+              className="hud-start-build-btn centered-start-btn"
               onClick={(e) => {
                 e.preventDefault();
                 handleStartBuildTrigger();
@@ -532,6 +453,22 @@ function Home() {
         </section>
       </div>
 
+      {/* ── 2-Card Mode Selection (Split Staggered Reveal + PixelCanvas Hover) ── */}
+      <ModeSelectionCards
+        isOpen={showModeCards}
+        onClose={() => setShowModeCards(false)}
+        onSelectLearn={() => {
+          setShowModeCards(false);
+          setShowAccountModal(true);
+        }}
+        onSelectFree={() => {
+          setShowModeCards(false);
+          setAppMode("explore");
+          handleScrollToBuild("smooth");
+        }}
+      />
+
+      {/* ── Google Sign-In & Name Verification Modal ── */}
       <AccountSetupModal
         isOpen={showAccountModal}
         onClose={() => setShowAccountModal(false)}

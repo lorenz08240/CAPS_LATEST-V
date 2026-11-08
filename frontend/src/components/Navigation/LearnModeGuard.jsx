@@ -21,9 +21,13 @@ export default function LearnModeGuard({ children, requiredStage, featureName = 
   let actionTarget = "/#build-station";
 
   if (location.pathname.startsWith("/3d-builder")) {
-    reason = "3D Studio is reserved for open exploration and is locked during the structured student certification track.";
-    nextAction = "Complete your 2D assembly and compatibility check first.";
-    actionTarget = "/#build-station";
+    reason = "3D Studio unlocks as the final engineering sandbox in your guided Learn Track.";
+    nextAction = "Complete your 2D assembly, check compatibility, and finish the Academy lessons.";
+    actionTarget = unlockedStages.includes("learn")
+      ? "/learn"
+      : unlockedStages.includes("compatibility")
+      ? "/compatibility"
+      : "/#build-station";
   } else if (location.pathname.startsWith("/compatibility")) {
     reason = "The Hardware Compatibility Matrix requires a complete 7-part build before running real-time diagnostics.";
     nextAction = "Select all 7 components in the 2D Builder to unlock compatibility checking.";

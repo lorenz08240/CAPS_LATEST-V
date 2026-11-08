@@ -122,11 +122,6 @@ export const LearnModeProvider = ({ children }) => {
       // Home and 2D Build are always accessible
       if (path === "/" || path === "/build") return true;
 
-      // 3D Studio is strictly locked during Learn Mode
-      if (path.startsWith("/3d-builder")) {
-        return false;
-      }
-
       // Helper to check stage unlock from state or local storage
       const isStageUnlocked = (key) => {
         if (unlockedStages.includes(key)) return true;
@@ -138,17 +133,23 @@ export const LearnModeProvider = ({ children }) => {
         }
       };
 
-      // Compatibility checker requires Stage 2 unlocked
+      // Learner sequential flow: BUILD (unlocked) -> COMPATIBILITY -> LEARN -> 3D STUDIO
+      // 1. Compatibility checker requires Stage 2 unlocked
       if (path.startsWith("/compatibility")) {
         return isStageUnlocked("compatibility");
       }
 
-      // Learn academy courseware requires Stage 3 unlocked
+      // 2. Learn academy courseware requires Stage 3 unlocked
       if (path.startsWith("/learn")) {
         return isStageUnlocked("learn");
       }
 
-      // Certificate requires Stage 4 unlocked
+      // 3. 3D Studio workspace requires Stage 4 unlocked
+      if (path.startsWith("/3d-builder")) {
+        return isStageUnlocked("studio") || isStageUnlocked("3d");
+      }
+
+      // Certificate requires certification unlocked
       if (path.startsWith("/certificate")) {
         return isStageUnlocked("certificate");
       }
