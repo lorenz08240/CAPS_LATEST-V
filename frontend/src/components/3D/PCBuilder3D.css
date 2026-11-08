@@ -831,77 +831,379 @@
   right: 1.25rem;
 }
 
-/* ── B.O.B. (3D Studio Companion Eye Follower) ── */
-.auto-rotate-bob-group {
+/* ── Controls Guide Top Bar Button ── */
+.controls-guide-btn {
+  background: rgba(0, 242, 254, 0.12) !important;
+  border-color: rgba(0, 242, 254, 0.45) !important;
+  color: #00f2fe !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  box-shadow: 0 0 12px rgba(0, 242, 254, 0.25) !important;
+  transition: all 0.2s ease !important;
+}
+
+.controls-guide-btn:hover,
+.controls-guide-btn.active {
+  background: rgba(0, 242, 254, 0.22) !important;
+  border-color: #00f2fe !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 20px rgba(0, 242, 254, 0.5) !important;
+  transform: translateY(-1px);
+}
+
+.controls-guide-icon {
+  font-size: 11px;
+}
+
+/* ── B.O.B. Floating 3D Studio Companion on Bottom-Left ── */
+.studio-bob-floating-dock {
+  position: absolute;
+  bottom: 24px;
+  left: 24px;
+  z-index: 120;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  pointer-events: auto;
+  user-select: none;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  filter: drop-shadow(0 16px 28px rgba(0, 0, 0, 0.85));
+}
+
+.studio-bob-floating-dock:hover {
+  transform: translateY(-3px) scale(1.04);
+}
+
+.studio-bob-pedestal {
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.studio-bob-aura-halo {
+  position: absolute;
+  inset: -14px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--bob-rgb-glow, rgba(0, 242, 254, 0.3)) 0%, transparent 70%);
+  filter: blur(14px);
+  pointer-events: none;
+  z-index: -1;
+  animation: bob3DAuraBreathe 3s ease-in-out infinite alternate;
+}
+
+@keyframes bob3DAuraBreathe {
+  0% { transform: scale(0.9); opacity: 0.55; }
+  100% { transform: scale(1.15); opacity: 0.95; }
+}
+
+.studio-bob-status-tag {
   display: inline-flex;
   align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  background: rgba(6, 8, 14, 0.9);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  font-family: var(--font-mono, monospace);
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
 }
 
-.bob-companion-dock {
+.studio-bob-status-tag .tag-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  animation: cyberPulse 1.4s ease-in-out infinite alternate;
+}
+
+/* Ensure speech bubble sits neatly above BOB on bottom-left */
+.studio-bob-floating-dock .eyt-say {
+  bottom: calc(100% + 14px) !important;
+  left: 0 !important;
+  right: auto !important;
+  top: auto !important;
+  transform-origin: bottom left !important;
+  border-radius: 14px 14px 14px 4px !important;
+  max-width: min(440px, calc(100vw - 80px)) !important;
+}
+
+.studio-bob-floating-dock .eyt-say::after {
+  left: 28px !important;
+  right: auto !important;
+  bottom: -6px !important;
+  border-right: none !important;
+  border-left: 1.5px solid var(--tint, #00f2fe) !important;
+  border-bottom: 1.5px solid var(--tint, #00f2fe) !important;
+  transform: rotate(-45deg) !important;
+}
+
+/* ── View Your Model / 3D Controls Guide Modal ── */
+.controls-guide-modal-overlay {
   position: absolute;
-  top: calc(100% + 9px);
-  right: 0;
+  inset: 0;
+  z-index: 850;
+  background: rgba(4, 7, 14, 0.72);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  padding: 0;
-  border-radius: 0;
-  cursor: pointer;
-  z-index: 20;
-  transition: transform 0.2s ease;
-  -webkit-user-select: none;
-  user-select: none;
+  padding: 1.5rem;
+  animation: fadeIn 0.25s ease;
 }
 
-.bob-companion-dock:hover {
-  transform: translateY(1px) scale(1.1);
-}
-
-.bob-coin-pedestal {
-  width: 38px;
-  height: 38px;
+.controls-guide-modal {
+  width: 100%;
+  max-width: 440px;
+  background: rgba(14, 18, 32, 0.96);
+  -webkit-backdrop-filter: blur(28px);
+  backdrop-filter: blur(28px);
+  border: 1px solid rgba(0, 242, 254, 0.35);
+  border-radius: 20px;
+  box-shadow: 
+    0 24px 64px rgba(0, 0, 0, 0.85), 
+    0 0 35px rgba(0, 242, 254, 0.18),
+    inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  padding: 1.4rem;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  gap: 1.1rem;
+  animation: modalPopIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
 }
 
-.bob-coin-pedestal .eyt {
-  width: 38px !important;
-  height: 38px !important;
+@keyframes modalPopIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
-.bob-coin-pedestal .eyt-ball {
-  filter: drop-shadow(0 0 6px var(--bob-rgb-color, transparent));
+.controls-guide-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.bob-label {
-  font-family: 'JetBrains Mono', 'Consolas', monospace;
+.controls-guide-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono, monospace);
   font-size: 9.5px;
   font-weight: 800;
-  letter-spacing: 0.8px;
-  color: var(--bob-rgb-color, #94a3b8);
-  text-shadow: 0 0 8px var(--bob-rgb-glow, transparent);
-  transition: color 0.25s ease, text-shadow 0.25s ease;
+  letter-spacing: 0.12em;
+  color: #00f2fe;
+  margin-bottom: 4px;
 }
 
-/* Chat bubble adaptation for B.O.B. in the top-right corner */
-.bob-companion-dock .eyt-say {
-  left: auto !important;
-  right: calc(100% + 10px) !important;
-  top: 50% !important;
-  transform: translateY(-50%) scale(0.85);
-  transform-origin: right center !important;
-  border-radius: 12px 12px 4px 12px !important;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+.controls-guide-badge .controls-guide-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #00f2fe;
+  box-shadow: 0 0 8px #00f2fe;
+  animation: cyberPulse 1.4s infinite alternate;
 }
 
-.bob-companion-dock .eyt-say[data-on] {
-  transform: translateY(-50%) scale(1) !important;
+.controls-guide-title {
+  margin: 0;
+  font-family: 'Syne', sans-serif;
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+}
+
+.controls-guide-close-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #94a3b8;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.controls-guide-close-btn:hover {
+  background: rgba(244, 63, 94, 0.2);
+  border-color: #f43f5e;
+  color: #ffffff;
+  transform: scale(1.08);
+}
+
+.controls-guide-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.control-guide-card {
+  background: rgba(20, 27, 46, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 0.85rem 1rem;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+.control-guide-card.active-guide-card {
+  background: rgba(26, 35, 62, 0.95);
+  border-color: #00f2fe;
+  box-shadow: 
+    0 0 0 2px rgba(0, 242, 254, 0.7),
+    0 0 24px rgba(0, 242, 254, 0.35),
+    inset 0 0 20px rgba(0, 242, 254, 0.08);
+  animation: activeGuideCardPulse 2s ease-in-out infinite alternate;
+}
+
+@keyframes activeGuideCardPulse {
+  0% {
+    border-color: #00f2fe;
+    box-shadow: 0 0 0 2px rgba(0, 242, 254, 0.6), 0 0 16px rgba(0, 242, 254, 0.25);
+  }
+  50% {
+    border-color: #f43f5e;
+    box-shadow: 0 0 0 2.5px rgba(244, 63, 94, 0.75), 0 0 24px rgba(244, 63, 94, 0.35);
+  }
+  100% {
+    border-color: #00f2fe;
+    box-shadow: 0 0 0 2px rgba(0, 242, 254, 0.8), 0 0 22px rgba(0, 242, 254, 0.35);
+  }
+}
+
+.control-guide-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 0.65rem;
+}
+
+.card-step-num {
+  font-family: var(--font-mono, monospace);
+  font-size: 10px;
+  font-weight: 800;
+  color: #f43f5e;
+  background: rgba(244, 63, 94, 0.12);
+  padding: 1px 5px;
+  border-radius: 4px;
+  border: 1px solid rgba(244, 63, 94, 0.3);
+}
+
+.card-step-title {
+  margin: 0;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #f8fafc;
+  letter-spacing: 0.02em;
+}
+
+.card-step-pulse {
+  margin-left: auto;
+  font-family: var(--font-mono, monospace);
+  font-size: 9px;
+  font-weight: 800;
+  color: #00f2fe;
+  letter-spacing: 0.1em;
+  animation: cyberPulse 1.2s infinite;
+}
+
+.control-guide-card-body {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.control-guide-card-body.three-cols {
+  grid-template-columns: 1fr auto 1fr auto 1fr;
+}
+
+.control-interaction-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+}
+
+.control-device-icon-wrap {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #cbd5e1;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.5));
+}
+
+.control-mouse-svg,
+.control-trackpad-svg {
+  transition: transform 0.2s ease;
+}
+
+.control-interaction-col:hover .control-mouse-svg,
+.control-interaction-col:hover .control-trackpad-svg {
+  transform: scale(1.08);
+}
+
+.control-instruction-text {
+  font-size: 10.5px;
+  color: #94a3b8;
+  line-height: 1.3;
+  font-weight: 500;
+}
+
+.control-col-divider {
+  width: 1px;
+  height: 38px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.controls-guide-footer {
+  display: flex;
+  justify-content: center;
+  padding-top: 0.4rem;
+}
+
+.controls-guide-ok-btn {
+  width: 100%;
+  padding: 0.65rem 2rem;
+  border-radius: 9999px;
+  background: #ffffff;
+  color: #06080e;
+  border: none;
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 18px rgba(255, 255, 255, 0.25);
+}
+
+.controls-guide-ok-btn:hover {
+  background: #00f2fe;
+  color: #06080e;
+  box-shadow: 0 0 28px rgba(0, 242, 254, 0.65);
+  transform: translateY(-2px);
 }
 
 .tools-hud {

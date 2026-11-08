@@ -6,6 +6,7 @@ import ProceduralSickleFan from './ProceduralSickleFan';
 import NepotatoGPU from './NepotatoGPU';
 import { MotherboardDDR4Kit } from './DDR4RAMModel';
 import { MotherboardNVMeSSD } from './NVMeSSDModel';
+import PSUModel from './PSUModel';
 
 // Procedural high-detail 3D models for all PC components (Clean Generic Models per Panel Specs)
 export default function ComponentModels3D({ 
@@ -373,48 +374,13 @@ export default function ComponentModels3D({
       )}
 
       {category === 'psu' && (
-        <group>
-          <mesh position={[0, 0, 0]}>
-            <boxGeometry args={[2.5, 1.5, 3.2]} />
-            <meshStandardMaterial 
-              color="#2d3748" 
-              roughness={0.65} 
-              metalness={0.65}
-              emissive={highlightEmissive}
-              emissiveIntensity={highlightIntensity}
-            />
-          </mesh>
-
-          <mesh position={[0, 0, -1.61]}>
-            <boxGeometry args={[2.3, 1.3, 0.02]} />
-            <meshStandardMaterial color="#111827" roughness={0.9} wireframe />
-          </mesh>
-
-          <mesh position={[0.7, -0.2, -1.62]}>
-            <boxGeometry args={[0.6, 0.4, 0.05]} />
-            <meshStandardMaterial color="#090d16" />
-          </mesh>
-
-          <mesh position={[-0.7, -0.2, -1.62]}>
-            <boxGeometry args={[0.3, 0.4, 0.06]} />
-            <meshStandardMaterial color="#ef4444" roughness={0.3} />
-          </mesh>
-
-          <mesh position={[0, 0, 1.61]}>
-            <boxGeometry args={[2.2, 1.2, 0.03]} />
-            <meshStandardMaterial color="#1e293b" />
-          </mesh>
-
-          <mesh position={[0.4, 0.2, 2.1]} rotation={[Math.PI / 2, 0, 0]}>
-            <cylinderGeometry args={[0.18, 0.18, 1.0, 16]} />
-            <meshStandardMaterial color="#111827" roughness={0.9} />
-          </mesh>
-
-          <mesh position={[-1.26, 0, 0]}>
-            <boxGeometry args={[0.01, 0.8, 1.6]} />
-            <meshStandardMaterial color="#facc15" metalness={0.92} roughness={0.2} />
-          </mesh>
-        </group>
+        <PSUModel 
+          rgbColor={rgbColor}
+          isSelected={activeSelected}
+          isHovered={effectiveHover}
+          enableHighlight={enableHighlight}
+          isMounted={true}
+        />
       )}
 
       {category === 'storage' && (

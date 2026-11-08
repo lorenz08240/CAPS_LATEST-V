@@ -8,7 +8,8 @@ import GenericPCCase from '../3D/GenericPCCase';
 import ComponentModels3D from '../3D/ComponentModels3D';
 import { HeroFloatingRAM } from '../3D/DDR4RAMModel';
 import { HeroFloatingSSD } from '../3D/NVMeSSDModel';
-import { preloadRAMModel, preloadNVMeSSDModel } from '../../utilities/modelPreloader';
+import { HeroFloatingPSU } from '../3D/PSUModel';
+import { preloadRAMModel, preloadNVMeSSDModel, preloadPSUModel } from '../../utilities/modelPreloader';
 
 const HERO_STAGES = [
   { id: 'case', name: 'ATX Chassis', stageNum: 1, desc: 'Precision Airflow Chassis' },
@@ -183,13 +184,8 @@ function HardwareStageModel({ stageId, rgbColor }) {
       );
     case 'psu':
       return (
-        <group scale={[0.52, 0.52, 0.52]}>
-          <ComponentModels3D
-            part={{ category: 'psu', name: 'Modular ATX Power Supply' }}
-            rgbColor={rgbColor}
-            showTooltip={false}
-            enableHighlight={false}
-          />
+        <group scale={[0.82, 0.82, 0.82]}>
+          <HeroFloatingPSU rgbColor={rgbColor} enableHighlight={false} />
         </group>
       );
     default:
@@ -213,8 +209,16 @@ function FluidScene({ onStageChange, rgbColor, scrollProgress = 0 }) {
   const motionGroupRef = useRef();
   const turntableAngleRef = useRef(0);
 
-  const [currentStageId, setCurrentStageId] = useState(HERO_STAGES[0].id);
+  const initialStage = (typeof window !== 'undefined' && window.__BUILDLAB_HERO_STAGE__) || HERO_STAGES[0].id;
+  const initialIndex = Math.max(0, HERO_STAGES.findIndex(s => s.id === initialStage));
+
+  const [currentStageId, setCurrentStageId] = useState(initialStage);
   const [landingProgress, setLandingProgress] = useState(0);
+
+  // Sync initial stage to parent component on mount
+  useEffect(() => {
+    onStageChange?.(currentStageId);
+  }, [currentStageId, onStageChange]);
 
   // Sequential background prefetching: pre-caches next heavy asset before transition
   useEffect(() => {
@@ -222,6 +226,8 @@ function FluidScene({ onStageChange, rgbColor, scrollProgress = 0 }) {
       preloadRAMModel('idle');
     } else if (currentStageId === 'ram') {
       preloadNVMeSSDModel('idle');
+    } else if (currentStageId === 'gpu') {
+      preloadPSUModel('idle');
     }
   }, [currentStageId]);
 
@@ -229,7 +235,7 @@ function FluidScene({ onStageChange, rgbColor, scrollProgress = 0 }) {
   const animRef = useRef({
     phase: 'rest', // 'rest' | 'exit' | 'pause' | 'enter'
     timer: 0,
-    currentIndex: 0,
+    currentIndex: initialIndex,
   });
 
   useFrame((state, rawDelta) => {

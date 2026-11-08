@@ -214,9 +214,11 @@ export default function GenericPCCase({
         </mesh>
       </group>
 
+      {/* PSU Shroud / Basement Compartment with Professional Side Viewing Window */}
       <group position={[0, -3.5, 0]}>
-        <mesh>
-          <boxGeometry args={[4.2, 1.8, 8.8]} />
+        {/* Shroud Top Deck */}
+        <mesh position={[0, 0.86, 0]}>
+          <boxGeometry args={[4.2, 0.08, 8.8]} />
           <meshStandardMaterial 
             color={psuShroudColor} 
             roughness={0.7} 
@@ -225,10 +227,76 @@ export default function GenericPCCase({
             emissiveIntensity={highlightIntensity}
           />
         </mesh>
+
+        {/* Shroud Right Wall (Motherboard Tray Backing Side) */}
+        <mesh position={[2.06, 0, 0]}>
+          <boxGeometry args={[0.08, 1.72, 8.8]} />
+          <meshStandardMaterial 
+            color={psuShroudColor} 
+            roughness={0.7} 
+            metalness={0.6}
+          />
+        </mesh>
+
+        {/* Shroud Front Wall (Behind Front Intake Fans) */}
+        <mesh position={[0, 0, 4.36]}>
+          <boxGeometry args={[4.2, 1.72, 0.08]} />
+          <meshStandardMaterial 
+            color={psuShroudColor} 
+            roughness={0.7} 
+            metalness={0.6}
+          />
+        </mesh>
+
+        {/* Shroud Left Wall (Facing Glass Window) — Front Drive Bay Solid Shroud */}
+        <mesh position={[-2.06, 0, 1.8]}>
+          <boxGeometry args={[0.08, 1.72, 5.2]} />
+          <meshStandardMaterial 
+            color={psuShroudColor} 
+            roughness={0.7} 
+            metalness={0.6}
+            emissive={highlightEmissive}
+            emissiveIntensity={highlightIntensity}
+          />
+        </mesh>
+
+        {/* PSU Display Window Upper Rail */}
+        <mesh position={[-2.06, 0.65, -2.6]}>
+          <boxGeometry args={[0.08, 0.42, 3.6]} />
+          <meshStandardMaterial 
+            color={psuShroudColor} 
+            roughness={0.7} 
+            metalness={0.6}
+          />
+        </mesh>
+
+        {/* PSU Display Window Lower Rail */}
+        <mesh position={[-2.06, -0.65, -2.6]}>
+          <boxGeometry args={[0.08, 0.42, 3.6]} />
+          <meshStandardMaterial 
+            color={psuShroudColor} 
+            roughness={0.7} 
+            metalness={0.6}
+          />
+        </mesh>
+
+        {/* PSU Window Rear Post */}
+        <mesh position={[-2.06, 0, -4.35]}>
+          <boxGeometry args={[0.08, 1.72, 0.1]} />
+          <meshStandardMaterial 
+            color={psuShroudColor} 
+            roughness={0.7} 
+            metalness={0.6}
+          />
+        </mesh>
+
+        {/* Shroud Top Ventilated Mesh */}
         <mesh position={[-0.8, 0.91, 0]}>
           <boxGeometry args={[2.0, 0.02, 6.0]} />
           <meshStandardMaterial color={meshColor} roughness={0.9} />
         </mesh>
+
+        {/* Cable Grommet Cutout */}
         <mesh position={[0.8, 0.91, 0.5]}>
           <boxGeometry args={[0.4, 0.03, 1.0]} />
           <meshStandardMaterial color="#0b0f19" roughness={0.95} />

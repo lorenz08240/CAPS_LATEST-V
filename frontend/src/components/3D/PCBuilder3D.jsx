@@ -1,4 +1,4 @@
-import React, { useState, Suspense, useRef, useEffect, useMemo } from 'react';
+import React, { useState, Suspense, useRef, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Grid, ContactShadows, Environment, Html } from '@react-three/drei';
@@ -12,7 +12,66 @@ import soundManager from '../../utilities/soundManager';
 import EyeTracker from '../EyeTracker';
 import GenericPCCase from './GenericPCCase';
 import ComponentModels3D from './ComponentModels3D';
+import { preloadPSUModel, preloadRAMModel, preloadNVMeSSDModel } from '../../utilities/modelPreloader';
 import './PCBuilder3D.css';
+
+/* ══════════════════════════════════════════════════════════════
+   B.O.B. 3D STUDIO CASUAL WISDOM & RIG BUILDER LINES
+   Tone: Playful, friendly gamer buddy (matching BobCompanion personality)
+   ══════════════════════════════════════════════════════════════ */
+const BOB_3D_CASUAL_LINES = [
+  "Hey, I see you spinning that rig in 3D!",
+  "Left-click and drag to rotate your build in 360 degrees.",
+  "Right-click or Shift-drag to pan the camera across the workbench.",
+  "Scroll your wheel to zoom right in on the motherboard sockets!",
+  "Loving the RGB Aura color! Looking super clean.",
+  "Don't forget to pop off the side glass to inspect internal cables.",
+  "Try the 'Workbench' stance up top for that YouTube shorts builder POV!",
+  "Check out that GPU clearance — plenty of airflow for the fans.",
+  "Boop! Stop poking me, you've got PC parts to assemble!",
+  "Hit 'Exploded View' to see all 7 components floating in space!",
+  "That tickles! What part are we mounting next?",
+  "Looking sharp from this angle! Make sure screws are seated tight."
+];
+
+/* ── Tailored casual lines triggered THE EXACT MOMENT camera focuses on the mounted part ── */
+const BOB_MOUNT_FOCUS_LINES = {
+  case: [
+    (name) => `Chassis locked in! ${name} gives us tons of airflow and room. Next up, let's slot in the motherboard!`,
+    (name) => `Ooh, clean case! ${name} is seated on the bench. Time to align the motherboard standoffs!`,
+    (name) => `Solid chassis foundation! ${name} looks sleek. Next step: let's mount our motherboard.`
+  ],
+  motherboard: [
+    (name) => `Motherboard mounted onto the standoffs! ${name} is looking pristine. Let's seat the CPU chip!`,
+    (name) => `Board secured! Look at all those PCIe and M.2 lanes on ${name}. Time for the processor brain!`,
+    (name) => `Backbone installed! ${name} is ready for action. Next step: align that CPU gold triangle pin!`
+  ],
+  cpu: [
+    (name) => `Boom, processor seated and latched! ${name} is our computing brain. Let's plug in the dual-channel RAM!`,
+    (name) => `CPU locked down! ${name} is gonna crank out serious frames. Next up, pop those RAM sticks in!`,
+    (name) => `Brain installed! Zero bent pins on ${name}. Let's snap that memory into slots 2 and 4!`
+  ],
+  ram: [
+    (name) => `Click! Dual-channel ${name} memory is locked in tight. Next up, ultra-fast NVMe storage!`,
+    (name) => `Memory snapped into place! ${name} is ready for high-speed multitasking. Time for the M.2 drive!`,
+    (name) => `RAM seated firmly! Retention clips engaged on ${name}. Let's slide in that NVMe SSD!`
+  ],
+  storage: [
+    (name) => `M.2 NVMe slid in at 30 degrees and screwed down! ${name} means lightning boots. Now for the GPU beast!`,
+    (name) => `Storage drive mounted flush! ${name} is ready for game libraries. Next up, the graphics card!`,
+    (name) => `High-speed SSD installed! Pure PCIe bandwidth on ${name}. Time to slot in that monster GPU!`
+  ],
+  gpu: [
+    (name) => `Graphics card clicked firmly into the top PCIe slot! Look at ${name} — absolute gaming powerhouse. Final step: power supply!`,
+    (name) => `GPU seated and bracket secured! ${name} looks incredible in this chassis. Just need the PSU to power it all!`,
+    (name) => `What a beast! ${name} is locked in with plenty of fan clearance. Let's slide in the power supply!`
+  ],
+  psu: [
+    (name) => `Power supply slid into the basement shroud! ${name} is ready to juice the whole machine. Rig 100% complete!`,
+    (name) => `PSU mounted and cables routed! ${name} provides clean, stable power. Hit Compatibility to verify your build!`,
+    (name) => `Boom! ${name} is locked down. Every single hardware stage is assembled! She's ready to test!`
+  ]
+};
 
 // Predefined snap positions inside the PC Case
 const TARGET_POSITIONS = {
@@ -21,7 +80,7 @@ const TARGET_POSITIONS = {
   cpu: [1.32, 1.6, -1.2],
   ram: [1.32, 1.6, 0.3],
   gpu: [0.6, -0.5, -0.9],
-  psu: [0, -3.5, -2.6],
+  psu: [0, -3.5, -2.85],
   storage: [1.33, 0.55, -1.2]
 };
 
@@ -194,6 +253,91 @@ function PCBuilder3DWorkspace() {
   const [toastMessage, setToastMessage] = useState(null);
   const [confirmDisassemble, setConfirmDisassemble] = useState(false);
 
+  // ── 3D Controls Guide Tour state (Plane controls walkthrough) ──
+  const [showControlsModal, setShowControlsModal] = useState(false);
+  const [controlsTourStep, setControlsTourStep] = useState(null); // 'rotate' | 'pan' | 'zoom' | 'ready' | null
+  const [bob3DSpeech, setBob3DSpeech] = useState(null);
+  const [bobLookTarget, setBobLookTarget] = useState(null);
+  const tourTimerRef = useRef(null);
+
+  const dismissControlsTour = useCallback(() => {
+    if (tourTimerRef.current) {
+      clearTimeout(tourTimerRef.current);
+      tourTimerRef.current = null;
+    }
+    setShowControlsModal(false);
+    setControlsTourStep(null);
+    setBobLookTarget(null);
+    setBob3DSpeech("Have fun building! Poke me down here anytime you need advice.");
+  }, []);
+
+  const startControlsTour = useCallback(() => {
+    if (tourTimerRef.current) {
+      clearTimeout(tourTimerRef.current);
+      tourTimerRef.current = null;
+    }
+
+    setShowControlsModal(true);
+
+    // STEP 1: Rotate View (6.2s)
+    setControlsTourStep('rotate');
+    setBobLookTarget('#guide-card-rotate');
+    setBob3DSpeech("Welcome to 3D Studio! Left-click and drag anywhere on the canvas to rotate your build in 360 degrees.");
+
+    tourTimerRef.current = setTimeout(() => {
+      // STEP 2: Pan View (6.0s)
+      setControlsTourStep('pan');
+      setBobLookTarget('#guide-card-pan');
+      setBob3DSpeech("To pan and slide the camera around, hold Shift + Left-click, or just Right-click and drag!");
+
+      tourTimerRef.current = setTimeout(() => {
+        // STEP 3: Zoom in/out (6.0s)
+        setControlsTourStep('zoom');
+        setBobLookTarget('#guide-card-zoom');
+        setBob3DSpeech("Scroll your mouse wheel up or down to zoom right into the motherboard sockets and screws!");
+
+        tourTimerRef.current = setTimeout(() => {
+          // STEP 4: Ready / Wrap-up
+          setControlsTourStep('ready');
+          setBobLookTarget(null);
+          setBob3DSpeech("You're all set to build in 3D! Click OK or dismiss anytime, and poke me down here if you need tips.");
+          tourTimerRef.current = null;
+        }, 6000);
+      }, 6000);
+    }, 6200);
+  }, []);
+
+  // Automatically trigger plane controls guide on first-time entry
+  useEffect(() => {
+    let isFirstVisit = false;
+    try {
+      isFirstVisit = !sessionStorage.getItem('buildlab_3d_controls_shown');
+    } catch {
+      isFirstVisit = true;
+    }
+
+    if (isFirstVisit) {
+      try {
+        sessionStorage.setItem('buildlab_3d_controls_shown', 'true');
+      } catch {}
+
+      const entranceTimer = setTimeout(() => {
+        startControlsTour();
+      }, 650);
+
+      return () => clearTimeout(entranceTimer);
+    }
+  }, [startControlsTour]);
+
+  // Cleanup guide tour timer on unmount
+  useEffect(() => {
+    return () => {
+      if (tourTimerRef.current) {
+        clearTimeout(tourTimerRef.current);
+      }
+    };
+  }, []);
+
   const orbitRef = useRef();
 
   // Play audio safely via central soundManager
@@ -209,8 +353,12 @@ function PCBuilder3DWorkspace() {
     }, 3200);
   };
 
-  // Keyboard shortcut: Escape to deselect active 3D component
+  // Keyboard shortcut: Escape to deselect active 3D component & pre-cache 3D models
   useEffect(() => {
+    preloadPSUModel('idle');
+    preloadRAMModel('idle');
+    preloadNVMeSSDModel('idle');
+
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
         setInspectedPart(null);
@@ -732,48 +880,33 @@ function PCBuilder3DWorkspace() {
 
             <div className="hud-divider"></div>
 
-            <div className="auto-rotate-bob-group">
-              <button 
-                className={`hud-btn ${autoRotate ? 'active' : ''}`}
-                onClick={() => {
-                  setAutoRotate(!autoRotate);
-                  playSound('click');
-                }}
-                title="Toggle Constant 360° Turntable Auto-Rotation"
-              >
-                {autoRotate ? 'Stop Spin' : 'Auto-Rotate'}
-              </button>
+            <button 
+              className={`hud-btn ${autoRotate ? 'active' : ''}`}
+              onClick={() => {
+                setAutoRotate(!autoRotate);
+                playSound('click');
+              }}
+              title="Toggle Constant 360° Turntable Auto-Rotation"
+            >
+              {autoRotate ? 'Stop Spin' : 'Auto-Rotate'}
+            </button>
 
-              <div 
-                className="bob-companion-dock" 
-                title="B.O.B. — Your 3D Studio Companion (Poke him!)"
-                style={{
-                  '--bob-rgb-color': rgbColor,
-                  '--bob-rgb-glow': `${rgbColor}44`,
-                }}
-              >
-                <div className="bob-coin-pedestal">
-                  <EyeTracker
-                    size={42}
-                    shape="Cube"
-                    eyes="Squares"
-                    bodyColor={rgbColor}
-                    eyeColor="#06080e"
-                    bounce={45}
-                    follow={80}
-                    speechLines={[
-                      "Hi! I'm B.O.B.",
-                      "Loving the RGB Aura color!",
-                      "Nice airflow orientation!",
-                      "Cable management looking clean.",
-                      "Click auto-rotate to inspect all angles!",
-                      "That tickles!",
-                      "Poke me anytime while building!"
-                    ]}
-                  />
-                </div>
-              </div>
-            </div>
+            <button 
+              type="button"
+              className={`hud-btn controls-guide-btn ${showControlsModal ? 'active' : ''}`}
+              onClick={() => {
+                playSound('click');
+                if (showControlsModal) {
+                  dismissControlsTour();
+                } else {
+                  startControlsTour();
+                }
+              }}
+              title="Open 3D Plane Controls Guide (Rotate, Pan & Zoom)"
+            >
+              <span className="controls-guide-icon">💡</span>
+              <span>Controls Guide</span>
+            </button>
           </div>
 
           <div className="hud-toolbar tools-hud">
@@ -1175,6 +1308,216 @@ function PCBuilder3DWorkspace() {
           {toastMessage && (
             <div className="workspace-toast">
               {toastMessage}
+            </div>
+          )}
+
+          {/* Floating B.O.B. 3D Studio Companion on Bottom-Left */}
+          <div 
+            className="studio-bob-floating-dock"
+            title="B.O.B. — Your 3D Studio Companion (Poke me for build tips!)"
+            style={{
+              '--bob-rgb-color': rgbColor,
+              '--bob-rgb-glow': `${rgbColor}44`,
+            }}
+          >
+            <div className="studio-bob-pedestal">
+              <div className="studio-bob-aura-halo" />
+              <EyeTracker
+                size={82}
+                shape="Cube"
+                eyes="Squares"
+                bodyColor={rgbColor}
+                eyeColor="#06080e"
+                bounce={48}
+                follow={85}
+                lookTarget={bobLookTarget}
+                externalSpeech={bob3DSpeech}
+                speechLines={BOB_3D_CASUAL_LINES}
+              />
+            </div>
+            <div className="studio-bob-status-tag">
+              <span className="tag-dot" style={{ background: rgbColor, boxShadow: `0 0 8px ${rgbColor}` }} />
+              <span>B.O.B. 3D</span>
+            </div>
+          </div>
+
+          {/* Plane Controls Guide Modal (View Your Model) */}
+          {showControlsModal && (
+            <div 
+              className="controls-guide-modal-overlay" 
+              onClick={dismissControlsTour}
+            >
+              <div 
+                className="controls-guide-modal" 
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="controls-guide-header">
+                  <div className="controls-guide-title-wrap">
+                    <div className="controls-guide-badge">
+                      <span className="tag-bracket">[</span>
+                      <span className="controls-guide-dot" />
+                      <span>3D WORKSPACE CONTROLS</span>
+                      <span className="tag-bracket">]</span>
+                    </div>
+                    <h3 className="controls-guide-title">View Your Model</h3>
+                  </div>
+                  <button 
+                    type="button" 
+                    className="controls-guide-close-btn" 
+                    onClick={dismissControlsTour}
+                    title="Close controls guide"
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                <div className="controls-guide-cards-list">
+                  {/* CARD 1: Rotate View */}
+                  <div 
+                    id="guide-card-rotate"
+                    className={`control-guide-card ${controlsTourStep === 'rotate' ? 'active-guide-card' : ''}`}
+                  >
+                    <div className="control-guide-card-header">
+                      <span className="card-step-num">01</span>
+                      <h4 className="card-step-title">Rotate View</h4>
+                      {controlsTourStep === 'rotate' && <span className="card-step-pulse">B.O.B. FOCUSED</span>}
+                    </div>
+                    <div className="control-guide-card-body">
+                      <div className="control-interaction-col">
+                        <div className="control-device-icon-wrap">
+                          <svg width="28" height="38" viewBox="0 0 32 42" fill="none" className="control-mouse-svg">
+                            <rect x="2" y="2" width="28" height="38" rx="14" stroke="currentColor" strokeWidth="2.2" />
+                            <path d="M16 2.5 V18" stroke="currentColor" strokeWidth="2" />
+                            <path d="M2.5 18 H29.5" stroke="currentColor" strokeWidth="2" />
+                            <path d="M2.5 16 C2.5 8.5 8.5 2.5 16 2.5 V18 H2.5 Z" fill="#00f2fe" opacity="0.9" />
+                          </svg>
+                        </div>
+                        <span className="control-instruction-text">Left-Click & drag</span>
+                      </div>
+
+                      <div className="control-col-divider" />
+
+                      <div className="control-interaction-col">
+                        <div className="control-device-icon-wrap">
+                          <svg width="44" height="32" viewBox="0 0 48 34" fill="none" className="control-trackpad-svg">
+                            <rect x="2" y="2" width="44" height="30" rx="6" stroke="currentColor" strokeWidth="2" />
+                            <circle cx="24" cy="17" r="4.5" fill="#00f2fe" />
+                            <path d="M24 17 L34 11" stroke="#00f2fe" strokeWidth="2" strokeLinecap="round" />
+                            <path d="M31 10 L35 11 L34 15" stroke="#00f2fe" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        </div>
+                        <span className="control-instruction-text">Press & drag</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* CARD 2: Pan View */}
+                  <div 
+                    id="guide-card-pan"
+                    className={`control-guide-card ${controlsTourStep === 'pan' ? 'active-guide-card' : ''}`}
+                  >
+                    <div className="control-guide-card-header">
+                      <span className="card-step-num">02</span>
+                      <h4 className="card-step-title">Pan View</h4>
+                      {controlsTourStep === 'pan' && <span className="card-step-pulse">B.O.B. FOCUSED</span>}
+                    </div>
+                    <div className="control-guide-card-body three-cols">
+                      <div className="control-interaction-col">
+                        <div className="control-device-icon-wrap">
+                          <svg width="28" height="38" viewBox="0 0 32 42" fill="none" className="control-mouse-svg">
+                            <rect x="2" y="2" width="28" height="38" rx="14" stroke="currentColor" strokeWidth="2.2" />
+                            <path d="M16 2.5 V18" stroke="currentColor" strokeWidth="2" />
+                            <path d="M2.5 18 H29.5" stroke="currentColor" strokeWidth="2" />
+                            <path d="M2.5 16 C2.5 8.5 8.5 2.5 16 2.5 V18 H2.5 Z" fill="#38bdf8" opacity="0.9" />
+                          </svg>
+                        </div>
+                        <span className="control-instruction-text">Shift + Click & drag</span>
+                      </div>
+
+                      <div className="control-col-divider" />
+
+                      <div className="control-interaction-col">
+                        <div className="control-device-icon-wrap">
+                          <svg width="28" height="38" viewBox="0 0 32 42" fill="none" className="control-mouse-svg">
+                            <rect x="2" y="2" width="28" height="38" rx="14" stroke="currentColor" strokeWidth="2.2" />
+                            <path d="M16 2.5 V18" stroke="currentColor" strokeWidth="2" />
+                            <path d="M2.5 18 H29.5" stroke="currentColor" strokeWidth="2" />
+                            <path d="M16 2.5 C23.5 2.5 29.5 8.5 29.5 16 V18 H16 Z" fill="#f43f5e" opacity="0.9" />
+                          </svg>
+                        </div>
+                        <span className="control-instruction-text">Right-Click & drag</span>
+                      </div>
+
+                      <div className="control-col-divider" />
+
+                      <div className="control-interaction-col">
+                        <div className="control-device-icon-wrap">
+                          <svg width="44" height="32" viewBox="0 0 48 34" fill="none" className="control-trackpad-svg">
+                            <rect x="2" y="2" width="44" height="30" rx="6" stroke="currentColor" strokeWidth="2" />
+                            <circle cx="19" cy="17" r="3.8" fill="#f43f5e" />
+                            <circle cx="29" cy="17" r="3.8" fill="#00f2fe" />
+                            <path d="M24 17 L34 11" stroke="#ffffff" strokeWidth="1.8" strokeLinecap="round" />
+                            <path d="M31 10 L35 11 L34 15" stroke="#ffffff" strokeWidth="1.5" strokeLinecap="round" />
+                          </svg>
+                        </div>
+                        <span className="control-instruction-text">Two-finger drag</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* CARD 3: Zoom in/out */}
+                  <div 
+                    id="guide-card-zoom"
+                    className={`control-guide-card ${controlsTourStep === 'zoom' ? 'active-guide-card' : ''}`}
+                  >
+                    <div className="control-guide-card-header">
+                      <span className="card-step-num">03</span>
+                      <h4 className="card-step-title">Zoom in/out</h4>
+                      {controlsTourStep === 'zoom' && <span className="card-step-pulse">B.O.B. FOCUSED</span>}
+                    </div>
+                    <div className="control-guide-card-body">
+                      <div className="control-interaction-col">
+                        <div className="control-device-icon-wrap">
+                          <svg width="28" height="38" viewBox="0 0 32 42" fill="none" className="control-mouse-svg">
+                            <rect x="2" y="2" width="28" height="38" rx="14" stroke="currentColor" strokeWidth="2.2" />
+                            <rect x="13.5" y="7" width="5" height="11" rx="2.5" fill="#00f2fe" stroke="#00f2fe" strokeWidth="1" />
+                            <circle cx="16" cy="12" r="1.5" fill="#06080e" />
+                          </svg>
+                        </div>
+                        <span className="control-instruction-text">Scroll wheel to zoom</span>
+                      </div>
+
+                      <div className="control-col-divider" />
+
+                      <div className="control-interaction-col">
+                        <div className="control-device-icon-wrap">
+                          <svg width="44" height="32" viewBox="0 0 48 34" fill="none" className="control-trackpad-svg">
+                            <rect x="2" y="2" width="44" height="30" rx="6" stroke="currentColor" strokeWidth="2" />
+                            <circle cx="19" cy="21" r="3.6" fill="#00f2fe" />
+                            <circle cx="29" cy="21" r="3.6" fill="#00f2fe" />
+                            <path d="M19 15 V8 M29 15 V8" stroke="#00f2fe" strokeWidth="1.8" strokeLinecap="round" />
+                            <path d="M16.5 10.5 L19 7 L21.5 10.5 M26.5 10.5 L29 7 L31.5 10.5" stroke="#00f2fe" strokeWidth="1.5" strokeLinecap="round" />
+                          </svg>
+                        </div>
+                        <span className="control-instruction-text">Two-finger push forward</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="controls-guide-footer">
+                  <button 
+                    type="button" 
+                    className="controls-guide-ok-btn" 
+                    onClick={() => {
+                      try { soundManager.click(); } catch {}
+                      dismissControlsTour();
+                    }}
+                  >
+                    <span>OK</span>
+                  </button>
+                </div>
+              </div>
             </div>
           )}
         </section>

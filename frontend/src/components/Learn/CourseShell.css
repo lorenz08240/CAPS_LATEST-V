@@ -1353,8 +1353,8 @@ body.theme-light .outline-lesson-min {
   padding: 0.85rem 1.15rem 1rem;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(6, 8, 14, 0.85);
-  backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
   box-sizing: border-box;
 }
 

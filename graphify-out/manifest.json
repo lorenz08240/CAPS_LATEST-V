@@ -60,21 +60,21 @@
     "semantic_hash": ""
   },
   "frontend/src/components/3D/ComponentModels3D.jsx": {
-    "mtime": 1793931234.1656272,
-    "seen": 1793931275.1680377,
-    "ast_hash": "38fe1b3af9e85ff04ee9f2826c0fd03a",
+    "mtime": 1794172204.8222587,
+    "seen": 1794173179.6524675,
+    "ast_hash": "05d6fdfec69290ce9bc06e5623e426bf",
     "semantic_hash": ""
   },
   "frontend/src/components/3D/GenericPCCase.jsx": {
-    "mtime": 1793931234.16861,
-    "seen": 1793931275.1680439,
-    "ast_hash": "676e7d03b66141e34f881164b061b5e3",
+    "mtime": 1794172225.0879233,
+    "seen": 1794173179.6526177,
+    "ast_hash": "0b823d734aaa8cb56482aef7cdfc5536",
     "semantic_hash": ""
   },
   "frontend/src/components/3D/PCBuilder3D.jsx": {
-    "mtime": 1793931234.1738665,
-    "seen": 1793931275.1680527,
-    "ast_hash": "cb656b03f67f0406d630da8727a03478",
+    "mtime": 1794172280.7061784,
+    "seen": 1794173179.6529014,
+    "ast_hash": "f39b7428b0d60466b993e17fa12cdc2b",
     "semantic_hash": ""
   },
   "frontend/src/components/3D/ProceduralSickleFan.jsx": {
@@ -492,9 +492,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Home/Home3DHero.jsx": {
-    "mtime": 1793931234.1976628,
-    "seen": 1793931275.170437,
-    "ast_hash": "3ff304253ed85b5e2f563def1d9b21ff",
+    "mtime": 1794172464.6260526,
+    "seen": 1794173179.6568723,
+    "ast_hash": "c27d9f7665119866fae35a8d27c66ec7",
     "semantic_hash": ""
   },
   "frontend/src/components/3D/DDR4RAMModel.jsx": {
@@ -588,9 +588,9 @@
     "semantic_hash": ""
   },
   "frontend/src/utilities/modelPreloader.js": {
-    "mtime": 1793797745.2578757,
-    "seen": 1793798585.729849,
-    "ast_hash": "4d9bcf7f7f6c3bc678e0d67c1b3ceca1",
+    "mtime": 1794172182.6008527,
+    "seen": 1794173179.6589324,
+    "ast_hash": "2448172e68bfcc6b0a0f237142b6d26e",
     "semantic_hash": ""
   },
   "frontend/src/utilities/scrapedMeta.js": {
@@ -773,16 +773,10 @@
     "ast_hash": "151a3e8bf59a8284fc69c570748d82ea",
     "semantic_hash": ""
   },
-  "backend/package-lock.json": {
-    "mtime": 1791800606.1768937,
-    "seen": 1794009108.998351,
-    "ast_hash": "661be6875e353b32cc107be3856a3c63",
-    "semantic_hash": ""
-  },
-  "frontend/package-lock.json": {
-    "mtime": 1793613485.6023724,
-    "seen": 1794009108.998354,
-    "ast_hash": "a47763d1ffd4e827c99335e63647a7c5",
+  "frontend/src/components/3D/PSUModel.jsx": {
+    "mtime": 1794172988.6639974,
+    "seen": 1794173179.652904,
+    "ast_hash": "8e34f6f3f5902a4da41dad6b488b50a9",
     "semantic_hash": ""
   }
 }

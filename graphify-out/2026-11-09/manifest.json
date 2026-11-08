@@ -72,9 +72,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/3D/PCBuilder3D.jsx": {
-    "mtime": 1793931234.1738665,
-    "seen": 1793931275.1680527,
-    "ast_hash": "cb656b03f67f0406d630da8727a03478",
+    "mtime": 1794171113.966266,
+    "seen": 1794171197.8164132,
+    "ast_hash": "8e20df6eacc998b82265deb290a0641b",
     "semantic_hash": ""
   },
   "frontend/src/components/3D/ProceduralSickleFan.jsx": {
