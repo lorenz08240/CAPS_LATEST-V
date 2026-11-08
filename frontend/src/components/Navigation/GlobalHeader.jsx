@@ -8,7 +8,7 @@ export default function GlobalHeader({ onSearchClick, hideBuildPill = false }) {
   const location = useLocation();
   const navigate = useNavigate();
   const currentPath = location.pathname;
-  const shouldHideBuildPill = hideBuildPill || currentPath.startsWith('/learn');
+  const shouldHideBuildPill = hideBuildPill || currentPath.startsWith('/learn') || currentPath.startsWith('/compatibility') || currentPath.startsWith('/build');
 
   const navItems = [
     { label: 'HOME', path: '/' },

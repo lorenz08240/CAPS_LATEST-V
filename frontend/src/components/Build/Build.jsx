@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useBuild } from "../../contexts/BuildContext";
 import { checkCompatibility } from "../../utilities/compatibilityEngine";
@@ -8,61 +8,229 @@ import GlobalHeader from "../Navigation/GlobalHeader";
 import EyeTracker from "../EyeTracker/EyeTracker";
 import "./Build.css";
 
+/* ══════════════════════════════════════════════════════════════
+   B.O.B. CASUAL GUIDING TOUR & HIGHLIGHT WISDOM
+   Tone: Playful, friendly, casual gamer buddy (like BobCompanion lines)
+   ══════════════════════════════════════════════════════════════ */
+const BOB_CASUAL_GUIDE = {
+  case: {
+    center: [
+      "This is where you pick your PC case! Look for good airflow so your parts stay nice and cool.",
+      "Check out these cases in the middle! Pick one that matches your style and has plenty of room.",
+      "Right here's where you select your chassis! Mid-towers are great for easy cable routing.",
+    ],
+    left: [
+      "Over here on the left is your build checklist! We're starting at Stage 1 with the case.",
+      "That checklist on the left tracks all your parts! You can jump between stages anytime.",
+      "Check out the left side panel — that's your 7-stage roadmap to a complete machine!",
+    ],
+    right: [
+      "And over on the right, you'll see case dimensions and specs. Hit Mount when you're happy!",
+      "Keep an eye on the right panel — it'll show form factor and glass panel specs before mounting.",
+      "The right side gives you live telemetry! Once you like a case, click Mount Component to slot it in.",
+    ],
+    done: [
+      "Alright, your turn! Click a case in the middle to check it out.",
+      "Go ahead, tap any case to see how it looks!",
+      "Take your time picking! Click one to see its full specs on the right.",
+    ],
+  },
+  motherboard: {
+    center: [
+      "Here are your motherboards! Gotta make sure the socket matches your CPU.",
+      "Pick your motherboard right here in the middle! This is the backbone that connects everything.",
+      "Check out the motherboards! Look for DDR5 slots and plenty of M.2 ports for fast drives.",
+    ],
+    left: [
+      "Over on the left, you can see Motherboard is Stage 2! The green check means your case is saved.",
+      "Check the left panel! You can always tap Stage 1 if you want to swap cases.",
+      "Stage 2 on the left checklist! We're building this beast step-by-step.",
+    ],
+    right: [
+      "The right panel shows chipset, RAM slots, and port count. Click Mount to lock it in!",
+      "Over on the right, verify your form factor and socket before hitting Mount Component!",
+      "Check out the right side for board specs. When ready, click Mount to lock in your foundation!",
+    ],
+    done: [
+      "Alright, pick a motherboard that fits your dream build!",
+      "Tap a board in the middle to inspect its chipset!",
+      "Click any motherboard to see its ports and features!",
+    ],
+  },
+  cpu: {
+    center: [
+      "Here's the brain of your PC! Check clock speeds and core counts right in the middle.",
+      "Processors in the center! Higher clock speed gives you crisp gaming frame rates.",
+      "Pick your CPU right here! More cores means smooth streaming, multitasking, and editing.",
+    ],
+    left: [
+      "Stage 3 on the left checklist! That's the CPU — heart and soul of the whole rig.",
+      "Glance at the left panel! 2 stages done already, moving fast!",
+      "Check the left side! Your Case and Motherboard are already locked down.",
+    ],
+    right: [
+      "The right panel reveals socket fit, wattage, and clock speeds. Hit Mount to seat the chip!",
+      "Check thermal TDP on the right so you know what cooling it needs, then hit Mount!",
+      "Telemetry on the right confirms socket compatibility. Click Mount when you're set!",
+    ],
+    done: [
+      "Pick your processor beast and let's install it!",
+      "Go ahead, click a CPU to see what it's packing!",
+      "Choose your processor and let's get it mounted!",
+    ],
+  },
+  ram: {
+    center: [
+      "Memory options right here in the center! Grab a dual-channel kit for snappy multitasking.",
+      "Here's where you pick your RAM! 16 gigs is solid, 32 gigs is super future-proof.",
+      "RAM sticks in the middle! Look for fast MHz speeds and tight latency for gaming.",
+    ],
+    left: [
+      "Stage 4 on the left! We're past the halfway mark now.",
+      "Look at that left checklist! Each stage lights up green as we mount parts.",
+      "Left panel tracks our memory slot! Remember, slots 2 and 4 are the magic combo.",
+    ],
+    right: [
+      "Specs on the right show DDR type and speed rating. Hit Mount to snap the sticks in!",
+      "Verify DDR4 vs DDR5 on the right panel so it matches your board, then hit Mount!",
+      "Right side gives you full capacity and timings. Click Mount Component to lock 'em in!",
+    ],
+    done: [
+      "Your turn! Pick your RAM kit and let's keep going!",
+      "Click a RAM kit in the middle to inspect it!",
+      "Pick your memory sticks and let's plug 'em in!",
+    ],
+  },
+  storage: {
+    center: [
+      "Fast SSD drives right here in the middle! NVMe M.2 means zero boot delay.",
+      "Pick your storage here! NVMe drives plug directly into the board without messy cables.",
+      "Storage drives in the center! Grab a 1TB or 2TB drive so you never run out of game storage.",
+    ],
+    left: [
+      "Stage 5 on the left panel! Core hardware is almost completely loaded up.",
+      "Check the left list! Storage is stage 5, then just graphics and power left.",
+      "Left checklist is looking great! Look at all those green completed stages.",
+    ],
+    right: [
+      "The right side shows read/write speeds and interface type. Hit Mount to install the drive!",
+      "Check capacity and PCIe gen on the right, then smash that Mount button!",
+      "Right panel telemetry shows full storage specs. Click Mount Component when ready!",
+    ],
+    done: [
+      "Pick your drive and let's slot it into the board!",
+      "Tap an SSD drive to see its speed ratings!",
+      "Choose your storage and let's install it!",
+    ],
+  },
+  gpu: {
+    center: [
+      "Ooh, the graphics cards in the center! This is what turns your rig into a gaming monster.",
+      "Here are your GPUs! Look at the VRAM so you can crank up textures and resolution.",
+      "Pick your graphics card right here! Pick one that fits your monitor resolution and frame rate goals.",
+    ],
+    left: [
+      "Stage 6 on the left! Penultimate stage — only power supply left after this!",
+      "Check the left panel! You've built a nearly complete rig already.",
+      "Stage 6 on the checklist! Don't forget your case has to have clearance for this card.",
+    ],
+    right: [
+      "Right panel shows VRAM, power requirement, and card length. Hit Mount to slot it in!",
+      "Check the power draw on the right — we'll need enough wattage in the next stage!",
+      "Right side gives you GPU clock and dimensions. Click Mount Component to seat the card!",
+    ],
+    done: [
+      "Pick your graphics card and let's unleash some frames!",
+      "Tap a GPU in the middle to inspect its power draw and specs!",
+      "Choose your graphics card beast!",
+    ],
+  },
+  psu: {
+    center: [
+      "Power supplies right here! Make sure you get enough wattage headroom for peak power spikes.",
+      "Pick your PSU in the middle! 80 Plus Gold keeps efficiency high and electric bills low.",
+      "PSU options right here! Modular cables mean you only plug in the wires you actually need.",
+    ],
+    left: [
+      "Final stage on the left checklist! Stage 7 brings the entire machine to life.",
+      "Look at the left panel — 6 out of 7 stages done! This is the grand finale.",
+      "Stage 7 on the left! Once this is mounted, your entire rig is assembled!",
+    ],
+    right: [
+      "Right panel shows total wattage and efficiency rating. Click Mount to complete your build!",
+      "Check total system power requirements on the right, then hit Mount to seal the deal!",
+      "Right side gives you modularity and cert ratings. Click Mount Component to complete the rig!",
+    ],
+    done: [
+      "Pick your power supply and let's power this baby up!",
+      "Click a power supply to check its wattage rating!",
+      "Lock in your power supply and let's finish this build!",
+    ],
+  },
+};
+
 const BOB_STAGE_TIPS = {
   case: [
-    "Hi there! I'm B.O.B.",
-    "Pick a roomy case for good airflow!",
-    "Mesh front panels keep components cool.",
-    "Mid-towers fit standard ATX motherboards.",
+    "Cases with front mesh keep temps nice and frosty!",
+    "Hey! Make sure the case fits a full ATX board if that's what you want.",
+    "Boop! I'm keeping an eye on that case size.",
+    "Cable management is way easier in a mid-tower case!",
     "Check GPU length clearance before mounting!",
   ],
   motherboard: [
-    "Hi there! I'm B.O.B.",
-    "Match the motherboard socket to your CPU!",
-    "Check for M.2 NVMe slots for fast storage.",
-    "Verify DDR4 vs DDR5 RAM compatibility.",
-    "ATX and mATX are standard reliable form factors.",
+    "Remember: CPU socket has to match the board socket!",
+    "Look for DDR5 support if you want the newest memory tech.",
+    "Stop poking me and check those M.2 slots, haha!",
+    "ATX boards give you tons of expansion slots.",
+    "Wi-Fi built into the board saves you an extra USB dongle!",
   ],
   cpu: [
-    "Hi there! I'm B.O.B.",
-    "The brain of your PC! Check core counts and speeds.",
-    "Align the gold triangle when installing the CPU.",
-    "Pair high-end CPUs with adequate thermal cooling.",
+    "More cores means smoother streaming and video editing!",
+    "Intel or AMD? Both make beasts nowadays.",
+    "Tickles! Make sure you pair a beefy cooler with that chip.",
+    "Higher clock speeds give you better gaming FPS!",
+    "Don't worry, the gold triangle on the corner shows which way it goes.",
   ],
   ram: [
-    "Hi there! I'm B.O.B.",
-    "Dual-channel memory: remember slots 2 and 4!",
-    "16GB is great for gaming, 32GB for creator workflows.",
-    "Enable XMP/EXPO in BIOS for maximum rated speed.",
+    "Always install sticks in slots 2 and 4 for dual channel!",
+    "16 gigs is great, 32 gigs is chef's kiss.",
+    "Hey, don't forget to enable XMP in BIOS later to get full speed!",
+    "RGB RAM adds at least 10 imaginary horsepower, haha!",
+    "Dual-channel gives you double the memory bandwidth.",
   ],
   storage: [
-    "Hi there! I'm B.O.B.",
-    "NVMe M.2 SSDs give you instant boot times.",
-    "Install your OS on your fastest M.2 drive.",
-    "Mount the SSD in the top slot connected to the CPU.",
+    "NVMe M.2 drives plug right into the board — no messy cables!",
+    "Put your operating system on the fastest drive you got.",
+    "Again? Okay! Always mount the main SSD in the top slot closest to the CPU.",
+    "A 1TB or 2TB NVMe is plenty for games and files.",
+    "SSDs have no moving parts, so they're super reliable and quiet.",
   ],
   gpu: [
-    "Hi there! I'm B.O.B.",
-    "The graphics engine! Check case clearance.",
-    "Remember: plug your monitor directly into the GPU!",
-    "Use dedicated power cables from the PSU.",
+    "Don't forget: plug the monitor into the GPU, NOT the motherboard!",
+    "Check clearance so that three-fan card actually fits in the case.",
+    "That tickles! Gotta make sure your power supply has enough cables for this card.",
+    "8GB VRAM is good, 12GB+ is amazing for 1440p and 4K gaming.",
+    "Fans only spin when gaming so the card stays silent while browsing.",
   ],
   psu: [
-    "Hi there! I'm B.O.B.",
-    "Leave 20-30% wattage headroom for power spikes.",
-    "80+ Gold certification ensures efficiency and cool runs.",
-    "Never mix modular cables from different power supplies!",
+    "Never cheap out on the power supply — it protects everything else!",
+    "80 Plus Gold gives you great efficiency and stays super quiet.",
+    "Don't mix modular cables from different brands — they can fry your stuff!",
+    "Always leave 20-30% wattage headroom for power spikes.",
+    "Modular power supplies let you leave unused cables in the box!",
   ],
 };
 
 const BOB_GENERAL_BUILD_LINES = [
-  "Hi there! I'm B.O.B.",
   "Hey, I see you!",
-  "Take your time picking parts!",
+  "Take your time picking parts, no rush!",
   "Looking good so far!",
-  "Click STARTER RIG below for a balanced preset!",
+  "Click STARTER RIG if you want a balanced preset ready to go!",
   "That tickles!",
-  "Poke me anytime for build advice!"
+  "Poke me anytime for build advice!",
+  "Boop! I'm watching your build.",
+  "You found me!",
+  "Again? Okay, let's keep building!"
 ];
 
 export const buildSteps = [
@@ -160,7 +328,7 @@ const CATEGORY_FILTERS = {
   ]
 };
 
-function BuildPage({ isIntegrated = false, startBuildRequested = false }) {
+function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildInteracted }) {
   const {
     currentBuild,
     allComponents,
@@ -260,6 +428,72 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false }) {
 
   const selectedComponents = getSelectedComponents();
 
+  // Guided highlight tour state:
+  // guideTarget: null | 'center' | 'left' | 'right'
+  const [guideTarget, setGuideTarget] = useState(null);
+  const [guideLookTarget, setGuideLookTarget] = useState(null);
+  const guideTimerRef = useRef(null);
+  const guidedStagesRef = useRef(new Set());
+
+  // Function to gracefully dismiss the tour if user interacts
+  const dismissGuideTour = useCallback(() => {
+    if (guideTimerRef.current) {
+      clearTimeout(guideTimerRef.current);
+      guideTimerRef.current = null;
+    }
+    setGuideTarget(null);
+    setGuideLookTarget(null);
+  }, []);
+
+  // Cleanup guide timers on unmount
+  useEffect(() => {
+    return () => {
+      if (guideTimerRef.current) {
+        clearTimeout(guideTimerRef.current);
+      }
+    };
+  }, []);
+
+  // Orchestrate the 3-step Guided Tour: Center (3.2s) -> Left (2.8s) -> Right (2.8s) -> Finish
+  const startGuideTour = useCallback((category = null) => {
+    const activeCategory = category || buildSteps[currentStep].key;
+    const catGuide = BOB_CASUAL_GUIDE[activeCategory] || BOB_CASUAL_GUIDE.case;
+
+    if (guideTimerRef.current) {
+      clearTimeout(guideTimerRef.current);
+      guideTimerRef.current = null;
+    }
+
+    const pickRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+    // PHASE 1: Center Area (Select parts available) - 6.5 seconds (gives comfortable reading & scanning time)
+    setGuideTarget("center");
+    setGuideLookTarget("#build-center-panel");
+    setBobSpeech(pickRandom(catGuide.center));
+
+    guideTimerRef.current = setTimeout(() => {
+      // PHASE 2: Left Side Panel (Hardware stages checklist) - 6.0 seconds
+      setGuideTarget("left");
+      setGuideLookTarget("#build-left-panel");
+      setBobSpeech(pickRandom(catGuide.left));
+
+      guideTimerRef.current = setTimeout(() => {
+        // PHASE 3: Right Side Panel (Telemetry & Mount Component) - 6.0 seconds
+        setGuideTarget("right");
+        setGuideLookTarget("#build-right-panel");
+        setBobSpeech(pickRandom(catGuide.right));
+
+        guideTimerRef.current = setTimeout(() => {
+          // PHASE 4: Return to normal cursor following & casual wrapup
+          setGuideTarget(null);
+          setGuideLookTarget(null);
+          setBobSpeech(pickRandom(catGuide.done));
+          guideTimerRef.current = null;
+        }, 6000);
+      }, 6000);
+    }, 6500);
+  }, [currentStep]);
+
   // Entrance Dialogue Trigger:
   // ONLY fires when user clicked START BUILD AND is currently looking/staying on the build picker
   useEffect(() => {
@@ -278,18 +512,34 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false }) {
       }
 
       entranceGreetedRef.current = true;
+      const initialCat = buildSteps[currentStep]?.key || "case";
+      guidedStagesRef.current.add(initialCat);
 
+      // Give a gentle, friendly one-line greeting instead of forcing an 18.5s tour
       if (selectedComponents.length === buildSteps.length) {
         setBobSpeech("All 7 hardware stages armed! Rig is ready to verify!");
       } else if (selectedComponents.length > 0) {
-        setBobSpeech(`Welcome back! ${selectedComponents.length} of 7 stages locked in. Let's finish your rig!`);
+        setBobSpeech(`Welcome back! ${selectedComponents.length} of ${buildSteps.length} stages assembled.`);
       } else {
         setBobSpeech("Hi there! I'm B.O.B., your hardware companion. Select a PC Case to begin!");
       }
     }, 450);
 
     return () => clearTimeout(timer);
-  }, [hasStartedBuild, isViewingBuild, selectedComponents.length]);
+  }, [hasStartedBuild, isViewingBuild, currentStep, selectedComponents.length]);
+
+  // Stage change: friendly tip when learner enters new stages, NO automatic tour hijacking
+  useEffect(() => {
+    const catKey = buildSteps[currentStep]?.key;
+    if (!catKey) return;
+
+    if (hasStartedBuild && isViewingBuild && !guidedStagesRef.current.has(catKey)) {
+      guidedStagesRef.current.add(catKey);
+      const stageTips = BOB_STAGE_TIPS[catKey] || BOB_GENERAL_BUILD_LINES;
+      const tip = stageTips[Math.floor(Math.random() * stageTips.length)];
+      setBobSpeech(tip);
+    }
+  }, [currentStep, hasStartedBuild, isViewingBuild]);
 
   // Completion toast: fires once the rig selection is completed DURING build activity,
   // NEVER on initial mount / page entrance.
@@ -304,18 +554,28 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false }) {
     if (selectedComponents.length === buildSteps.length) {
       soundManager.complete();
       setShowCompleteToast(true);
-      setBobSpeech("All 7 hardware stages armed! Rig is ready to verify!");
+      const completeLines = [
+        "Woohoo! All 7 parts are in! Let's check compatibility and test this beast!",
+        "Look at that! Complete build locked and loaded. Ready for testing!",
+        "She's fully assembled! Hit Compatibility to verify everything before buying!",
+      ];
+      setBobSpeech(completeLines[Math.floor(Math.random() * completeLines.length)]);
       const timer = setTimeout(() => setShowCompleteToast(false), 9000);
       return () => clearTimeout(timer);
     }
     setShowCompleteToast(false);
   }, [selectedComponents.length]);
 
+  // Sync viewedComponent when switching stages:
+  // If the current stage already has a selected component, show its specs;
+  // If no component is selected for this stage, viewedComponent remains null
+  // so the right panel displays Assembly Overview (specs preview only appears when selected)
   useEffect(() => {
-    setViewedComponent(currentBuild[buildSteps[currentStep].key] || null);
+    const currentCategoryKey = buildSteps[currentStep]?.key;
+    setViewedComponent(currentBuild[currentCategoryKey] || null);
     setSearchQuery("");
     setActiveFilter("ALL");
-  }, [currentStep]);
+  }, [currentStep, currentBuild]);
 
   useEffect(() => {
     if (location.state?.scrollTo) {
@@ -330,40 +590,65 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false }) {
 
   const handleComponentSelect = (component) => {
     onBuildInteracted?.();
+    dismissGuideTour();
     const category = buildSteps[currentStep].key;
     addComponent(category, component);
-    soundManager.install();
-    setBobSpeech(`Locked in ${component.name}!`);
-
-    // Automatically move to the next step
-    if (currentStep < buildSteps.length - 1) {
-      const nextStepIndex = currentStep + 1;
-      setCurrentStep(nextStepIndex);
-      setViewedComponent(currentBuild[buildSteps[nextStepIndex].key] || null);
-    } else {
-      setViewedComponent(null);
-    }
-
-    // Anchor view so user never has to scroll up and down repeatedly
-    const buildArea = document.getElementById("build-main-area");
-    if (buildArea) {
-      const rect = buildArea.getBoundingClientRect();
-      if (rect.top < -50 || rect.top > 200) {
-        buildArea.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
-    }
-  };
-
-  const handleCardClick = (component) => {
-    onBuildInteracted?.();
-    soundManager.snap();
     setViewedComponent(component);
+    soundManager.install();
+
+    const casualMountLines = {
+      case: [
+        `Ooh, sweet case! ${component.name} is gonna look super clean.`,
+        `Nice chassis! ${component.name} has tons of room to build in.`,
+        `Solid pick! ${component.name} locked down as our foundation.`,
+      ],
+      motherboard: [
+        `Motherboard locked in! ${component.name} is a solid foundation.`,
+        `Ooh, good board! ${component.name} socket is ready for action.`,
+        `Nice pick! ${component.name} is gonna connect everything beautifully.`,
+      ],
+      cpu: [
+        `CPU mounted! ${component.name} is packing some serious power.`,
+        `Boom, brain installed! ${component.name} is seated and ready.`,
+        `Beast processor mounted! Don't forget thermal cooling later, haha.`,
+      ],
+      ram: [
+        `Memory locked in! ${component.name} is gonna keep things super snappy.`,
+        `Nice sticks! ${component.name} dual-channel speed ready to fly.`,
+        `RAM mounted! That's plenty of speed for multitasking.`,
+      ],
+      storage: [
+        `Fast storage in the slot! ${component.name} boot times are gonna be instant.`,
+        `Drive mounted! ${component.name} has plenty of room for games.`,
+        `Storage locked in! Lightning quick load times incoming.`,
+      ],
+      gpu: [
+        `Oof, look at that graphics card! ${component.name} is a gaming monster.`,
+        `GPU locked in! Frames are gonna be sky high with ${component.name}.`,
+        `Beast card mounted! Make sure we give it enough power in the next stage.`,
+      ],
+      psu: [
+        `Power supply mounted! ${component.name} has plenty of juice to feed the beast.`,
+        `PSU locked in! Clean power ready to flow through the whole rig.`,
+        `Power locked in! That completes all 7 hardware stages!`,
+      ],
+    };
+
+    const pool = casualMountLines[category] || [`Locked in ${component.name}!`];
+    setBobSpeech(pool[Math.floor(Math.random() * pool.length)]);
   };
 
   const handleReset = () => {
+    dismissGuideTour();
     soundManager.modalClose();
     resetBuild();
-    setBobSpeech("Workspace cleared. Let's start fresh with a PC Case!");
+    setViewedComponent(null);
+    const resetLines = [
+      "Clean slate! Alright, let's start fresh with a new case.",
+      "Wiped the bench! What kind of rig do you wanna build this time?",
+      "Workspace cleared! Pick your case whenever you're ready.",
+    ];
+    setBobSpeech(resetLines[Math.floor(Math.random() * resetLines.length)]);
     setCurrentStep(0); // Reset to Step 1 (PC Case)
   };
 
@@ -396,7 +681,25 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false }) {
       {!isIntegrated && <GlobalHeader />}
       <div className="build-main" id="build-main-area">
         <div className="build-sidebar">
-          <div className="sidebar-card">
+          <div
+            className={`sidebar-card bob-highlight-target ${guideTarget === 'left' ? 'active-guide' : ''}`}
+            id="build-left-panel"
+          >
+            {guideTarget === 'left' && (
+              <>
+                <div className="bob-guide-indicator-pill">
+                  <span className="tag-bracket">[</span>
+                  <span className="bob-guide-indicator-dot" />
+                  <span>B.O.B. // HARDWARE STAGES</span>
+                  <span className="tag-bracket">]</span>
+                </div>
+                <div className="bob-guide-scanline" />
+                <div className="bob-guide-corner-tl" />
+                <div className="bob-guide-corner-tr" />
+                <div className="bob-guide-corner-bl" />
+                <div className="bob-guide-corner-br" />
+              </>
+            )}
             <div className="sidebar-header-row">
               <div className="sidebar-header-title-wrap">
                 <div className="cyber-tag-badge mini">
@@ -442,6 +745,9 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false }) {
                           e.stopPropagation();
                           soundManager.click();
                           removeComponent(step.key);
+                          if (step.key === currentStepData.key) {
+                            setViewedComponent(null);
+                          }
                         }}
                         title={`Remove ${step.label}`}
                       >
@@ -465,6 +771,7 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false }) {
                   bounce={55}
                   speechLines={BOB_STAGE_TIPS[currentStepData.key] || BOB_GENERAL_BUILD_LINES}
                   externalSpeech={bobSpeech}
+                  lookTarget={guideLookTarget}
                 />
               </div>
             )}
@@ -481,8 +788,14 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false }) {
               <button
                 type="button"
                 onClick={() => {
+                  dismissGuideTour();
                   try { soundManager.click(); } catch {}
-                  setBobSpeech("Starter Rig loaded! Balanced specs and verified compatibility.");
+                  const starterLines = [
+                    "Loaded up the starter preset! Balanced, tested, and ready to roll.",
+                    "Boom! Starter rig locked in with verified compatibility.",
+                    "Sweet! Loaded our balanced starter build for you.",
+                  ];
+                  setBobSpeech(starterLines[Math.floor(Math.random() * starterLines.length)]);
                   if (loadDemoBuild) loadDemoBuild();
                 }}
                 className="load-starter-btn sidebar-starter-btn"
@@ -537,20 +850,63 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false }) {
             <span className="build-guide-text">
               STAGE {currentStep + 1} OF {buildSteps.length} // Select compatible {currentStepData.label} to advance assembly
             </span>
+            <div className="guide-subbar-actions">
+              {guideTarget ? (
+                <button
+                  type="button"
+                  className="bob-tour-pill-btn active"
+                  onClick={dismissGuideTour}
+                  title="Dismiss highlight guide"
+                >
+                  <span className="tour-pill-pulse" />
+                  <span>✕ SKIP TOUR</span>
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className="bob-tour-pill-btn"
+                  onClick={() => {
+                    try { soundManager.click(); } catch {}
+                    startGuideTour(currentStepData.key);
+                  }}
+                  title="Ask B.O.B. to guide you through this stage"
+                >
+                  <span className="tour-pill-icon">💡</span>
+                  <span>GUIDE ME</span>
+                </button>
+              )}
+            </div>
           </div>
 
           <div className="build-grid-and-panel">
-            <div className="components-grid-wrapper">
+            <div
+              className={`components-grid-wrapper bob-highlight-target ${guideTarget === 'center' ? 'active-guide' : ''}`}
+              id="build-center-panel"
+            >
+              {guideTarget === 'center' && (
+                <>
+                  <div className="bob-guide-indicator-pill">
+                    <span className="tag-bracket">[</span>
+                    <span className="bob-guide-indicator-dot" />
+                    <span>B.O.B. // SELECT {currentStepData.label.toUpperCase()} HERE</span>
+                    <span className="tag-bracket">]</span>
+                  </div>
+                  <div className="bob-guide-scanline" />
+                  <div className="bob-guide-corner-tl" />
+                  <div className="bob-guide-corner-tr" />
+                  <div className="bob-guide-corner-bl" />
+                  <div className="bob-guide-corner-br" />
+                </>
+              )}
               <div className="components-grid compact">
                 {filteredComponents.map((component) => {
                   const isSelected = selectedComponent?.id === component.id;
-                  const isViewed = viewedComponent?.id === component.id;
 
                   return (
                     <div
                       key={component.id}
-                      className={`component-card compact-card ${isViewed ? "viewed" : ""} ${isSelected ? "selected" : ""}`}
-                      onClick={() => handleCardClick(component)}
+                      className={`component-card compact-card ${isSelected ? "selected" : ""}`}
+                      onClick={() => handleComponentSelect(component)}
                     >
                       <div className="component-image">
                         <img src={component.img} alt={component.name} />
@@ -559,6 +915,16 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false }) {
                         <span className="card-brand-label">{component.brand}</span>
                         <h3 className="component-name">{component.name}</h3>
                       </div>
+                      <button
+                        type="button"
+                        className={`card-action-btn ${isSelected ? "selected" : ""}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleComponentSelect(component);
+                        }}
+                      >
+                        {isSelected ? "✓ MOUNTED" : "SELECT PART"}
+                      </button>
                       {isSelected && (
                         <span className="card-installed-tag">✓ MOUNTED</span>
                       )}
@@ -568,7 +934,25 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false }) {
               </div>
             </div>
 
-            <div className="specifications-panel">
+            <div
+              className={`specifications-panel bob-highlight-target ${guideTarget === 'right' ? 'active-guide' : ''}`}
+              id="build-right-panel"
+            >
+              {guideTarget === 'right' && (
+                <>
+                  <div className="bob-guide-indicator-pill">
+                    <span className="tag-bracket">[</span>
+                    <span className="bob-guide-indicator-dot" />
+                    <span>B.O.B. // TELEMETRY & MOUNT</span>
+                    <span className="tag-bracket">]</span>
+                  </div>
+                  <div className="bob-guide-scanline" />
+                  <div className="bob-guide-corner-tl" />
+                  <div className="bob-guide-corner-tr" />
+                  <div className="bob-guide-corner-bl" />
+                  <div className="bob-guide-corner-br" />
+                </>
+              )}
               {viewedComponent ? (
                 <>
                   <div className="spec-header-tag">
@@ -586,15 +970,34 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false }) {
                   </div>
 
                   <div className="spec-action-top">
-                    <button
-                      className={`btn-select-component ${selectedComponent?.id === viewedComponent.id ? "is-selected" : ""}`}
-                      onClick={() => handleComponentSelect(viewedComponent)}
-                    >
-                      <span className="btn-label">
-                        {selectedComponent?.id === viewedComponent.id ? "✓ COMPONENT MOUNTED" : "MOUNT COMPONENT"}
-                      </span>
-                      <span className="btn-arrow">&rarr;</span>
-                    </button>
+                    <div className="spec-mounted-badge">
+                      <span className="badge-check">✓</span>
+                      <span>MOUNTED IN RIG (STAGE {currentStep + 1}/{buildSteps.length})</span>
+                    </div>
+                    {currentStep < buildSteps.length - 1 ? (
+                      <button
+                        type="button"
+                        className="btn-select-component btn-next-stage"
+                        onClick={() => {
+                          try { soundManager.click(); } catch {}
+                          setCurrentStep(currentStep + 1);
+                        }}
+                      >
+                        <span className="btn-label">NEXT STAGE: {buildSteps[currentStep + 1].label.toUpperCase()}</span>
+                        <span className="btn-arrow">&rarr;</span>
+                      </button>
+                    ) : (
+                      <Link
+                        to="/compatibility"
+                        className="btn-select-component btn-next-stage"
+                        onClick={() => {
+                          try { soundManager.click(); } catch {}
+                        }}
+                      >
+                        <span className="btn-label">CHECK COMPATIBILITY</span>
+                        <span className="btn-arrow">&rarr;</span>
+                      </Link>
+                    )}
                   </div>
 
                   <div className="spec-details-list">
@@ -831,6 +1234,12 @@ export default Build;
  * The instance integrated into the Home page is gated by Home instead.
  */
 function Build({ isIntegrated = false, startBuildRequested = false, onBuildInteracted }) {
-  const page = <BuildPage isIntegrated={isIntegrated} startBuildRequested={startBuildRequested} />;
+  const page = (
+    <BuildPage
+      isIntegrated={isIntegrated}
+      startBuildRequested={startBuildRequested}
+      onBuildInteracted={onBuildInteracted}
+    />
+  );
   return isIntegrated ? page : <FullscreenGate requireFullscreen>{page}</FullscreenGate>;
 }

@@ -1,9 +1,9 @@
 {
+  "0": "EyeTracker.tsx",
   "2": "App.jsx",
-  "6": "CourseVideoPlayer.jsx",
-  "8": "PCBuilder3D.jsx",
+  "4": "CourseShell.jsx",
   "9": "App.jsx",
-  "10": "EyeTracker.tsx",
+  "10": "compatibilityEngine.js",
   "14": "BuildLab Changelog",
   "15": "[2026-10-23] - OpenCode Session - Immersive Fullscreen System & UX Cleanups (OC)",
   "16": "scrapedMeta.js",

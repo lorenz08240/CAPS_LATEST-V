@@ -99,9 +99,9 @@ const LINES = [
   "Again? Okay.",
   "You found B.O.B.!",
 ];
-const TINTS = ["#3b5bff", "#179c52", "#e0307f"];
-const KEY_MS = 38;
-const HOLD_MS = 1500;
+const TINTS = ["#f43f5e", "#00f2fe", "#38bdf8", "#00e5a0", "#fb7185"];
+const KEY_MS = 22;
+const HOLD_MS = 3800;
 
 /* ── the body, in three shapes ──────────────────────────────
    The eyes are worked out on a sphere whatever the body is, so
@@ -206,6 +206,8 @@ export function EyeTracker({
   speechLines,
   /* externally requested phrase to speak */
   externalSpeech,
+  /* explicit target for eyes to track (selector string like '#build-catalog' or {x, y} coords) */
+  lookTarget,
   className = "",
   style,
 }: {
@@ -224,11 +226,14 @@ export function EyeTracker({
   eyeColor?: string;
   speechLines?: string[];
   externalSpeech?: string | null;
+  lookTarget?: { x: number; y: number } | string | null;
   className?: string;
   style?: React.CSSProperties;
 } = {}) {
   const still = stillness();
   const box = useRef<HTMLDivElement>(null);
+  const lookTargetRef = useRef(lookTarget);
+  lookTargetRef.current = lookTarget;
   const [typed, setTyped] = useState("");
   const [talking, setTalking] = useState(false);
   const [tint, setTint] = useState(TINTS[0]);
@@ -243,17 +248,18 @@ export function EyeTracker({
     setTyped("");
     setTalking(true);
     for (let k = 1; k <= text.length; k++) {
-      await wait(KEY_MS + Math.random() * 24);
+      await wait(KEY_MS + Math.random() * 8);
       if (mine !== turn.current) return;
       const char = text[k - 1];
-      if (char && char.trim()) {
+      if (char && char.trim() && (k % 2 === 0 || char === " ")) {
         try {
           soundManager.typewriter();
         } catch {}
       }
       setTyped(text.slice(0, k));
     }
-    await wait(HOLD_MS + 400);
+    const holdDuration = Math.max(HOLD_MS, text.length * 48);
+    await wait(holdDuration);
     if (mine !== turn.current) return;
     setTalking(false);
   };
@@ -379,6 +385,40 @@ export function EyeTracker({
         t.x = t.tx;
         t.y = t.ty;
       } else {
+        // If an explicit target is set (e.g. during guided highlight tour), lock eyes on target
+        if (lookTargetRef.current) {
+          let targetX = 0;
+          let targetY = 0;
+          let hasTarget = false;
+
+          if (typeof lookTargetRef.current === "string") {
+            const targetEl = document.querySelector(lookTargetRef.current);
+            if (targetEl) {
+              const tr = targetEl.getBoundingClientRect();
+              targetX = tr.left + tr.width / 2;
+              targetY = tr.top + tr.height / 2;
+              hasTarget = true;
+            }
+          } else if (typeof lookTargetRef.current === "object" && lookTargetRef.current !== null) {
+            targetX = lookTargetRef.current.x;
+            targetY = lookTargetRef.current.y;
+            hasTarget = true;
+          }
+
+          if (hasTarget) {
+            const r = el.getBoundingClientRect();
+            const dx = targetX - (r.left + r.width / 2);
+            const dy = targetY - (r.top + r.height / 2);
+            const d = Math.hypot(dx, dy) || 1;
+            const vw = typeof window !== "undefined" ? window.innerWidth : 1200;
+            const vh = typeof window !== "undefined" ? window.innerHeight : 800;
+            const reach = Math.max(160, Math.min(vw, vh) * 0.45);
+            const far = Math.min(0.92, Math.tanh(d / reach) * (clamp(knobs.current.follow, 0, 100) / 100) * 1.5);
+            t.tx = (dx / d) * far;
+            t.ty = (dy / d) * far;
+          }
+        }
+
         /* one spring for both axes; Bounce loosens the damping */
         const k = 0.06;
         const d = 0.34 - (clamp(knobs.current.bounce, 0, 100) / 100) * 0.22;
@@ -407,6 +447,8 @@ export function EyeTracker({
        wherever your mouse travels on the page. Only constrained if
        an explicit container selector is supplied. */
     const aim = (e: PointerEvent) => {
+      if (lookTargetRef.current) return;
+
       // If a specific container selector is explicitly provided (and not "window"), constrain to it
       if (within && within !== "window") {
         const frame = el.closest<HTMLElement>(within);

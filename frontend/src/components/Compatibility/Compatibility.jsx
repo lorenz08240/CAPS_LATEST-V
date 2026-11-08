@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useEffect, useCallback, useRef } from "react";
 import EyeTracker from "../EyeTracker/EyeTracker";
 import { createPortal } from "react-dom";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useBuild } from "../../contexts/BuildContext";
 import { getCompatibilitySummary } from "../../utilities/rules";
 import soundManager from "../../utilities/soundManager";
@@ -49,6 +49,7 @@ const getComponentBobHint = (comp) => {
 };
 
 function CompatibilityView({ isIntegrated = false }) {
+  const navigate = useNavigate();
   const {
     currentBuild,
     getSelectedComponents,
@@ -432,7 +433,7 @@ function CompatibilityView({ isIntegrated = false }) {
         )}
 
       <div className={`compat-page ${isIntegrated ? "integrated-view" : ""}`}>
-        {!isIntegrated && <GlobalHeader />}
+        {!isIntegrated && <GlobalHeader hideBuildPill={true} />}
         {!isIntegrated && (
           <>
             <div className="bg-grid" aria-hidden="true" />
@@ -443,6 +444,23 @@ function CompatibilityView({ isIntegrated = false }) {
         )}
 
         <div className="compat-container-wrap">
+          {!isIntegrated && (
+            <div className="compat-action-bar">
+              <button
+                type="button"
+                className="compat-back-build-btn"
+                onClick={() => {
+                  try { soundManager.click(); } catch {}
+                  navigate("/build");
+                }}
+                title="Return to Build Workbench"
+              >
+                <span className="back-btn-arrow">&larr;</span>
+                <span className="back-btn-text">BACK TO BUILD WORKBENCH</span>
+              </button>
+            </div>
+          )}
+
           {!isIntegrated && (
             <header className="compat-hero-title-header">
               <h1 className="compat-hero-title">

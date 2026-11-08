@@ -75,6 +75,50 @@
   margin: 0 auto;
 }
 
+.compat-action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 8px;
+  padding: 4px 8px;
+}
+
+.compat-back-build-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(244, 63, 94, 0.45);
+  border-radius: 9999px;
+  color: #ffffff;
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+
+.compat-back-build-btn:hover {
+  background: rgba(244, 63, 94, 0.2);
+  border-color: #f43f5e;
+  color: #ff4d73;
+  transform: translateX(-4px);
+  box-shadow: 0 6px 20px rgba(244, 63, 94, 0.35);
+}
+
+.compat-back-build-btn .back-btn-arrow {
+  font-size: 14px;
+  transition: transform 0.2s ease;
+}
+
+.compat-back-build-btn:hover .back-btn-arrow {
+  transform: translateX(-3px);
+}
+
 .compat-hero-title-header {
   text-align: center;
   margin-bottom: 24px;
