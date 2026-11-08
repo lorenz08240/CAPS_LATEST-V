@@ -1,25 +1,30 @@
 // Centralized UI & System Sound Effects Manager for BuildLab
-// High-performance audio pool + procedural Web Audio API synthesis fallback
+// High-performance audio pool with eDEX-UI sci-fi sound suite + procedural Web Audio API synthesis fallback
 
 const SOUND_SOURCE_MAP = {
-  click: ["/sfx/click.wav", "/sfx/UI_Interact.mp3"],
-  snap: ["/sfx/snap.wav"],
-  install: ["/sfx/install.wav"],
-  open_box: ["/sfx/open_box.wav"],
-  modal_open: ["/sfx/modal_open.wav"],
-  modal_close: ["/sfx/modal_close.wav"],
-  complete: ["/sfx/granted.wav"],
-  error: ["/sfx/error.mp3", "/sfx/Error1.mp3"],
-  Error1: ["/sfx/Error1.mp3"],
-  Error2: ["/sfx/error.mp3"],
-  Error3: ["/sfx/Error3.mp3"],
-  hint: ["/sfx/hint.wav"],
-  warning: ["/sfx/warning.wav", "/sfx/denied.mp3"],
-  denied: ["/sfx/denied.mp3", "/sfx/error.mp3"],
-  UI_Denied_2: ["/sfx/denied.mp3"],
-  granted: ["/sfx/granted.wav", "/sfx/complete.wav"],
-  interact: ["/sfx/UI_Interact.mp3", "/sfx/click.wav"],
-  UI_Interact: ["/sfx/UI_Interact.mp3", "/sfx/click.wav"],
+  click: ["/sfx/audio/stdout.wav", "/sfx/click.wav", "/sfx/UI_Interact.mp3"],
+  snap: ["/sfx/audio/stdin.wav", "/sfx/snap.wav"],
+  install: ["/sfx/audio/folder.wav", "/sfx/install.wav"],
+  open_box: ["/sfx/audio/panels.wav", "/sfx/open_box.wav"],
+  modal_open: ["/sfx/audio/panels.wav", "/sfx/modal_open.wav"],
+  modal_close: ["/sfx/audio/expand.wav", "/sfx/modal_close.wav"],
+  complete: ["/sfx/audio/granted.wav", "/sfx/granted.wav"],
+  granted: ["/sfx/audio/granted.wav", "/sfx/granted.wav"],
+  denied: ["/sfx/audio/denied.wav", "/sfx/denied.mp3"],
+  UI_Denied_2: ["/sfx/audio/denied.wav", "/sfx/denied.mp3"],
+  error: ["/sfx/audio/error.wav", "/sfx/error.mp3"],
+  Error1: ["/sfx/audio/error.wav", "/sfx/Error1.mp3"],
+  Error2: ["/sfx/audio/error.wav", "/sfx/error.mp3"],
+  Error3: ["/sfx/audio/error.wav", "/sfx/Error3.mp3"],
+  warning: ["/sfx/audio/alarm.wav", "/sfx/warning.wav"],
+  hint: ["/sfx/audio/info.wav", "/sfx/hint.wav"],
+  info: ["/sfx/audio/info.wav", "/sfx/hint.wav"],
+  scan: ["/sfx/audio/scan.wav"],
+  panels: ["/sfx/audio/panels.wav", "/sfx/modal_open.wav"],
+  expand: ["/sfx/audio/expand.wav", "/sfx/modal_close.wav"],
+  theme: ["/sfx/audio/theme.wav"],
+  interact: ["/sfx/audio/stdout.wav", "/sfx/UI_Interact.mp3", "/sfx/click.wav"],
+  UI_Interact: ["/sfx/audio/stdout.wav", "/sfx/UI_Interact.mp3", "/sfx/click.wav"],
 };
 
 class SynthAudio {
@@ -313,6 +318,26 @@ class SoundManager {
 
   hint() {
     this.play("hint", 0.3);
+  }
+
+  info() {
+    this.play("info", 0.3);
+  }
+
+  scan() {
+    this.play("scan", 0.35);
+  }
+
+  panels() {
+    this.play("panels", 0.3);
+  }
+
+  expand() {
+    this.play("expand", 0.3);
+  }
+
+  theme() {
+    this.play("theme", 0.25);
   }
 
   warning() {
