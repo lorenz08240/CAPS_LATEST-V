@@ -1,10 +1,12 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import GlobalHeader from "../Navigation/GlobalHeader";
 import { useBuild } from "../../contexts/BuildContext";
 import CourseVideoPlayer from "./CourseVideoPlayer";
 import BobCompanion from "../BobCompanion/BobCompanion";
 import soundManager from "../../utilities/soundManager";
+import { useLearnMode } from "../../contexts/LearnModeContext";
+import StageUnlockBanner from "../Navigation/StageUnlockBanner";
 import "./CourseShell.css";
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -655,35 +657,50 @@ const COURSE = [
    ══════════════════════════════════════════════════════════════ */
 const BOB_SYLLABUS_GUIDE = {
   introNew: [
-    "Yo! Welcome to the Course Syllabus. I'm B.O.B., your hardware companion. Let me show you around the lab!",
-    "Hey there! Welcome to the syllabus. I'm B.O.B., your PC building buddy. Ready for a quick tour?",
+    "Yo, welcome to the syllabus! I'm B.O.B. Want a quick 10-second walkthrough of the lab?",
+    "Hey! Welcome to the course syllabus. I'm B.O.B. Ready for a quick tour?",
   ],
   introReturning: [
-    "Welcome back to the Course Syllabus! Let's get right into the hardware breakdown.",
-    "Back in the syllabus! Pick up right where you left off, or check out the next chapter.",
-    "Ready for more hardware labs? Pick a topic and let's get into it!",
+    "Welcome to the Course Syllabus! Ready to master computer architecture? Take a quick look around!",
+    "Here's the full course syllabus! Want a quick 10-second tour of how it's laid out?",
+    "Welcome to the syllabus! Pick up right where you left off or check out a new module.",
   ],
   center: [
-    "Right here in the center is where the magic happens! Video lessons, interactive hardware breakdowns, and lab demos.",
-    "Center stage! You've got comprehensive lessons, video films, and step-by-step assembly guides right here.",
+    "Right here in the center: full video walkthrough, socket specs, and clearance notes for the active chapter.",
+    "Center panel is the main stage—watch the lecture film, review pinouts, and test component clearances.",
   ],
   topics: [
-    "Up top is your topic quick-jump bar! Jump straight between Foundational Lecture, Objectives, Core Reading, or Unit Quiz.",
-    "Check that sticky bar at the top! It lets you jump to any section of the lesson in one click.",
+    "Top bar is your quick-jump rack. Snap straight to the lecture, objectives, reading, or unit quiz.",
+    "Use this top bar to jump between the video, deep dive notes, and the chapter checkup in one click.",
   ],
   syllabus: [
-    "Over on the right is your master syllabus! Track your modules, chapters, and completed lectures. Hit the tab to expand or collapse it.",
-    "The right panel tracks your whole curriculum! You can see all 12 modules and jump between them anytime.",
+    "Right side is your master roadmap! Track all 12 modules, see your checkmarks, and hop chapters anytime.",
+    "Curriculum deck on the right—collapsible, tracks your completion %, and lets you jump anywhere.",
   ],
   done: [
-    "That's the layout! Take your time, soak in the specs, and poke me anytime if you need a tip.",
-    "You're all set! Dive into Chapter 1 whenever you're ready—let's build some PC knowledge!",
+    "All set! Kick off Chapter 1 whenever you're ready. Poke me anytime if you get stuck.",
+    "That's the setup! Start with the lecture film or jump straight into the lab notes. Let's build!",
   ],
 };
 
 export default function CourseShell({ componentGuide }) {
   const navigate = useNavigate();
   const { addComponent } = useBuild();
+  const { mode, seenBanners, markBannerSeen, unlockStage } = useLearnMode();
+  const [showUnlockBanner, setShowUnlockBanner] = useState(() => mode === "learn" && !seenBanners?.learn);
+
+  const handleUnlockBannerComplete = useCallback(() => {
+    setShowUnlockBanner(false);
+    markBannerSeen("learn");
+    try {
+      const syllabusSeen = localStorage.getItem("buildlab_syllabus_intro_seen") === "true";
+      if (!syllabusSeen) {
+        setShowWelcomeOverlay(true);
+        setIsBobCentered(true);
+      }
+    } catch {}
+    setBobSpeech("Welcome to the BuildLab Hardware Academy! I'm B.O.B., and I'll guide you through each topic toward your certification.");
+  }, [markBannerSeen]);
 
   /* Course navigation */
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -705,6 +722,7 @@ export default function CourseShell({ componentGuide }) {
   // Welcome Banner & Navigation Tour State
   const [showWelcomeOverlay, setShowWelcomeOverlay] = useState(() => {
     try {
+      if (mode === "learn" && !seenBanners?.learn) return false;
       return localStorage.getItem("buildlab_syllabus_intro_seen") !== "true";
     } catch {
       return false;
@@ -713,6 +731,7 @@ export default function CourseShell({ componentGuide }) {
 
   const [isBobCentered, setIsBobCentered] = useState(() => {
     try {
+      if (mode === "learn" && !seenBanners?.learn) return false;
       return localStorage.getItem("buildlab_syllabus_intro_seen") !== "true";
     } catch {
       return false;
@@ -738,8 +757,9 @@ export default function CourseShell({ componentGuide }) {
     setIsBobCentered(false);
     try {
       localStorage.setItem("buildlab_syllabus_intro_seen", "true");
-      soundManager.play("click");
+      soundManager.play("modal_close");
     } catch {}
+    setBobSpeech(BOB_SYLLABUS_GUIDE.done[0]);
   }, []);
 
   // Start 3-step navigation highlight tour
@@ -923,10 +943,12 @@ export default function CourseShell({ componentGuide }) {
     setQuizAnswers({});
     setSelectedMistake(null);
     setVideoToast(null);
-    setBobSpeech(BOB_LESSON_WISDOM[current.id] || "Hi! I'm B.O.B., your BuildLab companion. Let's master this hardware together!");
+    if (!showWelcomeOverlay && !guideTarget) {
+      setBobSpeech(BOB_LESSON_WISDOM[current.id] || "Ready to master this hardware? Let's get to it!");
+    }
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [current.id]);
+  }, [current.id, showWelcomeOverlay, guideTarget]);
 
   /* ── Helpers ── */
 
@@ -972,6 +994,13 @@ export default function CourseShell({ componentGuide }) {
   const firstIncomplete = FLAT.findIndex((l) => !completed.includes(l.id));
   const doneCount = completed.filter((id) => FLAT.some((l) => l.id === id)).length;
   const progressPct = Math.round((doneCount / FLAT.length) * 100);
+
+  // When curriculum reaches 100%, unlock Stage 4 (Certification)
+  useEffect(() => {
+    if (progressPct === 100) {
+      unlockStage("certificate");
+    }
+  }, [progressPct, unlockStage]);
 
   /* ── Matcher (component lessons) ── */
 
@@ -1956,6 +1985,33 @@ export default function CourseShell({ componentGuide }) {
                     {progressPct}% Mastered · {doneCount} of {FLAT.length} Topics Verified
                   </span>
                 </div>
+
+                {progressPct === 100 && (
+                  <div className="course-hub-grad-card">
+                    <div className="grad-card-left">
+                      <div className="grad-badge-row">
+                        <span className="grad-star">★</span>
+                        <span className="grad-badge-text">STAGE 04 READY // ALL MODULES MASTERED</span>
+                      </div>
+                      <h3 className="grad-card-title">Curriculum 100% Completed!</h3>
+                      <p className="grad-card-desc">
+                        Your verified Certificate of Hardware Mastery is ready with your Google Account details.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      className="grad-card-cta-btn"
+                      onClick={() => {
+                        try { soundManager.granted(); } catch {}
+                        unlockStage("certificate");
+                        navigate("/certificate");
+                      }}
+                    >
+                      <span>CLAIM OFFICIAL CERTIFICATE (PDF)</span>
+                      <span className="btn-arrow">&rarr;</span>
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -2182,6 +2238,21 @@ export default function CourseShell({ componentGuide }) {
                 </span>
                 <span className="progress-pct-badge">{progressPct}%</span>
               </div>
+
+              {progressPct === 100 && (
+                <button
+                  type="button"
+                  className="sidebar-claim-cert-btn"
+                  onClick={() => {
+                    try { soundManager.granted(); } catch {}
+                    unlockStage("certificate");
+                    navigate("/certificate");
+                  }}
+                >
+                  <span>🎓 VIEW CERTIFICATE (PDF)</span>
+                  <span className="btn-arrow">&rarr;</span>
+                </button>
+              )}
             </div>
 
             <div className="outline-scroll">
@@ -2256,7 +2327,7 @@ export default function CourseShell({ componentGuide }) {
       </div>
 
       {/* ── First-Time Enter Welcome Overlay Banner ── */}
-      {showWelcomeOverlay && (
+      {showWelcomeOverlay && !showUnlockBanner && (
         <div className="syllabus-welcome-overlay" role="dialog" aria-modal="true" aria-label="Welcome to Course Syllabus">
           <div className="syllabus-welcome-backdrop" onClick={dismissGuideTour} />
           <div className="syllabus-welcome-card">
@@ -2334,6 +2405,18 @@ export default function CourseShell({ componentGuide }) {
             </div>
           </div>
         </div>
+      )}
+
+      {showUnlockBanner && (
+        <StageUnlockBanner
+          stageKey="learn"
+          stageNumber="03"
+          title="HARDWARE ACADEMY UNLOCKED"
+          subtitle="All curriculum modules accessible. Complete all 12 lessons to earn your verified Certificate of Hardware Mastery."
+          accentColor="#00d2ff"
+          badge="LEARN TRACK // STAGE 03"
+          onComplete={handleUnlockBannerComplete}
+        />
       )}
 
       <BobCompanion

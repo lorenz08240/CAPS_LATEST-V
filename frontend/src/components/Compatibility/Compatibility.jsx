@@ -3,10 +3,12 @@ import EyeTracker from "../EyeTracker/EyeTracker";
 import { createPortal } from "react-dom";
 import { Link, useNavigate } from "react-router-dom";
 import { useBuild } from "../../contexts/BuildContext";
+import { useLearnMode } from "../../contexts/LearnModeContext";
 import { getCompatibilitySummary } from "../../utilities/rules";
 import soundManager from "../../utilities/soundManager";
 import FullscreenGate from "../FullscreenGate/FullscreenGate";
 import GlobalHeader from "../Navigation/GlobalHeader";
+import StageUnlockBanner from "../Navigation/StageUnlockBanner";
 import "./Compatibility.css";
 
 
@@ -50,6 +52,8 @@ const getComponentBobHint = (comp) => {
 
 function CompatibilityView({ isIntegrated = false }) {
   const navigate = useNavigate();
+  const { mode, seenBanners, markBannerSeen, unlockStage } = useLearnMode();
+  const [showUnlockBanner, setShowUnlockBanner] = useState(() => mode === "learn" && !seenBanners?.compatibility);
   const {
     currentBuild,
     getSelectedComponents,
@@ -92,6 +96,14 @@ function CompatibilityView({ isIntegrated = false }) {
       setBobSpeech(text);
     }, 40);
   }, []);
+
+  const handleUnlockBannerComplete = useCallback(() => {
+    setShowUnlockBanner(false);
+    markBannerSeen("compatibility");
+    setTimeout(() => {
+      triggerBobHint("Stage 02 Unlocked! All 7 parts assembled. I've audited your clearances — check the metrics below!");
+    }, 500);
+  }, [markBannerSeen, triggerBobHint]);
 
   const bindBobInteract = useCallback((hintText) => {
     let touchTimer = null;
@@ -433,6 +445,17 @@ function CompatibilityView({ isIntegrated = false }) {
         )}
 
       <div className={`compat-page ${isIntegrated ? "integrated-view" : ""}`}>
+        {showUnlockBanner && (
+          <StageUnlockBanner
+            stageKey="compatibility"
+            stageNumber="02"
+            title="COMPATIBILITY MATRIX UNLOCKED"
+            subtitle="All 7 hardware components assembled. Automated socket, power, and thermal clearance auditing online."
+            accentColor="#00e5a0"
+            badge="LEARN TRACK // STAGE 02"
+            onComplete={handleUnlockBannerComplete}
+          />
+        )}
         {!isIntegrated && <GlobalHeader hideBuildPill={true} />}
         {!isIntegrated && (
           <>
@@ -474,6 +497,33 @@ function CompatibilityView({ isIntegrated = false }) {
                 <span>Right-click or hold (touchscreen) any component or metric to inspect with B.O.B.</span>
               </div>
             </header>
+          )}
+
+          {mode === "learn" && (
+            <div className="compat-learn-unlock-card">
+              <div className="learn-unlock-info">
+                <div className="learn-unlock-badge">
+                  <span className="badge-dot" />
+                  <span>STAGE 02 COMPLETE // DIAGNOSTICS AUDITED</span>
+                </div>
+                <h3 className="learn-unlock-title">Hardware Verification Complete</h3>
+                <p className="learn-unlock-desc">
+                  Your 7-stage build passed comprehensive compatibility inspection. You are now authorized to unlock the BuildLab Hardware Academy and begin your certified coursework.
+                </p>
+              </div>
+              <button
+                type="button"
+                className="learn-unlock-btn"
+                onClick={() => {
+                  try { soundManager.granted(); } catch {}
+                  unlockStage("learn");
+                  navigate("/learn");
+                }}
+              >
+                <span>UNLOCK &amp; PROCEED TO LEARN LAB</span>
+                <span className="btn-arrow">&rarr;</span>
+              </button>
+            </div>
           )}
 
           {compatibilityIssues.length > 0 && (

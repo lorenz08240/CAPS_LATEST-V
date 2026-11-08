@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useBuild } from "../../contexts/BuildContext";
+import { useLearnMode } from "../../contexts/LearnModeContext";
 import { checkCompatibility } from "../../utilities/compatibilityEngine";
 import soundManager from "../../utilities/soundManager";
 import FullscreenGate from "../FullscreenGate/FullscreenGate";
@@ -329,6 +330,7 @@ const CATEGORY_FILTERS = {
 };
 
 function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildInteracted }) {
+  const { mode, unlockStage, unlockedStages } = useLearnMode();
   const {
     currentBuild,
     allComponents,
@@ -554,6 +556,9 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
     if (selectedComponents.length === buildSteps.length) {
       soundManager.complete();
       setShowCompleteToast(true);
+      if (mode === "learn") {
+        unlockStage("compatibility");
+      }
       const completeLines = [
         "Woohoo! All 7 parts are in! Let's check compatibility and test this beast!",
         "Look at that! Complete build locked and loaded. Ready for testing!",
@@ -564,7 +569,14 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
       return () => clearTimeout(timer);
     }
     setShowCompleteToast(false);
-  }, [selectedComponents.length]);
+  }, [selectedComponents.length, mode, unlockStage]);
+
+  // Keep compatibility unlocked if 7/7 parts are mounted in Learn Mode
+  useEffect(() => {
+    if (mode === "learn" && selectedComponents.length === buildSteps.length) {
+      unlockStage("compatibility");
+    }
+  }, [mode, selectedComponents.length, unlockStage]);
 
   // Sync viewedComponent when switching stages:
   // If the current stage already has a selected component, show its specs;

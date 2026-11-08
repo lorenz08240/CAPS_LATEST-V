@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import GlobalHeader from "../Navigation/GlobalHeader";
 import soundManager from "../../utilities/soundManager";
@@ -140,11 +140,44 @@ const TEAM_MEMBERS = [
 export default function AboutUs() {
   const [filter, setFilter] = useState("all");
   const [selectedMember, setSelectedMember] = useState(null);
+  const [teamMembers, setTeamMembers] = useState(TEAM_MEMBERS);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    fetch("/api/content/team")
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch team content");
+        return res.json();
+      })
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          const mapped = data.map((m) => ({
+            ...m,
+            roleCategory: m.role_category || m.roleCategory || "core",
+            avatarBadge: m.avatar_badge || m.avatarBadge || "DEV",
+            photoUrl: m.photo_url || m.photoUrl || null,
+            keyContributions: Array.isArray(m.key_contributions)
+              ? m.key_contributions
+              : (Array.isArray(m.keyContributions) ? m.keyContributions : []),
+            techStack: Array.isArray(m.tech_stack)
+              ? m.tech_stack
+              : (Array.isArray(m.techStack) ? m.techStack : []),
+            rigSpecs: typeof m.rig_specs === "object"
+              ? m.rig_specs
+              : (typeof m.rigSpecs === "object" ? m.rigSpecs : {}),
+            favTip: m.fav_tip || m.favTip || ""
+          }));
+          setTeamMembers(mapped);
+        }
+      })
+      .catch((err) => {
+        console.warn("Using fallback team data:", err);
+      });
+  }, []);
+
   const filteredMembers = filter === "all" 
-    ? TEAM_MEMBERS 
-    : TEAM_MEMBERS.filter((m) => m.roleCategory === filter);
+    ? teamMembers 
+    : teamMembers.filter((m) => m.roleCategory === filter);
 
   const handleFilterClick = (cat) => {
     try { soundManager.click(); } catch {}
@@ -229,28 +262,28 @@ export default function AboutUs() {
                 className={`filter-btn ${filter === "all" ? "active" : ""}`}
                 onClick={() => handleFilterClick("all")}
               >
-                ALL (5)
+                ALL ({teamMembers.length})
               </button>
               <button 
                 type="button" 
                 className={`filter-btn ${filter === "core" ? "active" : ""}`}
                 onClick={() => handleFilterClick("core")}
               >
-                CORE &amp; 3D (2)
+                CORE &amp; 3D ({teamMembers.filter((m) => m.roleCategory === "core").length})
               </button>
               <button 
                 type="button" 
                 className={`filter-btn ${filter === "frontend" ? "active" : ""}`}
                 onClick={() => handleFilterClick("frontend")}
               >
-                FRONTEND &amp; UX (1)
+                FRONTEND &amp; UX ({teamMembers.filter((m) => m.roleCategory === "frontend").length})
               </button>
               <button 
                 type="button" 
                 className={`filter-btn ${filter === "backend" ? "active" : ""}`}
                 onClick={() => handleFilterClick("backend")}
               >
-                BACKEND &amp; QA (2)
+                BACKEND &amp; QA ({teamMembers.filter((m) => m.roleCategory === "backend").length})
               </button>
             </div>
           </div>
@@ -273,7 +306,21 @@ export default function AboutUs() {
                       <polygon points="50 3, 93 26, 93 74, 50 97, 7 74, 7 26" className="hex-outer" />
                       <polygon points="50 10, 85 29, 85 71, 50 90, 15 71, 15 29" className="hex-inner" />
                     </svg>
-                    <div className="avatar-icon-content">
+                    {(member.photoUrl || member.photo_url) ? (
+                      <img
+                        src={member.photoUrl || member.photo_url}
+                        alt={member.name}
+                        className="avatar-img-hex"
+                        onError={(e) => {
+                          e.target.style.display = "none";
+                          if (e.target.nextSibling) e.target.nextSibling.style.display = "flex";
+                        }}
+                      />
+                    ) : null}
+                    <div
+                      className="avatar-icon-content"
+                      style={{ display: (member.photoUrl || member.photo_url) ? "none" : "flex" }}
+                    >
                       <span className="avatar-code">{member.codename.slice(0, 3)}</span>
                     </div>
                   </div>
@@ -316,8 +363,34 @@ export default function AboutUs() {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="dossier-header-bar">
+                <div className="dossier-avatar-hex-wrap">
+                  <div className="avatar-hex-frame hex-dossier">
+                    <svg viewBox="0 0 100 100" className="avatar-hex-svg">
+                      <polygon points="50 3, 93 26, 93 74, 50 97, 7 74, 7 26" className="hex-outer" />
+                      <polygon points="50 10, 85 29, 85 71, 50 90, 15 71, 15 29" className="hex-inner" />
+                    </svg>
+                    {(selectedMember.photoUrl || selectedMember.photo_url) ? (
+                      <img
+                        src={selectedMember.photoUrl || selectedMember.photo_url}
+                        alt={selectedMember.name}
+                        className="avatar-img-hex"
+                        onError={(e) => {
+                          e.target.style.display = "none";
+                          if (e.target.nextSibling) e.target.nextSibling.style.display = "flex";
+                        }}
+                      />
+                    ) : null}
+                    <div
+                      className="avatar-icon-content"
+                      style={{ display: (selectedMember.photoUrl || selectedMember.photo_url) ? "none" : "flex" }}
+                    >
+                      <span className="avatar-code">{selectedMember.codename.slice(0, 3)}</span>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="dossier-title-group">
-                  <span className="dossier-kicker">ENGINEERING DOSSIER // {selectedMember.id}</span>
+                  <span className="dossier-kicker">ENGINEERING DOSSIER // {selectedMember.id} &bull; {selectedMember.avatarBadge}</span>
                   <h2 className="dossier-name">{selectedMember.name}</h2>
                   <span className="dossier-designation">{selectedMember.designation}</span>
                 </div>

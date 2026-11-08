@@ -9,6 +9,7 @@ import {
 } from "react-router-dom";
 import { BuildProvider } from "./contexts/BuildContext";
 import { AuthProvider } from "./contexts/AuthContext";
+import { LearnModeProvider } from "./contexts/LearnModeContext";
 import { ThemeProvider, useTheme } from "./contexts/ThemeContext";
 import { SidebarProvider, useSidebar } from "./contexts/SidebarContext";
 import { AnimatePresence } from "motion/react";
@@ -18,10 +19,13 @@ import Home from "./components/Home/Home";
 import Build from "./components/Build/Build";
 import Compatibility from "./components/Compatibility/Compatibility";
 import Learn from "./components/Learn/Learn";
+import CertificationPage from "./components/Learn/CertificationPage";
 import HelpSupport from "./components/HelpSupport/HelpSupport";
 import AboutUs from "./components/AboutUs/AboutUs";
 import Brands from "./components/Brands/Brands";
 import PCBuilder3D from "./components/3D/PCBuilder3D";
+import CookieConsent from "./components/Navigation/CookieConsent";
+import LearnModeGuard from "./components/Navigation/LearnModeGuard";
 import {
   AdminInventory,
   AdminCrawler,
@@ -29,7 +33,9 @@ import {
   AdminEditComponent,
   AdminLogin,
   AdminAuthGuard,
-  AdminLogs
+  AdminLogs,
+  AdminAccounts,
+  AdminContent
 } from "./components/Admin/Admin";
 import MotionPage from "./utilities/pageTransitions";
 
@@ -66,6 +72,7 @@ function AppContent() {
 
   return (
     <div className={`min-h-screen app-layout ${theme === 'dark' ? 'theme-dark' : 'theme-light'} ${isPinned ? 'sidebar-pinned' : ''} ${isSidebarOpen ? 'sidebar-open' : ''}`}>
+      <CookieConsent />
       <Navbar />
       <main className="main-content">
         <AnimatePresence mode="wait" initial={false}>
@@ -74,14 +81,61 @@ function AppContent() {
 
             <Route path="/build" element={<MotionPage routeKey="/build"><Build /></MotionPage>} />
 
-            <Route path="/compatibility" element={<MotionPage routeKey="/compatibility"><Compatibility /></MotionPage>} />
+            <Route
+              path="/compatibility"
+              element={
+                <MotionPage routeKey="/compatibility">
+                  <LearnModeGuard requiredStage="compatibility" featureName="Compatibility Matrix">
+                    <Compatibility />
+                  </LearnModeGuard>
+                </MotionPage>
+              }
+            />
 
-            <Route path="/learn" element={<MotionPage routeKey="/learn"><Learn /></MotionPage>} />
-            <Route path="/learn/:componentId" element={<MotionPage routeKey="/learn"><Learn /></MotionPage>} />
+            <Route
+              path="/learn"
+              element={
+                <MotionPage routeKey="/learn">
+                  <LearnModeGuard requiredStage="learn" featureName="Hardware Academy">
+                    <Learn />
+                  </LearnModeGuard>
+                </MotionPage>
+              }
+            />
+            <Route
+              path="/learn/:componentId"
+              element={
+                <MotionPage routeKey="/learn">
+                  <LearnModeGuard requiredStage="learn" featureName="Hardware Academy">
+                    <Learn />
+                  </LearnModeGuard>
+                </MotionPage>
+              }
+            />
+
+            <Route
+              path="/certificate"
+              element={
+                <MotionPage routeKey="/certificate">
+                  <LearnModeGuard requiredStage="certificate" featureName="Official Certification">
+                    <CertificationPage />
+                  </LearnModeGuard>
+                </MotionPage>
+              }
+            />
 
             <Route path="/brands" element={<MotionPage routeKey="/brands"><Brands /></MotionPage>} />
 
-            <Route path="/3d-builder" element={<MotionPage routeKey="/3d-builder"><PCBuilder3D /></MotionPage>} />
+            <Route
+              path="/3d-builder"
+              element={
+                <MotionPage routeKey="/3d-builder">
+                  <LearnModeGuard requiredStage="3d-builder" featureName="3D Studio">
+                    <PCBuilder3D />
+                  </LearnModeGuard>
+                </MotionPage>
+              }
+            />
 
             <Route path="/help" element={<MotionPage routeKey="/help"><HelpSupport /></MotionPage>} />
 
@@ -159,6 +213,26 @@ function AppContent() {
                 </AdminAuthGuard>
               }
             />
+            <Route
+              path="/admin/accounts"
+              element={
+                <AdminAuthGuard>
+                  <MotionPage routeKey="/admin/accounts">
+                    <AdminAccounts />
+                  </MotionPage>
+                </AdminAuthGuard>
+              }
+            />
+            <Route
+              path="/admin/content"
+              element={
+                <AdminAuthGuard>
+                  <MotionPage routeKey="/admin/content">
+                    <AdminContent />
+                  </MotionPage>
+                </AdminAuthGuard>
+              }
+            />
 
           </Routes>
         </AnimatePresence>
@@ -166,6 +240,7 @@ function AppContent() {
           location.pathname !== "/build" &&
           location.pathname !== "/compatibility" &&
           location.pathname !== "/3d-builder" &&
+          location.pathname !== "/certificate" &&
           !location.pathname.startsWith("/admin") &&
           !location.pathname.startsWith("/learn") && <Footer />}
       </main>
@@ -177,14 +252,16 @@ function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <BuildProvider>
-          <SidebarProvider>
-            <Router>
-              <ScrollToTop />
-              <AppContent />
-            </Router>
-          </SidebarProvider>
-        </BuildProvider>
+        <LearnModeProvider>
+          <BuildProvider>
+            <SidebarProvider>
+              <Router>
+                <ScrollToTop />
+                <AppContent />
+              </Router>
+            </SidebarProvider>
+          </BuildProvider>
+        </LearnModeProvider>
       </AuthProvider>
     </ThemeProvider>
   );

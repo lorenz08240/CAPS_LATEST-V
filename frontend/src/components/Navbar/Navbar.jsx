@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useSidebar } from "../../contexts/SidebarContext";
+import { useLearnMode } from "../../contexts/LearnModeContext";
 import { enterFullscreen } from "../../utilities/fullscreen";
 import soundManager from "../../utilities/soundManager";
 import "./Navbar.css";
@@ -10,6 +11,7 @@ import "./Navbar.css";
 function Navbar({ isPinned: propsIsPinned }) {
   const { isAdmin, logoutAdmin } = useAuth();
   const { toggleTheme, isDark } = useTheme();
+  const { mode, userProfile, unlockedStages } = useLearnMode();
   const sidebarCtx = useSidebar();
 
   // Prefer context state, falling back to props if provided
@@ -130,12 +132,12 @@ function Navbar({ isPinned: propsIsPinned }) {
 
                 <div className="sidebar-account-info">
                   <div className="account-title-row">
-                    <span className="account-title-main">Account</span>
-                    <span className="account-role-tag">LEARNER</span>
+                    <span className="account-title-main">{userProfile?.fullName || "Account"}</span>
+                    <span className="account-role-tag">{mode === "learn" ? "LEARN" : "EXPLORE"}</span>
                   </div>
                   <div className="account-action-row">
-                    <span className="account-action-text">Sign Up</span>
-                    <span className="account-google-tag">GOOGLE API</span>
+                    <span className="account-action-text">{userProfile?.setupCompleted ? "Verified Profile" : "Mode Setup"}</span>
+                    <span className="account-google-tag">{mode === "learn" ? "GOOGLE SYNC" : "OPEN LAB"}</span>
                   </div>
                 </div>
               </div>
@@ -294,6 +296,7 @@ function Navbar({ isPinned: propsIsPinned }) {
                         <line x1="12" y1="22.08" x2="12" y2="12"/>
                       </svg>
                       <span>3D Studio</span>
+                      {mode === "learn" && <span style={{ marginLeft: "auto", fontSize: "11px" }} title="Locked in Learn Track">🔒</span>}
                     </Link>
 
                     <Link 
@@ -306,6 +309,9 @@ function Navbar({ isPinned: propsIsPinned }) {
                         <polyline points="9 12 11 14 15 10"/>
                       </svg>
                       <span>Compatibility</span>
+                      {mode === "learn" && !unlockedStages.includes("compatibility") && (
+                        <span style={{ marginLeft: "auto", fontSize: "11px" }} title="Locked: 7 parts required">🔒</span>
+                      )}
                     </Link>
 
                     <Link 
@@ -318,7 +324,22 @@ function Navbar({ isPinned: propsIsPinned }) {
                         <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
                       </svg>
                       <span>Academy &amp; Learn</span>
+                      {mode === "learn" && !unlockedStages.includes("learn") && (
+                        <span style={{ marginLeft: "auto", fontSize: "11px" }} title="Locked: Complete compatibility check first">🔒</span>
+                      )}
                     </Link>
+
+                    {unlockedStages.includes("certificate") && (
+                      <Link 
+                        to="/certificate" 
+                        onClick={handleLinkClick} 
+                        className={`sidebar-link ${location.pathname === "/certificate" ? "active" : ""}`}
+                      >
+                        <span style={{ fontSize: "15px" }}>🎓</span>
+                        <span>Certificate</span>
+                        <span style={{ marginLeft: "auto", fontSize: "9px", fontWeight: "800", color: "#fbbf24", background: "rgba(251,191,36,0.15)", padding: "2px 6px", borderRadius: "4px" }}>VERIFIED</span>
+                      </Link>
+                    )}
 
                     <Link 
                       to="/about" 

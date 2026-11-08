@@ -1,30 +1,31 @@
 // Centralized UI & System Sound Effects Manager for BuildLab
-// High-performance audio pool with eDEX-UI sci-fi sound suite + procedural Web Audio API synthesis fallback
+// High-performance audio pool targeting /sfx/audio/ + procedural Web Audio API synthesis fallback
 
 const SOUND_SOURCE_MAP = {
-  click: ["/sfx/audio/stdout.wav", "/sfx/click.wav", "/sfx/UI_Interact.mp3"],
-  snap: ["/sfx/audio/stdin.wav", "/sfx/snap.wav"],
-  install: ["/sfx/audio/folder.wav", "/sfx/install.wav"],
-  open_box: ["/sfx/audio/panels.wav", "/sfx/open_box.wav"],
-  modal_open: ["/sfx/audio/panels.wav", "/sfx/modal_open.wav"],
-  modal_close: ["/sfx/audio/expand.wav", "/sfx/modal_close.wav"],
-  complete: ["/sfx/audio/granted.wav", "/sfx/granted.wav"],
-  granted: ["/sfx/audio/granted.wav", "/sfx/granted.wav"],
-  denied: ["/sfx/audio/denied.wav", "/sfx/denied.mp3"],
-  UI_Denied_2: ["/sfx/audio/denied.wav", "/sfx/denied.mp3"],
-  error: ["/sfx/audio/error.wav", "/sfx/error.mp3"],
-  Error1: ["/sfx/audio/error.wav", "/sfx/Error1.mp3"],
-  Error2: ["/sfx/audio/error.wav", "/sfx/error.mp3"],
-  Error3: ["/sfx/audio/error.wav", "/sfx/Error3.mp3"],
-  warning: ["/sfx/audio/alarm.wav", "/sfx/warning.wav"],
-  hint: ["/sfx/audio/info.wav", "/sfx/hint.wav"],
-  info: ["/sfx/audio/info.wav", "/sfx/hint.wav"],
+  click: ["/sfx/audio/stdout.wav", "/sfx/audio/UI_Interact.mp3"],
+  snap: ["/sfx/audio/snap.wav", "/sfx/audio/stdin.wav"],
+  install: ["/sfx/audio/folder.wav", "/sfx/audio/snap.wav"],
+  open_box: ["/sfx/audio/panels.wav"],
+  modal_open: ["/sfx/audio/panels.wav"],
+  modal_close: ["/sfx/audio/expand.wav"],
+  complete: ["/sfx/audio/granted.wav"],
+  granted: ["/sfx/audio/granted.wav"],
+  denied: ["/sfx/audio/denied.mp3", "/sfx/audio/denied.wav"],
+  UI_Denied_2: ["/sfx/audio/denied.mp3", "/sfx/audio/denied.wav"],
+  error: ["/sfx/audio/error.mp3", "/sfx/audio/error.wav"],
+  Error1: ["/sfx/audio/Error1.mp3", "/sfx/audio/error.wav"],
+  Error2: ["/sfx/audio/error.mp3", "/sfx/audio/error.wav"],
+  Error3: ["/sfx/audio/Error3.mp3", "/sfx/audio/error.wav"],
+  warning: ["/sfx/audio/warning.wav", "/sfx/audio/alarm.wav"],
+  hint: ["/sfx/audio/hint.wav", "/sfx/audio/info.wav"],
+  info: ["/sfx/audio/info.wav", "/sfx/audio/hint.wav"],
   scan: ["/sfx/audio/scan.wav"],
-  panels: ["/sfx/audio/panels.wav", "/sfx/modal_open.wav"],
-  expand: ["/sfx/audio/expand.wav", "/sfx/modal_close.wav"],
+  panels: ["/sfx/audio/panels.wav"],
+  expand: ["/sfx/audio/expand.wav"],
+  keyboard: ["/sfx/audio/keyboard.wav"],
   theme: ["/sfx/audio/theme.wav"],
-  interact: ["/sfx/audio/stdout.wav", "/sfx/UI_Interact.mp3", "/sfx/click.wav"],
-  UI_Interact: ["/sfx/audio/stdout.wav", "/sfx/UI_Interact.mp3", "/sfx/click.wav"],
+  interact: ["/sfx/audio/UI_Interact.mp3", "/sfx/audio/stdout.wav"],
+  UI_Interact: ["/sfx/audio/UI_Interact.mp3", "/sfx/audio/stdout.wav"],
 };
 
 class SynthAudio {
@@ -320,6 +321,10 @@ class SoundManager {
     this.play("hint", 0.3);
   }
 
+  warning() {
+    this.play("warning", 0.35);
+  }
+
   info() {
     this.play("info", 0.3);
   }
@@ -336,12 +341,12 @@ class SoundManager {
     this.play("expand", 0.3);
   }
 
-  theme() {
-    this.play("theme", 0.25);
+  keyboard() {
+    this.play("keyboard", 0.25);
   }
 
-  warning() {
-    this.play("warning", 0.35);
+  theme() {
+    this.play("theme", 0.25);
   }
 
   typewriter(customVol = null) {

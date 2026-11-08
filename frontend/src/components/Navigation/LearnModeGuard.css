@@ -1,0 +1,193 @@
+/* ═══════════════════════════════════════════════════════════════════
+   LEARN MODE ROUTE GUARD - ACCESS RESTRICTION SCREEN
+   ═══════════════════════════════════════════════════════════════════ */
+
+.learn-guard-screen {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 50% 30%, #161022 0%, #080a10 75%);
+  padding: 24px;
+  position: relative;
+  z-index: 50;
+}
+
+.learn-guard-card {
+  width: min(92vw, 540px);
+  background: rgba(15, 19, 32, 0.94);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(244, 63, 94, 0.45);
+  border-radius: 22px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.75), 0 0 32px rgba(244, 63, 94, 0.2);
+  padding: 36px 32px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: guardCardSlide 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes guardCardSlide {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.guard-cyber-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.guard-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 14px;
+  background: rgba(244, 63, 94, 0.12);
+  border: 1px solid rgba(244, 63, 94, 0.4);
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: #f43f5e;
+}
+
+.guard-badge-pulse {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #f43f5e;
+  box-shadow: 0 0 10px #f43f5e;
+  animation: guardPulse 1.4s infinite;
+}
+
+@keyframes guardPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.8); }
+}
+
+.guard-icon-wrap {
+  width: 68px;
+  height: 68px;
+  border-radius: 20px;
+  background: rgba(244, 63, 94, 0.1);
+  border: 1px solid rgba(244, 63, 94, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  box-shadow: inset 0 0 20px rgba(244, 63, 94, 0.15);
+}
+
+.guard-title {
+  margin: 0 0 10px;
+  font-size: 24px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+}
+
+.guard-reason {
+  margin: 0 0 24px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: #94a3b8;
+  max-width: 440px;
+}
+
+.guard-path-box {
+  width: 100%;
+  padding: 16px 20px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px dashed rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+  margin-bottom: 28px;
+  text-align: left;
+}
+
+.guard-path-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #00e5a0;
+  margin-bottom: 6px;
+}
+
+.guard-path-header .path-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #00e5a0;
+  box-shadow: 0 0 8px #00e5a0;
+}
+
+.guard-path-desc {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #e2e8f0;
+}
+
+.guard-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.guard-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 24px;
+  background: linear-gradient(135deg, #f43f5e 0%, #be123c 100%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(244, 63, 94, 0.4);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.guard-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(244, 63, 94, 0.6);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.guard-btn-secondary {
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 12px;
+  color: #cbd5e1;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.guard-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.3);
+}

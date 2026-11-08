@@ -14,26 +14,6 @@
   pointer-events: auto;
 }
 
-.bob-floating-free.bob-centered {
-  position: fixed !important;
-  top: calc(50% - 130px) !important;
-  left: 50% !important;
-  bottom: auto !important;
-  right: auto !important;
-  transform: translate(-50%, -50%) !important;
-  z-index: 100010 !important;
-}
-
-.bob-floating-free.bob-centered .eyt-say {
-  bottom: auto !important;
-  top: calc(100% + 16px) !important;
-  left: 50% !important;
-  right: auto !important;
-  transform: translateX(-50%) !important;
-  transform-origin: top center !important;
-  border-radius: 4px 14px 14px 14px !important;
-}
-
 .bob-free-stage {
   position: relative;
   display: flex;
@@ -110,4 +90,40 @@
     bottom: 20px;
     right: 20px !important;
   }
+}
+
+/* ── Centered B.O.B. Onboarding / Welcome Mode ── */
+.bob-floating-free.bob-centered {
+  position: fixed !important;
+  top: calc(50% - 225px) !important;
+  left: 50% !important;
+  bottom: auto !important;
+  right: auto !important;
+  transform: translate(-50%, -50%) !important;
+  z-index: 100010 !important;
+}
+
+.bob-floating-free.bob-centered .eyt-say {
+  position: absolute !important;
+  bottom: calc(100% + 14px) !important;
+  top: auto !important;
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+  transform-origin: bottom center !important;
+  border-radius: 14px !important;
+  text-align: center !important;
+  max-width: min(480px, calc(100vw - 40px)) !important;
+}
+
+.bob-floating-free.bob-centered .eyt-say[data-on] {
+  opacity: 1 !important;
+  transform: translateX(-50%) scale(1) !important;
+}
+
+.bob-floating-free.bob-centered .eyt-say::after {
+  left: 50% !important;
+  right: auto !important;
+  bottom: -6px !important;
+  transform: translateX(-50%) rotate(45deg) !important;
 }

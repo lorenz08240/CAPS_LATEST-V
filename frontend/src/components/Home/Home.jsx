@@ -6,7 +6,9 @@ import FullscreenGate from "../FullscreenGate/FullscreenGate";
 import Preloader from "./Preloader";
 import Home3DHero from "./Home3DHero";
 import CyberBrand from "../Navigation/CyberBrand";
+import AccountSetupModal from "./AccountSetupModal";
 import { useSidebar } from "../../contexts/SidebarContext";
+import { useLearnMode } from "../../contexts/LearnModeContext";
 import { enterFullscreen } from "../../utilities/fullscreen";
 import soundManager from "../../utilities/soundManager";
 import systemLogo from "../../assets/system_logo.png";
@@ -14,6 +16,8 @@ import systemLogo from "../../assets/system_logo.png";
 function Home() {
   const navigate = useNavigate();
   const { toggleSidebar } = useSidebar();
+  const { mode, setAppMode, userProfile, unlockedStages } = useLearnMode();
+  const [showAccountModal, setShowAccountModal] = useState(false);
   const [activeModel, setActiveModel] = useState('case');
   const [scrollProgress, setScrollProgress] = useState(0);
   const [startBuildRequested, setStartBuildRequested] = useState(false);
@@ -45,6 +49,38 @@ function Home() {
     document.documentElement.style.overflow = "";
     document.body.style.overflow = "";
   }, []);
+
+  const handleSelectMode = (targetMode) => {
+    if (targetMode === "learn") {
+      if (userProfile?.setupCompleted) {
+        soundManager.granted();
+        setAppMode("learn");
+      } else {
+        soundManager.click();
+        setShowAccountModal(true);
+      }
+    } else {
+      soundManager.click();
+      setAppMode("explore");
+    }
+  };
+
+  const handleStartBuildTrigger = () => {
+    // If Learn Mode is active and profile not setup, prompt Google setup modal
+    if (mode === "learn" && !userProfile?.setupCompleted) {
+      soundManager.click();
+      setShowAccountModal(true);
+      return;
+    }
+    // If no mode is selected yet, prompt user with modal so they can choose
+    if (!mode) {
+      soundManager.click();
+      setShowAccountModal(true);
+      return;
+    }
+    // Explore mode or verified Learn mode: smoothly scroll to build station
+    handleScrollToBuild("smooth");
+  };
 
   const STAGE_META = {
     case: { num: '01', name: 'ATX CHASSIS' },
@@ -82,12 +118,23 @@ function Home() {
   };
 
   const handleLaunch3DStudio = () => {
+    if (mode === "learn") {
+      soundManager.warning();
+      alert("3D Studio is locked during Learn Mode. Switch to Explore Mode from the top bar to access.");
+      return;
+    }
     soundManager.click();
     enterFullscreen();
     navigate('/3d-builder');
   };
 
   const handleOpenCompatibility = () => {
+    if (mode === "learn" && !unlockedStages.includes("compatibility")) {
+      soundManager.warning();
+      alert("Compatibility Matrix is locked! Mount all 7 parts in the 2D Builder first.");
+      handleScrollToBuild("smooth");
+      return;
+    }
     soundManager.click();
     navigate('/compatibility');
   };
@@ -265,6 +312,18 @@ function Home() {
             </nav>
 
             <div className="cyber-nav-actions">
+              <button
+                type="button"
+                className={`cyber-mode-badge-btn ${mode === 'learn' ? 'mode-badge-learn' : 'mode-badge-explore'}`}
+                onClick={() => setShowAccountModal(true)}
+                title="Click to switch or configure operating mode"
+              >
+                <span className="badge-pulse-dot" />
+                <span className="badge-mode-text">
+                  {mode === 'learn' ? '🎓 LEARN TRACK' : mode === 'explore' ? '🚀 EXPLORE LAB' : '⚡ SELECT MODE'}
+                </span>
+              </button>
+
               <button 
                 type="button" 
                 className="cyber-search-btn" 
@@ -336,9 +395,16 @@ function Home() {
                 <button 
                   type="button" 
                   className="cyber-btn-primary"
-                  onClick={() => { soundManager.click(); navigate('/learn'); }}
+                  onClick={() => {
+                    if (mode === "explore") {
+                      soundManager.click();
+                      navigate('/learn');
+                    } else {
+                      handleSelectMode("learn");
+                    }
+                  }}
                 >
-                  <span>EXPLORE LEARN LAB</span>
+                  <span>{mode === 'explore' ? 'EXPLORE LEARN LAB' : 'START LEARN TRACK'}</span>
                   <span className="btn-notch">///</span>
                 </button>
               </div>
@@ -359,8 +425,48 @@ function Home() {
                   className="cyber-btn-outline"
                   onClick={handleOpenCompatibility}
                 >
-                  <span>COMPATIBILITY MATRIX</span>
+                  <span>{mode === 'learn' && !unlockedStages.includes('compatibility') ? 'COMPATIBILITY MATRIX 🔒' : 'COMPATIBILITY MATRIX'}</span>
                   <span className="btn-arrow">&rarr;</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Mode Selector Dock */}
+          <div className="cyber-hero-mode-dock">
+            <div className="mode-dock-inner">
+              <div className="mode-dock-tag">
+                <span className="dock-pulse-dot" />
+                <span>CHOOSE OPERATING MODE</span>
+              </div>
+
+              <div className="mode-dock-tabs">
+                <button
+                  type="button"
+                  className={`mode-dock-pill ${mode === 'learn' ? 'active learn' : ''}`}
+                  onClick={() => handleSelectMode('learn')}
+                  title="Guided track: 2D Builder -> Compatibility Matrix -> Hardware Academy -> Verified Certificate"
+                >
+                  <span className="dock-pill-icon">🎓</span>
+                  <div className="dock-pill-text">
+                    <span className="dock-pill-title">LEARN MODE</span>
+                    <span className="dock-pill-sub">Guided Certification Track</span>
+                  </div>
+                  {mode === 'learn' && <span className="dock-pill-tag">ACTIVE TRACK</span>}
+                </button>
+
+                <button
+                  type="button"
+                  className={`mode-dock-pill ${mode === 'explore' ? 'active explore' : ''}`}
+                  onClick={() => handleSelectMode('explore')}
+                  title="Browse freely without lockouts: 3D Studio, Matrix, and Academy are all unlocked"
+                >
+                  <span className="dock-pill-icon">🚀</span>
+                  <div className="dock-pill-text">
+                    <span className="dock-pill-title">EXPLORE MODE</span>
+                    <span className="dock-pill-sub">Free Browsing &amp; 3D Sandbox</span>
+                  </div>
+                  {mode === 'explore' && <span className="dock-pill-tag">ACTIVE LAB</span>}
                 </button>
               </div>
             </div>
@@ -411,7 +517,7 @@ function Home() {
               className="hud-start-build-btn"
               onClick={(e) => {
                 e.preventDefault();
-                handleScrollToBuild("smooth");
+                handleStartBuildTrigger();
               }}
               title="Launch 2D Workbench"
             >
@@ -425,6 +531,20 @@ function Home() {
           <Build isIntegrated={true} startBuildRequested={startBuildRequested} onBuildInteracted={unlockBuildScroll} />
         </section>
       </div>
+
+      <AccountSetupModal
+        isOpen={showAccountModal}
+        onClose={() => setShowAccountModal(false)}
+        onConfirmed={(targetMode) => {
+          setShowAccountModal(false);
+          if (targetMode === "explore") {
+            setAppMode("explore");
+          } else {
+            setAppMode("learn");
+          }
+          handleScrollToBuild("smooth");
+        }}
+      />
     </FullscreenGate>
   </>
   );
