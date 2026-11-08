@@ -10,7 +10,10 @@ export const AdminLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
-  const destination = location.state?.from?.pathname || "/admin/inventory";
+  const destination =
+    location.state?.from?.pathname
+      ? location.state.from.pathname + (location.state.from.search || "")
+      : localStorage.getItem("buildlab_admin_last_location") || "/admin/inventory";
 
   // If already authenticated, redirect to destination immediately
   if (isAdmin) {

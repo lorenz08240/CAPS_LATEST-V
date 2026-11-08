@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import ReactDOM from "react-dom";
 import HardwareIcon from "./HardwareIcon";
+import "./Admin.css";
 
 const CATEGORIES = ["gpu", "motherboard", "cpu", "ram", "storage", "case", "psu"];
 
@@ -68,9 +69,9 @@ export const EditComponentDrawer = ({
       const currentInitialId = initialData?.id || null;
       let loadedFromDraft = false;
 
-      // Check for active draft in sessionStorage
+      // Check for active draft in localStorage (persists across accidental tab close)
       try {
-        const rawDraft = sessionStorage.getItem(DRAFT_STORAGE_KEY);
+        const rawDraft = localStorage.getItem(DRAFT_STORAGE_KEY) || sessionStorage.getItem(DRAFT_STORAGE_KEY);
         if (rawDraft) {
           const parsed = JSON.parse(rawDraft);
           // Only restore if the draft belongs to this context (both are new, or same item id)
@@ -81,7 +82,7 @@ export const EditComponentDrawer = ({
           }
         }
       } catch (e) {
-        console.warn("Failed to parse drawer draft from sessionStorage:", e);
+        console.warn("Failed to parse drawer draft from storage:", e);
       }
 
       if (!loadedFromDraft) {
@@ -169,7 +170,7 @@ export const EditComponentDrawer = ({
     setFormData(updated);
 
     try {
-      sessionStorage.setItem(
+      localStorage.setItem(
         DRAFT_STORAGE_KEY,
         JSON.stringify({
           initialId: initialData?.id || null,
@@ -183,6 +184,7 @@ export const EditComponentDrawer = ({
   // Discard draft and revert to initial state
   const handleDiscardDraft = () => {
     try {
+      localStorage.removeItem(DRAFT_STORAGE_KEY);
       sessionStorage.removeItem(DRAFT_STORAGE_KEY);
     } catch {}
     setRestoredDraft(false);
@@ -236,6 +238,7 @@ export const EditComponentDrawer = ({
 
   const handleCancelAndClear = () => {
     try {
+      localStorage.removeItem(DRAFT_STORAGE_KEY);
       sessionStorage.removeItem(DRAFT_STORAGE_KEY);
     } catch {}
     setRestoredDraft(false);
@@ -276,8 +279,9 @@ export const EditComponentDrawer = ({
 
       await onSave(cleaned);
 
-      // Clean up session draft on successful commit
+      // Clean up draft on successful commit
       try {
+        localStorage.removeItem(DRAFT_STORAGE_KEY);
         sessionStorage.removeItem(DRAFT_STORAGE_KEY);
       } catch {}
 
@@ -292,7 +296,12 @@ export const EditComponentDrawer = ({
   const isEditing = Boolean(initialData && initialData.id && !isScrapedVerification);
 
   const drawerContent = (
-    <div className="drawer-portal-root">
+    <div
+      className="drawer-portal-root fixed inset-0 z-[999999] flex items-center justify-center p-4"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) handleCloseWithPrompt();
+      }}
+    >
       <div
         className="drawer-backdrop-overlay"
         onClick={handleCloseWithPrompt}

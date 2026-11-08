@@ -32,10 +32,35 @@ const logSystemActivity = async ({ actionType, adminUser = "Admin", details = ""
   }
 };
 
-// API to get all parts grouped by category
+// Ensure soft-delete columns exist on pc_parts
+async function initSoftDeleteSchema() {
+  try {
+    const [cols] = await db.query("DESCRIBE pc_parts");
+    const colNames = cols.map(c => c.Field);
+    if (!colNames.includes("is_archived")) {
+      await db.query("ALTER TABLE pc_parts ADD COLUMN is_archived TINYINT(1) DEFAULT 0");
+    }
+    if (!colNames.includes("deleted_at")) {
+      await db.query("ALTER TABLE pc_parts ADD COLUMN deleted_at TIMESTAMP NULL DEFAULT NULL");
+    }
+  } catch (err) {
+    console.error("Soft-delete schema init error:", err.message);
+  }
+}
+initSoftDeleteSchema();
+
+// API to get all parts grouped by category (filters out archived by default unless include_archived=true or archived=true)
 app.get("/api/parts", async (req, res) => {
   try {
-    const [rows] = await db.query("SELECT * FROM pc_parts ORDER BY id DESC");
+    let sql = "SELECT * FROM pc_parts";
+    if (req.query.archived === "true") {
+      sql += " WHERE is_archived = 1";
+    } else if (req.query.include_archived !== "true") {
+      sql += " WHERE (is_archived = 0 OR is_archived IS NULL)";
+    }
+    sql += " ORDER BY id DESC";
+
+    const [rows] = await db.query(sql);
     const componentsData = {};
     rows.forEach(row => {
       if (!componentsData[row.category]) {
@@ -47,6 +72,8 @@ app.get("/api/parts", async (req, res) => {
       item.name = item.name || "";
       item.brand = item.brand || "";
       item.created_at = item.created_at || new Date().toISOString();
+      item.is_archived = Boolean(row.is_archived);
+      item.deleted_at = row.deleted_at || null;
 
       if (typeof item.tags === 'string') {
         try { item.tags = JSON.parse(item.tags); } catch(e) {}
@@ -61,18 +88,26 @@ app.get("/api/parts", async (req, res) => {
   }
 });
 
-// API to get parts by category
+// API to get parts by category (filters out archived by default unless include_archived=true or archived=true)
 app.get("/api/parts/:category", async (req, res) => {
   try {
-    const [rows] = await db.query("SELECT * FROM pc_parts WHERE category = ? ORDER BY id DESC", [
-      req.params.category,
-    ]);
+    let sql = "SELECT * FROM pc_parts WHERE category = ?";
+    if (req.query.archived === "true") {
+      sql += " AND is_archived = 1";
+    } else if (req.query.include_archived !== "true") {
+      sql += " AND (is_archived = 0 OR is_archived IS NULL)";
+    }
+    sql += " ORDER BY id DESC";
+
+    const [rows] = await db.query(sql, [req.params.category]);
     res.json(rows.map(row => {
       const item = { ...row };
       item.desc = item.desc || "";
       item.name = item.name || "";
       item.brand = item.brand || "";
       item.created_at = item.created_at || new Date().toISOString();
+      item.is_archived = Boolean(row.is_archived);
+      item.deleted_at = row.deleted_at || null;
       if (typeof item.tags === 'string') {
         try { item.tags = JSON.parse(item.tags); } catch(e) {}
       }
@@ -159,28 +194,87 @@ app.post("/api/parts", adminAuth, async (req, res) => {
   }
 });
 
-// API to delete a part (Admin Protected, with 404 validation)
+// API to delete/archive a part (Soft-delete by default, permanent hard delete if ?permanent=true)
 app.delete("/api/parts/:id", adminAuth, async (req, res) => {
   try {
-    const [existing] = await db.query("SELECT name, category, brand FROM pc_parts WHERE id = ?", [req.params.id]);
-    const [result] = await db.query("DELETE FROM pc_parts WHERE id = ?", [req.params.id]);
-    if (result.affectedRows === 0) {
+    const isPermanent = req.query.permanent === "true" || req.query.hard === "true";
+    const [existing] = await db.query("SELECT name, category, brand, is_archived FROM pc_parts WHERE id = ?", [req.params.id]);
+    if (!existing || existing.length === 0) {
       return res.status(404).json({ error: "Component not found" });
     }
-    const partInfo = existing[0] ? `"${existing[0].name}" (${existing[0].brand || "Generic"})` : req.params.id;
+
+    const partInfo = `"${existing[0].name}" (${existing[0].brand || "Generic"})`;
+
+    if (isPermanent) {
+      const [result] = await db.query("DELETE FROM pc_parts WHERE id = ?", [req.params.id]);
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ error: "Component not found" });
+      }
+      logSystemActivity({
+        actionType: "PERMANENT_DELETE_COMPONENT",
+        adminUser: "Admin",
+        details: `Permanently purged component ${partInfo} from database records.`,
+        targetId: req.params.id,
+        targetCategory: existing[0]?.category || null,
+        status: "SUCCESS",
+        req
+      });
+      return res.json({ success: true, message: "Component permanently deleted from database" });
+    } else {
+      // Soft-delete pattern: update is_archived = 1, deleted_at = NOW()
+      await db.query("UPDATE pc_parts SET is_archived = 1, deleted_at = NOW() WHERE id = ?", [req.params.id]);
+      logSystemActivity({
+        actionType: "ARCHIVE_COMPONENT",
+        adminUser: "Admin",
+        details: `Archived component ${partInfo}. Moved to trash/archive repository.`,
+        targetId: req.params.id,
+        targetCategory: existing[0]?.category || null,
+        status: "SUCCESS",
+        req
+      });
+      return res.json({ success: true, message: "Component archived successfully" });
+    }
+  } catch (err) {
+    console.error(`DELETE /api/parts/${req.params.id} error:`, err);
+    res.status(500).json({ error: "Failed to archive/delete component" });
+  }
+});
+
+// API to restore an archived component back to active inventory (Admin Protected)
+app.post("/api/parts/:id/restore", adminAuth, async (req, res) => {
+  try {
+    const [existing] = await db.query("SELECT name, category, brand, is_archived FROM pc_parts WHERE id = ?", [req.params.id]);
+    if (!existing || existing.length === 0) {
+      return res.status(404).json({ error: "Component not found" });
+    }
+
+    await db.query("UPDATE pc_parts SET is_archived = 0, deleted_at = NULL WHERE id = ?", [req.params.id]);
+    const partInfo = `"${existing[0].name}" (${existing[0].brand || "Generic"})`;
     logSystemActivity({
-      actionType: "DELETE_COMPONENT",
+      actionType: "RESTORE_COMPONENT",
       adminUser: "Admin",
-      details: `Permanently removed component ${partInfo}.`,
+      details: `Restored archived component ${partInfo} to active inventory.`,
       targetId: req.params.id,
       targetCategory: existing[0]?.category || null,
       status: "SUCCESS",
       req
     });
-    res.json({ success: true, message: "Component deleted successfully" });
+    res.json({ success: true, message: "Component restored to active inventory" });
   } catch (err) {
-    console.error(`DELETE /api/parts/${req.params.id} error:`, err);
-    res.status(500).json({ error: "Failed to delete component" });
+    console.error(`POST /api/parts/${req.params.id}/restore error:`, err);
+    res.status(500).json({ error: "Failed to restore component" });
+  }
+});
+app.put("/api/parts/:id/restore", adminAuth, async (req, res) => {
+  req.url = req.url.replace('/restore', '/restore');
+  // Re-run handler directly
+  try {
+    const [existing] = await db.query("SELECT name, category, brand, is_archived FROM pc_parts WHERE id = ?", [req.params.id]);
+    if (!existing || existing.length === 0) return res.status(404).json({ error: "Component not found" });
+    await db.query("UPDATE pc_parts SET is_archived = 0, deleted_at = NULL WHERE id = ?", [req.params.id]);
+    res.json({ success: true, message: "Component restored to active inventory" });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to restore component" });
   }
 });
 
@@ -525,10 +619,13 @@ app.post("/api/scraped-queue/merge", adminAuth, async (req, res) => {
 
     let mergedCount = 0;
     for (const item of approvedItems) {
-      let prodId = item.id.startsWith("easypc-") ? item.id : `prod-${item.id}`;
-      const [existingPart] = await db.query("SELECT id FROM pc_parts WHERE id = ?", [prodId]);
-      if (existingPart && existingPart.length > 0) {
-        prodId = `${prodId}-${Date.now().toString().slice(-4)}`;
+      // Deduplicate: check if a part with same name already exists in active inventory
+      const [existingByName] = await db.query("SELECT id FROM pc_parts WHERE LOWER(name) = LOWER(?)", [item.scraped_name]);
+      let prodId;
+      if (existingByName && existingByName.length > 0) {
+        prodId = existingByName[0].id;
+      } else {
+        prodId = item.id.startsWith("easypc-") || item.id.startsWith("bermor-") ? item.id : `prod-${item.id}`;
       }
 
       const query = `

@@ -46,10 +46,14 @@ export function AuthProvider({ children }) {
       sessionStorage.removeItem(SESSION_AUTH_KEY);
       sessionStorage.removeItem(SESSION_TIMESTAMP_KEY);
       sessionStorage.removeItem(SESSION_TOKEN_KEY);
-      // Clean up session drafts upon explicit logout
+      // Clean up drafts upon explicit logout
       sessionStorage.removeItem("buildlab_admin_drawer_draft");
       sessionStorage.removeItem("buildlab_admin_crawler_draft");
       sessionStorage.removeItem("buildlab_admin_terminal_logs");
+      localStorage.removeItem("buildlab_admin_drawer_draft");
+      localStorage.removeItem("buildlab_admin_crawler_draft");
+      localStorage.removeItem("buildlab_admin_terminal_logs");
+      localStorage.removeItem("buildlab_admin_last_location");
       // Clean up legacy localStorage if present
       localStorage.removeItem("buildlab_admin");
       localStorage.removeItem("buildlab_admin_token");

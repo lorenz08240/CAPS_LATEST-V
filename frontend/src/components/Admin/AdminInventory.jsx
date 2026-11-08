@@ -106,14 +106,45 @@ export const AdminInventory = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const PAGE_SIZE = 12;
 
+  // Inventory View Mode ("active" by default, or "archived")
+  const [inventoryViewMode, setInventoryViewMode] = useState("active");
+
   // Drawer state
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [drawerInitialData, setDrawerInitialData] = useState(null);
+
+  // Delete & Archive modal states with two-step "type confirm"
+  const [componentToDelete, setComponentToDelete] = useState(null);
+  const [isPermanentDelete, setIsPermanentDelete] = useState(false);
+  const [confirmStep, setConfirmStep] = useState(1); // 1 = initial confirm button, 2 = type "confirm"
+  const [typeConfirmationInput, setTypeConfirmationInput] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Inventory parts state
   const [parts, setParts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [notification, setNotification] = useState({ text: "", type: "info" });
+
+  // Close delete modal on Escape key press
+  useEffect(() => {
+    if (!componentToDelete) return;
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape" && !isDeleting) {
+        setComponentToDelete(null);
+        setConfirmStep(1);
+        setTypeConfirmationInput("");
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [componentToDelete, isDeleting]);
+
+  // Persist current location for admin so accidental tab closure restores exact state after re-login
+  useEffect(() => {
+    try {
+      localStorage.setItem("buildlab_admin_last_location", window.location.pathname + window.location.search);
+    } catch {}
+  }, [activeCategory, inventoryViewMode, searchParams]);
 
   // Auto-open drawer when deep-linked or redirected with ?action=add or ?edit=id or ?id=id
   useEffect(() => {
@@ -145,10 +176,10 @@ export const AdminInventory = () => {
     };
   }, []);
 
-  // Fetch parts from backend
+  // Fetch parts from backend (including archived flag so admin can toggle between active and archived)
   useEffect(() => {
     let ignore = false;
-    apiFetch("/api/parts")
+    apiFetch("/api/parts?include_archived=true")
       .then((res) => (res.ok ? res.json() : {}))
       .then((data) => {
         if (ignore) return;
@@ -173,9 +204,14 @@ export const AdminInventory = () => {
     };
   }, []);
 
-  // Filtered & Sorted list
+  // Active vs Archived counts
+  const activePartsCount = useMemo(() => parts.filter((p) => !p.is_archived).length, [parts]);
+  const archivedPartsCount = useMemo(() => parts.filter((p) => Boolean(p.is_archived)).length, [parts]);
+
+  // Filtered & Sorted list (Main View: displays active components by default; Archived view: displays archived components)
   const filteredParts = useMemo(() => {
     let result = parts
+      .filter((p) => (inventoryViewMode === "archived" ? Boolean(p.is_archived) : !p.is_archived))
       .filter((p) => (activeCategory === "all" ? true : (p.category || "").toLowerCase() === activeCategory))
       .filter((p) => {
         if (!searchTerm.trim()) return true;
@@ -188,17 +224,19 @@ export const AdminInventory = () => {
         );
       });
 
-    // Quick filter by date / age
-    if (quickFilter === "recent24h") {
-      result = result.filter((p) => {
-        const info = getComponentAgeInfo(p.created_at);
-        return info.isRecent24h;
-      });
-    } else if (quickFilter === "recent7d") {
-      result = result.filter((p) => {
-        const info = getComponentAgeInfo(p.created_at);
-        return info.type === "new" || info.type === "recent";
-      });
+    // Quick filter by date / age (for active view)
+    if (inventoryViewMode === "active") {
+      if (quickFilter === "recent24h") {
+        result = result.filter((p) => {
+          const info = getComponentAgeInfo(p.created_at);
+          return info.isRecent24h;
+        });
+      } else if (quickFilter === "recent7d") {
+        result = result.filter((p) => {
+          const info = getComponentAgeInfo(p.created_at);
+          return info.type === "new" || info.type === "recent";
+        });
+      }
     }
 
     // Sort components
@@ -223,7 +261,7 @@ export const AdminInventory = () => {
     });
 
     return result;
-  }, [parts, activeCategory, searchTerm, quickFilter, sortBy]);
+  }, [parts, inventoryViewMode, activeCategory, searchTerm, quickFilter, sortBy]);
 
   // Strict Pagination calculations with automatic clamp (no cascading render effect)
   const totalPages = Math.max(1, Math.ceil(filteredParts.length / PAGE_SIZE));
@@ -234,12 +272,13 @@ export const AdminInventory = () => {
     return filteredParts.slice(start, start + PAGE_SIZE);
   }, [filteredParts, safeCurrentPage, PAGE_SIZE]);
 
-  // Category counts
+  // Category counts (Active components only)
   const categoryCounts = useMemo(() => {
-    const counts = { all: parts.length };
+    const activeList = parts.filter((p) => !p.is_archived);
+    const counts = { all: activeList.length };
     CATEGORIES.forEach((cat) => {
       if (cat !== "all") {
-        counts[cat] = parts.filter((p) => (p.category || "").toLowerCase() === cat).length;
+        counts[cat] = activeList.filter((p) => (p.category || "").toLowerCase() === cat).length;
       }
     });
     return counts;
@@ -278,6 +317,92 @@ export const AdminInventory = () => {
         : `New component "${componentData.name}" onboarded into inventory.`,
       type: "success"
     });
+  };
+
+  // Restore archived component to active inventory
+  const handleRestoreComponent = async (part) => {
+    try {
+      const res = await apiFetch(`/api/parts/${encodeURIComponent(part.id)}/restore`, {
+        method: "POST"
+      });
+      if (!res.ok) {
+        throw new Error(`Failed to restore component (HTTP ${res.status})`);
+      }
+      setParts((prev) =>
+        prev.map((p) => (p.id === part.id ? { ...p, is_archived: false, deleted_at: null } : p))
+      );
+      setNotification({
+        text: `Component "${part.name}" restored to active inventory.`,
+        type: "success"
+      });
+    } catch (err) {
+      console.error("Restore failed:", err);
+      setNotification({
+        text: err.message || "Failed to restore component.",
+        type: "error"
+      });
+    }
+  };
+
+  // Execute Delete (Soft Archive or Permanent Delete) after typing "confirm"
+  const handleExecuteDeleteOrArchive = async () => {
+    if (!componentToDelete) return;
+    setIsDeleting(true);
+
+    try {
+      const endpoint = isPermanentDelete
+        ? `/api/parts/${encodeURIComponent(componentToDelete.id)}?permanent=true`
+        : `/api/parts/${encodeURIComponent(componentToDelete.id)}`;
+
+      const res = await apiFetch(endpoint, {
+        method: "DELETE"
+      });
+
+      if (!res.ok && res.status !== 404) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || `Server returned ${res.status}: Failed to process deletion`);
+      }
+
+      if (isPermanentDelete) {
+        // Permanent delete: remove completely
+        setParts((prev) => prev.filter((p) => p.id !== componentToDelete.id));
+        setNotification({
+          text: `Component "${componentToDelete.name}" permanently purged from database records.`,
+          type: "success"
+        });
+      } else {
+        // Soft delete (archive): mark as archived
+        setParts((prev) =>
+          prev.map((p) =>
+            p.id === componentToDelete.id
+              ? { ...p, is_archived: true, deleted_at: new Date().toISOString() }
+              : p
+          )
+        );
+        setNotification({
+          text: `Component "${componentToDelete.name}" archived. You can view or restore it under the Archived filter.`,
+          type: "success"
+        });
+      }
+
+      // If open in drawer, close drawer
+      if (drawerInitialData && drawerInitialData.id === componentToDelete.id) {
+        setIsDrawerOpen(false);
+        setDrawerInitialData(null);
+      }
+
+      setComponentToDelete(null);
+      setConfirmStep(1);
+      setTypeConfirmationInput("");
+    } catch (err) {
+      console.error("Failed to delete/archive component:", err);
+      setNotification({
+        text: err.message || "Failed to delete/archive component.",
+        type: "error"
+      });
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   // Spec column helper
@@ -379,24 +504,52 @@ export const AdminInventory = () => {
               <div className="quick-filter-pills">
                 <button
                   type="button"
-                  className={`quick-pill ${quickFilter === "all" ? "active" : ""}`}
-                  onClick={() => setQuickFilter("all")}
+                  className={`quick-pill ${inventoryViewMode === "active" && quickFilter === "all" ? "active" : ""}`}
+                  onClick={() => {
+                    setInventoryViewMode("active");
+                    setQuickFilter("all");
+                    setCurrentPage(1);
+                  }}
                 >
-                  All ({filteredParts.length})
+                  All ({activePartsCount})
                 </button>
                 <button
                   type="button"
-                  className={`quick-pill pill-new ${quickFilter === "recent24h" ? "active" : ""}`}
-                  onClick={() => setQuickFilter("recent24h")}
+                  className={`quick-pill pill-new ${inventoryViewMode === "active" && quickFilter === "recent24h" ? "active" : ""}`}
+                  onClick={() => {
+                    setInventoryViewMode("active");
+                    setQuickFilter("recent24h");
+                    setCurrentPage(1);
+                  }}
                 >
                   New (&lt;24h)
                 </button>
                 <button
                   type="button"
-                  className={`quick-pill pill-week ${quickFilter === "recent7d" ? "active" : ""}`}
-                  onClick={() => setQuickFilter("recent7d")}
+                  className={`quick-pill pill-week ${inventoryViewMode === "active" && quickFilter === "recent7d" ? "active" : ""}`}
+                  onClick={() => {
+                    setInventoryViewMode("active");
+                    setQuickFilter("recent7d");
+                    setCurrentPage(1);
+                  }}
                 >
                   Recent (&le;7d)
+                </button>
+                <button
+                  type="button"
+                  className={`quick-pill pill-archived ${inventoryViewMode === "archived" ? "active" : ""}`}
+                  onClick={() => {
+                    setInventoryViewMode("archived");
+                    setCurrentPage(1);
+                  }}
+                  title="View archived / decommissioned components"
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ display: "inline-block", marginRight: "5px", verticalAlign: "middle" }}>
+                    <polyline points="21 8 21 21 3 21 3 8"></polyline>
+                    <rect x="1" y="3" width="22" height="5"></rect>
+                    <line x1="10" y1="12" x2="14" y2="12"></line>
+                  </svg>
+                  Archived ({archivedPartsCount})
                 </button>
               </div>
             </div>
@@ -416,6 +569,25 @@ export const AdminInventory = () => {
               </button>
             </div>
           </div>
+
+          {inventoryViewMode === "archived" && (
+            <div className="archived-banner-alert">
+              <div>
+                <strong>Archived Components Repository:</strong> Showing {filteredParts.length} archived/decommissioned hardware item(s). These components are safely retained in records but hidden from active PC builder catalogs.
+              </div>
+              <button
+                type="button"
+                className="drawer-btn-ghost"
+                style={{ padding: "6px 14px", fontSize: "0.8rem", color: "#fbbf24", borderColor: "rgba(245, 158, 11, 0.4)" }}
+                onClick={() => {
+                  setInventoryViewMode("active");
+                  setCurrentPage(1);
+                }}
+              >
+                &larr; Return to Active Inventory
+              </button>
+            </div>
+          )}
 
             <div className="table-container fullbleed-scroll">
               <table className="admin-table">
@@ -490,17 +662,58 @@ export const AdminInventory = () => {
 
                         <td style={{ textAlign: "center" }}>
                           <div className="table-actions">
-                            <button
-                              type="button"
-                              className="sleek-block-action-btn edit-block-btn"
-                              onClick={() => {
-                                setDrawerInitialData(part);
-                                setIsDrawerOpen(true);
-                              }}
-                              title={`Edit specs and matrix rules for ${part.name}`}
-                            >
-                              <span className="btn-label">Edit</span>
-                            </button>
+                            {inventoryViewMode === "archived" ? (
+                              <>
+                                <button
+                                  type="button"
+                                  className="sleek-block-action-btn restore-block-btn"
+                                  onClick={() => handleRestoreComponent(part)}
+                                  title={`Restore ${part.name} to active inventory`}
+                                >
+                                  <span className="btn-label">Restore</span>
+                                </button>
+                                <button
+                                  type="button"
+                                  className="sleek-block-action-btn delete-block-btn text-rose-400 hover:bg-rose-500/20 border-rose-500/40"
+                                  onClick={() => {
+                                    setComponentToDelete(part);
+                                    setIsPermanentDelete(true);
+                                    setConfirmStep(1);
+                                    setTypeConfirmationInput("");
+                                  }}
+                                  title={`Permanently delete ${part.name} from database`}
+                                >
+                                  <span className="btn-label">Delete</span>
+                                </button>
+                              </>
+                            ) : (
+                              <>
+                                <button
+                                  type="button"
+                                  className="sleek-block-action-btn edit-block-btn"
+                                  onClick={() => {
+                                    setDrawerInitialData(part);
+                                    setIsDrawerOpen(true);
+                                  }}
+                                  title={`Edit specs and matrix rules for ${part.name}`}
+                                >
+                                  <span className="btn-label">Edit</span>
+                                </button>
+                                <button
+                                  type="button"
+                                  className="sleek-block-action-btn delete-block-btn text-rose-400 hover:bg-rose-500/20 border-rose-500/40"
+                                  onClick={() => {
+                                    setComponentToDelete(part);
+                                    setIsPermanentDelete(false);
+                                    setConfirmStep(1);
+                                    setTypeConfirmationInput("");
+                                  }}
+                                  title={`Archive component ${part.name}`}
+                                >
+                                  <span className="btn-label">Delete</span>
+                                </button>
+                              </>
+                            )}
                           </div>
                         </td>
                       </tr>
@@ -581,6 +794,213 @@ export const AdminInventory = () => {
         initialData={drawerInitialData}
         onSave={handleSaveComponent}
       />
+
+      {/* Delete / Archive Confirmation Modal */}
+      {componentToDelete && (
+        <div
+          className="admin-confirm-modal-backdrop"
+          onClick={() => !isDeleting && setComponentToDelete(null)}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="delete-dialog-title"
+        >
+          <div
+            className="admin-confirm-modal-box"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="confirm-modal-header">
+              <div className="confirm-modal-icon-wrap">
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#ef4444"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                  <line x1="12" y1="9" x2="12" y2="13" />
+                  <line x1="12" y1="17" x2="12.01" y2="17" />
+                </svg>
+              </div>
+              <div className="confirm-modal-title-text">
+                <h3 id="delete-dialog-title">
+                  {confirmStep === 2
+                    ? (isPermanentDelete ? "Security Check: Type 'confirm'" : "Authorization: Type 'confirm'")
+                    : (isPermanentDelete ? "Permanent Delete Component" : "Archive Component")}
+                </h3>
+                <p>
+                  {confirmStep === 2
+                    ? `Please type "confirm" below to authorize ${isPermanentDelete ? "permanent deletion" : "archiving"} of this component.`
+                    : (isPermanentDelete
+                      ? "Are you sure you want to permanently delete this component?"
+                      : "Are you sure you want to delete (archive) this component?")}
+                </p>
+              </div>
+            </div>
+
+            <div style={{ padding: "0 1.5rem 1rem" }}>
+              <div
+                style={{
+                  background: "rgba(15, 23, 42, 0.65)",
+                  border: "1px solid rgba(255, 255, 255, 0.08)",
+                  borderRadius: "8px",
+                  padding: "12px 14px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "12px"
+                }}
+              >
+                {componentToDelete.img && (
+                  <img
+                    src={componentToDelete.img}
+                    alt={componentToDelete.name}
+                    style={{
+                      width: "44px",
+                      height: "44px",
+                      objectFit: "contain",
+                      borderRadius: "6px",
+                      background: "rgba(0,0,0,0.3)",
+                      padding: "2px"
+                    }}
+                    onError={(e) => {
+                      e.target.style.display = "none";
+                    }}
+                  />
+                )}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div
+                    style={{
+                      fontSize: "0.92rem",
+                      fontWeight: "700",
+                      color: "#f8fafc",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis"
+                    }}
+                    title={componentToDelete.name}
+                  >
+                    {componentToDelete.name}
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      marginTop: "4px",
+                      fontSize: "0.75rem",
+                      color: "#94a3b8"
+                    }}
+                  >
+                    <span
+                      style={{
+                        color: "#00f2fe",
+                        fontWeight: "600",
+                        textTransform: "uppercase"
+                      }}
+                    >
+                      {componentToDelete.brand || "GENERIC"}
+                    </span>
+                    <span>•</span>
+                    <span style={{ textTransform: "uppercase" }}>
+                      {componentToDelete.category || "PART"}
+                    </span>
+                    {componentToDelete.id && (
+                      <>
+                        <span>•</span>
+                        <span style={{ fontFamily: "monospace", opacity: 0.8 }}>
+                          ID: {componentToDelete.id}
+                        </span>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {confirmStep === 2 && (
+                <div className="safety-prompt-box" style={{ marginTop: "14px" }}>
+                  <label htmlFor="confirm-type-field">
+                    Type <strong>confirm</strong> to authorize {isPermanentDelete ? "permanent deletion" : "archiving"}:
+                  </label>
+                  <input
+                    id="confirm-type-field"
+                    type="text"
+                    placeholder="confirm"
+                    value={typeConfirmationInput}
+                    onChange={(e) => setTypeConfirmationInput(e.target.value)}
+                    autoFocus
+                    autoComplete="off"
+                  />
+                </div>
+              )}
+            </div>
+
+            <div className="confirm-modal-warning">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg>
+              <span>
+                {isPermanentDelete
+                  ? "This action cannot be undone. The record will be permanently purged from the database."
+                  : "This component will be moved to the Archived repository and removed from active catalogs. You can restore it anytime."}
+              </span>
+            </div>
+
+            <div className="confirm-modal-footer">
+              <button
+                type="button"
+                className="btn-cancel"
+                onClick={() => {
+                  if (confirmStep === 2) {
+                    setConfirmStep(1);
+                  } else {
+                    setComponentToDelete(null);
+                  }
+                }}
+                disabled={isDeleting}
+              >
+                {confirmStep === 2 ? "Back" : "Cancel"}
+              </button>
+
+              {confirmStep === 1 ? (
+                <button
+                  type="button"
+                  className="btn-danger-confirm-delete"
+                  onClick={() => {
+                    setConfirmStep(2);
+                    setTypeConfirmationInput("");
+                  }}
+                  disabled={isDeleting}
+                >
+                  Confirm / Delete
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className="btn-danger-confirm-delete"
+                  onClick={handleExecuteDeleteOrArchive}
+                  disabled={typeConfirmationInput.trim().toLowerCase() !== "confirm" || isDeleting}
+                >
+                  {isDeleting
+                    ? (isPermanentDelete ? "Purging..." : "Archiving...")
+                    : (isPermanentDelete ? "Permanently Delete" : "Archive Component")}
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

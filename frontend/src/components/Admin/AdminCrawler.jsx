@@ -17,10 +17,11 @@ const STORES = [
 export const AdminCrawler = () => {
   const { isAdmin } = useAuth();
 
-  // Crawler Console Controls with Session Storage Draft Persistence
+  // Crawler Console Controls with Persistent Draft across Tab Closures
   const [selectedStore, setSelectedStore] = useState(() => {
     try {
-      const draft = JSON.parse(sessionStorage.getItem("buildlab_admin_crawler_draft") || "{}");
+      const raw = localStorage.getItem("buildlab_admin_crawler_draft") || sessionStorage.getItem("buildlab_admin_crawler_draft");
+      const draft = JSON.parse(raw || "{}");
       return draft.store || "EasyPC";
     } catch {
       return "EasyPC";
@@ -28,7 +29,8 @@ export const AdminCrawler = () => {
   });
   const [selectedCategory, setSelectedCategory] = useState(() => {
     try {
-      const draft = JSON.parse(sessionStorage.getItem("buildlab_admin_crawler_draft") || "{}");
+      const raw = localStorage.getItem("buildlab_admin_crawler_draft") || sessionStorage.getItem("buildlab_admin_crawler_draft");
+      const draft = JSON.parse(raw || "{}");
       return draft.category || "all";
     } catch {
       return "all";
@@ -36,7 +38,8 @@ export const AdminCrawler = () => {
   });
   const [maxPages, setMaxPages] = useState(() => {
     try {
-      const draft = JSON.parse(sessionStorage.getItem("buildlab_admin_crawler_draft") || "{}");
+      const raw = localStorage.getItem("buildlab_admin_crawler_draft") || sessionStorage.getItem("buildlab_admin_crawler_draft");
+      const draft = JSON.parse(raw || "{}");
       return draft.maxPages || 1;
     } catch {
       return 1;
@@ -45,22 +48,24 @@ export const AdminCrawler = () => {
   const [crawlerStatus, setCrawlerStatus] = useState("Idle"); // "Idle", "Running", "Finished", "Error"
   const [isCrawling, setIsCrawling] = useState(false);
 
-  // Sync crawler console draft to sessionStorage
+  // Sync crawler console draft to localStorage
   useEffect(() => {
     try {
-      sessionStorage.setItem(
+      localStorage.setItem(
         "buildlab_admin_crawler_draft",
         JSON.stringify({ store: selectedStore, category: selectedCategory, maxPages })
       );
+      localStorage.setItem("buildlab_admin_last_location", window.location.pathname + window.location.search);
     } catch {}
   }, [selectedStore, selectedCategory, maxPages]);
 
-  // Terminal Log Monitor State with Session Storage Retention
+  // Terminal Log Monitor State with Persistent Retention
   const [isTerminalCollapsed, setIsTerminalCollapsed] = useState(false);
   const [autoScroll, setAutoScroll] = useState(true);
   const [logs, setLogs] = useState(() => {
     try {
-      const savedLogs = JSON.parse(sessionStorage.getItem("buildlab_admin_terminal_logs") || "[]");
+      const raw = localStorage.getItem("buildlab_admin_terminal_logs") || sessionStorage.getItem("buildlab_admin_terminal_logs");
+      const savedLogs = JSON.parse(raw || "[]");
       if (Array.isArray(savedLogs) && savedLogs.length > 0) return savedLogs;
     } catch {}
     return [
@@ -115,6 +120,7 @@ export const AdminCrawler = () => {
         setLogs((prev) => {
           const updated = [...prev, ...batch].slice(-150);
           try {
+            localStorage.setItem("buildlab_admin_terminal_logs", JSON.stringify(updated));
             sessionStorage.setItem("buildlab_admin_terminal_logs", JSON.stringify(updated));
           } catch {}
           return updated;

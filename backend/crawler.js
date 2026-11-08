@@ -387,12 +387,59 @@ async function processAndSaveProducts(products, sourceName, sourceBadge, targetC
   const scrapedParts = [];
   const normalizedTarget = (targetCategory || "all").toLowerCase();
 
+  // Load existing inventory and review queue items to strictly prevent duplicate entries
+  const existingInventoryNames = new Set();
+  const existingInventoryNormalized = new Set();
+  const existingQueueNames = new Set();
+  const existingQueueNormalized = new Set();
+
+  try {
+    const [invRows] = await db.query("SELECT LOWER(name) AS name FROM pc_parts");
+    invRows.forEach(r => {
+      if (r.name) {
+        const trimmed = r.name.trim();
+        existingInventoryNames.add(trimmed);
+        existingInventoryNormalized.add(trimmed.replace(/[^a-z0-9]/g, ''));
+      }
+    });
+
+    const [queueRows] = await db.query("SELECT LOWER(scraped_name) AS name FROM scraped_queue");
+    queueRows.forEach(r => {
+      if (r.name) {
+        const trimmed = r.name.trim();
+        existingQueueNames.add(trimmed);
+        existingQueueNormalized.add(trimmed.replace(/[^a-z0-9]/g, ''));
+      }
+    });
+  } catch (err) {
+    console.warn("[WARN] Could not fetch existing inventory for deduplication:", err.message);
+  }
+
+  let skippedDuplicatesCount = 0;
+
   for (const product of products) {
     const name = product.title || product.name || '';
-    const lowerName = name.toLowerCase();
+    const lowerName = name.toLowerCase().trim();
+    if (!lowerName) continue;
 
     // Skip non-component items
     if (EXCLUDED_KEYWORDS.some(kw => lowerName.includes(kw))) {
+      continue;
+    }
+
+    const normName = lowerName.replace(/[^a-z0-9]/g, '');
+
+    // 1. DEDUPLICATION: Skip if already exists in active pc_parts inventory
+    if (existingInventoryNames.has(lowerName) || (normName.length > 10 && existingInventoryNormalized.has(normName))) {
+      console.log(`[SKIP DUPLICATE] "${name}" is already in active inventory. Skipping.`);
+      skippedDuplicatesCount++;
+      continue;
+    }
+
+    // 2. DEDUPLICATION: Skip if already staged in scraped review queue
+    if (existingQueueNames.has(lowerName) || (normName.length > 10 && existingQueueNormalized.has(normName))) {
+      console.log(`[SKIP QUEUE DUPLICATE] "${name}" is already in the review queue. Skipping.`);
+      skippedDuplicatesCount++;
       continue;
     }
 
@@ -410,6 +457,10 @@ async function processAndSaveProducts(products, sourceName, sourceBadge, targetC
     const img = product.images && product.images.length > 0 ? product.images[0].src : "/pcbackground.png";
     const specs = extractSpecs(name);
 
+    // Register into memory sets so same scrape run never duplicates within itself
+    existingQueueNames.add(lowerName);
+    existingQueueNormalized.add(normName);
+
     scrapedParts.push({
       id: `${sourceName.toLowerCase().replace(/[^a-z0-9]/g, '')}-${product.id || Date.now() + Math.random().toString().slice(2, 6)}`,
       source: sourceBadge,
@@ -424,6 +475,10 @@ async function processAndSaveProducts(products, sourceName, sourceBadge, targetC
       tags: JSON.stringify(["scraped", category, sourceName.toLowerCase().replace(/\s+/g, '')]),
       ...specs
     });
+  }
+
+  if (skippedDuplicatesCount > 0) {
+    console.log(`[DEDUPLICATION] Filtered out ${skippedDuplicatesCount} duplicate component(s) matching inventory or current queue.`);
   }
 
   let savedCount = 0;
