@@ -24,13 +24,27 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
   if (!isOpen) return null;
 
   // Google Sign-In linking
-  const handleGoogleSignIn = () => {
+  const handleGoogleSignIn = async () => {
     soundManager.click();
     setError("");
+    setIsLinking(true);
+
+    // Wait up to 1.5 seconds for window.google to be ready if needed
+    if (!window.google?.accounts?.oauth2) {
+      await new Promise((resolve) => {
+        let count = 0;
+        const check = setInterval(() => {
+          count++;
+          if (window.google?.accounts?.oauth2 || count >= 15) {
+            clearInterval(check);
+            resolve();
+          }
+        }, 100);
+      });
+    }
 
     // If real Google Client ID is configured and Google GSI script is loaded:
     if (googleClientId && window.google?.accounts?.oauth2) {
-      setIsLinking(true);
       try {
         const client = window.google.accounts.oauth2.initTokenClient({
           client_id: googleClientId,
@@ -48,7 +62,7 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
                   data.picture ||
                     `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(data.name || data.email)}`
                 );
-                soundManager.granted();
+                try { soundManager.granted(); } catch {}
                 setStep("name_input");
               } catch (fetchErr) {
                 console.error("Failed to fetch Google profile:", fetchErr);
@@ -61,8 +75,11 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
           error_callback: (err) => {
             console.warn("Google OAuth error / cancelled:", err);
             setIsLinking(false);
-            setError("Google popup was closed or origin not authorized. You can test directly below.");
-            setStep("tester_email");
+            if (err?.type === "popup_closed") {
+              setError("Google sign-in popup was closed.");
+            } else {
+              setError("Google sign-in encountered an issue. You can also test with your email below.");
+            }
           },
         });
 
@@ -73,12 +90,8 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
         setStep("tester_email");
       }
     } else {
-      // Prompt user to enter their tester Google account directly
-      setIsLinking(true);
-      setTimeout(() => {
-        setIsLinking(false);
-        setStep("tester_email");
-      }, 350);
+      setIsLinking(false);
+      setStep("tester_email");
     }
   };
 
