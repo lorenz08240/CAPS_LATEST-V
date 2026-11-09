@@ -34,6 +34,24 @@ function Footer() {
             <h3>Resources</h3>
             <Link to="/brands">Brands</Link>
             <a href="https://github.com/buildcores/buildcores-open-db" target="_blank" rel="noreferrer">Open DB</a>
+            <button
+              type="button"
+              className="footer-cookie-btn"
+              onClick={() => {
+                window.dispatchEvent(new CustomEvent("buildlab:open-cookie-preferences"));
+              }}
+              style={{
+                background: "none",
+                border: "none",
+                color: "inherit",
+                font: "inherit",
+                cursor: "pointer",
+                padding: 0,
+                textAlign: "left"
+              }}
+            >
+              Cookie Preferences
+            </button>
           </div>
         </div>
       </div>

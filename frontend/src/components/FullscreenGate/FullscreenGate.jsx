@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, createContext, useContext } from "react";
 import {
   enterFullscreen,
   isFullscreenActive,
@@ -11,6 +11,8 @@ import {
 import soundManager from "../../utilities/soundManager";
 import "./FullscreenGate.css";
 
+export const FullscreenGateContext = createContext(false);
+
 /**
  * FullscreenGate — Centered modal dialog for BuildLab's immersive workstation mode.
  *
@@ -18,53 +20,72 @@ import "./FullscreenGate.css";
  * side-by-side hero layout featuring the BuildLab Flask/Chip logo, vertical divider,
  * clean typography, vibrant gradient CTA button, and keyboard shortcut note.
  */
-export default function FullscreenGate({ children, requireFullscreen = false }) {
-  const [fullscreenActive, setFullscreenActive] = useState(isFullscreenActive());
-  const [engaged, setEngaged] = useState(hasEngagedFullscreen());
-  const [rotateNeeded, setRotateNeeded] = useState(needsRotation());
-  const [windowedMode, setWindowedMode] = useState(() => {
+export default function FullscreenGate({ children, requireFullscreen = true, disabled = false }) {
+  const isNested = useContext(FullscreenGateContext);
+  if (isNested) {
+    // If nested inside an active global FullscreenGate, pass children through directly
+    return <>{children}</>;
+  }
+
+  const [fullscreenActive, setFullscreenActive] = useState(() => isFullscreenActive());
+  const [engaged, setEngaged] = useState(() => hasEngagedFullscreen());
+  const [rotateNeeded, setRotateNeeded] = useState(() => needsRotation());
+  const [windowedMode, setWindowedMode] = useState(false);
+  const [hasSeenPreloader, setHasSeenPreloader] = useState(() => {
     try {
-      return sessionStorage.getItem("buildlab_windowed_mode") === "true";
+      return sessionStorage.getItem("buildlab_preloader_seen") === "true";
     } catch {
-      return false;
+      return true;
     }
   });
 
   const handleDismissToWindowed = useCallback(() => {
     setWindowedMode(true);
-    try {
-      sessionStorage.setItem("buildlab_windowed_mode", "true");
-    } catch {}
+  }, []);
+
+  // Listen for preloader completion so we don't flash the gate underneath the welcome splash
+  useEffect(() => {
+    const handlePreloaderDone = () => {
+      setHasSeenPreloader(true);
+      const active = isFullscreenActive();
+      setFullscreenActive(active);
+      if (active) {
+        setWindowedMode(false);
+        markFullscreenEngaged();
+        setEngaged(true);
+      }
+    };
+    window.addEventListener("buildlab:preloader-completed", handlePreloaderDone);
+    return () => window.removeEventListener("buildlab:preloader-completed", handlePreloaderDone);
   }, []);
 
   useEffect(() => {
+    if (disabled) return;
+
     const sync = () => {
       const active = isFullscreenActive();
       setFullscreenActive(active);
       setRotateNeeded(needsRotation());
       if (active) {
         setWindowedMode(false);
-        try {
-          sessionStorage.removeItem("buildlab_windowed_mode");
-        } catch {}
-      }
-      if (active && !hasEngagedFullscreen()) {
         markFullscreenEngaged();
         setEngaged(true);
       }
     };
+
     const unsubscribe = onViewportChange(sync);
     sync();
     return unsubscribe;
-  }, []);
+  }, [disabled]);
 
-  const showRotation = rotateNeeded;
+  const showRotation = !disabled && rotateNeeded;
   const showFullscreen =
+    !disabled &&
     !windowedMode &&
     !showRotation &&
     isFullscreenSupported() &&
     !fullscreenActive &&
-    (requireFullscreen || engaged);
+    hasSeenPreloader;
 
   // Freeze page scroll while the gate modal is displayed
   useEffect(() => {
@@ -84,6 +105,7 @@ export default function FullscreenGate({ children, requireFullscreen = false }) 
       markFullscreenEngaged();
       setEngaged(true);
       setFullscreenActive(true);
+      setWindowedMode(false);
     }
   }, []);
 
@@ -102,7 +124,7 @@ export default function FullscreenGate({ children, requireFullscreen = false }) 
   }, [showFullscreen, handleEnterFullscreen]);
 
   return (
-    <>
+    <FullscreenGateContext.Provider value={true}>
       {showRotation && (
         <div
           className="fs-gate-overlay fs-gate-rotation"
@@ -194,7 +216,7 @@ export default function FullscreenGate({ children, requireFullscreen = false }) 
             </button>
 
             <p className="fs-card-esc-hint">
-              Press <kbd className="fs-kbd-f11">F11</kbd> at any time to leave (your build is saved).
+              Press <kbd className="fs-kbd-f11">F11</kbd> at any time to toggle fullscreen.
             </p>
 
             <button
@@ -218,6 +240,6 @@ export default function FullscreenGate({ children, requireFullscreen = false }) 
       )}
 
       {children}
-    </>
+    </FullscreenGateContext.Provider>
   );
 }

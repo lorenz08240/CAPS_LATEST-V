@@ -2,8 +2,6 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Home.css";
 import Build from "../Build/Build";
-import FullscreenGate from "../FullscreenGate/FullscreenGate";
-import Preloader from "./Preloader";
 import Home3DHero from "./Home3DHero";
 import CyberBrand from "../Navigation/CyberBrand";
 import AccountSetupModal from "./AccountSetupModal";
@@ -65,20 +63,9 @@ function Home() {
   };
 
   const handleStartBuildTrigger = () => {
-    // If no operating mode has been selected yet, present the 2 Mode Selection Cards
-    if (!mode) {
-      try { soundManager.click(); } catch {}
-      setShowModeCards(true);
-      return;
-    }
-    // If Learn Mode is active and profile not setup, prompt Google setup modal
-    if (mode === "learn" && !userProfile?.setupCompleted) {
-      try { soundManager.click(); } catch {}
-      setShowAccountModal(true);
-      return;
-    }
-    // Explore mode or verified Learn mode: smoothly scroll to build station
-    handleScrollToBuild("smooth");
+    // Always present the 2 Mode Selection Cards on START BUILD so the user can choose or switch modes
+    try { soundManager.click(); } catch {}
+    setShowModeCards(true);
   };
 
   const STAGE_META = {
@@ -245,9 +232,7 @@ function Home() {
 
   return (
     <>
-      <Preloader />
-      <FullscreenGate>
-        <div className="home-page">
+      <div className="home-page">
         <section id="cyber-hero" className="cyber-hero-section">
           <div className="cyber-ambient-pink-spot" />
           <div className="cyber-ambient-grid" />
@@ -482,7 +467,6 @@ function Home() {
           handleScrollToBuild("smooth");
         }}
       />
-    </FullscreenGate>
   </>
   );
 }

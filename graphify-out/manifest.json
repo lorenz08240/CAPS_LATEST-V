@@ -54,9 +54,9 @@
     "semantic_hash": "8e5f2021f5b1721b527c842f43f78c73"
   },
   "frontend/src/App.jsx": {
-    "mtime": 1794176072.3125942,
-    "seen": 1794176494.1527429,
-    "ast_hash": "52ba0eef50837f1a3c4d5e47f0d73326",
+    "mtime": 1794183682.161241,
+    "seen": 1794183788.5222006,
+    "ast_hash": "c75efe7af54ce0d898881c29359bd5c3",
     "semantic_hash": ""
   },
   "frontend/src/components/3D/ComponentModels3D.jsx": {
@@ -114,21 +114,21 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Footer/Footer.jsx": {
-    "mtime": 1793931619.418775,
-    "seen": 1793931638.0744474,
-    "ast_hash": "e969c8667dcaab6e04a2a6f779afa912",
+    "mtime": 1794182618.9660735,
+    "seen": 1794183525.7052658,
+    "ast_hash": "5230bc77852a981c32684ed7143b0500",
     "semantic_hash": ""
   },
   "frontend/src/components/FullscreenGate/FullscreenGate.jsx": {
-    "mtime": 1793931234.1946747,
-    "seen": 1793931275.1704276,
-    "ast_hash": "081c7241d95fc01bc16c333d511a3719",
+    "mtime": 1794183402.4860277,
+    "seen": 1794183525.7052703,
+    "ast_hash": "d28d332ce1fe9f7957f9f77b91027190",
     "semantic_hash": ""
   },
   "frontend/src/components/Home/Home.jsx": {
-    "mtime": 1794181139.2526124,
-    "seen": 1794181421.7023118,
-    "ast_hash": "0c477f358bea7eaaa9d4f3a97d18ddca",
+    "mtime": 1794183586.033429,
+    "seen": 1794183788.5323398,
+    "ast_hash": "5ba35e28359dda93e88b890558eb9fa8",
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/CourseShell.jsx": {
@@ -150,9 +150,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Navbar/Navbar.jsx": {
-    "mtime": 1794176682.5739188,
-    "seen": 1794176837.0870488,
-    "ast_hash": "eb8d360e8227203686f98cc035b039a8",
+    "mtime": 1794183385.6329494,
+    "seen": 1794183525.7080805,
+    "ast_hash": "0be91f4303e51f6e6bfb7f7ff063e929",
     "semantic_hash": ""
   },
   "frontend/src/contexts/AuthContext.jsx": {
@@ -192,10 +192,10 @@
     "semantic_hash": ""
   },
   "frontend/src/utilities/fullscreen.js": {
-    "mtime": 1792695561.174616,
-    "seen": 1793457744.9743137,
-    "ast_hash": "20eb5befcfa11db1d8cb1fe117e6e904",
-    "semantic_hash": "20eb5befcfa11db1d8cb1fe117e6e904"
+    "mtime": 1794183348.904241,
+    "seen": 1794183525.714,
+    "ast_hash": "0e152ef377ebf81774fce92bd27c7a0f",
+    "semantic_hash": ""
   },
   "frontend/src/utilities/offlineParts.js": {
     "mtime": 1791964211.3016775,
@@ -246,9 +246,9 @@
     "semantic_hash": ""
   },
   "frontend/index.html": {
-    "mtime": 1792134866.6412475,
-    "seen": 1793463115.9074075,
-    "ast_hash": "58e8f3eb92d97fd8b88e094d8a304f1d",
+    "mtime": 1794183278.535394,
+    "seen": 1794183525.7198923,
+    "ast_hash": "d43934b76486c02cbb528ff65e3e9fa2",
     "semantic_hash": ""
   },
   "frontend/public/assets/compatibility_bg.jpg": {
@@ -474,9 +474,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Home/Preloader.jsx": {
-    "mtime": 1794180627.4914234,
-    "seen": 1794181421.7024584,
-    "ast_hash": "4c7d7c5786abe55c052c4adcd46b76c5",
+    "mtime": 1794183662.6210089,
+    "seen": 1794183788.532731,
+    "ast_hash": "ed9fc3919b74dde3254e81a6276fd099",
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/AdminSidebar.jsx": {
@@ -714,9 +714,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Home/AccountSetupModal.jsx": {
-    "mtime": 1794180587.7233486,
-    "seen": 1794181421.7023094,
-    "ast_hash": "cc1152282f62288db7f4b6e65a30f374",
+    "mtime": 1794183452.459519,
+    "seen": 1794183525.7055979,
+    "ast_hash": "2ad61eb6a4472f01d599b60c0af61236",
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/CertificationPage.jsx": {
@@ -816,15 +816,15 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Common/PixelCanvas.jsx": {
-    "mtime": 1794180505.390667,
-    "seen": 1794181421.7013016,
-    "ast_hash": "00c54b6bd8d04d2e269f14834f9a551d",
+    "mtime": 1794181504.302047,
+    "seen": 1794183525.7036898,
+    "ast_hash": "5925ef469b58f43bee4e4493fd18f471",
     "semantic_hash": ""
   },
   "frontend/src/components/Home/ModeSelectionCards.jsx": {
-    "mtime": 1794180534.151946,
-    "seen": 1794181421.702456,
-    "ast_hash": "371b0604384c6647a98bc4e920ba6b3e",
+    "mtime": 1794181504.729296,
+    "seen": 1794183525.7059221,
+    "ast_hash": "fd254c9269c7e151066e560bdc1ca1b2",
     "semantic_hash": ""
   }
 }

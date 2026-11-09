@@ -1,5 +1,5 @@
 /* ═════════════════════════════════════════════════════════════════
-   Minimal Single Element Preloader CSS (Anti-Slop Clean Loading)
+   Minimal Single Element Preloader & Entrance CSS
    ═════════════════════════════════════════════════════════════════ */
 
 .buildlab-minimal-preloader {
@@ -10,8 +10,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
-              visibility 0.35s ease;
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              visibility 0.4s ease;
   pointer-events: auto;
 }
 
@@ -23,18 +23,18 @@
 
 .minimal-preloader-glow {
   position: absolute;
-  width: 220px;
-  height: 220px;
+  width: 340px;
+  height: 340px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(0, 229, 160, 0.15) 0%, transparent 70%);
-  filter: blur(28px);
+  background: radial-gradient(circle, rgba(0, 229, 160, 0.16) 0%, rgba(56, 189, 248, 0.08) 45%, transparent 70%);
+  filter: blur(36px);
   pointer-events: none;
-  animation: glowBreathe 1.8s ease-in-out infinite alternate;
+  animation: glowBreathe 2.4s ease-in-out infinite alternate;
 }
 
 @keyframes glowBreathe {
-  0% { transform: scale(0.9); opacity: 0.6; }
-  100% { transform: scale(1.15); opacity: 1; }
+  0% { transform: scale(0.92); opacity: 0.6; }
+  100% { transform: scale(1.18); opacity: 1; }
 }
 
 .minimal-preloader-core {
@@ -44,24 +44,27 @@
   align-items: center;
   gap: 16px;
   user-select: none;
+  text-align: center;
+  max-width: 440px;
+  padding: 0 24px;
 }
 
 .minimal-spinner-ring {
   position: relative;
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   border: 2px solid rgba(255, 255, 255, 0.08);
   border-top-color: #00e5a0;
   border-right-color: #38bdf8;
-  animation: spinMinimal 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-  box-shadow: 0 0 16px rgba(0, 229, 160, 0.25);
+  animation: spinMinimal 0.9s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  box-shadow: 0 0 20px rgba(0, 229, 160, 0.28);
 }
 
 .spinner-spark {
   position: absolute;
   top: -3px;
-  right: 6px;
+  right: 7px;
   width: 6px;
   height: 6px;
   border-radius: 50%;
@@ -77,13 +80,14 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  margin-top: 2px;
 }
 
 .minimal-brand-title {
   font-family: 'JetBrains Mono', 'Consolas', monospace;
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   font-weight: 900;
-  letter-spacing: 0.28em;
+  letter-spacing: 0.32em;
   color: #f1f5f9;
   text-transform: uppercase;
 }
@@ -95,4 +99,91 @@
   background: #00e5a0;
   box-shadow: 0 0 8px #00e5a0;
   animation: cyberPulse 1.2s infinite alternate;
+}
+
+.minimal-welcome-text-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.minimal-welcome-title {
+  font-family: var(--font-display, 'Inter', -apple-system, sans-serif);
+  font-size: 1.28rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #ffffff;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.minimal-welcome-desc {
+  font-size: 0.86rem;
+  color: #94a3b8;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  margin: 0;
+  line-height: 1.45;
+  max-width: 340px;
+}
+
+.minimal-enter-btn {
+  margin-top: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 11px 32px;
+  background: linear-gradient(135deg, rgba(0, 229, 160, 0.14) 0%, rgba(56, 189, 248, 0.14) 100%);
+  border: 1px solid rgba(0, 229, 160, 0.5);
+  border-radius: 9999px;
+  color: #00e5a0;
+  font-family: 'JetBrains Mono', 'Consolas', monospace;
+  font-size: 0.84rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 20px rgba(0, 229, 160, 0.18), inset 0 0 14px rgba(0, 229, 160, 0.08);
+}
+
+.minimal-enter-btn:hover {
+  background: linear-gradient(135deg, #00e5a0 0%, #38bdf8 100%);
+  border-color: #00e5a0;
+  color: #06080e;
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 8px 30px rgba(0, 229, 160, 0.45), 0 0 20px rgba(56, 189, 248, 0.3);
+}
+
+.minimal-enter-btn:active {
+  transform: translateY(0) scale(0.99);
+}
+
+.minimal-enter-arrow {
+  font-size: 1rem;
+  transition: transform 0.2s ease;
+}
+
+.minimal-enter-btn:hover .minimal-enter-arrow {
+  transform: translateX(3px);
+}
+
+.minimal-keyboard-hint {
+  font-family: 'JetBrains Mono', 'Consolas', monospace;
+  font-size: 0.72rem;
+  color: #64748b;
+  letter-spacing: 0.05em;
+  margin-top: -4px;
+}
+
+.minimal-keyboard-hint kbd {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 4px;
+  padding: 1px 6px;
+  color: #94a3b8;
+  font-size: 0.7rem;
 }

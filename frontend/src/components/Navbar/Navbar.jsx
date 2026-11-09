@@ -6,6 +6,7 @@ import { useSidebar } from "../../contexts/SidebarContext";
 import { useLearnMode } from "../../contexts/LearnModeContext";
 import { enterFullscreen } from "../../utilities/fullscreen";
 import soundManager from "../../utilities/soundManager";
+import AccountSetupModal from "../Home/AccountSetupModal";
 import "./Navbar.css";
 
 function Navbar({ isPinned: propsIsPinned }) {
@@ -410,77 +411,15 @@ function Navbar({ isPinned: propsIsPinned }) {
         </div>
       </aside>
 
-      {/* ── LEARNER ACCOUNT & GOOGLE SIGN-IN MODAL (Anti-Slop Clean Dialog) ── */}
-      {showAccountModal && (
-        <div 
-          className="account-modal-backdrop" 
-          onClick={() => {
-            try { soundManager.modalClose(); } catch {}
-            setShowAccountModal(false);
-          }}
-        >
-          <div 
-            className="account-modal-dialog" 
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="account-modal-header">
-              <div className="account-modal-tag">
-                <span className="tag-bracket">[</span>
-                <span className="account-tag-dot" />
-                <span>LEARNER PROFILE</span>
-                <span className="tag-bracket">]</span>
-              </div>
-              <button 
-                type="button" 
-                className="account-modal-close" 
-                onClick={() => {
-                  try { soundManager.modalClose(); } catch {}
-                  setShowAccountModal(false);
-                }}
-                title="Close modal"
-              >
-                ✕
-              </button>
-            </div>
-
-            <div className="account-modal-body">
-              <div className="account-modal-icon-wrap">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00e5a0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                  <circle cx="12" cy="7" r="4" />
-                </svg>
-              </div>
-
-              <h3 className="account-modal-title">Cloud Save &amp; Progress</h3>
-              <p className="account-modal-desc">
-                Sign in with Google to backup your custom 3D PC rigs, saved component builds, and hardware academy badges.
-              </p>
-
-              <button 
-                type="button" 
-                className="account-google-btn"
-                onClick={() => {
-                  try { soundManager.click(); } catch {}
-                  alert("Google Sign-In API ready: Once you configure your VITE_GOOGLE_CLIENT_ID in the environment, your learner progress will automatically sync to Google Cloud.");
-                }}
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24">
-                  <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
-                  <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
-                  <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
-                  <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
-                </svg>
-                <span>Continue with Google</span>
-              </button>
-
-              <div className="account-modal-status">
-                <span className="status-dot-pulse" />
-                <span>Google Sign-In API • Ready to Save Progress</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* ── LEARNER ACCOUNT & GOOGLE SIGN-IN MODAL ── */}
+      <AccountSetupModal
+        isOpen={showAccountModal}
+        onClose={() => setShowAccountModal(false)}
+        onConfirmed={() => {
+          setShowAccountModal(false);
+          closeSidebar();
+        }}
+      />
     </>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLearnMode } from "../../contexts/LearnModeContext";
 import soundManager from "../../utilities/soundManager";
 import "./AccountSetupModal.css";
@@ -6,31 +6,105 @@ import "./AccountSetupModal.css";
 export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
   const { userProfile, setUserProfile, setAppMode } = useLearnMode();
 
-  const [step, setStep] = useState("connect"); // 'connect' | 'name_input'
+  const [step, setStep] = useState("connect"); // 'connect' | 'tester_email' | 'name_input'
   const [fullName, setFullName] = useState(userProfile.fullName || "");
-  const [email, setEmail] = useState(userProfile.email || "learner.student@gmail.com");
-  const [avatar, setAvatar] = useState(userProfile.photo || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&h=120&fit=crop&crop=faces");
+  const [email, setEmail] = useState(userProfile.email || "");
+  const [avatar, setAvatar] = useState(
+    userProfile.photo ||
+      "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=120&h=120&fit=crop&crop=faces"
+  );
   const [isLinking, setIsLinking] = useState(false);
   const [error, setError] = useState("");
+  const [testerEmailInput, setTesterEmailInput] = useState("");
+  const [showConfigGuide, setShowConfigGuide] = useState(false);
+
+  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || "";
+  const currentOrigin = typeof window !== "undefined" ? window.location.origin : "http://localhost:5173";
 
   if (!isOpen) return null;
 
   // Google Sign-In linking
   const handleGoogleSignIn = () => {
     soundManager.click();
-    setIsLinking(true);
     setError("");
 
-    // Simulate authentic Google OAuth redirect/token exchange with feedback
-    setTimeout(() => {
-      setIsLinking(false);
+    // If real Google Client ID is configured and Google GSI script is loaded:
+    if (googleClientId && window.google?.accounts?.oauth2) {
+      setIsLinking(true);
       try {
-        soundManager.granted();
-      } catch {}
-      setEmail("learner.student@gmail.com");
-      setAvatar("https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=120&h=120&fit=crop&crop=faces");
-      setStep("name_input");
-    }, 650);
+        const client = window.google.accounts.oauth2.initTokenClient({
+          client_id: googleClientId,
+          scope: "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email",
+          callback: async (tokenResponse) => {
+            if (tokenResponse && tokenResponse.access_token) {
+              try {
+                const res = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+                  headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+                });
+                const data = await res.json();
+                setEmail(data.email || "learner.tester@gmail.com");
+                setFullName(data.name || "");
+                setAvatar(
+                  data.picture ||
+                    `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(data.name || data.email)}`
+                );
+                soundManager.granted();
+                setStep("name_input");
+              } catch (fetchErr) {
+                console.error("Failed to fetch Google profile:", fetchErr);
+                setError("Connected to Google, but couldn't retrieve profile. Please enter details below.");
+                setStep("tester_email");
+              }
+            }
+            setIsLinking(false);
+          },
+          error_callback: (err) => {
+            console.warn("Google OAuth error / cancelled:", err);
+            setIsLinking(false);
+            setError("Google popup was closed or origin not authorized. You can test directly below.");
+            setStep("tester_email");
+          },
+        });
+
+        client.requestAccessToken({ prompt: "select_account" });
+      } catch (err) {
+        console.error("Google initTokenClient error:", err);
+        setIsLinking(false);
+        setStep("tester_email");
+      }
+    } else {
+      // Prompt user to enter their tester Google account directly
+      setIsLinking(true);
+      setTimeout(() => {
+        setIsLinking(false);
+        setStep("tester_email");
+      }, 350);
+    }
+  };
+
+  const handleTesterEmailSubmit = (e) => {
+    e.preventDefault();
+    const cleanEmail = testerEmailInput.trim();
+    if (!cleanEmail || !cleanEmail.includes("@")) {
+      soundManager.warning();
+      setError("Please enter a valid Google email address (e.g. yourname@gmail.com).");
+      return;
+    }
+
+    soundManager.granted();
+    setEmail(cleanEmail);
+    // Extract a default legal name suggestion from the email prefix
+    const namePrefix = cleanEmail.split("@")[0].replace(/[._-]/g, " ");
+    const formattedName = namePrefix
+      .split(" ")
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(" ");
+    if (!fullName) {
+      setFullName(formattedName);
+    }
+    setAvatar(`https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(cleanEmail)}&backgroundColor=00e5a0`);
+    setError("");
+    setStep("name_input");
   };
 
   const handleNameSubmit = (e) => {
@@ -44,9 +118,9 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
     soundManager.granted();
     const finalProfile = {
       fullName: fullName.trim(),
-      email: email.trim(),
+      email: email.trim() || "learner.tester@gmail.com",
       photo: avatar,
-      googleId: "google-oauth2|linked",
+      googleId: "google-oauth2|verified",
       setupCompleted: true,
       joinedDate: new Date().toLocaleDateString("en-US", {
         month: "long",
@@ -92,7 +166,7 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
           </button>
         </div>
 
-        {step === "connect" ? (
+        {step === "connect" && (
           <div className="account-step-body">
             <div className="account-hero-icon">
               <span className="cyber-cert-icon">🎓</span>
@@ -102,7 +176,9 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
               Sign in with your Google account to track your progress and generate your official BuildLab verified Certificate of Completion.
             </p>
 
-            {/* ONLY OPTION: GOOGLE ACCOUNT BUTTON */}
+            {error && <div className="account-error-alert">{error}</div>}
+
+            {/* PRIMARY: GOOGLE ACCOUNT BUTTON */}
             <div className="google-only-auth-container">
               <button
                 type="button"
@@ -136,11 +212,105 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
               </button>
             </div>
 
+            <div className="tester-quick-toggle">
+              <button
+                type="button"
+                className="btn-tester-link"
+                onClick={() => {
+                  try { soundManager.click(); } catch {}
+                  setStep("tester_email");
+                }}
+              >
+                🧪 Using another Google account as a tester? Click to enter your Gmail &rarr;
+              </button>
+            </div>
+
             <p className="account-trust-note">
               🔒 We only access your basic Google identity to save your custom rig builds and Academy certificate. No private drive data requested.
             </p>
           </div>
-        ) : (
+        )}
+
+        {step === "tester_email" && (
+          <form className="account-step-body" onSubmit={handleTesterEmailSubmit}>
+            <div className="account-hero-icon">
+              <span className="cyber-cert-icon">📧</span>
+            </div>
+            <h2 className="account-title">Enter Your Google Tester Account</h2>
+            <p className="account-subtitle">
+              Enter your Google email address to test student synchronization, cloud progress, and certification linking.
+            </p>
+
+            {error && <div className="account-error-alert">{error}</div>}
+
+            <div className="account-form-group">
+              <label htmlFor="tester-email-input">Tester Google Account Email *</label>
+              <input
+                id="tester-email-input"
+                type="email"
+                className="account-input"
+                value={testerEmailInput}
+                onChange={(e) => setTesterEmailInput(e.target.value)}
+                placeholder="e.g. yourname.tester@gmail.com"
+                autoFocus
+                required
+              />
+              <span className="input-hint">
+                Your builds and official certificate will be tied to this Google account.
+              </span>
+            </div>
+
+            {/* Expandable Google Cloud OAuth Client ID configuration helper */}
+            <div className="google-clientid-helper">
+              <button
+                type="button"
+                className="btn-toggle-clientid-guide"
+                onClick={() => setShowConfigGuide(!showConfigGuide)}
+              >
+                <span>⚙️ {showConfigGuide ? "Hide" : "Want official Google popup? Check setup guide"}</span>
+                <span className="guide-arrow">{showConfigGuide ? "▲" : "▼"}</span>
+              </button>
+
+              {showConfigGuide && (
+                <div className="clientid-guide-box">
+                  <p className="guide-step">
+                    <strong>1.</strong> Go to <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noreferrer">Google Cloud Console</a> &rarr; Credentials.
+                  </p>
+                  <p className="guide-step">
+                    <strong>2.</strong> Create <strong>OAuth Client ID</strong> &rarr; Application Type: <strong>Web application</strong>.
+                  </p>
+                  <p className="guide-step">
+                    <strong>3.</strong> Add Authorized JavaScript Origin:
+                    <code className="guide-code">{currentOrigin}</code>
+                  </p>
+                  <p className="guide-step">
+                    <strong>4.</strong> Add to <code>frontend/.env</code>:
+                    <code className="guide-code">VITE_GOOGLE_CLIENT_ID=your-id.apps.googleusercontent.com</code>
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <div className="account-form-actions">
+              <button
+                type="button"
+                className="btn-back-step"
+                onClick={() => {
+                  setError("");
+                  setStep("connect");
+                }}
+              >
+                &larr; Back
+              </button>
+              <button type="submit" className="btn-confirm-track">
+                <span>VERIFY GOOGLE ACCOUNT</span>
+                <span className="btn-arrow">&rarr;</span>
+              </button>
+            </div>
+          </form>
+        )}
+
+        {step === "name_input" && (
           <form className="account-step-body" onSubmit={handleNameSubmit}>
             <div className="verified-google-badge">
               <img src={avatar} alt="Avatar" className="verified-avatar" />
@@ -178,7 +348,10 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
               <button
                 type="button"
                 className="btn-back-step"
-                onClick={() => setStep("connect")}
+                onClick={() => {
+                  setError("");
+                  setStep("connect");
+                }}
               >
                 &larr; Reconnect
               </button>

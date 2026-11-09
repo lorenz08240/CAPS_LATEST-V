@@ -24,6 +24,8 @@ import HelpSupport from "./components/HelpSupport/HelpSupport";
 import AboutUs from "./components/AboutUs/AboutUs";
 import Brands from "./components/Brands/Brands";
 import PCBuilder3D from "./components/3D/PCBuilder3D";
+import FullscreenGate from "./components/FullscreenGate/FullscreenGate";
+import Preloader from "./components/Home/Preloader";
 import CookieConsent from "./components/Navigation/CookieConsent";
 import LearnModeGuard from "./components/Navigation/LearnModeGuard";
 import {
@@ -58,6 +60,7 @@ function AppContent() {
   const { isPinned, isSidebarOpen } = useSidebar();
   const { theme } = useTheme();
   const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith("/admin");
 
   // Globally disable the default browser right-click context menu across all pages
   useEffect(() => {
@@ -70,13 +73,32 @@ function AppContent() {
     };
   }, []);
 
+  // One-click demo state & cookie reset handler (Trigger with ?reset=demo or ?reset=1)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("reset") === "demo" || params.get("reset") === "1" || params.has("clear-demo")) {
+      try {
+        localStorage.clear();
+        sessionStorage.clear();
+        document.cookie.split(";").forEach((c) => {
+          document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+        });
+      } catch (err) {
+        console.warn("Could not wipe client storage:", err);
+      }
+      window.location.replace("/");
+    }
+  }, []);
+
   return (
     <div className={`min-h-screen app-layout ${theme === 'dark' ? 'theme-dark' : 'theme-light'} ${isPinned ? 'sidebar-pinned' : ''} ${isSidebarOpen ? 'sidebar-open' : ''}`}>
-      <CookieConsent />
-      <Navbar />
-      <main className="main-content">
-        <AnimatePresence mode="wait" initial={false}>
-          <Routes location={location} key={location.pathname}>
+      <Preloader />
+      <FullscreenGate disabled={isAdminRoute} requireFullscreen>
+        <CookieConsent />
+        <Navbar />
+        <main className="main-content">
+          <AnimatePresence mode="wait" initial={false}>
+            <Routes location={location} key={location.pathname}>
             <Route path="/" element={<MotionPage routeKey="/"><Home /></MotionPage>} />
 
             <Route path="/build" element={<MotionPage routeKey="/build"><Build /></MotionPage>} />
@@ -243,7 +265,8 @@ function AppContent() {
           location.pathname !== "/certificate" &&
           !location.pathname.startsWith("/admin") &&
           !location.pathname.startsWith("/learn") && <Footer />}
-      </main>
+        </main>
+      </FullscreenGate>
     </div>
   );
 }

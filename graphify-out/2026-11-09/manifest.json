@@ -54,9 +54,9 @@
     "semantic_hash": "8e5f2021f5b1721b527c842f43f78c73"
   },
   "frontend/src/App.jsx": {
-    "mtime": 1794176072.3125942,
-    "seen": 1794176494.1527429,
-    "ast_hash": "52ba0eef50837f1a3c4d5e47f0d73326",
+    "mtime": 1794183459.5911055,
+    "seen": 1794183525.6884542,
+    "ast_hash": "a21389aa43871e3281fe3402fab95f44",
     "semantic_hash": ""
   },
   "frontend/src/components/3D/ComponentModels3D.jsx": {
@@ -96,9 +96,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Build/Build.jsx": {
-    "mtime": 1794176319.6407957,
-    "seen": 1794176494.1566546,
-    "ast_hash": "1ca81851d912ae024340e4de03ea4b81",
+    "mtime": 1794180893.7698762,
+    "seen": 1794181421.701298,
+    "ast_hash": "60c62a9c8955d7364eede76e5dd3443f",
     "semantic_hash": ""
   },
   "frontend/src/components/Compatibility/Compatibility.jsx": {
@@ -114,27 +114,27 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Footer/Footer.jsx": {
-    "mtime": 1793931619.418775,
-    "seen": 1793931638.0744474,
-    "ast_hash": "e969c8667dcaab6e04a2a6f779afa912",
+    "mtime": 1794182618.9660735,
+    "seen": 1794183525.7052658,
+    "ast_hash": "5230bc77852a981c32684ed7143b0500",
     "semantic_hash": ""
   },
   "frontend/src/components/FullscreenGate/FullscreenGate.jsx": {
-    "mtime": 1793931234.1946747,
-    "seen": 1793931275.1704276,
-    "ast_hash": "081c7241d95fc01bc16c333d511a3719",
+    "mtime": 1794183402.4860277,
+    "seen": 1794183525.7052703,
+    "ast_hash": "d28d332ce1fe9f7957f9f77b91027190",
     "semantic_hash": ""
   },
   "frontend/src/components/Home/Home.jsx": {
-    "mtime": 1794176258.6336625,
-    "seen": 1794176494.1576083,
-    "ast_hash": "312c4c326ae899b1c0bd8cab256a2120",
+    "mtime": 1794183486.555861,
+    "seen": 1794183525.705605,
+    "ast_hash": "575fa552294b18531891e1ea0fe44ab8",
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/CourseShell.jsx": {
-    "mtime": 1794178303.7488678,
-    "seen": 1794178387.6162832,
-    "ast_hash": "5c5c7197ed667f3964b5deea5afd260a",
+    "mtime": 1794181117.596237,
+    "seen": 1794181421.7026243,
+    "ast_hash": "c744738d6887663f67b4075df96c311e",
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/CourseVideoPlayer.jsx": {
@@ -150,9 +150,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Navbar/Navbar.jsx": {
-    "mtime": 1794176682.5739188,
-    "seen": 1794176837.0870488,
-    "ast_hash": "eb8d360e8227203686f98cc035b039a8",
+    "mtime": 1794183385.6329494,
+    "seen": 1794183525.7080805,
+    "ast_hash": "0be91f4303e51f6e6bfb7f7ff063e929",
     "semantic_hash": ""
   },
   "frontend/src/contexts/AuthContext.jsx": {
@@ -192,10 +192,10 @@
     "semantic_hash": ""
   },
   "frontend/src/utilities/fullscreen.js": {
-    "mtime": 1792695561.174616,
-    "seen": 1793457744.9743137,
-    "ast_hash": "20eb5befcfa11db1d8cb1fe117e6e904",
-    "semantic_hash": "20eb5befcfa11db1d8cb1fe117e6e904"
+    "mtime": 1794183348.904241,
+    "seen": 1794183525.714,
+    "ast_hash": "0e152ef377ebf81774fce92bd27c7a0f",
+    "semantic_hash": ""
   },
   "frontend/src/utilities/offlineParts.js": {
     "mtime": 1791964211.3016775,
@@ -246,9 +246,9 @@
     "semantic_hash": ""
   },
   "frontend/index.html": {
-    "mtime": 1792134866.6412475,
-    "seen": 1793463115.9074075,
-    "ast_hash": "58e8f3eb92d97fd8b88e094d8a304f1d",
+    "mtime": 1794183278.535394,
+    "seen": 1794183525.7198923,
+    "ast_hash": "d43934b76486c02cbb528ff65e3e9fa2",
     "semantic_hash": ""
   },
   "frontend/public/assets/compatibility_bg.jpg": {
@@ -474,9 +474,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Home/Preloader.jsx": {
-    "mtime": 1793931234.1976628,
-    "seen": 1793931275.1704402,
-    "ast_hash": "2b7fdab34afc06a6f8b927fa3b09a407",
+    "mtime": 1794183413.2384896,
+    "seen": 1794183525.7059262,
+    "ast_hash": "7b16261be8315f10406b6cb1f2e6b6cb",
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/AdminSidebar.jsx": {
@@ -714,9 +714,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Home/AccountSetupModal.jsx": {
-    "mtime": 1794176166.8777058,
-    "seen": 1794176494.1576052,
-    "ast_hash": "56aacb37fc3b1b73ad05e6a9fecaa324",
+    "mtime": 1794183452.459519,
+    "seen": 1794183525.7055979,
+    "ast_hash": "2ad61eb6a4472f01d599b60c0af61236",
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/CertificationPage.jsx": {
@@ -726,15 +726,15 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Navigation/CookieConsent.jsx": {
-    "mtime": 1794175763.551589,
-    "seen": 1794176494.158528,
-    "ast_hash": "fad128a6b723bdd61a2a32322f4d8236",
+    "mtime": 1794180675.4019346,
+    "seen": 1794181421.7030518,
+    "ast_hash": "39d59f90ff45cb0046da38fa91d7f937",
     "semantic_hash": ""
   },
   "frontend/src/components/Navigation/LearnModeGuard.jsx": {
-    "mtime": 1794175813.9861095,
-    "seen": 1794176494.158994,
-    "ast_hash": "fba6c8835c1ea9b548b49ee474eb1db2",
+    "mtime": 1794181127.1699898,
+    "seen": 1794181421.703366,
+    "ast_hash": "62a138ff6b6ba4d0b3e87f5d4358697a",
     "semantic_hash": ""
   },
   "frontend/src/components/Navigation/StageUnlockBanner.jsx": {
@@ -744,9 +744,9 @@
     "semantic_hash": ""
   },
   "frontend/src/contexts/LearnModeContext.jsx": {
-    "mtime": 1794176875.152237,
-    "seen": 1794177141.5311847,
-    "ast_hash": "fdbcb61a769d1dd4a5ed05c025362426",
+    "mtime": 1794180729.6991372,
+    "seen": 1794181421.7038007,
+    "ast_hash": "6b9f399e49f03921b696f3bcbdc0f6a2",
     "semantic_hash": ""
   },
   "backend/uploads/profiles/photo-1794176073655-f3qzal.gif": {
@@ -815,15 +815,27 @@
     "ast_hash": "bf209b766d154b2f20e9c5dd5fc49f03",
     "semantic_hash": ""
   },
+  "frontend/src/components/Common/PixelCanvas.jsx": {
+    "mtime": 1794181504.302047,
+    "seen": 1794183525.7036898,
+    "ast_hash": "5925ef469b58f43bee4e4493fd18f471",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Home/ModeSelectionCards.jsx": {
+    "mtime": 1794181504.729296,
+    "seen": 1794183525.7059221,
+    "ast_hash": "fd254c9269c7e151066e560bdc1ca1b2",
+    "semantic_hash": ""
+  },
   "backend/package-lock.json": {
     "mtime": 1791800606.1768937,
-    "seen": 1794178387.627715,
+    "seen": 1794183525.750378,
     "ast_hash": "661be6875e353b32cc107be3856a3c63",
     "semantic_hash": ""
   },
   "frontend/package-lock.json": {
     "mtime": 1794176728.843809,
-    "seen": 1794178387.6277175,
+    "seen": 1794183525.7503836,
     "ast_hash": "f4d6919a6221545e6c013e409c685cf6",
     "semantic_hash": ""
   }
