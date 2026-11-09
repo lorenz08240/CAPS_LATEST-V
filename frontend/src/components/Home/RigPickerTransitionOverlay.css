@@ -1,0 +1,382 @@
+/* ═════════════════════════════════════════════════════════════════════════════
+   BUILDLAB // RIG COMPONENT PICKER TRANSITION OVERLAY
+   Quick Fade-In / Fade-Out Cyber Workstation Transition Screen
+   ═════════════════════════════════════════════════════════════════════════════ */
+
+.rig-transition-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: #06080e;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 3rem 4rem;
+  overflow: hidden;
+  box-sizing: border-box;
+  pointer-events: all;
+  user-select: none;
+  -webkit-user-select: none;
+  opacity: 0;
+  transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity;
+}
+
+/* Phase Transitions */
+.rig-transition-overlay.entering {
+  opacity: 1;
+}
+
+.rig-transition-overlay.holding {
+  opacity: 1;
+}
+
+.rig-transition-overlay.leaving {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Ambient Backdrop Elements ── */
+.rig-trans-grid {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
+  background-size: 48px 48px;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.rig-trans-glow-rose {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 75vw;
+  height: 60vh;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(244, 63, 94, 0.18) 0%,
+    rgba(56, 189, 248, 0.07) 50%,
+    transparent 75%
+  );
+  filter: blur(75px);
+  pointer-events: none;
+}
+
+.rig-trans-scanline {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(244, 63, 94, 0.15) 20%, 
+    rgba(56, 189, 248, 0.45) 50%, 
+    rgba(244, 63, 94, 0.15) 80%, 
+    transparent 100%
+  );
+  transform: translateY(-50%);
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+/* ── 1. Top HUD Bar ── */
+.rig-trans-top-bar {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.rig-trans-brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.rig-trans-logo-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 9px;
+  background: rgba(244, 63, 94, 0.12);
+  border: 1px solid rgba(244, 63, 94, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #f43f5e;
+  font-size: 1rem;
+  font-weight: 900;
+  box-shadow: 0 0 20px rgba(244, 63, 94, 0.35);
+}
+
+.rig-trans-brand-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.rig-trans-brand-title {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 1.05rem;
+  letter-spacing: 0.18em;
+  color: #ffffff;
+}
+
+.rig-trans-brand-sub {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: #38bdf8;
+}
+
+.rig-trans-status-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 0.5rem 1.25rem;
+  border-radius: 9999px;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+}
+
+.rig-trans-pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #38bdf8;
+  box-shadow: 0 0 12px #38bdf8, 0 0 24px rgba(56, 189, 248, 0.8);
+  position: relative;
+  animation: rigPulse 1.4s ease-in-out infinite alternate;
+}
+
+@keyframes rigPulse {
+  0% { transform: scale(0.85); opacity: 0.7; }
+  100% { transform: scale(1.15); opacity: 1; }
+}
+
+.rig-trans-status-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: #e2e8f0;
+}
+
+/* ── 2. Center Hero Banner ── */
+.rig-trans-center {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  max-width: 960px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.rig-trans-frame {
+  position: relative;
+  padding: 3.5rem 4.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Reticle Corner Brackets */
+.rig-bracket {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  border-color: rgba(244, 63, 94, 0.75);
+  pointer-events: none;
+}
+
+.rig-bracket-tl {
+  top: 0;
+  left: 0;
+  border-top: 2px solid;
+  border-left: 2px solid;
+}
+
+.rig-bracket-tr {
+  top: 0;
+  right: 0;
+  border-top: 2px solid;
+  border-right: 2px solid;
+}
+
+.rig-bracket-bl {
+  bottom: 0;
+  left: 0;
+  border-bottom: 2px solid;
+  border-left: 2px solid;
+}
+
+.rig-bracket-br {
+  bottom: 0;
+  right: 0;
+  border-bottom: 2px solid;
+  border-right: 2px solid;
+}
+
+/* Eyebrow */
+.rig-trans-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.35rem 1rem;
+  border-radius: 6px;
+  background: rgba(244, 63, 94, 0.1);
+  border: 1px solid rgba(244, 63, 94, 0.35);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  color: #f43f5e;
+  text-transform: uppercase;
+  margin-bottom: 1.6rem;
+  box-shadow: 0 0 20px rgba(244, 63, 94, 0.15);
+}
+
+/* Big Title */
+.rig-trans-title {
+  margin: 0 0 1.2rem;
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(2.8rem, 5.2vw, 4.4rem);
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1.05;
+  background: linear-gradient(180deg, #ffffff 15%, rgba(255, 255, 255, 0.55) 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 60px rgba(244, 63, 94, 0.35), 0 0 100px rgba(56, 189, 248, 0.2);
+}
+
+/* Underline glow */
+.rig-trans-underline {
+  width: 140px;
+  height: 3px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #f43f5e 0%, #38bdf8 100%);
+  box-shadow: 0 0 20px #f43f5e, 0 0 35px #38bdf8;
+  margin-bottom: 1.6rem;
+}
+
+/* Subtext */
+.rig-trans-subtext {
+  margin: 0 0 1.8rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  color: #94a3b8;
+  max-width: 620px;
+  line-height: 1.6;
+  text-transform: uppercase;
+}
+
+.rig-cyan-hi {
+  color: #38bdf8;
+  font-weight: 700;
+}
+
+/* Mini Loader */
+.rig-trans-mini-loader {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  padding: 0.55rem 1.4rem;
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  backdrop-filter: blur(12px);
+}
+
+.rig-mini-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.rig-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.rig-dot.active-rose {
+  background: #f43f5e;
+  box-shadow: 0 0 8px #f43f5e;
+}
+
+.rig-dot.active-cyan {
+  background: #38bdf8;
+  box-shadow: 0 0 8px #38bdf8;
+}
+
+.rig-loader-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: #64748b;
+}
+
+/* ── 3. Bottom HUD Bar ── */
+.rig-trans-bottom-bar {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  color: #475569;
+}
+
+.rig-trans-tag {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tag-rose {
+  color: #f43f5e;
+}
+
+.tag-cyan {
+  color: #38bdf8;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .rig-transition-overlay {
+    padding: 2rem 1.5rem;
+  }
+  .rig-trans-frame {
+    padding: 2rem 1.5rem;
+  }
+  .rig-trans-title {
+    font-size: 2.2rem;
+  }
+  .rig-trans-subtext {
+    font-size: 0.72rem;
+  }
+}

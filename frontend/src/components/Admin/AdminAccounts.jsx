@@ -2,55 +2,62 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import AdminSidebar from "./AdminSidebar";
 import AdminHeader from "./AdminHeader";
+import soundManager from "../../utilities/soundManager";
 import "./Admin.css";
 
 export const AdminAccounts = () => {
-  const [accounts, setAccounts] = useState([]);
+  const [rootAccount, setRootAccount] = useState(null);
+  const [learners, setLearners] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [notification, setNotification] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  // Modal / Drawer states
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [editingAccount, setEditingAccount] = useState(null);
-  const [deleteConfirmId, setDeleteConfirmId] = useState(null);
-
-  // Form states
-  const [formData, setFormData] = useState({
-    username: "",
-    display_name: "",
-    email: "",
-    role: "Administrator",
-    passcode: "admin123",
-    status: "ACTIVE",
-    avatar_url: ""
-  });
+  // Edit Root Modal
+  const [showEditRootModal, setShowEditRootModal] = useState(false);
+  const [rootPasscode, setRootPasscode] = useState("admin12345");
+  const [rootDisplayName, setRootDisplayName] = useState("Root Administrator");
+  const [rootAvatar, setRootAvatar] = useState("");
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const fileInputRef = useRef(null);
-  const editFileInputRef = useRef(null);
 
-  const getAdminKey = () => localStorage.getItem("adminKey") || "admin123";
+  const getAdminKey = () => localStorage.getItem("adminKey") || "admin12345";
 
   const showToast = (msg, type = "success") => {
     setNotification({ message: msg, type });
     setTimeout(() => setNotification(null), 4000);
   };
 
-  const fetchAccounts = async () => {
+  const fetchData = async () => {
     try {
       setLoading(true);
       setError(null);
-      const res = await fetch("/api/admin/accounts", {
+
+      // Fetch single root account
+      const adminRes = await fetch("/api/admin/accounts", {
         headers: { "x-admin-key": getAdminKey() }
       });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || `HTTP error ${res.status}`);
+      if (adminRes.ok) {
+        const admins = await adminRes.json();
+        const root = (Array.isArray(admins) ? admins : []).find((a) => a.username === "root") || admins[0];
+        if (root) {
+          setRootAccount(root);
+          setRootPasscode(root.passcode || "admin12345");
+          setRootDisplayName(root.display_name || "Root Administrator");
+          setRootAvatar(root.avatar_url || "");
+        }
       }
-      const data = await res.json();
-      setAccounts(Array.isArray(data) ? data : []);
+
+      // Fetch Google Learners
+      const learnerRes = await fetch("/api/admin/learners", {
+        headers: { "x-admin-key": getAdminKey() }
+      });
+      if (learnerRes.ok) {
+        const learnerData = await learnerRes.json();
+        setLearners(Array.isArray(learnerData) ? learnerData : []);
+      }
     } catch (err) {
-      console.error("Failed to load admin accounts:", err);
+      console.error("Failed to load accounts data:", err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -58,18 +65,13 @@ export const AdminAccounts = () => {
   };
 
   useEffect(() => {
-    fetchAccounts();
+    fetchData();
   }, []);
 
-  // Handle image upload to backend
-  const handlePhotoUpload = async (file, isEdit = false) => {
+  const handlePhotoUpload = async (file) => {
     if (!file) return;
     if (!file.type.startsWith("image/")) {
       showToast("Please select a valid image file (PNG, JPG, WEBP).", "error");
-      return;
-    }
-    if (file.size > 8 * 1024 * 1024) {
-      showToast("Image size must be less than 8MB.", "error");
       return;
     }
 
@@ -89,124 +91,79 @@ export const AdminAccounts = () => {
           });
 
           if (!res.ok) {
-            const errData = await res.json().catch(() => ({}));
-            throw new Error(errData.error || "Failed to upload photo");
+            throw new Error("Failed to upload photo");
           }
 
           const result = await res.json();
-          if (isEdit && editingAccount) {
-            setEditingAccount((prev) => ({ ...prev, avatar_url: result.url }));
-          } else {
-            setFormData((prev) => ({ ...prev, avatar_url: result.url }));
-          }
-          showToast("Profile photo uploaded successfully!");
+          setRootAvatar(result.url);
+          showToast("Profile avatar uploaded!");
         } catch (uploadErr) {
-          console.error("Upload error:", uploadErr);
-          showToast(uploadErr.message || "Failed to upload image.", "error");
+          showToast(uploadErr.message || "Upload failed.", "error");
         } finally {
           setUploadingAvatar(false);
         }
       };
       reader.readAsDataURL(file);
     } catch (err) {
-      console.error("File reading error:", err);
       setUploadingAvatar(false);
     }
   };
 
-  const handleCreateAccount = async (e) => {
+  const handleUpdateRoot = async (e) => {
     e.preventDefault();
-    if (!formData.username.trim() || !formData.display_name.trim()) {
-      showToast("Username and Display Name are required.", "error");
-      return;
-    }
+    if (!rootAccount) return;
 
     try {
-      const res = await fetch("/api/admin/accounts", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-admin-key": getAdminKey()
-        },
-        body: JSON.stringify(formData)
-      });
-
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || "Failed to create account");
-      }
-
-      showToast(`Admin account '${formData.username}' created successfully.`);
-      setShowCreateModal(false);
-      setFormData({
-        username: "",
-        display_name: "",
-        email: "",
-        role: "Administrator",
-        passcode: "admin123",
-        status: "ACTIVE",
-        avatar_url: ""
-      });
-      fetchAccounts();
-    } catch (err) {
-      showToast(err.message, "error");
-    }
-  };
-
-  const handleUpdateAccount = async (e) => {
-    e.preventDefault();
-    if (!editingAccount) return;
-
-    try {
-      const res = await fetch(`/api/admin/accounts/${editingAccount.id}`, {
+      const res = await fetch(`/api/admin/accounts/${rootAccount.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           "x-admin-key": getAdminKey()
         },
         body: JSON.stringify({
-          display_name: editingAccount.display_name,
-          email: editingAccount.email,
-          role: editingAccount.role,
-          avatar_url: editingAccount.avatar_url,
-          passcode: editingAccount.passcode,
-          status: editingAccount.status
+          display_name: rootDisplayName.trim(),
+          passcode: rootPasscode.trim(),
+          avatar_url: rootAvatar,
+          role: "Root Administrator"
         })
       });
 
-      const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || "Failed to update account");
+        throw new Error("Failed to update root credentials");
       }
 
-      showToast(`Admin account '${editingAccount.username}' updated.`);
-      setEditingAccount(null);
-      fetchAccounts();
+      showToast("Root administrator credentials updated successfully!");
+      setShowEditRootModal(false);
+      fetchData();
     } catch (err) {
       showToast(err.message, "error");
     }
   };
 
-  const handleDeleteAccount = async (id) => {
+  const handleDeleteLearner = async (id, name) => {
+    if (!window.confirm(`Remove learner account for ${name}?`)) return;
+
     try {
-      const res = await fetch(`/api/admin/accounts/${id}`, {
+      const res = await fetch(`/api/admin/learners/${id}`, {
         method: "DELETE",
         headers: { "x-admin-key": getAdminKey() }
       });
-
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || "Failed to delete account");
-      }
-
-      showToast("Account deleted successfully.");
-      setDeleteConfirmId(null);
-      fetchAccounts();
+      if (!res.ok) throw new Error("Failed to delete learner account");
+      showToast(`Learner ${name} removed.`);
+      fetchData();
     } catch (err) {
       showToast(err.message, "error");
-      setDeleteConfirmId(null);
     }
   };
+
+  const filteredLearners = learners.filter((l) => {
+    if (!searchQuery.trim()) return true;
+    const q = searchQuery.toLowerCase();
+    return (
+      (l.full_name && l.full_name.toLowerCase().includes(q)) ||
+      (l.email && l.email.toLowerCase().includes(q))
+    );
+  });
 
   return (
     <div className="admin-page-wrapper">
@@ -224,221 +181,243 @@ export const AdminAccounts = () => {
               </div>
             )}
 
-            {/* Header Title & Action Bar */}
+            {/* Banner Header */}
             <div className="accounts-header-banner">
               <div className="accounts-title-group">
-                <div className="accounts-kicker">CONTROL PANEL // CREDENTIALS &amp; ROLES</div>
-                <h1 className="accounts-title">Admin Account Manager</h1>
+                <div className="accounts-kicker">CONTROL PANEL // ACCOUNTS &amp; GOOGLE AUTH</div>
+                <h1 className="accounts-title">Account Manager</h1>
                 <p className="accounts-subtitle">
-                  Provision and manage administrator profiles, assign security roles, manage authentication passcodes, and upload avatar identity photos.
+                  Single shared Root Administrator credentials management and live directory of Google Sign-In learner accounts.
                 </p>
               </div>
+
               <div className="accounts-actions-group">
-                <button
-                  type="button"
-                  className="btn-create-account"
-                  onClick={() => setShowCreateModal(true)}
-                >
-                  <span className="btn-icon">+</span>
-                  <span>Provision New Admin</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Metric Summary Cards */}
-            <div className="accounts-metrics-grid">
-              <div className="account-metric-card">
-                <div className="metric-label">TOTAL ACCOUNTS</div>
-                <div className="metric-value">{accounts.length}</div>
-                <div className="metric-foot">Provisioned System Operators</div>
-              </div>
-
-              <div className="account-metric-card">
-                <div className="metric-label">ACTIVE SESSIONS</div>
-                <div className="metric-value text-emerald">
-                  {accounts.filter((a) => a.status === "ACTIVE").length}
-                </div>
-                <div className="metric-foot">Verified &amp; Operational</div>
-              </div>
-
-              <div className="account-metric-card">
-                <div className="metric-label">SECURITY PROTOCOL</div>
-                <div className="metric-value text-amber">ROLE-BASED</div>
-                <div className="metric-foot">Direct Database Isolation</div>
-              </div>
-            </div>
-
-            {/* Accounts Table Container */}
-            <div className="accounts-table-card">
-              <div className="accounts-table-header">
-                <div className="table-header-title">
-                  <span className="dot-live" />
-                  <span>REGISTERED ADMINISTRATORS ({accounts.length})</span>
-                </div>
-                <button
-                  type="button"
-                  className="btn-refresh-accounts"
-                  onClick={fetchAccounts}
-                  title="Reload Accounts Roster"
-                >
+                <button type="button" className="btn-refresh-accounts" onClick={fetchData} title="Sync accounts data">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <polyline points="23 4 23 10 17 10"></polyline>
                     <polyline points="1 20 1 14 7 14"></polyline>
                     <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
                   </svg>
-                  <span>Sync</span>
+                  <span>Sync Directory</span>
                 </button>
+              </div>
+            </div>
+
+            {/* SECTION 1: SINGLE SHARED ROOT ADMINISTRATOR CARD */}
+            <div className="root-admin-card-container">
+              <div className="section-header-row">
+                <div className="section-title-tag">
+                  <span className="tag-bracket">[</span>
+                  <span>SYSTEM AUTHORITY // SHARED CREDENTIAL</span>
+                  <span className="tag-bracket">]</span>
+                </div>
+                <span className="auth-level-tag">SINGLE ADMIN PROFILE</span>
+              </div>
+
+              <div className="root-admin-card wood-mahogany">
+                <div className="root-admin-profile-left">
+                  <div className="root-avatar-wrap">
+                    {rootAvatar ? (
+                      <img src={rootAvatar} alt="Root Admin" className="root-avatar-img" />
+                    ) : (
+                      <div className="root-avatar-fallback">ROOT</div>
+                    )}
+                  </div>
+                  <div className="root-meta-info">
+                    <div className="root-display-title">
+                      <h2>{rootAccount?.display_name || "Root Administrator"}</h2>
+                      <span className="root-badge">SUPER ADMIN</span>
+                    </div>
+                    <div className="root-credentials-preview">
+                      <span className="cred-chip"><strong>ID:</strong> root</span>
+                      <span className="cred-chip"><strong>PASS:</strong> {rootAccount?.passcode || "admin12345"}</span>
+                      <span className="cred-chip status-chip">
+                        <span className="status-dot-green" /> ACTIVE
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="root-admin-actions">
+                  <button
+                    type="button"
+                    className="btn-edit-root"
+                    onClick={() => setShowEditRootModal(true)}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M12 20h9"></path>
+                      <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                    </svg>
+                    <span>Edit Root Passcode &amp; Avatar</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* SECTION 2: GOOGLE LEARN MODE STUDENT DIRECTORY */}
+            <div className="google-learners-container">
+              <div className="learners-header-bar">
+                <div className="learners-header-title">
+                  <span className="google-g-icon">
+                    <svg viewBox="0 0 24 24" width="16" height="16">
+                      <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
+                      <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
+                      <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+                      <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+                    </svg>
+                  </span>
+                  <span>GOOGLE SIGN-IN LEARNER ACCOUNTS ({learners.length})</span>
+                </div>
+
+                <div className="learners-search-wrap">
+                  <input
+                    type="text"
+                    placeholder="Search learners by name or email..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="learners-search-input"
+                  />
+                  {searchQuery && (
+                    <button type="button" className="btn-clear-search" onClick={() => setSearchQuery("")}>
+                      &times;
+                    </button>
+                  )}
+                </div>
               </div>
 
               {loading ? (
                 <div className="accounts-loading-state">
                   <div className="loading-spinner" />
-                  <span>Loading administrative accounts...</span>
+                  <span>Loading learner accounts...</span>
                 </div>
               ) : error ? (
                 <div className="accounts-error-state">
-                  <span className="error-icon">⚠</span>
-                  <span>Failed to load accounts: {error}</span>
-                  <button type="button" onClick={fetchAccounts} className="btn-retry">Retry</button>
+                  <span>Error: {error}</span>
+                  <button type="button" onClick={fetchData} className="btn-retry">Retry</button>
+                </div>
+              ) : filteredLearners.length === 0 ? (
+                <div className="accounts-empty-state">
+                  <p>No Google learner accounts found matching &quot;{searchQuery}&quot;.</p>
                 </div>
               ) : (
-                <div className="accounts-table-responsive">
-                  <table className="accounts-table">
-                    <thead>
-                      <tr>
-                        <th>OPERATOR</th>
-                        <th>ROLE</th>
-                        <th>EMAIL</th>
-                        <th>STATUS</th>
-                        <th>SECURITY PASSCODE</th>
-                        <th>LAST LOGIN</th>
-                        <th className="text-right">ACTIONS</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {accounts.map((acc) => (
-                        <tr key={acc.id} className="account-row">
-                          <td>
-                            <div className="operator-cell">
-                              <div className="operator-avatar-wrap">
-                                {acc.avatar_url ? (
-                                  <img
-                                    src={acc.avatar_url}
-                                    alt={acc.display_name}
-                                    className="operator-avatar-img"
-                                    onError={(e) => {
-                                      e.target.style.display = "none";
-                                      e.target.nextSibling.style.display = "flex";
-                                    }}
-                                  />
-                                ) : null}
-                                <div
-                                  className="operator-avatar-fallback"
-                                  style={{ display: acc.avatar_url ? "none" : "flex" }}
-                                >
-                                  {acc.display_name.slice(0, 2).toUpperCase()}
+                <div className="accounts-table-card">
+                  <div className="accounts-table-responsive">
+                    <table className="accounts-table">
+                      <thead>
+                        <tr>
+                          <th>STUDENT / LEARNER</th>
+                          <th>GOOGLE ACCOUNT</th>
+                          <th>INSTITUTION</th>
+                          <th>PROGRESS / STAGES</th>
+                          <th>LAST ACTIVE</th>
+                          <th className="text-right">ACTION</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredLearners.map((learner) => (
+                          <tr key={learner.id} className="learner-row">
+                            <td>
+                              <div className="operator-cell">
+                                <div className="operator-avatar-wrap">
+                                  {learner.avatar_url ? (
+                                    <img
+                                      src={learner.avatar_url}
+                                      alt={learner.full_name}
+                                      className="operator-avatar-img"
+                                      onError={(e) => {
+                                        e.target.style.display = "none";
+                                        if (e.target.nextSibling) e.target.nextSibling.style.display = "flex";
+                                      }}
+                                    />
+                                  ) : null}
+                                  <div
+                                    className="operator-avatar-fallback"
+                                    style={{ display: learner.avatar_url ? "none" : "flex" }}
+                                  >
+                                    {learner.full_name ? learner.full_name.slice(0, 2).toUpperCase() : "ST"}
+                                  </div>
+                                </div>
+                                <div className="operator-names">
+                                  <div className="operator-display-name">{learner.full_name}</div>
+                                  <div className="learner-google-tag">Google Verified</div>
                                 </div>
                               </div>
-                              <div className="operator-names">
-                                <div className="operator-display-name">{acc.display_name}</div>
-                                <div className="operator-username">@{acc.username}</div>
+                            </td>
+
+                            <td>
+                              <span className="email-cell font-mono">{learner.email}</span>
+                            </td>
+
+                            <td>
+                              <span className="institution-cell">{learner.institution || "PTC"}</span>
+                            </td>
+
+                            <td>
+                              <div className="stages-pills-wrap">
+                                {(Array.isArray(learner.unlocked_stages) ? learner.unlocked_stages : ["build"]).map((st, i) => (
+                                  <span key={i} className="stage-chip">{st}</span>
+                                ))}
                               </div>
-                            </div>
-                          </td>
+                            </td>
 
-                          <td>
-                            <span className={`role-badge ${acc.role?.toLowerCase().includes("super") ? "super" : "standard"}`}>
-                              {acc.role || "Administrator"}
-                            </span>
-                          </td>
+                            <td>
+                              <span className="login-date">
+                                {learner.last_active
+                                  ? new Date(learner.last_active).toLocaleDateString("en-US", {
+                                      month: "short",
+                                      day: "numeric",
+                                      year: "numeric"
+                                    })
+                                  : "Recently"}
+                              </span>
+                            </td>
 
-                          <td>
-                            <span className="email-cell">{acc.email || "—"}</span>
-                          </td>
-
-                          <td>
-                            <span className={`status-pill ${acc.status === "ACTIVE" ? "active" : "inactive"}`}>
-                              <span className="status-dot" />
-                              {acc.status}
-                            </span>
-                          </td>
-
-                          <td>
-                            <span className="passcode-masked" title="Authentication Passcode">
-                              ••••••••
-                            </span>
-                          </td>
-
-                          <td>
-                            <span className="login-date">
-                              {acc.last_login
-                                ? new Date(acc.last_login).toLocaleDateString("en-US", {
-                                    month: "short",
-                                    day: "numeric",
-                                    year: "numeric"
-                                  })
-                                : "Never"}
-                            </span>
-                          </td>
-
-                          <td className="text-right">
-                            <div className="account-actions-wrap">
+                            <td className="text-right">
                               <button
                                 type="button"
-                                className="btn-action-edit"
-                                onClick={() => setEditingAccount(acc)}
-                                title="Edit Administrator Profile"
+                                className="btn-action-delete"
+                                onClick={() => handleDeleteLearner(learner.id, learner.full_name)}
+                                title="Remove learner profile"
                               >
-                                Edit
+                                Remove
                               </button>
-
-                              {acc.username !== "admin" && (
-                                <button
-                                  type="button"
-                                  className="btn-action-delete"
-                                  onClick={() => setDeleteConfirmId(acc.id)}
-                                  title="Revoke Admin Access"
-                                >
-                                  Delete
-                                </button>
-                              )}
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               )}
             </div>
 
-            {/* CREATE ADMIN MODAL */}
-            {showCreateModal && (
-              <div className="admin-modal-backdrop" onClick={() => setShowCreateModal(false)}>
+            {/* EDIT ROOT ADMINISTRATOR MODAL */}
+            {showEditRootModal && (
+              <div className="admin-modal-backdrop" onClick={() => setShowEditRootModal(false)}>
                 <div className="admin-modal-card wood-mahogany" onClick={(e) => e.stopPropagation()}>
                   <div className="modal-header">
                     <div className="modal-title-wrap">
-                      <span className="modal-kicker">SECURITY PORTAL // PROVISION OPERATOR</span>
-                      <h2 className="modal-title">New Administrator Account</h2>
+                      <span className="modal-kicker">ROOT SECURITY // SHARED CREDENTIALS</span>
+                      <h2 className="modal-title">Edit Root Administrator</h2>
                     </div>
                     <button
                       type="button"
                       className="modal-close-btn"
-                      onClick={() => setShowCreateModal(false)}
+                      onClick={() => setShowEditRootModal(false)}
                     >
                       &times;
                     </button>
                   </div>
 
-                  <form onSubmit={handleCreateAccount} className="modal-form">
+                  <form onSubmit={handleUpdateRoot} className="modal-form">
                     <div className="avatar-upload-field">
-                      <label className="form-label">PROFILE PHOTO</label>
+                      <label className="form-label">ADMIN AVATAR</label>
                       <div className="avatar-picker-row">
                         <div className="avatar-preview-box">
-                          {formData.avatar_url ? (
-                            <img src={formData.avatar_url} alt="Avatar Preview" className="avatar-preview-img" />
+                          {rootAvatar ? (
+                            <img src={rootAvatar} alt="Root Avatar" className="avatar-preview-img" />
                           ) : (
-                            <span className="avatar-preview-placeholder">No Photo</span>
+                            <span className="avatar-preview-placeholder">ROOT</span>
                           )}
                         </div>
                         <div className="avatar-picker-controls">
@@ -447,7 +426,7 @@ export const AdminAccounts = () => {
                             ref={fileInputRef}
                             style={{ display: "none" }}
                             accept="image/*"
-                            onChange={(e) => handlePhotoUpload(e.target.files[0], false)}
+                            onChange={(e) => handlePhotoUpload(e.target.files[0])}
                           />
                           <button
                             type="button"
@@ -455,242 +434,59 @@ export const AdminAccounts = () => {
                             disabled={uploadingAvatar}
                             onClick={() => fileInputRef.current?.click()}
                           >
-                            {uploadingAvatar ? "Uploading..." : "Upload Profile Photo"}
-                          </button>
-                          <input
-                            type="text"
-                            placeholder="Or paste external image URL..."
-                            className="form-input text-xs"
-                            value={formData.avatar_url}
-                            onChange={(e) => setFormData({ ...formData, avatar_url: e.target.value })}
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="form-row-2">
-                      <div className="form-group">
-                        <label className="form-label">USERNAME *</label>
-                        <input
-                          type="text"
-                          required
-                          placeholder="e.g. jdoe_admin"
-                          className="form-input"
-                          value={formData.username}
-                          onChange={(e) => setFormData({ ...formData, username: e.target.value.toLowerCase().replace(/\s+/g, "_") })}
-                        />
-                      </div>
-
-                      <div className="form-group">
-                        <label className="form-label">DISPLAY NAME *</label>
-                        <input
-                          type="text"
-                          required
-                          placeholder="e.g. John Doe"
-                          className="form-input"
-                          value={formData.display_name}
-                          onChange={(e) => setFormData({ ...formData, display_name: e.target.value })}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="form-row-2">
-                      <div className="form-group">
-                        <label className="form-label">EMAIL ADDRESS</label>
-                        <input
-                          type="email"
-                          placeholder="admin@buildlab.internal"
-                          className="form-input"
-                          value={formData.email}
-                          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        />
-                      </div>
-
-                      <div className="form-group">
-                        <label className="form-label">ROLE</label>
-                        <select
-                          className="form-select"
-                          value={formData.role}
-                          onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                        >
-                          <option value="Administrator">Administrator</option>
-                          <option value="Super Admin">Super Admin</option>
-                          <option value="Hardware Architect">Hardware Architect</option>
-                          <option value="Inventory Lead">Inventory Lead</option>
-                          <option value="QA Specialist">QA Specialist</option>
-                          <option value="Content Editor">Content Editor</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div className="form-row-2">
-                      <div className="form-group">
-                        <label className="form-label">INITIAL PASSCODE</label>
-                        <input
-                          type="password"
-                          required
-                          placeholder="Access passcode"
-                          className="form-input"
-                          value={formData.passcode}
-                          onChange={(e) => setFormData({ ...formData, passcode: e.target.value })}
-                        />
-                      </div>
-
-                      <div className="form-group">
-                        <label className="form-label">STATUS</label>
-                        <select
-                          className="form-select"
-                          value={formData.status}
-                          onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                        >
-                          <option value="ACTIVE">ACTIVE</option>
-                          <option value="INACTIVE">INACTIVE</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div className="modal-actions-bar">
-                      <button
-                        type="button"
-                        className="btn-modal-cancel"
-                        onClick={() => setShowCreateModal(false)}
-                      >
-                        Cancel
-                      </button>
-                      <button type="submit" className="btn-modal-submit">
-                        Provision Account
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            )}
-
-            {/* EDIT ADMIN MODAL */}
-            {editingAccount && (
-              <div className="admin-modal-backdrop" onClick={() => setEditingAccount(null)}>
-                <div className="admin-modal-card wood-mahogany" onClick={(e) => e.stopPropagation()}>
-                  <div className="modal-header">
-                    <div className="modal-title-wrap">
-                      <span className="modal-kicker">SECURITY PORTAL // EDIT OPERATOR</span>
-                      <h2 className="modal-title">Edit @{editingAccount.username}</h2>
-                    </div>
-                    <button
-                      type="button"
-                      className="modal-close-btn"
-                      onClick={() => setEditingAccount(null)}
-                    >
-                      &times;
-                    </button>
-                  </div>
-
-                  <form onSubmit={handleUpdateAccount} className="modal-form">
-                    <div className="avatar-upload-field">
-                      <label className="form-label">UPDATE PROFILE PHOTO</label>
-                      <div className="avatar-picker-row">
-                        <div className="avatar-preview-box">
-                          {editingAccount.avatar_url ? (
-                            <img src={editingAccount.avatar_url} alt="Avatar Preview" className="avatar-preview-img" />
-                          ) : (
-                            <span className="avatar-preview-placeholder">No Photo</span>
-                          )}
-                        </div>
-                        <div className="avatar-picker-controls">
-                          <input
-                            type="file"
-                            ref={editFileInputRef}
-                            style={{ display: "none" }}
-                            accept="image/*"
-                            onChange={(e) => handlePhotoUpload(e.target.files[0], true)}
-                          />
-                          <button
-                            type="button"
-                            className="btn-upload-avatar"
-                            disabled={uploadingAvatar}
-                            onClick={() => editFileInputRef.current?.click()}
-                          >
                             {uploadingAvatar ? "Uploading..." : "Upload New Photo"}
                           </button>
                           <input
                             type="text"
-                            placeholder="Or paste external image URL..."
+                            placeholder="Or paste image URL..."
                             className="form-input text-xs"
-                            value={editingAccount.avatar_url || ""}
-                            onChange={(e) => setEditingAccount({ ...editingAccount, avatar_url: e.target.value })}
+                            value={rootAvatar}
+                            onChange={(e) => setRootAvatar(e.target.value)}
                           />
                         </div>
                       </div>
                     </div>
 
-                    <div className="form-row-2">
-                      <div className="form-group">
-                        <label className="form-label">DISPLAY NAME *</label>
-                        <input
-                          type="text"
-                          required
-                          className="form-input"
-                          value={editingAccount.display_name}
-                          onChange={(e) => setEditingAccount({ ...editingAccount, display_name: e.target.value })}
-                        />
-                      </div>
-
-                      <div className="form-group">
-                        <label className="form-label">EMAIL ADDRESS</label>
-                        <input
-                          type="email"
-                          className="form-input"
-                          value={editingAccount.email || ""}
-                          onChange={(e) => setEditingAccount({ ...editingAccount, email: e.target.value })}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="form-row-2">
-                      <div className="form-group">
-                        <label className="form-label">ROLE</label>
-                        <select
-                          className="form-select"
-                          value={editingAccount.role || "Administrator"}
-                          onChange={(e) => setEditingAccount({ ...editingAccount, role: e.target.value })}
-                        >
-                          <option value="Administrator">Administrator</option>
-                          <option value="Super Admin">Super Admin</option>
-                          <option value="Hardware Architect">Hardware Architect</option>
-                          <option value="Inventory Lead">Inventory Lead</option>
-                          <option value="QA Specialist">QA Specialist</option>
-                          <option value="Content Editor">Content Editor</option>
-                        </select>
-                      </div>
-
-                      <div className="form-group">
-                        <label className="form-label">STATUS</label>
-                        <select
-                          className="form-select"
-                          value={editingAccount.status || "ACTIVE"}
-                          onChange={(e) => setEditingAccount({ ...editingAccount, status: e.target.value })}
-                        >
-                          <option value="ACTIVE">ACTIVE</option>
-                          <option value="INACTIVE">INACTIVE</option>
-                        </select>
-                      </div>
+                    <div className="form-group">
+                      <label className="form-label">OPERATOR ID (SHARED)</label>
+                      <input
+                        type="text"
+                        disabled
+                        value="root"
+                        className="form-input disabled"
+                      />
                     </div>
 
                     <div className="form-group">
-                      <label className="form-label">RESET PASSCODE (OPTIONAL)</label>
+                      <label className="form-label">DISPLAY TITLE</label>
                       <input
-                        type="password"
-                        placeholder="Leave blank to retain current passcode"
+                        type="text"
+                        required
                         className="form-input"
-                        value={editingAccount.passcode || ""}
-                        onChange={(e) => setEditingAccount({ ...editingAccount, passcode: e.target.value })}
+                        value={rootDisplayName}
+                        onChange={(e) => setRootDisplayName(e.target.value)}
                       />
+                    </div>
+
+                    <div className="form-group">
+                      <label className="form-label">SHARED SECURITY PASSCODE *</label>
+                      <input
+                        type="text"
+                        required
+                        className="form-input font-mono"
+                        value={rootPasscode}
+                        onChange={(e) => setRootPasscode(e.target.value)}
+                      />
+                      <span className="text-xs text-muted" style={{ marginTop: 4, display: "block" }}>
+                        Default: <code>admin12345</code>
+                      </span>
                     </div>
 
                     <div className="modal-actions-bar">
                       <button
                         type="button"
                         className="btn-modal-cancel"
-                        onClick={() => setEditingAccount(null)}
+                        onClick={() => setShowEditRootModal(false)}
                       >
                         Cancel
                       </button>
@@ -699,25 +495,6 @@ export const AdminAccounts = () => {
                       </button>
                     </div>
                   </form>
-                </div>
-              </div>
-            )}
-
-            {/* DELETE CONFIRMATION DIALOG */}
-            {deleteConfirmId && (
-              <div className="admin-modal-backdrop" onClick={() => setDeleteConfirmId(null)}>
-                <div className="admin-modal-card modal-sm wood-mahogany" onClick={(e) => e.stopPropagation()}>
-                  <div className="modal-header">
-                    <h3 className="modal-title text-rose">Confirm Revocation</h3>
-                    <button type="button" className="modal-close-btn" onClick={() => setDeleteConfirmId(null)}>&times;</button>
-                  </div>
-                  <p className="confirm-text">
-                    Are you sure you want to permanently revoke this administrator account? All active sessions for this operator will be terminated immediately.
-                  </p>
-                  <div className="modal-actions-bar">
-                    <button type="button" className="btn-modal-cancel" onClick={() => setDeleteConfirmId(null)}>Cancel</button>
-                    <button type="button" className="btn-danger-confirm" onClick={() => handleDeleteAccount(deleteConfirmId)}>Revoke Account</button>
-                  </div>
                 </div>
               </div>
             )}

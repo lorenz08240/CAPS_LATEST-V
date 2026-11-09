@@ -1,25 +1,25 @@
 /* ═════════════════════════════════════════════════════════════════
-   CookieConsent.css — Tailored to BuildLab & Land-Book Reference
-   Collapsible/Expandable Cookie Preferences with Specific Details
+   CookieConsent.css — BuildLab Hero Themed Cookie Preferences Card
+   Matches the Dark Cyberpunk Glassmorphic Hero & Mode Selection Theme
    ═════════════════════════════════════════════════════════════════ */
 
-/* ── BOTTOM NOTICE BANNER ── */
+/* ── 1. BOTTOM NOTICE BANNER ── */
 .buildlab-cookie-banner {
   position: fixed;
   bottom: 20px;
   left: 24px;
   right: 24px;
-  max-width: 1200px;
+  max-width: 1100px;
   margin: 0 auto;
   z-index: 99998;
-  background: rgba(11, 17, 30, 0.95);
+  background: rgba(11, 17, 30, 0.94);
   border: 1px solid rgba(0, 229, 160, 0.35);
   border-radius: 16px;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8), 0 0 24px rgba(0, 229, 160, 0.12);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85), 0 0 30px rgba(0, 229, 160, 0.12);
   -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px);
   animation: bannerSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-  padding: 16px 20px;
+  padding: 16px 22px;
   box-sizing: border-box;
 }
 
@@ -68,13 +68,19 @@
   border-radius: 50%;
   background: #00e5a0;
   box-shadow: 0 0 8px #00e5a0;
+  animation: cyberPulse 1.4s infinite alternate;
+}
+
+@keyframes cyberPulse {
+  0% { opacity: 0.4; transform: scale(0.85); }
+  100% { opacity: 1; transform: scale(1.15); }
 }
 
 .cookie-heading {
   font-family: 'JetBrains Mono', 'Consolas', monospace;
   font-size: 0.72rem;
   font-weight: 800;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   color: #00e5a0;
   text-transform: uppercase;
 }
@@ -97,7 +103,7 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 18px;
+  padding: 10px 20px;
   border-radius: 8px;
   background: linear-gradient(135deg, #00e5a0 0%, #059669 100%);
   border: 1px solid #00e5a0;
@@ -105,14 +111,14 @@
   font-size: 0.84rem;
   font-weight: 800;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   white-space: nowrap;
 }
 
 .cookie-btn-accept:hover {
   background: linear-gradient(135deg, #10b981 0%, #047857 100%);
-  box-shadow: 0 0 16px rgba(0, 229, 160, 0.45);
-  transform: translateY(-1px);
+  box-shadow: 0 0 20px rgba(0, 229, 160, 0.55);
+  transform: translateY(-2px);
 }
 
 .cookie-btn-secondary {
@@ -120,8 +126,8 @@
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #94a3b8;
-  font-size: 0.8rem;
+  color: #cbd5e1;
+  font-size: 0.82rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -132,24 +138,26 @@
   background: rgba(255, 255, 255, 0.1);
   color: #ffffff;
   border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
 }
 
 /* ═════════════════════════════════════════════════════════════════
-   COOKIE PREFERENCES DIALOG (IMAGE 2 REPLICA)
+   2. REDESIGNED COOKIE PREFERENCES MODAL (MATCHING HERO SECTION)
    ═════════════════════════════════════════════════════════════════ */
 
 .cookie-prefs-overlay {
   position: fixed;
   inset: 0;
   z-index: 100000;
-  background: rgba(3, 7, 18, 0.82);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
+  background: rgba(3, 7, 18, 0.86);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1.5rem;
+  padding: clamp(0.75rem, 3vw, 1.75rem);
   animation: prefsFadeIn 0.25s ease-out;
+  touch-action: pan-y;
 }
 
 @keyframes prefsFadeIn {
@@ -158,245 +166,479 @@
 }
 
 .cookie-prefs-dialog {
-  width: 100%;
-  max-width: 480px;
-  max-height: 92vh;
-  background: #090e18;
-  border: 1px solid rgba(0, 229, 160, 0.3);
-  border-radius: 16px;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85), 0 0 40px rgba(0, 229, 160, 0.1);
+  width: min(720px, calc(100vw - 32px));
+  max-width: 720px;
+  max-height: min(88vh, 88dvh);
+  height: min(88vh, 760px);
+  min-height: 380px;
+  background: linear-gradient(180deg, #0b111e 0%, #060911 100%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9), 0 0 50px rgba(0, 229, 160, 0.08);
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  animation: prefsSlideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  animation: prefsSlideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Top Cyber Gradient Accent Line (matching ModeSelectionCards & Hero) */
+.cookie-prefs-dialog::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, #00e5a0 30%, #38bdf8 70%, transparent 100%);
+  z-index: 10;
 }
 
 @keyframes prefsSlideUp {
-  from { opacity: 0; transform: translateY(20px) scale(0.98); }
+  from { opacity: 0; transform: translateY(24px) scale(0.97); }
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* Header */
+/* ── Header ── */
 .cookie-prefs-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  padding: 18px 20px 14px;
+  padding: 22px 26px 18px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+  gap: 16px;
+}
+
+.cookie-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cookie-cyber-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'JetBrains Mono', 'Consolas', monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #38bdf8;
+  text-transform: uppercase;
+}
+
+.tag-bracket {
+  color: rgba(56, 189, 248, 0.5);
+  font-weight: 900;
+}
+
+.cookie-cyber-tag .tag-pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #38bdf8;
+  box-shadow: 0 0 8px #38bdf8;
 }
 
 .cookie-prefs-title {
-  font-size: 1.25rem;
-  font-weight: 800;
-  color: #00e5a0;
+  font-size: 1.55rem;
+  font-weight: 900;
+  color: #ffffff;
   margin: 0;
   letter-spacing: -0.01em;
+  line-height: 1.2;
 }
 
 .cookie-prefs-close-btn {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   color: #94a3b8;
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.18s ease;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  flex-shrink: 0;
+  font-size: 14px;
 }
 
 .cookie-prefs-close-btn:hover {
-  background: rgba(244, 63, 94, 0.2);
-  border-color: #f43f5e;
+  background: rgba(244, 63, 94, 0.18);
+  border-color: rgba(244, 63, 94, 0.55);
   color: #f43f5e;
+  transform: rotate(90deg);
+  box-shadow: 0 0 16px rgba(244, 63, 94, 0.35);
 }
 
-/* Body */
+/* ── Body (Scrollable Container) ── */
 .cookie-prefs-body {
-  padding: 18px 20px;
+  padding: 22px 26px;
   overflow-y: auto;
-  flex: 1;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  overscroll-behavior: contain;
+  flex: 1 1 auto;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   gap: 16px;
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+  scrollbar-color: rgba(0, 229, 160, 0.5) rgba(255, 255, 255, 0.04);
 }
 
+.cookie-prefs-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.cookie-prefs-body::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 4px;
+  margin: 8px 0;
+}
+
+.cookie-prefs-body::-webkit-scrollbar-thumb {
+  background: rgba(0, 229, 160, 0.45);
+  border-radius: 4px;
+  border: 1px solid rgba(0, 229, 160, 0.2);
+}
+
+.cookie-prefs-body::-webkit-scrollbar-thumb:hover {
+  background: #00e5a0;
+  box-shadow: 0 0 10px rgba(0, 229, 160, 0.5);
+}
+
+/* Usage Intro */
 .cookie-usage-intro {
-  margin-bottom: 4px;
+  margin-bottom: 2px;
+  flex-shrink: 0;
 }
 
 .cookie-usage-heading {
-  font-size: 0.98rem;
+  font-size: 1.02rem;
   font-weight: 800;
-  color: #f1f5f9;
+  color: #f8fafc;
   margin: 0 0 6px 0;
+  letter-spacing: -0.01em;
 }
 
 .cookie-usage-desc {
-  font-size: 0.82rem;
-  line-height: 1.5;
+  font-size: 0.85rem;
+  line-height: 1.55;
   color: #94a3b8;
   margin: 0;
 }
 
-/* ── ACCORDION CATEGORY CARDS ── */
+/* ── 3. ACCORDION CATEGORY CARDS ── */
 .cookie-category-card {
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(255, 255, 255, 0.025);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
+  border-radius: 14px;
   overflow: hidden;
-  transition: all 0.2s ease;
+  flex-shrink: 0;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cookie-category-card:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.16);
+  transform: translateY(-1px);
 }
 
 .cookie-category-card.expanded {
-  background: rgba(255, 255, 255, 0.035);
-  border-color: rgba(0, 229, 160, 0.25);
+  background: rgba(0, 229, 160, 0.02);
+  border-color: rgba(0, 229, 160, 0.32);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4), 0 0 24px rgba(0, 229, 160, 0.06);
 }
 
+/* Accordion Header */
 .category-card-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 16px;
+  padding: 16px 18px;
   cursor: pointer;
   user-select: none;
-  background: rgba(255, 255, 255, 0.02);
+  background: transparent;
+  flex-shrink: 0;
+  transition: background 0.2s ease;
 }
 
 .category-card-header:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .category-header-left {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+  min-width: 0;
 }
 
 .accordion-chevron {
   font-size: 10px;
   color: #64748b;
-  transition: transform 0.2s ease;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s ease;
+}
+
+.cookie-category-card.expanded .accordion-chevron {
+  color: #00e5a0;
+  transform: rotate(180deg);
+}
+
+.category-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .category-title {
-  font-size: 0.92rem;
+  font-size: 0.95rem;
   font-weight: 700;
   color: #f1f5f9;
+  letter-spacing: 0.01em;
+  transition: color 0.2s ease;
 }
 
 .cookie-category-card.expanded .category-title {
   color: #00e5a0;
 }
 
-/* Content */
+/* Status Pills */
+.category-status-pill {
+  font-family: 'JetBrains Mono', 'Consolas', monospace;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 2px 7px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.category-status-pill.locked {
+  background: rgba(0, 229, 160, 0.12);
+  border: 1px solid rgba(0, 229, 160, 0.3);
+  color: #00e5a0;
+}
+
+.category-status-pill.active {
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  color: #38bdf8;
+}
+
+.category-status-pill.inactive {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #64748b;
+}
+
+/* ── 4. SMOOTH ACCORDION TRANSITION (@reanimate CSS Grid) ── */
+.category-card-content-wrap {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.34s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cookie-category-card.expanded .category-card-content-wrap {
+  grid-template-rows: 1fr;
+}
+
 .category-card-content {
-  padding: 14px 16px 16px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  min-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.28s ease, padding 0.34s ease;
+  padding: 0 18px 0;
   display: flex;
   flex-direction: column;
   gap: 14px;
 }
 
-.category-explanation {
-  font-size: 0.8rem;
-  line-height: 1.5;
-  color: #94a3b8;
-  margin: 0;
+.cookie-category-card.expanded .category-card-content {
+  opacity: 1;
+  padding: 0 18px 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  margin-top: 4px;
 }
 
-/* Sub-Services Toggles */
+.category-explanation {
+  font-size: 0.83rem;
+  line-height: 1.55;
+  color: #94a3b8;
+  margin: 10px 0 0;
+}
+
+/* ── 5. SUB-SERVICES LIST (TOGGLE PANELS) ── */
 .sub-services-list {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding: 10px 12px;
-  background: rgba(0, 0, 0, 0.25);
-  border-radius: 8px;
+  padding: 12px 14px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
 }
 
 .sub-service-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
+}
+
+.sub-service-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .sub-service-name {
-  font-size: 0.82rem;
-  color: #e2e8f0;
-  font-weight: 600;
+  font-size: 0.84rem;
+  color: #f1f5f9;
+  font-weight: 700;
 }
 
-/* Specific Cookie Details Table */
-.cookie-details-table {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  background: rgba(0, 0, 0, 0.35);
-  border-radius: 8px;
-  padding: 12px;
+.sub-service-sub {
+  font-size: 0.73rem;
+  color: #64748b;
 }
 
-.cookie-detail-group {
+/* ── 6. SPECIFIC COOKIE DETAILS (CRYSTAL CLEAR HIGH CONTRAST) ── */
+.cookie-details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 10px;
+}
+
+.cookie-detail-card {
+  background: rgba(5, 9, 18, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 12px 14px;
   display: flex;
   flex-direction: column;
   gap: 6px;
-  padding-bottom: 12px;
-  border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+  transition: all 0.2s ease;
 }
 
-.cookie-detail-group:last-child {
-  padding-bottom: 0;
-  border-bottom: none;
+.cookie-detail-card:hover {
+  background: rgba(8, 14, 28, 0.85);
+  border-color: rgba(56, 189, 248, 0.3);
+  transform: translateY(-1px);
 }
 
-.cookie-detail-row {
-  display: grid;
-  grid-template-columns: 85px 1fr;
-  gap: 10px;
-  font-size: 0.78rem;
-  line-height: 1.4;
+.cookie-detail-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
 }
 
-.cookie-detail-label {
+.cookie-name-badge {
   font-family: 'JetBrains Mono', 'Consolas', monospace;
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: #00e5a0;
+  background: rgba(0, 229, 160, 0.08);
+  border: 1px solid rgba(0, 229, 160, 0.25);
+  padding: 2px 7px;
+  border-radius: 5px;
+}
+
+.cookie-expiry-tag {
+  font-family: 'JetBrains Mono', 'Consolas', monospace;
+  font-size: 0.65rem;
   font-weight: 700;
   color: #38bdf8;
+  background: rgba(56, 189, 248, 0.08);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  padding: 2px 6px;
+  border-radius: 4px;
 }
 
-.cookie-detail-val {
+.cookie-detail-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.74rem;
+}
+
+.meta-label {
+  font-family: 'JetBrains Mono', 'Consolas', monospace;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.meta-value {
+  color: #94a3b8;
+}
+
+.cookie-detail-desc {
+  font-size: 0.78rem;
+  line-height: 1.45;
   color: #cbd5e1;
+  margin: 2px 0 0;
 }
 
-/* More Info */
+/* ── 7. MORE INFORMATION & TRANSPARENCY ── */
 .cookie-more-info {
-  margin-top: 8px;
+  margin-top: 4px;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed rgba(255, 255, 255, 0.09);
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.more-info-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.more-info-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #38bdf8;
+  box-shadow: 0 0 6px #38bdf8;
 }
 
 .more-info-title {
-  font-size: 0.88rem;
+  font-size: 0.82rem;
   font-weight: 800;
-  color: #00e5a0;
-  margin: 0 0 4px 0;
+  color: #f1f5f9;
+  margin: 0;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .more-info-text {
   font-size: 0.78rem;
   line-height: 1.5;
-  color: #64748b;
+  color: #94a3b8;
   margin: 0;
 }
 
 .more-info-text a {
-  color: #00e5a0;
+  color: #38bdf8;
   text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.15s ease;
 }
 
-/* ── TOGGLE SWITCH (Clean Cyber iOS Style) ── */
+.more-info-text a:hover {
+  color: #00e5a0;
+}
+
+/* ── 8. TOGGLE SWITCH (CLEAN CYBER STYLE) ── */
 .toggle-switch {
   position: relative;
   display: inline-block;
@@ -407,7 +649,7 @@
 }
 
 .toggle-switch.small {
-  width: 36px;
+  width: 38px;
   height: 20px;
 }
 
@@ -420,113 +662,171 @@
 .toggle-slider {
   position: absolute;
   inset: 0;
-  background: #334155;
+  background: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 24px;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .toggle-slider::before {
   content: "";
   position: absolute;
-  height: 18px;
-  width: 18px;
+  height: 16px;
+  width: 16px;
   left: 3px;
   bottom: 3px;
   background: #ffffff;
   border-radius: 50%;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
 .toggle-switch.small .toggle-slider::before {
   height: 14px;
   width: 14px;
+  left: 2px;
+  bottom: 2px;
 }
 
 .toggle-switch input:checked + .toggle-slider {
   background: #00e5a0;
+  border-color: #00e5a0;
+  box-shadow: 0 0 12px rgba(0, 229, 160, 0.4);
 }
 
 .toggle-switch input:checked + .toggle-slider::before {
   transform: translateX(20px);
+  background: #060911;
 }
 
 .toggle-switch.small input:checked + .toggle-slider::before {
-  transform: translateX(16px);
+  transform: translateX(18px);
 }
 
 .toggle-switch.locked {
   cursor: not-allowed;
-  opacity: 0.7;
+  opacity: 0.75;
 }
 
 .toggle-switch.locked input:checked + .toggle-slider {
-  background: #059669;
+  background: rgba(0, 229, 160, 0.7);
+  border-color: rgba(0, 229, 160, 0.5);
+  box-shadow: none;
 }
 
-/* ── BOTTOM STACKED ACTIONS (Exact Image 2) ── */
+/* ── 9. BOTTOM ACTIONS (HERO-THEMED ACTION BAR) ── */
 .cookie-prefs-footer {
-  padding: 16px 20px;
+  padding: 16px 26px 20px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-  background: #080c14;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  background: #070b14;
+  flex-shrink: 0;
 }
 
 .btn-cookie-action {
-  width: 100%;
-  padding: 12px 18px;
-  border-radius: 8px;
-  font-size: 0.88rem;
+  padding: 10px 18px;
+  border-radius: 9999px;
+  font-size: 0.84rem;
   font-weight: 800;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   text-align: center;
   font-family: inherit;
+  white-space: nowrap;
 }
 
-.btn-cookie-action.accept-all {
-  background: #00875a;
-  border: 1px solid #00a36c;
-  color: #ffffff;
-}
-
-.btn-cookie-action.accept-all:hover {
-  background: #00a36c;
-  box-shadow: 0 4px 14px rgba(0, 163, 108, 0.4);
-}
-
+/* Reject All: Sleek Ghost / Cyber Outline */
 .btn-cookie-action.reject-all {
-  background: #005a3c;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #ffffff;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #94a3b8;
 }
 
 .btn-cookie-action.reject-all:hover {
-  background: #00704a;
+  background: rgba(244, 63, 94, 0.12);
+  border-color: rgba(244, 63, 94, 0.4);
+  color: #f43f5e;
+  transform: translateY(-1px);
 }
 
+/* Save Preferences: Cyan Tech Button */
 .btn-cookie-action.save-prefs {
-  background: transparent;
-  border: 1px solid rgba(0, 229, 160, 0.4);
-  color: #00e5a0;
+  background: rgba(56, 189, 248, 0.06);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  color: #38bdf8;
 }
 
 .btn-cookie-action.save-prefs:hover {
-  background: rgba(0, 229, 160, 0.1);
-  border-color: #00e5a0;
+  background: rgba(56, 189, 248, 0.15);
+  border-color: #38bdf8;
+  color: #ffffff;
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.3);
+  transform: translateY(-1px);
 }
 
-@media (max-width: 640px) {
-  .cookie-banner-content {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .cookie-actions-col {
-    justify-content: flex-end;
-  }
+/* Accept All: Hero Emerald Neon Gradient with Arrow */
+.btn-cookie-action.accept-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  background: linear-gradient(135deg, #00e5a0 0%, #059669 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  color: #041f17;
+  box-shadow: 0 0 24px rgba(0, 229, 160, 0.45);
+}
+
+.btn-cookie-action.accept-all:hover {
+  background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+  box-shadow: 0 0 32px rgba(0, 229, 160, 0.7);
+  transform: translateY(-2px) scale(1.02);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.btn-cookie-action.accept-all .btn-arrow {
+  transition: transform 0.2s ease;
+}
+
+.btn-cookie-action.accept-all:hover .btn-arrow {
+  transform: translateX(3px);
+}
+
+/* ── 10. RESPONSIVE DESIGN ── */
+@media (max-width: 680px) {
   .cookie-prefs-dialog {
-    max-height: 95vh;
+    max-height: 92vh;
+    border-radius: 16px;
+  }
+
+  .cookie-prefs-header {
+    padding: 18px 18px 14px;
+  }
+
+  .cookie-prefs-body {
+    padding: 16px 18px;
+  }
+
+  .cookie-details-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cookie-prefs-footer {
+    padding: 14px 18px 16px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .btn-cookie-action {
+    flex: 1 1 calc(50% - 8px);
+    padding: 10px 14px;
+    font-size: 0.8rem;
+  }
+
+  .btn-cookie-action.accept-all {
+    flex: 1 1 100%;
+    justify-content: center;
   }
 }

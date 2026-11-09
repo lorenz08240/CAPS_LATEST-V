@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { useTheme } from "../../contexts/ThemeContext";
@@ -26,8 +26,21 @@ function Navbar({ isPinned: propsIsPinned }) {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const isAdminLogin = location.pathname === "/admin/login" || location.pathname.startsWith("/admin/login");
   const isAdminRoute = location.pathname.startsWith("/admin");
   const isVisible = isOpenManual;
+
+  // Auto-dismiss sidebar if navigating to admin login screen
+  useEffect(() => {
+    if (isAdminLogin && isOpenManual) {
+      closeSidebar();
+    }
+  }, [isAdminLogin, isOpenManual, closeSidebar]);
+
+  // Sidebar is strictly disabled on the admin login screen until the operator enters first
+  if (isAdminLogin) {
+    return null;
+  }
 
   const handleLinkClick = () => {
     if (!isPinned) {
@@ -87,7 +100,7 @@ function Navbar({ isPinned: propsIsPinned }) {
         <div className="sidebar-container">
           {/* ── ACCOUNT / BRAND HEADER (Anti-Slop Cyber Theme) ── */}
           <div className="sidebar-header">
-            {isAdminRoute ? (
+            {isAdmin && isAdminRoute ? (
               <div className="sidebar-brand-group">
                 <div className="sidebar-brand-icon admin">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -162,7 +175,7 @@ function Navbar({ isPinned: propsIsPinned }) {
 
           {/* ── SCROLLABLE NAVIGATION TREE ── */}
           <div className="sidebar-nav-scroll">
-            {isAdminRoute ? (
+            {isAdmin && isAdminRoute ? (
               /* ── ADMIN ROUTE NAVIGATION ── */
               <div className="sidebar-admin-body">
                 <div className="sidebar-admin-card">

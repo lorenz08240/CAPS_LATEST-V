@@ -6,6 +6,7 @@ import Home3DHero from "./Home3DHero";
 import CyberBrand from "../Navigation/CyberBrand";
 import AccountSetupModal from "./AccountSetupModal";
 import ModeSelectionCards from "./ModeSelectionCards";
+import RigPickerTransitionOverlay from "./RigPickerTransitionOverlay";
 import { useSidebar } from "../../contexts/SidebarContext";
 import { useLearnMode } from "../../contexts/LearnModeContext";
 import { enterFullscreen } from "../../utilities/fullscreen";
@@ -24,6 +25,7 @@ function Home() {
   const { mode, setAppMode, userProfile, unlockedStages } = useLearnMode();
   const [showModeCards, setShowModeCards] = useState(false);
   const [showAccountModal, setShowAccountModal] = useState(false);
+  const [showTransitionOverlay, setShowTransitionOverlay] = useState(false);
   const [activeModel, setActiveModel] = useState('case');
   const [scrollProgress, setScrollProgress] = useState(0);
   const [startBuildRequested, setStartBuildRequested] = useState(false);
@@ -168,8 +170,31 @@ function Home() {
       }
     };
 
+    // Helper: detect if event is inside any scrollable modal/dialog or child container
+    const isInsideScrollableOrModal = (target) => {
+      if (!target || !(target instanceof Element)) return false;
+      if (
+        target.closest(
+          '.cookie-prefs-overlay, .cookie-prefs-dialog, .account-modal-overlay, [role="dialog"], [data-scrollable="true"]'
+        )
+      ) {
+        return true;
+      }
+      let el = target;
+      while (el && el !== document.body && el !== document.documentElement) {
+        const style = window.getComputedStyle(el);
+        const overflowY = style.overflowY;
+        if ((overflowY === "auto" || overflowY === "scroll") && el.scrollHeight > el.clientHeight) {
+          return true;
+        }
+        el = el.parentElement;
+      }
+      return false;
+    };
+
     // Intercept wheel scrolling down
     const handleWheel = (e) => {
+      if (isInsideScrollableOrModal(e.target)) return;
       if (!hasClickedBuildRef.current && e.deltaY > 0) {
         e.preventDefault();
         e.stopPropagation();
@@ -185,6 +210,7 @@ function Home() {
     };
 
     const handleTouchMove = (e) => {
+      if (isInsideScrollableOrModal(e.target)) return;
       if (!hasClickedBuildRef.current && e.touches && e.touches.length > 0) {
         const deltaY = e.touches[0].clientY - touchStartY;
         if (deltaY < 0) {
@@ -196,6 +222,7 @@ function Home() {
 
     // Intercept navigation keys that scroll down (ArrowDown, PageDown, Space)
     const handleKeyDown = (e) => {
+      if (isInsideScrollableOrModal(document.activeElement || e.target)) return;
       if (!hasClickedBuildRef.current && ["ArrowDown", "PageDown", "Space", " "].includes(e.key)) {
         e.preventDefault();
         e.stopPropagation();
@@ -449,6 +476,7 @@ function Home() {
         onSelectFree={() => {
           setShowModeCards(false);
           setAppMode("explore");
+          setShowTransitionOverlay(true);
           handleScrollToBuild("smooth");
         }}
       />
@@ -466,6 +494,11 @@ function Home() {
           }
           handleScrollToBuild("smooth");
         }}
+      />
+      {/* ── Rig Component Picker Transition Overlay ── */}
+      <RigPickerTransitionOverlay
+        isOpen={showTransitionOverlay}
+        onComplete={() => setShowTransitionOverlay(false)}
       />
   </>
   );

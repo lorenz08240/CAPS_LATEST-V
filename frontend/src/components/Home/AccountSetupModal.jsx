@@ -145,6 +145,22 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
     setUserProfile(finalProfile);
     setAppMode("learn");
 
+    // Sync to backend Google Learner Directory
+    try {
+      fetch("/api/learn/sync-profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          googleId: finalProfile.googleId,
+          email: finalProfile.email,
+          fullName: finalProfile.fullName,
+          photo: finalProfile.photo,
+          institution: "Pateros Technological College",
+          unlockedStages: ["build"]
+        })
+      }).catch(() => {});
+    } catch {}
+
     // Dispatch learner onboarding event for B.O.B.'s guide animation
     try {
       window.dispatchEvent(

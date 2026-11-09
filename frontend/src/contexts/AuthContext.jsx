@@ -27,13 +27,30 @@ export function AuthProvider({ children }) {
     }
   });
 
-  const loginAdmin = (password) => {
-    if (password === "admin123") {
+  const loginAdmin = (usernameOrPass, maybePass) => {
+    let id = "root";
+    let pass = "";
+
+    if (maybePass !== undefined) {
+      id = (usernameOrPass || "").trim().toLowerCase();
+      pass = maybePass;
+    } else {
+      pass = usernameOrPass;
+    }
+
+    // Shared Single Admin Credentials: ID: root • Password: admin12345
+    // Also supports legacy fallback
+    const isValidId = id === "root" || id === "admin";
+    const isValidPass = pass === "admin12345" || pass === "admin123";
+
+    if (isValidId && isValidPass) {
       setIsAdmin(true);
       try {
         sessionStorage.setItem(SESSION_AUTH_KEY, "true");
         sessionStorage.setItem(SESSION_TIMESTAMP_KEY, Date.now().toString());
-        sessionStorage.setItem(SESSION_TOKEN_KEY, password);
+        sessionStorage.setItem(SESSION_TOKEN_KEY, pass);
+        sessionStorage.setItem("buildlab_admin_id", id);
+        localStorage.setItem("adminKey", pass);
       } catch {}
       return true;
     }

@@ -6,8 +6,11 @@ const SOUND_SOURCE_MAP = {
   snap: ["/sfx/audio/snap.wav", "/sfx/audio/stdin.wav"],
   install: ["/sfx/audio/folder.wav", "/sfx/audio/snap.wav"],
   open_box: ["/sfx/audio/panels.wav"],
-  modal_open: ["/sfx/audio/panels.wav"],
-  modal_close: ["/sfx/audio/expand.wav"],
+  modal_open: ["/sfx/audio/sidebar_open.wav", "/sfx/audio/panels.wav"],
+  modal_close: ["/sfx/audio/sidebar_close.wav", "/sfx/audio/stdin.wav", "/sfx/audio/snap.wav"],
+  sidebar_open: ["/sfx/audio/sidebar_open.wav", "/sfx/audio/panels.wav"],
+  sidebar_close: ["/sfx/audio/sidebar_close.wav", "/sfx/audio/stdin.wav", "/sfx/audio/snap.wav"],
+  sidebar_collapse: ["/sfx/audio/sidebar_close.wav", "/sfx/audio/stdin.wav", "/sfx/audio/snap.wav"],
   complete: ["/sfx/audio/granted.wav"],
   granted: ["/sfx/audio/granted.wav"],
   denied: ["/sfx/audio/denied.mp3", "/sfx/audio/denied.wav"],
@@ -98,14 +101,22 @@ class SynthAudio {
     this.playTone(280, "sine", 0.08, vol, 560);
   }
 
+  sidebarOpen(vol = 0.14) {
+    // Crisp upward panel reveal
+    this.playTone(220, "sine", 0.05, vol, 520);
+  }
+
+  sidebarClose(vol = 0.14) {
+    // Crisp subtle cybernetic slide-tuck / collapse
+    this.playTone(420, "sine", 0.05, vol, 140);
+  }
+
   modalOpen(vol = 0.16) {
-    // Upward glass chime
-    this.playTone(440, "sine", 0.06, vol, 660);
+    this.sidebarOpen(vol);
   }
 
   modalClose(vol = 0.14) {
-    // Downward gentle chime
-    this.playTone(660, "sine", 0.06, vol, 440);
+    this.sidebarClose(vol);
   }
 
   complete(vol = 0.22) {
@@ -289,12 +300,24 @@ class SoundManager {
     this.play("open_box", 0.4);
   }
 
+  sidebarOpen() {
+    this.play("sidebar_open", 0.22);
+  }
+
+  sidebarClose() {
+    this.play("sidebar_close", 0.2);
+  }
+
+  sidebarCollapse() {
+    this.sidebarClose();
+  }
+
   modalOpen() {
-    this.play("modal_open", 0.3);
+    this.sidebarOpen();
   }
 
   modalClose() {
-    this.play("modal_close", 0.25);
+    this.sidebarClose();
   }
 
   complete() {

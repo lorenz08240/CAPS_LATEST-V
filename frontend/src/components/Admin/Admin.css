@@ -6653,3 +6653,590 @@
   line-height: 1.6;
   margin: 10px 0 16px 0;
 }
+
+/* ==========================================================================
+   REDESIGNED ADMIN HERO LOGIN SCREEN (Home Hero Theme Parity + Pixel Canvas Trail)
+   ========================================================================== */
+.admin-login-hero-container {
+  position: relative;
+  width: 100vw;
+  min-height: 100vh;
+  background-color: #06080e;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.admin-login-pixel-trail {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  pointer-events: none !important;
+  z-index: 1 !important;
+  opacity: 0.9 !important;
+}
+
+.admin-login-ambient-glow {
+  position: absolute;
+  width: 780px;
+  height: 780px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 229, 160, 0.12) 0%, rgba(56, 189, 248, 0.05) 35%, rgba(244, 63, 94, 0.03) 60%, transparent 75%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  filter: blur(85px);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.admin-login-grid-mesh {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.admin-login-card-wrapper {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 440px;
+  margin: auto;
+  pointer-events: auto;
+}
+
+.admin-login-card {
+  position: relative;
+  background: linear-gradient(180deg, #0b111e 0%, #060911 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 20px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.85), 0 0 50px rgba(0, 229, 160, 0.08);
+  padding: 34px 30px 30px 30px;
+  overflow: hidden;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.admin-login-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, #00e5a0 30%, #38bdf8 70%, transparent 100%);
+  z-index: 1;
+}
+
+.admin-login-brand-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.admin-login-logo-box {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  background: #020b0b;
+  border: 1px solid rgba(0, 242, 254, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 0 16px rgba(0, 242, 254, 0.3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-login-logo-img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+
+.admin-login-brand-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.admin-login-brand-title {
+  display: block;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-weight: 900;
+  font-size: 26px;
+  color: #ffffff;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.admin-login-heading-group {
+  margin-bottom: 22px;
+}
+
+.admin-login-title {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 19px;
+  font-weight: 900;
+  color: #cbd5e1;
+  margin: 0;
+  letter-spacing: -0.3px;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.admin-login-error-banner {
+  background: rgba(244, 63, 94, 0.12);
+  border: 1px solid rgba(244, 63, 94, 0.4);
+  color: #f43f5e;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 9px 12px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.admin-login-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.admin-login-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'JetBrains Mono', 'Consolas', monospace;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: #94a3b8;
+  text-transform: uppercase;
+}
+
+.admin-login-label .label-req {
+  color: #00e5a0;
+}
+
+.admin-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.input-prefix-icon {
+  position: absolute;
+  left: 12px;
+  color: #64748b;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+}
+
+.admin-login-input {
+  width: 100%;
+  background: rgba(13, 20, 36, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 12px 40px 12px 38px;
+  color: #ffffff;
+  font-size: 13.5px;
+  outline: none;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.admin-login-input:focus {
+  border-color: #00e5a0;
+  background: rgba(15, 23, 42, 0.95);
+  box-shadow: 0 0 16px rgba(0, 229, 160, 0.22);
+}
+
+.btn-toggle-eye {
+  position: absolute;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s ease;
+}
+
+.btn-toggle-eye:hover {
+  color: #ffffff;
+}
+
+.btn-admin-login-submit {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #00e5a0;
+  color: #06080e;
+  border: none;
+  font-weight: 800;
+  font-size: 13.5px;
+  padding: 13px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  margin-top: 6px;
+  letter-spacing: 0.02em;
+}
+
+.btn-admin-login-submit:hover {
+  background: #00ffa8;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 22px rgba(0, 229, 160, 0.38);
+}
+
+.admin-login-return-link {
+  text-align: center;
+  color: #64748b;
+  font-size: 12.5px;
+  text-decoration: none;
+  margin-top: 8px;
+  transition: color 0.2s ease;
+  font-weight: 600;
+}
+
+.admin-login-return-link:hover {
+  color: #38bdf8;
+}
+
+/* ==========================================================================
+   ROOT ADMIN PROFILE & GOOGLE LEARNERS DIRECTORY
+   ========================================================================== */
+.root-admin-card-container {
+  margin-bottom: 24px;
+}
+
+.section-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.section-title-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: #64748b;
+}
+
+.auth-level-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px;
+  font-weight: 800;
+  color: #00e5a0;
+  background: rgba(0, 229, 160, 0.1);
+  border: 1px solid rgba(0, 229, 160, 0.3);
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.root-admin-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-radius: 10px;
+  background: #090d16;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.root-admin-profile-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.root-avatar-wrap {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #1e293b;
+  border: 2px solid rgba(0, 229, 160, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.root-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.root-avatar-fallback {
+  font-family: monospace;
+  font-weight: 900;
+  font-size: 13px;
+  color: #00e5a0;
+}
+
+.root-display-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.root-display-title h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0;
+}
+
+.root-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px;
+  font-weight: 800;
+  background: rgba(244, 63, 94, 0.15);
+  border: 1px solid rgba(244, 63, 94, 0.4);
+  color: #f43f5e;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.root-credentials-preview {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 12px;
+}
+
+.cred-chip {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 3px 8px;
+  border-radius: 4px;
+  color: #cbd5e1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+}
+
+.cred-chip strong {
+  color: #94a3b8;
+  margin-right: 4px;
+}
+
+.cred-chip.status-chip {
+  color: #00e5a0;
+  border-color: rgba(0, 229, 160, 0.3);
+  background: rgba(0, 229, 160, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 700;
+}
+
+.status-dot-green {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #00e5a0;
+  box-shadow: 0 0 6px #00e5a0;
+}
+
+.btn-edit-root {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 229, 160, 0.12);
+  border: 1px solid rgba(0, 229, 160, 0.35);
+  color: #00e5a0;
+  font-weight: 700;
+  font-size: 12px;
+  padding: 9px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-edit-root:hover {
+  background: rgba(0, 229, 160, 0.22);
+  border-color: #00e5a0;
+}
+
+/* Google Learners Directory */
+.google-learners-container {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 10px;
+}
+
+.learners-header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.learners-header-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #cbd5e1;
+}
+
+.learners-search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.learners-search-input {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  padding: 7px 30px 7px 12px;
+  color: #ffffff;
+  font-size: 12px;
+  width: 260px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.learners-search-input:focus {
+  border-color: #00e5a0;
+}
+
+.btn-clear-search {
+  position: absolute;
+  right: 8px;
+  background: transparent;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.learner-google-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px;
+  font-weight: 700;
+  color: #38bdf8;
+}
+
+.stages-pills-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.stage-chip {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: rgba(0, 229, 160, 0.08);
+  border: 1px solid rgba(0, 229, 160, 0.25);
+  color: #00e5a0;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.accounts-empty-state {
+  padding: 30px;
+  text-align: center;
+  color: #64748b;
+  font-size: 13px;
+  background: #090d16;
+  border: 1px dashed rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+}
+
+/* Minimal Content Management Helpers */
+.btn-quick-photo-change {
+  margin-top: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 4px;
+  background: rgba(0, 229, 160, 0.1);
+  border: 1px solid rgba(0, 229, 160, 0.3);
+  color: #00e5a0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-quick-photo-change:hover {
+  background: rgba(0, 229, 160, 0.22);
+}
+
+.modal-tab-nav {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 10px;
+}
+
+.modal-tab-btn {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 7px 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modal-tab-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.modal-tab-btn.active {
+  background: rgba(0, 229, 160, 0.15);
+  border-color: rgba(0, 229, 160, 0.4);
+  color: #00e5a0;
+}

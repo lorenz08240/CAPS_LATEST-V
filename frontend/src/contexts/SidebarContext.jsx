@@ -28,7 +28,7 @@ export const SidebarProvider = ({ children }) => {
     setIsOpenManual((prev) => {
       if (prev) {
         try {
-          soundManager.modalClose();
+          soundManager.sidebarClose();
         } catch {}
       }
       return false;
@@ -37,10 +37,14 @@ export const SidebarProvider = ({ children }) => {
   }, []);
 
   const openSidebar = useCallback(() => {
+    // If on admin login screen, sidebar is disabled
+    if (typeof window !== "undefined" && window.location.pathname.startsWith("/admin/login")) {
+      return;
+    }
     setIsOpenManual((prev) => {
       if (!prev) {
         try {
-          soundManager.modalOpen();
+          soundManager.sidebarOpen();
         } catch {}
       }
       return true;
@@ -48,13 +52,17 @@ export const SidebarProvider = ({ children }) => {
   }, []);
 
   const toggleSidebar = useCallback(() => {
+    // If on admin login screen, sidebar is disabled
+    if (typeof window !== "undefined" && window.location.pathname.startsWith("/admin/login")) {
+      return;
+    }
     setIsOpenManual((prev) => {
       const next = !prev;
       try {
         if (next) {
-          soundManager.modalOpen();
+          soundManager.sidebarOpen();
         } else {
-          soundManager.modalClose();
+          soundManager.sidebarClose();
         }
       } catch {}
       if (!next) {
@@ -75,6 +83,11 @@ export const SidebarProvider = ({ children }) => {
         return;
       }
 
+      // Explicitly disable shortcuts on the admin login screen
+      if (typeof window !== "undefined" && window.location.pathname.startsWith("/admin/login")) {
+        return;
+      }
+
       if (e.key === "Escape") {
         if (isSidebarOpen && !isPinned) {
           e.preventDefault();
@@ -90,17 +103,18 @@ export const SidebarProvider = ({ children }) => {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [toggleSidebar]);
+  }, [toggleSidebar, isSidebarOpen, isPinned, closeSidebar]);
 
   // Sync classes to document.body and root for global CSS styling
   useEffect(() => {
-    if (isSidebarOpen) {
+    const isLogin = typeof window !== "undefined" && window.location.pathname.startsWith("/admin/login");
+    if (isSidebarOpen && !isLogin) {
       document.body.classList.add("sidebar-active");
     } else {
       document.body.classList.remove("sidebar-active");
     }
 
-    if (isPinned) {
+    if (isPinned && !isLogin) {
       document.body.classList.add("sidebar-pinned-body");
     } else {
       document.body.classList.remove("sidebar-pinned-body");

@@ -4,6 +4,14 @@ const cors = require("cors");
 const { exec } = require("child_process");
 const db = require("./config/db");
 
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("Unhandled Rejection:", reason);
+});
+
+process.on("uncaughtException", (err) => {
+  console.error("Uncaught Exception:", err.message);
+});
+
 const app = express();
 app.use(cors());
 const fs = require("fs");
@@ -21,7 +29,8 @@ const adminAuth = (req, res, next) => {
   const adminKey = req.headers["x-admin-key"] || req.query.admin_key;
   const expectedKey = process.env.ADMIN_API_KEY || "admin123";
 
-  if (!adminKey || adminKey !== expectedKey) {
+  // Accepts standard API key or single root password (admin12345)
+  if (!adminKey || (adminKey !== expectedKey && adminKey !== "admin12345")) {
     return res.status(401).json({ error: "Unauthorized: Admin authorization required" });
   }
   next();
@@ -99,13 +108,41 @@ async function initContentAndAccountsSchema() {
       )
     `);
 
-    // Seed default admin accounts if empty
-    const [adminCount] = await db.query("SELECT COUNT(*) as c FROM admin_accounts");
-    if (!adminCount[0]?.c) {
+    // Ensure google_learner_accounts table exists for Google OAuth Learners
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS google_learner_accounts (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        google_id VARCHAR(100) UNIQUE,
+        email VARCHAR(150) NOT NULL,
+        full_name VARCHAR(150) NOT NULL,
+        avatar_url LONGTEXT,
+        institution VARCHAR(150) DEFAULT 'Pateros Technological College',
+        mode VARCHAR(50) DEFAULT 'learn',
+        unlocked_stages LONGTEXT,
+        last_active TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Ensure single shared root admin exists with credentials: ID: root / Password: admin12345
+    const [rootCheck] = await db.query("SELECT id FROM admin_accounts WHERE username = 'root'");
+    if (rootCheck.length === 0) {
       await db.query(`
-        INSERT INTO admin_accounts (id, username, display_name, email, role, avatar_url, passcode, status) VALUES 
-        (1, 'admin', 'Lead Administrator', 'admin@buildlab.internal', 'Super Admin', 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=200', 'admin123', 'ACTIVE'),
-        (2, 'system_architect', 'Hardware Architect', 'architect@buildlab.internal', 'Systems Architect', 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&q=80&w=200', 'admin123', 'ACTIVE')
+        INSERT INTO admin_accounts (username, display_name, email, role, avatar_url, passcode, status) VALUES 
+        ('root', 'Root Administrator', 'root@buildlab.internal', 'Root Administrator', 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=200', 'admin12345', 'ACTIVE')
+      `);
+    } else {
+      await db.query("UPDATE admin_accounts SET passcode = 'admin12345', role = 'Root Administrator' WHERE username = 'root'");
+    }
+
+    // Seed sample Google learner accounts if empty
+    const [learnerCount] = await db.query("SELECT COUNT(*) as c FROM google_learner_accounts");
+    if (!learnerCount[0]?.c) {
+      await db.query(`
+        INSERT INTO google_learner_accounts (google_id, email, full_name, avatar_url, institution, mode, unlocked_stages) VALUES
+        ('google-oauth2|1092837482910', 'student.lead@gmail.com', 'Alex Rivera', 'https://api.dicebear.com/7.x/initials/svg?seed=Alex+Rivera&backgroundColor=00e5a0', 'Pateros Technological College', 'learn', '["build", "compatibility", "learn", "certificate"]'),
+        ('google-oauth2|1092837482911', 'builder.mark@gmail.com', 'Mark Joshua Castro', 'https://api.dicebear.com/7.x/initials/svg?seed=Mark+Joshua&backgroundColor=38bdf8', 'Pateros Technological College', 'learn', '["build", "compatibility"]'),
+        ('google-oauth2|1092837482912', 'chloe.tech@gmail.com', 'Chloe Santos', 'https://api.dicebear.com/7.x/initials/svg?seed=Chloe+Santos&backgroundColor=f43f5e', 'Pateros Technological College', 'learn', '["build", "compatibility", "learn"]')
       `);
     }
 
@@ -1014,6 +1051,65 @@ app.delete("/api/admin/accounts/:id", adminAuth, async (req, res) => {
   } catch (err) {
     console.error("Delete admin account error:", err);
     res.status(500).json({ error: "Failed to delete admin account" });
+  }
+});
+
+// ── Google Learner Accounts APIs (Live Directory for Admin Accounts Manager) ──
+app.get("/api/admin/learners", adminAuth, async (req, res) => {
+  try {
+    const [rows] = await db.query(
+      "SELECT id, google_id, email, full_name, avatar_url, institution, mode, unlocked_stages, last_active, created_at FROM google_learner_accounts ORDER BY last_active DESC"
+    );
+    const parsed = rows.map((r) => {
+      let stages = ["build"];
+      try {
+        stages = typeof r.unlocked_stages === "string" ? JSON.parse(r.unlocked_stages) : (r.unlocked_stages || ["build"]);
+      } catch (_) {}
+      return { ...r, unlocked_stages: stages };
+    });
+    res.json(parsed);
+  } catch (err) {
+    console.error("Fetch learners error:", err);
+    res.status(500).json({ error: "Failed to fetch Google learner accounts" });
+  }
+});
+
+app.post("/api/learn/sync-profile", async (req, res) => {
+  try {
+    const { googleId, email, fullName, photo, institution, unlockedStages } = req.body;
+    if (!email) {
+      return res.status(400).json({ error: "Email is required" });
+    }
+    const gid = googleId || `google-oauth2|${Date.now()}`;
+    const name = (fullName || email.split("@")[0] || "Learner").trim();
+    const stagesJson = typeof unlockedStages === "object" ? JSON.stringify(unlockedStages) : (unlockedStages || '["build"]');
+
+    await db.query(
+      `INSERT INTO google_learner_accounts (google_id, email, full_name, avatar_url, institution, mode, unlocked_stages, last_active)
+       VALUES (?, ?, ?, ?, ?, 'learn', ?, CURRENT_TIMESTAMP)
+       ON DUPLICATE KEY UPDATE 
+         full_name = VALUES(full_name),
+         avatar_url = COALESCE(VALUES(avatar_url), avatar_url),
+         unlocked_stages = COALESCE(VALUES(unlocked_stages), unlocked_stages),
+         last_active = CURRENT_TIMESTAMP`,
+      [gid, email.trim(), name, photo || null, institution || "Pateros Technological College", stagesJson]
+    );
+
+    res.json({ success: true, message: "Google learner profile synchronized." });
+  } catch (err) {
+    console.error("Sync profile error:", err);
+    res.status(500).json({ error: "Failed to sync learner profile" });
+  }
+});
+
+app.delete("/api/admin/learners/:id", adminAuth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    await db.query("DELETE FROM google_learner_accounts WHERE id = ?", [id]);
+    res.json({ success: true, message: "Learner account deleted successfully." });
+  } catch (err) {
+    console.error("Delete learner error:", err);
+    res.status(500).json({ error: "Failed to delete learner account" });
   }
 });
 

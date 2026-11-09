@@ -151,24 +151,37 @@ export default function CookieConsent() {
         </aside>
       )}
 
-      {/* ── FULL COOKIE PREFERENCES ACCORDION MODAL (Exact Image 2 Reference) ── */}
+      {/* ── FULL COOKIE PREFERENCES ACCORDION MODAL (Hero Section Themed) ── */}
       {showPreferencesModal && (
         <div
           className="cookie-prefs-overlay"
           onClick={() => setShowPreferencesModal(false)}
+          onWheel={(e) => e.stopPropagation()}
+          onTouchMove={(e) => e.stopPropagation()}
         >
           <div
             className="cookie-prefs-dialog"
             onClick={(e) => e.stopPropagation()}
+            onWheel={(e) => e.stopPropagation()}
+            onTouchMove={(e) => e.stopPropagation()}
             role="dialog"
             aria-modal="true"
             aria-labelledby="cookie-prefs-title"
+            data-scrollable="true"
           >
             {/* Header */}
             <div className="cookie-prefs-header">
-              <h2 id="cookie-prefs-title" className="cookie-prefs-title">
-                Cookie Preferences
-              </h2>
+              <div className="cookie-header-left">
+                <div className="cookie-cyber-tag">
+                  <span className="tag-bracket">[</span>
+                  <span className="tag-pulse-dot" />
+                  <span>SYSTEM // DATA &amp; PRIVACY</span>
+                  <span className="tag-bracket">]</span>
+                </div>
+                <h2 id="cookie-prefs-title" className="cookie-prefs-title">
+                  Cookie Preferences
+                </h2>
+              </div>
               <button
                 type="button"
                 className="cookie-prefs-close-btn"
@@ -177,6 +190,7 @@ export default function CookieConsent() {
                   setShowPreferencesModal(false);
                 }}
                 aria-label="Close Cookie Preferences"
+                title="Close Preferences (Esc)"
               >
                 ✕
               </button>
@@ -185,9 +199,9 @@ export default function CookieConsent() {
             {/* Scrollable Content */}
             <div className="cookie-prefs-body">
               <div className="cookie-usage-intro">
-                <h3 className="cookie-usage-heading">Cookie Usage</h3>
+                <h3 className="cookie-usage-heading">Cookie Usage &amp; Diagnostics</h3>
                 <p className="cookie-usage-desc">
-                  We use cookies to ensure the basic functionalities of the website and to enhance your online experience. You can choose for each category to opt-in/out whenever you want.
+                  We use cookies and client storage to enable the basic functionalities of the hardware workbench, ensure 3D simulation stability, and remember your student progress. You can inspect each cookie category below and toggle your preferences.
                 </p>
               </div>
 
@@ -196,12 +210,17 @@ export default function CookieConsent() {
                 <div
                   className="category-card-header"
                   onClick={() => toggleSection("necessary")}
+                  role="button"
+                  tabIndex={0}
                 >
                   <div className="category-header-left">
                     <span className="accordion-chevron">
                       {expandedSections.necessary ? "▲" : "▼"}
                     </span>
-                    <span className="category-title">Strictly Necessary Cookies</span>
+                    <div className="category-title-wrap">
+                      <span className="category-title">Strictly Necessary Cookies</span>
+                      <span className="category-status-pill locked">ALWAYS ACTIVE</span>
+                    </div>
                   </div>
 
                   <div className="category-header-right" onClick={(e) => e.stopPropagation()}>
@@ -212,53 +231,43 @@ export default function CookieConsent() {
                   </div>
                 </div>
 
-                {expandedSections.necessary && (
+                <div className="category-card-content-wrap">
                   <div className="category-card-content">
                     <p className="category-explanation">
-                      These cookies are essential for the proper functioning of the website. Without these cookies, the website would not work properly. They enable basic functions like page navigation, access to secure areas, and maintain your session.
+                      These cookies are essential for the proper functioning of the BuildLab platform. Without these cookies, basic features like component selection, session continuity, and secure admin authentication cannot operate.
                     </p>
 
-                    <div className="cookie-details-table">
-                      <div className="cookie-detail-group">
-                        <div className="cookie-detail-row">
-                          <span className="cookie-detail-label">Cookie</span>
-                          <span className="cookie-detail-val">PHPSESSID / buildlab_session</span>
+                    <div className="cookie-details-grid">
+                      <div className="cookie-detail-card">
+                        <div className="cookie-detail-head">
+                          <span className="cookie-name-badge">buildlab_session</span>
+                          <span className="cookie-expiry-tag">SESSION</span>
                         </div>
-                        <div className="cookie-detail-row">
-                          <span className="cookie-detail-label">Domain</span>
-                          <span className="cookie-detail-val">buildlab.app</span>
+                        <div className="cookie-detail-meta">
+                          <span className="meta-label">Domain:</span>
+                          <span className="meta-value">buildlab.app</span>
                         </div>
-                        <div className="cookie-detail-row">
-                          <span className="cookie-detail-label">Expiration</span>
-                          <span className="cookie-detail-val">Session</span>
-                        </div>
-                        <div className="cookie-detail-row">
-                          <span className="cookie-detail-label">Description</span>
-                          <span className="cookie-detail-val">Preserves user session state across page requests.</span>
-                        </div>
+                        <p className="cookie-detail-desc">
+                          Preserves user session state, active workbench selections, and builder cache across page requests.
+                        </p>
                       </div>
 
-                      <div className="cookie-detail-group">
-                        <div className="cookie-detail-row">
-                          <span className="cookie-detail-label">Cookie</span>
-                          <span className="cookie-detail-val">buildlab_cookie_consent</span>
+                      <div className="cookie-detail-card">
+                        <div className="cookie-detail-head">
+                          <span className="cookie-name-badge">buildlab_cookie_consent</span>
+                          <span className="cookie-expiry-tag">365 DAYS</span>
                         </div>
-                        <div className="cookie-detail-row">
-                          <span className="cookie-detail-label">Domain</span>
-                          <span className="cookie-detail-val">buildlab.app</span>
+                        <div className="cookie-detail-meta">
+                          <span className="meta-label">Domain:</span>
+                          <span className="meta-value">buildlab.app</span>
                         </div>
-                        <div className="cookie-detail-row">
-                          <span className="cookie-detail-label">Expiration</span>
-                          <span className="cookie-detail-val">365 days</span>
-                        </div>
-                        <div className="cookie-detail-row">
-                          <span className="cookie-detail-label">Description</span>
-                          <span className="cookie-detail-val">Stores your cookie consent preferences.</span>
-                        </div>
+                        <p className="cookie-detail-desc">
+                          Remembers your customized cookie consent preferences so you are not prompted repeatedly.
+                        </p>
                       </div>
                     </div>
                   </div>
-                )}
+                </div>
               </div>
 
               {/* ── ACCORDION 2: Analytics Cookies (Toggleable) ── */}
@@ -266,12 +275,19 @@ export default function CookieConsent() {
                 <div
                   className="category-card-header"
                   onClick={() => toggleSection("analytics")}
+                  role="button"
+                  tabIndex={0}
                 >
                   <div className="category-header-left">
                     <span className="accordion-chevron">
                       {expandedSections.analytics ? "▲" : "▼"}
                     </span>
-                    <span className="category-title">Analytics Cookies</span>
+                    <div className="category-title-wrap">
+                      <span className="category-title">Analytics &amp; Diagnostics Cookies</span>
+                      <span className={`category-status-pill ${analyticsActive ? "active" : "inactive"}`}>
+                        {analyticsActive ? "ENABLED" : "DISABLED"}
+                      </span>
+                    </div>
                   </div>
 
                   <div className="category-header-right" onClick={(e) => e.stopPropagation()}>
@@ -281,6 +297,7 @@ export default function CookieConsent() {
                         checked={analyticsActive}
                         onChange={(e) => {
                           const val = e.target.checked;
+                          try { soundManager.click(); } catch {}
                           setAnalyticsActive(val);
                           setGoogleAnalyticsActive(val);
                           setTelemetryActive(val);
@@ -291,29 +308,41 @@ export default function CookieConsent() {
                   </div>
                 </div>
 
-                {expandedSections.analytics && (
+                <div className="category-card-content-wrap">
                   <div className="category-card-content">
                     {/* Sub-toggles */}
                     <div className="sub-services-list">
                       <div className="sub-service-row">
-                        <span className="sub-service-name">Google Analytics</span>
+                        <div className="sub-service-info">
+                          <span className="sub-service-name">Google Analytics</span>
+                          <span className="sub-service-sub">Aggregated visitor count &amp; navigation flows</span>
+                        </div>
                         <label className="toggle-switch small">
                           <input
                             type="checkbox"
                             checked={googleAnalyticsActive}
-                            onChange={(e) => setGoogleAnalyticsActive(e.target.checked)}
+                            onChange={(e) => {
+                              try { soundManager.click(); } catch {}
+                              setGoogleAnalyticsActive(e.target.checked);
+                            }}
                           />
                           <span className="toggle-slider" />
                         </label>
                       </div>
 
                       <div className="sub-service-row">
-                        <span className="sub-service-name">BuildLab Telemetry</span>
+                        <div className="sub-service-info">
+                          <span className="sub-service-name">BuildLab Rig Telemetry</span>
+                          <span className="sub-service-sub">Hardware compatibility error diagnostics &amp; crash logs</span>
+                        </div>
                         <label className="toggle-switch small">
                           <input
                             type="checkbox"
                             checked={telemetryActive}
-                            onChange={(e) => setTelemetryActive(e.target.checked)}
+                            onChange={(e) => {
+                              try { soundManager.click(); } catch {}
+                              setTelemetryActive(e.target.checked);
+                            }}
                           />
                           <span className="toggle-slider" />
                         </label>
@@ -321,50 +350,40 @@ export default function CookieConsent() {
                     </div>
 
                     <p className="category-explanation">
-                      These cookies collect information about how you use our website, such as which pages you visit most often. This data helps us improve the website and promote better user experience. Data is transferred to Google LLC under Standard Contractual Clauses (SCCs).
+                      These cookies collect telemetry on how learners use the 2D workbench and 3D studio. This anonymized data helps us optimize WebGL rendering performance and resolve component mismatches.
                     </p>
 
-                    <div className="cookie-details-table">
-                      <div className="cookie-detail-group">
-                        <div className="cookie-detail-row">
-                          <span className="cookie-detail-label">Cookie</span>
-                          <span className="cookie-detail-val">_ga</span>
+                    <div className="cookie-details-grid">
+                      <div className="cookie-detail-card">
+                        <div className="cookie-detail-head">
+                          <span className="cookie-name-badge">_ga</span>
+                          <span className="cookie-expiry-tag">2 YEARS</span>
                         </div>
-                        <div className="cookie-detail-row">
-                          <span className="cookie-detail-label">Domain</span>
-                          <span className="cookie-detail-val">buildlab.app</span>
+                        <div className="cookie-detail-meta">
+                          <span className="meta-label">Domain:</span>
+                          <span className="meta-value">buildlab.app</span>
                         </div>
-                        <div className="cookie-detail-row">
-                          <span className="cookie-detail-label">Expiration</span>
-                          <span className="cookie-detail-val">2 years</span>
-                        </div>
-                        <div className="cookie-detail-row">
-                          <span className="cookie-detail-label">Description</span>
-                          <span className="cookie-detail-val">Google Analytics - Used to distinguish users.</span>
-                        </div>
+                        <p className="cookie-detail-desc">
+                          Google Analytics — Used to calculate visitor, session, and campaign data for the platform.
+                        </p>
                       </div>
 
-                      <div className="cookie-detail-group">
-                        <div className="cookie-detail-row">
-                          <span className="cookie-detail-label">Cookie</span>
-                          <span className="cookie-detail-val">_gid</span>
+                      <div className="cookie-detail-card">
+                        <div className="cookie-detail-head">
+                          <span className="cookie-name-badge">_gid</span>
+                          <span className="cookie-expiry-tag">24 HOURS</span>
                         </div>
-                        <div className="cookie-detail-row">
-                          <span className="cookie-detail-label">Domain</span>
-                          <span className="cookie-detail-val">buildlab.app</span>
+                        <div className="cookie-detail-meta">
+                          <span className="meta-label">Domain:</span>
+                          <span className="meta-value">buildlab.app</span>
                         </div>
-                        <div className="cookie-detail-row">
-                          <span className="cookie-detail-label">Expiration</span>
-                          <span className="cookie-detail-val">24 hours</span>
-                        </div>
-                        <div className="cookie-detail-row">
-                          <span className="cookie-detail-label">Description</span>
-                          <span className="cookie-detail-val">Google Analytics - Used to persist session state.</span>
-                        </div>
+                        <p className="cookie-detail-desc">
+                          Google Analytics — Persists session identifiers during 24-hour learner usage periods.
+                        </p>
                       </div>
                     </div>
                   </div>
-                )}
+                </div>
               </div>
 
               {/* ── ACCORDION 3: Functionality Cookies (Toggleable) ── */}
@@ -372,12 +391,19 @@ export default function CookieConsent() {
                 <div
                   className="category-card-header"
                   onClick={() => toggleSection("functionality")}
+                  role="button"
+                  tabIndex={0}
                 >
                   <div className="category-header-left">
                     <span className="accordion-chevron">
                       {expandedSections.functionality ? "▲" : "▼"}
                     </span>
-                    <span className="category-title">Functionality Cookies</span>
+                    <div className="category-title-wrap">
+                      <span className="category-title">Functionality &amp; Audio Cookies</span>
+                      <span className={`category-status-pill ${functionalityActive ? "active" : "inactive"}`}>
+                        {functionalityActive ? "ENABLED" : "DISABLED"}
+                      </span>
+                    </div>
                   </div>
 
                   <div className="category-header-right" onClick={(e) => e.stopPropagation()}>
@@ -387,6 +413,7 @@ export default function CookieConsent() {
                         checked={functionalityActive}
                         onChange={(e) => {
                           const val = e.target.checked;
+                          try { soundManager.click(); } catch {}
                           setFunctionalityActive(val);
                           setAudioPrefsActive(val);
                         }}
@@ -396,16 +423,22 @@ export default function CookieConsent() {
                   </div>
                 </div>
 
-                {expandedSections.functionality && (
+                <div className="category-card-content-wrap">
                   <div className="category-card-content">
                     <div className="sub-services-list">
                       <div className="sub-service-row">
-                        <span className="sub-service-name">Audio &amp; Terminal Sound Effects</span>
+                        <div className="sub-service-info">
+                          <span className="sub-service-name">Sci-Fi UI &amp; Terminal Audio</span>
+                          <span className="sub-service-sub">Interactive EDEX-style SFX volume and mute state</span>
+                        </div>
                         <label className="toggle-switch small">
                           <input
                             type="checkbox"
                             checked={audioPrefsActive}
-                            onChange={(e) => setAudioPrefsActive(e.target.checked)}
+                            onChange={(e) => {
+                              try { soundManager.click(); } catch {}
+                              setAudioPrefsActive(e.target.checked);
+                            }}
                           />
                           <span className="toggle-slider" />
                         </label>
@@ -413,52 +446,59 @@ export default function CookieConsent() {
                     </div>
 
                     <p className="category-explanation">
-                      These cookies enable enhanced functionality and personalization, such as live audio SFX preferences, dark/light theme setting, and 3D camera sensitivity settings.
+                      These cookies enable enhanced personalization, preserving your sound preferences, dark/light theme setting, and 3D studio camera sensitivities across visits.
                     </p>
 
-                    <div className="cookie-details-table">
-                      <div className="cookie-detail-group">
-                        <div className="cookie-detail-row">
-                          <span className="cookie-detail-label">Cookie</span>
-                          <span className="cookie-detail-val">buildlab_audio_pref</span>
+                    <div className="cookie-details-grid">
+                      <div className="cookie-detail-card">
+                        <div className="cookie-detail-head">
+                          <span className="cookie-name-badge">buildlab_audio_pref</span>
+                          <span className="cookie-expiry-tag">365 DAYS</span>
                         </div>
-                        <div className="cookie-detail-row">
-                          <span className="cookie-detail-label">Domain</span>
-                          <span className="cookie-detail-val">buildlab.app</span>
+                        <div className="cookie-detail-meta">
+                          <span className="meta-label">Domain:</span>
+                          <span className="meta-value">buildlab.app</span>
                         </div>
-                        <div className="cookie-detail-row">
-                          <span className="cookie-detail-label">Expiration</span>
-                          <span className="cookie-detail-val">365 days</span>
+                        <p className="cookie-detail-desc">
+                          Stores audio mute state and volume settings for interactive terminal sound effects.
+                        </p>
+                      </div>
+
+                      <div className="cookie-detail-card">
+                        <div className="cookie-detail-head">
+                          <span className="cookie-name-badge">buildlab_app_mode</span>
+                          <span className="cookie-expiry-tag">SESSION</span>
                         </div>
-                        <div className="cookie-detail-row">
-                          <span className="cookie-detail-label">Description</span>
-                          <span className="cookie-detail-val">Preserves sound effect volume and audio toggle status.</span>
+                        <div className="cookie-detail-meta">
+                          <span className="meta-label">Domain:</span>
+                          <span className="meta-value">buildlab.app</span>
                         </div>
+                        <p className="cookie-detail-desc">
+                          Preserves your selected workspace track (Learn Track vs Free Workbench) across reloads.
+                        </p>
                       </div>
                     </div>
                   </div>
-                )}
+                </div>
               </div>
 
               {/* More Information */}
               <div className="cookie-more-info">
-                <h4 className="more-info-title">More Information</h4>
+                <div className="more-info-head">
+                  <span className="more-info-dot" />
+                  <h4 className="more-info-title">Privacy &amp; Data Transparency</h4>
+                </div>
                 <p className="more-info-text">
-                  For any queries in relation to our policy on cookies and your choices, please contact us. Read our full{" "}
-                  <a href="#terms" onClick={(e) => { e.preventDefault(); alert("BuildLab Terms & Privacy: All hardware models, engineering benchmarks, and simulation engines are educational resources."); }}>Privacy Policy, Cookie Policy, and Terms of Service</a>.
+                  BuildLab does not sell your personal data. All component engineering benchmarks, socket validation algorithms, and simulation tools are provided for educational purposes. For details, read our{" "}
+                  <a href="#terms" onClick={(e) => { e.preventDefault(); alert("BuildLab Terms & Privacy: Hardware benchmarks, 3D models, and certification records are stored for student educational evaluation."); }}>
+                    Privacy Policy &amp; Terms of Service
+                  </a>.
                 </p>
               </div>
             </div>
 
-            {/* Bottom Actions (Stacked as in screenshot) */}
+            {/* Bottom Actions (Hero Themed Button Bar) */}
             <div className="cookie-prefs-footer">
-              <button
-                type="button"
-                className="btn-cookie-action accept-all"
-                onClick={handleAcceptAll}
-              >
-                Accept all
-              </button>
               <button
                 type="button"
                 className="btn-cookie-action reject-all"
@@ -472,6 +512,14 @@ export default function CookieConsent() {
                 onClick={handleSavePreferences}
               >
                 Save preferences
+              </button>
+              <button
+                type="button"
+                className="btn-cookie-action accept-all"
+                onClick={handleAcceptAll}
+              >
+                <span>Accept all</span>
+                <span className="btn-arrow">&rarr;</span>
               </button>
             </div>
           </div>

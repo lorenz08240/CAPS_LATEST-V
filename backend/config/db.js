@@ -10,6 +10,12 @@ const pool = mysql.createPool({
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 10000,
+});
+
+pool.on("error", (err) => {
+  console.error("MySQL connection pool event:", err.message);
 });
 
 module.exports = pool;

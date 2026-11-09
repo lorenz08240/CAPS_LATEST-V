@@ -57,10 +57,18 @@ const AdminEditRedirect = () => {
 };
 
 function AppContent() {
-  const { isPinned, isSidebarOpen } = useSidebar();
+  const { isPinned, isSidebarOpen, closeSidebar } = useSidebar();
   const { theme } = useTheme();
   const location = useLocation();
+  const isAdminLogin = location.pathname === "/admin/login" || location.pathname.startsWith("/admin/login");
   const isAdminRoute = location.pathname.startsWith("/admin");
+
+  // Ensure sidebar is closed when on the login screen
+  useEffect(() => {
+    if (isAdminLogin && isSidebarOpen) {
+      closeSidebar();
+    }
+  }, [isAdminLogin, isSidebarOpen, closeSidebar]);
 
   // Globally disable the default browser right-click context menu across all pages
   useEffect(() => {
@@ -91,7 +99,7 @@ function AppContent() {
   }, []);
 
   return (
-    <div className={`min-h-screen app-layout ${theme === 'dark' ? 'theme-dark' : 'theme-light'} ${isPinned ? 'sidebar-pinned' : ''} ${isSidebarOpen ? 'sidebar-open' : ''}`}>
+    <div className={`min-h-screen app-layout ${theme === 'dark' ? 'theme-dark' : 'theme-light'} ${isPinned && !isAdminLogin ? 'sidebar-pinned' : ''} ${isSidebarOpen && !isAdminLogin ? 'sidebar-open' : ''}`}>
       <Preloader />
       <FullscreenGate disabled={isAdminRoute} requireFullscreen>
         <CookieConsent />
