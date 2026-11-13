@@ -12,6 +12,8 @@ const TEAM_MEMBERS = [
     designation: "Lead Systems Architect & Full-Stack Engineer",
     codename: "SYSTEM_CORE",
     avatarBadge: "ARCH",
+    // Paste Developer 01 Facebook Profile Photo URL or local path here (e.g. "https://..." or "/assets/dev1.jpg")
+    image: "",
     highlight: "Core Architecture & State Matrix",
     bio: "Leads the software architecture of BuildLab, bridging the React state machine with real-time 3D assembly graphs and the Node.js backend. Dedicated to zero-latency component selection and mathematical TDP validation.",
     keyContributions: [
@@ -38,6 +40,8 @@ const TEAM_MEMBERS = [
     designation: "UI/UX Lead & Frontend Design Engineer",
     codename: "CYBER_HUD",
     avatarBadge: "UI/UX",
+    // Paste Developer 02 Facebook Profile Photo URL or local path here (e.g. "https://..." or "/assets/dev2.jpg")
+    image: "",
     highlight: "Design Systems & Command Deck Interaction",
     bio: "Designed BuildLab's cohesive dark cyberpunk aesthetic, the mahogany Command Deck drawer, sound-synchronized interactions, and accessible high-contrast telemetry across all screen viewports.",
     keyContributions: [
@@ -64,6 +68,8 @@ const TEAM_MEMBERS = [
     designation: "3D Graphics & WebGL Simulation Engineer",
     codename: "MESH_RENDER",
     avatarBadge: "3D/GL",
+    // Paste Developer 03 Facebook Profile Photo URL or local path here (e.g. "https://..." or "/assets/dev3.jpg")
+    image: "",
     highlight: "Three.js Hardware Models & Orbit Rigging",
     bio: "Crafts the interactive 3D hardware studio, procedural PC components, physically based rendering (PBR) materials, and realistic socket snap-fit clearances using Three.js and WebGL shaders.",
     keyContributions: [
@@ -86,26 +92,28 @@ const TEAM_MEMBERS = [
   {
     id: "DEV-04",
     roleCategory: "backend",
-    name: "Developer 04",
-    designation: "Backend & Database Systems Architect",
-    codename: "DATA_VAULT",
-    avatarBadge: "API/DB",
-    highlight: "MySQL Normalization & Crawler Pipeline",
-    bio: "Architected BuildLab's normalized MySQL relational database, RESTful Express services, and the automated crawler hub that manages hardware specifications and benchmark baselines.",
+    name: "Shin Ariane Pol",
+    designation: "Project Documentation & Technical Writer",
+    codename: "DOC_ARCHIVE",
+    avatarBadge: "DOCS",
+    // Developer Profile Photo
+    image: "/assets/shin_ariane_pol.jpg",
+    highlight: "Technical Documentation for Project BuildLab",
+    bio: "Author and custodian of BuildLab's official project documentation, system architecture records, capstone manual, and comprehensive software requirements specifications.",
     keyContributions: [
-      "Designed normalized database schema for 7+ hardware categories",
-      "Built headless crawler integration and admin verification queue",
-      "Implemented secure JWT session management and admin inventory control"
+      "Authored comprehensive Capstone project documentation and system requirements",
+      "Standardized architectural workflow diagrams and user instruction guides",
+      "Curated component categorization references and validation criteria"
     ],
-    techStack: ["Node.js", "Express.js", "MySQL / MariaDB", "Cheerio", "JWT"],
+    techStack: ["Technical Writing", "System Documentation", "Markdown", "SRS / IEEE", "Git"],
     rigSpecs: {
-      cpu: "AMD Ryzen 9 5950X (16 Cores, 32 Threads)",
-      gpu: "NVIDIA GeForce RTX 3080 10GB",
-      ram: "64GB DDR4-3600 (4x16GB)",
-      storage: "4TB NVMe SSD + 24TB Home NAS Storage",
-      chassis: "Corsair 5000D Airflow"
+      cpu: "AMD Ryzen 7 5700X (8 Cores, 16 Threads)",
+      gpu: "NVIDIA GeForce RTX 3060 12GB",
+      ram: "32GB DDR4-3200 (2x16GB)",
+      storage: "1TB NVMe M.2 SSD + 2TB External Storage",
+      chassis: "DarkFlash DLM21 Mesh (White)"
     },
-    favTip: "Dual-channel memory goes into slots 2 and 4 (A2/B2). Check your motherboard's PCB silkscreen to ensure maximum signal trace impedance.",
+    favTip: "Document every component specification and cable routing plan before putting the first screw into the motherboard standoffs.",
     github: "https://github.com",
     linkedin: "https://linkedin.com"
   },
@@ -116,6 +124,8 @@ const TEAM_MEMBERS = [
     designation: "Hardware Research Lead & QA Specialist",
     codename: "VERIFY_LAB",
     avatarBadge: "QA/SPEC",
+    // Paste Developer 05 Facebook Profile Photo URL or local path here (e.g. "https://..." or "/assets/dev5.jpg")
+    image: "",
     highlight: "Compatibility Matrices & Socket Verification",
     bio: "Researched and documented hundreds of component socket standards, RAM clearance heights, PCIe lane bifurcation rules, and TDP dissipation curves to guarantee 100% accurate compatibility checks.",
     keyContributions: [
@@ -155,7 +165,8 @@ export default function AboutUs() {
             ...m,
             roleCategory: m.role_category || m.roleCategory || "core",
             avatarBadge: m.avatar_badge || m.avatarBadge || "DEV",
-            photoUrl: m.photo_url || m.photoUrl || null,
+            photoUrl: m.photo_url || m.photoUrl || m.image || null,
+            image: m.image || m.photo_url || m.photoUrl || null,
             keyContributions: Array.isArray(m.key_contributions)
               ? m.key_contributions
               : (Array.isArray(m.keyContributions) ? m.keyContributions : []),
@@ -180,17 +191,17 @@ export default function AboutUs() {
     : teamMembers.filter((m) => m.roleCategory === filter);
 
   const handleFilterClick = (cat) => {
-    try { soundManager.click(); } catch {}
+    try { soundManager.click(); } catch { }
     setFilter(cat);
   };
 
   const handleOpenDossier = (member) => {
-    try { soundManager.snap(); } catch {}
+    try { soundManager.snap(); } catch { }
     setSelectedMember(member);
   };
 
   const handleCloseDossier = () => {
-    try { soundManager.click(); } catch {}
+    try { soundManager.click(); } catch { }
     setSelectedMember(null);
   };
 
@@ -207,7 +218,6 @@ export default function AboutUs() {
           <div className="about-telemetry-badge">
             <span className="telemetry-live-dot" />
             <span className="telemetry-label">PATEROS TECHNOLOGICAL COLLEGE // BSIT CAPSTONE</span>
-            <span className="telemetry-bracket">[ DEPLOYED ]</span>
           </div>
 
           <h1 className="about-hero-title">
@@ -215,9 +225,9 @@ export default function AboutUs() {
           </h1>
 
           <p className="about-hero-description">
-            BuildLab was conceived and engineered by five student developers known as the 
-            <strong> WhiteHats</strong> at Pateros Technological College. Our goal was to eliminate 
-            PC assembly intimidation by creating an interactive, real-time 3D workstation that verifies 
+            BuildLab was conceived and engineered by five student developers known as the
+            <strong> WhiteHats</strong> at Pateros Technological College. Our goal was to eliminate
+            PC assembly intimidation by creating an interactive, real-time 3D workstation that verifies
             physical clearances, electrical loads, and socket compatibility before you spend a single peso on hardware.
           </p>
 
@@ -257,29 +267,29 @@ export default function AboutUs() {
             </div>
 
             <div className="team-filter-buttons">
-              <button 
-                type="button" 
+              <button
+                type="button"
                 className={`filter-btn ${filter === "all" ? "active" : ""}`}
                 onClick={() => handleFilterClick("all")}
               >
                 ALL ({teamMembers.length})
               </button>
-              <button 
-                type="button" 
+              <button
+                type="button"
                 className={`filter-btn ${filter === "core" ? "active" : ""}`}
                 onClick={() => handleFilterClick("core")}
               >
                 CORE &amp; 3D ({teamMembers.filter((m) => m.roleCategory === "core").length})
               </button>
-              <button 
-                type="button" 
+              <button
+                type="button"
                 className={`filter-btn ${filter === "frontend" ? "active" : ""}`}
                 onClick={() => handleFilterClick("frontend")}
               >
                 FRONTEND &amp; UX ({teamMembers.filter((m) => m.roleCategory === "frontend").length})
               </button>
-              <button 
-                type="button" 
+              <button
+                type="button"
                 className={`filter-btn ${filter === "backend" ? "active" : ""}`}
                 onClick={() => handleFilterClick("backend")}
               >
@@ -290,8 +300,8 @@ export default function AboutUs() {
 
           <div className="team-cards-grid">
             {filteredMembers.map((member) => (
-              <div 
-                key={member.id} 
+              <div
+                key={member.id}
                 className="team-member-card"
                 onClick={() => handleOpenDossier(member)}
               >
@@ -301,28 +311,30 @@ export default function AboutUs() {
                 </div>
 
                 <div className="card-avatar-wrap">
-                  <div className="avatar-hex-frame">
-                    <svg viewBox="0 0 100 100" className="avatar-hex-svg">
-                      <polygon points="50 3, 93 26, 93 74, 50 97, 7 74, 7 26" className="hex-outer" />
-                      <polygon points="50 10, 85 29, 85 71, 50 90, 15 71, 15 29" className="hex-inner" />
-                    </svg>
-                    {(member.photoUrl || member.photo_url) ? (
+                  <div className="avatar-photo-frame fb-profile-frame">
+                    {(member.image || member.photoUrl || member.photo_url) ? (
                       <img
-                        src={member.photoUrl || member.photo_url}
+                        src={member.image || member.photoUrl || member.photo_url}
                         alt={member.name}
-                        className="avatar-img-hex"
+                        className="avatar-photo fb-profile-pic"
+                        loading="lazy"
                         onError={(e) => {
-                          e.target.style.display = "none";
-                          if (e.target.nextSibling) e.target.nextSibling.style.display = "flex";
+                          e.currentTarget.style.display = "none";
+                          const fb = e.currentTarget.parentElement?.querySelector(".fb-avatar-fallback");
+                          if (fb) fb.style.display = "flex";
                         }}
                       />
                     ) : null}
                     <div
-                      className="avatar-icon-content"
-                      style={{ display: (member.photoUrl || member.photo_url) ? "none" : "flex" }}
+                      className="fb-avatar-fallback"
+                      style={{ display: (member.image || member.photoUrl || member.photo_url) ? "none" : "flex" }}
                     >
-                      <span className="avatar-code">{member.codename.slice(0, 3)}</span>
+                      <svg viewBox="0 0 24 24" className="fb-placeholder-svg" fill="currentColor">
+                        <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z" />
+                      </svg>
+                      <span className="fb-fallback-code">{member.codename.slice(0, 3)}</span>
                     </div>
+                    <span className="fb-active-dot" title="Active now" />
                   </div>
                   <div className="avatar-glow-ring" />
                 </div>
@@ -358,8 +370,8 @@ export default function AboutUs() {
         {/* FULL VITAE DOSSIER MODAL */}
         {selectedMember && (
           <div className="dossier-modal-backdrop" onClick={handleCloseDossier}>
-            <div 
-              className="dossier-modal-window wood-mahogany" 
+            <div
+              className="dossier-modal-window wood-mahogany"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="dossier-header-bar">
@@ -394,8 +406,8 @@ export default function AboutUs() {
                   <h2 className="dossier-name">{selectedMember.name}</h2>
                   <span className="dossier-designation">{selectedMember.designation}</span>
                 </div>
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="dossier-close-btn"
                   onClick={handleCloseDossier}
                   aria-label="Close Dossier"
@@ -409,6 +421,40 @@ export default function AboutUs() {
 
               <div className="dossier-body-grid">
                 <div className="dossier-left-col">
+                  {/* Operative Photo Dossier Card (Facebook Profile Format) */}
+                  <div className="dossier-photo-card">
+                    <div className="dossier-photo-frame fb-modal-frame">
+                      {selectedMember.image ? (
+                        <img
+                          src={selectedMember.image}
+                          alt={selectedMember.name}
+                          className="dossier-photo-img fb-profile-pic"
+                          onError={(e) => {
+                            e.currentTarget.style.display = "none";
+                            const fb = e.currentTarget.parentElement?.querySelector(".fb-modal-fallback");
+                            if (fb) fb.style.display = "flex";
+                          }}
+                        />
+                      ) : null}
+                      <div
+                        className="fb-modal-fallback"
+                        style={{ display: selectedMember.image ? "none" : "flex" }}
+                      >
+                        <svg viewBox="0 0 24 24" className="fb-placeholder-svg" fill="currentColor">
+                          <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z" />
+                        </svg>
+                        <span className="dossier-fallback-code">{selectedMember.codename.slice(0, 3)}</span>
+                      </div>
+                      <span className="fb-active-dot modal" title="Active now" />
+                    </div>
+                    <div className="dossier-photo-meta">
+                      <span className="dossier-photo-id">{selectedMember.id} // {selectedMember.codename}</span>
+                      <span className="dossier-live-status">
+                        <span className="telemetry-live-dot" /> ACTIVE NOW
+                      </span>
+                    </div>
+                  </div>
+
                   <div className="dossier-meta-card">
                     <span className="meta-card-title">SPECIALTY FOCUS</span>
                     <p className="meta-card-text">{selectedMember.highlight}</p>
@@ -470,8 +516,8 @@ export default function AboutUs() {
                 <span className="dossier-status-text">
                   STATUS: VERIFIED DEVELOPER RECORD // BUILDLAB V2.4
                 </span>
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="dossier-done-btn"
                   onClick={handleCloseDossier}
                 >
@@ -492,31 +538,31 @@ export default function AboutUs() {
             <h2 className="origin-title">Why We Built BuildLab</h2>
             <div className="origin-text-columns">
               <p>
-                First-time PC builders face a daunting challenge: components are expensive, technical jargon 
-                is confusing, and physical mismatches—like a cooler that blocks tall RAM heat spreaders or 
+                First-time PC builders face a daunting challenge: components are expensive, technical jargon
+                is confusing, and physical mismatches—like a cooler that blocks tall RAM heat spreaders or
                 an underpowered power supply—lead to wasted money or broken parts.
               </p>
               <p>
-                As students at <strong>Pateros Technological College</strong>, the WhiteHats team wanted to 
-                solve this problem directly. We combined real-time 3D rendering with an exhaustive compatibility 
-                matrix and interactive step-by-step assembly guides, giving students and enthusiasts a safe, 
+                As students at <strong>Pateros Technological College</strong>, the WhiteHats team wanted to
+                solve this problem directly. We combined real-time 3D rendering with an exhaustive compatibility
+                matrix and interactive step-by-step assembly guides, giving students and enthusiasts a safe,
                 zero-risk environment to learn and experiment.
               </p>
             </div>
 
             <div className="origin-actions">
-              <Link 
-                to="/build" 
+              <Link
+                to="/build"
                 className="origin-cta-btn primary"
-                onClick={() => { try { soundManager.click(); } catch {} }}
+                onClick={() => { try { soundManager.click(); } catch { } }}
               >
                 <span>OPEN PC BUILDER</span>
                 <span className="btn-arrow">&rarr;</span>
               </Link>
-              <Link 
-                to="/3d-builder" 
+              <Link
+                to="/3d-builder"
                 className="origin-cta-btn secondary"
-                onClick={() => { try { soundManager.click(); } catch {} }}
+                onClick={() => { try { soundManager.click(); } catch { } }}
               >
                 <span>LAUNCH 3D STUDIO</span>
               </Link>

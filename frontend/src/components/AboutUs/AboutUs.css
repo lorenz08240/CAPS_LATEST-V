@@ -295,11 +295,107 @@
   border-radius: 3px;
 }
 
+/* ── FACEBOOK PROFILE PICTURE FORMAT ── */
 .card-avatar-wrap {
   position: relative;
-  width: 64px;
-  height: 64px;
+  width: 86px;
+  height: 86px;
   margin-top: 0.2rem;
+}
+
+.fb-profile-frame {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%; /* Facebook circular profile format */
+  background: #18191a; /* FB Dark mode surface */
+  border: 3px solid rgba(212, 163, 75, 0.45); /* Cyber-gold profile ring */
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6), 0 0 12px rgba(212, 163, 75, 0.15);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.team-member-card:hover .fb-profile-frame {
+  border-color: #d4a34b;
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(212, 163, 75, 0.4), 0 8px 24px rgba(0, 0, 0, 0.7);
+}
+
+.fb-profile-pic {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.team-member-card:hover .fb-profile-pic {
+  transform: scale(1.08);
+}
+
+/* Facebook-style default silhouette placeholder */
+.fb-avatar-fallback,
+.fb-modal-fallback {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at center, #242526 0%, #18191a 100%);
+  color: #8a8d91;
+  position: relative;
+}
+
+.fb-placeholder-svg {
+  width: 52%;
+  height: 52%;
+  fill: #8a8d91;
+  opacity: 0.85;
+  transition: fill 0.2s ease, opacity 0.2s ease;
+}
+
+.team-member-card:hover .fb-placeholder-svg {
+  fill: #d4a34b;
+  opacity: 1;
+}
+
+.fb-fallback-code {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #cbd5e1;
+  margin-top: -4px;
+}
+
+/* Facebook Active Status Green Dot */
+.fb-active-dot {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background-color: #31a24c; /* Facebook exact active green */
+  border: 2.5px solid #0d111a;
+  box-shadow: 0 0 6px rgba(49, 162, 76, 0.8);
+  z-index: 5;
+  pointer-events: none;
+}
+
+.fb-active-dot.modal {
+  bottom: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  border: 3px solid #121826;
 }
 
 .avatar-hex-frame {
@@ -576,6 +672,72 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+}
+
+/* Dossier Operative Photo Card (Facebook Profile Format) */
+.dossier-photo-card {
+  background: rgba(18, 24, 38, 0.7);
+  border: 1px solid rgba(212, 163, 75, 0.25);
+  border-radius: 8px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  text-align: center;
+}
+
+.fb-modal-frame {
+  position: relative;
+  width: 124px;
+  height: 124px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3.5px solid rgba(212, 163, 75, 0.55);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7), 0 0 20px rgba(212, 163, 75, 0.25);
+  background: #18191a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fb-modal-frame .fb-placeholder-svg {
+  width: 55%;
+  height: 55%;
+}
+
+.fb-modal-frame .dossier-fallback-code {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 0.85rem;
+  font-weight: 900;
+  color: #d4a34b;
+  letter-spacing: 1.5px;
+}
+
+.dossier-photo-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  align-items: center;
+}
+
+.dossier-photo-id {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  color: #94a3b8;
+}
+
+.dossier-live-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #10b981;
 }
 
 .dossier-meta-card {
