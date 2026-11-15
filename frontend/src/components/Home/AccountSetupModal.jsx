@@ -1,18 +1,55 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { useLearnMode } from "../../contexts/LearnModeContext";
+import { enterFullscreen, isFullscreenActive, markFullscreenEngaged } from "../../utilities/fullscreen";
 import soundManager from "../../utilities/soundManager";
 import "./AccountSetupModal.css";
 
-export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
-  const { userProfile, setUserProfile, setAppMode } = useLearnMode();
+const STRAND_OPTIONS = [
+  "Grade 11 TVL - Computer Systems Servicing (CSS)",
+  "Grade 12 TVL - Information & Communications Tech (ICT)",
+  "BS Information Technology (PTC-IICT)",
+  "BS Computer Science / Computer Engineering",
+  "General PC Builder & Tech Enthusiast",
+];
 
-  const [step, setStep] = useState("connect"); // 'connect' | 'tester_email' | 'name_input'
+const INTEREST_OPTIONS = [
+  { id: "assembly_safety", label: "Desktop PC Assembly & Lab Safety", icon: "⚡" },
+  { id: "sockets_keying", label: "Component Keying & Sockets", icon: "🧩" },
+  { id: "psu_cables", label: "PSU Wattage & Keyed Cables", icon: "🔌" },
+  { id: "cooling_airflow", label: "Airflow Physics & Cooling", icon: "❄️" },
+  { id: "post_debug", label: "POST Troubleshooting & LEDs", icon: "🛠️" },
+  { id: "gaming_esports", label: "High-FPS Esports & Gaming Builds", icon: "🎮" },
+];
+
+const EXPERIENCE_OPTIONS = [
+  "Beginner (First time touching bare PC hardware)",
+  "Novice (Familiar with parts, practicing assembly)",
+  "Intermediate (Built a PC before, mastering standards)",
+];
+
+export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
+  const { userProfile, setUserProfile, setAppMode, unlockStage } = useLearnMode();
+
+  const [step, setStep] = useState("connect"); // 'connect' | 'tester_email' | 'name_input' | 'about_you'
   const [fullName, setFullName] = useState(userProfile.fullName || "");
   const [email, setEmail] = useState(userProfile.email || "");
   const [avatar, setAvatar] = useState(
     userProfile.photo ||
       "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=120&h=120&fit=crop&crop=faces"
   );
+  const [strand, setStrand] = useState(
+    userProfile.strand || "Grade 11 TVL - Computer Systems Servicing (CSS)"
+  );
+  const [interests, setInterests] = useState(
+    userProfile.interests && userProfile.interests.length > 0
+      ? userProfile.interests
+      : ["Desktop PC Assembly & Lab Safety", "Component Keying & Sockets"]
+  );
+  const [experienceLevel, setExperienceLevel] = useState(
+    userProfile.experienceLevel || "Beginner (First time touching bare PC hardware)"
+  );
+
   const [isLinking, setIsLinking] = useState(false);
   const [error, setError] = useState("");
   const [testerEmailInput, setTesterEmailInput] = useState("");
@@ -23,13 +60,19 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
 
   if (!isOpen) return null;
 
+  const toggleInterest = (label) => {
+    try { soundManager.snap(); } catch {}
+    setInterests((prev) =>
+      prev.includes(label) ? prev.filter((i) => i !== label) : [...prev, label]
+    );
+  };
+
   // Google Sign-In linking
   const handleGoogleSignIn = async () => {
-    soundManager.click();
+    try { soundManager.click(); } catch {}
     setError("");
     setIsLinking(true);
 
-    // Wait up to 1.5 seconds for window.google to be ready if needed
     if (!window.google?.accounts?.oauth2) {
       await new Promise((resolve) => {
         let count = 0;
@@ -43,7 +86,6 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
       });
     }
 
-    // If real Google Client ID is configured and Google GSI script is loaded:
     if (googleClientId && window.google?.accounts?.oauth2) {
       try {
         const client = window.google.accounts.oauth2.initTokenClient({
@@ -99,14 +141,13 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
     e.preventDefault();
     const cleanEmail = testerEmailInput.trim();
     if (!cleanEmail || !cleanEmail.includes("@")) {
-      soundManager.warning();
+      try { soundManager.warning(); } catch {}
       setError("Please enter a valid Google email address (e.g. yourname@gmail.com).");
       return;
     }
 
-    soundManager.granted();
+    try { soundManager.granted(); } catch {}
     setEmail(cleanEmail);
-    // Extract a default legal name suggestion from the email prefix
     const namePrefix = cleanEmail.split("@")[0].replace(/[._-]/g, " ");
     const formattedName = namePrefix
       .split(" ")
@@ -123,17 +164,33 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
   const handleNameSubmit = (e) => {
     e.preventDefault();
     if (!fullName.trim()) {
-      soundManager.warning();
-      setError("Please enter your name to proceed to the Build station.");
+      try { soundManager.warning(); } catch {}
+      setError("Please enter your name as it will appear on your verified certificate.");
       return;
     }
 
-    soundManager.granted();
+    try { soundManager.granted(); } catch {}
+    setError("");
+    setStep("about_you");
+  };
+
+  const handleFinalProfileSubmit = (e) => {
+    e.preventDefault();
+    if (interests.length === 0) {
+      try { soundManager.warning(); } catch {}
+      setError("Please select at least one primary hardware interest.");
+      return;
+    }
+
+    try { soundManager.granted(); } catch {}
     const finalProfile = {
       fullName: fullName.trim(),
       email: email.trim() || "learner.tester@gmail.com",
       photo: avatar,
       googleId: "google-oauth2|verified",
+      strand,
+      interests,
+      experienceLevel,
       setupCompleted: true,
       joinedDate: new Date().toLocaleDateString("en-US", {
         month: "long",
@@ -144,6 +201,45 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
 
     setUserProfile(finalProfile);
     setAppMode("learn");
+    unlockStage("build");
+    unlockStage("compatibility");
+    unlockStage("learn");
+    unlockStage("studio");
+    unlockStage("certificate");
+
+    // Save complete student identity to localStorage.user so all app parts recognize them immediately
+    try {
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          id: "student_" + Date.now(),
+          fullName: finalProfile.fullName,
+          name: finalProfile.fullName,
+          email: finalProfile.email,
+          photo: finalProfile.photo,
+          accountType: "student",
+          schoolYear: strand.includes("Grade 12") ? "Grade 12" : strand.includes("BS") ? "College" : "Grade 11",
+          strand: finalProfile.strand,
+          interests: finalProfile.interests,
+          experienceLevel: finalProfile.experienceLevel,
+        })
+      );
+      localStorage.setItem("buildlab_app_mode", "learn");
+      localStorage.setItem("buildlab_user_profile", JSON.stringify(finalProfile));
+      sessionStorage.setItem("buildlab_pending_learner_welcome", finalProfile.fullName);
+    } catch {}
+
+    // Auto fullscreen if windowed not preferred
+    try {
+      const isWindowedPref = sessionStorage.getItem("buildlab_windowed_mode") === "true";
+      if (!isWindowedPref && !isFullscreenActive()) {
+        enterFullscreen()
+          .then((ok) => {
+            if (ok) markFullscreenEngaged();
+          })
+          .catch(() => {});
+      }
+    } catch {}
 
     // Sync to backend Google Learner Directory
     try {
@@ -156,34 +252,37 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
           fullName: finalProfile.fullName,
           photo: finalProfile.photo,
           institution: "Pateros Technological College",
-          unlockedStages: ["build"]
-        })
+          strand: finalProfile.strand,
+          interests: finalProfile.interests,
+          unlockedStages: ["build", "compatibility", "learn", "studio", "certificate"],
+        }),
       }).catch(() => {});
     } catch {}
 
-    // Dispatch learner onboarding event for B.O.B.'s guide animation
-    try {
-      window.dispatchEvent(
-        new CustomEvent("buildlab:learner-onboarding-welcome", {
-          detail: { name: fullName.trim() },
-        })
-      );
-    } catch {}
-
     if (onConfirmed) {
-      onConfirmed("learn");
+      onConfirmed("learn", finalProfile);
     } else {
       onClose();
     }
   };
 
   return (
-    <div className="account-modal-overlay" onClick={onClose}>
+    <div className="account-modal-overlay" onClick={onClose} role="dialog" aria-modal="true">
       <div className="account-modal-card" onClick={(e) => e.stopPropagation()}>
         <div className="account-modal-header">
           <div className="account-step-tag">
-            <span className="step-badge">[ 01 ]</span>
-            <span className="step-title">LEARN MODE // GOOGLE AUTH</span>
+            <span className="step-badge">
+              {step === "connect" && "[ 01 / 03 ]"}
+              {step === "tester_email" && "[ 01 / 03 ]"}
+              {step === "name_input" && "[ 02 / 03 ]"}
+              {step === "about_you" && "[ 03 / 03 ]"}
+            </span>
+            <span className="step-title">
+              {step === "connect" && "LEARN MODE // GOOGLE AUTH"}
+              {step === "tester_email" && "LEARN MODE // TESTER EMAIL"}
+              {step === "name_input" && "STUDENT CERTIFICATION NAME"}
+              {step === "about_you" && "TELL US ABOUT YOU // INTERESTS"}
+            </span>
           </div>
           <button
             type="button"
@@ -195,6 +294,7 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
           </button>
         </div>
 
+        {/* STEP 1: CONNECT GOOGLE ACCOUNT */}
         {step === "connect" && (
           <div className="account-step-body">
             <div className="account-hero-icon">
@@ -202,12 +302,11 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
             </div>
             <h2 className="account-title">Student Certification Profile</h2>
             <p className="account-subtitle">
-              Sign in with your Google account to track your progress and generate your official BuildLab verified Certificate of Completion.
+              Sign in with your Google account to unlock the full 6-module curriculum, track progress across all 19 topics, and earn your verified PTC-IICT E-Certificate.
             </p>
 
             {error && <div className="account-error-alert">{error}</div>}
 
-            {/* PRIMARY: GOOGLE ACCOUNT BUTTON */}
             <div className="google-only-auth-container">
               <button
                 type="button"
@@ -257,9 +356,17 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
             <p className="account-trust-note">
               🔒 We only access your basic Google identity to save your custom rig builds and Academy certificate. No private drive data requested.
             </p>
+            <div className="account-legal-links">
+              <Link to="/privacy" onClick={onClose}>Privacy Policy</Link>
+              <span>&middot;</span>
+              <Link to="/terms" onClick={onClose}>Terms of Service</Link>
+              <span>&middot;</span>
+              <Link to="/cookies" onClick={onClose}>Cookie Policy</Link>
+            </div>
           </div>
         )}
 
+        {/* STEP 1B: TESTER EMAIL FALLBACK */}
         {step === "tester_email" && (
           <form className="account-step-body" onSubmit={handleTesterEmailSubmit}>
             <div className="account-hero-icon">
@@ -289,7 +396,6 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
               </span>
             </div>
 
-            {/* Expandable Google Cloud OAuth Client ID configuration helper */}
             <div className="google-clientid-helper">
               <button
                 type="button"
@@ -339,6 +445,7 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
           </form>
         )}
 
+        {/* STEP 2: LEGAL NAME FOR CERTIFICATE */}
         {step === "name_input" && (
           <form className="account-step-body" onSubmit={handleNameSubmit}>
             <div className="verified-google-badge">
@@ -351,7 +458,7 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
 
             <h3 className="details-heading">Enter Your Legal Name</h3>
             <p className="details-sub">
-              Please enter your full name as you wish it to appear on your verified Certificate of Completion and B.O.B. companion logs:
+              Please enter your full legal name exactly as you wish it to appear on your verified Certificate of Completion and school submission records:
             </p>
 
             {error && <div className="account-error-alert">{error}</div>}
@@ -364,12 +471,12 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
                 className="account-input"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                placeholder="e.g. Alex J. Mercer"
+                placeholder="e.g. Chloe Ramirez"
                 autoFocus
                 required
               />
               <span className="input-hint">
-                Certificate will be issued to: <strong>{fullName || "Your Name"}</strong>
+                E-Certificate will be officially issued to: <strong>{fullName || "Your Name"}</strong>
               </span>
             </div>
 
@@ -385,7 +492,100 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
                 &larr; Reconnect
               </button>
               <button type="submit" className="btn-confirm-track">
-                <span>PROCEED TO 2D BUILDER</span>
+                <span>NEXT: TELL US ABOUT YOU</span>
+                <span className="btn-arrow">&rarr;</span>
+              </button>
+            </div>
+          </form>
+        )}
+
+        {/* STEP 3: TELL US ABOUT YOU (INTERESTS & STRAND) */}
+        {step === "about_you" && (
+          <form className="account-step-body about-you-form" onSubmit={handleFinalProfileSubmit}>
+            <div className="about-you-badge">
+              <span className="about-you-sparkle">✨</span>
+              <span>PERSONALIZED STUDENT PROFILE</span>
+            </div>
+
+            <h3 className="details-heading">Tell Us About You</h3>
+            <p className="details-sub">
+              Personalize your BuildLab experience. We'll tailor hardware challenges and curriculum tracks to match your learning interests.
+            </p>
+
+            {error && <div className="account-error-alert">{error}</div>}
+
+            {/* 1. Academic Track / Strand */}
+            <div className="account-form-group">
+              <label htmlFor="strand-select">Academic Program / Strand *</label>
+              <select
+                id="strand-select"
+                className="account-select"
+                value={strand}
+                onChange={(e) => setStrand(e.target.value)}
+              >
+                {STRAND_OPTIONS.map((opt) => (
+                  <option key={opt} value={opt}>
+                    {opt}
+                  </option>
+                ))}
+              </select>
+              <span className="input-hint">
+                Curriculum certification matches your institutional academic track.
+              </span>
+            </div>
+
+            {/* 2. Primary Hardware Interests (Multi-select) */}
+            <div className="account-form-group">
+              <label>Primary Hardware Interests & Goals (Select all that apply) *</label>
+              <div className="interests-grid">
+                {INTEREST_OPTIONS.map((item) => {
+                  const isChecked = interests.includes(item.label);
+                  return (
+                    <button
+                      type="button"
+                      key={item.id}
+                      className={`interest-card-pill ${isChecked ? "is-selected" : ""}`}
+                      onClick={() => toggleInterest(item.label)}
+                    >
+                      <span className="interest-icon">{item.icon}</span>
+                      <span className="interest-label">{item.label}</span>
+                      <span className="interest-checkbox">{isChecked ? "✓" : "+"}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* 3. Hardware Experience Level */}
+            <div className="account-form-group">
+              <label htmlFor="exp-select">Hardware Assembly Experience Level</label>
+              <select
+                id="exp-select"
+                className="account-select"
+                value={experienceLevel}
+                onChange={(e) => setExperienceLevel(e.target.value)}
+              >
+                {EXPERIENCE_OPTIONS.map((opt) => (
+                  <option key={opt} value={opt}>
+                    {opt}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="account-form-actions">
+              <button
+                type="button"
+                className="btn-back-step"
+                onClick={() => {
+                  setError("");
+                  setStep("name_input");
+                }}
+              >
+                &larr; Back
+              </button>
+              <button type="submit" className="btn-confirm-track btn-unlock-all">
+                <span>COMPLETE &amp; UNLOCK ACADEMY 🎓</span>
                 <span className="btn-arrow">&rarr;</span>
               </button>
             </div>

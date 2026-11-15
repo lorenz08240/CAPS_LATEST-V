@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "./Home.css";
 import Build from "../Build/Build";
 import Home3DHero from "./Home3DHero";
 import CyberBrand from "../Navigation/CyberBrand";
+import StageUnlockBanner from "../Navigation/StageUnlockBanner";
 import AccountSetupModal from "./AccountSetupModal";
 import ModeSelectionCards from "./ModeSelectionCards";
 import RigPickerTransitionOverlay from "./RigPickerTransitionOverlay";
@@ -26,6 +27,9 @@ function Home() {
   const [showModeCards, setShowModeCards] = useState(false);
   const [showAccountModal, setShowAccountModal] = useState(false);
   const [showTransitionOverlay, setShowTransitionOverlay] = useState(false);
+  const [transitionMode, setTransitionMode] = useState("explore");
+  const [showLearnerWelcomeBanner, setShowLearnerWelcomeBanner] = useState(false);
+  const [welcomeLearnerProfile, setWelcomeLearnerProfile] = useState(null);
   const [activeModel, setActiveModel] = useState('case');
   const [scrollProgress, setScrollProgress] = useState(0);
   const [startBuildRequested, setStartBuildRequested] = useState(false);
@@ -54,6 +58,16 @@ function Home() {
       if (userProfile?.setupCompleted) {
         soundManager.granted();
         setAppMode("learn");
+        try {
+          sessionStorage.setItem(
+            "buildlab_pending_learner_welcome",
+            userProfile.fullName || "Builder"
+          );
+        } catch {}
+        setWelcomeLearnerProfile(userProfile);
+        setTransitionMode("learn");
+        setShowTransitionOverlay(true);
+        handleScrollToBuild("smooth");
       } else {
         soundManager.click();
         setShowAccountModal(true);
@@ -457,6 +471,13 @@ function Home() {
               <span className="btn-label">START BUILD</span>
               <span className="btn-arrow">&rarr;</span>
             </button>
+            <div className="hero-legal-links">
+              <Link to="/privacy">Privacy Policy</Link>
+              <span>&middot;</span>
+              <Link to="/terms">Terms of Service</Link>
+              <span>&middot;</span>
+              <Link to="/cookies">Cookie Policy</Link>
+            </div>
           </div>
         </section>
 
@@ -476,6 +497,7 @@ function Home() {
         onSelectFree={() => {
           setShowModeCards(false);
           setAppMode("explore");
+          setTransitionMode("explore");
           setShowTransitionOverlay(true);
           handleScrollToBuild("smooth");
         }}
@@ -485,21 +507,72 @@ function Home() {
       <AccountSetupModal
         isOpen={showAccountModal}
         onClose={() => setShowAccountModal(false)}
-        onConfirmed={(targetMode) => {
+        onConfirmed={(targetMode, confirmedProfile) => {
           setShowAccountModal(false);
           if (targetMode === "explore") {
             setAppMode("explore");
+            setTransitionMode("explore");
+            setShowTransitionOverlay(true);
+            handleScrollToBuild("smooth");
           } else {
             setAppMode("learn");
+            setWelcomeLearnerProfile(confirmedProfile || userProfile);
+            setTransitionMode("learn");
+            setShowTransitionOverlay(true);
+            handleScrollToBuild("smooth");
           }
-          handleScrollToBuild("smooth");
         }}
       />
       {/* ── Rig Component Picker Transition Overlay ── */}
       <RigPickerTransitionOverlay
         isOpen={showTransitionOverlay}
-        onComplete={() => setShowTransitionOverlay(false)}
+        mode={transitionMode}
+        learnerName={welcomeLearnerProfile?.fullName || userProfile?.fullName || ""}
+        onComplete={() => {
+          setShowTransitionOverlay(false);
+          const hasPendingWelcome =
+            transitionMode === "learn" ||
+            (typeof sessionStorage !== "undefined" &&
+              Boolean(sessionStorage.getItem("buildlab_pending_learner_welcome")));
+          if (hasPendingWelcome) {
+            setShowLearnerWelcomeBanner(true);
+          }
+        }}
       />
+
+      {/* ── Interactive Learner Welcome & Stage 01 Readiness Banner ── */}
+      {showLearnerWelcomeBanner && (
+        <StageUnlockBanner
+          stageKey="build"
+          stageNumber="01"
+          badge="LEARN TRACK // STAGE 01 READY"
+          title={`WELCOME, ${(
+            welcomeLearnerProfile?.fullName ||
+            userProfile?.fullName ||
+            "BUILDER"
+          ).toUpperCase()}!`}
+          subtitle="Your Google student profile is synced. Stage 01 (2D Rig Assembly) is ready — click below when you are settled in Full Screen so B.O.B. can start your guided tour!"
+          accentColor="#00e5a0"
+          requireConfirm={true}
+          autoFullscreenOnConfirm={true}
+          learnerProfile={welcomeLearnerProfile || userProfile}
+          onComplete={() => {
+            setShowLearnerWelcomeBanner(false);
+            const finalName =
+              welcomeLearnerProfile?.fullName ||
+              userProfile?.fullName ||
+              "Builder";
+            try {
+              sessionStorage.removeItem("buildlab_pending_learner_welcome");
+              window.dispatchEvent(
+                new CustomEvent("buildlab:learner-onboarding-welcome", {
+                  detail: { name: finalName },
+                })
+              );
+            } catch {}
+          }}
+        />
+      )}
   </>
   );
 }

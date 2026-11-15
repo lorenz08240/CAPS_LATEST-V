@@ -33,7 +33,14 @@ function Footer() {
           <div className="footer-column">
             <h3>Resources</h3>
             <Link to="/brands">Brands</Link>
+            <Link to="/help">Help &amp; Support</Link>
             <a href="https://github.com/buildcores/buildcores-open-db" target="_blank" rel="noreferrer">Open DB</a>
+          </div>
+          <div className="footer-column">
+            <h3>Legal &amp; Privacy</h3>
+            <Link to="/privacy">Privacy Policy</Link>
+            <Link to="/terms">Terms of Service</Link>
+            <Link to="/cookies">Cookie Policy</Link>
             <button
               type="button"
               className="footer-cookie-btn"

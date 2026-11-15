@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import soundManager from "../../utilities/soundManager";
 import "./CookieConsent.css";
 
@@ -31,23 +32,46 @@ export default function CookieConsent() {
     }));
   };
 
+  // Synchronous check to avoid flashes on deep links
+  const hasExistingConsent = () => {
+    try {
+      if (typeof window === "undefined" || !window.localStorage) return false;
+      const c1 = localStorage.getItem("buildlab_cookie_consent");
+      const c2 = localStorage.getItem("buildlab_cookie_consent_v1");
+      if (c1) return true;
+      if (c2) {
+        try {
+          const parsed = JSON.parse(c2);
+          if (parsed && (parsed.decided || parsed.necessary !== undefined)) return true;
+        } catch {}
+      }
+      return false;
+    } catch {
+      return false;
+    }
+  };
+
   useEffect(() => {
     try {
-      const consent = localStorage.getItem("buildlab_cookie_consent");
-      if (!consent) {
-        const timer = setTimeout(() => setShowNotice(true), 1000);
-        return () => clearTimeout(timer);
-      } else {
+      if (hasExistingConsent()) {
         const prefs = JSON.parse(localStorage.getItem("buildlab_cookie_preferences") || "{}");
         if (prefs.analytics !== undefined) setAnalyticsActive(prefs.analytics);
         if (prefs.functionality !== undefined) setFunctionalityActive(prefs.functionality);
+        return;
       }
+      const timer = setTimeout(() => {
+        if (!hasExistingConsent()) {
+          setShowNotice(true);
+        }
+      }, 1000);
+      return () => clearTimeout(timer);
     } catch {}
   }, []);
 
   const saveToStorage = (type, prefs) => {
     try {
       localStorage.setItem("buildlab_cookie_consent", type);
+      localStorage.setItem("buildlab_cookie_consent_v1", JSON.stringify({ ...prefs, decided: true }));
       localStorage.setItem("buildlab_cookie_preferences", JSON.stringify(prefs));
       localStorage.setItem("buildlab_cookie_consent_date", new Date().toISOString());
     } catch {}
@@ -123,7 +147,10 @@ export default function CookieConsent() {
                 <span id="cookie-title" className="cookie-heading">COOKIE &amp; DATA USAGE NOTICE</span>
               </div>
               <p className="cookie-description">
-                BuildLab uses cookies and browser storage to preserve your PC component builds, session preferences, and student certification progress. You can accept all or customize individual cookie categories.
+                BuildLab uses cookies and browser storage to preserve your PC component builds, session preferences, and student certification progress. Read our{" "}
+                <Link to="/cookies" style={{ color: "#38bdf8", textDecoration: "underline" }}>Cookie Policy</Link>{" "}
+                and{" "}
+                <Link to="/privacy" style={{ color: "#38bdf8", textDecoration: "underline" }}>Privacy Policy</Link>.
               </p>
             </div>
 
@@ -490,9 +517,9 @@ export default function CookieConsent() {
                 </div>
                 <p className="more-info-text">
                   BuildLab does not sell your personal data. All component engineering benchmarks, socket validation algorithms, and simulation tools are provided for educational purposes. For details, read our{" "}
-                  <a href="#terms" onClick={(e) => { e.preventDefault(); alert("BuildLab Terms & Privacy: Hardware benchmarks, 3D models, and certification records are stored for student educational evaluation."); }}>
-                    Privacy Policy &amp; Terms of Service
-                  </a>.
+                  <Link to="/privacy" onClick={() => setShowPreferencesModal(false)}>Privacy Policy</Link>,{" "}
+                  <Link to="/terms" onClick={() => setShowPreferencesModal(false)}>Terms of Service</Link>, and{" "}
+                  <Link to="/cookies" onClick={() => setShowPreferencesModal(false)}>Cookie Policy</Link>.
                 </p>
               </div>
             </div>

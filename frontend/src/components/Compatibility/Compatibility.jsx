@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useEffect, useCallback, useRef } from "react";
+import jsPDF from "jspdf";
 import EyeTracker from "../EyeTracker/EyeTracker";
 import { createPortal } from "react-dom";
 import { Link, useNavigate } from "react-router-dom";
@@ -341,6 +342,11 @@ function CompatibilityView({ isIntegrated = false }) {
     iss.components.some((c) => c.toLowerCase() === "psu" || c.toLowerCase() === "gpu")
   );
 
+  // Verification pass condition: ONLY true when user completes a 7-stage rig with 0 compatibility issues
+  const isRigComplete = selectedComponents.length >= 7;
+  const hasZeroIssues = compatibilityIssues.length === 0;
+  const isVerificationPassed = isRigComplete && hasZeroIssues;
+
   // Auditory feedback when entering Compatibility Checker
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -361,6 +367,147 @@ function CompatibilityView({ isIntegrated = false }) {
     soundManager.granted();
     setSaveMessage(`Build saved to Slot ${slot + 1}!`);
     setTimeout(() => setSaveMessage(""), 3500);
+  };
+
+  const handleExportManifestPDF = () => {
+    try {
+      soundManager.granted();
+      const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const issueList = compatibilityIssues || [];
+      const psuWatts = Number(currentBuild?.psu?.wattage) || 0;
+      const dateStr = new Date().toLocaleString("en-US", {
+        dateStyle: "medium",
+        timeStyle: "short",
+      });
+
+      // Header Banner
+      doc.setFillColor(10, 15, 28);
+      doc.rect(0, 0, pageWidth, 34, "F");
+      doc.setTextColor(0, 229, 160);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(16);
+      doc.text("BUILDLAB // TECHNICAL MANIFEST & BUILD SUMMARY", 14, 15);
+      doc.setTextColor(203, 213, 225);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(9.5);
+      doc.text(`Generated: ${dateStr}  |  Hardware Audit Status: ${issueList.length === 0 ? "100% VERIFIED COMPATIBLE" : `${issueList.length} CONFLICT(S) DETECTED`}`, 14, 24);
+
+      // Build Telemetry Summary Strip
+      let y = 44;
+      doc.setFillColor(241, 245, 249);
+      doc.roundedRect(14, y, pageWidth - 28, 18, 2, 2, "F");
+      doc.setTextColor(15, 23, 42);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(9.5);
+      doc.text(`Components: ${selectedComponents.length}/7`, 18, y + 7.5);
+      doc.text(`Est. Peak Draw: ${estWattage}W`, 62, y + 7.5);
+      doc.text(`PSU Rated: ${psuWatts ? `${psuWatts}W` : "N/A"}`, 112, y + 7.5);
+      doc.text(`Overall Score: ${getBuildScore(currentBuild)}/100`, 156, y + 7.5);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8.5);
+      doc.text(`Gaming Index: ${metricScore(currentBuild, "GPU")}/100   |   Productivity Index: ${metricScore(currentBuild, "CPU")}/100`, 18, y + 14);
+
+      // Components Table Header
+      y = 70;
+      doc.setFillColor(15, 23, 42);
+      doc.rect(14, y, pageWidth - 28, 8, "F");
+      doc.setTextColor(255, 255, 255);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(8.5);
+      doc.text("STAGE / PART", 17, y + 5.5);
+      doc.text("COMPONENT MODEL", 50, y + 5.5);
+      doc.text("SPECIFICATIONS", 132, y + 5.5);
+      doc.text("STATUS", 176, y + 5.5);
+
+      y += 8;
+      const stages = ["case", "motherboard", "cpu", "ram", "storage", "gpu", "psu"];
+      stages.forEach((cat, idx) => {
+        const comp = currentBuild?.[cat];
+        const hasIssue = comp
+          ? issueList.some((iss) =>
+              iss.components.some((c) => c.toLowerCase() === cat)
+            )
+          : false;
+
+        if (idx % 2 === 1) {
+          doc.setFillColor(248, 250, 252);
+          doc.rect(14, y, pageWidth - 28, 11, "F");
+        }
+
+        doc.setTextColor(15, 23, 42);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(8.5);
+        doc.text(cat.toUpperCase(), 17, y + 7);
+
+        doc.setFont("helvetica", "normal");
+        const modelText = comp ? `${comp.brand || ""} ${comp.name || ""}`.trim() : "-- Not Selected --";
+        doc.text(modelText.slice(0, 42), 50, y + 7);
+
+        let specStr = "N/A";
+        if (comp) {
+          const parts = [
+            comp.socket_type,
+            comp.ddr_type,
+            comp.form_factor,
+            comp.capacity,
+            comp.wattage ? `${comp.wattage}W` : null,
+            comp.power_required ? `${comp.power_required}W Req` : null,
+          ].filter(Boolean);
+          specStr = parts.join(" / ") || (comp.price || "Standard");
+        }
+        doc.text(specStr.slice(0, 24), 132, y + 7);
+
+        if (!comp) {
+          doc.setTextColor(100, 116, 139);
+          doc.text("MISSING", 176, y + 7);
+        } else if (hasIssue) {
+          doc.setTextColor(220, 38, 38);
+          doc.setFont("helvetica", "bold");
+          doc.text("CONFLICT", 176, y + 7);
+        } else {
+          doc.setTextColor(22, 163, 74);
+          doc.setFont("helvetica", "bold");
+          doc.text("READY", 176, y + 7);
+        }
+        y += 11;
+      });
+
+      // Compatibility Audit Section
+      y += 8;
+      doc.setTextColor(15, 23, 42);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(11);
+      doc.text("COMPATIBILITY AUDIT LOG", 14, y);
+      y += 6;
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(9);
+      if (issueList.length === 0) {
+        doc.setTextColor(22, 163, 74);
+        doc.text("PASS: No CPU socket, DDR generation, chassis form-factor, or PSU wattage conflicts detected.", 14, y);
+      } else {
+        issueList.forEach((iss, idx) => {
+          doc.setTextColor(220, 38, 38);
+          const line = `${idx + 1}. [${iss.components.join(" / ").toUpperCase()}] ${iss.issue}`;
+          const split = doc.splitTextToSize(line, pageWidth - 28);
+          doc.text(split, 14, y);
+          y += split.length * 4.5 + 2;
+        });
+      }
+
+      // Footer
+      doc.setTextColor(100, 116, 139);
+      doc.setFontSize(8);
+      doc.text("BuildLab PC Architecture & Assembly Studio  |  Pateros Technological College Capstone System", 14, 285);
+
+      doc.save("BuildLab_Technical_Manifest.pdf");
+      setSaveMessage("Technical Manifest PDF exported!");
+      setTimeout(() => setSaveMessage(""), 3500);
+    } catch (err) {
+      console.error("Failed to export technical manifest PDF:", err);
+      alert("Unable to export Technical Manifest PDF. Please check browser popup/download permissions.");
+    }
   };
 
   /* ── Brand Monogram Helper ── */
@@ -486,11 +633,16 @@ function CompatibilityView({ isIntegrated = false }) {
 
           {!isIntegrated && (
             <header className="compat-hero-title-header">
+              <div className="compat-telemetry-badge">
+                <span className="telemetry-live-dot" />
+                <span className="telemetry-label">DIAGNOSTIC MATRIX // REAL-TIME VALIDATION</span>
+                <span className="telemetry-bracket">[ LIVE ]</span>
+              </div>
               <h1 className="compat-hero-title">
                 Real-Time <span className="title-compat-accent">Compatibility</span> Check
               </h1>
               <p className="compat-hero-desc">
-                Every component is instantly verified against your existing choices.
+                Every component is instantly verified against physical clearances, electrical loads, and socket standards.
               </p>
               <div className="compat-bob-guide-pill" title="Hardware Interactive Guide">
                 <span className="bob-guide-icon">🤖</span>
@@ -499,16 +651,17 @@ function CompatibilityView({ isIntegrated = false }) {
             </header>
           )}
 
-          {mode === "learn" && (
-            <div className="compat-learn-unlock-card">
+          {isVerificationPassed && (
+            <div className="compat-learn-unlock-card glass-panel" {...bindBobInteract("Hardware Verification Complete: All 7 stages audited with zero conflicts! Unlock your coursework.")}>
               <div className="learn-unlock-info">
                 <div className="learn-unlock-badge">
-                  <span className="badge-dot" />
-                  <span>STAGE 02 COMPLETE // DIAGNOSTICS AUDITED</span>
+                  <span className="telemetry-live-dot" />
+                  <span className="learn-unlock-badge-label">STAGE 02 COMPLETE // DIAGNOSTICS AUDITED</span>
+                  <span className="telemetry-bracket">[ 7/7 VERIFIED ]</span>
                 </div>
                 <h3 className="learn-unlock-title">Hardware Verification Complete</h3>
                 <p className="learn-unlock-desc">
-                  Your 7-stage build passed comprehensive compatibility inspection. You are now authorized to unlock the BuildLab Hardware Academy and begin your certified coursework.
+                  Your 7-stage PC build passed comprehensive physical clearance, electrical TDP, and socket pinout inspection with zero conflicts. You are now authorized to unlock the BuildLab Hardware Academy and begin your certified coursework.
                 </p>
               </div>
               <button
@@ -583,6 +736,14 @@ function CompatibilityView({ isIntegrated = false }) {
                     <h3 className="section-title">
                       Your Selected Components ({selectedComponents.length} parts)
                     </h3>
+                    <button
+                      type="button"
+                      className="btn-export-manifest"
+                      onClick={handleExportManifestPDF}
+                      title="Download formatted Technical Manifest & Build Summary PDF"
+                    >
+                      <span>📄 EXPORT MANIFEST (PDF)</span>
+                    </button>
                   </div>
 
                   <div className="component-cards-stack">
@@ -919,139 +1080,76 @@ function CompatibilityView({ isIntegrated = false }) {
                     {radarProfileMode ? "Standard Profile" : "Convert Profile"}
                   </button>
                 </div>
-
-                <div className="glass-panel saved-configurations-panel">
-                  <h3 className="section-title">Saved Configurations</h3>
-
-                  <div className="preset-tabs-row">
-                    {[0, 1].map((slot) => (
-                      <button
-                        key={slot}
-                        className={`preset-tab-btn ${selectedSaveSlot === slot ? "tab-active" : ""}`}
-                        onClick={() => setSelectedSaveSlot(slot)}
-                      >
-                        BUILD {slot + 1}
-                        <span className="preset-subtext">Presets</span>
-                      </button>
-                    ))}
-                  </div>
-
-                  <button
-                    className="btn-toggle-evaluation"
-                    onClick={() => setCompareMode(!compareMode)}
-                  >
-                    {compareMode ? "Hide Performance Evaluation" : "Show Performance Evaluation"}
-                  </button>
-
-                  {compareMode && (
-                    <div className="side-by-side-matrix" {...bindBobInteract("Comparison Matrix: Comparing technical specs between Build 1 and Build 2 side-by-side.")}>
-                      <div className="matrix-column col-left">
-                        <div className="matrix-column-title">BUILD 1</div>
-                        <div className="matrix-item-row">
-                          <span className="spec-label">CPU</span>
-                          <span className="spec-val">
-                            {getCompDisplayName(getSavedBuild(0)?.cpu, "Intel Core i9")}
-                          </span>
-                        </div>
-                        <div className="matrix-item-row">
-                          <span className="spec-label">MOTHERBOARD</span>
-                          <span className="spec-val">
-                            {getCompDisplayName(getSavedBuild(0)?.motherboard, "Ainboard")}
-                          </span>
-                        </div>
-                        <div className="matrix-item-row">
-                          <span className="spec-label">RAM</span>
-                          <span className="spec-val spec-green">
-                            {getCompTag(getSavedBuild(0)?.ram, "DDR5")}
-                          </span>
-                        </div>
-                        <div className="matrix-item-row">
-                          <span className="spec-label">STORAGE</span>
-                          <span className="spec-val">
-                            {getCompDisplayName(getSavedBuild(0)?.storage, "3.58 GB")}
-                          </span>
-                        </div>
-                        <div className="matrix-item-row">
-                          <span className="spec-label">GPU</span>
-                          <span className="spec-val">
-                            {getCompDisplayName(getSavedBuild(0)?.gpu, "Geforce 7600")}
-                          </span>
-                        </div>
-                        <div className="matrix-item-row">
-                          <span className="spec-label">PSU</span>
-                          <span className="spec-val spec-red">
-                            {getCompWattage(getSavedBuild(0)?.psu, "15GB")}
-                          </span>
-                        </div>
-                        <div className="matrix-item-row">
-                          <span className="spec-label">CASE</span>
-                          <span className="spec-val">
-                            {getCompDisplayName(getSavedBuild(0)?.case, "Case")}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="matrix-column col-right">
-                        <div className="matrix-column-title">BUILD 2</div>
-                        <div className="matrix-item-row">
-                          <span className="spec-label">CPU</span>
-                          <span className="spec-val">
-                            {getCompDisplayName(getSavedBuild(1)?.cpu, "Intel Core i9")}
-                          </span>
-                        </div>
-                        <div className="matrix-item-row">
-                          <span className="spec-label">MOTHERBOARD</span>
-                          <span className="spec-val">
-                            {getCompDisplayName(getSavedBuild(1)?.motherboard, "Altiboard")}
-                          </span>
-                        </div>
-                        <div className="matrix-item-row">
-                          <span className="spec-label">RAM</span>
-                          <span className="spec-val spec-green">
-                            {getCompTag(getSavedBuild(1)?.ram, "DDR5")}
-                          </span>
-                        </div>
-                        <div className="matrix-item-row">
-                          <span className="spec-label">STORAGE</span>
-                          <span className="spec-val">
-                            {getCompDisplayName(getSavedBuild(1)?.storage, "3.58 GB")}
-                          </span>
-                        </div>
-                        <div className="matrix-item-row">
-                          <span className="spec-label">GPU</span>
-                          <span className="spec-val">
-                            {getCompDisplayName(getSavedBuild(1)?.gpu, "Geforce 7600")}
-                          </span>
-                        </div>
-                        <div className="matrix-item-row">
-                          <span className="spec-label">PSU</span>
-                          <span className="spec-val spec-red">
-                            {getCompWattage(getSavedBuild(1)?.psu, "16GB")}
-                          </span>
-                        </div>
-                        <div className="matrix-item-row">
-                          <span className="spec-label">CASE</span>
-                          <span className="spec-val">
-                            {getCompDisplayName(getSavedBuild(1)?.case, "Case")}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="slot-action-footer">
-                    <button
-                      onClick={() => handleSave(selectedSaveSlot)}
-                      className="btn-save-slot-trigger"
-                      {...bindBobInteract(`Save Snapshot: Stores your current build into Slot ${selectedSaveSlot + 1}.`)}
-                    >
-                      Save Current Build to Slot {selectedSaveSlot + 1}
-                    </button>
-                    {saveMessage && <span className="save-toast-text">{saveMessage}</span>}
-                  </div>
-                </div>
               </section>
             </div>
+          )}
+
+          {selectedComponents.length > 0 && (
+            <section
+              className="compat-compare-launcher-card glass-panel"
+              {...bindBobInteract("Rig Comparison Vault: Save your snapshot and compare side-by-side with other builds.")}
+            >
+              <div className="compare-launcher-info">
+                <div className="compare-launcher-badge">
+                  <span className="telemetry-live-dot" />
+                  <span className="compare-launcher-badge-label">RIG CONFIGURATION VAULT // DUAL-SLOT ARCHITECTURE</span>
+                  <span className="telemetry-bracket">[ READY ]</span>
+                </div>
+                <h3 className="compare-launcher-title">Compare Rigs &amp; Configuration Vault</h3>
+                <p className="compare-launcher-desc">
+                  Save your active custom build snapshot into a profile slot or launch the side-by-side Rig Comparison Matrix to evaluate hardware clearances, memory bandwidth, and benchmark differentials against alternative configurations.
+                </p>
+                <div className="compare-launcher-slots-row">
+                  <span className="slots-label">STORAGE SLOT:</span>
+                  {[0, 1, 2].map((slot) => {
+                    const hasSlotData = Boolean(savedBuilds?.[slot]);
+                    return (
+                      <button
+                        key={slot}
+                        type="button"
+                        className={`launcher-slot-chip ${selectedSaveSlot === slot ? "slot-selected" : ""} ${hasSlotData ? "slot-occupied" : ""}`}
+                        onClick={() => {
+                          try { soundManager.click(); } catch {}
+                          setSelectedSaveSlot(slot);
+                        }}
+                        title={hasSlotData ? `Slot 0${slot + 1} has saved build` : `Slot 0${slot + 1} is empty`}
+                      >
+                        <span className="slot-dot" />
+                        <span>SLOT 0{slot + 1}</span>
+                        {hasSlotData && <span className="slot-tag-saved">SAVED</span>}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="compare-launcher-actions">
+                <button
+                  type="button"
+                  className="btn-launcher-save"
+                  onClick={() => handleSave(selectedSaveSlot)}
+                  title="Save current workbench components into selected slot"
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                  <span>SAVE RIG TO SLOT 0{selectedSaveSlot + 1}</span>
+                </button>
+
+                <button
+                  type="button"
+                  className="btn-launcher-compare"
+                  onClick={() => {
+                    try { soundManager.click(); } catch {}
+                    navigate("/compare-rigs");
+                  }}
+                  title="Open the Dual Rig Comparison Studio"
+                >
+                  <span>OPEN COMPARE RIGS</span>
+                  <span className="compare-arrow">&rarr;</span>
+                </button>
+
+                {saveMessage && <div className="launcher-save-toast">{saveMessage}</div>}
+              </div>
+            </section>
           )}
         </div>
 

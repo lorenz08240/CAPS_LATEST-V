@@ -30,7 +30,13 @@ export default function FullscreenGate({ children, requireFullscreen = true, dis
   const [fullscreenActive, setFullscreenActive] = useState(() => isFullscreenActive());
   const [engaged, setEngaged] = useState(() => hasEngagedFullscreen());
   const [rotateNeeded, setRotateNeeded] = useState(() => needsRotation());
-  const [windowedMode, setWindowedMode] = useState(false);
+  const [windowedMode, setWindowedMode] = useState(() => {
+    try {
+      return sessionStorage.getItem("buildlab_windowed_mode") === "true";
+    } catch {
+      return false;
+    }
+  });
   const [hasSeenPreloader, setHasSeenPreloader] = useState(() => {
     try {
       return sessionStorage.getItem("buildlab_preloader_seen") === "true";
@@ -38,9 +44,44 @@ export default function FullscreenGate({ children, requireFullscreen = true, dis
       return true;
     }
   });
+  const [onboardingPending, setOnboardingPending] = useState(() => {
+    try {
+      return Boolean(sessionStorage.getItem("buildlab_pending_learner_welcome"));
+    } catch {
+      return false;
+    }
+  });
+
+  useEffect(() => {
+    const checkOnboarding = () => {
+      try {
+        setOnboardingPending(Boolean(sessionStorage.getItem("buildlab_pending_learner_welcome")));
+      } catch {
+        setOnboardingPending(false);
+      }
+    };
+    window.addEventListener("buildlab:start-build-clicked", checkOnboarding);
+    window.addEventListener("buildlab:learner-onboarding-welcome", checkOnboarding);
+    const id = setInterval(checkOnboarding, 350);
+    return () => {
+      window.removeEventListener("buildlab:start-build-clicked", checkOnboarding);
+      window.removeEventListener("buildlab:learner-onboarding-welcome", checkOnboarding);
+      clearInterval(id);
+    };
+  }, []);
 
   const handleDismissToWindowed = useCallback(() => {
+    try {
+      sessionStorage.setItem("buildlab_windowed_mode", "true");
+    } catch {}
     setWindowedMode(true);
+    window.dispatchEvent(new Event("buildlab:windowed-mode"));
+  }, []);
+
+  useEffect(() => {
+    const syncWindowed = () => setWindowedMode(true);
+    window.addEventListener("buildlab:windowed-mode", syncWindowed);
+    return () => window.removeEventListener("buildlab:windowed-mode", syncWindowed);
   }, []);
 
   // Listen for preloader completion so we don't flash the gate underneath the welcome splash
@@ -82,6 +123,8 @@ export default function FullscreenGate({ children, requireFullscreen = true, dis
   const showFullscreen =
     !disabled &&
     !windowedMode &&
+    !(typeof sessionStorage !== "undefined" && sessionStorage.getItem("buildlab_windowed_mode") === "true") &&
+    !onboardingPending &&
     !showRotation &&
     isFullscreenSupported() &&
     !fullscreenActive &&

@@ -142,7 +142,7 @@ export const AdminContent = () => {
         throw new Error("Failed to save profile changes");
       }
 
-      showToast(`Operative ${editingMember.name || editingMember.id} updated & synced!`);
+      showToast(`${editingMember.name || editingMember.id} saved.`);
       setEditingMember(null);
       fetchMembers();
     } catch (err) {
@@ -156,7 +156,7 @@ export const AdminContent = () => {
         <AdminSidebar />
 
         <main className="admin-main-content">
-          <AdminHeader breadcrumbCurrent="Content Management" />
+          <AdminHeader breadcrumbCurrent="Team Profiles" />
 
           <div className="admin-content-inner">
             {notification && (
@@ -169,49 +169,35 @@ export const AdminContent = () => {
             {/* Banner Header */}
             <div className="content-mgmt-header-banner">
               <div className="content-title-group">
-                <div className="content-kicker">CONTENT MANAGER // LIVE DOSSIER EDITOR</div>
-                <h1 className="content-title">Content Management</h1>
+                <div className="content-kicker">CONTENT MANAGEMENT // LIVE DOSSIER EDITOR</div>
+                <h1 className="content-title">Team Profiles</h1>
                 <p className="content-subtitle">
-                  Manage the 5 WhiteHats developer profiles and photos. Any changes automatically synchronize live with the public <Link to="/about" target="_blank" className="text-emerald underline">About Us</Link> page.
+                  Photos, hardware vitae, and details for the {members.length || 5} WhiteHats developers. Saved changes automatically synchronize live with the public <Link to="/about" target="_blank" className="text-emerald underline">About Us</Link> page.
                 </p>
               </div>
 
-              <div className="content-sync-status-card">
-                <div className="sync-status-indicator">
-                  <span className="sync-pulse-dot" />
-                  <span className="sync-status-text">LIVE SYNC ACTIVE</span>
-                </div>
-                <div className="sync-target-info">Public Target: /about ({members.length} Operatives)</div>
+              <div className="roster-header-actions" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <button type="button" className="btn-refresh-accounts" onClick={fetchMembers} title="Fetch latest team data from database">
+                  Sync
+                </button>
+                <Link to="/about" target="_blank" className="btn-view-live-about">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                  </svg>
+                  <span>Open About Us</span>
+                </Link>
               </div>
             </div>
 
-            {/* Operatives Cards Grid */}
+            {/* Developer profile cards */}
             <div className="operatives-roster-container">
-              <div className="roster-header-bar">
-                <div className="roster-header-title">
-                  <span className="tag-bracket">[</span>
-                  <span>THE WHITEHATS &bull; DEVELOPER PROFILES</span>
-                  <span className="tag-bracket">]</span>
-                </div>
-                <div className="roster-header-actions">
-                  <Link to="/about" target="_blank" className="btn-view-live-about">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                      <polyline points="15 3 21 3 21 9"></polyline>
-                      <line x1="10" y1="14" x2="21" y2="3"></line>
-                    </svg>
-                    <span>View Live /about</span>
-                  </Link>
-                  <button type="button" className="btn-refresh-accounts" onClick={fetchMembers}>
-                    Sync
-                  </button>
-                </div>
-              </div>
 
               {loading ? (
                 <div className="accounts-loading-state">
                   <div className="loading-spinner" />
-                  <span>Loading operative dossiers...</span>
+                  <span>Loading profiles...</span>
                 </div>
               ) : error ? (
                 <div className="accounts-error-state">
@@ -240,8 +226,10 @@ export const AdminContent = () => {
                               alt={member.name}
                               className="avatar-img-admin"
                               onError={(e) => {
-                                e.target.style.display = "none";
-                                if (e.target.nextSibling) e.target.nextSibling.style.display = "flex";
+                                e.currentTarget.style.display = "none";
+                                const parent = e.currentTarget.parentElement;
+                                const fallback = parent?.querySelector(".avatar-fallback-initials");
+                                if (fallback) fallback.style.display = "flex";
                               }}
                             />
                           ) : null}
@@ -259,7 +247,12 @@ export const AdminContent = () => {
                           ref={(el) => (cardFileInputRefs.current[member.id] = el)}
                           style={{ display: "none" }}
                           accept="image/*"
-                          onChange={(e) => handlePhotoUpload(e.target.files[0], member.id)}
+                          onChange={(e) => {
+                            if (e.target.files?.[0]) {
+                              handlePhotoUpload(e.target.files[0], member.id);
+                            }
+                            e.target.value = "";
+                          }}
                         />
                         <button
                           type="button"
@@ -279,7 +272,7 @@ export const AdminContent = () => {
                       <div className="operative-card-body">
                         <h3 className="operative-name">{member.name}</h3>
                         <div className="operative-designation">{member.designation}</div>
-                        <div className="operative-codename">CODENAME: {member.codename}</div>
+                        <div className="operative-codename">{member.codename}</div>
 
                         <div className="operative-highlight">
                           <span className="highlight-tag">{member.highlight}</span>
@@ -310,7 +303,7 @@ export const AdminContent = () => {
                             <path d="M12 20h9"></path>
                             <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
                           </svg>
-                          <span>Edit Details</span>
+                          <span>Edit</span>
                         </button>
                       </div>
                     </div>
@@ -386,7 +379,12 @@ export const AdminContent = () => {
                                 ref={modalFileInputRef}
                                 style={{ display: "none" }}
                                 accept="image/*"
-                                onChange={(e) => handlePhotoUpload(e.target.files[0], editingMember.id)}
+                                onChange={(e) => {
+                                  if (e.target.files?.[0]) {
+                                    handlePhotoUpload(e.target.files[0], editingMember.id);
+                                  }
+                                  e.target.value = "";
+                                }}
                               />
                               <div className="photo-buttons-row">
                                 <button
@@ -442,8 +440,8 @@ export const AdminContent = () => {
                           </div>
                         </div>
 
-                        <div className="form-row-2">
-                          <div className="form-group">
+                        <div className="form-row-3">
+                          <div className="form-group" style={{ flex: 1.5 }}>
                             <label className="form-label">DESIGNATION *</label>
                             <input
                               type="text"
@@ -451,6 +449,17 @@ export const AdminContent = () => {
                               className="form-input"
                               value={editingMember.designation || ""}
                               onChange={(e) => setEditingMember({ ...editingMember, designation: e.target.value })}
+                            />
+                          </div>
+
+                          <div className="form-group">
+                            <label className="form-label">BADGE</label>
+                            <input
+                              type="text"
+                              placeholder="e.g. ARCH"
+                              className="form-input uppercase"
+                              value={editingMember.avatar_badge || ""}
+                              onChange={(e) => setEditingMember({ ...editingMember, avatar_badge: e.target.value.toUpperCase() })}
                             />
                           </div>
 
@@ -486,6 +495,17 @@ export const AdminContent = () => {
                             className="form-textarea"
                             value={editingMember.bio || ""}
                             onChange={(e) => setEditingMember({ ...editingMember, bio: e.target.value })}
+                          />
+                        </div>
+
+                        <div className="form-group">
+                          <label className="form-label">KEY CAPSTONE CONTRIBUTIONS (1 PER LINE)</label>
+                          <textarea
+                            rows={3}
+                            placeholder="Engineered multi-tier component picker&#10;Integrated Three.js WebGL canvas&#10;Architected real-time bottleneck algorithms"
+                            className="form-textarea font-mono text-xs"
+                            value={editingMember.key_contributions || ""}
+                            onChange={(e) => setEditingMember({ ...editingMember, key_contributions: e.target.value })}
                           />
                         </div>
 

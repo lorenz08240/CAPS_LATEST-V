@@ -182,6 +182,24 @@ export const LearnModeProvider = ({ children }) => {
     } catch {}
   }, []);
 
+  // Learner Log Out
+  const logoutLearner = useCallback(() => {
+    setUserProfileState({
+      fullName: "",
+      email: "",
+      institution: "",
+      googleId: "",
+      photo: "",
+      setupCompleted: false,
+    });
+    setModeState("explore");
+    try {
+      localStorage.removeItem("buildlab_user_profile");
+      localStorage.setItem("buildlab_app_mode", "explore");
+      sessionStorage.removeItem("buildlab_pending_learner_welcome");
+    } catch {}
+  }, []);
+
   return (
     <LearnModeContext.Provider
       value={{
@@ -198,6 +216,7 @@ export const LearnModeProvider = ({ children }) => {
         closeUnlockBanner,
         canAccessPath,
         resetLearnProgress,
+        logoutLearner,
       }}
     >
       {children}

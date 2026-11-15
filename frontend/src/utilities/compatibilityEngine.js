@@ -246,8 +246,7 @@ export const getCompatibilitySummary = (build = {}, _allComponents = {}) => {
           issue: result1.reason,
           tip: result1.tip,
         });
-      }
-      if (!result2.isCompatible && result2.reason !== result1.reason) {
+      } else if (!result2.isCompatible) {
         issues.push({
           components: [cat2, cat1],
           issue: result2.reason,

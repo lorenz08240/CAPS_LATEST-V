@@ -66,6 +66,11 @@
   color: #ffffff;
 }
 
+body.theme-light .global-brand-title,
+.theme-light .global-brand-title {
+  color: #0f172a;
+}
+
 .global-brand-badge {
   font-size: 0.6rem;
   color: #f43f5e;
@@ -98,6 +103,19 @@
 .global-nav-link.active {
   color: #ffffff;
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+}
+
+body.theme-light .global-nav-link,
+.theme-light .global-nav-link {
+  color: #475569;
+}
+
+body.theme-light .global-nav-link:hover,
+body.theme-light .global-nav-link.active,
+.theme-light .global-nav-link:hover,
+.theme-light .global-nav-link.active {
+  color: #0f172a;
+  text-shadow: none;
 }
 
 .global-nav-link.active::after {
@@ -137,6 +155,21 @@
   border-color: #f43f5e;
   color: #ffffff;
   box-shadow: 0 0 12px rgba(244, 63, 94, 0.4);
+}
+
+body.theme-light .global-search-btn,
+.theme-light .global-search-btn {
+  background: rgba(15, 23, 42, 0.04);
+  border-color: rgba(15, 23, 42, 0.12);
+  color: #475569;
+}
+
+body.theme-light .global-search-btn:hover,
+.theme-light .global-search-btn:hover {
+  background: rgba(244, 63, 94, 0.1);
+  border-color: #e11d48;
+  color: #e11d48;
+  box-shadow: 0 2px 8px rgba(244, 63, 94, 0.2);
 }
 
 .global-build-pill {

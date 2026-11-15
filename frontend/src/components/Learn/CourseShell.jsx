@@ -1,1061 +1,317 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import GlobalHeader from "../Navigation/GlobalHeader";
+import { useNavigate } from "react-router-dom";
 import { useBuild } from "../../contexts/BuildContext";
-import CourseVideoPlayer from "./CourseVideoPlayer";
-import BobCompanion from "../BobCompanion/BobCompanion";
-import soundManager from "../../utilities/soundManager";
 import { useLearnMode } from "../../contexts/LearnModeContext";
+import LearnHardwareStage from "./LearnHardwareStage";
+import BobCompanion from "../BobCompanion/BobCompanion";
 import StageUnlockBanner from "../Navigation/StageUnlockBanner";
+import AccountSetupModal from "../Home/AccountSetupModal";
+import soundManager from "../../utilities/soundManager";
+import {
+  CSS_CURRICULUM,
+  FLAT_TOPICS,
+  TOTAL_TOPICS_COUNT,
+  TOTAL_MODULES_COUNT,
+} from "./curriculumData";
 import "./CourseShell.css";
 
 /* ═══════════════════════════════════════════════════════════════════
-   BUILDLAB QUICK COURSE — "Build Your Own PC"
-   Curriculum inspired by Udemy's "Building a PC from Scratch:
-   Beginner to Master" and W3Schools' "Computer Fundamentals /
-   Components of a Computer", compressed into a quick course of
-   4 modules and 12 lessons with progress tracking.
-
-   Lesson types:
-   • article   — written micro-lesson (objectives, sections, table, quiz)
-   • component — full BuildLab hardware deep-dive (componentGuide entry)
+   BUILDLAB HARDWARE WORKBENCH — COMPUTER SYSTEMS SERVICING (CSS)
+   Grade 11 Pre-Lab Curriculum: 6 Modules • 19 Sequential Topics
+   2-Zone Layout: 3D Hardware Workbench + CSS Pre-Lab Guide & Video
    ═══════════════════════════════════════════════════════════════════ */
 
 const PROGRESS_KEY = "buildlab.learn.progress.v1";
 
-const readProgress = () => {
+const readProgress = (email) => {
   try {
-    const raw = JSON.parse(localStorage.getItem(PROGRESS_KEY) || "[]");
+    const accountKey = email ? `buildlab.learn.progress.${email}` : null;
+    const rawStr =
+      (accountKey && localStorage.getItem(accountKey)) ||
+      localStorage.getItem(PROGRESS_KEY) ||
+      "[]";
+    const raw = JSON.parse(rawStr);
     return Array.isArray(raw) ? raw.filter((x) => typeof x === "string") : [];
   } catch {
     return [];
   }
 };
 
-/* ─────────────────────── ARTICLE LESSON CONTENT ─────────────────────── */
-
-const ARTICLE_LESSONS = {
-  "components-of-a-computer": {
-    title: "Components of a Computer",
-    minutes: 10,
-    tags: ["Computer Fundamentals", "Beginner"],
-    heroImage: "/textures/motherboard2.jpg",
-    youtubeId: "ExxFxD4OSZ0",
-    description:
-      "Everything from an office PC to a flagship gaming rig is built from the same handful of systems. Learn what each part does before you spend a single peso on it.",
-    objectives: [
-      "Name the four core components found in every computer",
-      "Tell the difference between memory (RAM) and storage",
-      "Follow the input, processing, output data flow",
-    ],
-    sections: [
-      {
-        heading: "Input, Processing, Output",
-        body: [
-          "A computer is, at its simplest, a machine that takes input, processes it, and produces output. Your keyboard and mouse are the input, the processor turns data into results with help from memory, and the monitor and speakers deliver the output.",
-          "The magic is speed: a modern CPU runs this loop billions of times per second. Your part choices simply determine how fast and how smoothly that loop runs.",
-        ],
-      },
-      {
-        heading: "The Core Four",
-        items: [
-          "Processor (CPU) - the brain. Executes every instruction, from opening an app to drawing a frame.",
-          "Memory (RAM) - the workbench. Holds the apps, textures, and data the CPU is using right now. Cleared on shutdown.",
-          "Storage (SSD / HDD) - the filing cabinet. Keeps your OS, games, and documents permanently, even with power off.",
-          "Motherboard - the nervous system. Connects everything, feeds it power, and moves data between parts.",
-        ],
-      },
-      {
-        heading: "The Supporting Cast",
-        items: [
-          "Power supply (PSU) - converts wall AC into clean, stable DC rails your parts can survive.",
-          "Graphics card (GPU) - the visuals engine that renders every pixel you see.",
-          "Case & cooling - protects the parts and keeps heat moving out.",
-          "Peripherals - monitor, keyboard, mouse, headset: the human interface.",
-        ],
-      },
-      {
-        heading: "Analogies That Stick",
-        note: "Workshop analogy: the CPU is the worker, RAM is the workbench (a bigger workbench means more projects open at once, NOT faster hands), storage is the warehouse, and the motherboard is the building wiring. Many people believe more RAM makes a PC faster - it does not; it lets you run more at once.",
-      },
-    ],
-    table: {
-      columns: ["Component", "Job in one line", "Think of it as"],
-      rows: [
-        ["CPU", "Executes instructions and calculations", "The brain"],
-        ["RAM", "Temporary workspace for running apps", "The workbench"],
-        ["SSD / HDD", "Permanent file storage", "The warehouse"],
-        ["Motherboard", "Connects and powers every part", "The nervous system"],
-        ["GPU", "Renders graphics to the display", "The visual engine"],
-        ["PSU", "Supplies clean, stable power", "The heart"],
-      ],
-    },
-    quiz: [
-      {
-        question: "Which component keeps files permanently, even when the PC is off?",
-        options: [
-          { text: "Storage (SSD / HDD)", correct: true },
-          { text: "RAM", correct: false },
-          { text: "CPU", correct: false },
-          { text: "Cooling fans", correct: false },
-        ],
-        explanation:
-          "RAM is volatile memory - it clears on shutdown. Only storage keeps data permanently.",
-      },
-      {
-        question: "Which part connects every other part and distributes power?",
-        options: [
-          { text: "Motherboard", correct: true },
-          { text: "Graphics card", correct: false },
-          { text: "Power supply", correct: false },
-          { text: "Monitor", correct: false },
-        ],
-        explanation:
-          "The motherboard is the central hub: both data and power travel through it.",
-      },
-      {
-        question: "What is the primary role of the CPU in a computer?",
-        options: [
-          { text: "Executing program instructions, calculations, and coordinating operations as the central brain", correct: true },
-          { text: "Storing permanent files and operating system installations", correct: false },
-          { text: "Providing power directly from the wall outlet to all fans", correct: false },
-          { text: "Cooling the graphics card memory chips", correct: false },
-        ],
-        explanation:
-          "The Central Processing Unit (CPU) is the brain that executes calculations and directs data between memory, storage, and graphics.",
-      },
-    ],
-  },
-
-  "how-parts-talk": {
-    title: "How the Parts Talk: Buses & Standards",
-    minutes: 8,
-    tags: ["Standards", "Ports"],
-    heroImage: "/assets/cpu_learn.jpg",
-    youtubeId: "PrXwe21biJo",
-    description:
-      "Cables and ports follow global standards. Learn the big ones - and why mixing generations bends pins.",
-    objectives: [
-      "Recognize the main internal ports and cables",
-      "Understand why part generations must match",
-      "Decode names like AM5, DDR5, and PCIe 5.0",
-    ],
-    sections: [
-      {
-        heading: "Data Highways Called Buses",
-        body: [
-          "Inside the case, data moves along buses - shared highways with fixed widths and speeds. PCIe lanes feed the GPU and SSDs, memory channels feed the CPU, and SATA feeds older drives.",
-          "The wider and faster the bus, the more data moves per second. That is why a PCIe 5.0 x16 GPU slot offers many times the bandwidth of a single SATA cable.",
-        ],
-      },
-      {
-        heading: "Generations Are Not Mix-and-Match",
-        body: [
-          "Most plugs are physically keyed to one generation. DDR5 has its notch in a different spot than DDR4, and AM5 lines up differently from AM4. A component only counts as compatible when the fit is mechanical, electrical, and version-matched at the same time.",
-          "Rule of thumb: if it needs force to seat, STOP. The only normal click of force in a build is RAM locking into its slot.",
-        ],
-      },
-    ],
-    table: {
-      columns: ["Standard", "Connects", "What to remember"],
-      rows: [
-        ["ATX 24-pin", "Motherboard power", "Main power from the PSU - the latch clicks shut"],
-        ["EPS 8-pin", "CPU power", "A separate 12V feed near the top of the board"],
-        ["PCIe x16", "GPU", "Open the plastic latch before removal"],
-        ["DIMM DDR4 / DDR5", "RAM", "The notch must match the slot - never force it"],
-        ["M.2 NVMe / SATA", "Storage", "M.2 plugs flat at a slight angle, then screws down"],
-        ["USB-C / audio", "Case front panel", "Fine headers - plug them in one at a time"],
-      ],
-    },
-    quiz: [
-      {
-        question: "You have DDR4 sticks and a DDR5 motherboard. What happens?",
-        options: [
-          {
-            text: "The notch offset means it will not seat - forcing it damages the module and board",
-            correct: true,
-          },
-          { text: "It works, but RAM speed drops by 10%", correct: false },
-          { text: "Slower DDR4 works fine in DDR5 slots", correct: false },
-          { text: "It is fine with a cheap adapter", correct: false },
-        ],
-        explanation:
-          "Memory generations are keyed differently and are electrically incompatible. Adapters do not exist for good reason.",
-      },
-      {
-        question: "What is the primary function of PCIe lanes on a modern motherboard?",
-        options: [
-          {
-            text: "High-speed direct data pipelines connecting the GPU and rapid NVMe SSDs directly to the CPU",
-            correct: true,
-          },
-          { text: "Supplying 240V alternating current directly to the chassis", correct: false },
-          { text: "Spinning case cooling fans at constant speeds", correct: false },
-          { text: "Transmitting analog radio signals to wireless peripherals", correct: false },
-        ],
-        explanation:
-          "PCIe lanes are high-bandwidth serial communication buses feeding huge streams of data to the graphics card and NVMe storage.",
-      },
-      {
-        question: "How does an M.2 NVMe SSD connect compared to an older 2.5-inch SATA SSD?",
-        options: [
-          {
-            text: "It plugs directly into an onboard slot flat against the motherboard with zero cables",
-            correct: true,
-          },
-          { text: "It requires a 24-pin ATX power harness from the power supply", correct: false },
-          { text: "It connects exclusively via an external USB-C port", correct: false },
-          { text: "It must be mounted inside the power supply shroud", correct: false },
-        ],
-        explanation:
-          "M.2 NVMe SSDs slot straight into motherboard sockets at a slight angle and screw down flat, requiring neither SATA data cables nor power leads.",
-      },
-    ],
-  },
-
-  "purpose-and-budget": {
-    title: "Purpose, Use Case & Budget",
-    minutes: 12,
-    tags: ["Planning", "Budget"],
-    heroImage: "/assets/pc_build.png",
-    youtubeId: "x7tAAr2fcMw",
-    description:
-      "Professional builders choose parts backwards: use case first, budget split second, brand last.",
-    objectives: [
-      "Choose a build tier based on what the PC is for",
-      "Split a budget by performance impact, not brand loyalty",
-      "Gather the tools before parts arrive",
-    ],
-    sections: [
-      {
-        heading: "Start with the Job, Not the Parts",
-        body: [
-          "There is no single 'best computer'. A competitive shooter PC wants high frame rates at 1080p, a video editor wants CPU cores and RAM, and a study PC mostly wants a fast SSD. Write down your main use case and a rough budget before window-shopping for parts.",
-          "Single duty list: Gaming leans on the GPU. Streaming and editing lean on CPU cores and RAM. Everyday use just needs a decent CPU and drive.",
-        ],
-      },
-      {
-        heading: "Where the Money Should Go",
-        body: [
-          "Ratios matter more than totals. In a gaming build the GPU usually takes the biggest slice, streaming and creation shift weight toward the CPU and RAM, and every build deserves an honest PSU budget - it protects everything else you bought.",
-        ],
-      },
-    ],
-    table: {
-      columns: ["Build tier", "Best for", "Where the budget goes"],
-      rows: [
-        ["Everyday / Study", "Browsing, office, media", "CPU with built-in graphics + 16GB RAM"],
-        ["1080p Esports", "Valorant, CS2, Dota at high FPS", "Balanced CPU + entry GPU, 16GB RAM"],
-        ["1440p Gaming", "Modern AAA titles, high settings", "GPU takes 45-50% of the budget"],
-        ["Streaming & Creation", "OBS, video editing, renders", "CPU + RAM take 40-50% combined"],
-        ["4K Enthusiast", "Max settings, ray tracing", "GPU 50%+ plus a 850W+ quality PSU"],
-      ],
-    },
-    sections2: null,
-    toolsHead: "Tools on the Bench",
-    tools: [
-      { text: "#2 Phillips screwdriver", sub: "It drives 90% of the entire build" },
-      { text: "Clean, dry, non-carpet work surface", sub: "Carpet breeds static; stage parts with room to breathe" },
-      { text: "Touch bare case metal now and then", sub: "Discharges static from your body before handling parts" },
-      { text: "Velcro strips or zip ties", sub: "For the rear-chamber cable passes" },
-      { text: "Good lighting", sub: "Standoffs and latches are easy to miss in shadow" },
-    ],
-    quiz: [
-      {
-        question: "In a dedicated 1440p gaming build, which component should take the largest portion of your budget?",
-        options: [
-          { text: "The Graphics Card (GPU) — typically 45% to 50% of the build cost", correct: true },
-          { text: "The PC Case and RGB lighting", correct: false },
-          { text: "Custom sleeved power supply cables", correct: false },
-          { text: "A secondary PCIe sound card", correct: false },
-        ],
-        explanation:
-          "In modern 1440p and 4K gaming, the graphics card has the greatest impact on frame rates, visual fidelity, and shader rendering.",
-      },
-      {
-        question: "Why should you avoid cutting your budget on a low-quality, uncertified power supply (PSU)?",
-        options: [
-          {
-            text: "A cheap PSU lacks essential circuit protections and can destroy all connected parts if it fails",
-            correct: true,
-          },
-          { text: "It locks your monitor refresh rate to 30Hz", correct: false },
-          { text: "Windows will refuse to boot from your SSD", correct: false },
-          { text: "Your keyboard and mouse RGB will stop syncing", correct: false },
-        ],
-        explanation:
-          "The PSU supplies electricity to everything. Poor-quality units without over-voltage and short-circuit protections risk catastrophic hardware damage.",
-      },
-      {
-        question: "What is the single essential tool required to assemble over 90% of a custom PC?",
-        options: [
-          { text: "A standard #2 Phillips screwdriver (preferably magnetic)", correct: true },
-          { text: "A soldering iron and wire cutter", correct: false },
-          { text: "An electric hammer drill", correct: false },
-          { text: "Heavy duty pliers", correct: false },
-        ],
-        explanation:
-          "Almost every PC fastener — case screws, motherboard standoffs, cooler brackets, and expansion slots — uses a standard #2 Phillips head.",
-      },
-    ],
-  },
-
-  "compatibility-chain": {
-    title: "The Compatibility Chain",
-    minutes: 9,
-    tags: ["Planning", "Checklist"],
-    heroImage: "/textures/case1.png",
-    youtubeId: "IhX0fOUYd8Q",
-    description:
-      "The biggest beginner mistake is buying one wrong generation. Run this five-point chain before you check out.",
-    objectives: [
-      "Run the five compatibility checks in order",
-      "Understand why each choice narrows the next one",
-      "Spot the classic mismatch symptoms",
-    ],
-    sections: [
-      {
-        heading: "Five Checks Before Checkout",
-        steps: [
-          { text: "CPU socket <-> motherboard socket", sub: "AM5, LGA1700, LGA1851 - they must be identical" },
-          { text: "RAM generation <-> motherboard slots", sub: "DDR4 or DDR5, decided by the board you picked" },
-          { text: "Motherboard size <-> case", sub: "ITX, mATX, ATX, E-ATX mounting points" },
-          { text: "GPU length & power <-> case + PSU", sub: "Clearance in mm, and watts with 100-150W headroom" },
-          { text: "Cooler height <-> case clearance", sub: "Tall air coolers clash with side panels" },
-        ],
-      },
-      {
-        heading: "Why the Chain Breaks",
-        body: [
-          "These checks run in order because each choice narrows the next: your CPU socket decides which boards are possible, the board decides the RAM generation, board and GPU decide the case size, and the total power draw decides the PSU.",
-          "BuildLab's Component Picker runs all five checks automatically as you add parts - this checklist mirrors exactly what it verifies.",
-        ],
-      },
-    ],
-    table: {
-      columns: ["Classic mismatch", "What actually happens"],
-      rows: [
-        ["AM5 CPU on an LGA1700 board", "Does not fit - different pin layout"],
-        ["mATX board in an ITX case", "Standoffs do not align - the board cannot mount"],
-        ["340mm GPU in a compact case", "Hits the drive cage or front fans"],
-        ["550W PSU with an RTX 4090-class card", "Protection trips - PC shuts off under load"],
-        ["165mm cooler in a low-profile case", "Side panel will not close"],
-      ],
-    },
-    quiz: [
-      {
-        question: "Which check should you complete FIRST when planning a build?",
-        options: [
-          {
-            text: "CPU-to-motherboard socket - everything else flows from it",
-            correct: true,
-          },
-          { text: "Equal RGB lighting across all parts", correct: false },
-          { text: "Monitor refresh rate", correct: false },
-          { text: "Case color and glass panels", correct: false },
-        ],
-        explanation:
-          "The CPU socket is the root of the compatibility chain: it determines which boards, and through the boards, which RAM, cases, and coolers are possible.",
-      },
-      {
-        question: "What happens if you purchase a full-size ATX motherboard for a compact Mini-ITX case?",
-        options: [
-          {
-            text: "The board physically will not fit inside the case, and mounting standoffs will not align",
-            correct: true,
-          },
-          { text: "It fits normally, but you can only install one stick of RAM", correct: false },
-          { text: "The processor automatically runs at half its clock speed", correct: false },
-          { text: "The power supply trips and shuts down on boot", correct: false },
-        ],
-        explanation:
-          "Chassis form factor dictates maximum board size. A Mini-ITX case only accommodates 170x170mm boards, far smaller than a 305x244mm ATX board.",
-      },
-      {
-        question: "Which measurement must be verified to ensure a large CPU air cooler fits inside your case?",
-        options: [
-          {
-            text: "Cooler height clearance (mm) between the CPU socket and the case side panel",
-            correct: true,
-          },
-          { text: "The diagonal width of the front tempered glass panel", correct: false },
-          { text: "The thickness of the bottom dust filter", correct: false },
-          { text: "The length of the power supply power cord", correct: false },
-        ],
-        explanation:
-          "Tall twin-tower air coolers (often 155mm–165mm tall) will block the tempered glass side panel from closing if cooler height exceeds case clearance.",
-      },
-    ],
-  },
-
-  "full-build-order": {
-    title: "Full Build Order (Assembly)",
-    minutes: 14,
-    tags: ["Assembly", "Checklist"],
-    heroImage: "/assets/pc_build.png",
-    youtubeId: "BL4DCEp7blY",
-    description:
-      "The professional assembly order. Your hands stay empty of force for the whole build - except one confident RAM click.",
-    objectives: [
-      "Follow a safe 12-step assembly order",
-      "Know the two places beginners destroy parts",
-      "Practice the order before touching real hardware",
-    ],
-    sections: [
-      {
-        heading: "The 12-Step Order",
-        steps: [
-          { text: "Prep the case", sub: "Both panels off, standoffs matching your board layout, screw tray ready" },
-          { text: "CPU into the open motherboard", sub: "Golden triangle aligned to the socket marker, drop in with zero force, lock the lever" },
-          { text: "Install the M.2 SSD", sub: "Insert at a slight angle, press flat, fasten the screw" },
-          { text: "RAM into slots 2 & 4", sub: "Push down on BOTH ends until both clips click - the one place force is normal" },
-          { text: "Mount the cooler", sub: "Pea-sized thermal paste, screws tightened in an X pattern" },
-          { text: "I/O shield + motherboard into the case", sub: "Align rear ports, seat over standoffs, screw gently" },
-          { text: "PSU in", sub: "Fan facing the bottom dust filter; plug the 24-pin and EPS as you go" },
-          { text: "GPU into the top x16 slot", sub: "Latch clicks over the card, screw the bracket, add anti-sag support for heavy cards" },
-          { text: "Front panel headers", sub: "Power switch, USB-C, audio - one connector at a time" },
-          { text: "Fans & RGB headers", sub: "Intake at the front, exhaust at rear and top" },
-          { text: "Cable management pass", sub: "Tie down the rear chamber; never block the fan tunnels" },
-          { text: "First boot", sub: "Monitor into the GPU, then press power" },
-        ],
-      },
-      {
-        heading: "The Two Catastrophes",
-        note: "1) Never power a system without the cooler fully seated - a bare CPU hits 100 degrees Celsius in seconds. 2) Never mix modular cables between PSU brands or models - reversed polarity fries drives and boards instantly.",
-      },
-      {
-        heading: "Practice It in 3D",
-        body: [
-          "BuildLab's 3D Studio walks this exact order with install, remove, and disassembly modes. Repeat the sequence there until it is muscle memory before you touch real hardware.",
-        ],
-      },
-    ],
-    quiz: [
-      {
-        question: "Why should you install the CPU, SSD, and RAM onto the motherboard before mounting it in the case?",
-        options: [
-          {
-            text: "It gives you open, unobstructed access on a flat desk before working inside cramped case walls",
-            correct: true,
-          },
-          { text: "Motherboards cannot detect processors if mounted inside the case first", correct: false },
-          { text: "Thermal paste will dry out if the board is mounted inside early", correct: false },
-          { text: "Case screws block the CPU socket retention lever from lifting", correct: false },
-        ],
-        explanation:
-          "Pre-assembling core components on top of the motherboard box gives your hands full clearance and optimal lighting to install delicate parts safely.",
-      },
-      {
-        question: "How much downward force is needed when placing a CPU into an LGA or AM5 socket?",
-        options: [
-          {
-            text: "Zero insertion force (ZIF) — let it rest completely flush under its own weight after aligning markers",
-            correct: true,
-          },
-          { text: "15 to 20 pounds of firm pressure to push the pins in", correct: false },
-          { text: "Tap it gently with a small rubber mallet", correct: false },
-          { text: "Slide it horizontally from the side of the bracket", correct: false },
-        ],
-        explanation:
-          "CPUs drop in under gravity with Zero Insertion Force. Any manual pushing bends socket pins and destroys the motherboard.",
-      },
-      {
-        question: "Where should the monitor display cable be connected on a PC with a dedicated graphics card?",
-        options: [
-          {
-            text: "Directly into one of the horizontal DisplayPort or HDMI ports on the dedicated GPU bracket",
-            correct: true,
-          },
-          { text: "Into the vertical HDMI port on the motherboard rear I/O panel", correct: false },
-          { text: "Into the USB-C port on top of the case front panel", correct: false },
-          { text: "Into the power supply rear pass-through", correct: false },
-        ],
-        explanation:
-          "Plugging the display cable into the motherboard bypasses your dedicated graphics card entirely, causing a black screen on CPUs without integrated graphics.",
-      },
-    ],
-  },
-
-  "first-boot": {
-    title: "First Boot & Troubleshooting",
-    minutes: 10,
-    tags: ["POST", "BIOS", "Troubleshooting"],
-    heroImage: "/textures/core-i7_01.jpg",
-    youtubeId: "XzgPUozaiKU",
-    description:
-      "Assembled? Time for the POST - the first power-up of a brand-new PC. Here is the boot routine plus an escape plan for the usual suspects.",
-    objectives: [
-      "Run the 90-second pre-flight check",
-      "Configure XMP / EXPO and boot order in BIOS",
-      "Diagnose the most common first-boot failures",
-    ],
-    sections: [
-      {
-        heading: "The 90-Second Pre-Flight",
-        steps: [
-          { text: "PSU rear switch ON", sub: "The small rocker at the back of the power supply" },
-          { text: "Monitor cable into the GPU", sub: "NOT the motherboard's ports - the classic first-build mistake" },
-          { text: "Keyboard and mouse plugged in", sub: "Directly into the motherboard or case ports" },
-          { text: "Power path verified", sub: "Power button reachable, wall socket and surge strip live" },
-        ],
-      },
-      {
-        heading: "POST & BIOS: Three Quick Settings",
-        body: [
-          "On power-up the machine runs a POST (Power-On Self-Test). If it passes, press DEL or F2 to enter BIOS and set three things before installing Windows:",
-        ],
-        items: [
-          "Enable XMP (Intel) or EXPO (AMD) so the RAM runs at the speed you actually paid for - the default is a conservative baseline",
-          "Set fan curves so the system stays quiet at idle",
-          "Confirm boot priority points at your Windows install USB",
-        ],
-      },
-      {
-        heading: "When Nothing Happens",
-        table: {
-          columns: ["Symptom", "First suspect", "The fix"],
-          rows: [
-            ["No lights, no fans", "Power path", "PSU switch, wall outlet, 24-pin and EPS fully latched, front-panel power header on the correct pins"],
-            ["Fans spin, screen stays black", "Display path", "Cable into the GPU port, reseat RAM in slots 2 & 4, reseat the GPU"],
-            ["Beeps or error LEDs (DRAM, VGA, BOOT)", "Named subsystem", "Follow the manual's LED legend - DRAM means reseat RAM, VGA means reseat GPU"],
-            ["Shuts off under heavy load", "Power or heat", "PSU capacity, 12V-2x6 seated flush, cooler mounting pressure"],
-            ["Windows cannot see the M.2 SSD", "Storage", "Enable the M.2 slot, or load NVMe drivers on older boards"],
-          ],
-        },
-      },
-      {
-        heading: "After the Boot",
-        items: [
-          "Install Windows, then chipset and GPU drivers (NVIDIA App / AMD Adrenalin)",
-          "Update the OS and let Windows Update fetch remaining drivers",
-          "Monitor temperatures with HWiNFO or MSI Afterburner during a game or stress test",
-          "Your build is complete - jump back to the Compatibility page any time you upgrade",
-        ],
-      },
-    ],
-    quiz: [
-      {
-        question:
-          "The most common cause of 'fans spin but black screen' right after a first build?",
-        options: [
-          {
-            text: "Display cable plugged into the motherboard instead of the GPU",
-            correct: true,
-          },
-          { text: "Too much RAM installed", correct: false },
-          { text: "Missing thermal paste on the SSD", correct: false },
-          { text: "Case RGB cable unplugged", correct: false },
-        ],
-        explanation:
-          "Unless the CPU has integrated graphics and you deliberately choose the iGPU output, video only comes from the discrete graphics card.",
-      },
-      {
-        question: "Which keyboard key is most commonly pressed repeatedly during power-on to enter UEFI BIOS?",
-        options: [
-          { text: "DEL (Delete) or F2 key", correct: true },
-          { text: "Spacebar or Enter key", correct: false },
-          { text: "Shift + Backspace", correct: false },
-          { text: "Caps Lock", correct: false },
-        ],
-        explanation:
-          "During POST (Power-On Self-Test), repeatedly tapping DEL or F2 triggers the motherboard firmware to enter the UEFI BIOS setup menu.",
-      },
-      {
-        question: "What is the first performance setting to enable in BIOS before installing your operating system?",
-        options: [
-          { text: "Enable XMP (Intel) or EXPO (AMD) to run RAM at full rated speeds", correct: true },
-          { text: "Disable all case cooling fans for zero noise", correct: false },
-          { text: "Delete the BIOS firmware partition", correct: false },
-          { text: "Set CPU voltage to maximum override limit", correct: false },
-        ],
-        explanation:
-          "Enabling XMP or EXPO applies the manufacturer-tested memory profile, ensuring RAM runs at its advertised speed (e.g. 6000 MT/s) rather than safe default baseline.",
-      },
-    ],
-  },
-};
-
-/* ─────────────────────── B.O.B. LESSON WISDOM & INTEL ─────────────────────── */
-
-const BOB_LESSON_WISDOM = {
-  "components-of-a-computer": "Welcome to Module 1! Let's master the Core Four: CPU, RAM, Storage, and Motherboard. Poke me anytime!",
-  "how-parts-talk": "Data highways called buses! PCIe lanes, memory channels, and chipsets follow strict protocols.",
-  "cpu": "Module 2: Processor silicon! Dropping the CPU into the socket requires Zero Insertion Force. Test it in our 3D Lab!",
-  "motherboard": "The foundation! Always verify your brass chassis standoffs to prevent short circuits on the PCB.",
-  "ram": "Module 3: Memory speed! Install a 2-stick kit into slots 2 and 4 for maximum dual-channel bandwidth.",
-  "compatibility-chain": "Run the 5-point compatibility chain before buying: socket, memory, board size, GPU length, and cooler clearance.",
-  "gpu": "Module 4: Graphics power! Listen for the PCIe x16 retention click and plug the 12V-2x6 power cable completely flush.",
-  "psu": "Clean power delivery! Never mix modular cables across different power supply units.",
-  "case": "Airflow dynamics! Perforated mesh front panels provide cold intake air for peak GPU boost clocks.",
-  "full-build-order": "Module 5: The grand assembly! Follow the 12-step protocol or practice directly in 3D Studio.",
-  "first-boot": "First boot POST! Remember: plug your monitor display cable into the GPU, never the motherboard!",
-  "purpose-and-budget": "Plan backwards: define your workload first, split the budget by performance, and brand last.",
-};
-
-/* ─────────────────────── COURSE STRUCTURE ─────────────────────── */
-
-const COURSE = [
+/* ─────────────────────── 3D BENCHMARK HOTSPOTS ─────────────────────── */
+const ARTICLE_HOTSPOTS = [
   {
-    id: "m1",
-    label: "Module 1",
-    title: "Computer Architecture & Fundamentals",
-    badge: "VIDEO & TEXT · B.O.B. QUIZ",
-    lessons: [
-      { type: "article", ref: "components-of-a-computer", minutes: 10 },
-      { type: "article", ref: "how-parts-talk", minutes: 8 },
-    ],
+    id: "sys-cpu",
+    label: "CPU & Cooler Assembly",
+    pos: [-0.65, 1.55, -0.6],
+    camPos: [-4.6, 2.2, 1.4],
+    target: [-0.2, 1.4, -0.6],
+    bus: "Socket AM5 / LGA1700",
+    voltage: "1.2V VCore · 65W-253W",
+    role: "Executes OS instructions, physics, and arithmetic operations.",
+    tip: "Align the golden triangle and drop into socket with Zero Insertion Force.",
   },
   {
-    id: "m2",
-    label: "Module 2",
-    title: "Core Processing & Platform",
-    badge: "HARDWARE DEEP-DIVE · 3D LAB",
-    lessons: [
-      { type: "component", key: "cpu", minutes: 25 },
-      { type: "component", key: "motherboard", minutes: 25 },
-    ],
+    id: "sys-ram",
+    label: "Dual-Channel RAM (A2 / B2)",
+    pos: [-0.55, 1.4, 0.9],
+    camPos: [-4.4, 1.8, 2.6],
+    target: [-0.15, 1.4, 0.8],
+    bus: "128-Bit DDR5 / DDR4",
+    voltage: "1.1V - 1.35V VDD",
+    role: "Active high-speed memory buffering textures and applications.",
+    tip: "With 2 sticks, populate slots 2 and 4 (A2 & B2) to activate dual-channel.",
   },
   {
-    id: "m3",
-    label: "Module 3",
-    title: "High-Speed Memory & Expansion",
-    badge: "HARDWARE DEEP-DIVE · 3D LAB",
-    lessons: [
-      { type: "component", key: "ram", minutes: 20 },
-      { type: "article", ref: "compatibility-chain", minutes: 12 },
-    ],
+    id: "sys-nvme",
+    label: "M.2 NVMe Boot SSD",
+    pos: [-0.45, 0.35, -0.6],
+    camPos: [-3.6, 0.8, 0.9],
+    target: [-0.1, 0.35, -0.6],
+    bus: "PCIe 4.0 / 5.0 x4",
+    voltage: "3.3V Direct Rail",
+    role: "Non-volatile flash storage wired straight to CPU PCIe lanes.",
+    tip: "Insert at 30° angle and always peel the heatsink thermal pad film.",
   },
   {
-    id: "m4",
-    label: "Module 4",
-    title: "Graphics, Power & Airflow Dynamics",
-    badge: "HARDWARE DEEP-DIVE · 3D LAB",
-    lessons: [
-      { type: "component", key: "gpu", minutes: 22 },
-      { type: "component", key: "psu", minutes: 18 },
-      { type: "component", key: "case", minutes: 15 },
-    ],
+    id: "sys-gpu",
+    label: "PCIe x16 Graphics Card",
+    pos: [-1.15, -0.7, -0.1],
+    camPos: [-5.8, -0.2, 3.2],
+    target: [-0.4, -0.7, -0.2],
+    bus: "PCIe x16 + 12V-2x6",
+    voltage: "115W - 450W TGP",
+    role: "Massively parallel visual engine rendering 3D frames and compute.",
+    tip: "Plug monitor HDMI/DisplayPort directly into this graphics card.",
   },
   {
-    id: "m5",
-    label: "Module 5",
-    title: "Full PC Assembly & POST Diagnostics",
-    badge: "CAPSTONE 2 SIMULATION · 3D LAB",
-    lessons: [
-      { type: "article", ref: "full-build-order", minutes: 14 },
-      { type: "article", ref: "first-boot", minutes: 10 },
-      { type: "article", ref: "purpose-and-budget", minutes: 10 },
-    ],
+    id: "sys-vrm",
+    label: "VRM & 24-Pin Power Bus",
+    pos: [-0.35, 2.25, -1.6],
+    camPos: [-4.6, 2.6, -2.8],
+    target: [-0.15, 1.9, -1.0],
+    bus: "12V ATX / EPS Input",
+    voltage: "VRM Steps 12V -> 1.2V",
+    role: "Converts PSU DC rails into regulated, clean CPU boost power.",
+    tip: "Remember both the 24-pin ATX side cable and the top 8-pin CPU EPS cable.",
   },
 ];
 
-/* ═══════════════════════════ COMPONENT ═══════════════════════════ */
+/* ─────────────────────── 3-STEP ONBOARDING TOUR ─────────────────────── */
+const TOUR_STEPS = [
+  {
+    id: "wb-zone-stage",
+    name: "Interactive 3D PC Workbench",
+    desc: "360° orbital view, live bus flow, and clickable hotspots for socket inspection.",
+    speech:
+      "Center stage is your interactive 3D PC workbench. Drag to orbit and rotate, scroll to zoom in close, and tap glowing pins to inspect physical motherboard sockets.",
+    direction: "stage",
+  },
+  {
+    id: "wb-zone-dock",
+    name: "CSS Pre-Lab Guide & Video",
+    desc: "16:9 lecture video, field facts, lab safety warnings, and 1-question quick check.",
+    speech:
+      "On the right is your CSS pre-lab guide: watch the video lesson, review safety warnings, and answer the quick check to earn certificate progress.",
+    direction: "left",
+  },
+  {
+    id: "wb-zone-rail",
+    name: "Syllabus Modules & Certificate Progress",
+    desc: "Browse 6 modules with 19 sequential topics, track progress, and earn your certificate.",
+    speech:
+      "Use the left rail to navigate all 6 modules and 19 topics, and track your accredited certificate progress up top.",
+    direction: "right",
+  },
+];
 
-/* ══════════════════════════════════════════════════════════════
-   B.O.B. CASUAL SYLLABUS TOUR & DIALOGUE WISDOM (ANTI-SLOP)
-   Tone: Playful, friendly, casual hardware buddy
-   ══════════════════════════════════════════════════════════════ */
-const BOB_SYLLABUS_GUIDE = {
-  introNew: [
-    "Yo, welcome to the syllabus! I'm B.O.B. Want a quick 10-second walkthrough of the lab?",
-    "Hey! Welcome to the course syllabus. I'm B.O.B. Ready for a quick tour?",
-  ],
-  introReturning: [
-    "Welcome to the Course Syllabus! Ready to master computer architecture? Take a quick look around!",
-    "Here's the full course syllabus! Want a quick 10-second tour of how it's laid out?",
-    "Welcome to the syllabus! Pick up right where you left off or check out a new module.",
-  ],
-  center: [
-    "Right here in the center: full video walkthrough, socket specs, and clearance notes for the active chapter.",
-    "Center panel is the main stage—watch the lecture film, review pinouts, and test component clearances.",
-  ],
-  topics: [
-    "Top bar is your quick-jump rack. Snap straight to the lecture, objectives, reading, or unit quiz.",
-    "Use this top bar to jump between the video, deep dive notes, and the chapter checkup in one click.",
-  ],
-  syllabus: [
-    "Right side is your master roadmap! Track all 12 modules, see your checkmarks, and hop chapters anytime.",
-    "Curriculum deck on the right—collapsible, tracks your completion %, and lets you jump anywhere.",
-  ],
-  done: [
-    "All set! Kick off Chapter 1 whenever you're ready. Poke me anytime if you get stuck.",
-    "That's the setup! Start with the lecture film or jump straight into the lab notes. Let's build!",
-  ],
-};
-
-export default function CourseShell({ componentGuide }) {
+export default function CourseShell() {
   const navigate = useNavigate();
-  const { addComponent } = useBuild();
-  const { mode, seenBanners, markBannerSeen, unlockStage } = useLearnMode();
-  const [showUnlockBanner, setShowUnlockBanner] = useState(() => mode === "learn" && !seenBanners?.learn);
+  const { currentBuild } = useBuild();
+  const { mode, userProfile, seenBanners, markBannerSeen, unlockStage } = useLearnMode();
 
-  /* Course navigation */
+  // Stage unlock banner state
+  const [showUnlockBanner, setShowUnlockBanner] = useState(
+    () => mode === "learn" && !seenBanners?.learn
+  );
+
+  // Workbench visual theme: 'dark' (clean pro slate) or 'light' (soft glare-free titanium)
+  const [workbenchTheme, setWorkbenchTheme] = useState(() => {
+    try {
+      const saved = localStorage.getItem("buildlab_learn_theme");
+      if (saved === "light" || saved === "blueprint") return "light";
+      return "dark";
+    } catch {
+      return "dark";
+    }
+  });
+
+  const isLight = workbenchTheme === "light";
+
+  const toggleTheme = useCallback(() => {
+    try { soundManager.click(); } catch {}
+    setWorkbenchTheme((prev) => (prev === "light" ? "dark" : "light"));
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("buildlab_learn_theme", workbenchTheme);
+    } catch {}
+  }, [workbenchTheme]);
+
+  // First-time Welcome to Course Syllabus banner overlay state
+  const [showSyllabusWelcome, setShowSyllabusWelcome] = useState(() => {
+    try {
+      const unlockActive = mode === "learn" && !seenBanners?.learn;
+      const syllabusSeen = localStorage.getItem("buildlab_learn_syllabus_seen") === "true";
+      return !unlockActive && !syllabusSeen;
+    } catch {
+      return false;
+    }
+  });
+
+  // Centered B.O.B. state during Welcome overlay
+  const [bobIsCenter, setBobIsCenter] = useState(() => {
+    try {
+      const unlockActive = mode === "learn" && !seenBanners?.learn;
+      const syllabusSeen = localStorage.getItem("buildlab_learn_syllabus_seen") === "true";
+      return !unlockActive && !syllabusSeen;
+    } catch {
+      return false;
+    }
+  });
+
+  // Windows 11 Snipping Tool Spotlight Walkthrough State
+  const [tourActive, setTourActive] = useState(false);
+  const [tourStepIndex, setTourStepIndex] = useState(0);
+  const tourStepIndexRef = useRef(0);
+  const [spotlightRect, setSpotlightRect] = useState(null);
+  const tourTimerRef = useRef(null);
+
+  // Left Rail & Popover Drawers
+  const [leftRailOpen, setLeftRailOpen] = useState(true);
+  const [activePopover, setActivePopover] = useState(null); // null | 'lessons'
+  const [expandedModules, setExpandedModules] = useState({
+    m1: true,
+    m2: true,
+    m3: true,
+    m4: true,
+    m5: true,
+    m6: true,
+  });
+
+  // Curriculum Navigation & Progress
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [completed, setCompleted] = useState(readProgress);
+  const [completed, setCompleted] = useState(() => readProgress(userProfile?.email));
 
-  /* Right Sidebar Syllabus Panel — EXPANDED/SHOWN by default, strictly toggleable via click */
-  const [isPinned, setIsPinned] = useState(() => {
-    try {
-      const saved = localStorage.getItem("buildlab.course.sidebar.pinned");
-      if (saved !== null) return JSON.parse(saved);
-      return true; // Default: EXPANDED/SHOWN by default per user requirement!
-    } catch {
-      return true;
+  // Current active topic
+  const currentTopic = FLAT_TOPICS[currentIndex] || FLAT_TOPICS[0];
+
+  // Right Panel Video & Interactive State
+  const [videoExpanded, setVideoExpanded] = useState(true);
+  const [videoHighlighted, setVideoHighlighted] = useState(false);
+  const [selectedQuizOption, setSelectedQuizOption] = useState(null);
+  const [quizAnswerStatus, setQuizAnswerStatus] = useState(null); // null | 'correct' | 'incorrect'
+  const rightDockRef = useRef(null);
+  const guideCardRef = useRef(null);
+
+  // Modals for Account Setup and Guest Curriculum Unlock
+  const [showAccountModal, setShowAccountModal] = useState(false);
+  const [showGuestLockModal, setShowGuestLockModal] = useState(false);
+
+  // Auto-scroll guide card to top on topic change
+  useEffect(() => {
+    if (guideCardRef.current) {
+      guideCardRef.current.scrollTo({ top: 0, behavior: "smooth" });
     }
-  });
-  // Sidebar visibility is strictly driven by toggle/click, not mouse hover!
-  const isVisible = isPinned;
+  }, [currentIndex]);
 
-  // Welcome Banner & Navigation Tour State
-  const [showWelcomeOverlay, setShowWelcomeOverlay] = useState(() => {
+  // Authenticated learner status check
+  const localUser = (() => {
     try {
-      if (mode === "learn" && !seenBanners?.learn) return false;
-      return localStorage.getItem("buildlab_syllabus_intro_seen") !== "true";
+      return JSON.parse(localStorage.getItem("user") || "{}");
     } catch {
-      return false;
+      return {};
     }
-  });
+  })();
 
-  const [isWelcomeExiting, setIsWelcomeExiting] = useState(false);
-  const welcomeExitTimerRef = useRef(null);
+  const isAuthenticated = Boolean(
+    (userProfile?.setupCompleted && userProfile?.fullName) ||
+    localUser?.fullName ||
+    localUser?.name ||
+    (mode === "learn" && userProfile?.fullName)
+  );
 
-  const [isBobCentered, setIsBobCentered] = useState(() => {
-    try {
-      if (mode === "learn" && !seenBanners?.learn) return false;
-      return localStorage.getItem("buildlab_syllabus_intro_seen") !== "true";
-    } catch {
-      return false;
-    }
-  });
+  const learnerDisplayName =
+    userProfile?.fullName ||
+    localUser?.fullName ||
+    localUser?.name ||
+    (isAuthenticated ? "Student Track" : "Guest Preview");
 
-  const [guideTarget, setGuideTarget] = useState(null);
-  const guideTimerRef = useRef(null);
+  const learnerSubtext =
+    userProfile?.strand ||
+    localUser?.strand ||
+    (isAuthenticated ? "Grade 11 CSS Learner" : "Sign In to Unlock Full Academy");
 
-  /* B.O.B. Companion live speech state */
+  const isTopicLockedForGuest = (topicIdx) => {
+    if (isAuthenticated) return false;
+    return topicIdx > 2; // Only Module 1 (first 3 topics) is preview
+  };
+
+  // 3D Hotspot Selection
+  const [selectedHotspotId, setSelectedHotspotId] = useState(currentTopic.hotspotId || null);
+
+  // B.O.B. Companion Live Speech
   const [bobSpeech, setBobSpeech] = useState(
-    "Hi! I'm B.O.B., your BuildLab companion. Let's master computer architecture together!"
+    `Welcome to Topic ${currentTopic.topicCode}: ${currentTopic.title}! Watch the lecture video or inspect the 3D specimen.`
   );
 
-  // Triggered when StageUnlockBanner completes its entrance + exit animation
-  const handleUnlockBannerComplete = useCallback(() => {
-    setShowUnlockBanner(false);
-    markBannerSeen("learn");
-
-    // Once unlock banner is completely faded away, show the BOB Welcome Banner
-    setTimeout(() => {
-      setShowWelcomeOverlay(true);
-      setIsBobCentered(true);
-      let introduced = false;
-      try {
-        introduced = localStorage.getItem("buildlab_bob_introduced") === "true";
-      } catch {}
-      const pickRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
-      setBobSpeech(
-        introduced
-          ? pickRandom(BOB_SYLLABUS_GUIDE.introReturning)
-          : pickRandom(BOB_SYLLABUS_GUIDE.introNew)
-      );
-      try {
-        localStorage.setItem("buildlab_bob_introduced", "true");
-        soundManager.play("modal_open");
-      } catch {}
-    }, 200);
-  }, [markBannerSeen]);
-
-  // Launch the 3-step navigation highlight sequence
-  const executeGuideSequence = useCallback(() => {
-    if (guideTimerRef.current) {
-      clearTimeout(guideTimerRef.current);
-      guideTimerRef.current = null;
-    }
-    const pickRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
-
-    // PHASE 1: Center Lesson Content & Video (6.0s)
-    setGuideTarget("center");
-    setBobSpeech(pickRandom(BOB_SYLLABUS_GUIDE.center));
-    try {
-      soundManager.play("hint");
-    } catch {}
-
-    guideTimerRef.current = setTimeout(() => {
-      // PHASE 2: Topics Quick Jump Bar (5.5s)
-      setGuideTarget("topics");
-      setBobSpeech(pickRandom(BOB_SYLLABUS_GUIDE.topics));
-      try {
-        soundManager.play("hint");
-      } catch {}
-
-      guideTimerRef.current = setTimeout(() => {
-        // PHASE 3: Right Sidebar Curriculum Syllabus (6.0s)
-        setIsPinned(true);
-        setGuideTarget("syllabus");
-        setBobSpeech(pickRandom(BOB_SYLLABUS_GUIDE.syllabus));
-        try {
-          soundManager.play("snap");
-        } catch {}
-
-        guideTimerRef.current = setTimeout(() => {
-          // PHASE 4: Return to normal mode
-          setGuideTarget(null);
-          setBobSpeech(pickRandom(BOB_SYLLABUS_GUIDE.done));
-          try {
-            soundManager.play("complete");
-          } catch {}
-          guideTimerRef.current = null;
-        }, 6000);
-      }, 5500);
-    }, 6000);
-  }, []);
-
-  // Trigger guide tour: ONLY when the welcome banner is completely faded away!
-  const startGuideTour = useCallback(() => {
-    try {
-      localStorage.setItem("buildlab_syllabus_intro_seen", "true");
-    } catch {}
-
-    if (showWelcomeOverlay) {
-      // 1. Fade away the welcome banner first
-      setIsWelcomeExiting(true);
-      try {
-        soundManager.play("snap");
-      } catch {}
-
-      // 2. ONLY when banner is completely faded away (420ms), unmount banner and start navigation guide
-      if (welcomeExitTimerRef.current) clearTimeout(welcomeExitTimerRef.current);
-      welcomeExitTimerRef.current = setTimeout(() => {
-        setShowWelcomeOverlay(false);
-        setIsWelcomeExiting(false);
-        setIsBobCentered(false); // B.O.B. animates / glides to the lower-right corner
-        executeGuideSequence();
-      }, 420);
-    } else {
-      setIsBobCentered(false);
-      executeGuideSequence();
-    }
-  }, [showWelcomeOverlay, executeGuideSequence]);
-
-  // Dismiss guide tour or welcome overlay
-  const dismissGuideTour = useCallback(() => {
-    if (guideTimerRef.current) {
-      clearTimeout(guideTimerRef.current);
-      guideTimerRef.current = null;
-    }
-    try {
-      localStorage.setItem("buildlab_syllabus_intro_seen", "true");
-    } catch {}
-
-    if (showWelcomeOverlay) {
-      setIsWelcomeExiting(true);
-      try {
-        soundManager.play("modal_close");
-      } catch {}
-
-      if (welcomeExitTimerRef.current) clearTimeout(welcomeExitTimerRef.current);
-      welcomeExitTimerRef.current = setTimeout(() => {
-        setShowWelcomeOverlay(false);
-        setIsWelcomeExiting(false);
-        setIsBobCentered(false);
-        setGuideTarget(null);
-        const pickRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
-        setBobSpeech(pickRandom(BOB_SYLLABUS_GUIDE.done));
-      }, 420);
-    } else {
-      setGuideTarget(null);
-      setIsBobCentered(false);
-      const pickRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
-      setBobSpeech(pickRandom(BOB_SYLLABUS_GUIDE.done));
-    }
-  }, [showWelcomeOverlay]);
-
-  // Clean up all timers on unmount
+  // Unlock Stage 4 Studio & Certificate gracefully once in Learn
   useEffect(() => {
-    return () => {
-      if (guideTimerRef.current) clearTimeout(guideTimerRef.current);
-      if (welcomeExitTimerRef.current) clearTimeout(welcomeExitTimerRef.current);
-    };
-  }, []);
-
-  // Initial Entrance Greeting (DO NOT repeat Bob's intro if already seen)
-  useEffect(() => {
-    if (showUnlockBanner) return; // Wait until unlock banner finishes!
-
-    let introduced = false;
-    try {
-      introduced = localStorage.getItem("buildlab_bob_introduced") === "true";
-    } catch {}
-
-    const pickRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
-
-    if (!introduced) {
-      setBobSpeech(pickRandom(BOB_SYLLABUS_GUIDE.introNew));
-      try {
-        localStorage.setItem("buildlab_bob_introduced", "true");
-      } catch {}
-    } else {
-      setBobSpeech(pickRandom(BOB_SYLLABUS_GUIDE.introReturning));
+    if (mode === "learn") {
+      unlockStage("studio");
+      unlockStage("certificate");
     }
+  }, [mode, unlockStage]);
 
-    if (showWelcomeOverlay) {
-      try {
-        soundManager.play("modal_open");
-      } catch {}
-    }
-  }, [showUnlockBanner, showWelcomeOverlay]);
-
-  // Keyboard shortcut: ESC dismisses overlay or tour
-  useEffect(() => {
-    if (!showWelcomeOverlay && !guideTarget) return undefined;
-    const handleKeyDown = (e) => {
-      if (e.key === "Escape") {
-        e.preventDefault();
-        e.stopPropagation();
-        dismissGuideTour();
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [showWelcomeOverlay, guideTarget, dismissGuideTour]);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem("buildlab.course.sidebar.pinned", JSON.stringify(isPinned));
-    } catch {}
-  }, [isPinned]);
-
-  /* Video prerequisite gating state */
-  const [watchedVideos, setWatchedVideos] = useState(() => {
-    try {
-      const saved = localStorage.getItem("buildlab_watched_videos");
-      return saved ? JSON.parse(saved) : [];
-    } catch {
-      return [];
-    }
-  });
-  const [videoToast, setVideoToast] = useState(null);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem("buildlab_watched_videos", JSON.stringify(watchedVideos));
-    } catch {}
-  }, [watchedVideos]);
-
-  const toggleVideoWatched = (lessonId) => {
-    soundManager.snap();
-    setWatchedVideos((prev) =>
-      prev.includes(lessonId) ? prev.filter((id) => id !== lessonId) : [...prev, lessonId]
-    );
-  };
-
-  const markVideoWatched = (lessonId) => {
-    soundManager.snap();
-    setWatchedVideos((prev) => (prev.includes(lessonId) ? prev : [...prev, lessonId]));
-  };
-
-  /* Lesson-internal state (reset per lesson) */
-  const [matcherRows, setMatcherRows] = useState(componentGuide[0].matcherRows);
-  const [activeStep, setActiveStep] = useState(1);
-  const [quizIndex, setQuizIndex] = useState(0);
-  const [quizAnswers, setQuizAnswers] = useState({});
-  const [selectedMistake, setSelectedMistake] = useState(null);
-
-  /* Flat lesson list: { id, type, moduleLabel, moduleTitle, minutes, lesson } */
-  const FLAT = useMemo(
-    () =>
-      COURSE.flatMap((mod) =>
-        mod.lessons.map((l) => {
-          const comp =
-            l.type === "component"
-              ? componentGuide.find((c) => c.id === l.key)
-              : null;
-          const art = l.type === "article" ? ARTICLE_LESSONS[l.ref] : null;
-          return {
-            id: l.type === "component" ? l.key : l.ref,
-            type: l.type,
-            moduleLabel: mod.label,
-            moduleTitle: mod.title,
-            minutes: l.minutes,
-            lesson: comp || art,
-          };
-        })
-      ),
-    [componentGuide]
-  );
-
-  const current = FLAT[currentIndex] || FLAT[0];
-  const lesson = current.lesson;
-
-  /* Persist progress */
+  // Persist progress globally and per Google Learner Account
   useEffect(() => {
     try {
       localStorage.setItem(PROGRESS_KEY, JSON.stringify(completed));
-    } catch {
-      /* private mode - ignore */
-    }
-  }, [completed]);
+      if (userProfile?.email) {
+        localStorage.setItem(
+          `buildlab.learn.progress.${userProfile.email}`,
+          JSON.stringify(completed)
+        );
+      }
+    } catch {}
+  }, [completed, userProfile?.email]);
 
-  /* Reset per-lesson state + scroll top on lesson change */
+  // Update quiz and hotspot state when changing topic
   useEffect(() => {
-    if (current.type === "component") {
-      setMatcherRows(lesson.matcherRows);
+    const isDone = completed.includes(currentTopic.id);
+    if (isDone) {
+      const correctIdx = currentTopic.quiz.options.findIndex((o) => o.correct);
+      setSelectedQuizOption(correctIdx !== -1 ? correctIdx : null);
+      setQuizAnswerStatus("correct");
+    } else {
+      setSelectedQuizOption(null);
+      setQuizAnswerStatus(null);
     }
-    setActiveStep(1);
-    setQuizIndex(0);
-    setQuizAnswers({});
-    setSelectedMistake(null);
-    setVideoToast(null);
-    if (!showWelcomeOverlay && !guideTarget) {
-      setBobSpeech(BOB_LESSON_WISDOM[current.id] || "Ready to master this hardware? Let's get to it!");
-    }
-    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [current.id, showWelcomeOverlay, guideTarget]);
+    setSelectedHotspotId(currentTopic.hotspotId || null);
+    setActivePopover(null);
+    setBobSpeech(
+      `Topic ${currentTopic.topicCode}: ${currentTopic.title}. Watch the video, review safety warnings, and complete the quick check!`
+    );
+  }, [currentIndex, currentTopic, completed]);
 
-  /* ── Helpers ── */
+  const markComplete = useCallback((topicId) => {
+    try { soundManager.complete(); } catch {}
+    setCompleted((prev) => (prev.includes(topicId) ? prev : [...prev, topicId]));
+  }, []);
 
-  const markComplete = (lessonId) => {
-    soundManager.complete();
-    setCompleted((prev) => (prev.includes(lessonId) ? prev : [...prev, lessonId]));
-  };
+  const doneCount = completed.filter((id) => FLAT_TOPICS.some((f) => f.id === id)).length;
+  const progressPct = Math.round((doneCount / FLAT_TOPICS.length) * 100);
 
-  const goLesson = (idx) => {
-    soundManager.click();
-    setCurrentIndex(idx);
-    if (typeof window !== "undefined" && window.matchMedia("(max-width: 960px)").matches) {
-      setIsPinned(false);
-    }
-  };
-
-  const currentVideoId = lesson.youtubeId;
-  const isVideoWatched = !currentVideoId || watchedVideos.includes(current.id);
-
-  const handleNext = () => {
-    if (currentVideoId && !isVideoWatched) {
-      soundManager.warning();
-      setVideoToast("Video Requirement: You must watch the lesson video tutorial before proceeding! Click 'Mark as Watched' once viewed.");
-      setTimeout(() => setVideoToast(null), 4500);
-      return;
-    }
-    markComplete(current.id);
-    if (currentIndex < FLAT.length - 1) {
-      goLesson(currentIndex + 1);
-    }
-  };
-
-  const handleMarkComplete = (lessonId) => {
-    if (currentVideoId && !isVideoWatched) {
-      soundManager.warning();
-      setVideoToast("Video Requirement: You must watch the lesson video before marking this lesson complete! Click 'Mark as Watched' once viewed.");
-      setTimeout(() => setVideoToast(null), 4500);
-      return;
-    }
-    markComplete(lessonId);
-  };
-
-  const firstIncomplete = FLAT.findIndex((l) => !completed.includes(l.id));
-  const doneCount = completed.filter((id) => FLAT.some((l) => l.id === id)).length;
-  const progressPct = Math.round((doneCount / FLAT.length) * 100);
-
-  // When curriculum reaches 100%, unlock Stage 4 (Certification & 3D Studio)
   useEffect(() => {
     if (progressPct === 100) {
       unlockStage("certificate");
@@ -1063,1441 +319,1161 @@ export default function CourseShell({ componentGuide }) {
     }
   }, [progressPct, unlockStage]);
 
-  /* ── Matcher (component lessons) ── */
-
-  const handleModelChange = (rowId, newModelName) => {
-    const selected = lesson.modelOptions.find((c) => c.name === newModelName);
-    if (!selected) return;
-    setMatcherRows((prev) =>
-      prev.map((row) =>
-        row.id === rowId ? { ...row, model: newModelName, socket: selected.socket } : row
-      )
-    );
-  };
-
-  const handleSocketChange = (rowId, newSocket) => {
-    setMatcherRows((prev) =>
-      prev.map((row) =>
-        row.id === rowId ? { ...row, targetSocket: newSocket } : row
-      )
-    );
-  };
-
-  const handleConnectToBuild = (modelName, socketName) => {
-    soundManager.install();
-    if (addComponent) {
-      addComponent(lesson.id, {
-        name: modelName || lesson.name,
-        socket: socketName || "Standard",
-        price: "$299",
-      });
+  const goTopic = (idx) => {
+    if (idx < 0 || idx >= FLAT_TOPICS.length) return;
+    if (isTopicLockedForGuest(idx)) {
+      try { soundManager.warning(); } catch {}
+      setShowGuestLockModal(true);
+      return;
     }
-    navigate("/build");
+    try { soundManager.snap(); } catch {}
+    setCurrentIndex(idx);
+    setActivePopover(null);
+    if (guideCardRef.current) {
+      guideCardRef.current.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
-  /* ── Shared renderers ── */
+  const handleNextTopic = useCallback(() => {
+    // If guest reaches the end of Module 1 preview (index 2)
+    if (!isAuthenticated && currentIndex === 2) {
+      try { soundManager.warning(); } catch {}
+      setShowGuestLockModal(true);
+      return;
+    }
 
-  const renderQuiz = (quiz) => {
-    const activeQ = quiz[quizIndex];
-    if (!activeQ) return null;
-    const answered = quizAnswers[quizIndex];
+    if (currentIndex + 1 < FLAT_TOPICS.length) {
+      try { soundManager.snap(); } catch {}
+      setCurrentIndex((i) => i + 1);
+      if (guideCardRef.current) {
+        guideCardRef.current.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    } else {
+      try { soundManager.complete(); } catch {}
+      unlockStage("certificate");
+      navigate("/certificate");
+    }
+  }, [currentIndex, isAuthenticated, unlockStage, navigate]);
 
-    const handleQuizOption = (opt, i) => {
-      setQuizAnswers((prev) => ({ ...prev, [quizIndex]: i }));
-      if (opt.correct) {
-        soundManager.complete();
-        const cheers = [
-          "Spot on! Brilliant hardware analysis!",
-          "Correct! You nailed the architecture standard!",
-          "Exact match! You're building solid engineering instincts!",
-        ];
-        setBobSpeech(cheers[Math.floor(Math.random() * cheers.length)]);
+  const handleCertClick = () => {
+    if (!isAuthenticated) {
+      try { soundManager.click(); } catch {}
+      setShowGuestLockModal(true);
+      return;
+    }
+    try { soundManager.click(); } catch {}
+    unlockStage("certificate");
+    navigate("/certificate");
+  };
+
+  const handlePrevTopic = useCallback(() => {
+    if (currentIndex > 0) {
+      try { soundManager.click(); } catch {}
+      setCurrentIndex((i) => i - 1);
+      if (rightDockRef.current) {
+        rightDockRef.current.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    }
+  }, [currentIndex]);
+
+  const handleSelectQuizOption = useCallback(
+    (optIdx, isCorrect) => {
+      setSelectedQuizOption(optIdx);
+      if (isCorrect) {
+        setQuizAnswerStatus("correct");
+        try { soundManager.complete(); } catch {}
+        markComplete(currentTopic.id);
+        setBobSpeech(
+          `Excellent job! You spotted the lab mistake and mastered Topic ${currentTopic.topicCode}!`
+        );
       } else {
-        soundManager.error();
-        setBobSpeech("Careful! Read the takeaway note to see why that was incorrect.");
+        setQuizAnswerStatus("incorrect");
+        try { soundManager.error(); } catch {}
+        setBobSpeech(
+          "Not quite! Take a close look at the 'Avoid This Mistake in Lab' warning above and try again."
+        );
+      }
+    },
+    [currentTopic, markComplete]
+  );
+
+  const handleInspectIn3D = useCallback(() => {
+    try { soundManager.click(); } catch {}
+    if (currentTopic.hotspotId) {
+      setSelectedHotspotId(currentTopic.hotspotId);
+      setBobSpeech(
+        `Focusing 3D camera on ${currentTopic.title}! Inspect socket alignment and physical pin keys.`
+      );
+    } else {
+      setSelectedHotspotId(null);
+      setBobSpeech(
+        `Viewing 3D ${currentTopic.specimenKey} overview for ${currentTopic.title}.`
+      );
+    }
+  }, [currentTopic]);
+
+  const handleOpenLectureFilm = useCallback(() => {
+    try { soundManager.snap(); } catch {}
+    setVideoExpanded(true);
+    setVideoHighlighted(true);
+    setTimeout(() => setVideoHighlighted(false), 1400);
+    if (rightDockRef.current) {
+      rightDockRef.current.scrollTo({ top: 0, behavior: "smooth" });
+    }
+    setBobSpeech(
+      `Playing lecture video for "${currentTopic.title}". Inspect the 3D model and watch side-by-side!`
+    );
+  }, [currentTopic]);
+
+  const toggleModuleExpanded = (modId) => {
+    try { soundManager.click(); } catch {}
+    setExpandedModules((prev) => ({ ...prev, [modId]: !prev[modId] }));
+  };
+
+  // Windows 11 Snipping Tool Spotlight Walkthrough Controllers
+  const updateSpotlightRect = useCallback((stepIdx) => {
+    const step = TOUR_STEPS[stepIdx];
+    if (!step) return;
+    const el = document.getElementById(step.id);
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const pad = 6;
+    setSpotlightRect({
+      top: Math.max(0, Math.round(r.top - pad)),
+      left: Math.max(0, Math.round(r.left - pad)),
+      width: Math.round(r.width + pad * 2),
+      height: Math.round(r.height + pad * 2),
+      borderRadius: step.id === "wb-zone-hud" ? 14 : 14,
+    });
+  }, []);
+
+  const dismissTour = useCallback((tourDone = false) => {
+    if (tourTimerRef.current) {
+      clearTimeout(tourTimerRef.current);
+      tourTimerRef.current = null;
+    }
+    try {
+      if (tourDone) {
+        soundManager.complete();
+      } else {
+        soundManager.click();
+      }
+    } catch {}
+    try {
+      localStorage.setItem("buildlab_learn_syllabus_seen", "true");
+    } catch {}
+    setTourActive(false);
+    setSpotlightRect(null);
+    setBobSpeech(
+      tourDone
+        ? "Tour complete! You're ready to explore. Watch the video or inspect the 3D parts."
+        : "Tour closed. Click any pulsing green dot or review the lesson guide to begin."
+    );
+  }, []);
+
+  const goToStep = useCallback(
+    (stepIdx) => {
+      if (tourTimerRef.current) {
+        clearTimeout(tourTimerRef.current);
+        tourTimerRef.current = null;
+      }
+      if (stepIdx < 0) return;
+      if (stepIdx >= TOUR_STEPS.length) {
+        dismissTour(true);
+        return;
+      }
+      try { soundManager.snap(); } catch {}
+      tourStepIndexRef.current = stepIdx;
+      setTourStepIndex(stepIdx);
+      requestAnimationFrame(() => {
+        updateSpotlightRect(stepIdx);
+      });
+      setBobSpeech(TOUR_STEPS[stepIdx].speech);
+    },
+    [updateSpotlightRect, dismissTour]
+  );
+
+  const handleTourNextStep = useCallback(() => {
+    goToStep(tourStepIndexRef.current + 1);
+  }, [goToStep]);
+
+  const handleTourPrevStep = useCallback(() => {
+    goToStep(tourStepIndexRef.current - 1);
+  }, [goToStep]);
+
+  const getCalloutPlacement = useCallback((stepIdx, rect) => {
+    if (!rect) return { style: {}, dir: "bottom" };
+    const step = TOUR_STEPS[stepIdx];
+    const dir = step?.direction || "bottom";
+
+    switch (dir) {
+      case "right":
+        return {
+          dir: "right",
+          style: {
+            left: `${Math.round(rect.left + rect.width + 24)}px`,
+            top: `${Math.max(76, Math.min(window.innerHeight - 340, rect.top + 80))}px`,
+          },
+        };
+      case "stage":
+        return {
+          dir: "stage",
+          style: {
+            left: `${Math.round(rect.left + 32)}px`,
+            top: `${Math.round(rect.top + 32)}px`,
+          },
+        };
+      case "left":
+      default:
+        return {
+          dir: "left",
+          style: {
+            right: `${Math.round(window.innerWidth - rect.left + 24)}px`,
+            top: `${Math.max(76, Math.min(window.innerHeight - 340, rect.top + 60))}px`,
+          },
+        };
+    }
+  }, []);
+
+  const startTour = useCallback(
+    (stepIdx = 0) => {
+      try { soundManager.granted(); } catch {}
+      setActivePopover(null);
+      setTourActive(true);
+      tourStepIndexRef.current = stepIdx;
+      setTourStepIndex(stepIdx);
+      setTimeout(() => {
+        updateSpotlightRect(stepIdx);
+      }, 100);
+      setBobSpeech(TOUR_STEPS[stepIdx]?.speech || "");
+    },
+    [updateSpotlightRect]
+  );
+
+  useEffect(() => {
+    if (!tourActive) return undefined;
+    const handleResize = () => updateSpotlightRect(tourStepIndexRef.current);
+    window.addEventListener("resize", handleResize);
+    window.addEventListener("scroll", handleResize, true);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("scroll", handleResize, true);
+    };
+  }, [tourActive, updateSpotlightRect]);
+
+  const handleDismissSyllabusWelcome = () => {
+    try { soundManager.click(); } catch {}
+    try {
+      localStorage.setItem("buildlab_learn_syllabus_seen", "true");
+    } catch {}
+    setShowSyllabusWelcome(false);
+    setBobIsCenter(false);
+    setBobSpeech(
+      "All yours! Watch the lecture video, inspect 3D hotspots, or review the field facts to begin."
+    );
+  };
+
+  const handleStartWorkbenchTour = () => {
+    try { soundManager.click(); } catch {}
+    try {
+      localStorage.setItem("buildlab_learn_syllabus_seen", "true");
+    } catch {}
+    setShowSyllabusWelcome(false);
+    setBobIsCenter(false);
+    setTimeout(() => {
+      startTour(0);
+    }, 380);
+  };
+
+  useEffect(() => {
+    if (showSyllabusWelcome) {
+      setBobIsCenter(true);
+      try { soundManager.granted(); } catch {}
+      setBobSpeech(
+        "Welcome to the CSS Hardware Academy! I've loaded your 6 modules and 19 interactive topics. Ready for the grand tour?"
+      );
+    }
+  }, [showSyllabusWelcome]);
+
+  useEffect(() => {
+    if (!tourActive) return;
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        dismissTour(false);
+      } else if (e.key === "ArrowRight") {
+        handleTourNextStep();
+      } else if (e.key === "ArrowLeft") {
+        handleTourPrevStep();
       }
     };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [tourActive, dismissTour, handleTourNextStep, handleTourPrevStep]);
 
-    return (
-      <div className="clean-quiz-wrap">
-        <p className="quiz-prompt">{activeQ.question}</p>
-
-        <div className="quiz-options-vertical">
-          {activeQ.options.map((opt, i) => {
-            const isSelected = answered === i;
-            const showResult = answered !== undefined;
-
-            let optClass = "";
-            if (showResult) {
-              if (opt.correct) optClass = "opt-correct";
-              else if (isSelected) optClass = "opt-wrong";
-            }
-
-            return (
-              <button
-                key={i}
-                className={`quiz-choice-btn ${isSelected ? "selected" : ""} ${optClass}`}
-                onClick={() => handleQuizOption(opt, i)}
-              >
-                <span className="choice-bullet">{isSelected ? "●" : "○"}</span>
-                <span className="choice-text">{opt.text}</span>
-              </button>
-            );
-          })}
-        </div>
-
-        {answered !== undefined && (
-          <div className="quiz-feedback-box animate-fade-in">
-            <strong>Takeaway:</strong> {activeQ.explanation}
-          </div>
-        )}
-
-        <div className="quiz-footer-actions">
-          <span className="quiz-progress-text">
-            {answered !== undefined && activeQ.options[answered]?.correct ? "✓ Validated" : "Awaiting response"}
-          </span>
+  return (
+    <div
+      className={`wb-shell theme-${workbenchTheme} ${
+        isLight ? "theme-light" : "theme-obsidian"
+      } ${
+        leftRailOpen ? "rail-expanded" : "rail-collapsed"
+      } ${tourActive ? "is-tour-active" : ""}`}
+    >
+      {/* ══ ZONE 1: LEFT NAVIGATION RAIL ══ */}
+      <aside
+        id="wb-zone-rail"
+        className={`wb-left-rail ${!leftRailOpen ? "is-collapsed" : ""}`}
+        aria-label="Workbench Navigation"
+      >
+        <div className="wb-rail-top">
           <button
-            className="quiz-action-btn"
+            type="button"
+            className="wb-rail-collapse-btn"
             onClick={() => {
-              if (quizIndex < quiz.length - 1) {
-                setQuizIndex((prev) => prev + 1);
-              } else {
-                setQuizIndex(0);
-              }
+              try { soundManager.click(); } catch {}
+              setLeftRailOpen((o) => !o);
+              setActivePopover(null);
             }}
+            data-tooltip={leftRailOpen ? "Collapse sidebar" : "Expand sidebar"}
+            aria-label="Toggle navigation rail"
           >
-            {quizIndex < quiz.length - 1 ? "Next Question →" : "Restart Quiz ↺"}
+            {leftRailOpen ? "‹" : "›"}
           </button>
+          {leftRailOpen && <span className="wb-rail-brand">BUILDLAB</span>}
         </div>
-      </div>
-    );
-  };
 
-  const renderTable = (table) => (
-    <div className="lesson-table-wrap">
-      <table className="matrix-table">
-        <thead>
-          <tr>
-            {table.columns.map((col, i) => (
-              <th key={i}>{col}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {table.rows.map((row, ri) => (
-            <tr key={ri}>
-              {row.map((cell, ci) => (
-                <td key={ci}>{ci === 0 ? <strong>{cell}</strong> : cell}</td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
+        <nav className="wb-rail-nav">
+          <button
+            type="button"
+            className="wb-rail-item"
+            onClick={() => navigate("/")}
+            data-tooltip="Return Home"
+            aria-label="Return Home"
+          >
+            <span className="wb-rail-icon">⌂</span>
+            {leftRailOpen && <span className="wb-rail-label">HOME</span>}
+          </button>
 
-  const renderSteps = (steps) => (
-    <div className="lesson-checklist">
-      {steps.map((st, i) => (
-        <div className="checklist-row" key={i}>
-          <span className="checklist-n">{i + 1}</span>
-          <div className="checklist-body">
-            <strong>{st.text}</strong>
-            {st.sub && <p>{st.sub}</p>}
-          </div>
-        </div>
-      ))}
-    </div>
-  );
+          <button
+            type="button"
+            className={`wb-rail-item ${activePopover === "lessons" ? "is-active" : ""}`}
+            onClick={() => {
+              try { soundManager.snap(); } catch {}
+              setActivePopover((p) => (p === "lessons" ? null : "lessons"));
+            }}
+            data-tooltip={`Browse all ${TOTAL_TOPICS_COUNT} Topics across ${TOTAL_MODULES_COUNT} Modules`}
+            aria-label="Browse Curriculum Lessons"
+          >
+            <span className="wb-rail-icon">📖</span>
+            {leftRailOpen && <span className="wb-rail-label">LESSONS</span>}
+          </button>
 
-  const renderNote = (note) => (
-    <div className="lesson-note">{note}</div>
-  );
+          <button
+            type="button"
+            className="wb-rail-item"
+            onClick={handleOpenLectureFilm}
+            data-tooltip="Toggle Current Lecture Video"
+            aria-label="Watch Video Lecture"
+          >
+            <span className="wb-rail-icon">▶</span>
+            {leftRailOpen && <span className="wb-rail-label">VIDEO FILM</span>}
+          </button>
 
-  /* ── ARTICLE lesson ── */
+          <button
+            type="button"
+            className="wb-rail-item"
+            onClick={() => navigate("/compatibility")}
+            data-tooltip="Stage 02: Compatibility Matrix"
+            aria-label="Compatibility Matrix"
+          >
+            <span className="wb-rail-icon">✓</span>
+            {leftRailOpen && <span className="wb-rail-label">COMPAT CHECK</span>}
+          </button>
 
-  const renderArticleLesson = (art) => (
-    <>
-      <div id="syllabus-art-1" className="mockup-card article-media-card">
-        <div className="syllabus-unit-ribbon">
-          <div className="syllabus-unit-lead">
-            <span className="unit-number-tag">§ 1.1</span>
-            <span className="unit-type-label">Foundational Video Lecture &amp; System Architecture Blueprint</span>
-          </div>
-          <div className="syllabus-unit-meta">
-            <span className="unit-badge video-badge">📺 Instructional Media</span>
-            <span className="unit-badge req-badge">{watchedVideos.includes(current.id) ? "✓ Lecture Verified" : "⏳ Prerequisite"}</span>
-          </div>
-        </div>
-        <div className="article-media-grid">
-          <div className="article-video-col">
-            <div className="lesson-video-topbar">
-              <div className="video-gate-status">
-                {watchedVideos.includes(current.id) ? (
-                  <span className="video-gate-badge watched">
-                    Video Verified
-                  </span>
-                ) : (
-                  <span className="video-gate-badge unwatched">
-                    ⏳ Required Video — Watch to proceed
-                  </span>
-                )}
-              </div>
-              <button
-                className={`video-mark-btn ${watchedVideos.includes(current.id) ? "is-marked" : ""}`}
-                onClick={() => toggleVideoWatched(current.id)}
-              >
-                {watchedVideos.includes(current.id) ? "✓ Watched (Reset)" : "▶ Mark as Watched"}
-              </button>
-            </div>
+          <button
+            type="button"
+            className="wb-rail-item"
+            onClick={() => {
+              try { soundManager.install(); } catch {}
+              unlockStage("studio");
+              navigate("/3d-builder?learn=true");
+            }}
+            data-tooltip="Stage 04: 3D Assembly Studio"
+            aria-label="3D Studio Sandbox"
+          >
+            <span className="wb-rail-icon">◈</span>
+            {leftRailOpen && <span className="wb-rail-label">3D STUDIO</span>}
+          </button>
 
-            <div className="lesson-video-frame">
-              {art.youtubeId ? (
-                <CourseVideoPlayer
-                  key={`artvideo-${art.youtubeId}`}
-                  videoId={art.youtubeId}
-                  lessonId={current.id}
-                  title={`${art.title} Tutorial Video`}
-                  isAlreadyFinished={watchedVideos.includes(current.id)}
-                  onFinished={() => markVideoWatched(current.id)}
-                                  />
-              ) : (
-                <img src={art.heroImage} alt={art.title} className="lesson-video-fallback" />
-              )}
-            </div>
-
-            <div className="lesson-video-bar">
-              {art.youtubeId && (
-                <a
-                  href={`https://www.youtube.com/watch?v=${art.youtubeId}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="step-quick-youtube-link"
-                  onClick={() => markVideoWatched(current.id)}
-                >
-                  ▶ Open on YouTube
-                </a>
-              )}
-            </div>
-
-            {!watchedVideos.includes(current.id) && (
-              <div className="video-gate-notice">
-                <strong>Prerequisite:</strong> Watch this video tutorial before continuing to the next topic.
-              </div>
+          <button
+            type="button"
+            className="wb-rail-item wb-theme-switch-btn"
+            onClick={toggleTheme}
+            data-tooltip={isLight ? "Switch to Dark Studio" : "Switch to Light Studio"}
+            aria-label={isLight ? "Switch to Dark Studio" : "Switch to Light Studio"}
+          >
+            <span className="wb-rail-icon">{isLight ? "🌙" : "☀️"}</span>
+            {leftRailOpen && (
+              <span className="wb-rail-label">
+                {isLight ? "DARK STUDIO" : "LIGHT STUDIO"}
+              </span>
             )}
-          </div>
+          </button>
+        </nav>
 
-          <div className="article-visual-col">
-            <span className="media-section-subhead">Topic Architecture Blueprint</span>
-            <div className="article-img-frame">
-              <img
-                src={art.heroImage}
-                alt={art.title}
-                className="article-hero-preview-img"
-                onError={(e) => {
-                  e.currentTarget.onerror = null;
-                  e.currentTarget.src = "/assets/pc_build.png";
-                }}
-              />
-              <div className="article-img-caption">
-                <span className="article-img-title">{art.title}</span>
-                <span className="article-img-sub">Hardware Schematic Reference</span>
+        {leftRailOpen && (
+          <div className="wb-rail-footer">
+            <div
+              className={`wb-learner-chip ${!isAuthenticated ? "is-guest-chip" : ""}`}
+              onClick={!isAuthenticated ? () => setShowGuestLockModal(true) : undefined}
+              data-tooltip={!isAuthenticated ? "Click to link account and unlock full curriculum" : learnerDisplayName}
+            >
+              <span className={`wb-learner-dot ${!isAuthenticated ? "is-guest-dot" : ""}`} />
+              <div className="wb-learner-meta">
+                <strong>{learnerDisplayName}</strong>
+                <span>{learnerSubtext}</span>
               </div>
+              {!isAuthenticated && <span className="wb-learner-unlock-arrow">→</span>}
             </div>
-
-            {art.objectives && (
-              <div className="article-objectives-box">
-                <span className="objectives-heading">Core Objectives</span>
-                <ul className="objectives-list">
-                  {art.objectives.map((obj, idx) => (
-                    <li key={idx}><span className="obj-check">✓</span> {obj}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
           </div>
-        </div>
-      </div>
-
-      <div id="syllabus-art-2" className="mockup-card article-objectives-card">
-        <div className="syllabus-unit-ribbon">
-          <div className="syllabus-unit-lead">
-            <span className="unit-number-tag">§ 1.2</span>
-            <span className="unit-type-label">Syllabus Learning Objectives &amp; Required Lab Equipment</span>
-          </div>
-          <div className="syllabus-unit-meta">
-            <span className="unit-badge specs-badge">🎯 Curriculum Benchmarks</span>
-          </div>
-        </div>
-        <span className="know-part-subhead">What you'll learn</span>
-        <ul className="lesson-objectives">
-          {art.objectives.map((o, i) => (
-            <li key={i}>{o}</li>
-          ))}
-        </ul>
-        {art.tools && (
-          <>
-            <span className="know-part-subhead tools-subhead">{art.toolsHead}</span>
-            {renderSteps(art.tools)}
-          </>
         )}
-        {art.table && renderTable(art.table)}
-      </div>
+      </aside>
 
-      {art.sections.map((sec, si) => (
-        <div id={si === 0 ? "syllabus-art-3" : undefined} className="mockup-card article-section-card" key={si}>
-          {si === 0 && (
-            <div className="syllabus-unit-ribbon">
-              <div className="syllabus-unit-lead">
-                <span className="unit-number-tag">§ 1.3</span>
-                <span className="unit-type-label">Curriculum Technical Reading &amp; Architectural Deep Dive</span>
-              </div>
-              <div className="syllabus-unit-meta">
-                <span className="unit-badge lab-badge">📖 Specialization Material</span>
-              </div>
+      {/* ── 6-MODULE HIERARCHICAL SYLLABUS ACCORDION POPOVER ── */}
+      {activePopover === "lessons" && (
+        <div className="wb-popover-card wb-syllabus-accordion-popover" role="dialog" aria-label="Curriculum Modules">
+          <div className="wb-popover-head">
+            <div>
+              <h3>CSS SYLLABUS</h3>
+              <p className="wb-popover-subtitle">
+                {doneCount} of {TOTAL_TOPICS_COUNT} Topics Completed ({progressPct}%)
+              </p>
             </div>
-          )}
-          <h4 className="article-section-heading">{sec.heading}</h4>
-          {sec.body &&
-            (Array.isArray(sec.body) ? sec.body : [sec.body]).map((p, i) => (
-              <p className="lesson-para" key={i}>{p}</p>
-            ))}
-          {sec.items && (
-            <ul className="lesson-list">
-              {sec.items.map((it, i) => (
-                <li key={i}>{it}</li>
-              ))}
-            </ul>
-          )}
-          {sec.steps && renderSteps(sec.steps)}
-          {sec.note && renderNote(sec.note)}
-          {sec.table && renderTable(sec.table)}
-        </div>
-      ))}
+            <button
+              type="button"
+              className="wb-popover-close wb-syllabus-popover-close"
+              onClick={() => setActivePopover(null)}
+              aria-label="Close Syllabus"
+            >
+              ×
+            </button>
+          </div>
 
-      {art.quiz && (
-        <div id="syllabus-art-4" className="mockup-card quiz-card">
-          <div className="syllabus-unit-ribbon">
-            <div className="syllabus-unit-lead">
-              <span className="unit-number-tag">§ 1.4</span>
-              <span className="unit-type-label">Formative Knowledge Check &amp; Certification Assessment</span>
-            </div>
-            <div className="syllabus-unit-meta">
-              <span className="unit-badge exam-badge">📝 Evaluated Assessment</span>
-            </div>
+          <div className="wb-syllabus-accordion-body">
+            {CSS_CURRICULUM.map((mod) => {
+              const isModExpanded = expandedModules[mod.id] ?? true;
+              const modCompletedCount = mod.topics.filter((t) => completed.includes(t.id)).length;
+              const isModComplete = modCompletedCount === mod.topics.length;
+              const isModLocked = !isAuthenticated && mod.moduleNum > 1;
+
+              return (
+                <div key={mod.id} className="wb-module-accordion-section">
+                  <button
+                    type="button"
+                    className="wb-module-accordion-header wb-syllabus-module-btn"
+                    onClick={() => toggleModuleExpanded(mod.id)}
+                    aria-expanded={isModExpanded}
+                  >
+                    <div className="wb-module-header-title">
+                      <span className="wb-module-tag">M{mod.moduleNum}</span>
+                      <strong>{mod.title}</strong>
+                      {isModLocked && (
+                        <span className="wb-module-lock-tag">🔒 STUDENT TRACK</span>
+                      )}
+                    </div>
+                    <div className="wb-module-header-meta">
+                      <span className={`wb-module-done-pill ${isModComplete ? "is-all-done" : ""}`}>
+                        {modCompletedCount}/{mod.topics.length}
+                      </span>
+                      <span className="wb-module-chevron">{isModExpanded ? "▾" : "▸"}</span>
+                    </div>
+                  </button>
+
+                  {isModExpanded && (
+                    <div className="wb-module-topics-list">
+                      {mod.topics.map((t) => {
+                        const isDone = completed.includes(t.id);
+                        const globalIdx = FLAT_TOPICS.findIndex((f) => f.id === t.id);
+                        const isActive = globalIdx === currentIndex;
+                        const isLocked = isTopicLockedForGuest(globalIdx);
+
+                        return (
+                          <button
+                            type="button"
+                            key={t.id}
+                            className={`wb-topic-row-btn wb-syllabus-topic-item ${isActive ? "is-active" : ""} ${isLocked ? "is-locked" : ""}`}
+                            onClick={() => {
+                              if (isLocked) {
+                                try { soundManager.warning(); } catch {}
+                                setShowGuestLockModal(true);
+                              } else {
+                                goTopic(globalIdx);
+                                setActivePopover(null);
+                              }
+                            }}
+                          >
+                            <span className={`wb-topic-status-dot ${isDone ? "is-done" : ""} ${isLocked ? "is-locked-dot" : ""}`}>
+                              {isDone ? "✓" : isLocked ? "🔒" : t.topicCode}
+                            </span>
+                            <span className="wb-topic-name">{t.title}</span>
+                            {isLocked && (
+                              <span className="wb-topic-lock-label">LOCKED</span>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+
+            {!isAuthenticated && (
+              <div className="wb-syllabus-unlock-banner">
+                <div className="wb-unlock-banner-content">
+                  <span className="wb-unlock-banner-icon">🎓</span>
+                  <div className="wb-unlock-banner-text">
+                    <strong>Unlock All 6 Modules &amp; Verified E-Certificate</strong>
+                    <p>
+                      Guest preview includes Module 1. Link your Google account to access all 19 topics and earn an accredited PTC-IICT certificate.
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  className="wb-unlock-banner-btn"
+                  onClick={() => {
+                    setActivePopover(null);
+                    setShowGuestLockModal(true);
+                  }}
+                >
+                  Connect Google Account &amp; Unlock Free →
+                </button>
+              </div>
+            )}
           </div>
-          <div className="mockup-card-header">
-            <h3 className="mockup-card-title">Knowledge Check</h3>
-          </div>
-          <div className="quiz-card-body">{renderQuiz(art.quiz)}</div>
         </div>
       )}
 
-      {(current.id === "full-build-order" || current.id === "compatibility-chain") && (
-        <div className="mockup-card practical-3d-lab-card">
-          <div className="lab-card-header">
-            <div className="lab-badge-row">
-              <span className="lab-chip-tag">CAPSTONE 2 SIMULATION LAB</span>
-              <span className="lab-live-indicator">● Hands-on 3D Studio Integration</span>
-            </div>
-            <h3 className="lab-card-title">
-              {current.id === "full-build-order"
-                ? "Interactive 3D Assembly: Complete 12-Step Build"
-                : "Interactive 3D Workshop: Compatibility & Clearance Check"}
-            </h3>
-            <p className="lab-card-desc">
-              {current.id === "full-build-order"
-                ? "Rehearse the complete PC assembly workflow in 3D. Install every subsystem in proper physical order before building real hardware."
-                : "Test component physical clearances, PCIe lane bandwidths, and cooler heights inside the 3D Studio."}
+      {/* ══ MAIN WORKBENCH COLUMN ══ */}
+      <div className="wb-main-column">
+        {/* ══ CLEAN TOP HUD: TITLE + DYNAMIC TOPIC PROGRESS + ACTIONS (NO CLOCK BLOAT) ══ */}
+        <header className="wb-top-header" role="banner">
+          <div className="wb-title-block">
+            <h1 className="wb-app-title">LEARN HARDWARE</h1>
+            <p className="wb-app-sub">
+              EXPLORE &middot; UNDERSTAND &middot; BUILD &mdash; COMPUTER SYSTEMS SERVICING (CSS)
             </p>
           </div>
 
-          <div className="lab-challenge-grid">
-            <div className="lab-objectives-box">
-              <span className="lab-tasks-head">Simulation Goals</span>
-              <div className="lab-task-list">
-                <div className="lab-task-item">
-                  <span className="lab-task-check">01</span>
-                  <span>{current.id === "full-build-order" ? "Pre-assemble motherboard tray outside the chassis" : "Verify CPU socket to board matching"}</span>
-                </div>
-                <div className="lab-task-item">
-                  <span className="lab-task-check">02</span>
-                  <span>{current.id === "full-build-order" ? "Seat graphics card, route power harnesses, and fasten thumb screws" : "Check GPU length against case radiator clearance"}</span>
-                </div>
-                <div className="lab-task-item">
-                  <span className="lab-task-check">03</span>
-                  <span>{current.id === "full-build-order" ? "Inspect 360° turntable spin for unseated connectors" : "Verify twin-tower cooler height against tempered glass"}</span>
+          <div className="wb-header-right">
+            <button
+              type="button"
+              className={`wb-hud-pill wb-tour-btn ${tourActive ? "is-active" : ""}`}
+              onClick={tourActive ? () => dismissTour(false) : () => startTour(0)}
+              data-tooltip={tourActive ? "Close guided tour (Esc)" : "Tour the 3 workbench zones with B.O.B."}
+              aria-label={tourActive ? "Stop tour" : "Start guide tour"}
+            >
+              <span className="wb-tour-icon">{tourActive ? "✕" : "💡"}</span>
+              <span>{tourActive ? "STOP TOUR" : "GUIDE ME"}</span>
+            </button>
+
+            {/* Dynamic Module & Topic Progress Indicator */}
+            <div className="wb-hud-pill" id="wb-zone-hud">
+              <div className="wb-hud-track">
+                <span className="wb-hud-icon">📖</span>
+                <div className="wb-hud-bar-wrap">
+                  <div className="wb-hud-bar-top">
+                    <span>MODULE {currentTopic.moduleNum}</span>
+                    <span className="wb-hud-divider">•</span>
+                    <strong>
+                      TOPIC {currentIndex + 1}/{FLAT_TOPICS.length}
+                    </strong>
+                  </div>
+                  <div className="wb-hud-progress">
+                    <div className="wb-hud-progress-fill" style={{ width: `${progressPct}%` }} />
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div className="lab-action-box">
-              <button
-                className="btn-launch-3d-lab-primary"
-                onClick={() => {
-                  soundManager.install();
-                  navigate('/3d-builder?mode=full&learn=true');
-                }}
-              >
-                <span>🚀 Launch Full 3D Assembly Simulator</span>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <polyline points="9 18 15 12 9 6"></polyline>
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </>
-  );
+            <button
+              type="button"
+              className="wb-stage-cta wb-cta-studio"
+              onClick={() => {
+                try { soundManager.granted(); } catch {}
+                unlockStage("studio");
+                navigate("/3d-builder?learn=true");
+              }}
+              data-tooltip="Open 3D PC Builder Sandbox"
+              aria-label="Open 3D Studio"
+            >
+              3D STUDIO →
+            </button>
 
-  /* ── COMPONENT lesson (merged deep-dive cards) ── */
+            <button
+              type="button"
+              className="wb-stage-cta wb-cta-cert"
+              onClick={handleCertClick}
+              data-tooltip="View or Download Verified Certificate"
+              aria-label="View Certificate"
+            >
+              🎓 CERT ({progressPct}%)
+            </button>
+          </div>
+        </header>
 
-  const renderComponentLesson = (comp) => (
-    <>
-      <div id="syllabus-sec-1" className="mockup-card lesson-brief-card">
-        <div className="syllabus-unit-ribbon">
-          <div className="syllabus-unit-lead">
-            <span className="unit-number-tag">§ 1.1</span>
-            <span className="unit-type-label">Core Instructional Lecture &amp; Hardware Specimen</span>
-          </div>
-          <div className="syllabus-unit-meta">
-            <span className="unit-badge video-badge">📺 Interactive Lecture Film</span>
-            <span className="unit-badge req-badge">{watchedVideos.includes(comp.id) ? "✓ Lecture Verified" : "⏳ Prerequisite"}</span>
-          </div>
-        </div>
-        <div className="lesson-brief-grid">
-          <div className="lesson-video-col">
-            <div className="lesson-video-topbar">
-              <div className="video-gate-status">
-                {watchedVideos.includes(comp.id) ? (
-                  <span className="video-gate-badge watched">
-                    Video Verified
+        {/* ══ 2-FOCUSED ZONE WORKBENCH: CENTER 3D CANVAS + RIGHT CSS PRE-LAB GUIDE ══ */}
+        <div className="wb-workbench-body">
+          {/* ══ ZONE 1: CENTER 3D HARDWARE STAGE (BREATHING ROOM, NO BOTTOM STRIP) ══ */}
+          <section
+            id="wb-zone-stage"
+            className="wb-center-stage"
+            aria-label="Interactive 3D Hardware Board"
+          >
+            <LearnHardwareStage
+              specimenKey={currentTopic.specimenKey}
+              selectedBuildPart={currentBuild?.[currentTopic.specimenKey] || null}
+              lessonTitle={currentTopic.title}
+              hotspots={ARTICLE_HOTSPOTS}
+              selectedHotspotId={selectedHotspotId}
+              onSelectHotspotId={(id) => {
+                setSelectedHotspotId(id);
+                if (id) {
+                  const hs = ARTICLE_HOTSPOTS.find((h) => h.id === id);
+                  if (hs) {
+                    setBobSpeech(`Examining ${hs.label}: ${hs.role}. Rule: ${hs.tip}`);
+                  }
+                }
+              }}
+              onOpenVideo={handleOpenLectureFilm}
+              theme={workbenchTheme}
+              onToggleTheme={toggleTheme}
+            />
+          </section>
+
+          {/* ══ ZONE 2: RIGHT PRACTICAL CSS PRE-LAB GUIDE CARD ══ */}
+          <aside
+            id="wb-zone-dock"
+            className="wb-right-dock"
+            ref={rightDockRef}
+            aria-label="CSS Pre-Lab Guide & Practical Reference"
+          >
+            <div className="wb-css-guide-card" ref={guideCardRef}>
+              {/* 1. Header & YouTube Lecture Player */}
+              <div className="wb-guide-header">
+                <div className="wb-guide-meta-row">
+                  <span className="wb-module-badge">
+                    MODULE {currentTopic.moduleNum} // {currentTopic.moduleTitle.toUpperCase()}
                   </span>
-                ) : (
-                  <span className="video-gate-badge unwatched">
-                    ⏳ Required Video — Watch to proceed
+                  {completed.includes(currentTopic.id) && (
+                    <span className="wb-topic-done-badge">✓ COMPLETED</span>
+                  )}
+                </div>
+                <h2 className="wb-topic-main-title">{currentTopic.title}</h2>
+              </div>
+
+              {/* Collapsible 16:9 YouTube Lecture Video Card */}
+              <div className={`wb-lecture-video-card ${videoHighlighted ? "is-highlighted" : ""}`}>
+                <button
+                  type="button"
+                  className="wb-video-card-head"
+                  onClick={() => setVideoExpanded((v) => !v)}
+                  aria-expanded={videoExpanded}
+                >
+                  <div className="wb-video-head-left">
+                    <span className="wb-video-play-icon">📺</span>
+                    <strong>Lecture Video: {currentTopic.videoTitle}</strong>
+                  </div>
+                  <span className="wb-video-toggle-chevron">
+                    {videoExpanded ? "▴ Hide Video" : "▾ Watch Video"}
                   </span>
+                </button>
+
+                                {videoExpanded && (
+                  <>
+                    <div className="wb-video-frame-wrap">
+                      <iframe
+                        className="wb-video-iframe"
+                        src={`https://www.youtube-nocookie.com/embed/${currentTopic.youtubeId}?rel=0&modestbranding=1`}
+                        title={`${currentTopic.title} Lecture Video`}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowFullScreen
+                      />
+                    </div>
+                    <div className="wb-video-fallback-bar">
+                      <span>Video playback issue?</span>
+                      <a
+                        href={`https://www.youtube.com/watch?v=${currentTopic.youtubeId}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="wb-video-external-link"
+                      >
+                        ▶ Open on YouTube ↗
+                      </a>
+                    </div>
+                  </>
                 )}
               </div>
-              <button
-                className={`video-mark-btn ${watchedVideos.includes(comp.id) ? "is-marked" : ""}`}
-                onClick={() => toggleVideoWatched(comp.id)}
-                title={watchedVideos.includes(comp.id) ? "Click to reset watch state" : "Mark as completed"}
-              >
-                {watchedVideos.includes(comp.id) ? "✓ Watched (Reset)" : "▶ Mark as Watched"}
-              </button>
-            </div>
 
-            <div className="lesson-video-frame">
-              {comp.youtubeId ? (
-                <CourseVideoPlayer
-                  key={`lessonvideo-${comp.id}-${comp.youtubeId}`}
-                  videoId={comp.youtubeId}
-                  lessonId={comp.id}
-                  title={`${comp.name} Lesson Film`}
-                  isAlreadyFinished={watchedVideos.includes(comp.id)}
-                  onFinished={() => markVideoWatched(comp.id)}
-                                  />
-              ) : (
-                <img src={comp.heroImage} alt={comp.name} className="lesson-video-fallback" />
-              )}
-            </div>
-            <div className="lesson-video-bar">
-              <a
-                href={`https://www.youtube.com/watch?v=${comp.youtubeId}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="step-quick-youtube-link"
-                onClick={() => markVideoWatched(comp.id)}
-              >
-                ▶ Watch Full Tutorial on YouTube
-              </a>
-            </div>
-
-            {!watchedVideos.includes(comp.id) && (
-              <div className="video-gate-notice">
-                <strong>Prerequisite:</strong> Watch this instructional hardware video before moving to the next lesson or marking complete.
+              {/* 2. Core Explanation */}
+              <div className="wb-guide-section">
+                <h3 className="wb-section-heading">Core Concept</h3>
+                <p className="wb-guide-explanation-text">{currentTopic.explanation}</p>
               </div>
-            )}
-          </div>
 
-          <aside className="lesson-brief-side">
-            <div className="hardware-specimen-header">
-              <div className="specimen-badge-row">
-                <span className="specimen-badge-pill">Hardware Specimen</span>
-                <span className="specimen-tier-pill">{comp.badge || "Verified Architecture"}</span>
-              </div>
-              <div className="specimen-image-container">
-                <img
-                  src={comp.heroImage}
-                  alt={comp.name}
-                  className="hardware-specimen-img"
-                  onError={(e) => {
-                    e.currentTarget.onerror = null;
-                    e.currentTarget.src = "/assets/cpu_learn.jpg";
-                  }}
-                />
-                <div className="specimen-caption-overlay">
-                  <span className="specimen-part-title">{comp.name}</span>
-                  <span className="specimen-subtext">Original BuildLab Part Reference</span>
+              {/* 3. Quick Field Fact Box */}
+              <div className="wb-field-fact-card">
+                <div className="wb-fact-head">
+                  <span className="wb-fact-icon">⚡</span>
+                  <strong className="wb-fact-title">
+                    FIELD REFERENCE // {currentTopic.fieldFact.title}
+                  </strong>
+                  <span className="wb-fact-badge">{currentTopic.fieldFact.badge}</span>
+                </div>
+                <div className="wb-fact-items-grid">
+                  {currentTopic.fieldFact.items.map((item, i) => (
+                    <div key={i} className="wb-fact-item-row">
+                      <div className="wb-fact-item-label">
+                        <span
+                          className="wb-fact-tag"
+                          style={{ borderColor: item.color, color: item.color }}
+                        >
+                          {item.tag}
+                        </span>
+                        <strong>{item.label}</strong>
+                      </div>
+                      <span className="wb-fact-item-val">{item.value}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
-            </div>
 
-            <div className="lesson-tags-row">
-              {comp.tags.map((tag, idx) => (
-                <span key={idx} className="badge-pill">{tag}</span>
-              ))}
-            </div>
-            <p className="lesson-brief-text">{comp.description}</p>
-            <div className="common-errors-alert compact-errors">
-              <div className="errors-header-line">
-                <span className="error-title-text">Common Errors</span>
-                <span className="error-badge-pill">Danger</span>
+              {/* 4. Avoid This Lab Mistake (Warning Callout Box) */}
+              <div className="wb-mistake-warning-card">
+                <div className="wb-warning-head">
+                  <span className="wb-warning-icon">⚠️</span>
+                  <strong>AVOID THIS MISTAKE IN LAB</strong>
+                </div>
+                <p className="wb-warning-desc">{currentTopic.mistakeWarning.desc}</p>
               </div>
-              <p className="error-body-text">{comp.commonErrors}</p>
+
+              {/* 5. 3D Action & 1-Question Quick Check */}
+              <div className="wb-action-and-check-section">
+                <div className="wb-inspect-3d-banner">
+                  <div className="wb-inspect-3d-info">
+                    <span className="wb-inspect-icon">🔍</span>
+                    <div>
+                      <strong>Inspect Specimen in 3D</strong>
+                      <span>Focus the camera on physical component &amp; socket keying</span>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    className="wb-inspect-3d-btn"
+                    onClick={handleInspectIn3D}
+                  >
+                    Inspect in 3D ⌖
+                  </button>
+                </div>
+
+                {/* Spot The Lab Mistake Quiz */}
+                <div className="wb-quick-check-card">
+                  <div className="wb-quiz-header">
+                    <span className="wb-quiz-icon">📝</span>
+                    <strong>SPOT THE LAB MISTAKE // 1-QUESTION QUICK CHECK</strong>
+                  </div>
+                  <p className="wb-quiz-question">{currentTopic.quiz.question}</p>
+
+                  <div className="wb-quiz-options-list">
+                    {currentTopic.quiz.options.map((opt, optIdx) => {
+                      const isSelected = selectedQuizOption === optIdx;
+                      let optionClass = "wb-quiz-opt-btn";
+                      if (isSelected) {
+                        optionClass += opt.correct ? " is-correct" : " is-incorrect";
+                      }
+                      return (
+                        <button
+                          type="button"
+                          key={optIdx}
+                          className={optionClass}
+                          onClick={() => handleSelectQuizOption(optIdx, opt.correct)}
+                        >
+                          <span className="wb-opt-letter">{["A", "B", "C", "D"][optIdx]}</span>
+                          <span className="wb-opt-text">{opt.text}</span>
+                          {isSelected && (
+                            <span className="wb-opt-feedback-icon">
+                              {opt.correct ? "✓" : "✕"}
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {quizAnswerStatus === "correct" && (
+                    <div className="wb-quiz-explanation-box success">
+                      <span className="wb-quiz-expl-title">✓ Correct! Lab Mistake Avoided:</span>
+                      <p>{currentTopic.quiz.explanation}</p>
+                    </div>
+                  )}
+
+                  {quizAnswerStatus === "incorrect" && (
+                    <div className="wb-quiz-explanation-box error">
+                      <span className="wb-quiz-expl-title">✕ Incorrect procedure:</span>
+                      <p>Review the warning callout above and try selecting the correct safety procedure!</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* 6. Linear Topic Navigation Footer */}
+              {(() => {
+                const isTopicCompleted = completed.includes(currentTopic.id);
+                const isPreviewEnd = !isAuthenticated && currentIndex === 2;
+
+                return (
+                  <div className="wb-dock-nav-footer">
+                    <button
+                      type="button"
+                      className="wb-nav-step-btn wb-btn-prev"
+                      onClick={handlePrevTopic}
+                      disabled={currentIndex === 0}
+                    >
+                      ← Previous
+                    </button>
+                    <span className="wb-nav-step-counter">
+                      Topic {currentIndex + 1} of {FLAT_TOPICS.length}
+                    </span>
+                    <button
+                      type="button"
+                      className={`wb-nav-step-btn wb-btn-next ${!isTopicCompleted ? "is-locked" : ""} ${isPreviewEnd ? "is-preview-unlock" : ""}`}
+                      onClick={handleNextTopic}
+                      disabled={!isTopicCompleted}
+                      data-tooltip={
+                        !isTopicCompleted
+                          ? "Answer the Quick Check quiz above to unlock"
+                          : isPreviewEnd
+                          ? "Link Google account to unlock Module 2–6 and Certificate"
+                          : "Proceed to next topic"
+                      }
+                    >
+                      {currentIndex + 1 === FLAT_TOPICS.length
+                        ? "Claim Certificate 🎓"
+                        : isPreviewEnd
+                        ? "Unlock Full Academy 🎓"
+                        : "Next Topic →"}
+                    </button>
+                  </div>
+                );
+              })()}
             </div>
           </aside>
         </div>
       </div>
 
-      <div id="syllabus-sec-2" className="mockup-card know-part-card">
-        <div className="syllabus-unit-ribbon">
-          <div className="syllabus-unit-lead">
-            <span className="unit-number-tag">§ 1.2</span>
-            <span className="unit-type-label">Technical Architecture, Specifications &amp; Suffix Decoder</span>
-          </div>
-          <div className="syllabus-unit-meta">
-            <span className="unit-badge specs-badge">📋 Standard Data Sheet</span>
-          </div>
-        </div>
-        <div className="mockup-card-header">
-          <h3 className="mockup-card-title">Know Your Part</h3>
-        </div>
-        <div className="know-part-grid">
-          <div className="know-specs">
-            <span className="know-part-subhead">Key Specifications</span>
-            <div className="specs-8grid know-specs-grid">
-              {comp.specs.map((spec, idx) => (
-                <div key={idx} className="spec-tile">
-                  <span className="spec-tile-label">{spec.label}</span>
-                  <span className="spec-tile-value">{spec.value}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="know-decoder">
-            <span className="know-part-subhead">Naming &amp; Suffix Decoder</span>
-            <div className="decoder-table-panel intel-table-panel">
-              <div className={`decoder-panel-head ${comp.namingLeft.colorClass}`}>
-                <span>{comp.namingLeft.title}</span>
-              </div>
-              <div className="decoder-rows-stack">
-                {comp.namingLeft.rows.map((r, i) => (
-                  <div key={i} className="decoder-spec-row">
-                    <span className="d-label">{r.label}</span>
-                    <span className="d-val">{r.val}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="decoder-table-panel amd-table-panel">
-              <div className={`decoder-panel-head ${comp.namingRight.colorClass}`}>
-                <span>{comp.namingRight.title}</span>
-              </div>
-              <div className="decoder-rows-stack">
-                {comp.namingRight.rows.map((r, i) => (
-                  <div key={i} className="decoder-spec-row">
-                    <span className="d-label">{r.label}</span>
-                    <span className="d-val">{r.val}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div id="syllabus-sec-3" className="mockup-card try-it-yourself-card">
-        <div className="syllabus-unit-ribbon">
-          <div className="syllabus-unit-lead">
-            <span className="unit-number-tag">§ 1.3</span>
-            <span className="unit-type-label">Hands-On Laboratory Practicum: Interface &amp; Socket Compatibility</span>
-          </div>
-          <div className="syllabus-unit-meta">
-            <span className="unit-badge lab-badge">🔬 Interactive Lab Workbench</span>
-          </div>
-        </div>
-        <div className="mockup-card-header">
-          <h3 className="mockup-card-title">Try It Yourself</h3>
-          <span className="try-it-hint">Match the interface target to see a green check</span>
-        </div>
-        <div className="matcher-table-wrapper">
-          <div className="matcher-table-head">
-            <span className="col-head col-tier">Profile Tier</span>
-            <span className="col-head col-model">Component Model</span>
-            <span className="col-head col-socket">Interface / Socket Target</span>
-            <span className="col-head col-status">Status &amp; Action</span>
-          </div>
-          <div className="matcher-table-rows">
-            {matcherRows.map((row) => {
-              const isMatch = row.socket === row.targetSocket;
-              return (
-                <div key={row.id} className={`matcher-row ${isMatch ? "match-ok" : "match-err"}`}>
-                  <div className="col-cell col-tier">
-                    <span className="tier-tag-text">{row.tier}</span>
-                  </div>
-                  <div className="col-cell col-model">
-                    <select
-                      className="mockup-select"
-                      value={row.model}
-                      onChange={(e) => handleModelChange(row.id, e.target.value)}
-                    >
-                      {comp.modelOptions.map((opt, i) => (
-                        <option key={i} value={opt.name}>
-                          {opt.name} ({opt.socket})
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="col-cell col-socket">
-                    <select
-                      className="mockup-select"
-                      value={row.targetSocket}
-                      onChange={(e) => handleSocketChange(row.id, e.target.value)}
-                    >
-                      {comp.targetSockets.map((sock, i) => (
-                        <option key={i} value={sock}>
-                          {sock}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="col-cell col-status">
-                    {isMatch ? (
-                      <div className="status-cell-wrap">
-                        <span className="match-badge-success">✓ Compatible</span>
-                        <button
-                          className="btn-cell-builder"
-                          onClick={() => handleConnectToBuild(row.model, row.targetSocket)}
-                        >
-                          Load
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="status-cell-wrap">
-                        <span className="match-badge-error">✕ Incompatible</span>
-                        <button
-                          className="btn-cell-fix"
-                          onClick={() => handleSocketChange(row.id, row.socket)}
-                        >
-                          Fix
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
-      <div id="syllabus-sec-4" className="mockup-card assembly-card">
-        <div className="syllabus-unit-ribbon">
-          <div className="syllabus-unit-lead">
-            <span className="unit-number-tag">§ 1.4</span>
-            <span className="unit-type-label">Procedural Assembly Protocol &amp; Synced Video Demonstration</span>
-          </div>
-          <div className="syllabus-unit-meta">
-            <span className="unit-badge protocol-badge">🛠️ Standard Assembly Procedure</span>
-          </div>
-        </div>
-        <div className="mockup-card-header">
-          <h3 className="mockup-card-title">Build It: Step by Step</h3>
-          <span className="try-it-hint">Click a step to sync the film</span>
-        </div>
-        <div className="installation-main-grid assembly-grid">
-          <div className="installation-steps-stack">
-            {comp.steps.map((item) => (
-              <div
-                key={item.step}
-                className={`step-interactive-row ${activeStep === item.step ? "active-step" : ""}`}
-                onClick={() => {
-                  setActiveStep(item.step);
-                }}
-              >
-                <div className="step-left-content">
-                  <span className="step-tag-bold">Step {item.step}</span>
-                  <p className="step-title-text">{item.title}</p>
-                  <p className="step-desc-text">{item.desc}</p>
-                </div>
-                <div className="step-icon-graphic">
-                  {item.step === 1 && "01"}
-                  {item.step === 2 && "02"}
-                  {item.step === 3 && "03"}
-                  {item.step === 4 && "04"}
-                  {item.step === 5 && "05"}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="installation-step-preview-container">
-            <div className="step-preview-header">
-              <span className="step-preview-badge">Step {activeStep} Demonstration</span>
-            </div>
-            <div className="step-preview-video-wrapper">
-              {comp.youtubeId ? (
-                <CourseVideoPlayer
-                  key={`${comp.id}-stepfilm-${comp.youtubeId}-${activeStep}`}
-                  videoId={comp.youtubeId}
-                  lessonId={`${comp.id}-step-${activeStep}`}
-                  title={`${comp.name} Step ${activeStep} Demonstration`}
-                  compact
-                  isAlreadyFinished={watchedVideos.includes(`${comp.id}-step-${activeStep}`)}
-                  onFinished={() => markVideoWatched(`${comp.id}-step-${activeStep}`)}
-                                  />
-              ) : (
-                <div className="step-preview-placeholder">
-                  <img src={comp.heroImage} alt={comp.name} />
-                </div>
-              )}
-            </div>
-            <div className="step-preview-caption">
-              <strong>{comp.steps.find((s) => s.step === activeStep)?.title}</strong>
-              <p>{comp.steps.find((s) => s.step === activeStep)?.desc}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div id="syllabus-sec-5" className="mockup-card practical-3d-lab-card">
-        <div className="syllabus-unit-ribbon">
-          <div className="syllabus-unit-lead">
-            <span className="unit-number-tag">§ 1.5</span>
-            <span className="unit-type-label">Capstone 2 Virtual Workshop: 3D Studio CAD Simulation</span>
-          </div>
-          <div className="syllabus-unit-meta">
-            <span className="unit-badge workshop-badge">🚀 3D CAD Orbit Workshop</span>
-          </div>
-        </div>
-        <div className="lab-card-header">
-          <div className="lab-badge-row">
-            <span className="lab-chip-tag">CAPSTONE 2 PRACTICAL ACTIVITY</span>
-            <span className="lab-live-indicator">● 3D Studio Real-Time Integration</span>
-          </div>
-          <h3 className="lab-card-title">Interactive 3D Assembly Challenge: {comp.name}</h3>
-          <p className="lab-card-desc">
-            Put theory into practice inside BuildLab's 3D Studio. Orient the {comp.name}, verify mechanical socket/slot alignment, and test retention latch tolerances before physical assembly.
-          </p>
-        </div>
-
-        <div className="lab-challenge-grid">
-          <div className="lab-objectives-box">
-            <span className="lab-tasks-head">Hands-On Milestones</span>
-            <div className="lab-task-list">
-              <div className="lab-task-item">
-                <span className="lab-task-check">01</span>
-                <div>
-                  <strong>Mechanical Key Inspection:</strong>
-                  <p>Examine notch positions, golden triangle alignment, or retention latch orientation.</p>
-                </div>
-              </div>
-              <div className="lab-task-item">
-                <span className="lab-task-check">02</span>
-                <div>
-                  <strong>Zero-Strain Insertion:</strong>
-                  <p>Seat the component flat into its designated socket or slot in full 3D orbital view.</p>
-                </div>
-              </div>
-              <div className="lab-task-item">
-                <span className="lab-task-check">03</span>
-                <div>
-                  <strong>Thermal &amp; Power Clearances:</strong>
-                  <p>Verify cooler, cable harness, and side panel clearances from every angle.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="lab-action-box">
-            <button
-              className="btn-launch-3d-lab-primary"
-              onClick={() => {
-                soundManager.install();
-                navigate(`/3d-builder?stage=${comp.id}&learn=true`);
-              }}
-            >
-              <span>🚀 Launch 3D Studio {comp.name} Lab</span>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <polyline points="9 18 15 12 9 6"></polyline>
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div id="syllabus-sec-6" className="mockup-card knowledge-check-card">
-        <div className="syllabus-unit-ribbon">
-          <div className="syllabus-unit-lead">
-            <span className="unit-number-tag">§ 1.6</span>
-            <span className="unit-type-label">Formative Unit Evaluation: Mastery Quiz &amp; Pitfall Diagnostics</span>
-          </div>
-          <div className="syllabus-unit-meta">
-            <span className="unit-badge exam-badge">📝 Evaluated Assessment</span>
-          </div>
-        </div>
-        <div className="mockup-card-header">
-          <h3 className="mockup-card-title">Knowledge Check</h3>
-          {quizAnswers[quizIndex] !== undefined && comp.quiz[quizIndex] && (
-            <span className={`quiz-verdict ${comp.quiz[quizIndex].options[quizAnswers[quizIndex]]?.correct ? "verdict-pass" : "verdict-fail"}`}>
-              {comp.quiz[quizIndex].options[quizAnswers[quizIndex]]?.correct ? "✓ Correct" : "✕ Study & retry"}
-            </span>
-          )}
-        </div>
-        <div className="knowledge-check-grid">
-          <div className="knowledge-quiz-side">
-            {renderQuiz(comp.quiz)}
-          </div>
-          <div className="knowledge-mistakes-side">
-            <span className="know-part-subhead mistakes-subhead">Common Mistakes to Avoid</span>
-            <div className="mistakes-2x2-grid">
-              {comp.mistakes.map((m, idx) => (
-                <div
-                  key={idx}
-                  className="mistake-badge-btn"
-                  onClick={() => setSelectedMistake(selectedMistake === m.name ? null : m.name)}
-                >
-                  <span className="m-icon">!</span>
-                  <span className="m-name">{m.name}</span>
-                </div>
-              ))}
-            </div>
-            {selectedMistake && (
-              <div className="mistake-details-drawer animate-fade-in">
-                {comp.mistakes.find((m) => m.name === selectedMistake)?.desc}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      <div id="syllabus-sec-7" className="mockup-card matrix-card">
-        <div className="syllabus-unit-ribbon">
-          <div className="syllabus-unit-lead">
-            <span className="unit-number-tag">§ 1.7</span>
-            <span className="unit-type-label">Industry Recommendation Matrix &amp; Vendor Qualification Guide</span>
-          </div>
-          <div className="syllabus-unit-meta">
-            <span className="unit-badge matrix-badge">📊 Benchmarked Standards</span>
-          </div>
-        </div>
-        <div className="mockup-card-header">
-          <h3 className="mockup-card-title">{comp.name} Recommendation Matrix</h3>
-          <a href="#matcher-section" className="view-specs-link">Try it yourself ↑</a>
-        </div>
-        <div className="matrix-table-responsive">
-          <table className="matrix-table">
-            <thead>
-              <tr>
-                <th>Build tier</th>
-                <th>Recommended Hardware</th>
-                <th>Interface / Target</th>
-                <th>Target Spec</th>
-                <th>Release / TDP</th>
-              </tr>
-            </thead>
-            <tbody>
-              {comp.matrix.map((row, idx) => (
-                <tr key={idx} className={row.highlight ? "highlight-green-row" : ""}>
-                  <td><span className="matrix-tier-name">{row.tier}</span></td>
-                  <td><strong>{row.cpu}</strong></td>
-                  <td>{row.socket}</td>
-                  <td>{row.spec}</td>
-                  <td>{row.tdp}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        <div className="manufacturers-divider" />
-        <span className="know-part-subhead">Popular Manufacturers</span>
-        <div className="manufacturers-4col-grid">
-          {comp.brands.map((brand, idx) => (
-            <div key={idx} className="mfg-card-tile">
-              <span className="mfg-logo-icon">{brand.icon}</span>
-              <div className="mfg-text-wrap">
-                <span className="mfg-title">{brand.name}</span>
-                <span className="mfg-sub">{brand.desc}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="mockup-card action-bar-card">
-        <div className="action-left-text">
-          <h4 className="action-main-title">Ready to build your dream PC?</h4>
-          <p className="action-sub-text">
-            Put your hardware knowledge to work with real-time socket matching, power estimation, and 3D component fitting.
-          </p>
-        </div>
-        <div className="action-right-buttons">
-          <button
-            className="btn-connect-build"
-            onClick={() =>
-              handleConnectToBuild(comp.matcherRows[0]?.model, comp.matcherRows[0]?.socket)
-            }
-          >
-            Connect to Build
-          </button>
-          <Link to="/brands" className="btn-add-charts">
-            + Add Spec Charts
-          </Link>
-        </div>
-      </div>
-    </>
-  );
-
-  /* ── Scaffold ── */
-
-  return (
-    <div className="learn-page full-bleed-page course-shell-root">
-      <GlobalHeader hideBuildPill={true} />
-      <div className="bg-glow bg-glow-1" aria-hidden="true" />
-      <div className="bg-glow bg-glow-2" aria-hidden="true" />
-
-      {!isPinned && (
-        <button 
-          className="course-sidebar-edge-tab"
-          onClick={() => {
-            soundManager.snap();
-            setIsPinned(true);
-          }}
-          aria-label="Expand Course Syllabus"
-          title="Open Course Syllabus (Click to expand)"
-        >
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-            <line x1="9" y1="3" x2="9" y2="21" />
-          </svg>
-          <span className="edge-tab-label">Syllabus</span>
-          <span className="edge-tab-arrow">‹</span>
-        </button>
-      )}
-
-      <div 
-        className={`course-sidebar-backdrop ${isPinned ? "mobile-active" : ""}`} 
-        onClick={() => setIsPinned(false)} 
-      />
-
-      <div className={`course-shell ${isPinned ? "right-pinned" : ""}`}>
-        <div className="course-main">
-          <div className="course-stream">
-            <div className="course-hub-master-banner">
-              <div className="course-hub-left-info">
-                <div className="course-hub-eyebrow-row">
-                  <span className="course-academy-badge">BUILDLAB ACADEMY · PROFESSIONAL SPECIALIZATION</span>
-                  {guideTarget ? (
-                    <button
-                      type="button"
-                      className="course-tour-pill-btn active"
-                      onClick={dismissGuideTour}
-                      title="Dismiss highlight guide"
-                    >
-                      <span className="tour-pill-pulse" />
-                      <span>✕ SKIP TOUR</span>
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      className="course-tour-pill-btn"
-                      onClick={startGuideTour}
-                      title="Ask B.O.B. to guide you through the syllabus layout"
-                    >
-                      <span className="tour-pill-icon">💡</span>
-                      <span>GUIDE ME</span>
-                    </button>
-                  )}
-                  <button
-                    className={`course-syllabus-toggle-btn ${isPinned ? "is-open" : "is-collapsed"}`}
-                    onClick={() => {
-                      soundManager.snap();
-                      setIsPinned(!isPinned);
-                    }}
-                    title={isPinned ? "Collapse Syllabus Navigation Panel" : "Expand Syllabus Navigation Panel"}
-                  >
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: '6px' }}>
-                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                      <line x1="15" y1="3" x2="15" y2="21" />
-                    </svg>
-                    <span>{isPinned ? "Syllabus (Expanded)" : "Syllabus (Show Panel)"}</span>
-                  </button>
-                </div>
-                <h2 className="course-hub-program-title">PC Architecture &amp; System Engineering Masterclass</h2>
-                <div className="course-hub-progress-track">
-                  <div className="hub-progress-bar-container">
-                    <div className="hub-progress-bar-fill" style={{ width: `${progressPct}%` }} />
-                  </div>
-                  <span className="hub-progress-label">
-                    {progressPct}% Mastered · {doneCount} of {FLAT.length} Topics Verified
-                  </span>
-                </div>
-
-                {progressPct === 100 && (
-                  <div className="course-hub-grad-card">
-                    <div className="grad-card-left">
-                      <div className="grad-badge-row">
-                        <span className="grad-star">★</span>
-                        <span className="grad-badge-text">STAGE 04 READY // ALL MODULES MASTERED</span>
-                      </div>
-                      <h3 className="grad-card-title">Curriculum 100% Completed!</h3>
-                      <p className="grad-card-desc">
-                        Your verified Certificate of Hardware Mastery is ready with your Google Account details.
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      className="grad-card-cta-btn"
-                      onClick={() => {
-                        try { soundManager.granted(); } catch {}
-                        unlockStage("certificate");
-                        unlockStage("studio");
-                        navigate("/certificate");
-                      }}
-                    >
-                      <span>CLAIM OFFICIAL CERTIFICATE (PDF)</span>
-                      <span className="btn-arrow">&rarr;</span>
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <header
-              className={`lesson-header ${current.type === "component" ? "has-hero" : ""}`}
-              style={
-                current.type === "component"
-                  ? { backgroundImage: `url('${lesson.heroImage}')` }
-                  : undefined
-              }
-            >
-              <div className="lesson-header-overlay" />
-              <div className="lesson-header-inner">
-                <div className="lesson-header-top-row">
-                  <nav className="lesson-eyebrow" aria-label="Course breadcrumb">
-                    <Link to="/" className="eyebrow-link">Home</Link>
-                    <span className="eyebrow-sep">›</span>
-                    <Link to="/learn" className="eyebrow-link">Learn</Link>
-                    <span className="eyebrow-sep">›</span>
-                    <span className="eyebrow-module">{current.moduleLabel} · {current.moduleTitle}</span>
-                  </nav>
-                  <span className="academic-course-code">COURSE CS-102 · UNIT {currentIndex + 1} OF {FLAT.length}</span>
-                </div>
-
-                <h1 className="lesson-title">
-                  {current.type === "component" ? lesson.name : lesson.title}
-                </h1>
-
-                <div className="lesson-meta-chips">
-                  <span className="meta-chip minutes-chip">◷ {current.minutes} min syllabus load</span>
-                  <span className="meta-chip academic-level-chip">🎓 Professional Specialization</span>
-                  {completed.includes(current.id) ? (
-                    <span className="meta-chip done-chip">✓ Verified Complete</span>
-                  ) : (
-                    <span className="meta-chip in-progress-chip">⏳ In Progress</span>
-                  )}
-                  {(current.type === "article" ? lesson.tags : []).map((tag, i) => (
-                    <span key={i} className="meta-chip">{tag}</span>
-                  ))}
-                </div>
-
-                <p className="lesson-header-desc">{lesson.description}</p>
-              </div>
-            </header>
-
-            <nav
-              className={`syllabus-anchor-bar bob-highlight-target ${guideTarget === 'topics' ? 'active-guide' : ''}`}
-              id="learn-topics-panel"
-              aria-label="Syllabus Unit Navigation"
-            >
-              {guideTarget === 'topics' && (
-                <>
-                  <div className="bob-guide-indicator-pill">
-                    <span className="tag-bracket">[</span>
-                    <span className="bob-guide-indicator-dot" />
-                    <span>B.O.B. // TOPIC QUICK-JUMP BAR</span>
-                    <span className="tag-bracket">]</span>
-                  </div>
-                  <div className="bob-guide-scanline" />
-                  <div className="bob-guide-corner-tl" />
-                  <div className="bob-guide-corner-tr" />
-                  <div className="bob-guide-corner-bl" />
-                  <div className="bob-guide-corner-br" />
-                </>
-              )}
-              <div className="syllabus-anchor-label">
-                <span className="anchor-dot">●</span>
-                <span>Syllabus Topics:</span>
-              </div>
-              <div className="syllabus-anchor-scroll">
-                {current.type === "component" ? (
-                  <>
-                    <a href="#syllabus-sec-1" className="syllabus-anchor-pill">§ 1.1 Lecture &amp; Specimen</a>
-                    <a href="#syllabus-sec-2" className="syllabus-anchor-pill">§ 1.2 Specs &amp; Suffixes</a>
-                    <a href="#syllabus-sec-3" className="syllabus-anchor-pill">§ 1.3 Compatibility Lab</a>
-                    <a href="#syllabus-sec-4" className="syllabus-anchor-pill">§ 1.4 Assembly Protocol</a>
-                    <a href="#syllabus-sec-5" className="syllabus-anchor-pill">§ 1.5 3D Simulation Lab</a>
-                    <a href="#syllabus-sec-6" className="syllabus-anchor-pill">§ 1.6 Assessment &amp; Pitfalls</a>
-                    <a href="#syllabus-sec-7" className="syllabus-anchor-pill">§ 1.7 Field Matrix</a>
-                  </>
-                ) : (
-                  <>
-                    <a href="#syllabus-art-1" className="syllabus-anchor-pill">§ 1.1 Foundational Lecture</a>
-                    <a href="#syllabus-art-2" className="syllabus-anchor-pill">§ 1.2 Curriculum Objectives</a>
-                    <a href="#syllabus-art-3" className="syllabus-anchor-pill">§ 1.3 Core Reading</a>
-                    <a href="#syllabus-art-4" className="syllabus-anchor-pill">§ 1.4 Unit Assessment</a>
-                  </>
-                )}
-              </div>
-            </nav>
-
-            <div
-              className={`course-lesson-body bob-highlight-target ${guideTarget === 'center' ? 'active-guide' : ''}`}
-              id="learn-center-panel"
-            >
-              {guideTarget === 'center' && (
-                <>
-                  <div className="bob-guide-indicator-pill">
-                    <span className="tag-bracket">[</span>
-                    <span className="bob-guide-indicator-dot" />
-                    <span>B.O.B. // LESSON FILM &amp; LAB CONTENT</span>
-                    <span className="tag-bracket">]</span>
-                  </div>
-                  <div className="bob-guide-scanline" />
-                  <div className="bob-guide-corner-tl" />
-                  <div className="bob-guide-corner-tr" />
-                  <div className="bob-guide-corner-bl" />
-                  <div className="bob-guide-corner-br" />
-                </>
-              )}
-              {current.type === "component" ? renderComponentLesson(lesson) : renderArticleLesson(lesson)}
-            </div>
-
-            {videoToast && (
-              <div className="video-toast-banner animate-fade-in">
-                <span className="toast-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
-                <span className="toast-text">{videoToast}</span>
-                <button
-                  className="video-toast-mark-btn"
-                  onClick={() => {
-                    markVideoWatched(current.id);
-                    setVideoToast(null);
-                  }}
-                >
-                  Mark as Watched Now
-                </button>
-              </div>
-            )}
-
-            <div className="lesson-footer-nav">
-              <button
-                className="lesson-nav-btn prev"
-                disabled={currentIndex === 0}
-                onClick={() => goLesson(currentIndex - 1)}
-              >
-                ‹ Previous
-              </button>
-
-              {completed.includes(current.id) ? (
-                <span className="lesson-done-note">✓ Lesson complete — nice work</span>
-              ) : (
-                <button
-                  className={`lesson-mark-btn ${currentVideoId && !isVideoWatched ? "gated-btn" : ""}`}
-                  onClick={() => handleMarkComplete(current.id)}
-                  title={currentVideoId && !isVideoWatched ? "Watch video before marking complete" : "Mark lesson complete"}
-                >
-                  {currentVideoId && !isVideoWatched ? "Complete (Watch Video First)" : "✓ Mark complete"}
-                </button>
-              )}
-
-              <button
-                className={`lesson-nav-btn next ${currentVideoId && !isVideoWatched ? "gated-btn" : ""}`}
-                onClick={handleNext}
-                title={currentVideoId && !isVideoWatched ? "Watch video before proceeding to next lesson" : "Next lesson"}
-              >
-                {currentVideoId && !isVideoWatched
-                  ? "Next lesson (Watch video first)"
-                  : currentIndex === FLAT.length - 1
-                  ? "Finish Course"
-                  : "Next lesson ›"}
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <aside 
-          className={`course-outline cyber-syllabus-panel ${isPinned ? "open pinned" : "closed"} bob-highlight-target ${guideTarget === 'syllabus' ? 'active-guide' : ''}`}
-          id="learn-syllabus-panel"
-          aria-label="Course Outline Sidebar"
-        >
-
-          {guideTarget === 'syllabus' && (
-            <>
-              <div className="bob-guide-indicator-pill">
-                <span className="tag-bracket">[</span>
-                <span className="bob-guide-indicator-dot" />
-                <span>B.O.B. // CURRICULUM SYLLABUS</span>
-                <span className="tag-bracket">]</span>
-              </div>
-              <div className="bob-guide-scanline" />
-              <div className="bob-guide-corner-tl" />
-              <div className="bob-guide-corner-tr" />
-              <div className="bob-guide-corner-bl" />
-              <div className="bob-guide-corner-br" />
-            </>
-          )}
-          <div className="course-sidebar-container">
-            <div className="course-sidebar-header">
-              <div className="sidebar-header-left">
-                <span className="course-sidebar-eyebrow">ACADEMIC CURRICULUM</span>
-                <h2 className="course-sidebar-title">COURSE SYLLABUS</h2>
-              </div>
-              <div className="sidebar-header-actions">
-                <button 
-                  className="sidebar-close-btn"
-                  onClick={() => {
-                    soundManager.snap();
-                    setIsPinned(false);
-                  }}
-                  title="Collapse Syllabus Navigation"
-                  aria-label="Collapse Syllabus Navigation"
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                  </svg>
-                </button>
-              </div>
-            </div>
-
-            <div className="course-sidebar-progress-card">
-              <div className="outline-progress">
-                <div className="outline-progress-fill" style={{ width: `${progressPct}%` }} />
-              </div>
-              <div className="outline-progress-stats">
-                <span className="outline-progress-text">
-                  {doneCount === FLAT.length ? (
-                    <span className="progress-complete-badge">✓ CURRICULUM COMPLETED</span>
-                  ) : (
-                    <>
-                      <span className="progress-highlight">{doneCount}</span> of <span className="progress-highlight">{FLAT.length}</span> lessons
-                    </>
-                  )}
-                </span>
-                <span className="progress-pct-badge">{progressPct}%</span>
-              </div>
-
-              {progressPct === 100 && (
-                <button
-                  type="button"
-                  className="sidebar-claim-cert-btn"
-                  onClick={() => {
-                    try { soundManager.granted(); } catch {}
-                    unlockStage("certificate");
-                    navigate("/certificate");
-                  }}
-                >
-                  <span>🎓 VIEW CERTIFICATE (PDF)</span>
-                  <span className="btn-arrow">&rarr;</span>
-                </button>
-              )}
-            </div>
-
-            <div className="outline-scroll">
-              {COURSE.map((mod, modIdx) => (
-                <div className="outline-module-group" key={mod.id}>
-                  <div className="outline-module-head">
-                    <span className="outline-module-badge">CH {String(modIdx + 1).padStart(2, "0")}</span>
-                    <span className="outline-module-title">{mod.title}</span>
-                  </div>
-                  {mod.lessons.map((l) => {
-                    const flatIdx = FLAT.findIndex(
-                      (f) =>
-                        f.id === (l.type === "component" ? l.key : l.ref) &&
-                        f.type === l.type
-                    );
-                    const isActive = flatIdx === currentIndex;
-                    const isDone = completed.includes(l.type === "component" ? l.key : l.ref);
-                    const lessonTitle =
-                      l.type === "component"
-                        ? componentGuide.find((c) => c.id === l.key)?.name
-                        : ARTICLE_LESSONS[l.ref]?.title;
-                    return (
-                      <button
-                        key={`${mod.id}-${l.type}-${l.key || l.ref}`}
-                        className={`outline-lesson ${isActive ? "active" : ""} ${isDone ? "done" : ""}`}
-                        onClick={() => goLesson(flatIdx)}
-                      >
-                        <span className={`lesson-dot ${isDone ? "dot-done" : ""} ${isActive ? "dot-now" : ""}`}>
-                          {isDone ? "✓" : isActive ? "▶" : ""}
-                        </span>
-                        <div className="outline-lesson-info">
-                          <span className={`outline-lesson-type-tag ${l.type === "component" ? "tag-lecture" : "tag-guide"}`}>
-                            {l.type === "component" ? "LECTURE & LAB" : "MODULE GUIDE"}
-                          </span>
-                          <span className="outline-lesson-name">{lessonTitle}</span>
-                        </div>
-                        <span className="outline-lesson-min">{l.minutes}m</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              ))}
-            </div>
-
-            <div className="course-sidebar-foot">
-              {firstIncomplete >= 0 ? (
-                <button
-                  className="outline-continue-btn cyber-cta-btn"
-                  onClick={() => goLesson(firstIncomplete)}
-                  title={FLAT[firstIncomplete].type === "article" ? FLAT[firstIncomplete].lesson.title : FLAT[firstIncomplete].lesson.name}
-                >
-                  <span className="cta-icon">▶</span>
-                  <span className="cta-label">
-                    Continue: {FLAT[firstIncomplete].type === "article"
-                      ? FLAT[firstIncomplete].lesson.title
-                      : FLAT[firstIncomplete].lesson.name}
-                  </span>
-                  <span className="cta-arrow">→</span>
-                </button>
-              ) : (
-                <button
-                  className="outline-continue-btn done-btn cyber-cta-btn"
-                  onClick={() => navigate("/build")}
-                >
-                  <span>Start your first build</span>
-                  <span className="cta-arrow">→</span>
-                </button>
-              )}
-            </div>
-          </div>
-        </aside>
-      </div>
-
-      {/* ── First-Time Enter Welcome Overlay Banner ── */}
-      {showWelcomeOverlay && !showUnlockBanner && (
-        <div 
-          className={`syllabus-welcome-overlay ${isWelcomeExiting ? "exiting" : ""}`} 
-          role="dialog" 
-          aria-modal="true" 
-          aria-label="Welcome to Course Syllabus"
-        >
-          <div className="syllabus-welcome-backdrop" onClick={dismissGuideTour} />
-          <div className="syllabus-welcome-card">
-            <div className="welcome-card-scanline" />
-            <div className="welcome-corner-tl" />
-            <div className="welcome-corner-tr" />
-            <div className="welcome-corner-bl" />
-            <div className="welcome-corner-br" />
-
-            <div className="welcome-card-header">
-              <div className="welcome-eyebrow-badge">
-                <span className="badge-pulse-dot" />
-                <span>BUILDLAB ACADEMY // ONBOARDING</span>
-              </div>
-              <button 
-                type="button"
-                className="welcome-card-close-btn" 
-                onClick={dismissGuideTour}
-                disabled={isWelcomeExiting}
-                title="Dismiss (Esc)"
-                aria-label="Close welcome banner"
-              >
-                ✕
-              </button>
-            </div>
-
-            <div className="welcome-card-body">
-              <div className="welcome-title-row">
-                <h1 className="welcome-card-title">WELCOME TO THE COURSE SYLLABUS</h1>
-                <p className="welcome-card-subtitle">
-                  Master PC architecture from component clearances to thermal dynamics. Guided interactive lessons, lab simulations, and live POST diagnostics.
-                </p>
-              </div>
-
-              <div className="welcome-features-grid">
-                <div className="welcome-feat-box">
-                  <span className="feat-box-icon">📽️</span>
-                  <div className="feat-box-info">
-                    <strong>HD Lesson Films</strong>
-                    <p>In-depth hardware walkthroughs with step demonstrations.</p>
-                  </div>
-                </div>
-                <div className="welcome-feat-box">
-                  <span className="feat-box-icon">⚡</span>
-                  <div className="feat-box-info">
-                    <strong>Clearance Labs</strong>
-                    <p>Interactive pinouts, RAM channels, and thermal stats.</p>
-                  </div>
-                </div>
-                <div className="welcome-feat-box">
-                  <span className="feat-box-icon">🤖</span>
-                  <div className="feat-box-info">
-                    <strong>B.O.B. Companion</strong>
-                    <p>Live guidance and build tips as you master each chapter.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="welcome-card-foot">
-              <button
-                type="button"
-                className="welcome-btn-primary"
-                onClick={startGuideTour}
-                disabled={isWelcomeExiting}
-              >
-                <span>SHOW ME AROUND</span>
-                <span className="btn-arrow">→</span>
-              </button>
-              <button
-                type="button"
-                className="welcome-btn-secondary"
-                onClick={dismissGuideTour}
-                disabled={isWelcomeExiting}
-              >
-                <span>I GOT THIS (SKIP TOUR)</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
+      {/* ══ STAGE UNLOCK BANNER MODAL ══ */}
       {showUnlockBanner && (
         <StageUnlockBanner
-          stageKey="learn"
+          currentStage="learn"
           stageNumber="03"
-          title="HARDWARE ACADEMY UNLOCKED"
-          subtitle="All curriculum modules accessible. Complete all 12 lessons to earn your verified Certificate of Hardware Mastery."
-          accentColor="#00d2ff"
+          stageName="Learn Hardware"
           badge="LEARN TRACK // STAGE 03"
-          onComplete={handleUnlockBannerComplete}
+          accentColor="#00e5a0"
+          learnerProfile={userProfile}
+          requireConfirm={true}
+          ctaLabel="ENTER HARDWARE ACADEMY →"
+          onDismiss={() => {
+            setShowUnlockBanner(false);
+            markBannerSeen("learn");
+            try {
+              if (localStorage.getItem("buildlab_learn_syllabus_seen") !== "true") {
+                setShowSyllabusWelcome(true);
+                setBobIsCenter(true);
+                try { soundManager.granted(); } catch {}
+                setBobSpeech(
+                  "Welcome to the CSS Hardware Academy! I've loaded your 6 modules and 19 interactive topics. Ready for the grand tour?"
+                );
+              }
+            } catch {}
+          }}
         />
       )}
 
+      {/* ══ FIRST-TIME WELCOME TO CSS SYLLABUS OVERLAY BANNER ══ */}
+      {showSyllabusWelcome && (
+        <div
+          className="wb-welcome-overlay-backdrop"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Welcome to CSS Hardware Academy"
+        >
+          <div className="wb-welcome-overlay-card">
+            <div className="wb-welcome-badge">
+              <span className="wb-welcome-badge-dot" />
+              <span>STAGE 03 // GRADE 11 CSS HARDWARE ACADEMY</span>
+            </div>
+            <h1 className="wb-welcome-title">WELCOME TO THE CSS SYLLABUS</h1>
+            <p className="wb-welcome-subtitle">
+              Master computer systems servicing from the silicon up. Hands-on 3D hardware inspection, practical field facts, lab safety precautions, and accredited student certification.
+            </p>
+
+            <div className="wb-welcome-highlights">
+              <div className="wb-welcome-chip">
+                <span className="chip-icon">🖥️</span>
+                <div>
+                  <strong>Interactive 3D PC Workbench</strong>
+                  <span>Rotate, zoom, and inspect physical sockets &amp; keyed connectors</span>
+                </div>
+              </div>
+              <div className="wb-welcome-chip">
+                <span className="chip-icon">📺</span>
+                <div>
+                  <strong>Video Lectures &amp; Field Facts</strong>
+                  <span>Watch YouTube tutorials and master real-world lab safety standards</span>
+                </div>
+              </div>
+              <div className="wb-welcome-chip">
+                <span className="chip-icon">🎓</span>
+                <div>
+                  <strong>Accredited CSS Student Certification</strong>
+                  <span>Complete quick checks across all 19 topics to earn your verified credential</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="wb-welcome-actions">
+              <button
+                type="button"
+                className="wb-welcome-start-btn"
+                onClick={handleStartWorkbenchTour}
+              >
+                🚀 START WORKBENCH TOUR
+              </button>
+              <button
+                type="button"
+                className="wb-welcome-skip-btn"
+                onClick={handleDismissSyllabusWelcome}
+              >
+                Skip Tour &amp; Jump In
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ══ WINDOWS 11 SNIPPING TOOL SPOTLIGHT WALKTHROUGH PORTAL ══ */}
+      {tourActive && spotlightRect && (
+        <div className="wb-snipping-portal" aria-live="polite">
+          <svg className="wb-snip-cutout-svg" aria-hidden="true">
+            <defs>
+              <mask id="wb-snip-mask">
+                <rect x="0" y="0" width="100%" height="100%" fill="#ffffff" />
+                <rect
+                  x={spotlightRect.left}
+                  y={spotlightRect.top}
+                  width={spotlightRect.width}
+                  height={spotlightRect.height}
+                  rx={spotlightRect.borderRadius || 14}
+                  ry={spotlightRect.borderRadius || 14}
+                  fill="#000000"
+                />
+              </mask>
+            </defs>
+            <rect
+              x="0"
+              y="0"
+              width="100%"
+              height="100%"
+              fill="rgba(4, 7, 14, 0.88)"
+              mask="url(#wb-snip-mask)"
+            />
+          </svg>
+
+          <div
+            className="wb-snip-highlight-ring"
+            style={{
+              top: `${spotlightRect.top}px`,
+              left: `${spotlightRect.left}px`,
+              width: `${spotlightRect.width}px`,
+              height: `${spotlightRect.height}px`,
+              borderRadius: `${spotlightRect.borderRadius || 14}px`,
+            }}
+          />
+
+          {(() => {
+            const placement = getCalloutPlacement(tourStepIndex, spotlightRect);
+            const step = TOUR_STEPS[tourStepIndex];
+            if (!step) return null;
+
+            return (
+              <div
+                className={`wb-snip-callout-card dir-${placement.dir}`}
+                style={placement.style}
+                role="dialog"
+                aria-label={`Guide: ${step.name}`}
+              >
+                <div className={`wb-tech-pointer dir-${placement.dir}`}>
+                  <span className="wb-pointer-ping-dot" />
+                  <span className="wb-pointer-stem" />
+                </div>
+
+                <div className="wb-callout-top">
+                  <div className="wb-callout-bob-brand">
+                    <div className="wb-mini-bob-avatar" aria-hidden="true">
+                      <span className="mini-bob-eye left" />
+                      <span className="mini-bob-eye right" />
+                    </div>
+                    <div className="wb-callout-bob-meta">
+                      <strong>B.O.B. GUIDE</strong>
+                      <span>ZONE {tourStepIndex + 1} OF {TOUR_STEPS.length}</span>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    className="wb-callout-close-x"
+                    onClick={() => dismissTour(false)}
+                    data-tooltip="Close Guide (Esc)"
+                    aria-label="Close Guide"
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                <h3 className="wb-callout-zone-title">{step.name}</h3>
+                <p className="wb-callout-body-text">{step.speech}</p>
+
+                <div className="wb-callout-foot">
+                  <div className="wb-callout-step-dots">
+                    {TOUR_STEPS.map((_, i) => (
+                      <button
+                        type="button"
+                        key={i}
+                        className={`wb-callout-step-dot ${i === tourStepIndex ? "is-active" : ""}`}
+                        onClick={() => goToStep(i)}
+                        data-tooltip={TOUR_STEPS[i].name}
+                        aria-label={`Jump to ${TOUR_STEPS[i].name}`}
+                      />
+                    ))}
+                  </div>
+
+                  <div className="wb-callout-actions">
+                    {tourStepIndex > 0 && (
+                      <button
+                        type="button"
+                        className="wb-callout-action-btn wb-btn-prev"
+                        onClick={handleTourPrevStep}
+                        data-tooltip="Previous Zone"
+                      >
+                        ‹ Prev
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      className="wb-callout-action-btn wb-btn-gotit"
+                      onClick={handleTourNextStep}
+                      data-tooltip="Confirm and proceed"
+                    >
+                      {tourStepIndex + 1 === TOUR_STEPS.length ? "Got It! Start Lab ✓" : "Got It →"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+        </div>
+      )}
+
+
+      {/* ══ GUEST PREVIEW UNLOCK MODAL (PERSUASIVE E-CERTIFICATE & FULL ACADEMY) ══ */}
+      {showGuestLockModal && (
+        <div
+          className="wb-welcome-overlay-backdrop"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Unlock Full Curriculum & E-Certificate"
+        >
+          <div className="wb-welcome-overlay-card wb-guest-lock-card">
+            <div className="wb-welcome-badge">
+              <span className="wb-welcome-badge-dot" />
+              <span>GUEST PREVIEW COMPLETED // UNLOCK FULL ACADEMY</span>
+            </div>
+            <h1 className="wb-welcome-title">UNLOCK FULL CSS CURRICULUM &amp; E-CERTIFICATE</h1>
+            <p className="wb-welcome-subtitle">
+              You are exploring in Guest Preview. Link your Google account to unlock all 6 modules, 19 interactive topics, and claim your accredited PTC-IICT Certificate of Completion.
+            </p>
+
+            <div className="wb-welcome-highlights">
+              <div className="wb-welcome-chip">
+                <span className="chip-icon">🎓</span>
+                <div>
+                  <strong>Official Verified E-Certificate</strong>
+                  <span>Earn an official credential with your full name, student ID, and accredited course hours.</span>
+                </div>
+              </div>
+              <div className="wb-welcome-chip">
+                <span className="chip-icon">🔓</span>
+                <div>
+                  <strong>Complete 6 Modules • 19 Topics</strong>
+                  <span>Unlock CPU socket pins, RAM dual-channel rules, USB color codes, PSU safety, airflow physics, and POST debugging.</span>
+                </div>
+              </div>
+              <div className="wb-welcome-chip">
+                <span className="chip-icon">✨</span>
+                <div>
+                  <strong>Personalized Interest Matching</strong>
+                  <span>Tailor learning challenges to your specific strand (CSS, ICT, BSIT) and hardware goals.</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="wb-welcome-actions">
+              <button
+                type="button"
+                className="wb-welcome-start-btn"
+                onClick={() => {
+                  setShowGuestLockModal(false);
+                  setShowAccountModal(true);
+                }}
+              >
+                🚀 Connect Google Account &amp; Unlock Free
+              </button>
+              <button
+                type="button"
+                className="wb-welcome-skip-btn"
+                onClick={() => setShowGuestLockModal(false)}
+              >
+                Keep Exploring Module 1 Preview
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── GOOGLE SIGN-IN & TELL US ABOUT YOU MODAL ── */}
+      <AccountSetupModal
+        isOpen={showAccountModal}
+        onClose={() => setShowAccountModal(false)}
+        onConfirmed={(newMode, newProfile) => {
+          setShowAccountModal(false);
+          setShowGuestLockModal(false);
+          if (currentIndex === 2) {
+            setCurrentIndex(3);
+          }
+        }}
+      />
+
+      {/* ══ B.O.B. COMPANION IN LEFT RAIL ══ */}
       <BobCompanion
         context="learn"
-        activeTopic={current.type === "component" ? lesson.name : lesson.title}
+        activeTopic={currentTopic.title}
         externalSpeech={bobSpeech}
-        dockRight={isPinned ? 345 : 24}
-        isCenter={isBobCentered && !showUnlockBanner}
+        dockRight={20}
+        size={bobIsCenter ? 88 : leftRailOpen ? 64 : 46}
+        isCenter={bobIsCenter}
         onLaunchLab={() => {
-          soundManager.install();
-          navigate(`/3d-builder?stage=${current.type === 'component' ? current.id : 'cpu'}&learn=true`);
+          try { soundManager.install(); } catch {}
+          navigate(`/3d-builder?stage=${currentTopic.specimenKey}&learn=true`);
         }}
       />
     </div>

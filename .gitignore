@@ -6,6 +6,7 @@ notify_telegram.py
 .webui_secret_key
 logs/
 pc_screen.png
+scratch/
 
 # Environment & Local Secrets
 .env

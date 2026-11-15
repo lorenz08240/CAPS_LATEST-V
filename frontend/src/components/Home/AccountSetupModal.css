@@ -268,6 +268,28 @@
   text-align: center;
 }
 
+.account-legal-links {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 11px;
+  color: #64748b;
+}
+
+.account-legal-links a {
+  color: #38bdf8;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.account-legal-links a:hover {
+  color: #00e5a0;
+  text-decoration: underline;
+}
+
 .account-explore-alt {
   margin-top: 14px;
   padding-top: 14px;
@@ -550,4 +572,222 @@
   font-size: 10px;
   color: #00e5a0;
   word-break: break-all;
+}
+
+/* ── LIGHT THEME STYLING ── */
+body.theme-light .account-modal-overlay,
+.theme-light .account-modal-overlay {
+  background: rgba(15, 23, 42, 0.45);
+}
+
+body.theme-light .account-modal-card,
+.theme-light .account-modal-card {
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  box-shadow: 0 24px 64px rgba(15, 23, 42, 0.14);
+  color: #0f172a;
+}
+
+body.theme-light .account-modal-header,
+.theme-light .account-modal-header {
+  border-bottom-color: rgba(15, 23, 42, 0.08);
+}
+
+body.theme-light .account-title-text h3,
+.theme-light .account-title-text h3 {
+  color: #0f172a;
+}
+
+body.theme-light .account-title-text p,
+.theme-light .account-title-text p {
+  color: #475569;
+}
+
+body.theme-light .account-field-label,
+.theme-light .account-field-label {
+  color: #334155;
+}
+
+body.theme-light .account-field-input,
+.theme-light .account-field-input {
+  background: #f8fafc;
+  border-color: rgba(15, 23, 42, 0.14);
+  color: #0f172a;
+}
+
+body.theme-light .account-field-input:focus,
+.theme-light .account-field-input:focus {
+  border-color: #059669;
+  background: #ffffff;
+}
+
+body.theme-light .account-status-card,
+.theme-light .account-status-card {
+  background: #f8fafc;
+  border-color: rgba(15, 23, 42, 0.1);
+  color: #0f172a;
+}
+
+body.theme-light .account-user-name,
+.theme-light .account-user-name {
+  color: #0f172a;
+}
+
+body.theme-light .account-user-email,
+.theme-light .account-user-email {
+  color: #64748b;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   TELL US ABOUT YOU STEP STYLING
+   ═══════════════════════════════════════════════════════════════════ */
+
+.about-you-form {
+  gap: 14px;
+}
+
+.about-you-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  padding: 4px 10px;
+  background: rgba(0, 229, 160, 0.12);
+  border: 1px solid rgba(0, 229, 160, 0.35);
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #00e5a0;
+  margin-bottom: 2px;
+}
+
+.about-you-sparkle {
+  font-size: 12px;
+}
+
+.account-select {
+  width: 100%;
+  padding: 10px 14px;
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  color: #f8fafc;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.account-select:focus {
+  border-color: #00e5a0;
+  box-shadow: 0 0 12px rgba(0, 229, 160, 0.25);
+}
+
+.account-select option {
+  background: #0d121f;
+  color: #f8fafc;
+}
+
+.interests-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.interest-card-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  cursor: pointer;
+  color: #cbd5e1;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.interest-card-pill:hover {
+  background: rgba(0, 229, 160, 0.06);
+  border-color: rgba(0, 229, 160, 0.3);
+  color: #f8fafc;
+}
+
+.interest-card-pill.is-selected {
+  background: rgba(0, 229, 160, 0.12);
+  border-color: #00e5a0;
+  color: #ffffff;
+  box-shadow: 0 0 14px rgba(0, 229, 160, 0.18);
+}
+
+.interest-icon {
+  font-size: 14px;
+}
+
+.interest-label {
+  flex: 1;
+  line-height: 1.25;
+}
+
+.interest-checkbox {
+  font-size: 11px;
+  font-weight: 800;
+  color: #00e5a0;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  background: rgba(0, 229, 160, 0.15);
+}
+
+.btn-unlock-all {
+  background: linear-gradient(135deg, #00e5a0 0%, #059669 100%) !important;
+  box-shadow: 0 0 20px rgba(0, 229, 160, 0.4) !important;
+  color: #04130d !important;
+  font-weight: 900 !important;
+}
+
+/* ── Light theme overrides for Tell Us About You ── */
+body.theme-light .account-select,
+.theme-light .account-select {
+  background: #f8fafc;
+  border-color: rgba(15, 23, 42, 0.15);
+  color: #0f172a;
+}
+
+body.theme-light .account-select option,
+.theme-light .account-select option {
+  background: #ffffff;
+  color: #0f172a;
+}
+
+body.theme-light .interest-card-pill,
+.theme-light .interest-card-pill {
+  background: #f8fafc;
+  border-color: rgba(15, 23, 42, 0.12);
+  color: #334155;
+}
+
+body.theme-light .interest-card-pill:hover,
+.theme-light .interest-card-pill:hover {
+  background: rgba(5, 150, 105, 0.06);
+  border-color: rgba(5, 150, 105, 0.35);
+  color: #0f172a;
+}
+
+body.theme-light .interest-card-pill.is-selected,
+.theme-light .interest-card-pill.is-selected {
+  background: #ecfdf5;
+  border-color: #059669;
+  color: #064e3b;
+  box-shadow: 0 0 12px rgba(5, 150, 105, 0.15);
 }

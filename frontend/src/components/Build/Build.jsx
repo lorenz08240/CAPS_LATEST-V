@@ -3,6 +3,11 @@ import { Link, useLocation } from "react-router-dom";
 import { useBuild } from "../../contexts/BuildContext";
 import { useLearnMode } from "../../contexts/LearnModeContext";
 import { checkCompatibility } from "../../utilities/compatibilityEngine";
+import {
+  PRESET_1080P_GAMING,
+  PRESET_WORKSTATION,
+  PRESET_ENTRY_STUDENT,
+} from "../../utilities/offlineParts";
 import soundManager from "../../utilities/soundManager";
 import FullscreenGate from "../FullscreenGate/FullscreenGate";
 import GlobalHeader from "../Navigation/GlobalHeader";
@@ -353,6 +358,7 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
   });
   const [activeFilter, setActiveFilter] = useState("ALL");
   const [viewedComponent, setViewedComponent] = useState(null);
+  const [pinnedComponent, setPinnedComponent] = useState(null);
   const [bobSpeech, setBobSpeech] = useState(null);
 
   // Bob appearance and entrance dialogue state:
@@ -456,8 +462,8 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
     };
   }, []);
 
-  // Orchestrate the 3-step Guided Tour: Center (3.2s) -> Left (2.8s) -> Right (2.8s) -> Finish
-  const startGuideTour = useCallback((category = null) => {
+  // Orchestrate the 3-step Guided Tour: Center (6.5s) -> Left (6.0s) -> Right (6.0s) -> Finish
+  const startGuideTour = useCallback((category = null, customIntroSpeech = null) => {
     const activeCategory = category || buildSteps[currentStep].key;
     const catGuide = BOB_CASUAL_GUIDE[activeCategory] || BOB_CASUAL_GUIDE.case;
 
@@ -471,7 +477,7 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
     // PHASE 1: Center Area (Select parts available) - 6.5 seconds (gives comfortable reading & scanning time)
     setGuideTarget("center");
     setGuideLookTarget("#build-center-panel");
-    setBobSpeech(pickRandom(catGuide.center));
+    setBobSpeech(customIntroSpeech || pickRandom(catGuide.center));
 
     guideTimerRef.current = setTimeout(() => {
       // PHASE 2: Left Side Panel (Hardware stages checklist) - 6.0 seconds
@@ -497,20 +503,69 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
   }, [currentStep]);
 
   // Entrance Dialogue Trigger:
-  // Listen for learner onboarding confirmation to deliver personalized B.O.B. welcome
+  // Listen for learner onboarding confirmation (dispatched AFTER the Loading Transition + Welcome Banner CTA click)
   useEffect(() => {
+    let pollInterval = null;
+
     const handleLearnerWelcome = (e) => {
       const learnerName = e.detail?.name || "Builder";
-      setTimeout(() => {
+      try {
+        sessionStorage.removeItem("buildlab_pending_learner_welcome");
+      } catch {}
+
+      if (pollInterval) {
+        clearInterval(pollInterval);
+        pollInterval = null;
+      }
+
+      const launchPersonalizedTour = () => {
         setHasStartedBuild(true);
         entranceGreetedRef.current = true;
-        setBobSpeech(`Welcome, ${learnerName}! I'm B.O.B., your hardware companion. Select a PC Case over on the left to begin Stage 01!`);
-        startGuideTour("case");
-      }, 600);
+        guidedStagesRef.current.add("case");
+        startGuideTour(
+          "case",
+          `Welcome, ${learnerName}! I'm B.O.B., your hardware companion! Start here in the center Component Catalog — tap any PC Case to inspect it!`
+        );
+      };
+
+      // Ensure no blocking overlay (such as FullscreenGate if the user exited fullscreen) is covering the screen
+      const isBlockingOverlayVisible = () =>
+        Boolean(
+          document.querySelector(
+            ".fs-gate-overlay, .stage-unlock-overlay, .rig-transition-overlay, .account-modal-overlay"
+          )
+        );
+
+      if (!isBlockingOverlayVisible()) {
+        setTimeout(() => {
+          if (!isBlockingOverlayVisible()) {
+            launchPersonalizedTour();
+          } else {
+            pollInterval = setInterval(() => {
+              if (!isBlockingOverlayVisible()) {
+                clearInterval(pollInterval);
+                pollInterval = null;
+                launchPersonalizedTour();
+              }
+            }, 300);
+          }
+        }, 250);
+      } else {
+        pollInterval = setInterval(() => {
+          if (!isBlockingOverlayVisible()) {
+            clearInterval(pollInterval);
+            pollInterval = null;
+            setTimeout(launchPersonalizedTour, 250);
+          }
+        }, 300);
+      }
     };
 
     window.addEventListener("buildlab:learner-onboarding-welcome", handleLearnerWelcome);
-    return () => window.removeEventListener("buildlab:learner-onboarding-welcome", handleLearnerWelcome);
+    return () => {
+      window.removeEventListener("buildlab:learner-onboarding-welcome", handleLearnerWelcome);
+      if (pollInterval) clearInterval(pollInterval);
+    };
   }, [startGuideTour]);
 
   // ONLY fires when user clicked START BUILD AND is currently looking/staying on the build picker
@@ -519,9 +574,28 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
       return;
     }
 
+    // Hold back generic entrance speech if a Learn Mode welcome banner is pending
+    try {
+      if (sessionStorage.getItem("buildlab_pending_learner_welcome")) {
+        return;
+      }
+    } catch {}
+
     // Short settle delay (450ms) so smooth scroll brings BOB completely into view before he greets
     const timer = setTimeout(() => {
       if (entranceGreetedRef.current) return;
+
+      try {
+        if (sessionStorage.getItem("buildlab_pending_learner_welcome")) return;
+      } catch {}
+
+      if (
+        document.querySelector(
+          ".fs-gate-overlay, .stage-unlock-overlay, .rig-transition-overlay, .account-modal-overlay"
+        )
+      ) {
+        return;
+      }
 
       const el = document.getElementById("build-main-area");
       if (el) {
@@ -550,6 +624,21 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
   useEffect(() => {
     const catKey = buildSteps[currentStep]?.key;
     if (!catKey) return;
+
+    // Suppress tip if learner welcome is pending or overlays are up
+    try {
+      if (sessionStorage.getItem("buildlab_pending_learner_welcome")) return;
+    } catch {}
+    if (
+      document.querySelector(
+        ".stage-unlock-overlay, .rig-transition-overlay, .account-modal-overlay"
+      )
+    ) {
+      return;
+    }
+
+    // Must only fire AFTER user has been greeted/onboarded
+    if (!entranceGreetedRef.current) return;
 
     if (hasStartedBuild && isViewingBuild && !guidedStagesRef.current.has(catKey)) {
       guidedStagesRef.current.add(catKey);
@@ -597,15 +686,23 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
   // Sync viewedComponent when switching stages:
   // If the current stage already has a selected component, show its specs;
   // If no component is selected for this stage, viewedComponent remains null
-  // so the right panel displays Assembly Overview (specs preview only appears when selected)
+  // until the user hovers or clicks a part to preview its specifications.
   useEffect(() => {
     const currentCategoryKey = buildSteps[currentStep]?.key;
-    setViewedComponent(currentBuild[currentCategoryKey] || null);
+    const currentMounted = currentBuild[currentCategoryKey] || null;
+    setViewedComponent(currentMounted);
+    setPinnedComponent(currentMounted);
     setSearchQuery("");
     setActiveFilter("ALL");
   }, [currentStep, currentBuild]);
 
   useEffect(() => {
+    if (location.state?.stepCategory) {
+      const idx = buildSteps.findIndex(
+        (s) => s.key.toLowerCase() === location.state.stepCategory.toLowerCase()
+      );
+      if (idx !== -1) setCurrentStep(idx);
+    }
     if (location.state?.scrollTo) {
       setTimeout(() => {
         const el = document.getElementById(location.state.scrollTo);
@@ -616,12 +713,37 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
     }
   }, [location.state]);
 
+  const handleComponentHover = (component) => {
+    if (!component) return;
+    setViewedComponent(component);
+  };
+
+  const handleComponentMouseLeave = () => {
+    const currentCategoryKey = buildSteps[currentStep]?.key;
+    const currentMounted = currentBuild[currentCategoryKey];
+    if (pinnedComponent) {
+      setViewedComponent(pinnedComponent);
+    } else if (currentMounted) {
+      setViewedComponent(currentMounted);
+    }
+    // Retain viewedComponent so learner can read specs in right panel comfortably
+  };
+
+  const handleCardInspect = (component) => {
+    if (!component) return;
+    try { soundManager.click(); } catch {}
+    setPinnedComponent(component);
+    setViewedComponent(component);
+  };
+
   const handleComponentSelect = (component) => {
+    if (!component) return;
     onBuildInteracted?.();
     dismissGuideTour();
     const category = buildSteps[currentStep].key;
     addComponent(category, component);
     setViewedComponent(component);
+    setPinnedComponent(component);
     soundManager.install();
 
     const casualMountLines = {
@@ -685,6 +807,82 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
   const selectedComponent = currentBuild[currentCategory];
   const currentStepData = buildSteps[currentStep];
   const currentCategoryFilters = CATEGORY_FILTERS[currentCategory] || [{ label: "ALL", filterFn: () => true }];
+
+  const getCardSpecBadge = (component, category) => {
+    const tags = Array.isArray(component.tags) ? component.tags : [];
+    switch (category) {
+      case "case":
+        return component.form_factor || "Mid Tower";
+      case "motherboard":
+        return [component.socket_type, component.ddr_type, component.form_factor].filter(Boolean).join(" • ") || "ATX Motherboard";
+      case "cpu":
+        return [component.socket_type, component.wattage ? `${component.wattage}W TDP` : null].filter(Boolean).join(" • ") || "Processor";
+      case "ram":
+        return [component.ddr_type, component.capacity, component.speed].filter(Boolean).join(" • ") || "Memory Kit";
+      case "storage":
+        return [component.type, component.capacity].filter(Boolean).join(" • ") || tags.slice(0, 2).join(" • ") || "SSD Drive";
+      case "gpu":
+        return [component.power_required ? `${component.power_required}W Req` : null, tags[0]].filter(Boolean).join(" • ") || "Graphics Card";
+      case "psu":
+        return [component.wattage ? `${component.wattage}W` : null, component.efficiency].filter(Boolean).join(" • ") || "Power Supply";
+      default:
+        return tags.slice(0, 2).join(" • ");
+    }
+  };
+
+  const getCardCompatibilityStatus = (component, category) => {
+    const relevantPairSelected =
+      (category === "case" && Boolean(currentBuild.motherboard)) ||
+      (category === "motherboard" && Boolean(currentBuild.case || currentBuild.cpu || currentBuild.ram)) ||
+      (category === "cpu" && Boolean(currentBuild.motherboard)) ||
+      (category === "ram" && Boolean(currentBuild.motherboard)) ||
+      (category === "gpu" && Boolean(currentBuild.psu)) ||
+      (category === "psu" && Boolean(currentBuild.gpu));
+
+    const result = checkCompatibility({ ...component, category }, currentBuild);
+
+    if (!result.isCompatible) {
+      let shortWarn = "Mismatch";
+      if (result.reason.toLowerCase().includes("socket")) {
+        shortWarn = `Needs ${component.socket_type || "Matching"} Board`;
+        if (category === "cpu" && currentBuild.motherboard?.socket_type) {
+          shortWarn = `Conflict (${currentBuild.motherboard.socket_type} vs ${component.socket_type || "?"})`;
+        } else if (category === "motherboard" && currentBuild.cpu?.socket_type) {
+          shortWarn = `Conflict (${component.socket_type || "?"} vs ${currentBuild.cpu.socket_type})`;
+        }
+      } else if (result.reason.toLowerCase().includes("memory") || result.reason.toLowerCase().includes("ddr")) {
+        shortWarn = `Needs ${currentBuild.motherboard?.ddr_type || component.ddr_type || "Matching"} RAM`;
+      } else if (result.reason.toLowerCase().includes("power")) {
+        shortWarn = category === "psu" ? `Need ≥${currentBuild.gpu?.power_required}W PSU` : `PSU (${currentBuild.psu?.wattage}W) Low`;
+      } else if (result.reason.toLowerCase().includes("form factor")) {
+        shortWarn = "Size Mismatch";
+      }
+      return {
+        state: "incompatible",
+        label: `⚠ ${shortWarn}`,
+        reason: result.reason,
+      };
+    }
+
+    if (relevantPairSelected) {
+      return {
+        state: "compatible",
+        label: "✓ Compatible",
+        reason: "Verified compatible with your currently selected parts.",
+      };
+    }
+
+    return { state: "neutral", label: null, reason: "" };
+  };
+
+  const handleLoadPurposePreset = (presetRig, label, speech) => {
+    dismissGuideTour();
+    onBuildInteracted?.();
+    try { soundManager.granted(); } catch {}
+    if (loadDemoBuild) loadDemoBuild(presetRig);
+    if (mode === "learn") unlockStage("compatibility");
+    setBobSpeech(speech);
+  };
 
   // Filter components based on search query and category filters
   const filteredComponents = currentComponents.filter((component) => {
@@ -906,6 +1104,52 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
             </div>
           </div>
 
+          <div className="purpose-presets-bar" aria-label="Purpose-driven build recommendations">
+            <span className="presets-bar-label">RECOMMENDED GOALS:</span>
+            <button
+              type="button"
+              className="preset-pill-btn preset-gaming"
+              onClick={() =>
+                handleLoadPurposePreset(
+                  PRESET_1080P_GAMING,
+                  "1080p Gaming",
+                  "Loaded our 1080p Gaming Preset! Ryzen 5 AM5 + RTX 4070 + DDR5, 100% verified compatible!"
+                )
+              }
+              title="Auto-fill a balanced 1080p/1440p Gaming PC rig"
+            >
+              <span>🎮 1080p Gaming</span>
+            </button>
+            <button
+              type="button"
+              className="preset-pill-btn preset-workstation"
+              onClick={() =>
+                handleLoadPurposePreset(
+                  PRESET_WORKSTATION,
+                  "Workstation",
+                  "Loaded the Creator Workstation Preset! Intel Core i7 16-core + 32GB DDR5 + RX 6800 XT 16GB!"
+                )
+              }
+              title="Auto-fill a high-core Workstation / Content Creation PC"
+            >
+              <span>🖥️ Workstation / Creator</span>
+            </button>
+            <button
+              type="button"
+              className="preset-pill-btn preset-student"
+              onClick={() =>
+                handleLoadPurposePreset(
+                  PRESET_ENTRY_STUDENT,
+                  "Entry Student",
+                  "Loaded the Entry Student Preset! Budget-friendly AM4 Ryzen 7 + DDR4 + RTX 3050, 100% compatible!"
+                )
+              }
+              title="Auto-fill an affordable Entry Student / Academic PC rig"
+            >
+              <span>🎓 Entry Student Build</span>
+            </button>
+          </div>
+
           <div className="build-grid-and-panel">
             <div
               className={`components-grid-wrapper bob-highlight-target ${guideTarget === 'center' ? 'active-guide' : ''}`}
@@ -926,15 +1170,22 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
                   <div className="bob-guide-corner-br" />
                 </>
               )}
-              <div className="components-grid compact">
-                {filteredComponents.map((component) => {
-                  const isSelected = selectedComponent?.id === component.id;
+              <div className="components-grid compact" key={currentCategory}>
+                {filteredComponents.map((component, idx) => {
+                  const isSelected = selectedComponent?.id === component.id || selectedComponent?.name === component.name;
+                  const isViewed = viewedComponent?.id === component.id || viewedComponent?.name === component.name;
+                  const compat = getCardCompatibilityStatus(component, currentCategory);
+                  const specBadge = getCardSpecBadge(component, currentCategory);
 
                   return (
                     <div
-                      key={component.id}
-                      className={`component-card compact-card ${isSelected ? "selected" : ""}`}
-                      onClick={() => handleComponentSelect(component)}
+                      key={`${currentCategory}-${component.id || component.name || idx}`}
+                      className={`component-card compact-card ${isSelected ? "selected" : ""} ${isViewed && !isSelected ? "viewed" : ""} ${compat.state === "incompatible" ? "card-incompatible" : ""}`}
+                      onMouseEnter={() => handleComponentHover(component)}
+                      onMouseLeave={handleComponentMouseLeave}
+                      onClick={() => handleCardInspect(component)}
+                      onDoubleClick={() => handleComponentSelect(component)}
+                      title={compat.reason || component.desc}
                     >
                       <div className="component-image">
                         <img src={component.img} alt={component.name} />
@@ -942,6 +1193,18 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
                       <div className="component-details compact-details">
                         <span className="card-brand-label">{component.brand}</span>
                         <h3 className="component-name">{component.name}</h3>
+                        {specBadge && (
+                          <span className="card-spec-badge">{specBadge}</span>
+                        )}
+                        {compat.label && (
+                          <span
+                            className={`card-compat-badge ${
+                              compat.state === "incompatible" ? "is-incompatible" : "is-compatible"
+                            }`}
+                          >
+                            {compat.label}
+                          </span>
+                        )}
                       </div>
                       <button
                         type="button"
@@ -951,7 +1214,7 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
                           handleComponentSelect(component);
                         }}
                       >
-                        {isSelected ? "✓ MOUNTED" : "SELECT PART"}
+                        {isSelected ? "✓ MOUNTED" : compat.state === "incompatible" ? "SWAP PART" : "SELECT PART"}
                       </button>
                       {isSelected && (
                         <span className="card-installed-tag">✓ MOUNTED</span>
@@ -998,33 +1261,58 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
                   </div>
 
                   <div className="spec-action-top">
-                    <div className="spec-mounted-badge">
-                      <span className="badge-check">✓</span>
-                      <span>MOUNTED IN RIG (STAGE {currentStep + 1}/{buildSteps.length})</span>
-                    </div>
-                    {currentStep < buildSteps.length - 1 ? (
-                      <button
-                        type="button"
-                        className="btn-select-component btn-next-stage"
-                        onClick={() => {
-                          try { soundManager.click(); } catch {}
-                          setCurrentStep(currentStep + 1);
-                        }}
-                      >
-                        <span className="btn-label">NEXT STAGE: {buildSteps[currentStep + 1].label.toUpperCase()}</span>
-                        <span className="btn-arrow">&rarr;</span>
-                      </button>
+                    {Boolean(
+                      selectedComponent &&
+                      viewedComponent &&
+                      (selectedComponent.id === viewedComponent.id || selectedComponent.name === viewedComponent.name)
+                    ) ? (
+                      <>
+                        <div className="spec-mounted-badge">
+                          <span className="badge-check">✓</span>
+                          <span>MOUNTED IN RIG (STAGE {currentStep + 1}/{buildSteps.length})</span>
+                        </div>
+                        {currentStep < buildSteps.length - 1 ? (
+                          <button
+                            type="button"
+                            className="btn-select-component btn-next-stage"
+                            onClick={() => {
+                              try { soundManager.click(); } catch {}
+                              setCurrentStep(currentStep + 1);
+                            }}
+                          >
+                            <span className="btn-label">NEXT STAGE: {buildSteps[currentStep + 1].label.toUpperCase()}</span>
+                            <span className="btn-arrow">&rarr;</span>
+                          </button>
+                        ) : (
+                          <Link
+                            to="/compatibility"
+                            className="btn-select-component btn-next-stage"
+                            onClick={() => {
+                              try { soundManager.click(); } catch {}
+                            }}
+                          >
+                            <span className="btn-label">CHECK COMPATIBILITY</span>
+                            <span className="btn-arrow">&rarr;</span>
+                          </Link>
+                        )}
+                      </>
                     ) : (
-                      <Link
-                        to="/compatibility"
-                        className="btn-select-component btn-next-stage"
-                        onClick={() => {
-                          try { soundManager.click(); } catch {}
-                        }}
-                      >
-                        <span className="btn-label">CHECK COMPATIBILITY</span>
-                        <span className="btn-arrow">&rarr;</span>
-                      </Link>
+                      <>
+                        <div className="spec-preview-badge">
+                          <span className="badge-dot" />
+                          <span>PREVIEWING SPECIFICATIONS</span>
+                        </div>
+                        <button
+                          type="button"
+                          className="btn-select-component btn-mount-preview"
+                          onClick={() => handleComponentSelect(viewedComponent)}
+                        >
+                          <span className="btn-label">
+                            {selectedComponent ? "SWAP INTO RIG" : "MOUNT IN RIG"}
+                          </span>
+                          <span className="btn-arrow">&rarr;</span>
+                        </button>
+                      </>
                     )}
                   </div>
 

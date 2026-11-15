@@ -12,17 +12,21 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { LearnModeProvider } from "./contexts/LearnModeContext";
 import { ThemeProvider, useTheme } from "./contexts/ThemeContext";
 import { SidebarProvider, useSidebar } from "./contexts/SidebarContext";
+import { LanguageProvider } from "./contexts/LanguageContext";
 import { AnimatePresence } from "motion/react";
 import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
 import Home from "./components/Home/Home";
 import Build from "./components/Build/Build";
 import Compatibility from "./components/Compatibility/Compatibility";
+import CompareRigs from "./components/Compare/CompareRigs";
 import Learn from "./components/Learn/Learn";
 import CertificationPage from "./components/Learn/CertificationPage";
 import HelpSupport from "./components/HelpSupport/HelpSupport";
 import AboutUs from "./components/AboutUs/AboutUs";
 import Brands from "./components/Brands/Brands";
+import LegalPage from "./components/Legal/LegalPage";
+import SettingsPage from "./components/Settings/SettingsPage";
 import PCBuilder3D from "./components/3D/PCBuilder3D";
 import FullscreenGate from "./components/FullscreenGate/FullscreenGate";
 import Preloader from "./components/Home/Preloader";
@@ -62,6 +66,14 @@ function AppContent() {
   const location = useLocation();
   const isAdminLogin = location.pathname === "/admin/login" || location.pathname.startsWith("/admin/login");
   const isAdminRoute = location.pathname.startsWith("/admin");
+  const isLegalRoute = [
+    "/privacy",
+    "/privacy-policy",
+    "/terms",
+    "/terms-of-service",
+    "/cookies",
+    "/cookie-policy",
+  ].includes(location.pathname);
 
   // Ensure sidebar is closed when on the login screen
   useEffect(() => {
@@ -101,7 +113,7 @@ function AppContent() {
   return (
     <div className={`min-h-screen app-layout ${theme === 'dark' ? 'theme-dark' : 'theme-light'} ${isPinned && !isAdminLogin ? 'sidebar-pinned' : ''} ${isSidebarOpen && !isAdminLogin ? 'sidebar-open' : ''}`}>
       <Preloader />
-      <FullscreenGate disabled={isAdminRoute} requireFullscreen>
+      <FullscreenGate disabled={isAdminRoute || isLegalRoute} requireFullscreen>
         <CookieConsent />
         <Navbar />
         <main className="main-content">
@@ -118,6 +130,23 @@ function AppContent() {
                   <LearnModeGuard requiredStage="compatibility" featureName="Compatibility Matrix">
                     <Compatibility />
                   </LearnModeGuard>
+                </MotionPage>
+              }
+            />
+
+            <Route
+              path="/compare"
+              element={
+                <MotionPage routeKey="/compare">
+                  <CompareRigs />
+                </MotionPage>
+              }
+            />
+            <Route
+              path="/compare-rigs"
+              element={
+                <MotionPage routeKey="/compare-rigs">
+                  <CompareRigs />
                 </MotionPage>
               }
             />
@@ -170,6 +199,15 @@ function AppContent() {
             <Route path="/help" element={<MotionPage routeKey="/help"><HelpSupport /></MotionPage>} />
 
             <Route path="/about" element={<MotionPage routeKey="/about"><AboutUs /></MotionPage>} />
+
+            <Route path="/settings" element={<MotionPage routeKey="/settings"><SettingsPage /></MotionPage>} />
+
+            <Route path="/privacy" element={<MotionPage routeKey="/privacy"><LegalPage docType="privacy" /></MotionPage>} />
+            <Route path="/privacy-policy" element={<MotionPage routeKey="/privacy-policy"><LegalPage docType="privacy" /></MotionPage>} />
+            <Route path="/terms" element={<MotionPage routeKey="/terms"><LegalPage docType="terms" /></MotionPage>} />
+            <Route path="/terms-of-service" element={<MotionPage routeKey="/terms-of-service"><LegalPage docType="terms" /></MotionPage>} />
+            <Route path="/cookies" element={<MotionPage routeKey="/cookies"><LegalPage docType="cookies" /></MotionPage>} />
+            <Route path="/cookie-policy" element={<MotionPage routeKey="/cookie-policy"><LegalPage docType="cookies" /></MotionPage>} />
 
             <Route path="/admin/login" element={<MotionPage routeKey="/admin/login"><AdminLogin /></MotionPage>} />
 
@@ -282,18 +320,20 @@ function AppContent() {
 function App() {
   return (
     <ThemeProvider>
-      <AuthProvider>
-        <LearnModeProvider>
-          <BuildProvider>
-            <SidebarProvider>
-              <Router>
-                <ScrollToTop />
-                <AppContent />
-              </Router>
-            </SidebarProvider>
-          </BuildProvider>
-        </LearnModeProvider>
-      </AuthProvider>
+      <LanguageProvider>
+        <AuthProvider>
+          <LearnModeProvider>
+            <BuildProvider>
+              <SidebarProvider>
+                <Router>
+                  <ScrollToTop />
+                  <AppContent />
+                </Router>
+              </SidebarProvider>
+            </BuildProvider>
+          </LearnModeProvider>
+        </AuthProvider>
+      </LanguageProvider>
     </ThemeProvider>
   );
 }

@@ -8,7 +8,7 @@ import GlobalHeader from "../Navigation/GlobalHeader";
 import "./CertificationPage.css";
 
 export default function CertificationPage() {
-  const { userProfile, setUserProfile, mode } = useLearnMode();
+  const { userProfile, setUserProfile, mode, unlockStage } = useLearnMode();
   const navigate = useNavigate();
   const certRef = useRef(null);
 
@@ -154,6 +154,19 @@ export default function CertificationPage() {
                 <span className="btn-arrow">&darr;</span>
               </>
             )}
+          </button>
+
+          <button
+            type="button"
+            className="cert-btn-studio"
+            onClick={() => {
+              try { soundManager.granted(); } catch {}
+              unlockStage?.("studio");
+              navigate("/3d-builder");
+            }}
+          >
+            <span>🚀 LAUNCH 3D STUDIO</span>
+            <span className="btn-arrow">&rarr;</span>
           </button>
         </div>
       </div>

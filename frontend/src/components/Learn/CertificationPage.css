@@ -116,6 +116,28 @@
   cursor: wait;
 }
 
+.cert-btn-studio {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #00e5a0 0%, #0ea5e9 100%);
+  color: #06080e;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 229, 160, 0.35);
+  transition: all 0.2s ease;
+}
+
+.cert-btn-studio:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(0, 229, 160, 0.55);
+}
+
 /* Name editor bar */
 .cert-name-editor {
   max-width: 1060px;

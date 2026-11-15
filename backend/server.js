@@ -66,6 +66,114 @@ async function initSoftDeleteSchema() {
 }
 initSoftDeleteSchema();
 
+// Seed essential compatible parts so manual assembly always supports AM4, AM5, LGA1700, DDR4, DDR5 & 850W PSU
+async function seedEssentialCompatibleParts() {
+  try {
+    await db.query("UPDATE pc_parts SET form_factor = 'Mid Tower' WHERE category = 'case' AND (form_factor IS NULL OR form_factor = '')");
+
+    const essentialParts = [
+      {
+        id: "case1",
+        category: "case",
+        name: "Montech AIR-903-base",
+        brand: "Montech",
+        desc: "Excellent airflow mid-tower case with tempered glass side panel and pre-installed high-performance fans.",
+        img: "https://netcodex.ph/wp-content/uploads/2025/04/Air-903-Base-Black-1.webp",
+        price: "₱3,500",
+        form_factor: "Mid Tower",
+        tags: JSON.stringify(["Mid Tower", "Airflow", "Tempered Glass"])
+      },
+      {
+        id: "asus-rog-strix-z690",
+        category: "motherboard",
+        name: "ASUS ROG Strix Z690-E Gaming WiFi",
+        brand: "ASUS",
+        desc: "High-end gaming motherboard with PCIe 5.0, robust power stages, and WiFi 6E.",
+        img: "https://i.pinimg.com/736x/03/8b/63/038b634627abdf7d8ffafbb73b6f5055.jpg",
+        price: "₱28,500",
+        socket_type: "LGA1700",
+        ddr_type: "DDR5",
+        form_factor: "ATX",
+        tags: JSON.stringify(["LGA1700", "DDR5", "ATX", "PCIe 5.0"])
+      },
+      {
+        id: "asus-prime-b660m",
+        category: "motherboard",
+        name: "ASUS Prime B660M-A WiFi",
+        brand: "ASUS",
+        desc: "Reliable mATX motherboard for Intel 12th/13th/14th gen processors.",
+        img: "https://i.pinimg.com/1200x/aa/7a/b6/aa7ab6601d825d397bdc9a0ef0536107.jpg",
+        price: "₱8,500",
+        socket_type: "LGA1700",
+        ddr_type: "DDR4",
+        form_factor: "mATX",
+        tags: JSON.stringify(["LGA1700", "DDR4", "mATX"])
+      },
+      {
+        id: "amd-ryzen7-5700x",
+        category: "cpu",
+        name: "AMD Ryzen 7 5700X",
+        brand: "AMD",
+        desc: "8-core, 16-thread processor on AM4 platform with high power efficiency.",
+        img: "https://i.pinimg.com/1200x/1f/2c/6e/1f2c6e6851d3343b285615ee65ede44c.jpg",
+        price: "₱10,800",
+        socket_type: "AM4",
+        wattage: 65,
+        tags: JSON.stringify(["AM4", "65W", "8 cores", "Zen 3"])
+      },
+      {
+        id: "corsair-dominator-ddr5-32gb",
+        category: "ram",
+        name: "Corsair Dominator Platinum RGB 32GB (2x16GB)",
+        brand: "Corsair",
+        desc: "Iconic aluminum heatspreader with Capellix RGB LEDs and 6000MHz ultra-low latency.",
+        img: "https://i.pinimg.com/1200x/24/32/a7/2432a792587ec1347b7f0b9b952a559f.jpg",
+        price: "₱12,500",
+        ddr_type: "DDR5",
+        capacity: "32GB",
+        tags: JSON.stringify(["DDR5", "32GB", "6000MHz", "RGB"])
+      },
+      {
+        id: "corsair-hx850x",
+        category: "psu",
+        name: "Corsair HX850 850W Platinum Fully Modular",
+        brand: "Corsair",
+        desc: "80 PLUS Platinum efficiency, Zero RPM fan mode, and 100% Japanese 105°C capacitors.",
+        img: "https://assets.corsair.com/image/upload/c_pad,q_85,h_360,w_360/products/Power-Supply-Units/CMPSU-850HX/Gallery/hx850_01.webp",
+        price: "₱9,200",
+        wattage: 850,
+        tags: JSON.stringify(["850W", "80+ Platinum", "Fully Modular"])
+      }
+    ];
+
+    const [cols] = await db.query("DESCRIBE pc_parts");
+    const colSet = new Set(cols.map(c => c.Field));
+
+    await db.query("UPDATE pc_parts SET id = 'case1' WHERE id = '' AND name = 'Montech AIR-903-base'");
+
+    for (const part of essentialParts) {
+      const [existing] = await db.query(
+        "SELECT id FROM pc_parts WHERE id = ? OR name = ? LIMIT 1",
+        [part.id, part.name]
+      );
+      if (existing.length === 0) {
+        const fields = Object.keys(part).filter(k => colSet.has(k));
+        const quotedFields = fields.map(f => `\`${f}\``);
+        const values = fields.map(k => part[k]);
+        const placeholders = fields.map(() => "?").join(", ");
+        await db.query(
+          `INSERT INTO pc_parts (${quotedFields.join(", ")}) VALUES (${placeholders})`,
+          values
+        );
+        console.log("Seeded essential part:", part.name);
+      }
+    }
+  } catch (err) {
+    console.error("Essential parts seed error:", err.message);
+  }
+}
+seedEssentialCompatibleParts();
+
 // Ensure tables and default data for admin accounts and content management exist
 async function initContentAndAccountsSchema() {
   try {
@@ -152,7 +260,7 @@ async function initContentAndAccountsSchema() {
       const defaultMembers = [
         [
           "DEV-01", "Developer 01", "Lead Systems Architect & Full-Stack Engineer", "SYSTEM_CORE", "core", "ARCH",
-          "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400",
+          "/uploads/profiles/photo-1794214083340-kb6u7l.jpg",
           "Core Architecture & State Matrix",
           "Leads the software architecture of BuildLab, bridging the React state machine with real-time 3D assembly graphs and the Node.js backend. Dedicated to zero-latency component selection and mathematical TDP validation.",
           JSON.stringify([
@@ -173,7 +281,7 @@ async function initContentAndAccountsSchema() {
         ],
         [
           "DEV-02", "Developer 02", "UI/UX Lead & Frontend Design Engineer", "CYBER_HUD", "frontend", "UI/UX",
-          "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400",
+          "/uploads/profiles/photo-1794176073655-f3qzal.gif",
           "Design Systems & Command Deck Interaction",
           "Designed BuildLab's cohesive dark cyberpunk aesthetic, the mahogany Command Deck drawer, sound-synchronized interactions, and accessible high-contrast telemetry across all screen viewports.",
           JSON.stringify([
@@ -194,7 +302,7 @@ async function initContentAndAccountsSchema() {
         ],
         [
           "DEV-03", "Developer 03", "3D Graphics & WebGL Simulation Engineer", "MESH_RENDER", "core", "3D/GL",
-          "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400",
+          "/uploads/profiles/photo-1794176080611-d0vfrg.gif",
           "Three.js Hardware Models & Orbit Rigging",
           "Crafts the interactive 3D hardware studio, procedural PC components, physically based rendering (PBR) materials, and realistic socket snap-fit clearances using Three.js and WebGL shaders.",
           JSON.stringify([
@@ -215,7 +323,7 @@ async function initContentAndAccountsSchema() {
         ],
         [
           "DEV-04", "Developer 04", "Backend & Database Systems Architect", "DATA_VAULT", "backend", "API/DB",
-          "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&q=80&w=400",
+          "/uploads/profiles/photo-1794176086486-hn7tru.jpg",
           "MySQL Normalization & Crawler Pipeline",
           "Architected BuildLab's normalized MySQL relational database, RESTful Express services, and the automated crawler hub that manages hardware specifications and benchmark baselines.",
           JSON.stringify([
@@ -1191,7 +1299,7 @@ app.put("/api/content/team/:id", adminAuth, async (req, res) => {
       return res.status(404).json({ error: `Member '${id}' not found.` });
     }
 
-    const prepJson = (val) => (typeof val === "object" ? JSON.stringify(val) : (val !== undefined ? val : null));
+    const prepJson = (val) => (val !== null && typeof val === "object" ? JSON.stringify(val) : (val !== undefined ? val : null));
 
     await db.query(
       `UPDATE team_members SET

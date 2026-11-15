@@ -11,7 +11,7 @@
   right: 24px;
   max-width: 1100px;
   margin: 0 auto;
-  z-index: 99998;
+  z-index: 9990; /* Safely layered below FullscreenGate (99992) and modals */
   background: rgba(11, 17, 30, 0.94);
   border: 1px solid rgba(0, 229, 160, 0.35);
   border-radius: 16px;
@@ -21,6 +21,51 @@
   animation: bannerSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   padding: 16px 22px;
   box-sizing: border-box;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+/* When on /learn or when workbench shell is present, lift and dock to bottom-right so it never crowds BOB or the carousel track */
+body:has(.wb-shell) .buildlab-cookie-banner,
+.wb-shell ~ .buildlab-cookie-banner {
+  bottom: 82px !important;
+  right: 24px !important;
+  left: auto !important;
+  width: calc(100% - 48px) !important;
+  max-width: 440px !important;
+  margin: 0 !important;
+}
+
+body:has(.wb-shell) .buildlab-cookie-banner .cookie-banner-content,
+.wb-shell ~ .buildlab-cookie-banner .cookie-banner-content {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 12px !important;
+}
+
+body:has(.wb-shell) .buildlab-cookie-banner .cookie-text-col,
+.wb-shell ~ .buildlab-cookie-banner .cookie-text-col {
+  width: 100% !important;
+}
+
+body:has(.wb-shell) .buildlab-cookie-banner .cookie-actions-col,
+.wb-shell ~ .buildlab-cookie-banner .cookie-actions-col {
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 10px !important;
+  width: 100% !important;
+  justify-content: flex-end !important;
+}
+
+/* While the first-time tour, welcome overlay, unlock banner, or fullscreen gate is active, suppress the banner */
+body:has(.is-tour-active) .buildlab-cookie-banner,
+body:has(.wb-welcome-overlay-backdrop) .buildlab-cookie-banner,
+body:has(.wb-welcome-overlay-card) .buildlab-cookie-banner,
+body:has(.stage-unlock-overlay) .buildlab-cookie-banner,
+body:has(.fs-gate-overlay) .buildlab-cookie-banner {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: translateY(20px) !important;
 }
 
 @keyframes bannerSlideUp {

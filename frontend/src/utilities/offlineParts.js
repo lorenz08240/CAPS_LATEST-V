@@ -310,3 +310,34 @@ export const DEMO_GAMING_RIG = {
   gpu: OFFLINE_COMPONENTS.gpu[0],
   psu: OFFLINE_COMPONENTS.psu[0]
 };
+
+// Purpose-driven recommendation presets (ISO/IEC 25010 Criterion 1.2)
+export const PRESET_1080P_GAMING = {
+  case: OFFLINE_COMPONENTS.case[0],
+  motherboard: OFFLINE_COMPONENTS.motherboard[2],
+  cpu: OFFLINE_COMPONENTS.cpu[0],
+  ram: OFFLINE_COMPONENTS.ram[0],
+  storage: OFFLINE_COMPONENTS.storage[0],
+  gpu: OFFLINE_COMPONENTS.gpu[0],
+  psu: OFFLINE_COMPONENTS.psu[1]
+};
+
+export const PRESET_WORKSTATION = {
+  case: OFFLINE_COMPONENTS.case[1],
+  motherboard: OFFLINE_COMPONENTS.motherboard[0],
+  cpu: OFFLINE_COMPONENTS.cpu[1],
+  ram: OFFLINE_COMPONENTS.ram[0],
+  storage: OFFLINE_COMPONENTS.storage[0],
+  gpu: OFFLINE_COMPONENTS.gpu[1],
+  psu: OFFLINE_COMPONENTS.psu[0]
+};
+
+export const PRESET_ENTRY_STUDENT = {
+  case: OFFLINE_COMPONENTS.case[0],
+  motherboard: OFFLINE_COMPONENTS.motherboard[3],
+  cpu: OFFLINE_COMPONENTS.cpu[2],
+  ram: OFFLINE_COMPONENTS.ram[1],
+  storage: OFFLINE_COMPONENTS.storage[1],
+  gpu: OFFLINE_COMPONENTS.gpu[2],
+  psu: OFFLINE_COMPONENTS.psu[2]
+};
