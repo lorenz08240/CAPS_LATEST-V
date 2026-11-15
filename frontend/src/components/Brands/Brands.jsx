@@ -72,7 +72,7 @@ const brandData = [
   },
 ];
 
-function Brands() {
+function Brands({ isIntegrated = false }) {
   const navigate = useNavigate();
   const [selectedBrand, setSelectedBrand] = useState(null);
 
@@ -83,12 +83,20 @@ function Brands() {
 
   const handleJumpToBuilder = (brandName) => {
     try { soundManager.click(); } catch {}
-    navigate(`/build?search=${encodeURIComponent(brandName)}`);
+    if (isIntegrated) {
+      window.dispatchEvent(new CustomEvent("buildlab:filter-by-brand", { detail: { brand: brandName } }));
+      const buildStation = document.getElementById("build-station") || document.getElementById("build-main-area");
+      if (buildStation) {
+        buildStation.scrollIntoView({ behavior: "smooth" });
+      }
+    } else {
+      navigate(`/build?search=${encodeURIComponent(brandName)}`);
+    }
   };
 
   return (
-    <div className="brands-page">
-      <GlobalHeader />
+    <div className={`brands-page ${isIntegrated ? 'integrated-section' : ''}`} id="brands-station">
+      {!isIntegrated && <GlobalHeader />}
 
       <div className="brands-container-wrap">
         <header className="brands-header">
@@ -177,10 +185,25 @@ function Brands() {
         )}
 
         <div className="brands-footer">
-          <Link to="/build" className="btn-brand-primary">
-            <span>START PC BUILD</span>
-            <span className="arrow">&rarr;</span>
-          </Link>
+          {isIntegrated ? (
+            <button 
+              type="button" 
+              className="btn-brand-primary"
+              onClick={() => {
+                try { soundManager.click(); } catch {}
+                const el = document.getElementById("build-station") || document.getElementById("build-main-area");
+                if (el) el.scrollIntoView({ behavior: "smooth" });
+              }}
+            >
+              <span>BACK TO 2D BUILDER</span>
+              <span className="arrow">&uarr;</span>
+            </button>
+          ) : (
+            <Link to="/build" className="btn-brand-primary">
+              <span>START PC BUILD</span>
+              <span className="arrow">&rarr;</span>
+            </Link>
+          )}
           <Link to="/3d-builder" className="btn-brand-secondary">
             <span>3D SIMULATION STUDIO</span>
           </Link>

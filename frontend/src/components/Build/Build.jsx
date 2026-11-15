@@ -454,6 +454,17 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
     };
   }, [location]);
 
+  // Listen for brand card clicks from Brands section
+  useEffect(() => {
+    const handleBrandFilter = (e) => {
+      if (e.detail?.brand) {
+        setSearchQuery(e.detail.brand);
+      }
+    };
+    window.addEventListener("buildlab:filter-by-brand", handleBrandFilter);
+    return () => window.removeEventListener("buildlab:filter-by-brand", handleBrandFilter);
+  }, []);
+
   // Track whether the user is actively viewing / staying on the build workstation
   useEffect(() => {
     const el = document.getElementById("build-main-area");

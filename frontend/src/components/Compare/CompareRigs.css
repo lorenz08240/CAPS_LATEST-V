@@ -125,8 +125,17 @@
 }
 
 @keyframes pulseDot {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(0.85); }
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.5;
+    transform: scale(0.85);
+  }
 }
 
 .telemetry-bracket {
@@ -146,7 +155,6 @@
 
 .compare-hero-title .title-accent {
   background: linear-gradient(135deg, #00e5a0 0%, #38bdf8 100%);
-  -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
@@ -358,9 +366,20 @@
   border-radius: 50%;
 }
 
-.red-dot { background-color: #f43f5e; box-shadow: 0 0 6px #f43f5e; }
-.purple-dot { background-color: #a855f7; box-shadow: 0 0 6px #a855f7; }
-.green-dot { background-color: #22c55e; box-shadow: 0 0 6px #22c55e; }
+.red-dot {
+  background-color: #f43f5e;
+  box-shadow: 0 0 6px #f43f5e;
+}
+
+.purple-dot {
+  background-color: #a855f7;
+  box-shadow: 0 0 6px #a855f7;
+}
+
+.green-dot {
+  background-color: #22c55e;
+  box-shadow: 0 0 6px #22c55e;
+}
 
 /* Quick Actions in Rig Card */
 .rig-quick-actions {
@@ -712,8 +731,13 @@
   color: #ffffff;
 }
 
-.score-purple { color: #c084fc; }
-.score-amber { color: #facc15; }
+.score-purple {
+  color: #c084fc;
+}
+
+.score-amber {
+  color: #facc15;
+}
 
 .val-tag {
   font-size: 0.68rem;
@@ -733,9 +757,17 @@
   font-weight: 700;
 }
 
-.diff-green { color: #22c55e; }
-.diff-cyan { color: #38bdf8; }
-.diff-neutral { color: #94a3b8; }
+.diff-green {
+  color: #22c55e;
+}
+
+.diff-cyan {
+  color: #38bdf8;
+}
+
+.diff-neutral {
+  color: #94a3b8;
+}
 
 /* 3. BuildLab Automated Architect Summary */
 .overview-summary-banner {
@@ -775,3 +807,114 @@
   margin: 0;
 }
 
+/* ── RIG 01 EMPTY STATE & ASSEMBLY CTA BUTTON ── */
+.btn-start-assembly-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  background: linear-gradient(90deg, #00f2fe 0%, #00ff87 100%);
+  color: #020617 !important; /* text-slate-950 */
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.88rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  padding: 0.75rem 1.6rem; /* py-3 px-6 */
+  border-radius: 0.75rem; /* rounded-xl */
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 10px 25px -5px rgba(0, 242, 254, 0.45), 0 8px 10px -6px rgba(0, 255, 135, 0.35);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  text-transform: uppercase;
+}
+
+.btn-start-assembly-cta:hover {
+  filter: brightness(1.12);
+  transform: translateY(-2px);
+  box-shadow: 0 16px 32px -5px rgba(0, 242, 254, 0.6), 0 12px 14px -5px rgba(0, 255, 135, 0.45);
+  color: #020617 !important;
+}
+
+.btn-start-assembly-cta:active {
+  transform: translateY(0);
+  filter: brightness(0.95);
+}
+
+.empty-rig1-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2.5rem 1.5rem;
+  min-height: 420px;
+  background: rgba(15, 23, 42, 0.45);
+  border-radius: 12px;
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  margin: 1rem 0;
+}
+
+.empty-rig1-icon-wrap {
+  width: 96px;
+  height: 96px;
+  margin-bottom: 1.25rem;
+  border-radius: 16px;
+  background: rgba(0, 242, 254, 0.06);
+  border: 1px solid rgba(0, 242, 254, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 0 24px rgba(0, 242, 254, 0.12);
+}
+
+.empty-rig1-img {
+  max-width: 80%;
+  max-height: 80%;
+  object-fit: contain;
+  opacity: 0.85;
+}
+
+.empty-rig1-title {
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.6rem;
+}
+
+.empty-rig1-desc {
+  color: #94a3b8;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  max-width: 320px;
+  margin-bottom: 1.5rem;
+}
+
+.empty-rig1-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+  width: 100%;
+}
+
+.btn-load-demo-ghost {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  color: #94a3b8;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 0.72rem;
+  padding: 0.5rem 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-load-demo-ghost:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+}

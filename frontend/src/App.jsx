@@ -122,6 +122,8 @@ function AppContent() {
             <Route path="/" element={<MotionPage routeKey="/"><Home /></MotionPage>} />
 
             <Route path="/build" element={<MotionPage routeKey="/build"><Build /></MotionPage>} />
+            <Route path="/assembly" element={<Navigate to="/build" replace />} />
+            <Route path="/builder" element={<Navigate to="/build" replace />} />
 
             <Route
               path="/compatibility"
@@ -134,6 +136,10 @@ function AppContent() {
               }
             />
 
+            <Route
+              path="/diagnostics"
+              element={<Navigate to="/compatibility" replace />}
+            />
             <Route
               path="/compare"
               element={

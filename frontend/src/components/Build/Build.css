@@ -72,6 +72,18 @@
   overflow: hidden !important;
 }
 
+.build-page.standalone {
+  height: auto !important;
+  max-height: none !important;
+  min-height: 100vh !important;
+  overflow-y: auto !important;
+}
+
+.build-page.standalone .build-main {
+  height: calc(100vh - 65px) !important;
+  min-height: calc(100vh - 65px) !important;
+}
+
 /* ── MAIN WORKSPACE GRID: Left Sidebar (280px) | Main Content (1fr) ── */
 .build-main {
   width: 100%;
