@@ -2,13 +2,13 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useBuild } from "../../contexts/BuildContext";
 import { useLearnMode } from "../../contexts/LearnModeContext";
-import { DEMO_GAMING_RIG } from "../../utilities/offlineParts";
-import { checkCompatibility } from "../../utilities/compatibilityEngine";
 import {
+  DEMO_GAMING_RIG,
   PRESET_1080P_GAMING,
   PRESET_WORKSTATION,
   PRESET_ENTRY_STUDENT,
 } from "../../utilities/offlineParts";
+import { checkCompatibility } from "../../utilities/compatibilityEngine";
 import soundManager from "../../utilities/soundManager";
 import FullscreenGate from "../FullscreenGate/FullscreenGate";
 import GlobalHeader from "../Navigation/GlobalHeader";
@@ -377,7 +377,7 @@ const getCaseMaxGPU = (comp) => {
 };
 
 function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildInteracted }) {
-  const { mode, unlockStage, unlockedStages } = useLearnMode();
+  const { mode, unlockStage } = useLearnMode();
   const {
     currentBuild,
     allComponents,
@@ -400,7 +400,6 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
   });
   const [activeFilter, setActiveFilter] = useState("ALL");
   const [viewedComponent, setViewedComponent] = useState(null);
-  const [pinnedComponent, setPinnedComponent] = useState(null);
   const [bobSpeech, setBobSpeech] = useState(null);
 
   // Bob appearance and entrance dialogue state:
@@ -827,27 +826,6 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
     setViewedComponent(component);
   };
 
-  const handleComponentHover = (component) => {
-    if (!component) return;
-    setViewedComponent(component);
-  };
-
-  const handleComponentMouseLeave = () => {
-    const currentCategoryKey = buildSteps[currentStep]?.key;
-    const currentMounted = currentBuild[currentCategoryKey];
-    if (pinnedComponent) {
-      setViewedComponent(pinnedComponent);
-    } else if (currentMounted) {
-      setViewedComponent(currentMounted);
-    }
-  };
-
-  const handleCardInspect = (component) => {
-    if (!component) return;
-    try { soundManager.click(); } catch {}
-    setPinnedComponent(component);
-    setViewedComponent(component);
-  };
 
   const handleReset = () => {
     dismissGuideTour();
@@ -1740,8 +1718,6 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
   );
 }
 
-export default Build;
-
 /**
  * Build — routed at /build with the FullscreenGate wrapper so the
  * standalone build experience always runs in immersive fullscreen mode.
@@ -1757,3 +1733,6 @@ function Build({ isIntegrated = false, startBuildRequested = false, onBuildInter
   );
   return isIntegrated ? page : <FullscreenGate requireFullscreen>{page}</FullscreenGate>;
 }
+
+export default Build;
+
