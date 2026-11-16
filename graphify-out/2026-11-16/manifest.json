@@ -102,9 +102,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Compatibility/Compatibility.jsx": {
-    "mtime": 1794813920.3598566,
-    "seen": 1794813956.1415427,
-    "ast_hash": "30b8ccb9aa409e100b8ed6dddcf35e08",
+    "mtime": 1794820877.2996922,
+    "seen": 1794821061.5990384,
+    "ast_hash": "9dece0a376eb8eaeca448299f5a9d0ff",
     "semantic_hash": ""
   },
   "frontend/src/components/FeatureCarousel/FeatureCarousel.jsx": {
@@ -126,9 +126,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Home/Home.jsx": {
-    "mtime": 1794820006.3767283,
-    "seen": 1794820085.429422,
-    "ast_hash": "c36f1f16ffe16221a579e026cacd092e",
+    "mtime": 1794820604.7595725,
+    "seen": 1794820725.154941,
+    "ast_hash": "06592f10f8e7f9c031804d81311f2934",
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/CourseShell.jsx": {
@@ -606,9 +606,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/AboutUs/AboutUs.jsx": {
-    "mtime": 1794820117.9754987,
-    "seen": 1794820158.4486628,
-    "ast_hash": "a5f7f824207020710462eba3c87657bb",
+    "mtime": 1794820906.925487,
+    "seen": 1794821061.595754,
+    "ast_hash": "c24f01095b010331413e157771cd61c1",
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/AdminLogs.jsx": {
