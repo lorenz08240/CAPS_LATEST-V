@@ -15,6 +15,7 @@ import FullscreenGate from "../FullscreenGate/FullscreenGate";
 import GlobalHeader from "../Navigation/GlobalHeader";
 import StageUnlockBanner from "../Navigation/StageUnlockBanner";
 import "./Compatibility.css";
+import "../Compare/CompareRigs.css";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -871,7 +872,7 @@ function CompatibilityView({ isIntegrated = false }) {
     return () => ctx.revert();
   }, [selectedComponents, rig2]);
 
-  /* ── FREE WORKBENCH: RIG 01 CARD (Matches Image 2) ── */
+  /* ── FREE WORKBENCH: RIG 01 CARD (Matches Image 2 when empty) ── */
   const renderFreeRig1Card = () => (
     <div className="compare-rig-card card-primary-workbench">
       <div className="rig-card-header">
@@ -880,77 +881,104 @@ function CompatibilityView({ isIntegrated = false }) {
           <span className="rig-badge-subtitle">Active Custom Build</span>
         </div>
         <div className="rig-compat-status-chip">
-          {rig1Issues.length === 0 ? (
-            <span className="chip-badge status-ok">✓ 100% COMPATIBLE</span>
+          {hasRig1 ? (
+            rig1Issues.length === 0 ? (
+              <span className="chip-badge status-ok">✓ 100% COMPATIBLE</span>
+            ) : (
+              <span className="chip-badge status-warning">⚠ {rig1Issues.length} ISSUE{rig1Issues.length > 1 ? "S" : ""}</span>
+            )
           ) : (
-            <span className="chip-badge status-warning">⚠ {rig1Issues.length} ISSUE{rig1Issues.length > 1 ? "S" : ""}</span>
+            <span className="chip-badge status-empty">EMPTY WORKBENCH</span>
           )}
         </div>
       </div>
 
-      <div className="rig-preview-media-box">
-        <img
-          src={currentBuild.case?.img || "/assets/component_picker_image_bg.png"}
-          alt={currentBuild.case?.name || "Rig 01"}
-          className="rig-preview-image"
-          onError={(e) => {
-            e.target.src = "/assets/component_picker_image_bg.png";
-          }}
-        />
-        <div className="rig-preview-overlay-telemetry">
-          <div className="telemetry-pill">
-            <span className="pill-dot red-dot" />
-            <span>{rig1Wattage}W EST.</span>
+      {hasRig1 ? (
+        <>
+          <div className="rig-preview-media-box">
+            <img
+              src={currentBuild.case?.img || "/assets/component_picker_image_bg.png"}
+              alt={currentBuild.case?.name || "Rig 01"}
+              className="rig-preview-image"
+              onError={(e) => {
+                e.target.src = "/assets/component_picker_image_bg.png";
+              }}
+            />
+            <div className="rig-preview-overlay-telemetry">
+              <div className="telemetry-pill">
+                <span className="pill-dot red-dot" />
+                <span>{rig1Wattage}W EST.</span>
+              </div>
+              <div className="telemetry-pill">
+                <span className="pill-dot purple-dot" />
+                <span>SCORE {rig1Scores.gaming || 92}</span>
+              </div>
+              <div className="telemetry-pill">
+                <span className="pill-dot green-dot" />
+                <span>{selectedComponents.length}/7 PARTS</span>
+              </div>
+            </div>
           </div>
-          <div className="telemetry-pill">
-            <span className="pill-dot purple-dot" />
-            <span>SCORE {rig1Scores.gaming || 92}</span>
-          </div>
-          <div className="telemetry-pill">
-            <span className="pill-dot green-dot" />
-            <span>{selectedComponents.length}/7 PARTS</span>
-          </div>
-        </div>
-      </div>
 
-      <div className="rig-quick-actions">
-        <Link
-          to="/build"
-          className="btn-rig-action btn-edit-workbench"
-          title="Modify components in Assembly Rig"
-        >
-          <span>EDIT IN ASSEMBLY RIG &rarr;</span>
-        </Link>
-        <button
-          type="button"
-          className="btn-rig-action btn-snapshot-save"
-          onClick={() => handleSave(selectedSaveSlot)}
-          title={`Save current workbench state into Slot 0${selectedSaveSlot + 1}`}
-        >
-          <span>SAVE SNAPSHOT</span>
-        </button>
-      </div>
+          <div className="rig-quick-actions">
+            <Link
+              to="/build"
+              className="btn-rig-action btn-edit-workbench"
+              title="Modify components in Assembly Rig"
+            >
+              <span>EDIT IN ASSEMBLY RIG &rarr;</span>
+            </Link>
+            <button
+              type="button"
+              className="btn-rig-action btn-snapshot-save"
+              onClick={() => handleSave(selectedSaveSlot)}
+              title={`Save current workbench state into Slot 0${selectedSaveSlot + 1}`}
+            >
+              <span>SAVE SNAPSHOT</span>
+            </button>
+          </div>
+        </>
+      ) : (
+        <div className="empty-rig1-card" style={{ minHeight: "240px" }}>
+          <p className="empty-rig1-desc">No configuration loaded in this slot.</p>
+          <Link
+            to="/build"
+            className="btn-load-demo-ghost"
+            style={{ textDecoration: "none", display: "inline-flex", alignItems: "center", justifyContent: "center" }}
+            onClick={() => { try { soundManager.click(); } catch {} }}
+          >
+            Go to Component Picker
+          </Link>
+        </div>
+      )}
 
       {saveMessage && <div className="rig-save-toast">{saveMessage}</div>}
 
       <div className="rig-specs-list">
         <div className="specs-list-title">HARDWARE SPECIFICATIONS</div>
-        {COMPONENT_CATEGORIES.map(({ key, label, icon }) => {
-          const comp = currentBuild[key];
-          const spec = getCompSpecSummary(comp, key);
-          return (
-            <div key={key} className={`spec-item-row ${spec.isSet ? "item-filled" : "item-empty"}`}>
-              <div className="spec-item-label-group">
-                <span className="spec-icon" aria-hidden="true">{icon}</span>
-                <span className="spec-category">{label}</span>
+        {hasRig1 ? (
+          COMPONENT_CATEGORIES.map(({ key, label, icon }) => {
+            const comp = currentBuild[key];
+            const spec = getCompSpecSummary(comp, key);
+            return (
+              <div key={key} className={`spec-item-row ${spec.isSet ? "item-filled" : "item-empty"}`}>
+                <div className="spec-item-label-group">
+                  <span className="spec-icon" aria-hidden="true">{icon}</span>
+                  <span className="spec-category">{label}</span>
+                </div>
+                <div className="spec-item-val-group">
+                  <span className="spec-name" title={spec.main}>{spec.main}</span>
+                  <span className="spec-tag">{spec.tag}</span>
+                </div>
               </div>
-              <div className="spec-item-val-group">
-                <span className="spec-name" title={spec.main}>{spec.main}</span>
-                <span className="spec-tag">{spec.tag}</span>
-              </div>
-            </div>
-          );
-        })}
+            );
+          })
+        ) : (
+          <div className="empty-rig2-prompt">
+            <p>No configuration loaded in this slot.</p>
+            <span>Go to Component Picker to assemble your PC components.</span>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -1430,7 +1458,7 @@ function CompatibilityView({ isIntegrated = false }) {
             </div>
           )}
 
-          {compatibilityIssues.length > 0 && selectedComponents.length >= 7 && (
+          {compatibilityIssues.length > 0 && hasRig1 && (
             <aside className="compat-top-banner" role="alert" {...bindBobInteract("Critical Warning: Compatibility issues found between your components!")}>
               <div className="compat-banner-info">
                 <span className="banner-alert-badge">COMPATIBILITY WARNING:</span>
@@ -1441,60 +1469,14 @@ function CompatibilityView({ isIntegrated = false }) {
             </aside>
           )}
 
-          {/* When assembly is not yet complete: neither card appears */}
-          {selectedComponents.length < 7 && (
-            <div className="empty-wrap">
-              <div className="empty-card glass-panel" {...bindBobInteract("Complete your 7-stage PC build in the Component Picker to unlock compatibility diagnostics.")}>
-                <div className="empty-img-wrap">
-                  <img
-                    src="/assets/component_picker_image_bg.png"
-                    alt="Assembly Rig"
-                    className="empty-img"
-                    onError={(e) => {
-                      e.target.style.display = "none";
-                    }}
-                  />
-                </div>
-                <h3>
-                  {selectedComponents.length === 0
-                    ? "No Components Selected Yet"
-                    : `Assembly Incomplete (${selectedComponents.length}/7 Parts Assembled)`}
-                </h3>
-                <p>
-                  {selectedComponents.length === 0
-                    ? "Head to the Component Picker and begin assembling your PC. Real-time compatibility checks and dual-rig comparison will appear here once your 7-stage build is complete."
-                    : `You have assembled ${selectedComponents.length} of 7 required hardware stages. Mount all 7 components in the Assembly Rig to unlock side-by-side comparison and pin-level diagnostics.`}
-                </p>
-                <div style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap", marginTop: "16px" }}>
-                  <Link to="/build" className="btn-resolve-cta" style={{ maxWidth: "260px", textDecoration: "none" }}>
-                    {selectedComponents.length === 0 ? "Go to Component Picker" : "Continue Assembly in 2D Builder"}
-                  </Link>
-                  <button 
-                    type="button" 
-                    className="btn-resolve-cta"
-                    style={{ maxWidth: "260px", margin: 0, background: "rgba(0, 229, 255, 0.15)", borderColor: "#00e5ff", color: "#00e5ff", cursor: "pointer" }}
-                    onClick={() => {
-                      try { soundManager.click(); } catch {}
-                      if (loadDemoBuild) loadDemoBuild();
-                    }}
-                  >
-                    Load Sample Rig (Test Demo)
-                  </button>
-                </div>
-              </div>
+          {/* Direct Dual Cards Layout ("rekta na dapat doon sa may card") */}
+          <div className="compare-mode-container" style={{ marginTop: "1.2rem" }}>
+            <div className="compare-dual-grid">
+              {renderFreeRig1Card()}
+              {renderFreeRig2Card()}
             </div>
-          )}
-
-          {/* When assembly is complete: Card 1 and Card 2 appear directly side-by-side with Dual Overview (middle launcher removed) */}
-          {selectedComponents.length >= 7 && (
-            <div className="compare-mode-container" style={{ marginTop: "1.2rem" }}>
-              <div className="compare-dual-grid">
-                {renderFreeRig1Card()}
-                {renderFreeRig2Card()}
-              </div>
-              {hasTwoRigs && renderFreeDualOverview()}
-            </div>
-          )}
+            {hasTwoRigs && renderFreeDualOverview()}
+          </div>
         </div>
 
         <div
