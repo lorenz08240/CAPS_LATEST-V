@@ -369,20 +369,6 @@ function CompatibilityView({ isIntegrated = false }) {
   // State for Free Workbench (non-account)
   const [rig2Source, setRig2Source] = useState("blank");
 
-  // Auto-save assembled build to Rig 02 Slot 01 when returning from Rig 02 Component Picker intent
-  useEffect(() => {
-    try {
-      const targetSlot = sessionStorage.getItem("buildlab_target_rig2_slot");
-      if (targetSlot === "0" && selectedComponents.length > 0) {
-        sessionStorage.removeItem("buildlab_target_rig2_slot");
-        saveBuildSnapshot(0);
-        setRig2Source("slot-0");
-        setSaveMessage("Assembled rig saved to Rig 02 (Slot 01)!");
-        setTimeout(() => setSaveMessage(""), 4000);
-      }
-    } catch {}
-  }, [selectedComponents.length, saveBuildSnapshot]);
-
   const triggerBobHint = useCallback((text) => {
     if (!text) return;
     try { soundManager.click(); } catch {}
@@ -843,16 +829,9 @@ function CompatibilityView({ isIntegrated = false }) {
 
   const handleDeleteRig2Assembly = () => {
     try { soundManager.click(); } catch {}
-    if (rig2Source.startsWith("slot-")) {
-      const slotIdx = parseInt(rig2Source.replace("slot-", ""), 10);
-      deleteBuildSnapshot(slotIdx);
-      setSaveMessage(`Assembly deleted from Slot 0${slotIdx + 1}!`);
-      setTimeout(() => setSaveMessage(""), 3500);
-    } else {
-      setRig2Source("blank");
-      setSaveMessage("Assembly cleared from Rig 02!");
-      setTimeout(() => setSaveMessage(""), 3500);
-    }
+    setRig2Source("blank");
+    setSaveMessage("Comparison recommendation cleared from Rig 02!");
+    setTimeout(() => setSaveMessage(""), 3500);
   };
 
   const rig2 = useMemo(() => {
@@ -898,7 +877,7 @@ function CompatibilityView({ isIntegrated = false }) {
       rig1Issues.forEach((iss) => list.push({ ...iss, rig: "Rig 01 (Workbench)" }));
     }
     if (hasRig2 && rig2Issues.length > 0) {
-      rig2Issues.forEach((iss) => list.push({ ...iss, rig: `Rig 02 (${rig2Source.replace("-", " ").toUpperCase()})` }));
+      rig2Issues.forEach((iss) => list.push({ ...iss, rig: "Rig 02 (Recommendation)" }));
     }
     return list;
   }, [hasRig1, rig1Issues, hasRig2, rig2Issues, rig2Source]);
@@ -1109,7 +1088,7 @@ function CompatibilityView({ isIntegrated = false }) {
       <div className="rig-card-header">
         <div className="rig-badge-group">
           <span className="rig-badge-live badge-cyan">RIG 02 // COMPARISON</span>
-          <span className="rig-badge-subtitle">Alternative Build</span>
+          <span className="rig-badge-subtitle">System Recommendation</span>
         </div>
         <div className="rig-header-controls">
           <div className="rig-source-dropdown-wrapper">
@@ -1120,14 +1099,11 @@ function CompatibilityView({ isIntegrated = false }) {
                 try { soundManager.click(); } catch {}
                 handleSelectRig2Source(e.target.value);
               }}
-              title="Select comparison preset or custom slot"
+              title="Select system recommendation preset to compare"
             >
-              <option value="blank">Blank Build (Empty Slot)</option>
-              <option value="preset-enthusiast">Preset: 4K Ultra Rig</option>
-              <option value="preset-budget">Preset: Budget Rig</option>
-              <option value="slot-0">{savedBuilds?.[0] ? "★ Slot 01 (Saved Custom Rig)" : "Slot 01 (Empty)"}</option>
-              <option value="slot-1">{savedBuilds?.[1] ? "★ Slot 02 (Saved Custom Rig)" : "Slot 02 (Empty)"}</option>
-              <option value="slot-2">{savedBuilds?.[2] ? "★ Slot 03 (Saved Custom Rig)" : "Slot 03 (Empty)"}</option>
+              <option value="blank">Blank Comparison (No Recommendation)</option>
+              <option value="preset-enthusiast">Recommendation: 4K Ultra Rig</option>
+              <option value="preset-budget">Recommendation: Budget Rig</option>
             </select>
             <div className="dropdown-chevron-icon" aria-hidden="true">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="6 9 12 15 18 9"/></svg>
@@ -1177,30 +1153,9 @@ function CompatibilityView({ isIntegrated = false }) {
           <div className="rig-quick-actions">
             <button
               type="button"
-              className="btn-rig-action btn-load-to-workbench"
-              onClick={() => {
-                try { soundManager.granted(); } catch {}
-                if (rig2) {
-                  Object.entries(rig2).forEach(([cat, comp]) => {
-                    if (comp) currentBuild[cat] = comp;
-                  });
-                  setSaveMessage("Rig 02 loaded into Workbench!");
-                  setTimeout(() => setSaveMessage(""), 3000);
-                }
-              }}
-              title="Load this configuration into active workbench"
-            >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M11 19l-7-7 7-7" />
-                <path d="M19 12H5" />
-              </svg>
-              <span>LOAD INTO WORKBENCH</span>
-            </button>
-            <button
-              type="button"
               className="btn-rig-action btn-delete-assembly"
               onClick={handleDeleteRig2Assembly}
-              title="Delete or clear this assembly from Rig 02"
+              title="Clear this comparison recommendation from Rig 02"
             >
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="3 6 5 6 21 6" />
@@ -1208,53 +1163,32 @@ function CompatibilityView({ isIntegrated = false }) {
                 <line x1="10" y1="11" x2="10" y2="17" />
                 <line x1="14" y1="11" x2="14" y2="17" />
               </svg>
-              <span>DELETE THIS ASSEMBLY</span>
+              <span>CLEAR COMPARISON RIG</span>
             </button>
           </div>
         </>
       ) : (
         <div className="empty-rig1-card">
           <p className="empty-rig1-desc">
-            {rig2Source.startsWith("slot-")
-              ? `No configuration saved in Slot 0${parseInt(rig2Source.replace("slot-", ""), 10) + 1} yet.`
-              : "No configuration loaded in this slot."}
+            No system recommendation loaded for comparison yet.
           </p>
           <div className="empty-rig-actions-row">
-            <Link
-              to="/build"
+            <button
+              type="button"
               className="btn-load-demo-ghost btn-manual-build"
-              onClick={() => {
-                try { soundManager.click(); } catch {}
-                try { sessionStorage.setItem("buildlab_target_rig2_slot", "0"); } catch {}
-              }}
-              title="Go to Component Picker to assemble a custom PC for Rig 02 (Slot 01)"
+              onClick={() => handleSelectRig2Source("preset-enthusiast")}
+              title="Load 4K Ultra hardware recommendation"
             >
-              Go to Component Picker
-            </Link>
+              Load 4K Ultra Recommendation
+            </button>
             <button
               type="button"
               className="btn-load-demo-ghost"
-              onClick={() => handleSelectRig2Source("preset-enthusiast")}
-              title="Load 4K Ultra hardware preset"
+              onClick={() => handleSelectRig2Source("preset-budget")}
+              title="Load Budget hardware recommendation"
             >
-              Load 4K Ultra Preset
+              Load Budget Recommendation
             </button>
-            {hasRig1 && !savedBuilds?.[0] && (
-              <button
-                type="button"
-                className="btn-load-demo-ghost btn-save-slot1"
-                onClick={() => {
-                  try { soundManager.granted(); } catch {}
-                  saveBuildSnapshot(0);
-                  setRig2Source("slot-0");
-                  setSaveMessage("Current rig saved to Rig 02 (Slot 01)!");
-                  setTimeout(() => setSaveMessage(""), 3500);
-                }}
-                title="Save current workbench rig into Slot 01 for Rig 02 comparison"
-              >
-                Save Workbench to Slot 01
-              </button>
-            )}
           </div>
         </div>
       )}
@@ -1311,11 +1245,7 @@ function CompatibilityView({ isIntegrated = false }) {
         ) : (
           <div className="empty-rig2-prompt">
             <p>No configuration loaded in this slot.</p>
-            <span>
-              {rig2Source.startsWith("slot-")
-                ? `Slot 0${parseInt(rig2Source.replace("slot-", ""), 10) + 1} is empty. Assemble parts in Rig 01 and save to Slot 0${parseInt(rig2Source.replace("slot-", ""), 10) + 1} to compare.`
-                : "Select a preset or saved slot from the dropdown above to compare."}
-            </span>
+            <span>Select a system recommendation preset from the dropdown above to compare against your build.</span>
           </div>
         )}
       </div>
