@@ -1767,50 +1767,14 @@
 }
 
 /* Symmetrical Source & Target Slot Dropdown Bars */
-.rig-source-control-bar {
+.rig-header-controls {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  padding: 0.5rem 0.85rem;
-  background: rgba(15, 23, 42, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
-  min-height: 44px;
-  box-sizing: border-box;
+  gap: 0.65rem;
 }
 
-.rig-source-control-meta {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-shrink: 0;
-}
-
-.source-control-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  display: inline-block;
-}
-
-.source-control-dot.green-dot {
-  background: #00e5a0;
-  box-shadow: 0 0 8px rgba(0, 229, 160, 0.6);
-}
-
-.source-control-dot.cyan-dot {
-  background: #38bdf8;
-  box-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
-}
-
-.source-control-label {
-  font-family: var(--font-mono, monospace);
-  font-size: 0.68rem;
-  font-weight: 800;
-  letter-spacing: 0.8px;
-  color: #94a3b8;
-  text-transform: uppercase;
+.rig-header-controls .rig-source-dropdown-wrapper {
+  max-width: 240px;
 }
 
 .rig-source-dropdown-wrapper {

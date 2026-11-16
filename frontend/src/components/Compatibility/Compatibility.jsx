@@ -893,30 +893,6 @@ function CompatibilityView({ isIntegrated = false }) {
         </div>
       </div>
 
-      <div className="rig-source-control-bar">
-        <div className="rig-source-control-meta">
-          <span className="source-control-dot green-dot" />
-          <span className="source-control-label">TARGET SAVE SLOT:</span>
-        </div>
-        <div className="rig-source-dropdown-wrapper">
-          <select
-            className="rig-source-dropdown-select green-accent"
-            value={selectedSaveSlot}
-            onChange={(e) => {
-              try { soundManager.click(); } catch {}
-              setSelectedSaveSlot(Number(e.target.value));
-            }}
-          >
-            <option value={0}>{savedBuilds?.[0] ? "★ Slot 01 (Saved Custom Build)" : "Slot 01 (Empty - Ready to Save)"}</option>
-            <option value={1}>{savedBuilds?.[1] ? "★ Slot 02 (Saved Custom Build)" : "Slot 02 (Empty - Ready to Save)"}</option>
-            <option value={2}>{savedBuilds?.[2] ? "★ Slot 03 (Saved Custom Build)" : "Slot 03 (Empty - Ready to Save)"}</option>
-          </select>
-          <div className="dropdown-chevron-icon" aria-hidden="true">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-          </div>
-        </div>
-      </div>
-
       {hasRig1 ? (
         <>
           <div className="rig-preview-media-box">
@@ -1015,42 +991,38 @@ function CompatibilityView({ isIntegrated = false }) {
           <span className="rig-badge-live badge-cyan">RIG 02 // COMPARISON</span>
           <span className="rig-badge-subtitle">Alternative Build</span>
         </div>
-        <div className="rig-compat-status-chip">
-          {hasRig2 ? (
-            rig2Issues.length === 0 ? (
-              <span className="chip-badge status-ok">✓ 100% COMPATIBLE</span>
+        <div className="rig-header-controls">
+          <div className="rig-source-dropdown-wrapper">
+            <select
+              className="rig-source-dropdown-select"
+              value={rig2Source}
+              onChange={(e) => {
+                try { soundManager.click(); } catch {}
+                handleSelectRig2Source(e.target.value);
+              }}
+              title="Select comparison preset or custom slot"
+            >
+              <option value="blank">Blank Build (Empty Slot)</option>
+              <option value="preset-enthusiast">Preset: 4K Ultra Rig</option>
+              <option value="preset-budget">Preset: Budget Rig</option>
+              <option value="slot-0">{savedBuilds?.[0] ? "★ Slot 01 (Saved Custom Rig)" : "Slot 01 (Empty)"}</option>
+              <option value="slot-1">{savedBuilds?.[1] ? "★ Slot 02 (Saved Custom Rig)" : "Slot 02 (Empty)"}</option>
+              <option value="slot-2">{savedBuilds?.[2] ? "★ Slot 03 (Saved Custom Rig)" : "Slot 03 (Empty)"}</option>
+            </select>
+            <div className="dropdown-chevron-icon" aria-hidden="true">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+          </div>
+          <div className="rig-compat-status-chip">
+            {hasRig2 ? (
+              rig2Issues.length === 0 ? (
+                <span className="chip-badge status-ok">✓ 100% COMPATIBLE</span>
+              ) : (
+                <span className="chip-badge status-warning">⚠ {rig2Issues.length} ISSUE{rig2Issues.length > 1 ? "S" : ""}</span>
+              )
             ) : (
-              <span className="chip-badge status-warning">⚠ {rig2Issues.length} ISSUE{rig2Issues.length > 1 ? "S" : ""}</span>
-            )
-          ) : (
-            <span className="chip-badge status-empty">EMPTY SLOT</span>
-          )}
-        </div>
-      </div>
-
-      <div className="rig-source-control-bar">
-        <div className="rig-source-control-meta">
-          <span className="source-control-dot cyan-dot" />
-          <span className="source-control-label">COMPARE SOURCE:</span>
-        </div>
-        <div className="rig-source-dropdown-wrapper">
-          <select
-            className="rig-source-dropdown-select"
-            value={rig2Source}
-            onChange={(e) => {
-              try { soundManager.click(); } catch {}
-              handleSelectRig2Source(e.target.value);
-            }}
-          >
-            <option value="blank">Blank Build (Empty Slot)</option>
-            <option value="preset-enthusiast">Preset: 4K Ultra Rig</option>
-            <option value="preset-budget">Preset: Budget Rig</option>
-            <option value="slot-0">{savedBuilds?.[0] ? "★ Slot 01 (Saved Custom Rig)" : "Slot 01 (Empty)"}</option>
-            <option value="slot-1">{savedBuilds?.[1] ? "★ Slot 02 (Saved Custom Rig)" : "Slot 02 (Empty)"}</option>
-            <option value="slot-2">{savedBuilds?.[2] ? "★ Slot 03 (Saved Custom Rig)" : "Slot 03 (Empty)"}</option>
-          </select>
-          <div className="dropdown-chevron-icon" aria-hidden="true">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+              <span className="chip-badge status-empty">EMPTY SLOT</span>
+            )}
           </div>
         </div>
       </div>
