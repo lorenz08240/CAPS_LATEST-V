@@ -84,18 +84,20 @@ export const BuildProvider = ({ children }) => {
 
   // Sync builds to storage:
   // - In Free Mode: strictly sessionStorage only (lost when window/tab is closed).
-  // - In Learn Mode (Student): saved to localStorage for permanent curriculum progress.
+  // - In Learn Mode (Student): saved to localStorage and archived per student email.
   useEffect(() => {
     try {
       const serialized = JSON.stringify(rig1Build);
       sessionStorage.setItem("buildlab_current_build", serialized);
-      if (isStudent) {
+      if (isStudent && userProfile?.email) {
+        const emailKey = userProfile.email.toLowerCase().trim();
         localStorage.setItem("buildlab_current_build", serialized);
-      } else {
+        localStorage.setItem(`buildlab_student_build_${emailKey}`, serialized);
+      } else if (!isStudent) {
         localStorage.removeItem("buildlab_current_build");
       }
     } catch {}
-  }, [rig1Build, isStudent]);
+  }, [rig1Build, isStudent, userProfile?.email]);
 
   useEffect(() => {
     try {
@@ -108,6 +110,40 @@ export const BuildProvider = ({ children }) => {
       }
     } catch {}
   }, [rig2Build, isStudent]);
+
+  // Listen for direct student build restore events
+  useEffect(() => {
+    const handleRestore = (e) => {
+      if (e.detail && typeof e.detail === "object") {
+        setRig1Build(e.detail);
+      }
+    };
+    window.addEventListener("buildlab_restore_student_build", handleRestore);
+    return () => window.removeEventListener("buildlab_restore_student_build", handleRestore);
+  }, []);
+
+  // When student identity loads, restore their archived build and configuration slots
+  useEffect(() => {
+    if (isStudent && userProfile?.email) {
+      try {
+        const emailKey = userProfile.email.toLowerCase().trim();
+        const archivedBuild = localStorage.getItem(`buildlab_student_build_${emailKey}`);
+        if (archivedBuild) {
+          const parsed = JSON.parse(archivedBuild);
+          if (parsed && typeof parsed === "object") {
+            setRig1Build(parsed);
+          }
+        }
+        const archivedSaved = localStorage.getItem(`buildlab_student_saved_builds_${emailKey}`);
+        if (archivedSaved) {
+          const parsedSaved = JSON.parse(archivedSaved);
+          if (Array.isArray(parsedSaved)) {
+            setSavedBuilds(parsedSaved);
+          }
+        }
+      } catch {}
+    }
+  }, [isStudent, userProfile?.email]);
 
   // Function to add a component to active build
   const addComponent = (category, component) => {
@@ -314,6 +350,10 @@ export const BuildProvider = ({ children }) => {
       try {
         if (isStudent) {
           localStorage.setItem("buildlab_saved_builds", JSON.stringify(newBuilds));
+          if (userProfile?.email) {
+            const emailKey = userProfile.email.toLowerCase().trim();
+            localStorage.setItem(`buildlab_student_saved_builds_${emailKey}`, JSON.stringify(newBuilds));
+          }
         } else {
           sessionStorage.setItem("buildlab_saved_builds", JSON.stringify(newBuilds));
           localStorage.removeItem("buildlab_saved_builds");
@@ -341,6 +381,10 @@ export const BuildProvider = ({ children }) => {
       try {
         if (isStudent) {
           localStorage.setItem("buildlab_saved_builds", JSON.stringify(newBuilds));
+          if (userProfile?.email) {
+            const emailKey = userProfile.email.toLowerCase().trim();
+            localStorage.setItem(`buildlab_student_saved_builds_${emailKey}`, JSON.stringify(newBuilds));
+          }
         } else {
           sessionStorage.setItem("buildlab_saved_builds", JSON.stringify(newBuilds));
           localStorage.removeItem("buildlab_saved_builds");

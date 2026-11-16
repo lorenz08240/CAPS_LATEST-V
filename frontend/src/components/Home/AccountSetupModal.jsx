@@ -29,7 +29,7 @@ const EXPERIENCE_OPTIONS = [
 ];
 
 export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
-  const { userProfile, setUserProfile, setAppMode, unlockStage } = useLearnMode();
+  const { userProfile, setUserProfile, setAppMode, unlockStage, restoreStudentAccount } = useLearnMode();
 
   const [step, setStep] = useState("connect"); // 'connect' | 'tester_email' | 'name_input' | 'about_you'
   const [fullName, setFullName] = useState(userProfile.fullName || "");
@@ -98,12 +98,31 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
                   headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
                 });
                 const data = await res.json();
-                setEmail(data.email || "learner.tester@gmail.com");
-                setFullName(data.name || "");
-                setAvatar(
-                  data.picture ||
-                    `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(data.name || data.email)}`
-                );
+                const targetEmail = data.email || "learner.tester@gmail.com";
+                setEmail(targetEmail);
+                if (data.name) setFullName(data.name);
+                const candidateAvatar = data.picture ||
+                  `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(data.name || targetEmail)}`;
+                setAvatar(candidateAvatar);
+
+                // Auto-restore returning student's account, build, and progress!
+                if (restoreStudentAccount) {
+                  const restored = restoreStudentAccount(targetEmail, {
+                    fullName: data.name || undefined,
+                    photo: candidateAvatar,
+                  });
+                  if (restored) {
+                    try { soundManager.granted(); } catch {}
+                    setIsLinking(false);
+                    if (onConfirmed) {
+                      onConfirmed("learn", restored);
+                    } else {
+                      onClose();
+                    }
+                    return;
+                  }
+                }
+
                 try { soundManager.granted(); } catch {}
                 setStep("name_input");
               } catch (fetchErr) {
@@ -144,6 +163,20 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
       try { soundManager.warning(); } catch {}
       setError("Please enter a valid Google email address (e.g. yourname@gmail.com).");
       return;
+    }
+
+    // Auto-restore returning student's account, build, and progress!
+    if (restoreStudentAccount) {
+      const restored = restoreStudentAccount(cleanEmail);
+      if (restored) {
+        try { soundManager.granted(); } catch {}
+        if (onConfirmed) {
+          onConfirmed("learn", restored);
+        } else {
+          onClose();
+        }
+        return;
+      }
     }
 
     try { soundManager.granted(); } catch {}
@@ -226,6 +259,9 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
       );
       localStorage.setItem("buildlab_app_mode", "learn");
       localStorage.setItem("buildlab_user_profile", JSON.stringify(finalProfile));
+      const emailKey = finalProfile.email.toLowerCase().trim();
+      localStorage.setItem(`buildlab_student_profile_${emailKey}`, JSON.stringify(finalProfile));
+      localStorage.setItem(`buildlab_student_stages_${emailKey}`, JSON.stringify(["build", "compatibility", "learn", "studio", "certificate"]));
       sessionStorage.setItem("buildlab_pending_learner_welcome", finalProfile.fullName);
     } catch {}
 

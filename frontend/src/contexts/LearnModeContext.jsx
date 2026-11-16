@@ -77,6 +77,10 @@ export const LearnModeProvider = ({ children }) => {
       const updated = { ...prev, ...profileData, setupCompleted: true };
       try {
         localStorage.setItem("buildlab_user_profile", JSON.stringify(updated));
+        if (updated.email) {
+          const emailKey = updated.email.toLowerCase().trim();
+          localStorage.setItem(`buildlab_student_profile_${emailKey}`, JSON.stringify(updated));
+        }
       } catch {}
       return updated;
     });
@@ -89,10 +93,14 @@ export const LearnModeProvider = ({ children }) => {
       const updated = [...prev, stageKey];
       try {
         localStorage.setItem("buildlab_learn_unlocked_stages", JSON.stringify(updated));
+        if (userProfile?.email) {
+          const emailKey = userProfile.email.toLowerCase().trim();
+          localStorage.setItem(`buildlab_student_stages_${emailKey}`, JSON.stringify(updated));
+        }
       } catch {}
       return updated;
     });
-  }, []);
+  }, [userProfile?.email]);
 
   // Mark banner as seen
   const markBannerSeen = useCallback((stageKey) => {
@@ -196,25 +204,99 @@ export const LearnModeProvider = ({ children }) => {
     } catch {}
   }, []);
 
-  // Learner Log Out: Complete reset to free mode as a brand new visitor
-  const logoutLearner = useCallback(() => {
-    // 1. Reset learner profile state
-    setUserProfileState({
-      fullName: "",
-      email: "",
-      institution: "",
-      googleId: "",
-      photo: "",
-      setupCompleted: false,
-    });
-    // 2. Reset app mode state to explore (Free Mode)
-    setModeState("explore");
-    // 3. Reset curriculum progress & banners
-    setUnlockedStages(["build", "compatibility", "learn"]);
-    setSeenBanners({ compatibility: false, learn: false, certificate: false });
-
+  // Restore an existing student account and their last build/progress
+  const restoreStudentAccount = useCallback((targetEmail, overrides = {}) => {
     try {
-      // Clear all student account data
+      const emailKey = (targetEmail || "").trim().toLowerCase();
+      if (!emailKey) return false;
+      const rawArchived = localStorage.getItem(`buildlab_student_profile_${emailKey}`);
+      if (!rawArchived) return false;
+
+      const archivedProfile = { ...JSON.parse(rawArchived), ...overrides, setupCompleted: true };
+
+      // 1. Restore Profile into state and active localStorage
+      setUserProfileState(archivedProfile);
+      setModeState("learn");
+      localStorage.setItem("buildlab_app_mode", "learn");
+      localStorage.setItem("buildlab_user_profile", JSON.stringify(archivedProfile));
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          id: "student_" + Date.now(),
+          fullName: archivedProfile.fullName,
+          name: archivedProfile.fullName,
+          email: archivedProfile.email,
+          photo: archivedProfile.photo,
+          accountType: "student",
+          strand: archivedProfile.strand,
+          interests: archivedProfile.interests,
+          experienceLevel: archivedProfile.experienceLevel,
+        })
+      );
+
+      // 2. Restore Unlocked Stages (if they finished all stages, all stages remain unlocked!)
+      const rawStages = localStorage.getItem(`buildlab_student_stages_${emailKey}`);
+      if (rawStages) {
+        try {
+          const parsedStages = JSON.parse(rawStages);
+          if (Array.isArray(parsedStages) && parsedStages.length > 0) {
+            setUnlockedStages(parsedStages);
+            localStorage.setItem("buildlab_learn_unlocked_stages", JSON.stringify(parsedStages));
+          }
+        } catch {}
+      } else {
+        setUnlockedStages(["build", "compatibility", "learn", "studio", "certificate"]);
+        localStorage.setItem("buildlab_learn_unlocked_stages", JSON.stringify(["build", "compatibility", "learn", "studio", "certificate"]));
+      }
+
+      // 3. Restore Student's Assembled Build into active session and storage
+      const rawBuild = localStorage.getItem(`buildlab_student_build_${emailKey}`);
+      if (rawBuild) {
+        try {
+          sessionStorage.setItem("buildlab_current_build", rawBuild);
+          localStorage.setItem("buildlab_current_build", rawBuild);
+          window.dispatchEvent(new CustomEvent("buildlab_restore_student_build", { detail: JSON.parse(rawBuild) }));
+        } catch {}
+      }
+
+      // 4. Restore Configuration Slots
+      const rawSavedBuilds = localStorage.getItem(`buildlab_student_saved_builds_${emailKey}`);
+      if (rawSavedBuilds) {
+        try {
+          sessionStorage.setItem("buildlab_saved_builds", rawSavedBuilds);
+          localStorage.setItem("buildlab_saved_builds", rawSavedBuilds);
+        } catch {}
+      }
+
+      sessionStorage.setItem("buildlab_pending_learner_welcome", archivedProfile.fullName);
+      return archivedProfile;
+    } catch (err) {
+      console.warn("Could not restore student account:", err);
+      return false;
+    }
+  }, []);
+
+  // Learner Log Out: Archive student progress, then reset website to clean Free Mode
+  const logoutLearner = useCallback(() => {
+    try {
+      // 1. Archive student's latest profile and unlocked stages under their email key
+      if (userProfile?.email) {
+        const emailKey = userProfile.email.toLowerCase().trim();
+        localStorage.setItem(`buildlab_student_profile_${emailKey}`, JSON.stringify(userProfile));
+        localStorage.setItem(`buildlab_student_stages_${emailKey}`, JSON.stringify(unlockedStages));
+
+        // Archive active build so when logging back in, their last build is preserved!
+        const curBuild = sessionStorage.getItem("buildlab_current_build") || localStorage.getItem("buildlab_current_build");
+        if (curBuild) {
+          localStorage.setItem(`buildlab_student_build_${emailKey}`, curBuild);
+        }
+        const savedBuilds = sessionStorage.getItem("buildlab_saved_builds") || localStorage.getItem("buildlab_saved_builds");
+        if (savedBuilds) {
+          localStorage.setItem(`buildlab_student_saved_builds_${emailKey}`, savedBuilds);
+        }
+      }
+
+      // 2. Clear ACTIVE student session so free mode has no student credentials
       localStorage.removeItem("buildlab_user_profile");
       localStorage.removeItem("user");
       localStorage.setItem("buildlab_app_mode", "explore");
@@ -223,10 +305,8 @@ export const LearnModeProvider = ({ children }) => {
       localStorage.removeItem("buildlab_learn_theme");
       localStorage.removeItem("buildlab_learn_syllabus_seen");
       localStorage.removeItem("buildlab_cert_id");
-      localStorage.removeItem("buildlab_course_progress");
-      localStorage.removeItem("buildlab_quiz_scores");
 
-      // Clear all builds so free mode starts completely reset
+      // 3. Clear active builds so free mode starts completely reset as a brand new visitor
       localStorage.removeItem("buildlab_current_build");
       localStorage.removeItem("buildlab_rig2_build");
       localStorage.removeItem("buildlab_saved_builds");
@@ -239,13 +319,26 @@ export const LearnModeProvider = ({ children }) => {
       sessionStorage.removeItem("buildlab_saved_builds");
     } catch {}
 
-    // Fully reload to Home so all components and states reset to new visitor status
+    // 4. Reset local React state
+    setUserProfileState({
+      fullName: "",
+      email: "",
+      institution: "",
+      googleId: "",
+      photo: "",
+      setupCompleted: false,
+    });
+    setModeState("explore");
+    setUnlockedStages(["build", "compatibility", "learn"]);
+    setSeenBanners({ compatibility: false, learn: false, certificate: false });
+
+    // 5. Fully reload to Home so all components and states reset to new visitor status
     try {
       window.location.replace("/#top");
     } catch {
       window.location.href = "/";
     }
-  }, []);
+  }, [userProfile, unlockedStages]);
 
   return (
     <LearnModeContext.Provider
@@ -255,6 +348,7 @@ export const LearnModeProvider = ({ children }) => {
         userProfile,
         setUserProfile,
         unlockedStages,
+        setUnlockedStages,
         unlockStage,
         seenBanners,
         markBannerSeen,
@@ -264,6 +358,7 @@ export const LearnModeProvider = ({ children }) => {
         canAccessPath,
         resetLearnProgress,
         logoutLearner,
+        restoreStudentAccount,
       }}
     >
       {children}
