@@ -31,6 +31,11 @@
   overflow: hidden;
 }
 
+.mode-selection-container.single-card {
+  max-width: 580px;
+  padding: 2rem 2rem 2.25rem;
+}
+
 .mode-selection-container::before {
   content: "";
   position: absolute;
@@ -117,6 +122,12 @@
   grid-template-columns: 1fr 1fr;
   gap: 1.5rem;
   perspective: 1000px;
+}
+
+.mode-cards-grid.single-card {
+  grid-template-columns: 1fr;
+  max-width: 500px;
+  margin: 0 auto;
 }
 
 .mode-card {

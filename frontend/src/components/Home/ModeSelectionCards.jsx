@@ -14,17 +14,17 @@ export default function ModeSelectionCards({
   return (
     <div className="mode-selection-overlay" onClick={onClose}>
       <div
-        className="mode-selection-container"
+        className="mode-selection-container single-card"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
-        aria-label="Choose Operating Mode"
+        aria-label="Start Guided Course"
       >
         <div className="mode-selection-header">
           <div className="mode-selection-tag">
             <span className="tag-bracket">[</span>
             <span className="tag-pulse-dot" />
-            <span>OPERATING MODE CONFIGURATION</span>
+            <span>STUDENT CERTIFICATION TRACK</span>
             <span className="tag-bracket">]</span>
           </div>
           <button
@@ -42,15 +42,14 @@ export default function ModeSelectionCards({
         </div>
 
         <div className="mode-selection-intro">
-          <h2 className="mode-selection-title">Choose How You Want to Build</h2>
+          <h2 className="mode-selection-title">Start Your Hardware Course</h2>
           <p className="mode-selection-sub">
-            Pick a guided certification track to save your progress, or jump right into the sandbox as a guest.
+            Follow an engineering-validated curriculum with automatic Google Cloud save and verified certification.
           </p>
         </div>
 
-        {/* ── SPLIT STAGGERED REVEAL CARDS (HexagonCircle Pixel Hover) ── */}
-        <div className="mode-cards-grid">
-          {/* CARD 1: LEARN MODE */}
+        {/* ── SINGLE CARD: LEARN TRACK (HexagonCircle Pixel Hover) ── */}
+        <div className="mode-cards-grid single-card">
           <div
             className="mode-card mode-card-learn"
             onClick={() => {
@@ -87,7 +86,7 @@ export default function ModeSelectionCards({
                 </li>
                 <li>
                   <span className="perk-check">✓</span>
-                  <span><strong>Sequential Flow:</strong> Build &rarr; Compatibility &rarr; Learn &rarr; 3D Studio</span>
+                  <span><strong>Courseware Modules:</strong> Sockets, clearances, pinouts, and thermal dynamics</span>
                 </li>
                 <li>
                   <span className="perk-check">✓</span>
@@ -108,64 +107,6 @@ export default function ModeSelectionCards({
                     <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
                   </svg>
                   <span>CONTINUE WITH GOOGLE</span>
-                  <span className="btn-arrow">&rarr;</span>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* CARD 2: FREE / CONTINUE WITHOUT SAVING */}
-          <div
-            className="mode-card mode-card-free"
-            onClick={() => {
-              try { soundManager.click(); } catch {}
-              onSelectFree();
-            }}
-            role="button"
-            tabIndex={0}
-          >
-            <PixelCanvas
-              colors={["#f43f5e", "#fb7185", "#38bdf8", "#facc15"]}
-              gap={7}
-            />
-
-            <div className="mode-card-content">
-              <div className="mode-card-badge free-badge">
-                <span className="badge-dot" />
-                <span>UNRESTRICTED HARDWARE SANDBOX</span>
-              </div>
-
-              <div className="mode-card-icon-wrap free-icon-wrap">
-                <span className="mode-card-emoji">🚀</span>
-              </div>
-
-              <h3 className="mode-card-heading">FREE WORKBENCH</h3>
-              <p className="mode-card-summary">
-                Continue without saving your progress. Zero sign-in or account setup required.
-              </p>
-
-              <ul className="mode-card-perks">
-                <li>
-                  <span className="perk-check">✓</span>
-                  <span><strong>No Account Needed:</strong> Jump straight into the hardware builder immediately</span>
-                </li>
-                <li>
-                  <span className="perk-check">✓</span>
-                  <span><strong>Open Exploration:</strong> Freely select parts, check compatibility &amp; 3D view</span>
-                </li>
-                <li>
-                  <span className="perk-check">✓</span>
-                  <span><strong>Temporary Rig State:</strong> Kept in your active browser window</span>
-                </li>
-                <li>
-                  <span className="perk-check">✓</span>
-                  <span><strong>Save Progress Anytime:</strong> Cloud save prompted only when you choose to store</span>
-                </li>
-              </ul>
-
-              <div className="mode-card-action">
-                <button type="button" className="mode-btn mode-btn-free">
-                  <span>START FREE BUILD</span>
                   <span className="btn-arrow">&rarr;</span>
                 </button>
               </div>

@@ -58,7 +58,7 @@ function Home() {
   const handleSelectMode = (targetMode) => {
     if (targetMode === "learn") {
       if (userProfile?.setupCompleted) {
-        soundManager.granted();
+        try { soundManager.granted(); } catch {}
         setAppMode("learn");
         try {
           sessionStorage.setItem(
@@ -69,13 +69,12 @@ function Home() {
         setWelcomeLearnerProfile(userProfile);
         setTransitionMode("learn");
         setShowTransitionOverlay(true);
-        handleScrollToBuild("smooth", true);
       } else {
-        soundManager.click();
+        try { soundManager.click(); } catch {}
         setShowAccountModal(true);
       }
     } else {
-      soundManager.click();
+      try { soundManager.click(); } catch {}
       setAppMode("explore");
     }
   };
@@ -465,24 +464,25 @@ function Home() {
               </div>
             </div>
 
-            {/* Centered START BUILD Action Button (Green Box, Metrics & Dock Removed) */}
+            {/* Centered START COURSE Action Button */}
             <div className="cyber-hero-center-action">
               <button
                 type="button"
                 className="hud-start-build-btn centered-start-btn"
                 onClick={(e) => {
                   e.preventDefault();
-                  if (!hasClickedBuildRef.current) {
-                    handleStartBuildTrigger();
-                  } else if (mode === "learn") {
-                    handleScrollToBuild("smooth");
-                  } else {
-                    navigate('/build');
+                  try { soundManager.click(); } catch {}
+                  // If user is already set up in Learn mode, go directly to Learn page
+                  if (mode === "learn" && (userProfile?.fullName || userProfile?.email)) {
+                    navigate('/learn');
+                    return;
                   }
+                  // Otherwise open the student certification track modal
+                  setShowModeCards(true);
                 }}
-                title="Launch 2D Workbench"
+                title="Start Course"
               >
-                <span className="btn-label">START BUILD</span>
+                <span className="btn-label">START COURSE</span>
                 <span className="btn-arrow">&rarr;</span>
               </button>
               <div className="hero-legal-links">
@@ -553,13 +553,8 @@ function Home() {
           onComplete={() => {
             setShowTransitionOverlay(false);
             unlockBuildScroll();
-            const hasPendingWelcome =
-              transitionMode === "learn" ||
-              (typeof sessionStorage !== "undefined" &&
-                Boolean(sessionStorage.getItem("buildlab_pending_learner_welcome")));
-            if (hasPendingWelcome || transitionMode === "learn") {
-              setShowLearnerWelcomeBanner(true);
-              handleScrollToBuild("smooth");
+            if (transitionMode === "learn") {
+              navigate("/learn");
             } else {
               navigate("/build");
             }

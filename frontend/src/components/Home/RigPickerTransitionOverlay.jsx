@@ -99,7 +99,7 @@ export default function RigPickerTransitionOverlay({
           </div>
 
           <h1 className="rig-trans-title">
-            {isLearn ? 'Stage 01: 2D Rig Station' : 'Rig Component Picker'}
+            {isLearn ? 'Hardware Academy & Course Lab' : 'Rig Component Picker'}
           </h1>
 
           <div className="rig-trans-underline" />
@@ -108,7 +108,7 @@ export default function RigPickerTransitionOverlay({
             {isLearn ? (
               <>
                 SYNCING GOOGLE PROFILE{learnerName ? ` (${learnerName.toUpperCase()})` : ''} •{' '}
-                <span className="rig-cyan-hi">CALIBRATING B.O.B. COMPANION GUIDE</span>
+                <span className="rig-cyan-hi">LAUNCHING HARDWARE ACADEMY</span>
               </>
             ) : (
               <>
@@ -127,7 +127,7 @@ export default function RigPickerTransitionOverlay({
               <span className="rig-dot" />
             </div>
             <span className="rig-loader-label">
-              {isLearn ? 'PREPARING LEARNER WELCOME PROMPT' : 'SYNCING HARDWARE CATALOG'}
+              {isLearn ? 'PREPARING COURSE MODULES' : 'SYNCING HARDWARE CATALOG'}
             </span>
           </div>
         </div>
@@ -138,7 +138,7 @@ export default function RigPickerTransitionOverlay({
         <div className="rig-trans-tag">
           <span className="tag-rose">■</span>
           <span>
-            {isLearn ? 'STAGE 01: GUIDED 2D ASSEMBLY' : 'STAGE: 2D WORKBENCH INITIALIZATION'}
+            {isLearn ? 'STUDENT CERTIFICATION TRACK' : 'STAGE: 2D WORKBENCH INITIALIZATION'}
           </span>
         </div>
         <div className="rig-trans-tag">

@@ -464,9 +464,6 @@ function Navbar({ isPinned: propsIsPinned }) {
                         <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
                       </svg>
                       <span>Academy &amp; Learn</span>
-                      {mode === "learn" && !unlockedStages.includes("learn") && (
-                        <span style={{ marginLeft: "auto", fontSize: "11px" }} title="Locked: Complete compatibility check first">🔒</span>
-                      )}
                     </Link>
 
                     {unlockedStages.includes("certificate") && (
