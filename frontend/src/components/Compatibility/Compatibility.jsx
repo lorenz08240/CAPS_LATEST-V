@@ -315,7 +315,7 @@ function CompatibilityView({ isIntegrated = false }) {
   const [bobSpeech, setBobSpeech] = useState(null);
 
   // State for Free Workbench (non-account)
-  const [rig2Source, setRig2Source] = useState("preset-enthusiast");
+  const [rig2Source, setRig2Source] = useState("blank");
 
   const triggerBobHint = useCallback((text) => {
     if (!text) return;
