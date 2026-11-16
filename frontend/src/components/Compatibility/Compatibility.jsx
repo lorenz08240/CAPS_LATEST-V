@@ -314,7 +314,6 @@ function CompatibilityView({ isIntegrated = false }) {
   const [bobSpeech, setBobSpeech] = useState(null);
 
   // State for Free Workbench (non-account)
-  const [showRig2, setShowRig2] = useState(false);
   const [rig2Source, setRig2Source] = useState("preset-enthusiast");
 
   const triggerBobHint = useCallback((text) => {
@@ -870,7 +869,7 @@ function CompatibilityView({ isIntegrated = false }) {
     }, compatContainerRef);
 
     return () => ctx.revert();
-  }, [selectedComponents, showRig2, rig2]);
+  }, [selectedComponents, rig2]);
 
   /* ── FREE WORKBENCH: RIG 01 CARD (Matches Image 2) ── */
   const renderFreeRig1Card = () => (
@@ -1100,76 +1099,7 @@ function CompatibilityView({ isIntegrated = false }) {
     </div>
   );
 
-  /* ── FREE WORKBENCH: LAUNCHER COMPARE CARD ── */
-  const renderFreeLauncherCard = () => (
-    <section className="compat-compare-launcher-card glass-panel">
-      <div className="compare-launcher-info">
-        <div className="compare-launcher-badge">
-          <span className="telemetry-live-dot" />
-          <span className="compare-launcher-badge-label">DUAL-RIG ARCHITECTURE // BENCHMARK MATRIX</span>
-          <span className="telemetry-bracket">[ READY ]</span>
-        </div>
-        <h3 className="compare-launcher-title">
-          {showRig2
-            ? "DUAL-RIG COMPARISON ACTIVE // BENCHMARK DIFFERENTIALS LOADED"
-            : "Want to compare this build against an alternative or budget preset?"}
-        </h3>
-        <p className="compare-launcher-desc">
-          {showRig2
-            ? "Switch between presets or saved slots on Rig 02 to evaluate hardware clearances, memory bandwidth, wattage draw, and benchmark differentials side-by-side."
-            : "Switch to Dual-Rig Compare to evaluate hardware clearances, memory bandwidth, wattage draw, and benchmark differentials side-by-side against alternative builds and budget presets."}
-        </p>
-        <div className="compare-launcher-slots-row">
-          <span className="slots-label">QUICK STORAGE SLOT:</span>
-          {[0, 1, 2].map((slot) => {
-            const hasSlotData = Boolean(savedBuilds?.[slot]);
-            return (
-              <button
-                key={slot}
-                type="button"
-                className={`launcher-slot-chip ${selectedSaveSlot === slot ? "slot-selected" : ""} ${hasSlotData ? "slot-occupied" : ""}`}
-                onClick={() => {
-                  try { soundManager.click(); } catch {}
-                  setSelectedSaveSlot(slot);
-                }}
-                title={hasSlotData ? `Slot 0${slot + 1} has saved build` : `Slot 0${slot + 1} is empty`}
-              >
-                <span className="slot-dot" />
-                <span>SLOT 0{slot + 1}</span>
-                {hasSlotData && <span className="slot-tag-saved">SAVED</span>}
-              </button>
-            );
-          })}
-        </div>
-      </div>
 
-      <div className="compare-launcher-actions">
-        <button
-          type="button"
-          className="btn-launcher-save"
-          onClick={() => handleSave(selectedSaveSlot)}
-          title="Save current workbench components into selected slot"
-        >
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-          <span>SAVE RIG TO SLOT 0{selectedSaveSlot + 1}</span>
-        </button>
-
-        <button
-          type="button"
-          className="btn-launcher-compare launcher-compare"
-          onClick={() => {
-            try { soundManager.click(); } catch {}
-            setShowRig2((prev) => !prev);
-          }}
-          title={showRig2 ? "Hide Rig 02 comparison" : "Reveal Rig 02 for side-by-side comparison"}
-        >
-          <span>{showRig2 ? "HIDE RIG 2 COMPARISON ▲" : "COMPARE RIGS →"}</span>
-        </button>
-
-        {saveMessage && <div className="launcher-save-toast">{saveMessage}</div>}
-      </div>
-    </section>
-  );
 
   /* ── FREE WORKBENCH: DUAL OVERVIEW SECTION ── */
   const renderFreeDualOverview = () => (
@@ -1500,7 +1430,7 @@ function CompatibilityView({ isIntegrated = false }) {
             </div>
           )}
 
-          {compatibilityIssues.length > 0 && selectedComponents.length > 0 && (
+          {compatibilityIssues.length > 0 && selectedComponents.length >= 7 && (
             <aside className="compat-top-banner" role="alert" {...bindBobInteract("Critical Warning: Compatibility issues found between your components!")}>
               <div className="compat-banner-info">
                 <span className="banner-alert-badge">COMPATIBILITY WARNING:</span>
@@ -1511,9 +1441,10 @@ function CompatibilityView({ isIntegrated = false }) {
             </aside>
           )}
 
-          {selectedComponents.length === 0 && (
+          {/* When assembly is not yet complete: neither card appears */}
+          {selectedComponents.length < 7 && (
             <div className="empty-wrap">
-              <div className="empty-card glass-panel" {...bindBobInteract("No components selected yet. Head to the Component Picker to begin.")}>
+              <div className="empty-card glass-panel" {...bindBobInteract("Complete your 7-stage PC build in the Component Picker to unlock compatibility diagnostics.")}>
                 <div className="empty-img-wrap">
                   <img
                     src="/assets/component_picker_image_bg.png"
@@ -1524,13 +1455,19 @@ function CompatibilityView({ isIntegrated = false }) {
                     }}
                   />
                 </div>
-                <h3>No Components Selected Yet</h3>
+                <h3>
+                  {selectedComponents.length === 0
+                    ? "No Components Selected Yet"
+                    : `Assembly Incomplete (${selectedComponents.length}/7 Parts Assembled)`}
+                </h3>
                 <p>
-                  Head to the Component Picker and begin assembling your PC. Real-time compatibility checks and performance telemetry will appear here instantly.
+                  {selectedComponents.length === 0
+                    ? "Head to the Component Picker and begin assembling your PC. Real-time compatibility checks and dual-rig comparison will appear here once your 7-stage build is complete."
+                    : `You have assembled ${selectedComponents.length} of 7 required hardware stages. Mount all 7 components in the Assembly Rig to unlock side-by-side comparison and pin-level diagnostics.`}
                 </p>
                 <div style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap", marginTop: "16px" }}>
                   <Link to="/build" className="btn-resolve-cta" style={{ maxWidth: "260px", textDecoration: "none" }}>
-                    Go to Component Picker
+                    {selectedComponents.length === 0 ? "Go to Component Picker" : "Continue Assembly in 2D Builder"}
                   </Link>
                   <button 
                     type="button" 
@@ -1548,24 +1485,15 @@ function CompatibilityView({ isIntegrated = false }) {
             </div>
           )}
 
-          {selectedComponents.length > 0 && (
-            <>
-              {!showRig2 ? (
-                <div className="compat-single-rig-wrap">
-                  {renderFreeRig1Card()}
-                  {renderFreeLauncherCard()}
-                </div>
-              ) : (
-                <div className="compare-mode-container" style={{ marginTop: "1.2rem" }}>
-                  <div className="compare-dual-grid">
-                    {renderFreeRig1Card()}
-                    {renderFreeRig2Card()}
-                  </div>
-                  {renderFreeLauncherCard()}
-                  {hasTwoRigs && renderFreeDualOverview()}
-                </div>
-              )}
-            </>
+          {/* When assembly is complete: Card 1 and Card 2 appear directly side-by-side with Dual Overview (middle launcher removed) */}
+          {selectedComponents.length >= 7 && (
+            <div className="compare-mode-container" style={{ marginTop: "1.2rem" }}>
+              <div className="compare-dual-grid">
+                {renderFreeRig1Card()}
+                {renderFreeRig2Card()}
+              </div>
+              {hasTwoRigs && renderFreeDualOverview()}
+            </div>
           )}
         </div>
 
