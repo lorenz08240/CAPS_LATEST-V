@@ -1139,15 +1139,6 @@ function CompatibilityView({ isIntegrated = false }) {
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="6 9 12 15 18 9"/></svg>
             </div>
           </div>
-          <button
-            type="button"
-            className="btn-rig-header-plus"
-            onClick={handleStartRig2ManualBuild}
-            title="Build another manual rig (+) to compare against Rig 01"
-          >
-            <span className="plus-icon">+</span>
-            <span>Manual Build</span>
-          </button>
           <div className="rig-compat-status-chip">
             {hasRig2 ? (
               rig2Issues.length === 0 ? (
