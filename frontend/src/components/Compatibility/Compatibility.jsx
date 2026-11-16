@@ -1048,23 +1048,9 @@ function CompatibilityView({ isIntegrated = false }) {
                 <div className="spec-item-val-group">
                   <span className="spec-name" title={spec.main}>{spec.main}</span>
                   {hasIssue ? (
-                    <>
-                      <span className="spec-tag issue-tag" title={matchingIssue.message}>
-                        ⚠ INCOMPATIBLE
-                      </span>
-                      <Link
-                        to={`/build?category=${key}#build-station`}
-                        state={{ stepCategory: key, scrollTo: "build-station" }}
-                        className="btn-spec-fix-issue"
-                        onClick={() => {
-                          try { soundManager.snap(); } catch {}
-                        }}
-                        title={`Fix ${label} issue in Component Picker`}
-                      >
-                        <span>Fix Issue</span>
-                        <span className="btn-fix-arrow">&rarr;</span>
-                      </Link>
-                    </>
+                    <span className="spec-tag issue-tag" title={matchingIssue.message}>
+                      ⚠ INCOMPATIBLE
+                    </span>
                   ) : (
                     <span className="spec-tag">{spec.tag}</span>
                   )}
@@ -1218,23 +1204,9 @@ function CompatibilityView({ isIntegrated = false }) {
                 <div className="spec-item-val-group">
                   <span className="spec-name" title={spec.main}>{spec.main}</span>
                   {hasIssue ? (
-                    <>
-                      <span className="spec-tag issue-tag" title={matchingIssue.message}>
-                        ⚠ INCOMPATIBLE
-                      </span>
-                      <Link
-                        to={`/build?category=${key}#build-station`}
-                        state={{ stepCategory: key, scrollTo: "build-station" }}
-                        className="btn-spec-fix-issue"
-                        onClick={() => {
-                          try { soundManager.snap(); } catch {}
-                        }}
-                        title={`Fix ${label} issue in Component Picker`}
-                      >
-                        <span>Fix Issue</span>
-                        <span className="btn-fix-arrow">&rarr;</span>
-                      </Link>
-                    </>
+                    <span className="spec-tag issue-tag" title={matchingIssue.message}>
+                      ⚠ INCOMPATIBLE
+                    </span>
                   ) : (
                     <span className="spec-tag">{spec.tag}</span>
                   )}
