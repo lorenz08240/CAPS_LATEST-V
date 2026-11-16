@@ -18,17 +18,15 @@ function Footer() {
       ScrollTrigger.create({
         trigger: footerRef.current,
         start: "top 90%",
-        end: "bottom 5%",
         onEnter: () => {
-          gsap.fromTo(
+          gsap.to(
             footerRef.current.querySelectorAll(".footer-brand, .footer-column, .footer-bottom"),
-            { opacity: 0, y: 35 },
             {
               opacity: 1,
               y: 0,
-              stagger: 0.1,
-              duration: 0.75,
-              ease: "power3.out",
+              stagger: 0.08,
+              duration: 0.65,
+              ease: "power2.out",
               overwrite: "auto",
             }
           );
@@ -38,8 +36,8 @@ function Footer() {
             footerRef.current.querySelectorAll(".footer-brand, .footer-column, .footer-bottom"),
             {
               opacity: 0,
-              y: 35,
-              stagger: 0.05,
+              y: 30,
+              stagger: 0.04,
               duration: 0.35,
               ease: "power2.in",
               overwrite: "auto",

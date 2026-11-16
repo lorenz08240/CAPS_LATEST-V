@@ -85,42 +85,27 @@ export default function PlatformServices() {
         });
       }
 
-      // 2. Master Header Reveal with bidirectional scroll triggers (down + up)
+      // 2. Master Header Reveal
       if (headerRef.current) {
         ScrollTrigger.create({
           trigger: headerRef.current,
-          start: "top 85%",
-          end: "bottom 15%",
+          start: "top 88%",
           onEnter: () => {
-            gsap.fromTo(
-              headerRef.current,
-              { opacity: 0, y: 40, scale: 0.98 },
-              { opacity: 1, y: 0, scale: 1, duration: 0.85, ease: "power3.out", overwrite: "auto" }
-            );
-          },
-          onLeave: () => {
             gsap.to(headerRef.current, {
-              opacity: 0,
-              y: -30,
-              scale: 0.98,
-              duration: 0.4,
-              ease: "power2.in",
+              opacity: 1,
+              y: 0,
+              scale: 1,
+              duration: 0.7,
+              ease: "power2.out",
               overwrite: "auto",
             });
-          },
-          onEnterBack: () => {
-            gsap.fromTo(
-              headerRef.current,
-              { opacity: 0, y: -35, scale: 0.98 },
-              { opacity: 1, y: 0, scale: 1, duration: 0.85, ease: "power3.out", overwrite: "auto" }
-            );
           },
           onLeaveBack: () => {
             gsap.to(headerRef.current, {
               opacity: 0,
-              y: 35,
+              y: 30,
               scale: 0.98,
-              duration: 0.4,
+              duration: 0.35,
               ease: "power2.in",
               overwrite: "auto",
             });
@@ -128,78 +113,68 @@ export default function PlatformServices() {
         });
       }
 
-      // 3. Staggered Asymmetric Feature Rows with bidirectional scroll support (down + up)
+      // 3. Staggered Asymmetric Feature Rows
       const rows = gsap.utils.toArray(".service-showcase-row");
       rows.forEach((row) => {
         const isCardLeft = row.classList.contains("left-card-right-text");
         const cardBay = row.querySelector(".service-card-bay");
         const textBay = row.querySelector(".service-text-bay");
 
-        const playRowEnter = (direction = "down") => {
-          const fromYCard = direction === "down" ? 50 : -45;
-          const fromYText = direction === "down" ? 30 : -30;
-
+        const playRowEnter = () => {
           const tl = gsap.timeline({ overwrite: "auto" });
 
-          tl.fromTo(
+          tl.to(
             cardBay,
-            { opacity: 0, y: fromYCard, x: isCardLeft ? -20 : 20, scale: 0.96 },
-            { opacity: 1, y: 0, x: 0, scale: 1, duration: 0.8, ease: "power3.out" }
+            { opacity: 1, y: 0, x: 0, scale: 1, duration: 0.65, ease: "power2.out" }
           )
-          .fromTo(
+          .to(
             textBay,
-            { opacity: 0, y: fromYText, x: isCardLeft ? 15 : -15 },
-            { opacity: 1, y: 0, x: 0, duration: 0.75, ease: "power3.out" },
-            "-=0.6"
+            { opacity: 1, y: 0, x: 0, duration: 0.6, ease: "power2.out" },
+            "-=0.45"
           )
-          .fromTo(
+          .to(
             textBay.querySelectorAll(".service-bullet-list li"),
-            { opacity: 0, x: 10 },
-            { opacity: 1, x: 0, duration: 0.4, stagger: 0.06, ease: "power2.out" },
-            "-=0.4"
+            { opacity: 1, x: 0, duration: 0.35, stagger: 0.05, ease: "power2.out" },
+            "-=0.3"
           );
 
           // Capability 1: Power bar and metric tiles flourish
           const powerBar = row.querySelector(".power-bar-fill");
           if (powerBar) {
-            tl.fromTo(
+            tl.to(
               powerBar,
-              { scaleX: 0, transformOrigin: "left center" },
-              { scaleX: 1, duration: 0.7, ease: "power2.out" },
-              "-=0.3"
+              { scaleX: 1, duration: 0.6, ease: "power2.out" },
+              "-=0.2"
             );
           }
 
           // Capability 3: Schematic traces flourish
           const traces = row.querySelectorAll(".schematic-trace");
           if (traces.length > 0) {
-            tl.fromTo(
+            tl.to(
               traces,
-              { scaleX: 0, opacity: 0 },
-              { scaleX: 1, opacity: 1, duration: 0.6, stagger: 0.08, ease: "power2.out" },
-              "-=0.35"
+              { scaleX: 1, opacity: 1, duration: 0.5, stagger: 0.06, ease: "power2.out" },
+              "-=0.25"
             );
           }
 
           // Capability 4: Studio control tags
           const controlTags = row.querySelectorAll(".control-tag");
           if (controlTags.length > 0) {
-            tl.fromTo(
+            tl.to(
               controlTags,
-              { opacity: 0, y: 8 },
-              { opacity: 1, y: 0, duration: 0.35, stagger: 0.05, ease: "power2.out" },
-              "-=0.25"
+              { opacity: 1, y: 0, duration: 0.3, stagger: 0.04, ease: "power2.out" },
+              "-=0.2"
             );
           }
         };
 
-        const playRowLeave = (direction = "down") => {
-          const exitY = direction === "down" ? -35 : 35;
+        const playRowLeaveBack = () => {
           gsap.to([cardBay, textBay], {
             opacity: 0,
-            y: exitY,
+            y: 35,
             scale: 0.98,
-            duration: 0.4,
+            duration: 0.35,
             ease: "power2.in",
             overwrite: "auto",
           });
@@ -207,12 +182,9 @@ export default function PlatformServices() {
 
         ScrollTrigger.create({
           trigger: row,
-          start: "top 85%",
-          end: "bottom 15%",
-          onEnter: () => playRowEnter("down"),
-          onLeave: () => playRowLeave("down"),
-          onEnterBack: () => playRowEnter("up"),
-          onLeaveBack: () => playRowLeave("up"),
+          start: "top 88%",
+          onEnter: () => playRowEnter(),
+          onLeaveBack: () => playRowLeaveBack(),
         });
       });
     }, sectionRef);

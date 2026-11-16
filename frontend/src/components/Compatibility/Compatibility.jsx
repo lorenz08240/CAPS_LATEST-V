@@ -816,76 +816,57 @@ function CompatibilityView({ isIntegrated = false }) {
     if (!compatContainerRef.current) return;
 
     const ctx = gsap.context(() => {
-      // 1. Header Reveal (Bidirectional)
+      // 1. Header Reveal (Smooth reveal on enter; reverses only when scrolled back out past top)
       ScrollTrigger.create({
         trigger: ".compat-hero-title-header",
-        start: "top 85%",
-        end: "bottom 15%",
-        onEnter: () =>
-          gsap.fromTo(
-            ".compat-hero-title-header",
-            { opacity: 0, y: 35, scale: 0.98 },
-            { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: "power3.out", overwrite: "auto" }
-          ),
-        onLeave: () =>
-          gsap.to(".compat-hero-title-header", { opacity: 0, y: -25, duration: 0.35, ease: "power2.in", overwrite: "auto" }),
-        onEnterBack: () =>
-          gsap.fromTo(
-            ".compat-hero-title-header",
-            { opacity: 0, y: -25, scale: 0.98 },
-            { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: "power3.out", overwrite: "auto" }
-          ),
-        onLeaveBack: () =>
-          gsap.to(".compat-hero-title-header", { opacity: 0, y: 25, duration: 0.35, ease: "power2.in", overwrite: "auto" }),
-      });
-
-      // 2. Primary Rig & Compare Cards (Bidirectional Batch)
-      ScrollTrigger.batch(".rig-workbench-card, .compare-rig-card, .compat-compare-launcher-card, .compare-dedicated-overview-card, .compat-learn-unlock-card", {
-        interval: 0.08,
-        batchMax: 2,
-        start: "top 88%",
-        end: "bottom 12%",
-        onEnter: (batch) =>
-          gsap.fromTo(
-            batch,
-            { opacity: 0, y: 40, scale: 0.97 },
-            { opacity: 1, y: 0, scale: 1, stagger: 0.08, duration: 0.7, ease: "power3.out", overwrite: "auto" }
-          ),
-        onLeave: (batch) =>
-          gsap.to(batch, { opacity: 0, y: -30, scale: 0.97, duration: 0.35, ease: "power2.in", overwrite: "auto" }),
-        onEnterBack: (batch) =>
-          gsap.fromTo(
-            batch,
-            { opacity: 0, y: -30, scale: 0.97 },
-            { opacity: 1, y: 0, scale: 1, stagger: 0.08, duration: 0.7, ease: "power3.out", overwrite: "auto" }
-          ),
-        onLeaveBack: (batch) =>
-          gsap.to(batch, { opacity: 0, y: 35, scale: 0.97, duration: 0.35, ease: "power2.in", overwrite: "auto" }),
-      });
-
-      // 3. Hardware Spec Rows Cascade (Bidirectional Batch)
-      ScrollTrigger.batch(".spec-item-row", {
-        interval: 0.04,
-        batchMax: 7,
         start: "top 92%",
-        end: "bottom 8%",
-        onEnter: (batch) =>
-          gsap.fromTo(
-            batch,
-            { opacity: 0, x: -15 },
-            { opacity: 1, x: 0, stagger: 0.04, duration: 0.45, ease: "power2.out", overwrite: "auto" }
-          ),
-        onLeave: (batch) =>
-          gsap.to(batch, { opacity: 0, x: -10, duration: 0.25, ease: "power2.in", overwrite: "auto" }),
-        onEnterBack: (batch) =>
-          gsap.fromTo(
-            batch,
-            { opacity: 0, x: -15 },
-            { opacity: 1, x: 0, stagger: 0.04, duration: 0.45, ease: "power2.out", overwrite: "auto" }
-          ),
-        onLeaveBack: (batch) =>
-          gsap.to(batch, { opacity: 0, x: 10, duration: 0.25, ease: "power2.in", overwrite: "auto" }),
+        onEnter: () =>
+          gsap.to(".compat-hero-title-header", {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.65,
+            ease: "power2.out",
+            overwrite: "auto",
+          }),
+        onLeaveBack: () =>
+          gsap.to(".compat-hero-title-header", {
+            opacity: 0,
+            y: 20,
+            duration: 0.3,
+            ease: "power2.in",
+            overwrite: "auto",
+          }),
       });
+
+      // 2. Primary Rig & Compare Cards (Reveal & remain visible throughout scroll; reverse only on scroll-back-up)
+      ScrollTrigger.batch(
+        ".rig-workbench-card, .compare-rig-card, .compat-compare-launcher-card, .compare-dedicated-overview-card, .compat-learn-unlock-card",
+        {
+          interval: 0.06,
+          batchMax: 2,
+          start: "top 88%",
+          onEnter: (batch) =>
+            gsap.to(batch, {
+              opacity: 1,
+              y: 0,
+              scale: 1,
+              stagger: 0.06,
+              duration: 0.6,
+              ease: "power2.out",
+              overwrite: "auto",
+            }),
+          onLeaveBack: (batch) =>
+            gsap.to(batch, {
+              opacity: 0,
+              y: 30,
+              scale: 0.98,
+              duration: 0.3,
+              ease: "power2.in",
+              overwrite: "auto",
+            }),
+        }
+      );
     }, compatContainerRef);
 
     return () => ctx.revert();
