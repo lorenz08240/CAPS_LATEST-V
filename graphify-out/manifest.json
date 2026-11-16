@@ -54,9 +54,9 @@
     "semantic_hash": "8e5f2021f5b1721b527c842f43f78c73"
   },
   "frontend/src/App.jsx": {
-    "mtime": 1794687358.8075247,
-    "seen": 1794687462.3505328,
-    "ast_hash": "ff259b03e11992c57ad4b7d5ca2ae020",
+    "mtime": 1794812220.0011685,
+    "seen": 1794812240.3722885,
+    "ast_hash": "19f1fa55bc281758808a80e371160109",
     "semantic_hash": ""
   },
   "frontend/src/components/3D/ComponentModels3D.jsx": {
@@ -90,21 +90,21 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Brands/Brands.jsx": {
-    "mtime": 1793931234.1891365,
-    "seen": 1793931275.169499,
-    "ast_hash": "98e1f7208c584781545f19bade3f6a45",
+    "mtime": 1794812220.0028799,
+    "seen": 1794812240.3786771,
+    "ast_hash": "329b577078d07cd637df5048c875f089",
     "semantic_hash": ""
   },
   "frontend/src/components/Build/Build.jsx": {
-    "mtime": 1794574886.4050698,
-    "seen": 1794574992.8861196,
-    "ast_hash": "90bdd6d960b9bb272aab5f2386267a1a",
+    "mtime": 1794812220.0056431,
+    "seen": 1794812240.378684,
+    "ast_hash": "9f8a1d38b623eb3b8af8cf693275b1fb",
     "semantic_hash": ""
   },
   "frontend/src/components/Compatibility/Compatibility.jsx": {
-    "mtime": 1794563242.323759,
-    "seen": 1794564089.098329,
-    "ast_hash": "9cf4accc7aab0aac247d8ac9b25d8679",
+    "mtime": 1794812220.0087512,
+    "seen": 1794812240.3794668,
+    "ast_hash": "259022119ef8c9a96a1d85dff15dda9e",
     "semantic_hash": ""
   },
   "frontend/src/components/FeatureCarousel/FeatureCarousel.jsx": {
@@ -126,9 +126,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Home/Home.jsx": {
-    "mtime": 1794573617.1335294,
-    "seen": 1794574627.6450496,
-    "ast_hash": "dd79555dc5445045d8edebca7219308b",
+    "mtime": 1794812220.00975,
+    "seen": 1794812240.381181,
+    "ast_hash": "42533fc188d7519a91ea00868b9fd728",
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/CourseShell.jsx": {
@@ -534,9 +534,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Navigation/GlobalHeader.jsx": {
-    "mtime": 1794161950.93285,
-    "seen": 1794162189.0458336,
-    "ast_hash": "37ad9479f059c8199606d9abb9ea68e6",
+    "mtime": 1794812220.010747,
+    "seen": 1794812240.384438,
+    "ast_hash": "e88a49d1d8d64c681b11bfefee586aa1",
     "semantic_hash": ""
   },
   "frontend/src/components/Navigation/CyberBrand.jsx": {

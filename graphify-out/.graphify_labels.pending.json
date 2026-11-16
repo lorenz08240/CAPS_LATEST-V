@@ -5,7 +5,7 @@
   "4": "crawler.js",
   "5": "[2026-10-23] - Master Checklist & Safari Compatibility Updates",
   "6": "PCBuilder3D.jsx",
-  "7": "EyeTracker.tsx",
+  "7": "CourseShell.jsx",
   "8": "db.js",
   "9": "App.jsx",
   "10": "SynthAudio",
@@ -26,5 +26,6 @@
   "28": "[2026-10-23] Learn Page: NotebookLLM Master Source Script for Module 1",
   "29": "[2026-10-23] Learn Page: Video Player Overhaul + 9 Dead Videos Replaced (OC)",
   "30": "[2026-10-23] 3D Studio: Clean Button Design (Icons & Emojis Removed)",
-  "31": "[2026-10-23] Learn: Course-Outline Sidebar REWORK REVERTED to the previous design (OC — user request)"
+  "31": "[2026-10-23] Learn: Course-Outline Sidebar REWORK REVERTED to the previous design (OC — user request)",
+  "32": "EyeTracker.tsx"
 }
