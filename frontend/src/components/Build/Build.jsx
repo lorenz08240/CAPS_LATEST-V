@@ -389,8 +389,10 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
   } = useBuild();
   const location = useLocation();
   const [currentStep, setCurrentStep] = useState(() => {
-    if (location.state?.stepCategory) {
-      const idx = buildSteps.findIndex((s) => s.key.toLowerCase() === location.state.stepCategory.toLowerCase());
+    const searchCat = new URLSearchParams(location.search).get("category") || new URLSearchParams(location.search).get("step");
+    const targetCat = location.state?.stepCategory || searchCat;
+    if (targetCat) {
+      const idx = buildSteps.findIndex((s) => s.key.toLowerCase() === targetCat.toLowerCase());
       return idx !== -1 ? idx : 0;
     }
     return 0;
@@ -745,21 +747,24 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
   }, [currentStep, currentBuild, allComponents]);
 
   useEffect(() => {
-    if (location.state?.stepCategory) {
+    const searchCat = new URLSearchParams(location.search).get("category") || new URLSearchParams(location.search).get("step");
+    const targetCat = location.state?.stepCategory || searchCat;
+    if (targetCat) {
       const idx = buildSteps.findIndex(
-        (s) => s.key.toLowerCase() === location.state.stepCategory.toLowerCase()
+        (s) => s.key.toLowerCase() === targetCat.toLowerCase()
       );
       if (idx !== -1) setCurrentStep(idx);
     }
-    if (location.state?.scrollTo) {
+    if (location.state?.scrollTo || window.location.hash === "#build-station") {
       setTimeout(() => {
-        const el = document.getElementById(location.state.scrollTo);
+        const targetId = location.state?.scrollTo || "build-station";
+        const el = document.getElementById(targetId);
         if (el) {
           el.scrollIntoView({ behavior: "smooth" });
         }
       }, 100);
     }
-  }, [location.state]);
+  }, [location.state, location.search, location.hash]);
 
   const handleComponentSelect = (component) => {
     if (!component) return;

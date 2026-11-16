@@ -2010,4 +2010,292 @@
   box-shadow: 0 0 12px rgba(239, 68, 68, 0.35);
 }
 
+/* ── Incompatible Row Highlight in HARDWARE SPECIFICATIONS ── */
+.spec-item-row.item-has-issue {
+  background: rgba(239, 68, 68, 0.12) !important;
+  border: 1px solid rgba(239, 68, 68, 0.45) !important;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.12) inset, 0 0 8px rgba(239, 68, 68, 0.2) !important;
+}
+
+.spec-item-row.item-has-issue .spec-category {
+  color: #f87171 !important;
+  font-weight: 800 !important;
+}
+
+.spec-item-row.item-has-issue .spec-name {
+  color: #fecaca !important;
+}
+
+.spec-tag.issue-tag {
+  background: rgba(239, 68, 68, 0.22) !important;
+  border: 1px solid rgba(239, 68, 68, 0.6) !important;
+  color: #ef4444 !important;
+  font-weight: 800 !important;
+  font-size: 0.65rem !important;
+  padding: 0.2rem 0.5rem !important;
+  border-radius: 4px !important;
+  letter-spacing: 0.04em !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.25rem !important;
+}
+
+/* Fix Issue Button in Spec Row */
+.btn-spec-fix-issue {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.65rem;
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.55);
+  border-radius: 4px;
+  color: #ffffff;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  margin-left: 0.35rem;
+}
+
+.btn-spec-fix-issue:hover {
+  background: #ef4444;
+  border-color: #f87171;
+  color: #ffffff;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.5);
+  transform: translateY(-1px);
+}
+
+.btn-spec-fix-issue .btn-fix-arrow {
+  font-size: 0.78rem;
+  transition: transform 0.2s ease;
+}
+
+.btn-spec-fix-issue:hover .btn-fix-arrow {
+  transform: translateX(3px);
+}
+
+/* ── Diagnostic Issues & Suggestions Container ── */
+.diagnostic-issues-card {
+  margin-top: 1.8rem;
+  padding: 1.8rem;
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 20px rgba(239, 68, 68, 0.12);
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.diagnostic-issues-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #ef4444, #f87171, #ef4444);
+}
+
+.diagnostic-header {
+  margin-bottom: 1.4rem;
+}
+
+.diagnostic-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.5rem;
+}
+
+.diagnostic-live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ef4444;
+  box-shadow: 0 0 8px #ef4444;
+  animation: pulse-red 1.6s infinite;
+}
+
+@keyframes pulse-red {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+.diagnostic-badge-text {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #ef4444;
+  text-transform: uppercase;
+}
+
+.diagnostic-title {
+  font-family: var(--font-display, "Space Grotesk", sans-serif);
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.35rem 0;
+}
+
+.diagnostic-subtitle {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.diagnostic-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 1.2rem;
+}
+
+.diagnostic-item-card {
+  background: rgba(11, 15, 25, 0.85);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  border-radius: 10px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.25s ease;
+}
+
+.diagnostic-item-card:hover {
+  border-color: rgba(239, 68, 68, 0.5);
+  box-shadow: 0 0 16px rgba(239, 68, 68, 0.15);
+}
+
+.diagnostic-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.diagnostic-item-cats {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #f87171;
+  letter-spacing: 0.04em;
+}
+
+.diagnostic-item-rig-badge {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.18rem 0.55rem;
+  border-radius: 4px;
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+}
+
+.diagnostic-conflict-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  margin-bottom: 0.9rem;
+}
+
+.diagnostic-icon-alert {
+  color: #ef4444;
+  font-size: 1.1rem;
+  line-height: 1;
+  margin-top: 2px;
+}
+
+.diagnostic-problem-text {
+  font-size: 0.86rem;
+  color: #fecaca;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.diagnostic-suggestion-box {
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  border-left: 3px solid #38bdf8;
+  border-radius: 6px;
+  padding: 0.8rem 0.95rem;
+  margin-bottom: 1.1rem;
+}
+
+.diagnostic-suggestion-header {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #38bdf8;
+  text-transform: uppercase;
+  margin-bottom: 0.35rem;
+}
+
+.diagnostic-suggestion-desc {
+  font-size: 0.8rem;
+  color: #cbd5e1;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.diagnostic-actions-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-top: auto;
+}
+
+.btn-diagnostic-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 6px;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-diagnostic-action.primary {
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.55);
+  color: #ffffff;
+}
+
+.btn-diagnostic-action.primary:hover {
+  background: #ef4444;
+  border-color: #f87171;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
+}
+
+.btn-diagnostic-action.secondary {
+  background: rgba(56, 189, 248, 0.1);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  color: #38bdf8;
+}
+
+.btn-diagnostic-action.secondary:hover {
+  background: rgba(56, 189, 248, 0.22);
+  border-color: #38bdf8;
+  color: #ffffff;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.3);
+}
+
+
 

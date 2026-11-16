@@ -278,6 +278,57 @@ const getComponentBobHint = (comp) => {
   return `Inspecting ${name}: Verified in system hardware configuration.`;
 };
 
+const getSmartSuggestion = (issue, build) => {
+  const msg = (issue?.message || issue?.issue || "").toLowerCase();
+  const comps = (issue?.components || []).map((c) => c.toLowerCase());
+
+  if (msg.includes("socket") || (comps.includes("cpu") && comps.includes("motherboard"))) {
+    const cpuSocket = build?.cpu?.socket_type || "AM4";
+    const moboSocket = build?.motherboard?.socket_type || "AM5";
+    return {
+      title: "Socket Architecture Incompatibility",
+      advice: `Processor (${build?.cpu?.name || "CPU"}) has an ${cpuSocket} socket, which cannot physically mount onto a ${moboSocket} motherboard (${build?.motherboard?.name || "Motherboard"}).`,
+      solution: `Switch to an ${moboSocket}-compatible processor (e.g. AMD Ryzen 7000/8000 series), or change your motherboard to an ${cpuSocket} model.`,
+    };
+  }
+
+  if (msg.includes("memory") || msg.includes("ddr") || (comps.includes("ram") && comps.includes("motherboard"))) {
+    const ramDdr = build?.ram?.ddr_type || "DDR4";
+    const moboDdr = build?.motherboard?.ddr_type || "DDR5";
+    return {
+      title: "DDR Memory Generation Conflict",
+      advice: `DDR memory slots are physically keyed differently. ${ramDdr} modules cannot physically lock into a ${moboDdr} motherboard.`,
+      solution: `Select a ${moboDdr} memory kit to match your motherboard, or change your motherboard to one supporting ${ramDdr}.`,
+    };
+  }
+
+  if (msg.includes("form factor") || (comps.includes("case") && comps.includes("motherboard"))) {
+    const moboFf = build?.motherboard?.form_factor || "ATX";
+    const caseFf = build?.case?.form_factor || "Micro-ATX";
+    return {
+      title: "Chassis Clearance Collision",
+      advice: `The ${moboFf} motherboard is too large to fit inside the ${caseFf} chassis.`,
+      solution: `Choose a Mid-Tower or Full-Tower chassis that supports ${moboFf}, or step down to an mATX/ITX motherboard.`,
+    };
+  }
+
+  if (msg.includes("power") || msg.includes("watt") || (comps.includes("psu") && comps.includes("gpu"))) {
+    const req = build?.gpu?.power_required || 750;
+    const curr = build?.psu?.wattage || 500;
+    return {
+      title: "Power Supply Headroom Deficit",
+      advice: `Your GPU recommends at least ${req}W, but the selected PSU only supplies ${curr}W. Transient load spikes can cause system shutdowns.`,
+      solution: `Upgrade your Power Supply Unit to at least ${req}W (e.g. 750W or 850W 80+ Gold certified).`,
+    };
+  }
+
+  return {
+    title: "Hardware Specification Conflict",
+    advice: issue?.message || "A hardware specification mismatch was detected between these components.",
+    solution: issue?.fix || "Inspect socket types, DDR memory standards, and dimensions in the Component Picker to align these parts.",
+  };
+};
+
 function CompatibilityView({ isIntegrated = false }) {
   const navigate = useNavigate();
   const { mode, seenBanners, markBannerSeen, unlockStage } = useLearnMode();
@@ -522,6 +573,7 @@ function CompatibilityView({ isIntegrated = false }) {
     const rawIssues = getCompatibilitySummary(build, allComponents);
     if (!rawIssues || rawIssues.length === 0) return [];
     return rawIssues.map((iss) => ({
+      components: Array.isArray(iss.components) ? iss.components.map((c) => c.toLowerCase()) : [],
       category: Array.isArray(iss.components)
         ? iss.components.map((c) => c.toUpperCase()).join(" ↔ ")
         : "Compatibility Notice",
@@ -840,6 +892,17 @@ function CompatibilityView({ isIntegrated = false }) {
   const rig1Issues = useMemo(() => checkBuildCompatibility(currentBuild), [currentBuild, allComponents]);
   const rig2Issues = useMemo(() => (rig2 ? checkBuildCompatibility(rig2) : []), [rig2, allComponents]);
 
+  const activeIssues = useMemo(() => {
+    const list = [];
+    if (hasRig1 && rig1Issues.length > 0) {
+      rig1Issues.forEach((iss) => list.push({ ...iss, rig: "Rig 01 (Workbench)" }));
+    }
+    if (hasRig2 && rig2Issues.length > 0) {
+      rig2Issues.forEach((iss) => list.push({ ...iss, rig: `Rig 02 (${rig2Source.replace("-", " ").toUpperCase()})` }));
+    }
+    return list;
+  }, [hasRig1, rig1Issues, hasRig2, rig2Issues, rig2Source]);
+
   // GSAP ScrollTrigger bidirectional cinematic reveals (Down & Up scroll)
   useEffect(() => {
     if (!compatContainerRef.current) return;
@@ -989,15 +1052,43 @@ function CompatibilityView({ isIntegrated = false }) {
           COMPONENT_CATEGORIES.map(({ key, label, icon }) => {
             const comp = currentBuild[key];
             const spec = getCompSpecSummary(comp, key);
+            const matchingIssue = rig1Issues.find((iss) =>
+              iss.components?.some((c) => c.toLowerCase() === key.toLowerCase())
+            );
+            const hasIssue = !!matchingIssue;
+
             return (
-              <div key={key} className={`spec-item-row ${spec.isSet ? "item-filled" : "item-empty"}`}>
+              <div
+                key={key}
+                className={`spec-item-row ${spec.isSet ? "item-filled" : "item-empty"} ${hasIssue ? "item-has-issue" : ""}`}
+              >
                 <div className="spec-item-label-group">
                   <span className="spec-icon" aria-hidden="true">{icon}</span>
                   <span className="spec-category">{label}</span>
                 </div>
                 <div className="spec-item-val-group">
                   <span className="spec-name" title={spec.main}>{spec.main}</span>
-                  <span className="spec-tag">{spec.tag}</span>
+                  {hasIssue ? (
+                    <>
+                      <span className="spec-tag issue-tag" title={matchingIssue.message}>
+                        ⚠ INCOMPATIBLE
+                      </span>
+                      <Link
+                        to={`/build?category=${key}#build-station`}
+                        state={{ stepCategory: key, scrollTo: "build-station" }}
+                        className="btn-spec-fix-issue"
+                        onClick={() => {
+                          try { soundManager.snap(); } catch {}
+                        }}
+                        title={`Fix ${label} issue in Component Picker`}
+                      >
+                        <span>Fix Issue</span>
+                        <span className="btn-fix-arrow">&rarr;</span>
+                      </Link>
+                    </>
+                  ) : (
+                    <span className="spec-tag">{spec.tag}</span>
+                  )}
                 </div>
               </div>
             );
@@ -1176,15 +1267,43 @@ function CompatibilityView({ isIntegrated = false }) {
           COMPONENT_CATEGORIES.map(({ key, label, icon }) => {
             const comp = rig2?.[key];
             const spec = getCompSpecSummary(comp, key);
+            const matchingIssue = rig2Issues.find((iss) =>
+              iss.components?.some((c) => c.toLowerCase() === key.toLowerCase())
+            );
+            const hasIssue = !!matchingIssue;
+
             return (
-              <div key={key} className={`spec-item-row ${spec.isSet ? "item-filled" : "item-empty"}`}>
+              <div
+                key={key}
+                className={`spec-item-row ${spec.isSet ? "item-filled" : "item-empty"} ${hasIssue ? "item-has-issue" : ""}`}
+              >
                 <div className="spec-item-label-group">
                   <span className="spec-icon" aria-hidden="true">{icon}</span>
                   <span className="spec-category">{label}</span>
                 </div>
                 <div className="spec-item-val-group">
                   <span className="spec-name" title={spec.main}>{spec.main}</span>
-                  <span className="spec-tag">{spec.tag}</span>
+                  {hasIssue ? (
+                    <>
+                      <span className="spec-tag issue-tag" title={matchingIssue.message}>
+                        ⚠ INCOMPATIBLE
+                      </span>
+                      <Link
+                        to={`/build?category=${key}#build-station`}
+                        state={{ stepCategory: key, scrollTo: "build-station" }}
+                        className="btn-spec-fix-issue"
+                        onClick={() => {
+                          try { soundManager.snap(); } catch {}
+                        }}
+                        title={`Fix ${label} issue in Component Picker`}
+                      >
+                        <span>Fix Issue</span>
+                        <span className="btn-fix-arrow">&rarr;</span>
+                      </Link>
+                    </>
+                  ) : (
+                    <span className="spec-tag">{spec.tag}</span>
+                  )}
                 </div>
               </div>
             );
@@ -1403,6 +1522,86 @@ function CompatibilityView({ isIntegrated = false }) {
     </section>
   );
 
+  /* ── Dedicated Container for Active Issues & Smart Suggestions ── */
+  const renderIssuesAndSuggestionsCard = () => {
+    if (activeIssues.length === 0) return null;
+
+    return (
+      <section className="diagnostic-issues-card glass-panel" aria-label="Detected Hardware Issues & Recommendations">
+        <div className="diagnostic-header">
+          <div className="diagnostic-badge-row">
+            <span className="diagnostic-live-dot" />
+            <span className="diagnostic-badge-text">
+              DIAGNOSTIC MATRIX // {activeIssues.length} CRITICAL CONFLICT{activeIssues.length > 1 ? "S" : ""} DETECTED
+            </span>
+          </div>
+          <h3 className="diagnostic-title">HARDWARE COMPATIBILITY ISSUES &amp; RESOLUTION RECOMMENDATIONS</h3>
+          <p className="diagnostic-subtitle">
+            Physical socket collisions, DDR generation mismatches, and power tolerances identified. Resolve these conflicts in the Component Picker before finalizing your build.
+          </p>
+        </div>
+
+        <div className="diagnostic-grid">
+          {activeIssues.map((iss, idx) => {
+            const rigContext = iss.rig?.includes("02") ? rig2 : currentBuild;
+            const suggestion = getSmartSuggestion(iss, rigContext);
+            const compList = iss.components || [];
+
+            return (
+              <div key={idx} className="diagnostic-item-card">
+                <div>
+                  <div className="diagnostic-item-header">
+                    <span className="diagnostic-item-cats">{iss.category}</span>
+                    <span className="diagnostic-item-rig-badge">{iss.rig}</span>
+                  </div>
+
+                  <div className="diagnostic-conflict-box">
+                    <span className="diagnostic-icon-alert" aria-hidden="true">⚠️</span>
+                    <p className="diagnostic-problem-text">{iss.message || iss.issue}</p>
+                  </div>
+
+                  <div className="diagnostic-suggestion-box">
+                    <div className="diagnostic-suggestion-header">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="9" y1="18" x2="15" y2="18"></line>
+                        <line x1="10" y1="22" x2="14" y2="22"></line>
+                        <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"></path>
+                      </svg>
+                      <span>RECOMMENDED RESOLUTION ({suggestion.title})</span>
+                    </div>
+                    <p className="diagnostic-suggestion-desc">{suggestion.solution}</p>
+                  </div>
+                </div>
+
+                <div className="diagnostic-actions-row">
+                  {compList.map((catKey) => {
+                    const matchedCat = COMPONENT_CATEGORIES.find((c) => c.key === catKey.toLowerCase());
+                    const catLabel = matchedCat?.label || catKey.toUpperCase();
+                    return (
+                      <Link
+                        key={catKey}
+                        to={`/build?category=${catKey}#build-station`}
+                        state={{ stepCategory: catKey, scrollTo: "build-station" }}
+                        className="btn-diagnostic-action primary"
+                        onClick={() => {
+                          try { soundManager.click(); } catch {}
+                        }}
+                        title={`Jump to ${catLabel} in Component Picker to swap or change`}
+                      >
+                        <span>Fix {catLabel}</span>
+                        <span className="btn-fix-arrow">&rarr;</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+    );
+  };
+
   return (
     <>
       {/* Issue Modal for Learn Mode */}
@@ -1551,6 +1750,7 @@ function CompatibilityView({ isIntegrated = false }) {
               {renderFreeRig1Card()}
               {renderFreeRig2Card()}
             </div>
+            {activeIssues.length > 0 && renderIssuesAndSuggestionsCard()}
             {hasTwoRigs && renderFreeDualOverview()}
           </div>
         </div>
