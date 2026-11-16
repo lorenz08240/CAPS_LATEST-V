@@ -54,9 +54,9 @@
     "semantic_hash": "8e5f2021f5b1721b527c842f43f78c73"
   },
   "frontend/src/App.jsx": {
-    "mtime": 1794812220.0011685,
-    "seen": 1794812240.3722885,
-    "ast_hash": "19f1fa55bc281758808a80e371160109",
+    "mtime": 1794813920.3581443,
+    "seen": 1794813956.1316328,
+    "ast_hash": "79b7bb174fec474c33b3b3714c789286",
     "semantic_hash": ""
   },
   "frontend/src/components/3D/ComponentModels3D.jsx": {
@@ -102,9 +102,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Compatibility/Compatibility.jsx": {
-    "mtime": 1794812220.0087512,
-    "seen": 1794812240.3794668,
-    "ast_hash": "259022119ef8c9a96a1d85dff15dda9e",
+    "mtime": 1794813920.3598566,
+    "seen": 1794813956.1415427,
+    "ast_hash": "30b8ccb9aa409e100b8ed6dddcf35e08",
     "semantic_hash": ""
   },
   "frontend/src/components/FeatureCarousel/FeatureCarousel.jsx": {
@@ -126,9 +126,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Home/Home.jsx": {
-    "mtime": 1794812220.00975,
-    "seen": 1794812240.381181,
-    "ast_hash": "42533fc188d7519a91ea00868b9fd728",
+    "mtime": 1794813920.3624303,
+    "seen": 1794813956.1433423,
+    "ast_hash": "8b5c130516292c75570dc2f103a5dc27",
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/CourseShell.jsx": {
@@ -150,9 +150,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Navbar/Navbar.jsx": {
-    "mtime": 1794687458.7546241,
-    "seen": 1794687462.3578234,
-    "ast_hash": "44c29051e872bab0d5e16b19cbc907aa",
+    "mtime": 1794813920.3634326,
+    "seen": 1794813956.1464002,
+    "ast_hash": "c55dc733b7f19feb9ccd542c0fcf0cd4",
     "semantic_hash": ""
   },
   "frontend/src/contexts/AuthContext.jsx": {

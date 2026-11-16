@@ -1,17 +1,17 @@
 # Graph Report - CAPS_LATEST-V  (2026-11-16)
 
 ## Corpus Check
-- 90 files · ~132,832 words
+- 90 files · ~131,223 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 45 file(s) not represented in the graph (top: .css 32, (none) 5, .glb 3)
 
 ## Summary
-- 586 nodes · 1463 edges · 33 communities (29 shown, 4 thin omitted)
+- 586 nodes · 1462 edges · 33 communities (29 shown, 4 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 16 edges (avg confidence: 0.9)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `d8956ade`
+- Built from commit: `81ce8d81`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -103,7 +103,7 @@ Nodes (6): [2026-10-23] - Master Checklist & Safari Compatibility Updates, 🧊 
 
 ### Community 6 - "PCBuilder3D.jsx"
 Cohesion: 0.09
-Nodes (38): BOB_CASUAL_GUIDE, BOB_GENERAL_BUILD_LINES, BOB_STAGE_TIPS, BuildPage(), CATEGORY_FILTERS, getCaseDimensions(), getCaseMaxGPU(), CompareRigsView() (+30 more)
+Nodes (37): BOB_CASUAL_GUIDE, BOB_GENERAL_BUILD_LINES, BOB_STAGE_TIPS, BuildPage(), CATEGORY_FILTERS, getCaseDimensions(), getCaseMaxGPU(), CompareRigsView() (+29 more)
 
 ### Community 7 - "CourseShell.jsx"
 Cohesion: 0.14
@@ -212,4 +212,4 @@ _Questions this graph is uniquely positioned to answer:_
 - **Should `PCBuilder3D.jsx` be split into smaller, more focused modules?**
   _Cohesion score 0.06234567901234568 - nodes in this community are weakly interconnected._
 - **Should `PCBuilder3D.jsx` be split into smaller, more focused modules?**
-  _Cohesion score 0.08792270531400966 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.08695652173913043 - nodes in this community are weakly interconnected._
