@@ -961,18 +961,30 @@
   perspective: 1100px;
 }
 
+.team-member-card,
 .about-member-card,
 .project-card,
-.showcase-flagship-card {
+.project-showcase-card,
+.flagship-atelier-card,
+.showcase-flagship-card,
+.origin-card,
+.arch-card,
+.manifesto-card {
   will-change: transform, opacity;
   transform-style: preserve-3d;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .scroll-reveal-target,
+  .team-member-card,
   .about-member-card,
   .project-card,
-  .showcase-flagship-card {
+  .project-showcase-card,
+  .flagship-atelier-card,
+  .showcase-flagship-card,
+  .origin-card,
+  .arch-card,
+  .manifesto-card {
     opacity: 1 !important;
     transform: none !important;
   }

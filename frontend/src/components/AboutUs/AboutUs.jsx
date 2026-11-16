@@ -448,7 +448,7 @@ export default function AboutUs() {
       });
 
       // 2. Team Members Cards Batch (Bidirectional KKXZOyZ pattern)
-      ScrollTrigger.batch(".about-member-card", {
+      ScrollTrigger.batch(".team-member-card, .about-member-card", {
         interval: 0.08,
         batchMax: 3,
         start: "top 88%",
@@ -504,7 +504,7 @@ export default function AboutUs() {
       });
 
       // 3. Showcase Flagship & Project Cards Batch (Bidirectional)
-      ScrollTrigger.batch(".showcase-flagship-card, .project-card", {
+      ScrollTrigger.batch(".flagship-atelier-card, .project-showcase-card, .manifesto-card, .showcase-flagship-card, .project-card", {
         interval: 0.08,
         batchMax: 3,
         start: "top 88%",
@@ -560,7 +560,7 @@ export default function AboutUs() {
       });
 
       // 4. Origin & Tech Stack Sections (Bidirectional)
-      ScrollTrigger.batch(".origin-card, .tech-category-card", {
+      ScrollTrigger.batch(".origin-card, .arch-card, .stat-card, .tech-category-card", {
         interval: 0.08,
         batchMax: 3,
         start: "top 88%",

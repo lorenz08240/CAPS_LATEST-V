@@ -25,6 +25,68 @@ import buildlabLogoTight from "../../assets/buildlab_logo_tight.png";
 // but resets to false whenever the user reloads the website with CTRL+R.
 let hasSessionUnlockedBuild = false;
 
+const STAGE_META = {
+  case: { num: '01', name: 'ATX CHASSIS' },
+  motherboard: { num: '02', name: 'ARCHITECTURAL MOTHERBOARD' },
+  cpu: { num: '03', name: 'THERMAL SICKLE COOLER' },
+  ram: { num: '04', name: 'HIGH-SPEED DDR4 MEMORY' },
+  storage: { num: '05', name: 'M.2 NVMe SSD STORAGE' },
+  gpu: { num: '06', name: 'DEDICATED TRIPLE GPU' },
+  psu: { num: '07', name: 'MODULAR POWER SUPPLY' },
+};
+
+const HERO_DYNAMIC_CONTEXTS = {
+  case: {
+    tag: "CAPABILITY 01 // RULES ENGINE",
+    title: "CLEARANCE AUDIT",
+    desc: "Real-time physical chassis inspection. Evaluate GPU millimeter length clearances, CPU cooler height margins, and unobstructed airflow channels before assembly.",
+    btnLabel: "AUDIT COMPATIBILITY",
+    targetSection: "service-compatibility",
+  },
+  motherboard: {
+    tag: "CAPABILITY 01 // SOCKET MATCHING",
+    title: "ZERO-PIN CONFLICT",
+    desc: "Mathematical socket validation cross-checking Intel LGA1700, AMD AM5, and PCIe lane bifurcation curves with zero tolerance for damaged pins.",
+    btnLabel: "INSPECT SOCKET RULES",
+    targetSection: "service-compatibility",
+  },
+  cpu: {
+    tag: "CAPABILITY 03 // STUDENT ACADEMY",
+    title: "HARDWARE ACADEMY",
+    desc: "Interactive TVL-CSS NC II accredited courseware. Practice processor seating, gold-notch orientation, and thermal paste patterns without risking fragile hardware.",
+    btnLabel: "ENTER HARDWARE ACADEMY",
+    targetSection: "service-academy",
+  },
+  ram: {
+    tag: "CAPABILITY 02 // DUAL-RIG BENCHMARK",
+    title: "COMPARE 2 RIGS",
+    desc: "Side-by-side performance benchmarking. Directly contrast DDR4 vs DDR5 bandwidth curves, gaming FPS projections, and budget-to-value compute ratios.",
+    btnLabel: "COMPARE HARDWARE RIGS",
+    targetSection: "service-compare",
+  },
+  storage: {
+    tag: "HARDWARE ECOSYSTEM // BRANDS",
+    title: "CERTIFIED BRANDS",
+    desc: "Verified high-speed NVMe PCIe Gen4 components from Corsair, Kingston, and Cooler Master audited for heatsink clearances and sustained thermal envelopes.",
+    btnLabel: "BROWSE VERIFIED BRANDS",
+    targetSection: "brands-station",
+  },
+  gpu: {
+    tag: "CAPABILITY 04 // THREE.JS SIMULATION",
+    title: "3D VIRTUAL STUDIO",
+    desc: "Experience true physics-based assembly simulation in full 360-degree OrbitControls with exploded component hierarchies and live clearance telemetry.",
+    btnLabel: "OPEN 3D STUDIO PREVIEW",
+    targetSection: "service-3d-studio",
+  },
+  psu: {
+    tag: "CAPABILITY 01 // POWER BUDGET SAFEGUARD",
+    title: "DYNAMIC TDP AUDITING",
+    desc: "Automated power dissipation analysis. Calculates dynamic transient wattage headroom with safe 80+ Gold capacity buffers before connecting physical power.",
+    btnLabel: "AUDIT SYSTEM TDP",
+    targetSection: "service-compatibility",
+  },
+};
+
 function Home() {
   const navigate = useNavigate();
   const { toggleSidebar } = useSidebar();
@@ -94,69 +156,7 @@ function Home() {
     setShowModeCards(true);
   };
 
-  const STAGE_META = {
-    case: { num: '01', name: 'ATX CHASSIS' },
-    motherboard: { num: '02', name: 'ARCHITECTURAL MOTHERBOARD' },
-    cpu: { num: '03', name: 'THERMAL SICKLE COOLER' },
-    ram: { num: '04', name: 'HIGH-SPEED DDR4 MEMORY' },
-    storage: { num: '05', name: 'M.2 NVMe SSD STORAGE' },
-    gpu: { num: '06', name: 'DEDICATED TRIPLE GPU' },
-    psu: { num: '07', name: 'MODULAR POWER SUPPLY' },
-  };
-
-  const HERO_DYNAMIC_CONTEXTS = {
-    case: {
-      tag: "CAPABILITY 01 // RULES ENGINE",
-      title: "CLEARANCE AUDIT",
-      desc: "Real-time physical chassis inspection. Evaluate GPU millimeter length clearances, CPU cooler height margins, and unobstructed airflow channels before assembly.",
-      btnLabel: "AUDIT COMPATIBILITY",
-      targetSection: "service-compatibility",
-    },
-    motherboard: {
-      tag: "CAPABILITY 01 // SOCKET MATCHING",
-      title: "ZERO-PIN CONFLICT",
-      desc: "Mathematical socket validation cross-checking Intel LGA1700, AMD AM5, and PCIe lane bifurcation curves with zero tolerance for damaged pins.",
-      btnLabel: "INSPECT SOCKET RULES",
-      targetSection: "service-compatibility",
-    },
-    cpu: {
-      tag: "CAPABILITY 03 // STUDENT ACADEMY",
-      title: "HARDWARE ACADEMY",
-      desc: "Interactive TVL-CSS NC II accredited courseware. Practice processor seating, gold-notch orientation, and thermal paste patterns without risking fragile hardware.",
-      btnLabel: "ENTER HARDWARE ACADEMY",
-      targetSection: "service-academy",
-    },
-    ram: {
-      tag: "CAPABILITY 02 // DUAL-RIG BENCHMARK",
-      title: "COMPARE 2 RIGS",
-      desc: "Side-by-side performance benchmarking. Directly contrast DDR4 vs DDR5 bandwidth curves, gaming FPS projections, and budget-to-value compute ratios.",
-      btnLabel: "COMPARE HARDWARE RIGS",
-      targetSection: "service-compare",
-    },
-    storage: {
-      tag: "HARDWARE ECOSYSTEM // BRANDS",
-      title: "CERTIFIED BRANDS",
-      desc: "Verified high-speed NVMe PCIe Gen4 components from Corsair, Kingston, and Cooler Master audited for heatsink clearances and sustained thermal envelopes.",
-      btnLabel: "BROWSE VERIFIED BRANDS",
-      targetSection: "brands-station",
-    },
-    gpu: {
-      tag: "CAPABILITY 04 // THREE.JS SIMULATION",
-      title: "3D VIRTUAL STUDIO",
-      desc: "Experience true physics-based assembly simulation in full 360-degree OrbitControls with exploded component hierarchies and live clearance telemetry.",
-      btnLabel: "OPEN 3D STUDIO PREVIEW",
-      targetSection: "service-3d-studio",
-    },
-    psu: {
-      tag: "CAPABILITY 01 // POWER BUDGET SAFEGUARD",
-      title: "DYNAMIC TDP AUDITING",
-      desc: "Automated power dissipation analysis. Calculates dynamic transient wattage headroom with safe 80+ Gold capacity buffers before connecting physical power.",
-      btnLabel: "AUDIT SYSTEM TDP",
-      targetSection: "service-compatibility",
-    },
-  };
-
-    const handleScrollToBuild = (behavior = "smooth", forceUnlock = false) => {
+  const handleScrollToBuild = (behavior = "smooth", forceUnlock = false) => {
       if (!hasClickedBuildRef.current && !forceUnlock) {
         handleStartBuildTrigger();
         return;
