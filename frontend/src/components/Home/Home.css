@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Big+Shoulders+Display:wght@800;900&family=Antonio:wght@700&family=Syne:wght@700;800;900&display=swap');
 
 .home-page {
   background: #06080e;
@@ -743,13 +743,13 @@
 /* 3. GIGANTIC BACKGROUND TYPOGRAPHY (Layered behind 3D Canvas) */
 .cyber-giant-text-backdrop {
   position: absolute;
-  top: 24%;
+  top: 32%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 2;
   pointer-events: none;
-  width: 90vw;
-  max-width: 1400px;
+  width: 94vw;
+  max-width: 1550px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -760,10 +760,10 @@
 }
 
 .giant-bg-text {
-  font-family: 'Syne', 'Impact', 'Bebas Neue', 'Oswald', system-ui, sans-serif;
-  font-size: clamp(3.4rem, 9.4vw, 9.8rem);
+  font-family: 'Big Shoulders Display', 'Bebas Neue', 'Antonio', 'Syne', system-ui, sans-serif;
+  font-size: clamp(5rem, 14vw, 14rem);
   font-weight: 900;
-  letter-spacing: -0.015em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: transparent;
   -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.22);
@@ -771,7 +771,7 @@
   -webkit-background-clip: text;
   background-clip: text;
   margin: 0;
-  line-height: 0.88;
+  line-height: 0.84;
   -webkit-user-select: none;
   user-select: none;
   white-space: nowrap;
@@ -779,6 +779,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  transform: scaleY(1.15);
+  transform-origin: center center;
 }
 
 .giant-bg-word {
@@ -787,7 +789,7 @@
 }
 
 .giant-bg-word + .giant-bg-word {
-  margin-left: 0.12em;
+  margin-left: 0.32em;
 }
 
 .giant-bg-txt {
@@ -804,12 +806,12 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 0.84em;
+  height: 0.76em;
   width: auto;
-  margin: 0 0.035em 0 0.045em;
+  margin: 0 0.035em;
   vertical-align: middle;
   position: relative;
-  transform: translateY(-0.045em);
+  transform: translateY(0.02em);
 }
 
 .giant-bg-logo-img {
