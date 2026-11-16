@@ -162,9 +162,9 @@
 }
 
 .service-description {
-  font-size: 0.96rem;
-  line-height: 1.65;
-  color: #94a3b8;
+  font-size: 1.12rem;
+  line-height: 1.75;
+  color: #cbd5e1;
   margin: 0;
 }
 
@@ -977,6 +977,11 @@
 
   .services-headline {
     font-size: 2.1rem;
+  }
+
+  .service-description {
+    font-size: 1.02rem;
+    line-height: 1.65;
   }
 
   .telemetry-body-grid,

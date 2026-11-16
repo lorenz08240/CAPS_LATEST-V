@@ -12,13 +12,13 @@ import { HeroFloatingPSU } from '../3D/PSUModel';
 import { preloadRAMModel, preloadNVMeSSDModel, preloadPSUModel } from '../../utilities/modelPreloader';
 
 const HERO_STAGES = [
-  { id: 'case', name: 'ATX Chassis', stageNum: 1, desc: 'Precision Airflow Chassis' },
-  { id: 'motherboard', name: 'Motherboard', stageNum: 2, desc: 'Architectural PCB Traces' },
-  { id: 'cpu', name: 'Thermal Cooler', stageNum: 3, desc: 'High Static Sickle Fin Assembly' },
-  { id: 'ram', name: 'DDR4 Memory', stageNum: 4, desc: 'Photorealistic Dual-Channel Kit' },
-  { id: 'storage', name: 'M.2 NVMe SSD', stageNum: 5, desc: 'High-Speed PCIe Gen4 Storage' },
-  { id: 'gpu', name: 'Dedicated GPU', stageNum: 6, desc: 'Triple Aerofoil Cooler' },
-  { id: 'psu', name: 'Modular Power', stageNum: 7, desc: '80 Plus Gold ATX Power Supply' },
+  { id: 'case', name: 'Computer Case', stageNum: 1, desc: 'PC Case' },
+  { id: 'motherboard', name: 'Motherboard', stageNum: 2, desc: 'Motherboard' },
+  { id: 'cpu', name: 'CPU Cooler', stageNum: 3, desc: 'Processor & Cooler' },
+  { id: 'ram', name: 'RAM Memory', stageNum: 4, desc: 'DDR4 Memory' },
+  { id: 'storage', name: 'SSD Storage', stageNum: 5, desc: 'Fast NVMe SSD' },
+  { id: 'gpu', name: 'Graphics Card', stageNum: 6, desc: 'Dedicated Graphics Card' },
+  { id: 'psu', name: 'Power Supply', stageNum: 7, desc: 'Power Supply Unit' },
 ];
 
 /**

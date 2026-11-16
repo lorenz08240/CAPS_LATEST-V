@@ -26,63 +26,63 @@ import buildlabLogoTight from "../../assets/buildlab_logo_tight.png";
 let hasSessionUnlockedBuild = false;
 
 const STAGE_META = {
-  case: { num: '01', name: 'ATX CHASSIS' },
-  motherboard: { num: '02', name: 'ARCHITECTURAL MOTHERBOARD' },
-  cpu: { num: '03', name: 'THERMAL SICKLE COOLER' },
-  ram: { num: '04', name: 'HIGH-SPEED DDR4 MEMORY' },
-  storage: { num: '05', name: 'M.2 NVMe SSD STORAGE' },
-  gpu: { num: '06', name: 'DEDICATED TRIPLE GPU' },
-  psu: { num: '07', name: 'MODULAR POWER SUPPLY' },
+  case: { num: '01', name: 'COMPUTER CASE' },
+  motherboard: { num: '02', name: 'MOTHERBOARD' },
+  cpu: { num: '03', name: 'CPU & COOLER' },
+  ram: { num: '04', name: 'RAM MEMORY' },
+  storage: { num: '05', name: 'SSD STORAGE' },
+  gpu: { num: '06', name: 'GRAPHICS CARD (GPU)' },
+  psu: { num: '07', name: 'POWER SUPPLY (PSU)' },
 };
 
 const HERO_DYNAMIC_CONTEXTS = {
   case: {
-    tag: "CAPABILITY 01 // RULES ENGINE",
-    title: "CLEARANCE AUDIT",
-    desc: "Real-time physical chassis inspection. Evaluate GPU millimeter length clearances, CPU cooler height margins, and unobstructed airflow channels before assembly.",
-    btnLabel: "AUDIT COMPATIBILITY",
+    tag: "FEATURE 01 // CASE FIT CHECK",
+    title: "WILL IT FIT?",
+    desc: "Check if your graphics card, cooler, and fans fit inside your PC case before you buy. Never worry about parts being too big.",
+    btnLabel: "CHECK CASE SIZES",
     targetSection: "service-compatibility",
   },
   motherboard: {
-    tag: "CAPABILITY 01 // SOCKET MATCHING",
-    title: "ZERO-PIN CONFLICT",
-    desc: "Mathematical socket validation cross-checking Intel LGA1700, AMD AM5, and PCIe lane bifurcation curves with zero tolerance for damaged pins.",
-    btnLabel: "INSPECT SOCKET RULES",
+    tag: "FEATURE 02 // SOCKET MATCHING",
+    title: "MATCH CPU & BOARD",
+    desc: "Make sure your processor matches your motherboard socket perfectly. Prevent bent pins and wrong purchases automatically.",
+    btnLabel: "CHECK CPU COMPATIBILITY",
     targetSection: "service-compatibility",
   },
   cpu: {
-    tag: "CAPABILITY 03 // STUDENT ACADEMY",
-    title: "HARDWARE ACADEMY",
-    desc: "Interactive TVL-CSS NC II accredited courseware. Practice processor seating, gold-notch orientation, and thermal paste patterns without risking fragile hardware.",
-    btnLabel: "ENTER HARDWARE ACADEMY",
+    tag: "FEATURE 03 // PC BUILDING LESSONS",
+    title: "LEARN STEP BY STEP",
+    desc: "Practice putting a PC together online. Learn how to place your CPU, apply thermal paste, and connect cables safely without breaking real parts.",
+    btnLabel: "START LEARNING NOW",
     targetSection: "service-academy",
   },
   ram: {
-    tag: "CAPABILITY 02 // DUAL-RIG BENCHMARK",
-    title: "COMPARE 2 RIGS",
-    desc: "Side-by-side performance benchmarking. Directly contrast DDR4 vs DDR5 bandwidth curves, gaming FPS projections, and budget-to-value compute ratios.",
-    btnLabel: "COMPARE HARDWARE RIGS",
+    tag: "FEATURE 04 // COMPARE 2 BUILDS",
+    title: "COMPARE 2 PCS",
+    desc: "Compare two computer builds side by side. See differences in price, gaming speed (FPS), and memory so you get the best value for your budget.",
+    btnLabel: "COMPARE 2 BUILDS",
     targetSection: "service-compare",
   },
   storage: {
-    tag: "HARDWARE ECOSYSTEM // BRANDS",
-    title: "CERTIFIED BRANDS",
-    desc: "Verified high-speed NVMe PCIe Gen4 components from Corsair, Kingston, and Cooler Master audited for heatsink clearances and sustained thermal envelopes.",
-    btnLabel: "BROWSE VERIFIED BRANDS",
+    tag: "FEATURE 05 // POPULAR BRANDS",
+    title: "TRUSTED BRANDS",
+    desc: "Pick from trusted brands like Corsair, Kingston, and Cooler Master. All parts are verified to work well together.",
+    btnLabel: "BROWSE TRUSTED BRANDS",
     targetSection: "brands-station",
   },
   gpu: {
-    tag: "CAPABILITY 04 // THREE.JS SIMULATION",
-    title: "3D VIRTUAL STUDIO",
-    desc: "Experience true physics-based assembly simulation in full 360-degree OrbitControls with exploded component hierarchies and live clearance telemetry.",
-    btnLabel: "OPEN 3D STUDIO PREVIEW",
+    tag: "FEATURE 06 // 3D WORKBENCH",
+    title: "3D ASSEMBLY STUDIO",
+    desc: "Rotate your PC 360 degrees in full 3D. Zoom in, look inside the case, and see exactly where each part goes before you build in real life.",
+    btnLabel: "EXPLORE 3D STUDIO",
     targetSection: "service-3d-studio",
   },
   psu: {
-    tag: "CAPABILITY 01 // POWER BUDGET SAFEGUARD",
-    title: "DYNAMIC TDP AUDITING",
-    desc: "Automated power dissipation analysis. Calculates dynamic transient wattage headroom with safe 80+ Gold capacity buffers before connecting physical power.",
-    btnLabel: "AUDIT SYSTEM TDP",
+    tag: "FEATURE 07 // POWER CALCULATOR",
+    title: "POWER & WATTAGE",
+    desc: "Calculate how much electricity your parts need. We make sure your power supply has enough watts so your computer runs safely and never shuts down.",
+    btnLabel: "CHECK POWER NEEDED",
     targetSection: "service-compatibility",
   },
 };
@@ -370,12 +370,12 @@ function Home() {
 
               <div className="cyber-editorial-col cyber-col-right">
                 <div className="cyber-meta-header">
-                  <span className="meta-kicker">{STAGE_META[activeModel]?.name || 'NEXT-GEN HARDWARE SIMULATOR'}</span>
+                  <span className="meta-kicker">{STAGE_META[activeModel]?.name || 'EASY 3D PC BUILDER'}</span>
                   <span className="meta-counter">{STAGE_META[activeModel]?.num || '01'} / 07</span>
                 </div>
                 <h2 className="cyber-col-title">BUILDLAB SUITE</h2>
                 <p className="cyber-col-desc">
-                  An intelligent 3D computer engineering workspace. Plan, customize, and validate high-performance rigs with real-time socket matching, TDP thermal auditing, and zero bottleneck tolerance before you buy physical parts.
+                  Build your dream PC in 3D before you buy. We test every part to make sure your processor fits your motherboard, your cooler fits your case, and your power supply has plenty of wattage.
                 </p>
                 <div className="cyber-btn-group right-align">
                   <button
@@ -383,7 +383,7 @@ function Home() {
                     className="cyber-btn-outline"
                     onClick={handleOpenCompatibility}
                   >
-                    <span>COMPATIBILITY MATRIX</span>
+                    <span>CHECK PART COMPATIBILITY</span>
                     <span className="btn-arrow">&rarr;</span>
                   </button>
                 </div>
@@ -496,7 +496,7 @@ function Home() {
               userProfile?.fullName ||
               "BUILDER"
             ).toUpperCase()}!`}
-            subtitle="Your Google student profile is synced. Stage 01 (2D Rig Assembly) is ready — click below when you are settled in Full Screen so B.O.B. can start your guided tour!"
+            subtitle="Your Google student profile is connected. Stage 01 (PC Builder) is ready — click below to start your guided tour with B.O.B.!"
             accentColor="#00e5a0"
             requireConfirm={true}
             autoFullscreenOnConfirm={true}

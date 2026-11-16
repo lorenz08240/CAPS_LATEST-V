@@ -13,16 +13,16 @@ const TEAM_MEMBERS = [
     id: "DEV-01",
     roleCategory: "core",
     name: "Developer 01",
-    designation: "Lead Systems Architect & Full-Stack Engineer",
+    designation: "Lead Full-Stack Developer",
     codename: "SYSTEM_CORE",
     avatarBadge: "ARCH",
     photoUrl: "/uploads/profiles/photo-1794214083340-kb6u7l.jpg",
-    highlight: "Core Architecture & State Matrix",
-    bio: "Leads the software architecture of BuildLab, bridging the React state machine with real-time 3D assembly graphs and the Node.js backend. Dedicated to zero-latency component selection and mathematical TDP validation.",
+    highlight: "System Architecture & Core Logic",
+    bio: "Builds the core foundation of BuildLab. Connects the user interface with the 3D PC builder and backend database so all parts checks work fast and accurately.",
     keyContributions: [
-      "Engineered multi-tier component picker and dependency state tree",
-      "Integrated Three.js WebGL canvas with live hardware inventory",
-      "Architected real-time bottleneck and socket matching algorithms"
+      "Built the PC part picker and compatibility checking system",
+      "Connected the 3D computer models with real hardware specs",
+      "Created the processor socket matching and power calculation tools"
     ],
     techStack: ["React 19", "Three.js", "Node.js", "Express", "MySQL"],
     rigSpecs: {
@@ -32,7 +32,7 @@ const TEAM_MEMBERS = [
       storage: "2TB PCIe Gen4 NVMe M.2 SSD",
       chassis: "Lian Li O11 Dynamic EVO (Black)"
     },
-    favTip: "Never cheap out on your power supply. An efficient Tier-A PSU protects your entire investment from dirty power and transient voltage spikes.",
+    favTip: "Never cheap out on your power supply. A good power supply protects your entire PC from sudden power spikes and keeps all parts running safely.",
     github: "https://github.com",
     linkedin: "https://linkedin.com"
   },
@@ -40,16 +40,16 @@ const TEAM_MEMBERS = [
     id: "DEV-02",
     roleCategory: "frontend",
     name: "Developer 02",
-    designation: "UI/UX Lead & Frontend Design Engineer",
+    designation: "UI/UX & Frontend Designer",
     codename: "CYBER_HUD",
     avatarBadge: "UI/UX",
     photoUrl: "/uploads/profiles/photo-1794176073655-f3qzal.gif",
-    highlight: "Design Systems & Command Deck Interaction",
-    bio: "Designed BuildLab's cohesive dark cyberpunk aesthetic, the mahogany Command Deck drawer, sound-synchronized interactions, and accessible high-contrast telemetry across all screen viewports.",
+    highlight: "User Interface & Visual Design",
+    bio: "Designs how BuildLab looks and feels. Created the sleek dark theme, interactive navigation menus, sound effects, and clean layouts for both desktop and mobile.",
     keyContributions: [
-      "Crafted the unified Wood-Mahogany Command Deck sidebar navigation",
-      "Implemented Web Audio API procedural sound feedback system",
-      "Optimized responsive mobile HUD layouts with zero horizontal clipping"
+      "Designed the mahogany sidebar navigation and interactive drawer",
+      "Added audio effects for button clicks, switches, and part snaps",
+      "Optimized the responsive layout for desktop and mobile screens"
     ],
     techStack: ["React", "Motion/React", "CSS3 / Variables", "Web Audio API", "Figma"],
     rigSpecs: {
@@ -59,7 +59,7 @@ const TEAM_MEMBERS = [
       storage: "1TB Kingston KC3000 + 2TB Crucial P3",
       chassis: "NZXT H6 Flow Dual-Chamber"
     },
-    favTip: "Assemble your motherboard, CPU, RAM, and M.2 SSD on top of the motherboard box before placing anything inside the PC case. It gives you 360-degree clear visibility.",
+    favTip: "Assemble your motherboard, CPU, RAM, and SSD on top of the motherboard box before putting them inside the PC case. It gives you plenty of room to work safely.",
     github: "https://github.com",
     linkedin: "https://linkedin.com"
   },
@@ -67,16 +67,16 @@ const TEAM_MEMBERS = [
     id: "DEV-03",
     roleCategory: "core",
     name: "Developer 03",
-    designation: "3D Graphics & WebGL Simulation Engineer",
+    designation: "3D Graphics & Simulation Developer",
     codename: "MESH_RENDER",
     avatarBadge: "3D/GL",
     photoUrl: "/uploads/profiles/photo-1794176080611-d0vfrg.gif",
-    highlight: "Three.js Hardware Models & Orbit Rigging",
-    bio: "Crafts the interactive 3D hardware studio, procedural PC components, physically based rendering (PBR) materials, and realistic socket snap-fit clearances using Three.js and WebGL shaders.",
+    highlight: "3D PC Models & Animations",
+    bio: "Creates the 3D computer parts and animations. Built the 3D studio where you can rotate, inspect, and connect computer hardware in full 360-degree view.",
     keyContributions: [
-      "Built the 3D Studio inspection viewport with smooth OrbitControls",
-      "Engineered procedural heatsink sickle fans and RAM module geometry",
-      "Calculated camera docking coordinates for all 7 hardware stages"
+      "Built the 360-degree 3D PC inspection studio with orbit controls",
+      "Modeled realistic computer fans, coolers, RAM, and PC cases",
+      "Set up interactive camera angles and exploded views for every part"
     ],
     techStack: ["Three.js", "WebGL", "GLTF / GLB", "Blender", "Canvas API"],
     rigSpecs: {
@@ -86,7 +86,7 @@ const TEAM_MEMBERS = [
       storage: "2TB Samsung 990 Pro PCIe 4.0 NVMe",
       chassis: "Fractal Design North (Charcoal with Walnut Front)"
     },
-    favTip: "Remember to peel off the clear plastic protective film from the bottom of your CPU cooler's copper cold plate before mounting it with thermal paste!",
+    favTip: "Always remember to remove the clear plastic protective film from the bottom of your CPU cooler before applying thermal paste and installing it!",
     github: "https://github.com",
     linkedin: "https://linkedin.com"
   },
@@ -94,18 +94,18 @@ const TEAM_MEMBERS = [
     id: "DEV-04",
     roleCategory: "backend",
     name: "Shin Ariane Pol",
-    designation: "Project Documentation & Technical Writer",
+    designation: "Project Documentation Lead",
     codename: "DOC_ARCHIVE",
     avatarBadge: "DOCS",
     // Developer Profile Photo
     photoUrl: "/assets/shin_ariane_pol.jpg",
     image: "/assets/shin_ariane_pol.jpg",
-    highlight: "Technical Documentation for Project BuildLab",
-    bio: "Author and custodian of BuildLab's official project documentation, system architecture records, capstone manual, and comprehensive software requirements specifications.",
+    highlight: "Project Documentation & Manuals",
+    bio: "Writes and organizes all project documentation. Created the project manual, research papers, system guides, and lesson materials for students and teachers.",
     keyContributions: [
-      "Authored comprehensive Capstone project documentation and system requirements",
-      "Standardized architectural workflow diagrams and user instruction guides",
-      "Curated component categorization references and validation criteria"
+      "Wrote the complete Capstone project manual and system requirements",
+      "Created easy-to-follow workflow diagrams and user instruction guides",
+      "Organized computer hardware categories and testing criteria"
     ],
     techStack: ["Technical Writing", "System Documentation", "Markdown", "SRS / IEEE", "Git"],
     rigSpecs: {
@@ -115,7 +115,7 @@ const TEAM_MEMBERS = [
       storage: "1TB NVMe M.2 SSD + 2TB External Storage",
       chassis: "DarkFlash DLM21 Mesh (White)"
     },
-    favTip: "Document every component specification and cable routing plan before putting the first screw into the motherboard standoffs.",
+    favTip: "Always double-check your part dimensions and cable layout before screwing down the motherboard into your PC case.",
     github: "https://github.com",
     linkedin: "https://linkedin.com"
   },
@@ -123,16 +123,16 @@ const TEAM_MEMBERS = [
     id: "DEV-05",
     roleCategory: "backend",
     name: "Developer 05",
-    designation: "Hardware Research Lead & QA Specialist",
+    designation: "Hardware Research & Quality Testing",
     codename: "VERIFY_LAB",
     avatarBadge: "QA/SPEC",
     photoUrl: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=400",
-    highlight: "Compatibility Matrices & Socket Verification",
-    bio: "Researched and documented hundreds of component socket standards, RAM clearance heights, PCIe lane bifurcation rules, and TDP dissipation curves to guarantee 100% accurate compatibility checks.",
+    highlight: "Hardware Testing & Compatibility Rules",
+    bio: "Researches and tests real computer hardware. Verified hundreds of part specifications, socket sizes, and power limits to ensure 100% accurate compatibility checks.",
     keyContributions: [
-      "Curated and verified 500+ component compatibility matrix rules",
-      "Audited LGA1700/AM5 cooler bracket clearances and PSU modular pinout alerts",
-      "Authored B.O.B. Interactive Troubleshooting Knowledge Base"
+      "Verified compatibility rules for over 500 computer components",
+      "Checked processor socket sizes, cooler clearances, and power cables",
+      "Wrote helpful troubleshooting tips for the B.O.B. voice guide"
     ],
     techStack: ["Hardware Specs Audit", "Benchmarking", "Jest", "Data Verification"],
     rigSpecs: {
@@ -142,7 +142,7 @@ const TEAM_MEMBERS = [
       storage: "1TB WD Black SN850X NVMe SSD",
       chassis: "DeepCool CH560 Digital (Tempered Glass)"
     },
-    favTip: "Never mix modular PSU cables between different power supply units. The pinouts on the power supply side are not standardized and can permanently fry your motherboard.",
+    favTip: "Never mix modular power supply cables between different brands or models. Even if the plug looks the same, the wiring can permanently damage your parts.",
     github: "https://github.com",
     linkedin: "https://linkedin.com"
   }
@@ -634,8 +634,8 @@ export default function AboutUs() {
         <section className="about-team-section">
           <div className="team-section-header">
             <div className="team-header-left">
-              <span className="team-section-kicker">OPERATIVES DIRECTORY</span>
-              <h2 className="team-section-heading">Developer Vitae &amp; Roles</h2>
+              <span className="team-section-kicker">TEAM DIRECTORY</span>
+              <h2 className="team-section-heading">Meet the Developers</h2>
             </div>
 
             <div className="team-filter-buttons">
@@ -665,7 +665,7 @@ export default function AboutUs() {
                 className={`filter-btn ${filter === "backend" ? "active" : ""}`}
                 onClick={() => handleFilterClick("backend")}
               >
-                BACKEND &amp; QA ({teamMembers.filter((m) => m.roleCategory === "backend").length})
+                DOCS &amp; TESTING ({teamMembers.filter((m) => m.roleCategory === "backend").length})
               </button>
             </div>
           </div>
@@ -731,7 +731,7 @@ export default function AboutUs() {
                 </div>
 
                 <div className="card-footer-action">
-                  <span className="action-hint">VIEW FULL VITAE</span>
+                  <span className="action-hint">VIEW FULL PROFILE</span>
                   <span className="action-arrow">&rarr;</span>
                 </div>
               </div>
@@ -776,7 +776,7 @@ export default function AboutUs() {
                 </div>
 
                 <div className="dossier-title-group">
-                  <span className="dossier-kicker">ENGINEERING DOSSIER // {selectedMember.id} &bull; {selectedMember.avatarBadge}</span>
+                  <span className="dossier-kicker">DEVELOPER PROFILE // {selectedMember.id} &bull; {selectedMember.avatarBadge}</span>
                   <h2 className="dossier-name">{selectedMember.name}</h2>
                   <span className="dossier-designation">{selectedMember.designation}</span>
                 </div>
@@ -784,7 +784,7 @@ export default function AboutUs() {
                   type="button"
                   className="dossier-close-btn"
                   onClick={handleCloseDossier}
-                  aria-label="Close Dossier"
+                  aria-label="Close Profile"
                 >
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                     <line x1="18" y1="6" x2="6" y2="18" />
@@ -830,12 +830,12 @@ export default function AboutUs() {
                   </div>
 
                   <div className="dossier-meta-card">
-                    <span className="meta-card-title">SPECIALTY FOCUS</span>
+                    <span className="meta-card-title">SPECIALTY</span>
                     <p className="meta-card-text">{selectedMember.highlight}</p>
                   </div>
 
                   <div className="dossier-meta-card">
-                    <span className="meta-card-title">PRIMARY TECHNOLOGIES</span>
+                    <span className="meta-card-title">TECHNOLOGIES USED</span>
                     <div className="dossier-tech-wrap">
                       {selectedMember.techStack.map((tech, i) => (
                         <span key={i} className="dossier-tech-badge">{tech}</span>
@@ -844,7 +844,7 @@ export default function AboutUs() {
                   </div>
 
                   <div className="dossier-meta-card rig-card">
-                    <span className="meta-card-title">PERSONAL PC RIG</span>
+                    <span className="meta-card-title">PERSONAL PC SPECS</span>
                     <ul className="dossier-rig-list">
                       <li><strong>CPU:</strong> {selectedMember.rigSpecs.cpu}</li>
                       <li><strong>GPU:</strong> {selectedMember.rigSpecs.gpu}</li>
@@ -857,7 +857,7 @@ export default function AboutUs() {
 
                 <div className="dossier-right-col">
                   <div className="dossier-section-block">
-                    <h4 className="dossier-subhead">CAPSTONE ACHIEVEMENTS</h4>
+                    <h4 className="dossier-subhead">KEY CONTRIBUTIONS</h4>
                     <ul className="dossier-contributions-list">
                       {selectedMember.keyContributions.map((contrib, idx) => (
                         <li key={idx}>
@@ -869,14 +869,14 @@ export default function AboutUs() {
                   </div>
 
                   <div className="dossier-section-block">
-                    <h4 className="dossier-subhead">HARDWARE PHILOSOPHY</h4>
+                    <h4 className="dossier-subhead">FAVORITE PC BUILDING TIP</h4>
                     <blockquote className="dossier-quote">
                       "{selectedMember.favTip}"
                     </blockquote>
                   </div>
 
                   <div className="dossier-section-block">
-                    <h4 className="dossier-subhead">AFFILIATION</h4>
+                    <h4 className="dossier-subhead">SCHOOL &amp; PROGRAM</h4>
                     <p className="dossier-academic-text">
                       Bachelor of Science in Information Technology / Computer Science
                       <br />
@@ -888,14 +888,14 @@ export default function AboutUs() {
 
               <div className="dossier-footer-bar">
                 <span className="dossier-status-text">
-                  STATUS: VERIFIED DEVELOPER RECORD // BUILDLAB V2.4
+                  STATUS: ACTIVE DEVELOPER &bull; BUILDLAB
                 </span>
                 <button
                   type="button"
                   className="dossier-done-btn"
                   onClick={handleCloseDossier}
                 >
-                  DISMISS DOSSIER
+                  CLOSE PROFILE
                 </button>
               </div>
             </div>

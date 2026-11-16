@@ -24,7 +24,7 @@ export default function ModeSelectionCards({
           <div className="mode-selection-tag">
             <span className="tag-bracket">[</span>
             <span className="tag-pulse-dot" />
-            <span>STUDENT CERTIFICATION TRACK</span>
+            <span>STUDENT CERTIFICATION COURSE</span>
             <span className="tag-bracket">]</span>
           </div>
           <button
@@ -44,7 +44,7 @@ export default function ModeSelectionCards({
         <div className="mode-selection-intro">
           <h2 className="mode-selection-title">Start Your Hardware Course</h2>
           <p className="mode-selection-sub">
-            Follow an engineering-validated curriculum with automatic Google Cloud save and verified certification.
+            Follow simple step-by-step lessons, save your progress with Google, and earn an official certificate.
           </p>
         </div>
 
@@ -67,7 +67,7 @@ export default function ModeSelectionCards({
             <div className="mode-card-content">
               <div className="mode-card-badge learn-badge">
                 <span className="badge-dot" />
-                <span>GUIDED CERTIFICATION TRACK</span>
+                <span>STUDENT CERTIFICATION COURSE</span>
               </div>
 
               <div className="mode-card-icon-wrap learn-icon-wrap">
@@ -76,25 +76,25 @@ export default function ModeSelectionCards({
 
               <h3 className="mode-card-heading">LEARN TRACK</h3>
               <p className="mode-card-summary">
-                Follow an engineering-validated curriculum with automatic Google Cloud save.
+                Learn how to build computers step-by-step with interactive quizzes and an official certificate.
               </p>
 
               <ul className="mode-card-perks">
                 <li>
                   <span className="perk-check">✓</span>
-                  <span><strong>Google Sign-In:</strong> Cloud backup for rigs, benchmarks &amp; lesson stats</span>
+                  <span><strong>Google Sign-In:</strong> Automatically saves your progress, quiz scores, and saved PC builds</span>
                 </li>
                 <li>
                   <span className="perk-check">✓</span>
-                  <span><strong>Courseware Modules:</strong> Sockets, clearances, pinouts, and thermal dynamics</span>
+                  <span><strong>Step-by-Step Lessons:</strong> Learn computer parts, CPU sockets, cables, and cooling in simple steps</span>
                 </li>
                 <li>
                   <span className="perk-check">✓</span>
-                  <span><strong>Completion Certificate:</strong> Inscribed with your verified legal name</span>
+                  <span><strong>Official Certificate:</strong> Earn a verified completion certificate with your full name</span>
                 </li>
                 <li>
                   <span className="perk-check">✓</span>
-                  <span><strong>B.O.B. Interactive Guide:</strong> Step-by-step companion tips &amp; socket checks</span>
+                  <span><strong>Helpful Guide B.O.B.:</strong> Friendly voice tips and reminders to guide you through every part</span>
                 </li>
               </ul>
 
