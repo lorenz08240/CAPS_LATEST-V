@@ -776,6 +776,58 @@
   user-select: none;
   white-space: nowrap;
   text-shadow: 0 0 60px rgba(244, 63, 94, 0.32);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.giant-bg-txt {
+  display: inline-block;
+  line-height: inherit;
+  color: inherit;
+  -webkit-text-stroke: inherit;
+  background: inherit;
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.giant-bg-logo-slot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 0.84em;
+  width: auto;
+  margin: 0 0.035em 0 0.045em;
+  vertical-align: middle;
+  position: relative;
+  transform: translateY(-0.045em);
+}
+
+.giant-bg-logo-img {
+  height: 100%;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 0 28px rgba(244, 63, 94, 0.65)) drop-shadow(0 0 55px rgba(244, 63, 94, 0.35));
+  pointer-events: none;
+  user-select: none;
+  animation: logoFlaskPulse 4s ease-in-out infinite alternate;
+}
+
+body.theme-light .giant-bg-logo-img,
+.theme-light .giant-bg-logo-img {
+  opacity: 0.65;
+  filter: drop-shadow(0 0 15px rgba(244, 63, 94, 0.35));
+}
+
+@keyframes logoFlaskPulse {
+  0% {
+    filter: drop-shadow(0 0 22px rgba(244, 63, 94, 0.55)) drop-shadow(0 0 45px rgba(244, 63, 94, 0.25));
+    transform: scale(0.99);
+  }
+  100% {
+    filter: drop-shadow(0 0 36px rgba(244, 63, 94, 0.85)) drop-shadow(0 0 70px rgba(244, 63, 94, 0.45));
+    transform: scale(1.02);
+  }
 }
 
 .cyber-canvas-stage {

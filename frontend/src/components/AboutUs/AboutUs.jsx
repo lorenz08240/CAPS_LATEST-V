@@ -1,8 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import GlobalHeader from "../Navigation/GlobalHeader";
 import soundManager from "../../utilities/soundManager";
 import "./AboutUs.css";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const TEAM_MEMBERS = [
   {
@@ -351,6 +355,7 @@ export default function AboutUs() {
   const [filter, setFilter] = useState("all");
   const [selectedMember, setSelectedMember] = useState(null);
   const [teamMembers, setTeamMembers] = useState(TEAM_MEMBERS);
+  const aboutPageRef = useRef(null);
 
   // WhiteHats Built Projects Showcase states
   const [projectFilter, setProjectFilter] = useState("all");

@@ -90,9 +90,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Brands/Brands.jsx": {
-    "mtime": 1794818674.40513,
-    "seen": 1794818981.8924823,
-    "ast_hash": "d75682b0361fa79938954b4cc2d5296f",
+    "mtime": 1794819449.3689997,
+    "seen": 1794819581.1616447,
+    "ast_hash": "26c8778f39debbae1edf8b0e89699250",
     "semantic_hash": ""
   },
   "frontend/src/components/Build/Build.jsx": {
@@ -114,9 +114,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Footer/Footer.jsx": {
-    "mtime": 1794817269.9885955,
-    "seen": 1794817496.554671,
-    "ast_hash": "04157c6050cbd86fd347e375e80db485",
+    "mtime": 1794819468.2651715,
+    "seen": 1794819581.164616,
+    "ast_hash": "666189ecee33c63065d8296e89da98b1",
     "semantic_hash": ""
   },
   "frontend/src/components/FullscreenGate/FullscreenGate.jsx": {
@@ -126,9 +126,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Home/Home.jsx": {
-    "mtime": 1794817402.6728144,
-    "seen": 1794817496.5555182,
-    "ast_hash": "411ef93e9faacdcbfbb6f35b3ad57413",
+    "mtime": 1794819508.1432533,
+    "seen": 1794819581.1664083,
+    "ast_hash": "fb58cd15df1b0c9acbb6fd24714a73fa",
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/CourseShell.jsx": {
@@ -540,9 +540,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Navigation/CyberBrand.jsx": {
-    "mtime": 1793931234.2064764,
-    "seen": 1793931275.170915,
-    "ast_hash": "a224e81bbbdbab33a79fefa5e1e371be",
+    "mtime": 1794819545.86594,
+    "seen": 1794819581.171687,
+    "ast_hash": "dd8c49f95d5d00244d8c215a73c1119e",
     "semantic_hash": ""
   },
   "frontend/src/contexts/SidebarContext.jsx": {
@@ -582,27 +582,27 @@
     "semantic_hash": ""
   },
   "frontend/public/assets/buildlab_logo_tight.png": {
-    "mtime": 1793902310.9811523,
-    "seen": 1793902426.8800228,
-    "ast_hash": "42ffbae10e15875b3df75fbeebbf9adb",
+    "mtime": 1794819280.0632038,
+    "seen": 1794819581.1808593,
+    "ast_hash": "8d2d26525629e84b7b62dccdd792a86d",
     "semantic_hash": ""
   },
   "frontend/public/assets/buildlab_logo_transparent.png": {
-    "mtime": 1793902310.9841533,
-    "seen": 1793902426.880025,
-    "ast_hash": "633de94665fa1e23eb24cc18f5446dce",
+    "mtime": 1794819279.9897282,
+    "seen": 1794819581.180864,
+    "ast_hash": "4c2761b95ff379109fbdaf71796c8627",
     "semantic_hash": ""
   },
   "frontend/public/assets/system_logo.png": {
-    "mtime": 1793902310.9881525,
-    "seen": 1793902426.8810418,
-    "ast_hash": "505a629d3518fb111c4d6fbc0bea88c7",
+    "mtime": 1794819279.9873579,
+    "seen": 1794819581.1841831,
+    "ast_hash": "4c2761b95ff379109fbdaf71796c8627",
     "semantic_hash": ""
   },
   "frontend/src/assets/system_logo.png": {
-    "mtime": 1793902310.9911551,
-    "seen": 1793902426.8835492,
-    "ast_hash": "505a629d3518fb111c4d6fbc0bea88c7",
+    "mtime": 1794819279.9853375,
+    "seen": 1794819581.1901271,
+    "ast_hash": "4c2761b95ff379109fbdaf71796c8627",
     "semantic_hash": ""
   },
   "frontend/src/components/AboutUs/AboutUs.jsx": {
@@ -900,9 +900,15 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Home/PlatformServices.jsx": {
-    "mtime": 1794818724.621797,
-    "seen": 1794818981.908539,
-    "ast_hash": "7d7e7915ecc4ca5377ec70f41743acbb",
+    "mtime": 1794819905.9636686,
+    "seen": 1794819911.0459888,
+    "ast_hash": "220abb327e4f3363f06642a503e2c45a",
+    "semantic_hash": ""
+  },
+  "frontend/src/assets/buildlab_logo_tight.png": {
+    "mtime": 1794819280.1230443,
+    "seen": 1794819581.1888938,
+    "ast_hash": "8d2d26525629e84b7b62dccdd792a86d",
     "semantic_hash": ""
   },
   "backend/package-lock.json": {

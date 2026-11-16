@@ -1,28 +1,55 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import soundManager from "../../utilities/soundManager";
 import "./Footer.css";
 
+gsap.registerPlugin(ScrollTrigger);
+
 function Footer() {
   const location = useLocation();
-  const [isRevealed, setIsRevealed] = useState(false);
   const footerRef = useRef(null);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsRevealed(true);
-        }
-      },
-      { threshold: 0.1 }
-    );
+    if (!footerRef.current) return;
 
-    if (footerRef.current) {
-      observer.observe(footerRef.current);
-    }
+    const ctx = gsap.context(() => {
+      ScrollTrigger.create({
+        trigger: footerRef.current,
+        start: "top 90%",
+        end: "bottom 5%",
+        onEnter: () => {
+          gsap.fromTo(
+            footerRef.current.querySelectorAll(".footer-brand, .footer-column, .footer-bottom"),
+            { opacity: 0, y: 35 },
+            {
+              opacity: 1,
+              y: 0,
+              stagger: 0.1,
+              duration: 0.75,
+              ease: "power3.out",
+              overwrite: "auto",
+            }
+          );
+        },
+        onLeaveBack: () => {
+          gsap.to(
+            footerRef.current.querySelectorAll(".footer-brand, .footer-column, .footer-bottom"),
+            {
+              opacity: 0,
+              y: 35,
+              stagger: 0.05,
+              duration: 0.35,
+              ease: "power2.in",
+              overwrite: "auto",
+            }
+          );
+        },
+      });
+    }, footerRef);
 
-    return () => observer.disconnect();
+    return () => ctx.revert();
   }, []);
 
   // Hide footer on 3D builder page
@@ -37,10 +64,7 @@ function Footer() {
   };
 
   return (
-    <footer
-      ref={footerRef}
-      className={`footer ${isRevealed ? "footer-revealed" : ""}`}
-    >
+    <footer ref={footerRef} className="footer">
       <div className="footer-container">
         {/* Brand & Institutional Profile Column */}
         <div className="footer-brand">

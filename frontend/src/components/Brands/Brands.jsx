@@ -118,27 +118,47 @@ function Brands({ isIntegrated = false }) {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // 1. Header reveal
-      gsap.fromTo(
-        ".brands-header",
-        { opacity: 0, y: 35 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.85,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: ".brands-header",
-            start: "top 85%",
-            toggleActions: "play none none reverse",
-          },
-        }
-      );
+      // 1. Header reveal with bidirectional scroll triggers (down + up)
+      ScrollTrigger.create({
+        trigger: ".brands-header",
+        start: "top 85%",
+        end: "bottom 15%",
+        onEnter: () =>
+          gsap.fromTo(
+            ".brands-header",
+            { opacity: 0, y: 35, scale: 0.98 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: "power3.out", overwrite: "auto" }
+          ),
+        onLeave: () =>
+          gsap.to(".brands-header", {
+            opacity: 0,
+            y: -30,
+            duration: 0.35,
+            ease: "power2.in",
+            overwrite: "auto",
+          }),
+        onEnterBack: () =>
+          gsap.fromTo(
+            ".brands-header",
+            { opacity: 0, y: -30, scale: 0.98 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: "power3.out", overwrite: "auto" }
+          ),
+        onLeaveBack: () =>
+          gsap.to(".brands-header", {
+            opacity: 0,
+            y: 35,
+            duration: 0.35,
+            ease: "power2.in",
+            overwrite: "auto",
+          }),
+      });
 
-      // 2. GreenSock ScrollTrigger.batch for brand cards (KKXZOyZ style)
+      // 2. GreenSock ScrollTrigger.batch for brand cards (KKXZOyZ style, full bidirectional)
       ScrollTrigger.batch(".brand-logo-card", {
         interval: 0.08,
         batchMax: 4,
+        start: "top 88%",
+        end: "bottom 12%",
         onEnter: (batch) =>
           gsap.fromTo(
             batch,
@@ -148,7 +168,31 @@ function Brands({ isIntegrated = false }) {
               y: 0,
               scale: 1,
               stagger: 0.08,
-              duration: 0.7,
+              duration: 0.65,
+              ease: "power3.out",
+              overwrite: "auto",
+            }
+          ),
+        onLeave: (batch) =>
+          gsap.to(batch, {
+            opacity: 0,
+            y: -35,
+            scale: 0.94,
+            stagger: 0.04,
+            duration: 0.35,
+            ease: "power2.in",
+            overwrite: "auto",
+          }),
+        onEnterBack: (batch) =>
+          gsap.fromTo(
+            batch,
+            { opacity: 0, y: -35, scale: 0.94 },
+            {
+              opacity: 1,
+              y: 0,
+              scale: 1,
+              stagger: 0.08,
+              duration: 0.65,
               ease: "power3.out",
               overwrite: "auto",
             }
@@ -159,27 +203,45 @@ function Brands({ isIntegrated = false }) {
             y: 40,
             scale: 0.94,
             stagger: 0.04,
-            duration: 0.4,
+            duration: 0.35,
+            ease: "power2.in",
             overwrite: "auto",
           }),
       });
 
-      // 3. Back to Top Button reveal
-      gsap.fromTo(
-        ".brands-footer",
-        { opacity: 0, y: 25 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.75,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: ".brands-footer",
-            start: "top 92%",
-            toggleActions: "play none none reverse",
-          },
-        }
-      );
+      // 3. Back to Top Button reveal with bidirectional support
+      ScrollTrigger.create({
+        trigger: ".brands-footer",
+        start: "top 92%",
+        end: "bottom 5%",
+        onEnter: () =>
+          gsap.fromTo(
+            ".brands-footer",
+            { opacity: 0, y: 30, scale: 0.95 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "power3.out", overwrite: "auto" }
+          ),
+        onLeave: () =>
+          gsap.to(".brands-footer", {
+            opacity: 0,
+            y: -25,
+            duration: 0.35,
+            overwrite: "auto",
+          }),
+        onEnterBack: () =>
+          gsap.fromTo(
+            ".brands-footer",
+            { opacity: 0, y: -25, scale: 0.95 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "power3.out", overwrite: "auto" }
+          ),
+        onLeaveBack: () =>
+          gsap.to(".brands-footer", {
+            opacity: 0,
+            y: 30,
+            scale: 0.95,
+            duration: 0.35,
+            overwrite: "auto",
+          }),
+      });
     }, containerRef);
 
     return () => ctx.revert();

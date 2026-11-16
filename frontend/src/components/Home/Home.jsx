@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { gsap } from "gsap";
 import "./Home.css";
 import Brands from "../Brands/Brands";
 import Build from "../Build/Build";
@@ -16,6 +17,7 @@ import { useLearnMode } from "../../contexts/LearnModeContext";
 import { enterFullscreen } from "../../utilities/fullscreen";
 import soundManager from "../../utilities/soundManager";
 import systemLogo from "../../assets/system_logo.png";
+import buildlabLogoTight from "../../assets/buildlab_logo_tight.png";
 
 // Module-level in-memory lock state:
 // The home/hero section is strictly locked until the user clicks START BUILD for the first time.
@@ -37,6 +39,30 @@ function Home() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isScrolledDown, setIsScrolledDown] = useState(false);
   const [startBuildRequested, setStartBuildRequested] = useState(false);
+  const leftColRef = useRef(null);
+
+  const activeContext = HERO_DYNAMIC_CONTEXTS[activeModel] || HERO_DYNAMIC_CONTEXTS.case;
+
+  // Seamlessly transition left editorial context in sync with 3D model rotation
+  useEffect(() => {
+    if (leftColRef.current) {
+      gsap.fromTo(
+        leftColRef.current,
+        { opacity: 0.35, y: 10 },
+        { opacity: 1, y: 0, duration: 0.55, ease: "power2.out" }
+      );
+    }
+  }, [activeModel]);
+
+  const handleHeroDynamicScroll = (targetSection) => {
+    try { soundManager.click(); } catch {}
+    const target = document.getElementById(targetSection);
+    if (target) {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    } else {
+      navigate("/compatibility");
+    }
+  };
 
   const handleSelectMode = (targetMode) => {
     if (targetMode === "learn") {
@@ -76,6 +102,58 @@ function Home() {
     storage: { num: '05', name: 'M.2 NVMe SSD STORAGE' },
     gpu: { num: '06', name: 'DEDICATED TRIPLE GPU' },
     psu: { num: '07', name: 'MODULAR POWER SUPPLY' },
+  };
+
+  const HERO_DYNAMIC_CONTEXTS = {
+    case: {
+      tag: "CAPABILITY 01 // RULES ENGINE",
+      title: "CLEARANCE AUDIT",
+      desc: "Real-time physical chassis inspection. Evaluate GPU millimeter length clearances, CPU cooler height margins, and unobstructed airflow channels before assembly.",
+      btnLabel: "AUDIT COMPATIBILITY",
+      targetSection: "service-compatibility",
+    },
+    motherboard: {
+      tag: "CAPABILITY 01 // SOCKET MATCHING",
+      title: "ZERO-PIN CONFLICT",
+      desc: "Mathematical socket validation cross-checking Intel LGA1700, AMD AM5, and PCIe lane bifurcation curves with zero tolerance for damaged pins.",
+      btnLabel: "INSPECT SOCKET RULES",
+      targetSection: "service-compatibility",
+    },
+    cpu: {
+      tag: "CAPABILITY 03 // STUDENT ACADEMY",
+      title: "HARDWARE ACADEMY",
+      desc: "Interactive TVL-CSS NC II accredited courseware. Practice processor seating, gold-notch orientation, and thermal paste patterns without risking fragile hardware.",
+      btnLabel: "ENTER HARDWARE ACADEMY",
+      targetSection: "service-academy",
+    },
+    ram: {
+      tag: "CAPABILITY 02 // DUAL-RIG BENCHMARK",
+      title: "COMPARE 2 RIGS",
+      desc: "Side-by-side performance benchmarking. Directly contrast DDR4 vs DDR5 bandwidth curves, gaming FPS projections, and budget-to-value compute ratios.",
+      btnLabel: "COMPARE HARDWARE RIGS",
+      targetSection: "service-compare",
+    },
+    storage: {
+      tag: "HARDWARE ECOSYSTEM // BRANDS",
+      title: "CERTIFIED BRANDS",
+      desc: "Verified high-speed NVMe PCIe Gen4 components from Corsair, Kingston, and Cooler Master audited for heatsink clearances and sustained thermal envelopes.",
+      btnLabel: "BROWSE VERIFIED BRANDS",
+      targetSection: "brands-station",
+    },
+    gpu: {
+      tag: "CAPABILITY 04 // THREE.JS SIMULATION",
+      title: "3D VIRTUAL STUDIO",
+      desc: "Experience true physics-based assembly simulation in full 360-degree OrbitControls with exploded component hierarchies and live clearance telemetry.",
+      btnLabel: "OPEN 3D STUDIO PREVIEW",
+      targetSection: "service-3d-studio",
+    },
+    psu: {
+      tag: "CAPABILITY 01 // POWER BUDGET SAFEGUARD",
+      title: "DYNAMIC TDP AUDITING",
+      desc: "Automated power dissipation analysis. Calculates dynamic transient wattage headroom with safe 80+ Gold capacity buffers before connecting physical power.",
+      btnLabel: "AUDIT SYSTEM TDP",
+      targetSection: "service-compatibility",
+    },
   };
 
     const handleScrollToBuild = (behavior = "smooth", forceUnlock = false) => {
@@ -213,35 +291,6 @@ function Home() {
                   ABOUT US
                 </button>
               </nav>
-
-              <div className="cyber-nav-actions">
-                <button
-                  type="button"
-                  className={`cyber-mode-badge-btn ${mode === 'learn' ? 'mode-badge-learn' : 'mode-badge-explore'}`}
-                  onClick={() => setShowAccountModal(true)}
-                  title="Click to switch or configure operating mode"
-                >
-                  <span className="badge-pulse-dot" />
-                  <span className="badge-mode-text">
-                    {mode === 'learn' ? '🎓 LEARN TRACK' : mode === 'explore' ? '🚀 FREE WORKBENCH' : '⚡ SELECT MODE'}
-                  </span>
-                </button>
-
-                <button
-                  type="button"
-                  className="cyber-search-btn"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    navigate("/build");
-                  }}
-                  title="Search Components"
-                >
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                  </svg>
-                </button>
-              </div>
             </header>
 
             <aside className="cyber-left-rail">
@@ -270,7 +319,18 @@ function Home() {
                 opacity: Math.max(0.15, 1 - scrollProgress * 1.2)
               }}
             >
-              <h1 className="giant-bg-text">BUILDLAB</h1>
+              <h1 className="giant-bg-text" aria-label="BUILDLAB">
+                <span className="giant-bg-txt">BUILDL</span>
+                <span className="giant-bg-logo-slot" aria-hidden="true">
+                  <img
+                    src={buildlabLogoTight}
+                    alt=""
+                    className="giant-bg-logo-img"
+                    draggable={false}
+                  />
+                </span>
+                <span className="giant-bg-txt">B</span>
+              </h1>
             </div>
 
             <div className="cyber-canvas-stage">
@@ -283,32 +343,24 @@ function Home() {
             </div>
 
             <div className="cyber-editorial-grid">
-              <div className="cyber-editorial-col cyber-col-left">
+              <div className="cyber-editorial-col cyber-col-left" ref={leftColRef}>
                 <div className="cyber-tag-badge">
                   <span className="tag-bracket">[</span>
                   <span className="tag-dot" />
-                  <span className="tag-text">STUDENT & BUILDER ACADEMY</span>
+                  <span className="tag-text">{activeContext.tag}</span>
                   <span className="tag-bracket">]</span>
                 </div>
-                <h2 className="cyber-col-title">LEARN HARDWARE</h2>
-                <p className="cyber-col-desc">
-                  Master PC architecture through hands-on virtual assembly. Understand component hierarchies, socket clearances, pinouts, and thermal dynamics with guided interactive lessons designed for students and enthusiasts.
-                </p>
+                <h2 className="cyber-col-title">{activeContext.title}</h2>
+                <p className="cyber-col-desc">{activeContext.desc}</p>
                 <div className="cyber-btn-group">
                   <button
                     type="button"
                     className="cyber-btn-primary"
-                    onClick={() => {
-                      if (mode === "explore") {
-                        soundManager.click();
-                        navigate('/learn');
-                      } else {
-                        handleSelectMode("learn");
-                      }
-                    }}
+                    onClick={() => handleHeroDynamicScroll(activeContext.targetSection)}
+                    title={`Explore ${activeContext.title}`}
                   >
-                    <span>{mode === 'explore' ? 'EXPLORE LEARN LAB' : 'START LEARN TRACK'}</span>
-                    <span className="btn-notch">///</span>
+                    <span>{activeContext.btnLabel}</span>
+                    <span className="btn-notch">&darr;</span>
                   </button>
                 </div>
               </div>

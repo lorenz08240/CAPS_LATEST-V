@@ -85,92 +85,135 @@ export default function PlatformServices() {
         });
       }
 
-      // 2. Master Header Reveal with smooth elevation
+      // 2. Master Header Reveal with bidirectional scroll triggers (down + up)
       if (headerRef.current) {
-        gsap.fromTo(
-          headerRef.current,
-          { opacity: 0, y: 45, scale: 0.98 },
-          {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            duration: 0.95,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: headerRef.current,
-              start: "top 85%",
-              toggleActions: "play none none reverse",
-            },
-          }
-        );
+        ScrollTrigger.create({
+          trigger: headerRef.current,
+          start: "top 85%",
+          end: "bottom 15%",
+          onEnter: () => {
+            gsap.fromTo(
+              headerRef.current,
+              { opacity: 0, y: 40, scale: 0.98 },
+              { opacity: 1, y: 0, scale: 1, duration: 0.85, ease: "power3.out", overwrite: "auto" }
+            );
+          },
+          onLeave: () => {
+            gsap.to(headerRef.current, {
+              opacity: 0,
+              y: -30,
+              scale: 0.98,
+              duration: 0.4,
+              ease: "power2.in",
+              overwrite: "auto",
+            });
+          },
+          onEnterBack: () => {
+            gsap.fromTo(
+              headerRef.current,
+              { opacity: 0, y: -35, scale: 0.98 },
+              { opacity: 1, y: 0, scale: 1, duration: 0.85, ease: "power3.out", overwrite: "auto" }
+            );
+          },
+          onLeaveBack: () => {
+            gsap.to(headerRef.current, {
+              opacity: 0,
+              y: 35,
+              scale: 0.98,
+              duration: 0.4,
+              ease: "power2.in",
+              overwrite: "auto",
+            });
+          },
+        });
       }
 
-      // 3. Staggered Asymmetric Feature Rows (KKXZOyZ & GreenSock layered reveals)
+      // 3. Staggered Asymmetric Feature Rows with bidirectional scroll support (down + up)
       const rows = gsap.utils.toArray(".service-showcase-row");
       rows.forEach((row) => {
         const isCardLeft = row.classList.contains("left-card-right-text");
         const cardBay = row.querySelector(".service-card-bay");
         const textBay = row.querySelector(".service-text-bay");
 
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: row,
-            start: "top 80%",
-            toggleActions: "play none none reverse",
-          },
-        });
+        const playRowEnter = (direction = "down") => {
+          const fromYCard = direction === "down" ? 50 : -45;
+          const fromYText = direction === "down" ? 30 : -30;
 
-        // Entrance animation
-        tl.fromTo(
-          cardBay,
-          { opacity: 0, y: 55, x: isCardLeft ? -25 : 25, scale: 0.97 },
-          { opacity: 1, y: 0, x: 0, scale: 1, duration: 0.85, ease: "power3.out" }
-        )
-        .fromTo(
-          textBay,
-          { opacity: 0, y: 35, x: isCardLeft ? 20 : -20 },
-          { opacity: 1, y: 0, x: 0, duration: 0.8, ease: "power3.out" },
-          "-=0.6"
-        )
-        .fromTo(
-          textBay.querySelectorAll(".service-bullet-list li"),
-          { opacity: 0, x: 12 },
-          { opacity: 1, x: 0, duration: 0.45, stagger: 0.08, ease: "power2.out" },
-          "-=0.4"
-        );
+          const tl = gsap.timeline({ overwrite: "auto" });
 
-        // Capability 1: Power bar and metric tiles flourish
-        const powerBar = row.querySelector(".power-bar-fill");
-        if (powerBar) {
           tl.fromTo(
-            powerBar,
-            { scaleX: 0, transformOrigin: "left center" },
-            { scaleX: 1, duration: 0.75, ease: "power2.out" },
-            "-=0.3"
-          );
-        }
-
-        // Capability 3: Schematic traces flourish
-        const traces = row.querySelectorAll(".schematic-trace");
-        if (traces.length > 0) {
-          tl.fromTo(
-            traces,
-            { scaleX: 0, opacity: 0 },
-            { scaleX: 1, opacity: 1, duration: 0.65, stagger: 0.1, ease: "power2.out" },
+            cardBay,
+            { opacity: 0, y: fromYCard, x: isCardLeft ? -20 : 20, scale: 0.96 },
+            { opacity: 1, y: 0, x: 0, scale: 1, duration: 0.8, ease: "power3.out" }
+          )
+          .fromTo(
+            textBay,
+            { opacity: 0, y: fromYText, x: isCardLeft ? 15 : -15 },
+            { opacity: 1, y: 0, x: 0, duration: 0.75, ease: "power3.out" },
+            "-=0.6"
+          )
+          .fromTo(
+            textBay.querySelectorAll(".service-bullet-list li"),
+            { opacity: 0, x: 10 },
+            { opacity: 1, x: 0, duration: 0.4, stagger: 0.06, ease: "power2.out" },
             "-=0.4"
           );
-        }
 
-        // Capability 4: Studio control tags
-        const controlTags = row.querySelectorAll(".control-tag");
-        if (controlTags.length > 0) {
-          tl.fromTo(
-            controlTags,
-            { opacity: 0, y: 8 },
-            { opacity: 1, y: 0, duration: 0.4, stagger: 0.06, ease: "power2.out" },
-            "-=0.3"
-          );
-        }
+          // Capability 1: Power bar and metric tiles flourish
+          const powerBar = row.querySelector(".power-bar-fill");
+          if (powerBar) {
+            tl.fromTo(
+              powerBar,
+              { scaleX: 0, transformOrigin: "left center" },
+              { scaleX: 1, duration: 0.7, ease: "power2.out" },
+              "-=0.3"
+            );
+          }
+
+          // Capability 3: Schematic traces flourish
+          const traces = row.querySelectorAll(".schematic-trace");
+          if (traces.length > 0) {
+            tl.fromTo(
+              traces,
+              { scaleX: 0, opacity: 0 },
+              { scaleX: 1, opacity: 1, duration: 0.6, stagger: 0.08, ease: "power2.out" },
+              "-=0.35"
+            );
+          }
+
+          // Capability 4: Studio control tags
+          const controlTags = row.querySelectorAll(".control-tag");
+          if (controlTags.length > 0) {
+            tl.fromTo(
+              controlTags,
+              { opacity: 0, y: 8 },
+              { opacity: 1, y: 0, duration: 0.35, stagger: 0.05, ease: "power2.out" },
+              "-=0.25"
+            );
+          }
+        };
+
+        const playRowLeave = (direction = "down") => {
+          const exitY = direction === "down" ? -35 : 35;
+          gsap.to([cardBay, textBay], {
+            opacity: 0,
+            y: exitY,
+            scale: 0.98,
+            duration: 0.4,
+            ease: "power2.in",
+            overwrite: "auto",
+          });
+        };
+
+        ScrollTrigger.create({
+          trigger: row,
+          start: "top 85%",
+          end: "bottom 15%",
+          onEnter: () => playRowEnter("down"),
+          onLeave: () => playRowLeave("down"),
+          onEnterBack: () => playRowEnter("up"),
+          onLeaveBack: () => playRowLeave("up"),
+        });
       });
     }, sectionRef);
 
@@ -206,7 +249,7 @@ export default function PlatformServices() {
         </div>
 
         {/* ── SERVICE 1: COMPATIBILITY CHECKER (2 COLUMNS: LEFT TELEMETRY, RIGHT NARRATIVE) ── */}
-        <div className="service-showcase-row left-card-right-text">
+        <div id="service-compatibility" className="service-showcase-row left-card-right-text">
           {/* Column 1: Interactive Telemetry Card */}
           <div className="service-card-bay">
             <div
@@ -327,7 +370,7 @@ export default function PlatformServices() {
         </div>
 
         {/* ── SERVICE 2: COMPARE 2 RIGS (2 COLUMNS: LEFT NARRATIVE, RIGHT COMPARISON CARD) ── */}
-        <div className="service-showcase-row right-card-left-text">
+        <div id="service-compare" className="service-showcase-row right-card-left-text">
           {/* Column 1: Editorial Narrative & Action */}
           <div className="service-text-bay">
             <div className="service-kicker-tag kicker-amber">CAPABILITY 02 // MULTI-TIER EVALUATION</div>
@@ -463,7 +506,7 @@ export default function PlatformServices() {
         </div>
 
         {/* ── SERVICE 3: HARDWARE ACADEMY & COURSEWARE (2 COLUMNS: LEFT CARD, RIGHT NARRATIVE) ── */}
-        <div className="service-showcase-row left-card-right-text">
+        <div id="service-academy" className="service-showcase-row left-card-right-text">
           {/* Column 1: Interactive Academy Card */}
           <div className="service-card-bay">
             <div
@@ -546,7 +589,7 @@ export default function PlatformServices() {
         </div>
 
         {/* ── SERVICE 4: 3D VIRTUAL PC STUDIO (2 COLUMNS: LEFT NARRATIVE, RIGHT 3D PREVIEW) ── */}
-        <div className="service-showcase-row right-card-left-text">
+        <div id="service-3d-studio" className="service-showcase-row right-card-left-text">
           {/* Column 1: Editorial Narrative & Action */}
           <div className="service-text-bay">
             <div className="service-kicker-tag kicker-sky">CAPABILITY 04 // THREE.JS SIMULATION</div>
