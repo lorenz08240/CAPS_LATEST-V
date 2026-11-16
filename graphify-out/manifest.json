@@ -42,9 +42,9 @@
     "semantic_hash": ""
   },
   "frontend/package.json": {
-    "mtime": 1794176728.741037,
-    "seen": 1794176837.0670607,
-    "ast_hash": "e1b59e8e3bcdfee0f91f689f88a7982e",
+    "mtime": 1794818385.4120362,
+    "seen": 1794818981.8580604,
+    "ast_hash": "ad515fc0387daa372c1f44f452c91b79",
     "semantic_hash": ""
   },
   "frontend/postcss.config.js": {
@@ -90,9 +90,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Brands/Brands.jsx": {
-    "mtime": 1794812220.0028799,
-    "seen": 1794812240.3786771,
-    "ast_hash": "329b577078d07cd637df5048c875f089",
+    "mtime": 1794818674.40513,
+    "seen": 1794818981.8924823,
+    "ast_hash": "d75682b0361fa79938954b4cc2d5296f",
     "semantic_hash": ""
   },
   "frontend/src/components/Build/Build.jsx": {
@@ -114,9 +114,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Footer/Footer.jsx": {
-    "mtime": 1794571549.6306322,
-    "seen": 1794571661.4841478,
-    "ast_hash": "dfda56173e107a310ca49c2b161bf212",
+    "mtime": 1794817269.9885955,
+    "seen": 1794817496.554671,
+    "ast_hash": "04157c6050cbd86fd347e375e80db485",
     "semantic_hash": ""
   },
   "frontend/src/components/FullscreenGate/FullscreenGate.jsx": {
@@ -126,9 +126,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Home/Home.jsx": {
-    "mtime": 1794814854.2873385,
-    "seen": 1794814871.0229838,
-    "ast_hash": "b6f5f9d0c267c49648f97f5c29a6a9c1",
+    "mtime": 1794817402.6728144,
+    "seen": 1794817496.5555182,
+    "ast_hash": "411ef93e9faacdcbfbb6f35b3ad57413",
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/CourseShell.jsx": {
@@ -534,9 +534,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Navigation/GlobalHeader.jsx": {
-    "mtime": 1794812220.010747,
-    "seen": 1794812240.384438,
-    "ast_hash": "e88a49d1d8d64c681b11bfefee586aa1",
+    "mtime": 1794817296.0636923,
+    "seen": 1794817496.5591874,
+    "ast_hash": "615b79d4f078c11aead428fb3bd67d7a",
     "semantic_hash": ""
   },
   "frontend/src/components/Navigation/CyberBrand.jsx": {
@@ -899,6 +899,12 @@
     "ast_hash": "b5fb3025a0b979e67b23ef53d7b9ddcb",
     "semantic_hash": ""
   },
+  "frontend/src/components/Home/PlatformServices.jsx": {
+    "mtime": 1794818724.621797,
+    "seen": 1794818981.908539,
+    "ast_hash": "7d7e7915ecc4ca5377ec70f41743acbb",
+    "semantic_hash": ""
+  },
   "backend/package-lock.json": {
     "mtime": 1791800606.1768937,
     "seen": 1794206128.4804482,
@@ -906,9 +912,9 @@
     "semantic_hash": ""
   },
   "frontend/package-lock.json": {
-    "mtime": 1794176728.843809,
-    "seen": 1794206128.480452,
-    "ast_hash": "f4d6919a6221545e6c013e409c685cf6",
+    "mtime": 1794818386.6978264,
+    "seen": 1794818982.0814998,
+    "ast_hash": "0c6fc47eaf8415fe284f5df235694a53",
     "semantic_hash": ""
   }
 }

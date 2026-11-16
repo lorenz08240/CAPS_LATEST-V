@@ -15,11 +15,9 @@ export default function GlobalHeader({ onSearchClick, hideBuildPill = false }) {
 
   const navItems = [
     { label: 'HOME', path: '/' },
-    ...(!isFreeWorkbench ? [{ label: 'BUILD', path: '/build' }] : []),
-    { label: '3D STUDIO', path: '/3d-builder' },
     { label: 'COMPATIBILITY', path: '/compatibility' },
     { label: 'LEARN', path: '/learn' },
-    ...(!isFreeWorkbench ? [{ label: 'BRANDS', path: '/brands' }] : []),
+    { label: 'BRANDS', path: '/brands' },
     { label: 'ABOUT US', path: '/about' }
   ];
 

@@ -453,6 +453,48 @@
   justify-content: space-between;
   width: 100%;
   padding-bottom: 0.5rem;
+  transition: all 0.25s ease;
+}
+
+.cyber-top-nav.is-scrolled {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 0.85rem 3rem;
+  background: rgba(6, 8, 14, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.65);
+  animation: slideDownNav 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideDownNav {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.nav-reveal-item {
+  animation: navItemReveal 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes navItemReveal {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .cyber-brand {

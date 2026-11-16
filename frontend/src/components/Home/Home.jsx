@@ -5,6 +5,7 @@ import Brands from "../Brands/Brands";
 import Build from "../Build/Build";
 import Footer from "../Footer/Footer";
 import Home3DHero from "./Home3DHero";
+import PlatformServices from "./PlatformServices";
 import CyberBrand from "../Navigation/CyberBrand";
 import StageUnlockBanner from "../Navigation/StageUnlockBanner";
 import AccountSetupModal from "./AccountSetupModal";
@@ -34,26 +35,8 @@ function Home() {
   const [welcomeLearnerProfile, setWelcomeLearnerProfile] = useState(null);
   const [activeModel, setActiveModel] = useState('case');
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [isScrolledDown, setIsScrolledDown] = useState(false);
   const [startBuildRequested, setStartBuildRequested] = useState(false);
-
-  // ── Hero Section Scroll-Down Lock Mechanism:
-  // When the user enters the Hero section, scrolling down is locked until they press START BUILD.
-  // Once they press START BUILD, the page unlocks, smoothly scrolls to the build station (so B.O.B.
-  // gets his proper introduction), and the user can freely scroll up and down until CTRL+R reload.
-  const [hasClickedBuild, setHasClickedBuild] = useState(() => hasSessionUnlockedBuild);
-  const hasClickedBuildRef = useRef(hasSessionUnlockedBuild);
-
-  useEffect(() => {
-    hasClickedBuildRef.current = hasClickedBuild;
-  }, [hasClickedBuild]);
-
-  const unlockBuildScroll = useCallback(() => {
-    hasSessionUnlockedBuild = true;
-    setHasClickedBuild(true);
-    hasClickedBuildRef.current = true;
-    document.documentElement.style.overflow = "";
-    document.body.style.overflow = "";
-  }, []);
 
   const handleSelectMode = (targetMode) => {
     if (targetMode === "learn") {
@@ -140,131 +123,40 @@ function Home() {
       navigate('/compatibility');
     };
 
-    // Intercept START BUILD click events across the app
+    // Fluid, unlocked scrolling across the home page and services
     useEffect(() => {
-      const handleBuildClickedEvent = () => {
-        unlockBuildScroll();
-      };
-      window.addEventListener("buildlab:start-build-clicked", handleBuildClickedEvent);
-      return () => window.removeEventListener("buildlab:start-build-clicked", handleBuildClickedEvent);
-    }, [unlockBuildScroll]);
-
-    // Lock scrolling down until user presses START BUILD
-    useEffect(() => {
-      const applyInitialLock = () => {
-        if (!hasClickedBuildRef.current) {
-          document.documentElement.style.overflow = "hidden";
-          document.body.style.overflow = "hidden";
-          if (window.scrollY > 0) {
-            window.scrollTo(0, 0);
-          }
-        } else {
-          document.documentElement.style.overflow = "";
-          document.body.style.overflow = "";
-        }
-      };
-
-      applyInitialLock();
+      document.documentElement.style.overflow = "";
+      document.body.style.overflow = "";
 
       const handleScroll = () => {
+        const currentScroll = window.scrollY || window.pageYOffset || 0;
+        setIsScrolledDown(currentScroll > 90);
+
         const hero = document.getElementById("cyber-hero");
         if (hero) {
           const heroHeight = hero.offsetHeight || window.innerHeight;
-          const currentScroll = window.scrollY || window.pageYOffset || 0;
           const progress = Math.min(1, Math.max(0, currentScroll / (heroHeight * 0.85)));
           setScrollProgress(progress);
-        }
-
-        if (!hasClickedBuildRef.current) {
-          const currentY = window.scrollY || window.pageYOffset || 0;
-          if (currentY > 0) {
-            window.scrollTo(0, 0);
-          }
-        }
-      };
-
-      // Helper: detect if event is inside any scrollable modal/dialog or child container
-      const isInsideScrollableOrModal = (target) => {
-        if (!target || !(target instanceof Element)) return false;
-        if (
-          target.closest(
-            '.cookie-prefs-overlay, .cookie-prefs-dialog, .account-modal-overlay, [role="dialog"], [data-scrollable="true"]'
-          )
-        ) {
-          return true;
-        }
-        let el = target;
-        while (el && el !== document.body && el !== document.documentElement) {
-          const style = window.getComputedStyle(el);
-          const overflowY = style.overflowY;
-          if ((overflowY === "auto" || overflowY === "scroll") && el.scrollHeight > el.clientHeight) {
-            return true;
-          }
-          el = el.parentElement;
-        }
-        return false;
-      };
-
-      // Intercept wheel scrolling down
-      const handleWheel = (e) => {
-        if (isInsideScrollableOrModal(e.target)) return;
-        if (!hasClickedBuildRef.current && e.deltaY > 0) {
-          e.preventDefault();
-          e.stopPropagation();
-        }
-      };
-
-      // Intercept touch swiping up (which scrolls page down)
-      let touchStartY = 0;
-      const handleTouchStart = (e) => {
-        if (e.touches && e.touches.length > 0) {
-          touchStartY = e.touches[0].clientY;
-        }
-      };
-
-      const handleTouchMove = (e) => {
-        if (isInsideScrollableOrModal(e.target)) return;
-        if (!hasClickedBuildRef.current && e.touches && e.touches.length > 0) {
-          const deltaY = e.touches[0].clientY - touchStartY;
-          if (deltaY < 0) {
-            if (e.cancelable) e.preventDefault();
-            e.stopPropagation();
-          }
-        }
-      };
-
-      // Intercept navigation keys that scroll down (ArrowDown, PageDown, Space)
-      const handleKeyDown = (e) => {
-        if (isInsideScrollableOrModal(document.activeElement || e.target)) return;
-        if (!hasClickedBuildRef.current && ["ArrowDown", "PageDown", "Space", " "].includes(e.key)) {
-          e.preventDefault();
-          e.stopPropagation();
         }
       };
 
       window.addEventListener("scroll", handleScroll, { passive: true });
-      window.addEventListener("wheel", handleWheel, { passive: false });
-      window.addEventListener("touchstart", handleTouchStart, { passive: true });
-      window.addEventListener("touchmove", handleTouchMove, { passive: false });
-      window.addEventListener("keydown", handleKeyDown);
+      handleScroll();
 
-      // Support direct hash navigation (e.g. /#build-station)
-      if (window.location.hash === "#build-station" || window.location.search.includes("scroll=build")) {
+      // Support direct hash navigation (e.g. /#brands-station)
+      if (window.location.hash === "#brands-station") {
         setTimeout(() => {
-          handleScrollToBuild("instant");
+          const el = document.getElementById("brands-station");
+          if (el) el.scrollIntoView({ behavior: "smooth" });
         }, 400);
       }
 
       return () => {
         window.removeEventListener("scroll", handleScroll);
-        window.removeEventListener("wheel", handleWheel);
-        window.removeEventListener("touchstart", handleTouchStart);
-        window.removeEventListener("touchmove", handleTouchMove);
-        window.removeEventListener("keydown", handleKeyDown);
         document.documentElement.style.overflow = "";
         document.body.style.overflow = "";
       };
-    }, [unlockBuildScroll]);
+    }, []);
 
     const handleNavigateHome = () => {
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -277,7 +169,7 @@ function Home() {
             <div className="cyber-ambient-pink-spot" />
             <div className="cyber-ambient-grid" />
 
-            <header className="cyber-top-nav">
+            <header className={`cyber-top-nav ${isScrolledDown ? "is-scrolled" : ""}`}>
               <CyberBrand onNavigateHome={handleNavigateHome} />
 
               <nav className="cyber-nav-links">
@@ -288,36 +180,17 @@ function Home() {
                 >
                   HOME
                 </button>
-                {mode !== "explore" && (
+                {/* BUILD: Removed per user request */}
+                {/* 3D STUDIO: Button Gone per user request */}
+                {isScrolledDown && (
                   <button
                     type="button"
-                    className="cyber-nav-link"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      if (!hasClickedBuildRef.current) {
-                        handleStartBuildTrigger();
-                      } else {
-                        handleScrollToBuild("smooth");
-                      }
-                    }}
+                    className="cyber-nav-link nav-reveal-item"
+                    onClick={handleOpenCompatibility}
                   >
-                    BUILD
+                    COMPATIBILITY
                   </button>
                 )}
-                <button
-                  type="button"
-                  className="cyber-nav-link"
-                  onClick={handleLaunch3DStudio}
-                >
-                  3D STUDIO
-                </button>
-                <button
-                  type="button"
-                  className="cyber-nav-link"
-                  onClick={handleOpenCompatibility}
-                >
-                  COMPATIBILITY
-                </button>
                 <button
                   type="button"
                   className="cyber-nav-link"
@@ -325,15 +198,13 @@ function Home() {
                 >
                   LEARN
                 </button>
-                {mode !== "explore" && (
-                  <button
-                    type="button"
-                    className="cyber-nav-link"
-                    onClick={handleScrollToBrands}
-                  >
-                    BRANDS
-                  </button>
-                )}
+                <button
+                  type="button"
+                  className="cyber-nav-link"
+                  onClick={handleScrollToBrands}
+                >
+                  BRANDS
+                </button>
                 <button
                   type="button"
                   className="cyber-nav-link"
@@ -361,7 +232,7 @@ function Home() {
                   className="cyber-search-btn"
                   onClick={(e) => {
                     e.preventDefault();
-                    handleScrollToBuild("smooth");
+                    navigate("/build");
                   }}
                   title="Search Components"
                 >
@@ -495,18 +366,16 @@ function Home() {
             </div>
           </section>
 
-          {mode === "learn" ? (
-            <section id="build-station" className="home-integrated-section">
-              <Build isIntegrated={true} startBuildRequested={startBuildRequested} onBuildInteracted={unlockBuildScroll} />
-            </section>
-          ) : (
-            <>
-              <section id="brands-station" className="home-brands-section">
-                <Brands isIntegrated={true} />
-              </section>
-              <Footer />
-            </>
-          )}
+          {/* ── Platform Capabilities & Services Showcase ── */}
+          <PlatformServices />
+
+          {/* ── Certified Hardware Ecosystem & Brands ── */}
+          <section id="brands-station" className="home-brands-section">
+            <Brands isIntegrated={true} />
+          </section>
+
+          {/* ── Global Footer ── */}
+          <Footer />
         </div>
 
         {/* ── 2-Card Mode Selection (Split Staggered Reveal + PixelCanvas Hover) ── */}

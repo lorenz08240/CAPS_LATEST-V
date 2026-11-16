@@ -1,8 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import GlobalHeader from "../Navigation/GlobalHeader";
 import soundManager from "../../utilities/soundManager";
 import "./Brands.css";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const brandData = [
   { 
@@ -75,6 +79,111 @@ const brandData = [
 function Brands({ isIntegrated = false }) {
   const navigate = useNavigate();
   const [selectedBrand, setSelectedBrand] = useState(null);
+  const containerRef = useRef(null);
+
+  // Dynamic 3D card tilt & reactive lighting
+  const handleCardMouseMove = (e) => {
+    const card = e.currentTarget;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateX = ((y - centerY) / centerY) * -6;
+    const rotateY = ((x - centerX) / centerX) * 6;
+
+    card.style.setProperty("--mouse-x", `${x}px`);
+    card.style.setProperty("--mouse-y", `${y}px`);
+
+    gsap.to(card, {
+      rotateX,
+      rotateY,
+      duration: 0.25,
+      ease: "power2.out",
+      transformPerspective: 800,
+      overwrite: "auto",
+    });
+  };
+
+  const handleCardMouseLeave = (e) => {
+    const card = e.currentTarget;
+    gsap.to(card, {
+      rotateX: 0,
+      rotateY: 0,
+      duration: 0.45,
+      ease: "power2.out",
+      overwrite: "auto",
+    });
+  };
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // 1. Header reveal
+      gsap.fromTo(
+        ".brands-header",
+        { opacity: 0, y: 35 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.85,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: ".brands-header",
+            start: "top 85%",
+            toggleActions: "play none none reverse",
+          },
+        }
+      );
+
+      // 2. GreenSock ScrollTrigger.batch for brand cards (KKXZOyZ style)
+      ScrollTrigger.batch(".brand-logo-card", {
+        interval: 0.08,
+        batchMax: 4,
+        onEnter: (batch) =>
+          gsap.fromTo(
+            batch,
+            { opacity: 0, y: 40, scale: 0.94 },
+            {
+              opacity: 1,
+              y: 0,
+              scale: 1,
+              stagger: 0.08,
+              duration: 0.7,
+              ease: "power3.out",
+              overwrite: "auto",
+            }
+          ),
+        onLeaveBack: (batch) =>
+          gsap.to(batch, {
+            opacity: 0,
+            y: 40,
+            scale: 0.94,
+            stagger: 0.04,
+            duration: 0.4,
+            overwrite: "auto",
+          }),
+      });
+
+      // 3. Back to Top Button reveal
+      gsap.fromTo(
+        ".brands-footer",
+        { opacity: 0, y: 25 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.75,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: ".brands-footer",
+            start: "top 92%",
+            toggleActions: "play none none reverse",
+          },
+        }
+      );
+    }, containerRef);
+
+    return () => ctx.revert();
+  }, []);
 
   const handleBrandClick = (brand) => {
     try { soundManager.click(); } catch {}
@@ -83,19 +192,15 @@ function Brands({ isIntegrated = false }) {
 
   const handleJumpToBuilder = (brandName) => {
     try { soundManager.click(); } catch {}
-    if (isIntegrated) {
-      window.dispatchEvent(new CustomEvent("buildlab:filter-by-brand", { detail: { brand: brandName } }));
-      const buildStation = document.getElementById("build-station") || document.getElementById("build-main-area");
-      if (buildStation) {
-        buildStation.scrollIntoView({ behavior: "smooth" });
-      }
-    } else {
-      navigate(`/build?search=${encodeURIComponent(brandName)}`);
-    }
+    navigate(`/build?search=${encodeURIComponent(brandName)}`);
   };
 
   return (
-    <div className={`brands-page ${isIntegrated ? 'integrated-section' : ''}`} id="brands-station">
+    <div
+      className={`brands-page ${isIntegrated ? 'integrated-section' : ''}`}
+      id="brands-station"
+      ref={containerRef}
+    >
       {!isIntegrated && <GlobalHeader />}
 
       <div className="brands-container-wrap">
@@ -123,6 +228,8 @@ function Brands({ isIntegrated = false }) {
               key={brand.id} 
               className={`brand-logo-card ${selectedBrand?.id === brand.id ? 'active-brand' : ''}`}
               onClick={() => handleBrandClick(brand)}
+              onMouseMove={handleCardMouseMove}
+              onMouseLeave={handleCardMouseLeave}
               title={`Click to view ${brand.name} components`}
             >
               <div className="brand-logo-wrapper">
@@ -185,31 +292,18 @@ function Brands({ isIntegrated = false }) {
         )}
 
         <div className="brands-footer">
-          {isIntegrated ? (
-            <button 
-              type="button" 
-              className="btn-brand-primary"
-              onClick={() => {
-                try { soundManager.click(); } catch {}
-                const el = document.getElementById("build-station") || document.getElementById("build-main-area");
-                if (el) el.scrollIntoView({ behavior: "smooth" });
-              }}
-            >
-              <span>BACK TO 2D BUILDER</span>
-              <span className="arrow">&uarr;</span>
-            </button>
-          ) : (
-            <Link to="/build" className="btn-brand-primary">
-              <span>START PC BUILD</span>
-              <span className="arrow">&rarr;</span>
-            </Link>
-          )}
-          <Link to="/3d-builder" className="btn-brand-secondary">
-            <span>3D SIMULATION STUDIO</span>
-          </Link>
-          <Link to="/learn" className="btn-brand-outline">
-            <span>EXPLORE ACADEMY</span>
-          </Link>
+          <button 
+            type="button" 
+            className="btn-brand-primary back-to-top-btn"
+            onClick={() => {
+              try { soundManager.click(); } catch {}
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+            title="Scroll back to top of page"
+          >
+            <span>Back to Top</span>
+            <span className="arrow">&uarr;</span>
+          </button>
         </div>
       </div>
     </div>
