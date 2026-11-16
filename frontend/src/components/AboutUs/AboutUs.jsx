@@ -418,28 +418,16 @@ export default function AboutUs() {
       // 1. Hero Intel Section
       ScrollTrigger.create({
         trigger: ".about-hero-section",
-        start: "top 85%",
-        end: "bottom 15%",
+        start: "top 90%",
         onEnter: () =>
-          gsap.fromTo(
-            ".about-hero-section",
-            { opacity: 0, y: 35, scale: 0.98 },
-            { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: "power3.out", overwrite: "auto" }
-          ),
-        onLeave: () =>
           gsap.to(".about-hero-section", {
-            opacity: 0,
-            y: -25,
-            duration: 0.35,
-            ease: "power2.in",
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.7,
+            ease: "power2.out",
             overwrite: "auto",
           }),
-        onEnterBack: () =>
-          gsap.fromTo(
-            ".about-hero-section",
-            { opacity: 0, y: -25, scale: 0.98 },
-            { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: "power3.out", overwrite: "auto" }
-          ),
         onLeaveBack: () =>
           gsap.to(".about-hero-section", {
             opacity: 0,
@@ -450,140 +438,80 @@ export default function AboutUs() {
           }),
       });
 
-      // 2. Team Members Cards Batch (Bidirectional KKXZOyZ pattern)
+      // 2. Team Members Cards Batch (Smooth staggered reveal; reverses only on scroll-back-up)
       ScrollTrigger.batch(".team-member-card, .about-member-card", {
-        interval: 0.08,
+        interval: 0.06,
         batchMax: 3,
         start: "top 88%",
-        end: "bottom 12%",
         onEnter: (batch) =>
-          gsap.fromTo(
-            batch,
-            { opacity: 0, y: 40, scale: 0.95 },
-            {
-              opacity: 1,
-              y: 0,
-              scale: 1,
-              stagger: 0.08,
-              duration: 0.65,
-              ease: "power3.out",
-              overwrite: "auto",
-            }
-          ),
-        onLeave: (batch) =>
           gsap.to(batch, {
-            opacity: 0,
-            y: -35,
-            scale: 0.95,
-            stagger: 0.04,
-            duration: 0.35,
-            ease: "power2.in",
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            stagger: 0.08,
+            duration: 0.65,
+            ease: "power2.out",
             overwrite: "auto",
           }),
-        onEnterBack: (batch) =>
-          gsap.fromTo(
-            batch,
-            { opacity: 0, y: -35, scale: 0.95 },
-            {
-              opacity: 1,
-              y: 0,
-              scale: 1,
-              stagger: 0.08,
-              duration: 0.65,
-              ease: "power3.out",
-              overwrite: "auto",
-            }
-          ),
-        onLeaveBack: (batch) =>
-          gsap.to(batch, {
-            opacity: 0,
-            y: 40,
-            scale: 0.95,
-            stagger: 0.04,
-            duration: 0.35,
-            ease: "power2.in",
-            overwrite: "auto",
-          }),
-      });
-
-      // 3. Showcase Flagship & Project Cards Batch (Bidirectional)
-      ScrollTrigger.batch(".flagship-atelier-card, .project-showcase-card, .manifesto-card, .showcase-flagship-card, .project-card", {
-        interval: 0.08,
-        batchMax: 3,
-        start: "top 88%",
-        end: "bottom 12%",
-        onEnter: (batch) =>
-          gsap.fromTo(
-            batch,
-            { opacity: 0, y: 40, scale: 0.96 },
-            {
-              opacity: 1,
-              y: 0,
-              scale: 1,
-              stagger: 0.09,
-              duration: 0.7,
-              ease: "power3.out",
-              overwrite: "auto",
-            }
-          ),
-        onLeave: (batch) =>
-          gsap.to(batch, {
-            opacity: 0,
-            y: -30,
-            scale: 0.96,
-            stagger: 0.04,
-            duration: 0.35,
-            ease: "power2.in",
-            overwrite: "auto",
-          }),
-        onEnterBack: (batch) =>
-          gsap.fromTo(
-            batch,
-            { opacity: 0, y: -30, scale: 0.96 },
-            {
-              opacity: 1,
-              y: 0,
-              scale: 1,
-              stagger: 0.09,
-              duration: 0.7,
-              ease: "power3.out",
-              overwrite: "auto",
-            }
-          ),
         onLeaveBack: (batch) =>
           gsap.to(batch, {
             opacity: 0,
             y: 35,
             scale: 0.96,
-            stagger: 0.04,
             duration: 0.35,
             ease: "power2.in",
             overwrite: "auto",
           }),
       });
 
-      // 4. Origin & Tech Stack Sections (Bidirectional)
-      ScrollTrigger.batch(".origin-card, .arch-card, .stat-card, .tech-category-card", {
-        interval: 0.08,
+      // 3. Showcase Flagship & Project Cards Batch
+      ScrollTrigger.batch(".flagship-atelier-card, .project-showcase-card, .manifesto-card, .showcase-flagship-card, .project-card", {
+        interval: 0.06,
         batchMax: 3,
         start: "top 88%",
-        end: "bottom 12%",
         onEnter: (batch) =>
-          gsap.fromTo(
-            batch,
-            { opacity: 0, y: 35 },
-            { opacity: 1, y: 0, stagger: 0.08, duration: 0.65, ease: "power3.out", overwrite: "auto" }
-          ),
-        onLeave: (batch) =>
-          gsap.to(batch, { opacity: 0, y: -25, stagger: 0.04, duration: 0.35, ease: "power2.in", overwrite: "auto" }),
-        onEnterBack: (batch) =>
-          gsap.fromTo(
-            batch,
-            { opacity: 0, y: -25 },
-            { opacity: 1, y: 0, stagger: 0.08, duration: 0.65, ease: "power3.out", overwrite: "auto" }
-          ),
+          gsap.to(batch, {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            stagger: 0.08,
+            duration: 0.65,
+            ease: "power2.out",
+            overwrite: "auto",
+          }),
         onLeaveBack: (batch) =>
-          gsap.to(batch, { opacity: 0, y: 30, stagger: 0.04, duration: 0.35, ease: "power2.in", overwrite: "auto" }),
+          gsap.to(batch, {
+            opacity: 0,
+            y: 35,
+            scale: 0.96,
+            duration: 0.35,
+            ease: "power2.in",
+            overwrite: "auto",
+          }),
+      });
+
+      // 4. Origin & Tech Stack Sections
+      ScrollTrigger.batch(".origin-card, .arch-card, .stat-card, .tech-category-card", {
+        interval: 0.06,
+        batchMax: 3,
+        start: "top 88%",
+        onEnter: (batch) =>
+          gsap.to(batch, {
+            opacity: 1,
+            y: 0,
+            stagger: 0.06,
+            duration: 0.6,
+            ease: "power2.out",
+            overwrite: "auto",
+          }),
+        onLeaveBack: (batch) =>
+          gsap.to(batch, {
+            opacity: 0,
+            y: 30,
+            duration: 0.35,
+            ease: "power2.in",
+            overwrite: "auto",
+          }),
       });
     }, aboutPageRef);
 
