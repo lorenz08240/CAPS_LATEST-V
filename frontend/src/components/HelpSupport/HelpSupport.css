@@ -612,3 +612,106 @@
     padding-left: 1.4rem;
   }
 }
+
+/* ═════════════════════════════════════════════════════════════════════
+   LIGHT MODE COMPREHENSIVE STYLING (Soft Titanium / Crisp Slate Laboratory)
+   ═════════════════════════════════════════════ */
+body.theme-light .help-support-page,
+.theme-light .help-support-page,
+[data-theme="light"] .help-support-page {
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+body.theme-light .help-hero-card,
+.theme-light .help-hero-card,
+[data-theme="light"] .help-hero-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.98) 100%);
+  border-color: rgba(5, 150, 105, 0.25);
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.06);
+}
+
+body.theme-light .help-hero-title,
+.theme-light .help-hero-title,
+[data-theme="light"] .help-hero-title {
+  color: #0f172a;
+}
+
+body.theme-light .help-hero-desc,
+.theme-light .help-hero-desc,
+[data-theme="light"] .help-hero-desc {
+  color: #475569;
+}
+
+body.theme-light .help-quick-chip,
+.theme-light .help-quick-chip,
+[data-theme="light"] .help-quick-chip {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.12);
+  color: #334155;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+}
+
+body.theme-light .help-quick-chip:hover,
+.theme-light .help-quick-chip:hover,
+[data-theme="light"] .help-quick-chip:hover {
+  background: #f1f5f9;
+  border-color: #059669;
+  color: #047857;
+}
+
+body.theme-light .symptom-card-btn,
+.theme-light .symptom-card-btn,
+[data-theme="light"] .symptom-card-btn {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.1);
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+}
+
+body.theme-light .symptom-card-btn:hover,
+.theme-light .symptom-card-btn:hover,
+[data-theme="light"] .symptom-card-btn:hover {
+  background: #ffffff;
+  border-color: rgba(2, 132, 199, 0.4);
+  box-shadow: 0 8px 24px rgba(2, 132, 199, 0.08);
+}
+
+body.theme-light .symptom-card-btn.active,
+.theme-light .symptom-card-btn.active,
+[data-theme="light"] .symptom-card-btn.active {
+  background: #ffffff;
+  border-color: #0284c7;
+  box-shadow: 0 0 16px rgba(2, 132, 199, 0.15);
+}
+
+body.theme-light .symptom-card-title,
+.theme-light .symptom-card-title,
+[data-theme="light"] .symptom-card-title {
+  color: #0f172a;
+}
+
+body.theme-light .symptom-card-desc,
+.theme-light .symptom-card-desc,
+[data-theme="light"] .symptom-card-desc {
+  color: #64748b;
+}
+
+body.theme-light .diagnosis-result-bay,
+.theme-light .diagnosis-result-bay,
+[data-theme="light"] .diagnosis-result-bay {
+  background: #ffffff;
+  border-color: rgba(2, 132, 199, 0.3);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+}
+
+body.theme-light .diagnosis-title,
+.theme-light .diagnosis-title,
+[data-theme="light"] .diagnosis-title {
+  color: #0f172a;
+}
+
+body.theme-light .diagnosis-explanation,
+.theme-light .diagnosis-explanation,
+[data-theme="light"] .diagnosis-explanation {
+  color: #475569;
+}

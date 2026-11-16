@@ -2525,6 +2525,149 @@
   line-height: 1;
 }
 
+/* ═════════════════════════════════════════════════════════════════════
+   LIGHT MODE COMPREHENSIVE STYLING (Soft Titanium / Crisp Slate Laboratory)
+   ═════════════════════════════════════════════ */
+body.theme-light .compat-page,
+.theme-light .compat-page,
+[data-theme="light"] .compat-page {
+  background-color: #f8fafc;
+  color: #0f172a;
+  background-image:
+    linear-gradient(rgba(248, 250, 252, 0.92), rgba(248, 250, 252, 0.97)),
+    url("/assets/compatibility_bg.jpg");
+}
+
+body.theme-light .compat-hero-title,
+body.theme-light .overview-title,
+.theme-light .compat-hero-title,
+.theme-light .overview-title,
+[data-theme="light"] .compat-hero-title,
+[data-theme="light"] .overview-title {
+  color: #0f172a !important;
+  text-shadow: none !important;
+}
+
+body.theme-light .compat-hero-subtitle,
+body.theme-light .overview-sub,
+.theme-light .compat-hero-subtitle,
+.theme-light .overview-sub,
+[data-theme="light"] .compat-hero-subtitle,
+[data-theme="light"] .overview-sub {
+  color: #475569 !important;
+}
+
+body.theme-light .glass-panel,
+body.theme-light .rig-workbench-card,
+body.theme-light .compat-compare-launcher-card,
+body.theme-light .compare-dedicated-overview-card,
+body.theme-light .compat-learn-unlock-card,
+.theme-light .glass-panel,
+.theme-light .rig-workbench-card,
+.theme-light .compat-compare-launcher-card,
+.theme-light .compare-dedicated-overview-card,
+.theme-light .compat-learn-unlock-card,
+[data-theme="light"] .glass-panel,
+[data-theme="light"] .rig-workbench-card,
+[data-theme="light"] .compat-compare-launcher-card,
+[data-theme="light"] .compare-dedicated-overview-card,
+[data-theme="light"] .compat-learn-unlock-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(15, 23, 42, 0.1);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+  color: #0f172a;
+}
+
+body.theme-light .compat-back-build-btn,
+.theme-light .compat-back-build-btn,
+[data-theme="light"] .compat-back-build-btn {
+  background: #ffffff;
+  border-color: rgba(244, 63, 94, 0.4);
+  color: #e11d48;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+}
+
+body.theme-light .compat-back-build-btn:hover,
+.theme-light .compat-back-build-btn:hover,
+[data-theme="light"] .compat-back-build-btn:hover {
+  background: #fff1f2;
+  border-color: #e11d48;
+  color: #be123c;
+}
+
+body.theme-light .compat-banner-alert,
+.theme-light .compat-banner-alert,
+[data-theme="light"] .compat-banner-alert {
+  background: rgba(254, 226, 226, 0.9);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #991b1b;
+}
+
+body.theme-light .spec-item-row,
+.theme-light .spec-item-row,
+[data-theme="light"] .spec-item-row {
+  background: #f8fafc;
+  border-color: rgba(15, 23, 42, 0.07);
+}
+
+body.theme-light .spec-item-row:hover,
+.theme-light .spec-item-row:hover,
+[data-theme="light"] .spec-item-row:hover {
+  background: #f1f5f9;
+  border-color: rgba(5, 150, 105, 0.35);
+}
+
+body.theme-light .spec-val-primary,
+.theme-light .spec-val-primary,
+[data-theme="light"] .spec-val-primary {
+  color: #0f172a;
+}
+
+body.theme-light .spec-label-sub,
+.theme-light .spec-label-sub,
+[data-theme="light"] .spec-label-sub {
+  color: #64748b;
+}
+
+body.theme-light .slot-indicator-badge,
+.theme-light .slot-indicator-badge,
+[data-theme="light"] .slot-indicator-badge {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.12);
+  color: #334155;
+}
+
+body.theme-light .slot-indicator-badge.is-saved,
+.theme-light .slot-indicator-badge.is-saved,
+[data-theme="light"] .slot-indicator-badge.is-saved {
+  background: rgba(5, 150, 105, 0.1);
+  border-color: rgba(5, 150, 105, 0.35);
+  color: #047857;
+}
+
+body.theme-light .btn-save-slot,
+.theme-light .btn-save-slot,
+[data-theme="light"] .btn-save-slot {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.14);
+  color: #334155;
+}
+
+body.theme-light .btn-save-slot:hover,
+.theme-light .btn-save-slot:hover,
+[data-theme="light"] .btn-save-slot:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+body.theme-light .brand-monogram-pill,
+.theme-light .brand-monogram-pill,
+[data-theme="light"] .brand-monogram-pill {
+  background: #f8fafc;
+  border-color: rgba(15, 23, 42, 0.1);
+}
+
+
 
 
 

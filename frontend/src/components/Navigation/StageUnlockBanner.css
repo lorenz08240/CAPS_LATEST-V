@@ -436,3 +436,34 @@
 .unlock-windowed-sub-btn:hover {
   color: #e2e8f0;
 }
+
+/* ═════════════════════════════════════════════════════════════════════
+   LIGHT MODE COMPREHENSIVE STYLING (Soft Titanium / Crisp Slate Laboratory)
+   ═════════════════════════════════════════════ */
+body.theme-light .stage-unlock-card,
+.theme-light .stage-unlock-card,
+[data-theme="light"] .stage-unlock-card {
+  background: rgba(255, 255, 255, 0.96);
+  border-color: rgba(5, 150, 105, 0.3);
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.14), 0 0 35px rgba(5, 150, 105, 0.1);
+}
+
+body.theme-light .unlock-title,
+.theme-light .unlock-title,
+[data-theme="light"] .unlock-title {
+  color: #0f172a;
+}
+
+body.theme-light .unlock-subtitle,
+.theme-light .unlock-subtitle,
+[data-theme="light"] .unlock-subtitle {
+  color: #475569;
+}
+
+body.theme-light .unlock-progress-flow,
+.theme-light .unlock-progress-flow,
+[data-theme="light"] .unlock-progress-flow {
+  background: #f8fafc;
+  border-color: rgba(15, 23, 42, 0.08);
+}
+
