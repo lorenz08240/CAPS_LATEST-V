@@ -102,9 +102,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Compatibility/Compatibility.jsx": {
-    "mtime": 1794813920.3598566,
-    "seen": 1794813956.1415427,
-    "ast_hash": "30b8ccb9aa409e100b8ed6dddcf35e08",
+    "mtime": 1794820216.763179,
+    "seen": 1794820369.0032163,
+    "ast_hash": "915cf41b94ff4f81519254e39e18c6d6",
     "semantic_hash": ""
   },
   "frontend/src/components/FeatureCarousel/FeatureCarousel.jsx": {
@@ -126,9 +126,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Home/Home.jsx": {
-    "mtime": 1794820006.3767283,
-    "seen": 1794820085.429422,
-    "ast_hash": "c36f1f16ffe16221a579e026cacd092e",
+    "mtime": 1794820182.3821003,
+    "seen": 1794820369.0062637,
+    "ast_hash": "295b33976cb6ae138e3a639cd1cae5ab",
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/CourseShell.jsx": {

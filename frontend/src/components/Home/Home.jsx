@@ -320,16 +320,19 @@ function Home() {
               }}
             >
               <h1 className="giant-bg-text" aria-label="BUILDLAB">
-                <span className="giant-bg-txt">BUILDL</span>
-                <span className="giant-bg-logo-slot" aria-hidden="true">
-                  <img
-                    src={buildlabLogoTight}
-                    alt=""
-                    className="giant-bg-logo-img"
-                    draggable={false}
-                  />
+                <span className="giant-bg-word">BUILD</span>
+                <span className="giant-bg-word giant-bg-lab">
+                  <span className="giant-bg-txt">L</span>
+                  <span className="giant-bg-logo-slot" aria-hidden="true">
+                    <img
+                      src={buildlabLogoTight}
+                      alt=""
+                      className="giant-bg-logo-img"
+                      draggable={false}
+                    />
+                  </span>
+                  <span className="giant-bg-txt">B</span>
                 </span>
-                <span className="giant-bg-txt">B</span>
               </h1>
             </div>
 

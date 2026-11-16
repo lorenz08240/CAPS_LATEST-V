@@ -38,6 +38,7 @@
   padding: 24px 20px 80px;
   position: relative;
   overflow-x: hidden;
+  perspective: 1100px;
   background-image:
     linear-gradient(rgba(11, 14, 20, 0.55), rgba(11, 14, 20, 0.72)),
     url("/assets/compatibility_bg.jpg");
@@ -45,6 +46,16 @@
   background-position: center center;
   background-attachment: fixed;
   background-repeat: no-repeat;
+}
+
+.compat-hero-title-header,
+.rig-workbench-card,
+.compat-compare-launcher-card,
+.compare-dedicated-overview-card,
+.compat-learn-unlock-card,
+.spec-item-row {
+  will-change: transform, opacity;
+  transform-style: preserve-3d;
 }
 
 .compat-page.integrated-view {

@@ -743,13 +743,13 @@
 /* 3. GIGANTIC BACKGROUND TYPOGRAPHY (Layered behind 3D Canvas) */
 .cyber-giant-text-backdrop {
   position: absolute;
-  top: 35%;
+  top: 24%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 2;
   pointer-events: none;
   width: 90vw;
-  max-width: 1360px;
+  max-width: 1400px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -779,6 +779,15 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+
+.giant-bg-word {
+  display: inline-flex;
+  align-items: center;
+}
+
+.giant-bg-word + .giant-bg-word {
+  margin-left: 0.12em;
 }
 
 .giant-bg-txt {

@@ -606,9 +606,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/AboutUs/AboutUs.jsx": {
-    "mtime": 1794820061.162109,
-    "seen": 1794820085.4156797,
-    "ast_hash": "5e8d784e3933cd8fb0ca02aadf1d93f7",
+    "mtime": 1794820117.9754987,
+    "seen": 1794820158.4486628,
+    "ast_hash": "a5f7f824207020710462eba3c87657bb",
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/AdminLogs.jsx": {

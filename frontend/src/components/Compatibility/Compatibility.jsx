@@ -3,6 +3,8 @@ import jsPDF from "jspdf";
 import EyeTracker from "../EyeTracker/EyeTracker";
 import { createPortal } from "react-dom";
 import { Link, useNavigate } from "react-router-dom";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useBuild } from "../../contexts/BuildContext";
 import { useLearnMode } from "../../contexts/LearnModeContext";
 import { getCompatibilitySummary } from "../../utilities/rules";
@@ -13,6 +15,8 @@ import FullscreenGate from "../FullscreenGate/FullscreenGate";
 import GlobalHeader from "../Navigation/GlobalHeader";
 import StageUnlockBanner from "../Navigation/StageUnlockBanner";
 import "./Compatibility.css";
+
+gsap.registerPlugin(ScrollTrigger);
 
 // Built-in presets for instant side-by-side comparison (Free Workbench mode)
 const PRESET_ENTHUSIAST_RIG = {
@@ -277,6 +281,7 @@ function CompatibilityView({ isIntegrated = false }) {
   const navigate = useNavigate();
   const { mode, seenBanners, markBannerSeen, unlockStage } = useLearnMode();
   const isLearnMode = mode === "learn";
+  const compatContainerRef = useRef(null);
 
   const [showUnlockBanner, setShowUnlockBanner] = useState(() => isLearnMode && !seenBanners?.compatibility);
   const {
@@ -554,6 +559,86 @@ function CompatibilityView({ isIntegrated = false }) {
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // GSAP ScrollTrigger bidirectional cinematic reveals (Down & Up scroll)
+  useEffect(() => {
+    if (!compatContainerRef.current) return;
+
+    const ctx = gsap.context(() => {
+      // 1. Header Reveal (Bidirectional)
+      ScrollTrigger.create({
+        trigger: ".compat-hero-title-header",
+        start: "top 85%",
+        end: "bottom 15%",
+        onEnter: () =>
+          gsap.fromTo(
+            ".compat-hero-title-header",
+            { opacity: 0, y: 35, scale: 0.98 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: "power3.out", overwrite: "auto" }
+          ),
+        onLeave: () =>
+          gsap.to(".compat-hero-title-header", { opacity: 0, y: -25, duration: 0.35, ease: "power2.in", overwrite: "auto" }),
+        onEnterBack: () =>
+          gsap.fromTo(
+            ".compat-hero-title-header",
+            { opacity: 0, y: -25, scale: 0.98 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: "power3.out", overwrite: "auto" }
+          ),
+        onLeaveBack: () =>
+          gsap.to(".compat-hero-title-header", { opacity: 0, y: 25, duration: 0.35, ease: "power2.in", overwrite: "auto" }),
+      });
+
+      // 2. Primary Rig & Compare Cards (Bidirectional Batch)
+      ScrollTrigger.batch(".rig-workbench-card, .compat-compare-launcher-card, .compare-dedicated-overview-card, .compat-learn-unlock-card", {
+        interval: 0.08,
+        batchMax: 2,
+        start: "top 88%",
+        end: "bottom 12%",
+        onEnter: (batch) =>
+          gsap.fromTo(
+            batch,
+            { opacity: 0, y: 40, scale: 0.97 },
+            { opacity: 1, y: 0, scale: 1, stagger: 0.08, duration: 0.7, ease: "power3.out", overwrite: "auto" }
+          ),
+        onLeave: (batch) =>
+          gsap.to(batch, { opacity: 0, y: -30, scale: 0.97, duration: 0.35, ease: "power2.in", overwrite: "auto" }),
+        onEnterBack: (batch) =>
+          gsap.fromTo(
+            batch,
+            { opacity: 0, y: -30, scale: 0.97 },
+            { opacity: 1, y: 0, scale: 1, stagger: 0.08, duration: 0.7, ease: "power3.out", overwrite: "auto" }
+          ),
+        onLeaveBack: (batch) =>
+          gsap.to(batch, { opacity: 0, y: 35, scale: 0.97, duration: 0.35, ease: "power2.in", overwrite: "auto" }),
+      });
+
+      // 3. Hardware Spec Rows Cascade (Bidirectional Batch)
+      ScrollTrigger.batch(".spec-item-row", {
+        interval: 0.04,
+        batchMax: 7,
+        start: "top 92%",
+        end: "bottom 8%",
+        onEnter: (batch) =>
+          gsap.fromTo(
+            batch,
+            { opacity: 0, x: -15 },
+            { opacity: 1, x: 0, stagger: 0.04, duration: 0.45, ease: "power2.out", overwrite: "auto" }
+          ),
+        onLeave: (batch) =>
+          gsap.to(batch, { opacity: 0, x: -10, duration: 0.25, ease: "power2.in", overwrite: "auto" }),
+        onEnterBack: (batch) =>
+          gsap.fromTo(
+            batch,
+            { opacity: 0, x: -15 },
+            { opacity: 1, x: 0, stagger: 0.04, duration: 0.45, ease: "power2.out", overwrite: "auto" }
+          ),
+        onLeaveBack: (batch) =>
+          gsap.to(batch, { opacity: 0, x: 10, duration: 0.25, ease: "power2.in", overwrite: "auto" }),
+      });
+    }, compatContainerRef);
+
+    return () => ctx.revert();
+  }, [selectedComponents, showRig2, rig2]);
 
   const handleSave = (slot) => {
     saveBuildSnapshot(slot);
@@ -1341,7 +1426,7 @@ function CompatibilityView({ isIntegrated = false }) {
           document.body
         )}
 
-      <div className={`compat-page ${isIntegrated ? "integrated-view" : ""}`}>
+      <div ref={compatContainerRef} className={`compat-page ${isIntegrated ? "integrated-view" : ""}`}>
         {/* Stage Unlock Banner for Learn Track */}
         {showUnlockBanner && isLearnMode && (
           <StageUnlockBanner
