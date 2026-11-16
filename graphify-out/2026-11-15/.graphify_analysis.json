@@ -1,0 +1,451 @@
+{
+  "communities": {
+    "0": [
+      "backend_config_db",
+      "backend_config_db_pool",
+      "backend_crawler",
+      "backend_crawler_initscrapedtable",
+      "backend_crawler_runcrawler",
+      "backend_crawler_scrapeeasypc",
+      "backend_package",
+      "backend_package_author",
+      "backend_package_dependencies",
+      "backend_package_dependencies_axios",
+      "backend_package_dependencies_cors",
+      "backend_package_dependencies_dotenv",
+      "backend_package_dependencies_express",
+      "backend_package_dependencies_mysql2",
+      "backend_package_description",
+      "backend_package_devdependencies",
+      "backend_package_devdependencies_nodemon",
+      "backend_package_keywords",
+      "backend_package_license",
+      "backend_package_main",
+      "backend_package_name",
+      "backend_package_scripts",
+      "backend_package_scripts_dev",
+      "backend_package_scripts_start",
+      "backend_package_scripts_test",
+      "backend_package_version",
+      "backend_server",
+      "backend_server_adminauth",
+      "backend_server_app",
+      "ref_axios",
+      "ref_child_process",
+      "ref_cors",
+      "ref_dotenv",
+      "ref_express",
+      "ref_mysql2",
+      "ref_nodemon"
+    ],
+    "1": [
+      "frontend_eslint_config",
+      "frontend_package",
+      "frontend_package_dependencies",
+      "frontend_package_dependencies_motion",
+      "frontend_package_dependencies_react",
+      "frontend_package_dependencies_react_dom",
+      "frontend_package_dependencies_react_router_dom",
+      "frontend_package_dependencies_react_three_drei",
+      "frontend_package_dependencies_react_three_fiber",
+      "frontend_package_dependencies_three",
+      "frontend_package_name",
+      "frontend_package_private",
+      "frontend_package_scripts",
+      "frontend_package_scripts_build",
+      "frontend_package_scripts_dev",
+      "frontend_package_scripts_lint",
+      "frontend_package_scripts_preview",
+      "frontend_package_scripts_start",
+      "frontend_package_type",
+      "frontend_package_version",
+      "frontend_vite_config",
+      "ref_autoprefixer",
+      "ref_eslint",
+      "ref_eslint_js",
+      "ref_eslint_plugin_react_hooks",
+      "ref_eslint_plugin_react_refresh",
+      "ref_globals",
+      "ref_postcss",
+      "ref_tailwindcss",
+      "ref_tailwindcss_postcss",
+      "ref_types_react",
+      "ref_types_react_dom",
+      "ref_vite",
+      "ref_vitejs_plugin_react"
+    ],
+    "2": [
+      "frontend_src_app",
+      "frontend_src_app_app",
+      "frontend_src_app_appcontent",
+      "frontend_src_app_scrolltotop",
+      "frontend_src_components_brands_brands",
+      "frontend_src_components_brands_brands_branddata",
+      "frontend_src_components_brands_brands_brands",
+      "frontend_src_components_footer_footer",
+      "frontend_src_components_footer_footer_footer",
+      "frontend_src_components_navbar_navbar",
+      "frontend_src_components_navbar_navbar_navbar",
+      "frontend_src_contexts_authcontext",
+      "frontend_src_contexts_authcontext_authcontext",
+      "frontend_src_contexts_authcontext_authprovider",
+      "frontend_src_contexts_authcontext_useauth",
+      "frontend_src_contexts_buildcontext_buildprovider",
+      "frontend_src_contexts_themecontext",
+      "frontend_src_contexts_themecontext_themecontext",
+      "frontend_src_contexts_themecontext_themeprovider",
+      "frontend_src_contexts_themecontext_usetheme",
+      "frontend_src_index",
+      "frontend_src_main",
+      "frontend_src_utilities_pagetransitions",
+      "frontend_src_utilities_pagetransitions_ease",
+      "frontend_src_utilities_pagetransitions_motion_props",
+      "frontend_src_utilities_pagetransitions_motionpage",
+      "ref_motion",
+      "ref_react",
+      "ref_react_dom",
+      "ref_react_router_dom"
+    ],
+    "3": [
+      "frontend_src_components_3d_componentmodels3d",
+      "frontend_src_components_3d_componentmodels3d_componentmodels3d",
+      "frontend_src_components_3d_componentmodels3d_gpufanrotor",
+      "frontend_src_components_3d_genericpccase",
+      "frontend_src_components_3d_genericpccase_genericpccase",
+      "frontend_src_components_3d_pcbuilder3d",
+      "frontend_src_components_3d_pcbuilder3d_camera_presets",
+      "frontend_src_components_3d_pcbuilder3d_cameracontroller",
+      "frontend_src_components_3d_pcbuilder3d_dropindicator",
+      "frontend_src_components_3d_pcbuilder3d_pcbuilder3d",
+      "frontend_src_components_3d_pcbuilder3d_pcbuilder3dworkspace",
+      "frontend_src_components_3d_pcbuilder3d_stage_requirements",
+      "frontend_src_components_3d_pcbuilder3d_target_positions",
+      "frontend_src_components_3d_proceduralsicklefan",
+      "frontend_src_components_3d_proceduralsicklefan_createsicklebladegeometry",
+      "frontend_src_components_3d_proceduralsicklefan_proceduralsicklefan",
+      "frontend_src_components_build_build_buildsteps",
+      "frontend_src_utilities_scoringengine",
+      "frontend_src_utilities_scoringengine_calculatescores",
+      "frontend_src_utilities_scoringengine_getnumber",
+      "ref_react_three_drei",
+      "ref_react_three_fiber",
+      "ref_three"
+    ],
+    "4": [
+      "frontend_src_components_build_build",
+      "frontend_src_components_build_build_build",
+      "frontend_src_components_build_build_buildpage",
+      "frontend_src_components_build_build_category_filters",
+      "frontend_src_components_compatibility_compatibility",
+      "frontend_src_components_fullscreengate_fullscreengate",
+      "frontend_src_components_fullscreengate_fullscreengate_fullscreengate",
+      "frontend_src_components_home_home",
+      "frontend_src_components_home_home_hero",
+      "frontend_src_utilities_fullscreen",
+      "frontend_src_utilities_fullscreen_enterfullscreen",
+      "frontend_src_utilities_fullscreen_exitfullscreen",
+      "frontend_src_utilities_fullscreen_fs_element",
+      "frontend_src_utilities_fullscreen_hasengagedfullscreen",
+      "frontend_src_utilities_fullscreen_iscoarsepointer",
+      "frontend_src_utilities_fullscreen_isfullscreenactive",
+      "frontend_src_utilities_fullscreen_isfullscreensupported",
+      "frontend_src_utilities_fullscreen_isportrait",
+      "frontend_src_utilities_fullscreen_markfullscreenengaged",
+      "frontend_src_utilities_fullscreen_needsrotation",
+      "frontend_src_utilities_fullscreen_onviewportchange",
+      "frontend_src_utilities_soundmanager",
+      "frontend_src_utilities_soundmanager_sound_source_map"
+    ],
+    "5": [
+      "frontend_src_utilities_soundmanager_soundmanager",
+      "frontend_src_utilities_soundmanager_soundmanager_click",
+      "frontend_src_utilities_soundmanager_soundmanager_complete",
+      "frontend_src_utilities_soundmanager_soundmanager_denied",
+      "frontend_src_utilities_soundmanager_soundmanager_error",
+      "frontend_src_utilities_soundmanager_soundmanager_getaudio",
+      "frontend_src_utilities_soundmanager_soundmanager_granted",
+      "frontend_src_utilities_soundmanager_soundmanager_hint",
+      "frontend_src_utilities_soundmanager_soundmanager_initglobaluilistener",
+      "frontend_src_utilities_soundmanager_soundmanager_install",
+      "frontend_src_utilities_soundmanager_soundmanager_interact",
+      "frontend_src_utilities_soundmanager_soundmanager_modalclose",
+      "frontend_src_utilities_soundmanager_soundmanager_modalopen",
+      "frontend_src_utilities_soundmanager_soundmanager_openbox",
+      "frontend_src_utilities_soundmanager_soundmanager_play",
+      "frontend_src_utilities_soundmanager_soundmanager_setenabled",
+      "frontend_src_utilities_soundmanager_soundmanager_setvolume",
+      "frontend_src_utilities_soundmanager_soundmanager_snap",
+      "frontend_src_utilities_soundmanager_soundmanager_togglesound",
+      "frontend_src_utilities_soundmanager_soundmanager_unlockaudio",
+      "frontend_src_utilities_soundmanager_soundmanager_warning"
+    ],
+    "6": [
+      "frontend_src_components_learn_courseshell",
+      "frontend_src_components_learn_courseshell_article_lessons",
+      "frontend_src_components_learn_courseshell_course",
+      "frontend_src_components_learn_courseshell_courseshell",
+      "frontend_src_components_learn_courseshell_readprogress",
+      "frontend_src_components_learn_coursevideoplayer",
+      "frontend_src_components_learn_coursevideoplayer_coursevideoplayer",
+      "frontend_src_components_learn_coursevideoplayer_fmttime",
+      "frontend_src_components_learn_coursevideoplayer_loadyoutubeapi",
+      "frontend_src_components_learn_learn",
+      "frontend_src_components_learn_learn_componentguide",
+      "frontend_src_components_learn_learn_learn",
+      "frontend_src_contexts_buildcontext",
+      "frontend_src_contexts_buildcontext_buildcontext",
+      "frontend_src_contexts_buildcontext_usebuild",
+      "frontend_src_utilities_offlineparts",
+      "frontend_src_utilities_offlineparts_demo_gaming_rig",
+      "frontend_src_utilities_offlineparts_offline_components"
+    ],
+    "7": [
+      "frontend_src_utilities_soundmanager_soundmanager_constructor",
+      "frontend_src_utilities_soundmanager_synthaudio",
+      "frontend_src_utilities_soundmanager_synthaudio_click",
+      "frontend_src_utilities_soundmanager_synthaudio_complete",
+      "frontend_src_utilities_soundmanager_synthaudio_constructor",
+      "frontend_src_utilities_soundmanager_synthaudio_denied",
+      "frontend_src_utilities_soundmanager_synthaudio_error",
+      "frontend_src_utilities_soundmanager_synthaudio_getcontext",
+      "frontend_src_utilities_soundmanager_synthaudio_granted",
+      "frontend_src_utilities_soundmanager_synthaudio_hint",
+      "frontend_src_utilities_soundmanager_synthaudio_install",
+      "frontend_src_utilities_soundmanager_synthaudio_interact",
+      "frontend_src_utilities_soundmanager_synthaudio_modalclose",
+      "frontend_src_utilities_soundmanager_synthaudio_modalopen",
+      "frontend_src_utilities_soundmanager_synthaudio_openbox",
+      "frontend_src_utilities_soundmanager_synthaudio_playtone",
+      "frontend_src_utilities_soundmanager_synthaudio_snap",
+      "frontend_src_utilities_soundmanager_synthaudio_warning"
+    ],
+    "8": [
+      "frontend_src_components_admin_admin",
+      "frontend_src_components_admin_admin_admin",
+      "frontend_src_components_admin_admin_categories",
+      "frontend_src_components_admin_admin_category_labels",
+      "frontend_src_components_admin_admin_default_parts",
+      "frontend_src_components_admin_admin_detectcategory",
+      "frontend_src_components_admin_admin_formatdate",
+      "frontend_src_components_admin_admin_getcomponentageinfo",
+      "frontend_src_components_admin_admin_initial_scraped_queue",
+      "frontend_src_components_featurecarousel_featurecarousel",
+      "frontend_src_components_featurecarousel_featurecarousel_featurecarousel",
+      "frontend_src_components_featurecarousel_featurecarousel_featureslides",
+      "frontend_src_utilities_api",
+      "frontend_src_utilities_api_api_base_url",
+      "frontend_src_utilities_api_apifetch",
+      "frontend_src_utilities_api_getadminheaders",
+      "frontend_src_utilities_api_getapiurl"
+    ],
+    "9": [
+      "frontend_package_devdependencies",
+      "frontend_package_devdependencies_autoprefixer",
+      "frontend_package_devdependencies_eslint",
+      "frontend_package_devdependencies_eslint_js",
+      "frontend_package_devdependencies_eslint_plugin_react_hooks",
+      "frontend_package_devdependencies_eslint_plugin_react_refresh",
+      "frontend_package_devdependencies_globals",
+      "frontend_package_devdependencies_postcss",
+      "frontend_package_devdependencies_tailwindcss",
+      "frontend_package_devdependencies_tailwindcss_postcss",
+      "frontend_package_devdependencies_types_react",
+      "frontend_package_devdependencies_types_react_dom",
+      "frontend_package_devdependencies_vite",
+      "frontend_package_devdependencies_vitejs_plugin_react"
+    ],
+    "10": [
+      "frontend_src_utilities_compatibilityengine",
+      "frontend_src_utilities_compatibilityengine_calculaterequiredwattage",
+      "frontend_src_utilities_compatibilityengine_checkcompatibility",
+      "frontend_src_utilities_compatibilityengine_findalternatives",
+      "frontend_src_utilities_compatibilityengine_getcaseformfactorcapacity",
+      "frontend_src_utilities_compatibilityengine_getcompatibilitysummary",
+      "frontend_src_utilities_compatibilityengine_getmoboformfactorrank",
+      "frontend_src_utilities_compatibilityengine_getnumber",
+      "frontend_src_utilities_compatibilityengine_normalizeddr",
+      "frontend_src_utilities_compatibilityengine_normalizesocket",
+      "frontend_src_utilities_rules"
+    ],
+    "11": [
+      "backend_tests_compatibility_test",
+      "backend_tests_compatibility_test_checkcompatibility",
+      "backend_tests_compatibility_test_getcaseformfactorcapacity",
+      "backend_tests_compatibility_test_getmoboformfactorrank",
+      "backend_tests_compatibility_test_getnumber",
+      "backend_tests_compatibility_test_normalizeddr",
+      "backend_tests_compatibility_test_normalizesocket",
+      "ref_node_assert",
+      "ref_node_test"
+    ],
+    "12": [
+      "frontend_tailwind_config",
+      "tailwindcss"
+    ],
+    "13": [
+      "frontend_postcss_config"
+    ]
+  },
+  "cohesion": {
+    "0": 0.06507936507936508,
+    "1": 0.0677361853832442,
+    "2": 0.1471264367816092,
+    "3": 0.17786561264822134,
+    "4": 0.22529644268774704,
+    "5": 0.18095238095238095,
+    "6": 0.19607843137254902,
+    "7": 0.20261437908496732,
+    "8": 0.18382352941176472,
+    "9": 0.14285714285714285,
+    "10": 0.32727272727272727,
+    "11": 0.3611111111111111,
+    "12": 1.0,
+    "13": 1.0
+  },
+  "gods": [
+    {
+      "id": "frontend_src_utilities_soundmanager_soundmanager",
+      "label": "SoundManager",
+      "degree": 30
+    },
+    {
+      "id": "ref_react",
+      "label": "react",
+      "degree": 22
+    },
+    {
+      "id": "frontend_src_utilities_soundmanager_synthaudio",
+      "label": "SynthAudio",
+      "degree": 18
+    },
+    {
+      "id": "frontend_src_components_fullscreengate_fullscreengate_fullscreengate",
+      "label": "FullscreenGate()",
+      "degree": 17
+    },
+    {
+      "id": "frontend_src_utilities_compatibilityengine_checkcompatibility",
+      "label": "checkCompatibility()",
+      "degree": 11
+    },
+    {
+      "id": "frontend_src_app_appcontent",
+      "label": "AppContent()",
+      "degree": 11
+    },
+    {
+      "id": "ref_react_router_dom",
+      "label": "react-router-dom",
+      "degree": 11
+    },
+    {
+      "id": "frontend_src_components_3d_pcbuilder3d_pcbuilder3dworkspace",
+      "label": "PCBuilder3DWorkspace()",
+      "degree": 9
+    },
+    {
+      "id": "frontend_src_contexts_buildcontext_usebuild",
+      "label": "useBuild()",
+      "degree": 9
+    },
+    {
+      "id": "frontend_src_components_admin_admin_admin",
+      "label": "Admin()",
+      "degree": 9
+    }
+  ],
+  "surprises": [
+    {
+      "source": "PCBuilder3DWorkspace()",
+      "target": "checkCompatibility()",
+      "source_files": [
+        "frontend/src/components/3D/PCBuilder3D.jsx",
+        "frontend/src/utilities/compatibilityEngine.js"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "AppContent()",
+      "target": "PCBuilder3D()",
+      "source_files": [
+        "frontend/src/App.jsx",
+        "frontend/src/components/3D/PCBuilder3D.jsx"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "AppContent()",
+      "target": "Admin()",
+      "source_files": [
+        "frontend/src/App.jsx",
+        "frontend/src/components/Admin/Admin.jsx"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "AppContent()",
+      "target": "Build()",
+      "source_files": [
+        "frontend/src/App.jsx",
+        "frontend/src/components/Build/Build.jsx"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "AppContent()",
+      "target": "Learn()",
+      "source_files": [
+        "frontend/src/App.jsx",
+        "frontend/src/components/Learn/Learn.jsx"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities"
+    }
+  ],
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `react` connect `App.jsx` to `frontend/package.json`, `PCBuilder3D.jsx`, `Build.jsx`, `BuildContext.jsx`, `Admin.jsx`?",
+      "why": "High betweenness centrality (0.170) - this node is a cross-community bridge."
+    },
+    {
+      "type": "isolated_nodes",
+      "question": "What connects `dotenv`, `nodemon`, `autoprefixer` to the rest of the system?",
+      "why": "8 weakly-connected nodes found - possible documentation gaps or missing edges."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `backend/package.json` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.06507936507936508 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `SoundManager` connect `SoundManager` to `App.jsx`, `PCBuilder3D.jsx`, `Build.jsx`, `BuildContext.jsx`, `SynthAudio`?",
+      "why": "High betweenness centrality (0.128) - this node is a cross-community bridge."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `frontend/package.json` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.0677361853832442 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `SynthAudio` connect `SynthAudio` to `Build.jsx`?",
+      "why": "High betweenness centrality (0.092) - this node is a cross-community bridge."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `App.jsx` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.1471264367816092 - nodes in this community are weakly interconnected."
+    }
+  ]
+}

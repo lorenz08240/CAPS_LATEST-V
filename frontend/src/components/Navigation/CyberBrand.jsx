@@ -16,6 +16,7 @@ const TELEMETRY_METRICS = [
 export default function CyberBrand({ onNavigateHome }) {
   const { isSidebarOpen, toggleSidebar } = useSidebar();
   const [metricIndex, setMetricIndex] = useState(0);
+  const [logoError, setLogoError] = useState(false);
   const navigate = useNavigate();
 
   // Rotate telemetry metrics when sidebar is open
@@ -68,18 +69,19 @@ export default function CyberBrand({ onNavigateHome }) {
             <span className="active-core-close-hint">‹</span>
           </div>
         ) : (
-          /* Standard BuildLab Triangle / Logo when Closed */
+          /* Standard BuildLab Logo when Closed */
           <div className="deck-closed-logo">
-            <img
-              src={systemLogo}
-              alt="BuildLab Logo"
-              className="cyber-logo-img"
-              draggable={false}
-              onError={(e) => {
-                e.currentTarget.style.display = "none";
-              }}
-            />
-            <span className="cyber-logo-fallback">▲</span>
+            {!logoError ? (
+              <img
+                src={systemLogo}
+                alt="BuildLab Logo"
+                className="cyber-logo-img"
+                draggable={false}
+                onError={() => setLogoError(true)}
+              />
+            ) : (
+              <span className="cyber-logo-fallback">▲</span>
+            )}
           </div>
         )}
       </button>

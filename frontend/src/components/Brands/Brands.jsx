@@ -1,8 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import GlobalHeader from "../Navigation/GlobalHeader";
 import soundManager from "../../utilities/soundManager";
 import "./Brands.css";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const brandData = [
   { 
@@ -72,9 +76,176 @@ const brandData = [
   },
 ];
 
-function Brands() {
+function Brands({ isIntegrated = false }) {
   const navigate = useNavigate();
   const [selectedBrand, setSelectedBrand] = useState(null);
+  const containerRef = useRef(null);
+
+  // Dynamic 3D card tilt & reactive lighting
+  const handleCardMouseMove = (e) => {
+    const card = e.currentTarget;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateX = ((y - centerY) / centerY) * -6;
+    const rotateY = ((x - centerX) / centerX) * 6;
+
+    card.style.setProperty("--mouse-x", `${x}px`);
+    card.style.setProperty("--mouse-y", `${y}px`);
+
+    gsap.to(card, {
+      rotateX,
+      rotateY,
+      duration: 0.25,
+      ease: "power2.out",
+      transformPerspective: 800,
+      overwrite: "auto",
+    });
+  };
+
+  const handleCardMouseLeave = (e) => {
+    const card = e.currentTarget;
+    gsap.to(card, {
+      rotateX: 0,
+      rotateY: 0,
+      duration: 0.45,
+      ease: "power2.out",
+      overwrite: "auto",
+    });
+  };
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // 1. Header reveal with bidirectional scroll triggers (down + up)
+      ScrollTrigger.create({
+        trigger: ".brands-header",
+        start: "top 85%",
+        end: "bottom 15%",
+        onEnter: () =>
+          gsap.fromTo(
+            ".brands-header",
+            { opacity: 0, y: 35, scale: 0.98 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: "power3.out", overwrite: "auto" }
+          ),
+        onLeave: () =>
+          gsap.to(".brands-header", {
+            opacity: 0,
+            y: -30,
+            duration: 0.35,
+            ease: "power2.in",
+            overwrite: "auto",
+          }),
+        onEnterBack: () =>
+          gsap.fromTo(
+            ".brands-header",
+            { opacity: 0, y: -30, scale: 0.98 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: "power3.out", overwrite: "auto" }
+          ),
+        onLeaveBack: () =>
+          gsap.to(".brands-header", {
+            opacity: 0,
+            y: 35,
+            duration: 0.35,
+            ease: "power2.in",
+            overwrite: "auto",
+          }),
+      });
+
+      // 2. GreenSock ScrollTrigger.batch for brand cards (KKXZOyZ style, full bidirectional)
+      ScrollTrigger.batch(".brand-logo-card", {
+        interval: 0.08,
+        batchMax: 4,
+        start: "top 88%",
+        end: "bottom 12%",
+        onEnter: (batch) =>
+          gsap.fromTo(
+            batch,
+            { opacity: 0, y: 40, scale: 0.94 },
+            {
+              opacity: 1,
+              y: 0,
+              scale: 1,
+              stagger: 0.08,
+              duration: 0.65,
+              ease: "power3.out",
+              overwrite: "auto",
+            }
+          ),
+        onLeave: (batch) =>
+          gsap.to(batch, {
+            opacity: 0,
+            y: -35,
+            scale: 0.94,
+            stagger: 0.04,
+            duration: 0.35,
+            ease: "power2.in",
+            overwrite: "auto",
+          }),
+        onEnterBack: (batch) =>
+          gsap.fromTo(
+            batch,
+            { opacity: 0, y: -35, scale: 0.94 },
+            {
+              opacity: 1,
+              y: 0,
+              scale: 1,
+              stagger: 0.08,
+              duration: 0.65,
+              ease: "power3.out",
+              overwrite: "auto",
+            }
+          ),
+        onLeaveBack: (batch) =>
+          gsap.to(batch, {
+            opacity: 0,
+            y: 40,
+            scale: 0.94,
+            stagger: 0.04,
+            duration: 0.35,
+            ease: "power2.in",
+            overwrite: "auto",
+          }),
+      });
+
+      // 3. Back to Top Button reveal with bidirectional support
+      ScrollTrigger.create({
+        trigger: ".brands-footer",
+        start: "top 92%",
+        end: "bottom 5%",
+        onEnter: () =>
+          gsap.fromTo(
+            ".brands-footer",
+            { opacity: 0, y: 30, scale: 0.95 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "power3.out", overwrite: "auto" }
+          ),
+        onLeave: () =>
+          gsap.to(".brands-footer", {
+            opacity: 0,
+            y: -25,
+            duration: 0.35,
+            overwrite: "auto",
+          }),
+        onEnterBack: () =>
+          gsap.fromTo(
+            ".brands-footer",
+            { opacity: 0, y: -25, scale: 0.95 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "power3.out", overwrite: "auto" }
+          ),
+        onLeaveBack: () =>
+          gsap.to(".brands-footer", {
+            opacity: 0,
+            y: 30,
+            scale: 0.95,
+            duration: 0.35,
+            overwrite: "auto",
+          }),
+      });
+    }, containerRef);
+
+    return () => ctx.revert();
+  }, []);
 
   const handleBrandClick = (brand) => {
     try { soundManager.click(); } catch {}
@@ -87,8 +258,12 @@ function Brands() {
   };
 
   return (
-    <div className="brands-page">
-      <GlobalHeader />
+    <div
+      className={`brands-page ${isIntegrated ? 'integrated-section' : ''}`}
+      id="brands-station"
+      ref={containerRef}
+    >
+      {!isIntegrated && <GlobalHeader />}
 
       <div className="brands-container-wrap">
         <header className="brands-header">
@@ -115,6 +290,8 @@ function Brands() {
               key={brand.id} 
               className={`brand-logo-card ${selectedBrand?.id === brand.id ? 'active-brand' : ''}`}
               onClick={() => handleBrandClick(brand)}
+              onMouseMove={handleCardMouseMove}
+              onMouseLeave={handleCardMouseLeave}
               title={`Click to view ${brand.name} components`}
             >
               <div className="brand-logo-wrapper">
@@ -177,16 +354,18 @@ function Brands() {
         )}
 
         <div className="brands-footer">
-          <Link to="/build" className="btn-brand-primary">
-            <span>START PC BUILD</span>
-            <span className="arrow">&rarr;</span>
-          </Link>
-          <Link to="/3d-builder" className="btn-brand-secondary">
-            <span>3D SIMULATION STUDIO</span>
-          </Link>
-          <Link to="/learn" className="btn-brand-outline">
-            <span>EXPLORE ACADEMY</span>
-          </Link>
+          <button 
+            type="button" 
+            className="btn-brand-primary back-to-top-btn"
+            onClick={() => {
+              try { soundManager.click(); } catch {}
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+            title="Scroll back to top of page"
+          >
+            <span>Back to Top</span>
+            <span className="arrow">&uarr;</span>
+          </button>
         </div>
       </div>
     </div>

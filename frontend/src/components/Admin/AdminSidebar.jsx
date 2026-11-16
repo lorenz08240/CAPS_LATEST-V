@@ -51,11 +51,6 @@ export const AdminSidebar = ({
             <div className="admin-brand-title-row">
               <span className="admin-brand-title-main">BUILDLAB</span>
               <span className="admin-brand-role-tag">ADMIN</span>
-              <span className="admin-brand-version-tag">v1.0.4</span>
-            </div>
-            <div className="admin-brand-status-row">
-              <span className="admin-brand-status-dot" />
-              <span className="admin-brand-status-text">CONTROL PANEL</span>
             </div>
           </div>
         </div>
@@ -64,16 +59,13 @@ export const AdminSidebar = ({
       {/* Admin Management Section */}
       <div className="admin-sidebar-section management-section">
         <div className="admin-section-tag">
-          <span className="tag-bracket">[</span>
-          <span className="tag-text">MANAGEMENT</span>
-          <span className="tag-bracket">]</span>
+          <span className="tag-text">Manage</span>
         </div>
 
         <div className="admin-management-list">
           <Link
             to="/admin/accounts"
             className={`admin-mgmt-item ${isAccounts ? "active" : ""}`}
-            title="Manage admin accounts, security passcodes, and avatars"
           >
             <div className="mgmt-item-icon">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -84,15 +76,14 @@ export const AdminSidebar = ({
               </svg>
             </div>
             <div className="mgmt-item-info">
-              <div className="mgmt-item-title">Account Manager</div>
-              <div className="mgmt-item-desc">Admin Roles &amp; Security</div>
+              <div className="mgmt-item-title">Accounts</div>
+              <div className="mgmt-item-desc">Admin login &amp; learners</div>
             </div>
           </Link>
 
           <Link
             to="/admin/content"
             className={`admin-mgmt-item ${isContent ? "active" : ""}`}
-            title="Manage developer dossiers, photos, and auto-sync with About Us"
           >
             <div className="mgmt-item-icon">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -101,8 +92,8 @@ export const AdminSidebar = ({
               </svg>
             </div>
             <div className="mgmt-item-info">
-              <div className="mgmt-item-title">Content Management</div>
-              <div className="mgmt-item-desc">Operatives &amp; Profile Photos</div>
+              <div className="mgmt-item-title">Team Profiles</div>
+              <div className="mgmt-item-desc">About Us developer cards</div>
             </div>
           </Link>
         </div>
@@ -111,9 +102,7 @@ export const AdminSidebar = ({
       {/* Hardware Inventory Stages */}
       <div className="admin-sidebar-section categories-section">
         <div className="admin-section-tag">
-          <span className="tag-bracket">[</span>
-          <span className="tag-text">INVENTORY STAGES</span>
-          <span className="tag-bracket">]</span>
+          <span className="tag-text">Inventory</span>
         </div>
 
         <div className="admin-category-list">

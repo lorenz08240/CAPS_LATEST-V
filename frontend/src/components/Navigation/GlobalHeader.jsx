@@ -2,18 +2,19 @@ import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import soundManager from '../../utilities/soundManager';
 import CyberBrand from './CyberBrand';
+import { useLearnMode } from '../../contexts/LearnModeContext';
 import './GlobalHeader.css';
 
 export default function GlobalHeader({ onSearchClick, hideBuildPill = false }) {
+  const { mode } = useLearnMode();
   const location = useLocation();
   const navigate = useNavigate();
   const currentPath = location.pathname;
-  const shouldHideBuildPill = hideBuildPill || currentPath.startsWith('/learn') || currentPath.startsWith('/compatibility') || currentPath.startsWith('/build');
+  const isFreeWorkbench = mode === 'explore';
+  const shouldHideBuildPill = hideBuildPill || isFreeWorkbench || currentPath.startsWith('/learn') || currentPath.startsWith('/compatibility') || currentPath.startsWith('/build');
 
   const navItems = [
     { label: 'HOME', path: '/' },
-    { label: 'BUILD', path: '/build' },
-    { label: '3D STUDIO', path: '/3d-builder' },
     { label: 'COMPATIBILITY', path: '/compatibility' },
     { label: 'LEARN', path: '/learn' },
     { label: 'BRANDS', path: '/brands' },

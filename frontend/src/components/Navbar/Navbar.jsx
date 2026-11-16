@@ -4,6 +4,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useSidebar } from "../../contexts/SidebarContext";
 import { useLearnMode } from "../../contexts/LearnModeContext";
+import { useLanguage } from "../../contexts/LanguageContext";
 import { enterFullscreen } from "../../utilities/fullscreen";
 import soundManager from "../../utilities/soundManager";
 import AccountSetupModal from "../Home/AccountSetupModal";
@@ -12,7 +13,8 @@ import "./Navbar.css";
 function Navbar({ isPinned: propsIsPinned }) {
   const { isAdmin, logoutAdmin } = useAuth();
   const { toggleTheme, isDark } = useTheme();
-  const { mode, userProfile, unlockedStages } = useLearnMode();
+  const { mode, userProfile, unlockedStages, logoutLearner } = useLearnMode();
+  const { language, setLanguage, t } = useLanguage();
   const sidebarCtx = useSidebar();
 
   // Prefer context state, falling back to props if provided
@@ -23,6 +25,8 @@ function Navbar({ isPinned: propsIsPinned }) {
 
   const [soundActive, setSoundActive] = useState(() => soundManager.enabled);
   const [showAccountModal, setShowAccountModal] = useState(false);
+  const [accountSubmenuOpen, setAccountSubmenuOpen] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -36,6 +40,13 @@ function Navbar({ isPinned: propsIsPinned }) {
       closeSidebar();
     }
   }, [isAdminLogin, isOpenManual, closeSidebar]);
+
+  // Reset account sub-menu when the sidebar drawer closes
+  useEffect(() => {
+    if (!isOpenManual) {
+      setAccountSubmenuOpen(false);
+    }
+  }, [isOpenManual]);
 
   // Sidebar is strictly disabled on the admin login screen until the operator enters first
   if (isAdminLogin) {
@@ -69,6 +80,8 @@ function Navbar({ isPinned: propsIsPinned }) {
   const isInventory = currentPath.includes("/admin/inventory") || currentPath === "/admin";
   const isCrawler = currentPath.includes("/admin/crawler");
   const isLogs = currentPath.includes("/admin/logs");
+  const isAccounts = currentPath.includes("/admin/accounts");
+  const isContent = currentPath.includes("/admin/content");
 
   return (
     <>
@@ -116,43 +129,52 @@ function Navbar({ isPinned: propsIsPinned }) {
                   onClick={() => { try { soundManager.click(); } catch {} }}
                 >
                   <div className="brand-title-row">
-                    <span className="brand-title-main">ADMIN DECK</span>
-                    <span className="brand-role-tag admin">CONTROL</span>
-                  </div>
-                  <div className="brand-status-row">
-                    <span className="status-live-dot" />
-                    <span className="status-live-text">OPERATIONS</span>
+                    <span className="brand-title-main">BUILDLAB</span>
+                    <span className="brand-role-tag admin">ADMIN</span>
                   </div>
                 </Link>
               </div>
             ) : (
               <div 
-                className="sidebar-account-card" 
+                className={`sidebar-account-card ${accountSubmenuOpen ? "expanded" : ""}`} 
                 onClick={() => {
                   try { soundManager.click(); } catch {}
-                  setShowAccountModal(true);
+                  setAccountSubmenuOpen((prev) => !prev);
                 }} 
                 role="button" 
                 tabIndex={0}
-                title="Manage Learner Account & Google Cloud Sync"
+                aria-expanded={accountSubmenuOpen}
+                title="Account Settings & Preferences"
               >
                 <div className="sidebar-account-avatar">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                    <circle cx="12" cy="7" r="4" />
-                  </svg>
-                  <span className="account-avatar-dot" />
+                  {userProfile?.photo ? (
+                    <img src={userProfile.photo} alt={userProfile.fullName || "User"} className="sidebar-account-avatar-img" />
+                  ) : (
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                      <circle cx="12" cy="7" r="4" />
+                    </svg>
+                  )}
+                  <span className={`account-avatar-dot ${userProfile?.setupCompleted ? "online" : ""}`} />
                 </div>
 
                 <div className="sidebar-account-info">
                   <div className="account-title-row">
-                    <span className="account-title-main">{userProfile?.fullName || "Account"}</span>
+                    <span className="account-title-main" title={userProfile?.fullName || "Account"}>
+                      {userProfile?.fullName || "Account"}
+                    </span>
                     <span className="account-role-tag">{mode === "learn" ? "LEARN" : "EXPLORE"}</span>
                   </div>
                   <div className="account-action-row">
                     <span className="account-action-text">{userProfile?.setupCompleted ? "Verified Profile" : "Mode Setup"}</span>
                     <span className="account-google-tag">{mode === "learn" ? "GOOGLE SYNC" : "OPEN LAB"}</span>
                   </div>
+                </div>
+
+                <div className={`sidebar-account-arrow ${accountSubmenuOpen ? "open" : ""}`} aria-hidden="true">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
                 </div>
               </div>
             )}
@@ -173,21 +195,140 @@ function Navbar({ isPinned: propsIsPinned }) {
             </div>
           </div>
 
+          {/* ── ACCOUNT SUB-OPTIONS ACCORDION / DRAWER ── */}
+          {accountSubmenuOpen && !isAdminRoute && (
+            <div className="sidebar-account-subpanel" role="region" aria-label="Account Sub-Options">
+              <div className="subpanel-badge-bar">
+                <span className="subpanel-badge-title">ACCOUNT & PREFERENCES</span>
+                <span className="subpanel-badge-mode">{userProfile?.setupCompleted ? "VERIFIED" : "GUEST"}</span>
+              </div>
+
+              <div className="subpanel-menu-list">
+                {/* 1. Dedicated Settings Page Link */}
+                <Link
+                  to="/settings"
+                  className="subpanel-menu-item"
+                  onClick={() => {
+                    try { soundManager.click(); } catch {}
+                    closeSidebar();
+                    setAccountSubmenuOpen(false);
+                  }}
+                  title="Open Dedicated Settings Page"
+                >
+                  <div className="subpanel-icon-box settings">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="3" />
+                      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                    </svg>
+                  </div>
+                  <div className="subpanel-item-content">
+                    <span className="subpanel-item-label">{t("settings", "Settings")}</span>
+                    <span className="subpanel-item-desc">Audio, themes & preferences</span>
+                  </div>
+                  <span className="subpanel-nav-arrow">→</span>
+                </Link>
+
+                {/* 2. Manage Account */}
+                <button
+                  type="button"
+                  className="subpanel-menu-item"
+                  onClick={() => {
+                    try { soundManager.click(); } catch {}
+                    setShowAccountModal(true);
+                    setAccountSubmenuOpen(false);
+                  }}
+                  title="Manage Learner Profile"
+                >
+                  <div className="subpanel-icon-box account">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                      <circle cx="12" cy="7" r="4" />
+                    </svg>
+                  </div>
+                  <div className="subpanel-item-content">
+                    <span className="subpanel-item-label">{t("manageAccount", "Manage Account")}</span>
+                    <span className="subpanel-item-desc">
+                      {userProfile?.setupCompleted ? "Profile & Google account" : "Connect Google Account"}
+                    </span>
+                  </div>
+                  <span className="subpanel-nav-badge">{userProfile?.setupCompleted ? "EDIT" : "SETUP"}</span>
+                </button>
+
+                {/* 3. Quick Language Selection */}
+                <div className="subpanel-menu-item language-switch-item">
+                  <div className="subpanel-icon-box language">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="2" y1="12" x2="22" y2="12" />
+                      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                    </svg>
+                  </div>
+                  <div className="subpanel-item-content">
+                    <span className="subpanel-item-label">{t("language", "Language")}</span>
+                    <span className="subpanel-item-desc">US English / Filipino</span>
+                  </div>
+                  <div className="subpanel-lang-pills">
+                    <button
+                      type="button"
+                      className={`lang-badge-btn ${language === "en" ? "active" : ""}`}
+                      onClick={() => {
+                        setLanguage("en");
+                        try { soundManager.click(); } catch {}
+                      }}
+                      title="Switch to English"
+                    >
+                      EN
+                    </button>
+                    <button
+                      type="button"
+                      className={`lang-badge-btn ${language === "tl" ? "active" : ""}`}
+                      onClick={() => {
+                        setLanguage("tl");
+                        try { soundManager.click(); } catch {}
+                      }}
+                      title="Switch to Filipino (Tagalog)"
+                    >
+                      FIL
+                    </button>
+                  </div>
+                </div>
+
+                {/* 4. Log Out Option */}
+                {userProfile?.setupCompleted && (
+                  <button
+                    type="button"
+                    className="subpanel-menu-item logout"
+                    onClick={() => {
+                      try { soundManager.warning(); } catch {}
+                      setShowLogoutConfirm(true);
+                    }}
+                    title="Log Out of Learner Account"
+                  >
+                    <div className="subpanel-icon-box logout">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                        <polyline points="16 17 21 12 16 7" />
+                        <line x1="21" y1="12" x2="9" y2="12" />
+                      </svg>
+                    </div>
+                    <div className="subpanel-item-content">
+                      <span className="subpanel-item-label logout">{t("logout", "Log Out")}</span>
+                      <span className="subpanel-item-desc">Sign out of {userProfile.fullName || "account"}</span>
+                    </div>
+                    <span className="subpanel-nav-arrow logout">✕</span>
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* ── SCROLLABLE NAVIGATION TREE ── */}
           <div className="sidebar-nav-scroll">
             {isAdmin && isAdminRoute ? (
               /* ── ADMIN ROUTE NAVIGATION ── */
               <div className="sidebar-admin-body">
-                <div className="sidebar-admin-card">
-                  <div className="admin-status-badge">
-                    <span className="status-dot"></span>
-                    <span>Admin Session Active</span>
-                  </div>
-                  <p className="admin-status-sub">Hardware Catalog &amp; Operations</p>
-                </div>
-
                 <div className="sidebar-nav-group">
-                  <div className="sidebar-group-title">OPERATIONS</div>
+                  <div className="sidebar-group-title">Manage</div>
                   <div className="sidebar-group-links">
                     <Link
                       to="/admin/inventory"
@@ -202,6 +343,31 @@ function Navbar({ isPinned: propsIsPinned }) {
                       <span>Inventory</span>
                     </Link>
 
+                    <Link
+                      to="/admin/accounts"
+                      onClick={handleLinkClick}
+                      className={`sidebar-link ${isAccounts ? "active" : ""}`}
+                    >
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="8.5" cy="7" r="4"></circle>
+                        <line x1="20" y1="8" x2="20" y2="14"></line>
+                        <line x1="23" y1="11" x2="17" y2="11"></line>
+                      </svg>
+                      <span>Accounts</span>
+                    </Link>
+
+                    <Link
+                      to="/admin/content"
+                      onClick={handleLinkClick}
+                      className={`sidebar-link ${isContent ? "active" : ""}`}
+                    >
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                      </svg>
+                      <span>Team Profiles</span>
+                    </Link>
 
                     <Link
                       to="/admin/crawler"
@@ -232,30 +398,6 @@ function Navbar({ isPinned: propsIsPinned }) {
                   </div>
                 </div>
 
-                <div className="sidebar-nav-group">
-                  <div className="sidebar-group-title">HARDWARE STAGES</div>
-                  <div className="admin-stage-quick-links">
-                    {[
-                      { key: "gpu", label: "GPU" },
-                      { key: "motherboard", label: "Motherboard" },
-                      { key: "cpu", label: "CPU" },
-                      { key: "ram", label: "RAM" },
-                      { key: "storage", label: "Storage" },
-                      { key: "case", label: "Case" },
-                      { key: "psu", label: "PSU" }
-                    ].map((s) => (
-                      <Link
-                        key={s.key}
-                        to={`/admin/inventory?category=${s.key}`}
-                        onClick={handleLinkClick}
-                        className="admin-stage-pill"
-                      >
-                        {s.label}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-
                 <div className="admin-bottom-actions">
                   <Link 
                     to="/" 
@@ -267,26 +409,13 @@ function Navbar({ isPinned: propsIsPinned }) {
                     </svg>
                     <span>Public PC Builder</span>
                   </Link>
-
-                  <button 
-                    type="button" 
-                    className="sidebar-logout-btn"
-                    onClick={handleAdminLogout}
-                  >
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                      <polyline points="16 17 21 12 16 7"></polyline>
-                      <line x1="21" y1="12" x2="9" y2="12"></line>
-                    </svg>
-                    <span>Log Out</span>
-                  </button>
                 </div>
               </div>
             ) : (
               /* ── FRONTEND REGULAR NAVIGATION ── */
               <div className="sidebar-frontend-body">
                 <div className="sidebar-nav-group">
-                  <div className="sidebar-group-title">WORKSPACE</div>
+                  <div className="sidebar-group-title">Workspace</div>
                   <div className="sidebar-group-links">
                     <a 
                       href="#build-station" 
@@ -323,9 +452,6 @@ function Navbar({ isPinned: propsIsPinned }) {
                         <polyline points="9 12 11 14 15 10"/>
                       </svg>
                       <span>Compatibility</span>
-                      {mode === "learn" && !unlockedStages.includes("compatibility") && (
-                        <span style={{ marginLeft: "auto", fontSize: "11px" }} title="Locked: 7 parts required">🔒</span>
-                      )}
                     </Link>
 
                     <Link 
@@ -338,9 +464,6 @@ function Navbar({ isPinned: propsIsPinned }) {
                         <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
                       </svg>
                       <span>Academy &amp; Learn</span>
-                      {mode === "learn" && !unlockedStages.includes("learn") && (
-                        <span style={{ marginLeft: "auto", fontSize: "11px" }} title="Locked: Complete compatibility check first">🔒</span>
-                      )}
                     </Link>
 
                     {unlockedStages.includes("certificate") && (
@@ -372,7 +495,7 @@ function Navbar({ isPinned: propsIsPinned }) {
                 </div>
 
                 <div className="sidebar-nav-group">
-                  <div className="sidebar-group-title">SUPPORT &amp; PORTAL</div>
+                  <div className="sidebar-group-title">Support</div>
                   <div className="sidebar-group-links">
                     <Link 
                       to="/help" 
@@ -386,6 +509,45 @@ function Navbar({ isPinned: propsIsPinned }) {
                       </svg>
                       <span>Help &amp; Support</span>
                     </Link>
+
+                    <Link
+                      to="/privacy"
+                      onClick={handleLinkClick}
+                      className={`sidebar-link ${location.pathname === "/privacy" || location.pathname === "/privacy-policy" ? "active" : ""}`}
+                    >
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                      </svg>
+                      <span>Privacy Policy</span>
+                    </Link>
+
+                    <Link
+                      to="/terms"
+                      onClick={handleLinkClick}
+                      className={`sidebar-link ${location.pathname === "/terms" || location.pathname === "/terms-of-service" ? "active" : ""}`}
+                    >
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                      </svg>
+                      <span>Terms of Service</span>
+                    </Link>
+
+                    <Link
+                      to="/cookies"
+                      onClick={handleLinkClick}
+                      className={`sidebar-link ${location.pathname === "/cookies" || location.pathname === "/cookie-policy" ? "active" : ""}`}
+                    >
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <circle cx="8.5" cy="9.5" r="1"/>
+                        <circle cx="15" cy="10.5" r="1"/>
+                        <circle cx="10.5" cy="15.5" r="1"/>
+                      </svg>
+                      <span>Cookie Policy</span>
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -395,15 +557,39 @@ function Navbar({ isPinned: propsIsPinned }) {
           {/* ── CLEAN FOOTER CONTROLS ── */}
           <div className="sidebar-footer">
             <div className="sidebar-footer-row">
-              <span className="footer-control-label">Appearance</span>
-              <button 
-                type="button" 
-                className="sidebar-pill-toggle"
-                onClick={toggleTheme}
-                title={`Switch to ${isDark ? "Light" : "Dark"} Mode`}
+              <span className="footer-control-label">Theme</span>
+              <div 
+                className="sidebar-theme-switch-group"
+                role="radiogroup" 
+                aria-label="Theme Mode Selection"
               >
-                <span>{isDark ? "🌙 Dark" : "☀️ Light"}</span>
-              </button>
+                <button
+                  type="button"
+                  role="radio"
+                  aria-checked={isDark}
+                  className={`theme-segment-btn ${isDark ? "active" : ""}`}
+                  onClick={() => {
+                    if (!isDark) toggleTheme();
+                  }}
+                  title="Switch to Cyber Dark Mode"
+                >
+                  <span className="theme-btn-icon">🌙</span>
+                  <span className="theme-btn-label">Dark</span>
+                </button>
+                <button
+                  type="button"
+                  role="radio"
+                  aria-checked={!isDark}
+                  className={`theme-segment-btn ${!isDark ? "active" : ""}`}
+                  onClick={() => {
+                    if (isDark) toggleTheme();
+                  }}
+                  title="Switch to Clean Light Mode"
+                >
+                  <span className="theme-btn-icon">☀️</span>
+                  <span className="theme-btn-label">Light</span>
+                </button>
+              </div>
             </div>
 
             <div className="sidebar-footer-row">
@@ -423,6 +609,42 @@ function Navbar({ isPinned: propsIsPinned }) {
           </div>
         </div>
       </aside>
+
+      {/* ── LEARNER LOGOUT CONFIRMATION DIALOG ── */}
+      {showLogoutConfirm && (
+        <div className="sidebar-logout-modal-overlay" onClick={() => setShowLogoutConfirm(false)}>
+          <div className="sidebar-logout-modal-dialog" onClick={(e) => e.stopPropagation()}>
+            <div className="logout-dialog-header">
+              <span className="logout-dialog-tag">SESSION CONTROL</span>
+              <h4 className="logout-dialog-title">{t("logoutConfirm", "Are you sure you want to log out?")}</h4>
+            </div>
+            <p className="logout-dialog-desc">
+              Signing out will revert your session to Open Lab mode. You can reconnect your Google learner account anytime.
+            </p>
+            <div className="logout-dialog-actions">
+              <button
+                type="button"
+                className="logout-action-btn cancel"
+                onClick={() => setShowLogoutConfirm(false)}
+              >
+                {t("cancel", "Cancel")}
+              </button>
+              <button
+                type="button"
+                className="logout-action-btn confirm"
+                onClick={() => {
+                  try { soundManager.click(); } catch {}
+                  logoutLearner();
+                  setShowLogoutConfirm(false);
+                  setAccountSubmenuOpen(false);
+                }}
+              >
+                {t("logout", "Log Out")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── LEARNER ACCOUNT & GOOGLE SIGN-IN MODAL ── */}
       <AccountSetupModal

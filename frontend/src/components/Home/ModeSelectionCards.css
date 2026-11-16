@@ -31,6 +31,11 @@
   overflow: hidden;
 }
 
+.mode-selection-container.single-card {
+  max-width: 580px;
+  padding: 2rem 2rem 2.25rem;
+}
+
 .mode-selection-container::before {
   content: "";
   position: absolute;
@@ -117,6 +122,12 @@
   grid-template-columns: 1fr 1fr;
   gap: 1.5rem;
   perspective: 1000px;
+}
+
+.mode-cards-grid.single-card {
+  grid-template-columns: 1fr;
+  max-width: 500px;
+  margin: 0 auto;
 }
 
 .mode-card {
@@ -358,5 +369,77 @@
     max-height: 90vh;
     overflow-y: auto;
   }
+}
+
+/* ── LIGHT THEME MODAL STYLING ── */
+body.theme-light .mode-selection-overlay,
+.theme-light .mode-selection-overlay {
+  background: rgba(15, 23, 42, 0.45);
+}
+
+body.theme-light .mode-selection-container,
+.theme-light .mode-selection-container {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.14);
+}
+
+body.theme-light .mode-selection-title,
+.theme-light .mode-selection-title {
+  color: #0f172a;
+}
+
+body.theme-light .mode-selection-subtitle,
+.theme-light .mode-selection-subtitle {
+  color: #475569;
+}
+
+body.theme-light .mode-close-btn,
+.theme-light .mode-close-btn {
+  background: rgba(15, 23, 42, 0.04);
+  border-color: rgba(15, 23, 42, 0.1);
+  color: #64748b;
+}
+
+body.theme-light .mode-close-btn:hover,
+.theme-light .mode-close-btn:hover {
+  background: rgba(15, 23, 42, 0.08);
+  color: #0f172a;
+}
+
+body.theme-light .mode-card,
+.theme-light .mode-card {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.1);
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.05);
+}
+
+body.theme-light .mode-card-title,
+.theme-light .mode-card-title {
+  color: #0f172a;
+}
+
+body.theme-light .mode-card-desc,
+.theme-light .mode-card-desc {
+  color: #475569;
+}
+
+body.theme-light .mode-feature-item,
+.theme-light .mode-feature-item {
+  color: #334155;
+}
+
+body.theme-light .mode-btn-free,
+.theme-light .mode-btn-free {
+  background: rgba(244, 63, 94, 0.08);
+  border-color: rgba(244, 63, 94, 0.3);
+  color: #e11d48;
+}
+
+body.theme-light .mode-btn-free:hover,
+.theme-light .mode-btn-free:hover {
+  background: #e11d48;
+  color: #ffffff;
+  box-shadow: 0 4px 16px rgba(225, 29, 72, 0.25);
 }
 

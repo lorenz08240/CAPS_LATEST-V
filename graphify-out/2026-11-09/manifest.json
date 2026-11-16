@@ -54,9 +54,9 @@
     "semantic_hash": "8e5f2021f5b1721b527c842f43f78c73"
   },
   "frontend/src/App.jsx": {
-    "mtime": 1794202094.6638165,
-    "seen": 1794202115.096298,
-    "ast_hash": "47f3f44052933adf83aea27397c9e6b6",
+    "mtime": 1794208086.2559838,
+    "seen": 1794208160.9408193,
+    "ast_hash": "8e3c1ad1ba63be8b9e2858884beb4f2b",
     "semantic_hash": ""
   },
   "frontend/src/components/3D/ComponentModels3D.jsx": {
@@ -102,9 +102,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Compatibility/Compatibility.jsx": {
-    "mtime": 1794176389.9635253,
-    "seen": 1794176494.1566567,
-    "ast_hash": "709466672898778b629c5f928a188c3c",
+    "mtime": 1794208157.8680935,
+    "seen": 1794208160.9458501,
+    "ast_hash": "2e89c1aab6c62bdd46943b35e5c02e0e",
     "semantic_hash": ""
   },
   "frontend/src/components/FeatureCarousel/FeatureCarousel.jsx": {
@@ -150,9 +150,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Navbar/Navbar.jsx": {
-    "mtime": 1794202082.8154397,
-    "seen": 1794202115.103277,
-    "ast_hash": "9ec6fd868f3446aab1760f01103aba60",
+    "mtime": 1794208143.368548,
+    "seen": 1794208160.9485645,
+    "ast_hash": "6e3901b46bcfb65b14e7fc9356390bcb",
     "semantic_hash": ""
   },
   "frontend/src/contexts/AuthContext.jsx": {
@@ -843,6 +843,24 @@
     "mtime": 1794201940.737686,
     "seen": 1794202115.1142018,
     "ast_hash": "81502069d20c3f17a29f6f4837eee944",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Compare/CompareRigs.jsx": {
+    "mtime": 1794208032.486544,
+    "seen": 1794208160.9458466,
+    "ast_hash": "0ad275fb4bd4791e6c80e06a82b6d6f7",
+    "semantic_hash": ""
+  },
+  "backend/package-lock.json": {
+    "mtime": 1791800606.1768937,
+    "seen": 1794206128.4804482,
+    "ast_hash": "661be6875e353b32cc107be3856a3c63",
+    "semantic_hash": ""
+  },
+  "frontend/package-lock.json": {
+    "mtime": 1794176728.843809,
+    "seen": 1794206128.480452,
+    "ast_hash": "f4d6919a6221545e6c013e409c685cf6",
     "semantic_hash": ""
   }
 }

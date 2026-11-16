@@ -32,9 +32,15 @@ export const LearnModeProvider = ({ children }) => {
   const [unlockedStages, setUnlockedStages] = useState(() => {
     try {
       const saved = localStorage.getItem("buildlab_learn_unlocked_stages");
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && !parsed.includes("learn")) {
+          parsed.push("learn");
+        }
+        return parsed;
+      }
     } catch {}
-    return ["build"];
+    return ["build", "compatibility", "learn"];
   });
 
   // Seen unlock animations (so the entrance banner plays once upon first unlock)
@@ -139,9 +145,9 @@ export const LearnModeProvider = ({ children }) => {
         return isStageUnlocked("compatibility");
       }
 
-      // 2. Learn academy courseware requires Stage 3 unlocked
+      // 2. Learn academy courseware is directly accessible in Learn track
       if (path.startsWith("/learn")) {
-        return isStageUnlocked("learn");
+        return true;
       }
 
       // 3. 3D Studio workspace requires Stage 4 unlocked
@@ -182,6 +188,24 @@ export const LearnModeProvider = ({ children }) => {
     } catch {}
   }, []);
 
+  // Learner Log Out
+  const logoutLearner = useCallback(() => {
+    setUserProfileState({
+      fullName: "",
+      email: "",
+      institution: "",
+      googleId: "",
+      photo: "",
+      setupCompleted: false,
+    });
+    setModeState("explore");
+    try {
+      localStorage.removeItem("buildlab_user_profile");
+      localStorage.setItem("buildlab_app_mode", "explore");
+      sessionStorage.removeItem("buildlab_pending_learner_welcome");
+    } catch {}
+  }, []);
+
   return (
     <LearnModeContext.Provider
       value={{
@@ -198,6 +222,7 @@ export const LearnModeProvider = ({ children }) => {
         closeUnlockBanner,
         canAccessPath,
         resetLearnProgress,
+        logoutLearner,
       }}
     >
       {children}

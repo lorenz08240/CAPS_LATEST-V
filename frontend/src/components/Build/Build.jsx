@@ -2,6 +2,12 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useBuild } from "../../contexts/BuildContext";
 import { useLearnMode } from "../../contexts/LearnModeContext";
+import {
+  DEMO_GAMING_RIG,
+  PRESET_1080P_GAMING,
+  PRESET_WORKSTATION,
+  PRESET_ENTRY_STUDENT,
+} from "../../utilities/offlineParts";
 import { checkCompatibility } from "../../utilities/compatibilityEngine";
 import soundManager from "../../utilities/soundManager";
 import FullscreenGate from "../FullscreenGate/FullscreenGate";
@@ -329,8 +335,49 @@ const CATEGORY_FILTERS = {
   ]
 };
 
+// Hardware telemetry helpers
+const getCaseDimensions = (comp) => {
+  if (!comp) return "460 x 215 x 480 mm";
+  if (comp.dimensions) return comp.dimensions;
+  const lowerName = (comp.name || "").toLowerCase();
+  const lowerDesc = (comp.desc || "").toLowerCase();
+  const lowerFF = (comp.form_factor || "").toLowerCase();
+
+  const dimMatch = (comp.desc || "").match(/\d{2,4}\s*[xX*]\s*\d{2,4}\s*[xX*]\s*\d{2,4}\s*(?:mm)?/i);
+  if (dimMatch) return dimMatch[0];
+
+  if (lowerName.includes("nr200") || lowerFF.includes("itx") || lowerFF.includes("mini")) {
+    return "376 x 185 x 292 mm";
+  }
+  if (lowerFF.includes("micro") || lowerFF.includes("matx") || lowerName.includes("m4m") || lowerName.includes("420d")) {
+    return "390 x 205 x 430 mm";
+  }
+  if (lowerName.includes("h9") || lowerDesc.includes("dual chamber") || lowerName.includes("dual-chamber")) {
+    return "495 x 290 x 466 mm";
+  }
+  if (lowerFF.includes("full") || lowerName.includes("5000t") || lowerName.includes("c500")) {
+    return "530 x 242 x 540 mm";
+  }
+  return "460 x 215 x 480 mm";
+};
+
+const getCaseMaxGPU = (comp) => {
+  if (!comp) return "360 mm";
+  if (comp.max_gpu_length) return comp.max_gpu_length;
+  const gpuMatch = (comp.desc || "").match(/(\d{3})\s*(?:mm)?\s*(?:max|gpu)/i);
+  if (gpuMatch) return `${gpuMatch[1]} mm`;
+
+  const lowerName = (comp.name || "").toLowerCase();
+  const lowerFF = (comp.form_factor || "").toLowerCase();
+  if (lowerName.includes("nr200") || lowerFF.includes("itx")) return "330 mm";
+  if (lowerFF.includes("micro") || lowerFF.includes("matx")) return "340 mm";
+  if (lowerName.includes("h9") || lowerName.includes("dual")) return "435 mm";
+  if (lowerFF.includes("full")) return "420 mm";
+  return "360 mm";
+};
+
 function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildInteracted }) {
-  const { mode, unlockStage, unlockedStages } = useLearnMode();
+  const { mode, unlockStage } = useLearnMode();
   const {
     currentBuild,
     allComponents,
@@ -387,7 +434,7 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
       setHasStartedBuild(true);
       try {
         sessionStorage.setItem("buildlab_start_build_intent", "true");
-      } catch {}
+      } catch { }
     };
 
     window.addEventListener("buildlab:start-build-clicked", handleStartBuild);
@@ -396,8 +443,8 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
     if (
       typeof window !== "undefined" &&
       (window.location.hash === "#build-station" ||
-       window.location.search.includes("scroll=build") ||
-       location.state?.scrollTo === "build-station")
+        window.location.search.includes("scroll=build") ||
+        location.state?.scrollTo === "build-station")
     ) {
       handleStartBuild();
     }
@@ -406,6 +453,17 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
       window.removeEventListener("buildlab:start-build-clicked", handleStartBuild);
     };
   }, [location]);
+
+  // Listen for brand card clicks from Brands section
+  useEffect(() => {
+    const handleBrandFilter = (e) => {
+      if (e.detail?.brand) {
+        setSearchQuery(e.detail.brand);
+      }
+    };
+    window.addEventListener("buildlab:filter-by-brand", handleBrandFilter);
+    return () => window.removeEventListener("buildlab:filter-by-brand", handleBrandFilter);
+  }, []);
 
   // Track whether the user is actively viewing / staying on the build workstation
   useEffect(() => {
@@ -456,8 +514,8 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
     };
   }, []);
 
-  // Orchestrate the 3-step Guided Tour: Center (3.2s) -> Left (2.8s) -> Right (2.8s) -> Finish
-  const startGuideTour = useCallback((category = null) => {
+  // Orchestrate the 3-step Guided Tour: Center (6.5s) -> Left (6.0s) -> Right (6.0s) -> Finish
+  const startGuideTour = useCallback((category = null, customIntroSpeech = null) => {
     const activeCategory = category || buildSteps[currentStep].key;
     const catGuide = BOB_CASUAL_GUIDE[activeCategory] || BOB_CASUAL_GUIDE.case;
 
@@ -471,7 +529,7 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
     // PHASE 1: Center Area (Select parts available) - 6.5 seconds (gives comfortable reading & scanning time)
     setGuideTarget("center");
     setGuideLookTarget("#build-center-panel");
-    setBobSpeech(pickRandom(catGuide.center));
+    setBobSpeech(customIntroSpeech || pickRandom(catGuide.center));
 
     guideTimerRef.current = setTimeout(() => {
       // PHASE 2: Left Side Panel (Hardware stages checklist) - 6.0 seconds
@@ -497,20 +555,69 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
   }, [currentStep]);
 
   // Entrance Dialogue Trigger:
-  // Listen for learner onboarding confirmation to deliver personalized B.O.B. welcome
+  // Listen for learner onboarding confirmation (dispatched AFTER the Loading Transition + Welcome Banner CTA click)
   useEffect(() => {
+    let pollInterval = null;
+
     const handleLearnerWelcome = (e) => {
       const learnerName = e.detail?.name || "Builder";
-      setTimeout(() => {
+      try {
+        sessionStorage.removeItem("buildlab_pending_learner_welcome");
+      } catch {}
+
+      if (pollInterval) {
+        clearInterval(pollInterval);
+        pollInterval = null;
+      }
+
+      const launchPersonalizedTour = () => {
         setHasStartedBuild(true);
         entranceGreetedRef.current = true;
-        setBobSpeech(`Welcome, ${learnerName}! I'm B.O.B., your hardware companion. Select a PC Case over on the left to begin Stage 01!`);
-        startGuideTour("case");
-      }, 600);
+        guidedStagesRef.current.add("case");
+        startGuideTour(
+          "case",
+          `Welcome, ${learnerName}! I'm B.O.B., your hardware companion! Start here in the center Component Catalog — tap any PC Case to inspect it!`
+        );
+      };
+
+      // Ensure no blocking overlay (such as FullscreenGate if the user exited fullscreen) is covering the screen
+      const isBlockingOverlayVisible = () =>
+        Boolean(
+          document.querySelector(
+            ".fs-gate-overlay, .stage-unlock-overlay, .rig-transition-overlay, .account-modal-overlay"
+          )
+        );
+
+      if (!isBlockingOverlayVisible()) {
+        setTimeout(() => {
+          if (!isBlockingOverlayVisible()) {
+            launchPersonalizedTour();
+          } else {
+            pollInterval = setInterval(() => {
+              if (!isBlockingOverlayVisible()) {
+                clearInterval(pollInterval);
+                pollInterval = null;
+                launchPersonalizedTour();
+              }
+            }, 300);
+          }
+        }, 250);
+      } else {
+        pollInterval = setInterval(() => {
+          if (!isBlockingOverlayVisible()) {
+            clearInterval(pollInterval);
+            pollInterval = null;
+            setTimeout(launchPersonalizedTour, 250);
+          }
+        }, 300);
+      }
     };
 
     window.addEventListener("buildlab:learner-onboarding-welcome", handleLearnerWelcome);
-    return () => window.removeEventListener("buildlab:learner-onboarding-welcome", handleLearnerWelcome);
+    return () => {
+      window.removeEventListener("buildlab:learner-onboarding-welcome", handleLearnerWelcome);
+      if (pollInterval) clearInterval(pollInterval);
+    };
   }, [startGuideTour]);
 
   // ONLY fires when user clicked START BUILD AND is currently looking/staying on the build picker
@@ -519,9 +626,28 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
       return;
     }
 
+    // Hold back generic entrance speech if a Learn Mode welcome banner is pending
+    try {
+      if (sessionStorage.getItem("buildlab_pending_learner_welcome")) {
+        return;
+      }
+    } catch {}
+
     // Short settle delay (450ms) so smooth scroll brings BOB completely into view before he greets
     const timer = setTimeout(() => {
       if (entranceGreetedRef.current) return;
+
+      try {
+        if (sessionStorage.getItem("buildlab_pending_learner_welcome")) return;
+      } catch {}
+
+      if (
+        document.querySelector(
+          ".fs-gate-overlay, .stage-unlock-overlay, .rig-transition-overlay, .account-modal-overlay"
+        )
+      ) {
+        return;
+      }
 
       const el = document.getElementById("build-main-area");
       if (el) {
@@ -550,6 +676,21 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
   useEffect(() => {
     const catKey = buildSteps[currentStep]?.key;
     if (!catKey) return;
+
+    // Suppress tip if learner welcome is pending or overlays are up
+    try {
+      if (sessionStorage.getItem("buildlab_pending_learner_welcome")) return;
+    } catch {}
+    if (
+      document.querySelector(
+        ".stage-unlock-overlay, .rig-transition-overlay, .account-modal-overlay"
+      )
+    ) {
+      return;
+    }
+
+    // Must only fire AFTER user has been greeted/onboarded
+    if (!entranceGreetedRef.current) return;
 
     if (hasStartedBuild && isViewingBuild && !guidedStagesRef.current.has(catKey)) {
       guidedStagesRef.current.add(catKey);
@@ -594,18 +735,22 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
     }
   }, [mode, selectedComponents.length, unlockStage]);
 
-  // Sync viewedComponent when switching stages:
-  // If the current stage already has a selected component, show its specs;
-  // If no component is selected for this stage, viewedComponent remains null
-  // so the right panel displays Assembly Overview (specs preview only appears when selected)
   useEffect(() => {
-    const currentCategoryKey = buildSteps[currentStep]?.key;
-    setViewedComponent(currentBuild[currentCategoryKey] || null);
+    const categoryKey = buildSteps[currentStep]?.key;
+    const stageComp = currentBuild[categoryKey];
+    const categoryComps = allComponents[categoryKey] || [];
+    setViewedComponent(stageComp || categoryComps[0] || null);
     setSearchQuery("");
     setActiveFilter("ALL");
-  }, [currentStep, currentBuild]);
+  }, [currentStep, currentBuild, allComponents]);
 
   useEffect(() => {
+    if (location.state?.stepCategory) {
+      const idx = buildSteps.findIndex(
+        (s) => s.key.toLowerCase() === location.state.stepCategory.toLowerCase()
+      );
+      if (idx !== -1) setCurrentStep(idx);
+    }
     if (location.state?.scrollTo) {
       setTimeout(() => {
         const el = document.getElementById(location.state.scrollTo);
@@ -617,11 +762,11 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
   }, [location.state]);
 
   const handleComponentSelect = (component) => {
+    if (!component) return;
     onBuildInteracted?.();
-    dismissGuideTour();
+    dismissGuideTour?.();
     const category = buildSteps[currentStep].key;
     addComponent(category, component);
-    setViewedComponent(component);
     soundManager.install();
 
     const casualMountLines = {
@@ -664,7 +809,34 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
 
     const pool = casualMountLines[category] || [`Locked in ${component.name}!`];
     setBobSpeech(pool[Math.floor(Math.random() * pool.length)]);
+
+    // Automatically advance to the next step so selecting a component progresses the build!
+    if (currentStep < buildSteps.length - 1) {
+      const nextStepIndex = currentStep + 1;
+      const nextKey = buildSteps[nextStepIndex].key;
+      setCurrentStep(nextStepIndex);
+      const nextMounted = currentBuild[nextKey];
+      const nextCatalog = allComponents[nextKey] || [];
+      setViewedComponent(nextMounted || nextCatalog[0] || null);
+    } else {
+      setViewedComponent(component);
+    }
+
+    const buildArea = document.getElementById("build-main-area");
+    if (buildArea) {
+      const rect = buildArea.getBoundingClientRect();
+      if (rect.top < -50 || rect.top > 200) {
+        buildArea.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
   };
+
+  const handleCardClick = (component) => {
+    onBuildInteracted?.();
+    soundManager.snap();
+    setViewedComponent(component);
+  };
+
 
   const handleReset = () => {
     dismissGuideTour();
@@ -678,6 +850,10 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
     ];
     setBobSpeech(resetLines[Math.floor(Math.random() * resetLines.length)]);
     setCurrentStep(0); // Reset to Step 1 (PC Case)
+    const firstCase = allComponents["case"]?.[0] || null;
+    setViewedComponent(firstCase);
+    setSearchQuery("");
+    setActiveFilter("ALL");
   };
 
   const currentCategory = buildSteps[currentStep].key;
@@ -685,6 +861,82 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
   const selectedComponent = currentBuild[currentCategory];
   const currentStepData = buildSteps[currentStep];
   const currentCategoryFilters = CATEGORY_FILTERS[currentCategory] || [{ label: "ALL", filterFn: () => true }];
+
+  const getCardSpecBadge = (component, category) => {
+    const tags = Array.isArray(component.tags) ? component.tags : [];
+    switch (category) {
+      case "case":
+        return component.form_factor || "Mid Tower";
+      case "motherboard":
+        return [component.socket_type, component.ddr_type, component.form_factor].filter(Boolean).join(" • ") || "ATX Motherboard";
+      case "cpu":
+        return [component.socket_type, component.wattage ? `${component.wattage}W TDP` : null].filter(Boolean).join(" • ") || "Processor";
+      case "ram":
+        return [component.ddr_type, component.capacity, component.speed].filter(Boolean).join(" • ") || "Memory Kit";
+      case "storage":
+        return [component.type, component.capacity].filter(Boolean).join(" • ") || tags.slice(0, 2).join(" • ") || "SSD Drive";
+      case "gpu":
+        return [component.power_required ? `${component.power_required}W Req` : null, tags[0]].filter(Boolean).join(" • ") || "Graphics Card";
+      case "psu":
+        return [component.wattage ? `${component.wattage}W` : null, component.efficiency].filter(Boolean).join(" • ") || "Power Supply";
+      default:
+        return tags.slice(0, 2).join(" • ");
+    }
+  };
+
+  const getCardCompatibilityStatus = (component, category) => {
+    const relevantPairSelected =
+      (category === "case" && Boolean(currentBuild.motherboard)) ||
+      (category === "motherboard" && Boolean(currentBuild.case || currentBuild.cpu || currentBuild.ram)) ||
+      (category === "cpu" && Boolean(currentBuild.motherboard)) ||
+      (category === "ram" && Boolean(currentBuild.motherboard)) ||
+      (category === "gpu" && Boolean(currentBuild.psu)) ||
+      (category === "psu" && Boolean(currentBuild.gpu));
+
+    const result = checkCompatibility({ ...component, category }, currentBuild);
+
+    if (!result.isCompatible) {
+      let shortWarn = "Mismatch";
+      if (result.reason.toLowerCase().includes("socket")) {
+        shortWarn = `Needs ${component.socket_type || "Matching"} Board`;
+        if (category === "cpu" && currentBuild.motherboard?.socket_type) {
+          shortWarn = `Conflict (${currentBuild.motherboard.socket_type} vs ${component.socket_type || "?"})`;
+        } else if (category === "motherboard" && currentBuild.cpu?.socket_type) {
+          shortWarn = `Conflict (${component.socket_type || "?"} vs ${currentBuild.cpu.socket_type})`;
+        }
+      } else if (result.reason.toLowerCase().includes("memory") || result.reason.toLowerCase().includes("ddr")) {
+        shortWarn = `Needs ${currentBuild.motherboard?.ddr_type || component.ddr_type || "Matching"} RAM`;
+      } else if (result.reason.toLowerCase().includes("power")) {
+        shortWarn = category === "psu" ? `Need ≥${currentBuild.gpu?.power_required}W PSU` : `PSU (${currentBuild.psu?.wattage}W) Low`;
+      } else if (result.reason.toLowerCase().includes("form factor")) {
+        shortWarn = "Size Mismatch";
+      }
+      return {
+        state: "incompatible",
+        label: `⚠ ${shortWarn}`,
+        reason: result.reason,
+      };
+    }
+
+    if (relevantPairSelected) {
+      return {
+        state: "compatible",
+        label: "✓ Compatible",
+        reason: "Verified compatible with your currently selected parts.",
+      };
+    }
+
+    return { state: "neutral", label: null, reason: "" };
+  };
+
+  const handleLoadPurposePreset = (presetRig, label, speech) => {
+    dismissGuideTour();
+    onBuildInteracted?.();
+    try { soundManager.granted(); } catch {}
+    if (loadDemoBuild) loadDemoBuild(presetRig);
+    if (mode === "learn") unlockStage("compatibility");
+    setBobSpeech(speech);
+  };
 
   // Filter components based on search query and category filters
   const filteredComponents = currentComponents.filter((component) => {
@@ -750,11 +1002,16 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
                   <div
                     key={step.key}
                     className={`step-item ${index === currentStep ? "active" : ""} ${picked ? "completed" : ""}`}
-                    onClick={() => setCurrentStep(index)}
+                    onClick={() => {
+                      setCurrentStep(index);
+                      const comp = currentBuild[step.key];
+                      const categoryComps = allComponents[step.key] || [];
+                      setViewedComponent(comp || categoryComps[0] || null);
+                    }}
                   >
                     <div className="step-icon">
                       {picked ? (
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12" /></svg>
                       ) : (
                         <span className="step-num">0{index + 1}</span>
                       )}
@@ -773,8 +1030,9 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
                           e.stopPropagation();
                           soundManager.click();
                           removeComponent(step.key);
-                          if (step.key === currentStepData.key) {
-                            setViewedComponent(null);
+                          if (index === currentStep) {
+                            const categoryComps = allComponents[step.key] || [];
+                            setViewedComponent(categoryComps[0] || null);
                           }
                         }}
                         title={`Remove ${step.label}`}
@@ -816,7 +1074,7 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
               <button
                 type="button"
                 onClick={() => {
-                  dismissGuideTour();
+                  dismissGuideTour?.();
                   try { soundManager.click(); } catch {}
                   const starterLines = [
                     "Loaded up the starter preset! Balanced, tested, and ready to roll.",
@@ -824,7 +1082,11 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
                     "Sweet! Loaded our balanced starter build for you.",
                   ];
                   setBobSpeech(starterLines[Math.floor(Math.random() * starterLines.length)]);
-                  if (loadDemoBuild) loadDemoBuild();
+                  if (loadDemoBuild) {
+                    loadDemoBuild();
+                    const demoComp = DEMO_GAMING_RIG[buildSteps[currentStep].key];
+                    if (demoComp) setViewedComponent(demoComp);
+                  }
                 }}
                 className="load-starter-btn sidebar-starter-btn"
                 title="Load a balanced, fully-compatible starter PC build"
@@ -906,6 +1168,52 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
             </div>
           </div>
 
+          <div className="purpose-presets-bar" aria-label="Purpose-driven build recommendations">
+            <span className="presets-bar-label">RECOMMENDED GOALS:</span>
+            <button
+              type="button"
+              className="preset-pill-btn preset-gaming"
+              onClick={() =>
+                handleLoadPurposePreset(
+                  PRESET_1080P_GAMING,
+                  "1080p Gaming",
+                  "Loaded our 1080p Gaming Preset! Ryzen 5 AM5 + RTX 4070 + DDR5, 100% verified compatible!"
+                )
+              }
+              title="Auto-fill a balanced 1080p/1440p Gaming PC rig"
+            >
+              <span>🎮 1080p Gaming</span>
+            </button>
+            <button
+              type="button"
+              className="preset-pill-btn preset-workstation"
+              onClick={() =>
+                handleLoadPurposePreset(
+                  PRESET_WORKSTATION,
+                  "Workstation",
+                  "Loaded the Creator Workstation Preset! Intel Core i7 16-core + 32GB DDR5 + RX 6800 XT 16GB!"
+                )
+              }
+              title="Auto-fill a high-core Workstation / Content Creation PC"
+            >
+              <span>🖥️ Workstation / Creator</span>
+            </button>
+            <button
+              type="button"
+              className="preset-pill-btn preset-student"
+              onClick={() =>
+                handleLoadPurposePreset(
+                  PRESET_ENTRY_STUDENT,
+                  "Entry Student",
+                  "Loaded the Entry Student Preset! Budget-friendly AM4 Ryzen 7 + DDR4 + RTX 3050, 100% compatible!"
+                )
+              }
+              title="Auto-fill an affordable Entry Student / Academic PC rig"
+            >
+              <span>🎓 Entry Student Build</span>
+            </button>
+          </div>
+
           <div className="build-grid-and-panel">
             <div
               className={`components-grid-wrapper bob-highlight-target ${guideTarget === 'center' ? 'active-guide' : ''}`}
@@ -926,15 +1234,18 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
                   <div className="bob-guide-corner-br" />
                 </>
               )}
-              <div className="components-grid compact">
-                {filteredComponents.map((component) => {
-                  const isSelected = selectedComponent?.id === component.id;
+              <div className="components-grid compact" key={currentCategory}>
+                {filteredComponents.map((component, idx) => {
+                  const isSelected = selectedComponent?.id === component.id || selectedComponent?.name === component.name;
+                  const isViewed = viewedComponent?.id === component.id || viewedComponent?.name === component.name;
+                  const compat = getCardCompatibilityStatus(component, currentCategory);
+                  const specBadge = getCardSpecBadge(component, currentCategory);
 
                   return (
                     <div
-                      key={component.id}
-                      className={`component-card compact-card ${isSelected ? "selected" : ""}`}
-                      onClick={() => handleComponentSelect(component)}
+                      key={component.id || `${currentCategory}-${idx}`}
+                      className={`component-card compact-card ${isViewed ? "viewed active-selected" : ""} ${isSelected ? "selected committed" : ""}`}
+                      onClick={() => handleCardClick(component)}
                     >
                       <div className="component-image">
                         <img src={component.img} alt={component.name} />
@@ -942,19 +1253,21 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
                       <div className="component-details compact-details">
                         <span className="card-brand-label">{component.brand}</span>
                         <h3 className="component-name">{component.name}</h3>
+                        {specBadge && (
+                          <span className="card-spec-badge">{specBadge}</span>
+                        )}
+                        {compat.label && (
+                          <span
+                            className={`card-compat-badge ${
+                              compat.state === "incompatible" ? "is-incompatible" : "is-compatible"
+                            }`}
+                          >
+                            {compat.label}
+                          </span>
+                        )}
                       </div>
-                      <button
-                        type="button"
-                        className={`card-action-btn ${isSelected ? "selected" : ""}`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleComponentSelect(component);
-                        }}
-                      >
-                        {isSelected ? "✓ MOUNTED" : "SELECT PART"}
-                      </button>
                       {isSelected && (
-                        <span className="card-installed-tag">✓ MOUNTED</span>
+                        <span className="card-installed-tag">✓ SELECTED</span>
                       )}
                     </div>
                   );
@@ -963,10 +1276,10 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
             </div>
 
             <div
-              className={`specifications-panel bob-highlight-target ${guideTarget === 'right' ? 'active-guide' : ''}`}
+              className={`specifications-panel bob-highlight-target ${guideTarget === "right" ? "active-guide" : ""}`}
               id="build-right-panel"
             >
-              {guideTarget === 'right' && (
+              {guideTarget === "right" && (
                 <>
                   <div className="bob-guide-indicator-pill">
                     <span className="tag-bracket">[</span>
@@ -981,242 +1294,404 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
                   <div className="bob-guide-corner-br" />
                 </>
               )}
-              {viewedComponent ? (
-                <>
-                  <div className="spec-header-tag">
-                    <span className="tag-bracket">[</span>
-                    <span className="tag-dot" />
-                    <span className="tag-text">COMPONENT TELEMETRY</span>
-                    <span className="tag-bracket">]</span>
-                  </div>
-                  <div className="spec-image-container">
-                    <img src={viewedComponent.img} alt={viewedComponent.name} />
-                  </div>
-                  <div className="spec-title-area">
-                    <span className="spec-brand-tag">{viewedComponent.brand || "Hardware"}</span>
-                    <h3 className="spec-component-title">{viewedComponent.name}</h3>
-                  </div>
-
-                  <div className="spec-action-top">
-                    <div className="spec-mounted-badge">
-                      <span className="badge-check">✓</span>
-                      <span>MOUNTED IN RIG (STAGE {currentStep + 1}/{buildSteps.length})</span>
-                    </div>
-                    {currentStep < buildSteps.length - 1 ? (
+              <div className="spec-scrollable-body">
+                {viewedComponent ? (
+                  <>
+                    <div className="spec-header-row">
+                      <div className={`spec-header-tag ${selectedComponent?.id === viewedComponent.id ? "is-selected-tag" : ""}`}>
+                        <span className="tag-bracket">[</span>
+                        <span className="tag-dot" />
+                        <span className="tag-text">
+                          {selectedComponent?.id === viewedComponent.id ? "✓ COMPONENT SELECTED" : "SPECIFICATIONS"}
+                        </span>
+                        <span className="tag-bracket">]</span>
+                      </div>
                       <button
                         type="button"
-                        className="btn-select-component btn-next-stage"
+                        className="btn-spec-overview-toggle"
                         onClick={() => {
-                          try { soundManager.click(); } catch {}
-                          setCurrentStep(currentStep + 1);
+                          soundManager.click();
+                          setViewedComponent(null);
                         }}
+                        title="View Assembly Overview"
                       >
-                        <span className="btn-label">NEXT STAGE: {buildSteps[currentStep + 1].label.toUpperCase()}</span>
-                        <span className="btn-arrow">&rarr;</span>
+                        <span>OVERVIEW</span>
+                        <span className="toggle-icon">↗</span>
                       </button>
-                    ) : (
-                      <Link
-                        to="/compatibility"
-                        className="btn-select-component btn-next-stage"
-                        onClick={() => {
-                          try { soundManager.click(); } catch {}
-                        }}
-                      >
-                        <span className="btn-label">CHECK COMPATIBILITY</span>
-                        <span className="btn-arrow">&rarr;</span>
-                      </Link>
-                    )}
-                  </div>
-
-                  <div className="spec-details-list">
-                    <div className="spec-row">
-                      <span className="spec-label">BRAND</span>
-                      <span className="spec-value">{viewedComponent.brand || "N/A"}</span>
-                    </div>
-                    <div className="spec-row">
-                      <span className="spec-label">NAME / MODEL</span>
-                      <span className="spec-value">{viewedComponent.name || "N/A"}</span>
-                    </div>
-                    <div className="spec-row spec-desc">
-                      <span className="spec-label" style={{ marginBottom: '4px' }}>DESCRIPTION</span>
-                      <p style={{ margin: 0 }}>{viewedComponent.desc || "N/A"}</p>
-                    </div>
-                    <div className="spec-row">
-                      <span className="spec-label">TAGS</span>
-                      <span className="spec-value" style={{ textTransform: 'capitalize' }}>
-                        {Array.isArray(viewedComponent.tags)
-                          ? viewedComponent.tags.join(', ')
-                          : typeof viewedComponent.tags === 'string'
-                            ? (() => {
-                              try {
-                                const parsedTags = JSON.parse(viewedComponent.tags);
-                                return Array.isArray(parsedTags) ? parsedTags.join(', ') : viewedComponent.tags;
-                              } catch {
-                                return viewedComponent.tags;
-                              }
-                            })()
-                            : "N/A"}
-                      </span>
                     </div>
 
-                    {viewedComponent.category === 'case' && (
+                    <div className="spec-image-container">
+                      <img src={viewedComponent.img} alt={viewedComponent.name} />
+                    </div>
+                    <div className="spec-title-area">
+                      <span className="spec-brand-tag">{viewedComponent.brand || "Hardware"}</span>
+                      <h3 className="spec-component-title">{viewedComponent.name}</h3>
+                    </div>
+
+                    <div className="spec-details-list">
                       <div className="spec-row">
-                        <span className="spec-label">FORM FACTOR</span>
-                        <span className="spec-value">{viewedComponent.form_factor || "N/A"}</span>
+                        <span className="spec-label">BRAND</span>
+                        <span className="spec-value">{viewedComponent.brand || "Hardware"}</span>
                       </div>
-                    )}
-
-                    {viewedComponent.category === 'motherboard' && (
-                      <>
-                        <div className="spec-row">
-                          <span className="spec-label">SOCKET TYPE</span>
-                          <span className="spec-value">{viewedComponent.socket_type || "N/A"}</span>
-                        </div>
-                        <div className="spec-row">
-                          <span className="spec-label">DDR TYPE</span>
-                          <span className="spec-value">{viewedComponent.ddr_type || "N/A"}</span>
-                        </div>
-                        <div className="spec-row">
-                          <span className="spec-label">FORM FACTOR</span>
-                          <span className="spec-value">{viewedComponent.form_factor || "N/A"}</span>
-                        </div>
-                      </>
-                    )}
-
-                    {viewedComponent.category === 'cpu' && (
-                      <>
-                        <div className="spec-row">
-                          <span className="spec-label">SOCKET TYPE</span>
-                          <span className="spec-value">{viewedComponent.socket_type || "N/A"}</span>
-                        </div>
-                        <div className="spec-row">
-                          <span className="spec-label">WATTAGE</span>
-                          <span className="spec-value">{viewedComponent.wattage || "N/A"}</span>
-                        </div>
-                      </>
-                    )}
-
-                    {viewedComponent.category === 'ram' && (
-                      <>
-                        <div className="spec-row">
-                          <span className="spec-label">DDR TYPE</span>
-                          <span className="spec-value">{viewedComponent.ddr_type || "N/A"}</span>
-                        </div>
-                        <div className="spec-row">
-                          <span className="spec-label">CAPACITY</span>
-                          <span className="spec-value">{viewedComponent.capacity || "N/A"}</span>
-                        </div>
-                      </>
-                    )}
-
-                    {viewedComponent.category === 'storage' && (
                       <div className="spec-row">
-                        <span className="spec-label">CAPACITY</span>
-                        <span className="spec-value">{viewedComponent.capacity || "N/A"}</span>
+                        <span className="spec-label">NAME / MODEL</span>
+                        <span className="spec-value">{viewedComponent.name || "N/A"}</span>
                       </div>
-                    )}
 
-                    {viewedComponent.category === 'gpu' && (
-                      <div className="spec-row">
-                        <span className="spec-label">POWER REQUIRED</span>
-                        <span className="spec-value">{viewedComponent.power_required || "N/A"}</span>
-                      </div>
-                    )}
+                      {viewedComponent.category === 'case' && (
+                        <>
+                          <div className="spec-row">
+                            <span className="spec-label">FORM FACTOR</span>
+                            <span className="spec-value">{viewedComponent.form_factor || "Mid Tower"}</span>
+                          </div>
+                          <div className="spec-row">
+                            <span className="spec-label">DIMENSIONS</span>
+                            <span className="spec-value">{getCaseDimensions(viewedComponent)}</span>
+                          </div>
+                          <div className="spec-row">
+                            <span className="spec-label">MAX GPU LENGTH</span>
+                            <span className="spec-value">{getCaseMaxGPU(viewedComponent)}</span>
+                          </div>
+                        </>
+                      )}
 
-                    {viewedComponent.category === 'psu' && (
-                      <div className="spec-row">
-                        <span className="spec-label">WATTAGE</span>
-                        <span className="spec-value">{viewedComponent.wattage || "N/A"}</span>
-                      </div>
-                    )}
-                  </div>
-                </>
-              ) : (
-                <div className="spec-overview-card">
-                  <div className="spec-overview-header">
-                    <div className="spec-overview-tag">
-                      <span className="tag-bracket">[</span>
-                      <span className="tag-dot" />
-                      <span className="tag-text">RIG TELEMETRY</span>
-                      <span className="tag-bracket">]</span>
-                    </div>
-                    <h3 className="spec-overview-title">ASSEMBLY OVERVIEW</h3>
-                  </div>
+                      {viewedComponent.category === 'motherboard' && (
+                        <>
+                          <div className="spec-row">
+                            <span className="spec-label">SOCKET TYPE</span>
+                            <span className="spec-value">{viewedComponent.socket_type || "N/A"}</span>
+                          </div>
+                          <div className="spec-row">
+                            <span className="spec-label">DDR TYPE</span>
+                            <span className="spec-value">{viewedComponent.ddr_type || "N/A"}</span>
+                          </div>
+                          <div className="spec-row">
+                            <span className="spec-label">FORM FACTOR</span>
+                            <span className="spec-value">{viewedComponent.form_factor || "ATX"}</span>
+                          </div>
+                        </>
+                      )}
 
-                  <div className="build-progress-box">
-                    <div className="progress-top-row">
-                      <span className="progress-label">HARDWARE CAPACITY</span>
-                      <span className="progress-value">
-                        {selectedComponents.length} / {buildSteps.length}
-                      </span>
-                    </div>
-                    <div className="progress-track">
-                      <div
-                        className="progress-fill"
-                        style={{ width: `${(selectedComponents.length / buildSteps.length) * 100}%` }}
-                      />
-                    </div>
-                    <span className="progress-caption">
-                      {selectedComponents.length === buildSteps.length
-                        ? "Complete 7-stage rig assembled. Ready for 3D Studio."
-                        : `${buildSteps.length - selectedComponents.length} component${buildSteps.length - selectedComponents.length === 1 ? '' : 's'} remaining to complete.`}
-                    </span>
-                  </div>
+                      {viewedComponent.category === 'cpu' && (
+                        <>
+                          <div className="spec-row">
+                            <span className="spec-label">SOCKET TYPE</span>
+                            <span className="spec-value">{viewedComponent.socket_type || "N/A"}</span>
+                          </div>
+                          <div className="spec-row">
+                            <span className="spec-label">WATTAGE / TDP</span>
+                            <span className="spec-value">{viewedComponent.wattage ? `${viewedComponent.wattage}W` : "N/A"}</span>
+                          </div>
+                        </>
+                      )}
 
-                  <div className="next-step-prompt">
-                    <div className="next-step-badge">
-                      <span className="next-step-icon">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-                      </span>
-                      <div className="next-step-content">
-                        <div className="next-step-title">CURRENT STAGE: {currentStepData.label.toUpperCase()}</div>
-                        <div className="next-step-desc">
-                          {selectedComponent
-                            ? `Selected: "${selectedComponent.name}". Click any card to swap or view specs.`
-                            : `Select a compatible ${currentStepData.label.toLowerCase()} to mount.`}
+                      {viewedComponent.category === 'ram' && (
+                        <>
+                          <div className="spec-row">
+                            <span className="spec-label">DDR TYPE</span>
+                            <span className="spec-value">{viewedComponent.ddr_type || "N/A"}</span>
+                          </div>
+                          <div className="spec-row">
+                            <span className="spec-label">CAPACITY</span>
+                            <span className="spec-value">{viewedComponent.capacity || "N/A"}</span>
+                          </div>
+                          {viewedComponent.speed && (
+                            <div className="spec-row">
+                              <span className="spec-label">SPEED</span>
+                              <span className="spec-value">{viewedComponent.speed}</span>
+                            </div>
+                          )}
+                        </>
+                      )}
+
+                      {viewedComponent.category === 'storage' && (
+                        <>
+                          <div className="spec-row">
+                            <span className="spec-label">TYPE / INTERFACE</span>
+                            <span className="spec-value">{viewedComponent.type || "NVMe M.2"}</span>
+                          </div>
+                          <div className="spec-row">
+                            <span className="spec-label">CAPACITY</span>
+                            <span className="spec-value">{viewedComponent.capacity || "N/A"}</span>
+                          </div>
+                        </>
+                      )}
+
+                      {viewedComponent.category === 'gpu' && (
+                        <div className="spec-row">
+                          <span className="spec-label">POWER REQUIRED</span>
+                          <span className="spec-value">{viewedComponent.power_required ? `${viewedComponent.power_required}W` : "N/A"}</span>
                         </div>
+                      )}
+
+                      {viewedComponent.category === 'psu' && (
+                        <>
+                          <div className="spec-row">
+                            <span className="spec-label">WATTAGE</span>
+                            <span className="spec-value">{viewedComponent.wattage ? `${viewedComponent.wattage}W` : "N/A"}</span>
+                          </div>
+                          <div className="spec-row">
+                            <span className="spec-label">EFFICIENCY</span>
+                            <span className="spec-value">{viewedComponent.efficiency || "80+ Gold"}</span>
+                          </div>
+                        </>
+                      )}
+
+                      <div className="spec-row spec-desc">
+                        <span className="spec-label" style={{ marginBottom: '4px' }}>DESCRIPTION</span>
+                        <p style={{ margin: 0 }}>{viewedComponent.desc || "N/A"}</p>
                       </div>
-                    </div>
-                  </div>
 
-                  <div className="spec-compat-banner">
-                    <span className="compat-shield">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                    </span>
-                    <span>
-                      {selectedComponents.length > 0
-                        ? "Live pin & socket matching active"
-                        : "Ready to assemble. Choose your case to begin."}
-                    </span>
-                  </div>
-
-                  <div className="overview-cta-row">
-                    <Link to="/compatibility" className="sidebar-cta-btn sidebar-cta-compat">
-                      <span className="sidebar-cta-icon">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                      </span>
-                      <div className="sidebar-cta-text">
-                        <span className="sidebar-cta-label">COMPATIBILITY MATRIX</span>
-                        <span className="sidebar-cta-sub">Verify socket clearances</span>
-                      </div>
-                    </Link>
-
-                    <Link to="/3d-builder" className="sidebar-cta-btn sidebar-cta-3d">
-                      <span className="sidebar-cta-icon">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-                      </span>
-                      <div className="sidebar-cta-text">
-                        <span className="sidebar-cta-label">Launch 3D Studio</span>
-                        <span className="sidebar-cta-sub">
-                          {selectedComponents.length === 0
-                            ? "Interactive 3D Assembly"
-                            : `Inspect ${selectedComponents.length}/${buildSteps.length} parts in 3D`}
+                      <div className="spec-row">
+                        <span className="spec-label">TAGS</span>
+                        <span className="spec-value" style={{ textTransform: 'capitalize' }}>
+                          {Array.isArray(viewedComponent.tags)
+                            ? viewedComponent.tags.join(', ')
+                            : typeof viewedComponent.tags === 'string'
+                              ? (() => {
+                                try {
+                                  const parsedTags = JSON.parse(viewedComponent.tags);
+                                  return Array.isArray(parsedTags) ? parsedTags.join(', ') : viewedComponent.tags;
+                                } catch {
+                                  return viewedComponent.tags;
+                                }
+                              })()
+                              : "N/A"}
                         </span>
                       </div>
-                    </Link>
+                    </div>
+
+                    {/* SELECT COMPONENT BUTTON AT THE BOTTOM (EXACTLY MATCHING USER REFERENCE IMAGE) */}
+                    <div className="spec-action-box">
+                      <button
+                        type="button"
+                        className={`btn-select-component ${selectedComponent?.id === viewedComponent.id ? "is-selected" : ""}`}
+                        onClick={() => {
+                          if (selectedComponent?.id === viewedComponent?.id && currentStep < buildSteps.length - 1) {
+                            soundManager.click();
+                            const nextStepIndex = currentStep + 1;
+                            const nextKey = buildSteps[nextStepIndex].key;
+                            setCurrentStep(nextStepIndex);
+                            const nextMounted = currentBuild[nextKey];
+                            const nextCatalog = allComponents[nextKey] || [];
+                            setViewedComponent(nextMounted || nextCatalog[0] || null);
+                          } else {
+                            handleComponentSelect(viewedComponent);
+                          }
+                        }}
+                      >
+                        <span className="btn-label">
+                          {selectedComponent?.id === viewedComponent.id ? "✓ COMPONENT SELECTED" : "SELECT COMPONENT"}
+                        </span>
+                      </button>
+
+                      {selectedComponent?.id === viewedComponent.id && (
+                        <div className="spec-mounted-actions">
+                          {currentStep < buildSteps.length - 1 ? (
+                            <button
+                              type="button"
+                              className="btn-next-stage-spec"
+                              onClick={() => {
+                                soundManager.click();
+                                const nextStepIndex = currentStep + 1;
+                                const nextKey = buildSteps[nextStepIndex].key;
+                                setCurrentStep(nextStepIndex);
+                                const nextMounted = currentBuild[nextKey];
+                                const nextCatalog = allComponents[nextKey] || [];
+                                setViewedComponent(nextMounted || nextCatalog[0] || null);
+                              }}
+                            >
+                              <span>PROCEED TO STAGE 0{currentStep + 2} ({buildSteps[currentStep + 1]?.label})</span>
+                              <span className="btn-arrow">&rarr;</span>
+                            </button>
+                          ) : (
+                            <Link
+                              to="/compatibility"
+                              className="btn-next-stage-spec finish"
+                              onClick={() => soundManager.click()}
+                            >
+                              <span>ALL 7 STAGES LOCKED • VERIFY COMPATIBILITY</span>
+                              <span className="btn-arrow">&rarr;</span>
+                            </Link>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  <div className="spec-overview-card">
+                    <div className="spec-overview-header">
+                      <div className="spec-overview-tag">
+                        <span className="tag-bracket">[</span>
+                        <span className="tag-dot" />
+                        <span className="tag-text">RIG TELEMETRY</span>
+                        <span className="tag-bracket">]</span>
+                      </div>
+                      <h3 className="spec-overview-title">ASSEMBLY OVERVIEW</h3>
+                    </div>
+
+                    <div className="build-progress-box">
+                      <div className="progress-top-row">
+                        <span className="progress-label">HARDWARE CAPACITY</span>
+                        <span className="progress-value">
+                          {selectedComponents.length} / {buildSteps.length}
+                        </span>
+                      </div>
+                      <div className="progress-track">
+                        <div
+                          className="progress-fill"
+                          style={{ width: `${(selectedComponents.length / buildSteps.length) * 100}%` }}
+                        />
+                      </div>
+                      <span className="progress-caption">
+                        {selectedComponents.length === buildSteps.length
+                          ? "Complete 7-stage rig assembled. Ready for 3D Studio."
+                          : `${buildSteps.length - selectedComponents.length} component${buildSteps.length - selectedComponents.length === 1 ? '' : 's'} remaining to complete.`}
+                      </span>
+                    </div>
+
+                    <div className="spec-selected-list-box">
+                      <div className="spec-selected-list-header">
+                        <span className="spec-selected-list-title">SELECTED COMPONENTS</span>
+                        <span className="spec-selected-badge">{selectedComponents.length} / {buildSteps.length}</span>
+                      </div>
+                      <div className="spec-selected-items-wrapper">
+                        {buildSteps.map((step, idx) => {
+                          const comp = currentBuild[step.key];
+                          const isCurrentStage = idx === currentStep;
+
+                          return (
+                            <div
+                              key={step.key}
+                              className={`spec-selected-row ${comp ? "has-component" : "empty"} ${isCurrentStage ? "active-stage" : ""}`}
+                              onClick={() => {
+                                setCurrentStep(idx);
+                                if (comp) {
+                                  setViewedComponent(comp);
+                                  soundManager.snap();
+                                } else {
+                                  const categoryComps = allComponents[step.key] || [];
+                                  setViewedComponent(categoryComps[0] || null);
+                                  soundManager.click();
+                                }
+                              }}
+                              title={comp ? `Click to inspect ${comp.name}` : `Click to choose ${step.label}`}
+                            >
+                              <div className="spec-selected-thumb">
+                                {comp ? (
+                                  <img src={comp.img} alt={comp.name} />
+                                ) : (
+                                  <span className="spec-selected-stage-num">0{idx + 1}</span>
+                                )}
+                              </div>
+                              <div className="spec-selected-info">
+                                <span className="spec-selected-stage-label">{step.label}</span>
+                                <span className={`spec-selected-name ${comp ? "picked" : ""}`}>
+                                  {comp ? comp.name : "Not selected yet"}
+                                </span>
+                              </div>
+                              <div className="spec-selected-tag-col">
+                                {comp ? (
+                                  <span className="spec-status-pill selected">✓ MOUNTED</span>
+                                ) : (
+                                  <span className="spec-status-pill empty">CHOOSE</span>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    <div className="next-step-prompt">
+                      <div className="next-step-badge">
+                        <span className="next-step-icon">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6" /></svg>
+                        </span>
+                        <div className="next-step-content">
+                          <div className="next-step-title">CURRENT STAGE: {currentStepData.label.toUpperCase()}</div>
+                          <div className="next-step-desc">
+                            {selectedComponent
+                              ? `Mounted: "${selectedComponent.name}". Click any card to swap or view specs.`
+                              : `Select a compatible ${currentStepData.label.toLowerCase()} to mount.`}
+                          </div>
+                          {selectedComponent ? (
+                            <button
+                              type="button"
+                              className="btn-view-stage-specs"
+                              onClick={() => setViewedComponent(selectedComponent)}
+                            >
+                              View Mounted Specs & Details →
+                            </button>
+                          ) : (
+                            <button
+                              type="button"
+                              className="btn-view-stage-specs"
+                              onClick={() => setViewedComponent(currentComponents[0] || null)}
+                            >
+                              View Component Telemetry & Mount →
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
                   </div>
+                )}
+              </div>
+
+              {/* PERMANENT DOCKED ACTION FOOTER (ALWAYS VISIBLE - NEVER DISAPPEARS) */}
+              <div className="spec-docked-footer">
+                <div className="spec-compat-banner">
+                  <span className="compat-shield">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
+                  </span>
+                  <span>
+                    {selectedComponents.length === buildSteps.length
+                      ? "All 7 stages locked • Ready to verify"
+                      : selectedComponents.length > 0
+                        ? `${selectedComponents.length}/${buildSteps.length} parts armed • Live pin match active`
+                        : "Ready to assemble. Choose your case to begin."}
+                  </span>
                 </div>
-              )}
+
+                <div className="overview-cta-row permanent">
+                  <Link
+                    to="/compatibility"
+                    className={`sidebar-cta-btn sidebar-cta-compat ${selectedComponents.length === buildSteps.length ? "is-ready-pulse" : ""}`}
+                    onClick={() => soundManager.click()}
+                  >
+                    <span className="sidebar-cta-icon">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
+                    </span>
+                    <div className="sidebar-cta-text">
+                      <span className="sidebar-cta-label">
+                        {selectedComponents.length === buildSteps.length ? "CHECK COMPATIBILITY" : "COMPATIBILITY MATRIX"}
+                      </span>
+                      <span className="sidebar-cta-sub">
+                        {selectedComponents.length === buildSteps.length ? "Verify complete build" : "Verify socket clearances"}
+                      </span>
+                    </div>
+                  </Link>
+
+                  <Link
+                    to="/3d-builder"
+                    className="sidebar-cta-btn sidebar-cta-3d"
+                    onClick={() => soundManager.click()}
+                  >
+                    <span className="sidebar-cta-icon">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" /><polyline points="3.27 6.96 12 12.01 20.73 6.96" /><line x1="12" y1="22.08" x2="12" y2="12" /></svg>
+                    </span>
+                    <div className="sidebar-cta-text">
+                      <span className="sidebar-cta-label">Launch 3D Studio</span>
+                      <span className="sidebar-cta-sub">
+                        {selectedComponents.length === 0
+                          ? "Interactive 3D Assembly"
+                          : `Inspect ${selectedComponents.length}/${buildSteps.length} parts in 3D`}
+                      </span>
+                    </div>
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -1225,7 +1700,7 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
       {showCompleteToast && (
         <div className="build-complete-toast" role="status">
           <span className="bct-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>
           </span>
           <div className="bct-body">
             <strong>All {buildSteps.length} parts selected — build complete!</strong>
@@ -1254,8 +1729,6 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
   );
 }
 
-export default Build;
-
 /**
  * Build — routed at /build with the FullscreenGate wrapper so the
  * standalone build experience always runs in immersive fullscreen mode.
@@ -1271,3 +1744,6 @@ function Build({ isIntegrated = false, startBuildRequested = false, onBuildInter
   );
   return isIntegrated ? page : <FullscreenGate requireFullscreen>{page}</FullscreenGate>;
 }
+
+export default Build;
+

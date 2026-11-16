@@ -236,6 +236,14 @@
   display: none !important;
 }
 
+/* ── Integrated Brands Section on Homepage ── */
+.home-brands-section {
+  position: relative;
+  width: 100%;
+  background: #06080e;
+  z-index: 2;
+}
+
 /* ── Why Build Section ── */
 .why-build {
   background-color: #0b0f1a;
@@ -445,6 +453,48 @@
   justify-content: space-between;
   width: 100%;
   padding-bottom: 0.5rem;
+  transition: all 0.25s ease;
+}
+
+.cyber-top-nav.is-scrolled {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 0.85rem 3rem;
+  background: rgba(6, 8, 14, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.65);
+  animation: slideDownNav 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideDownNav {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.nav-reveal-item {
+  animation: navItemReveal 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes navItemReveal {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .cyber-brand {
@@ -693,13 +743,13 @@
 /* 3. GIGANTIC BACKGROUND TYPOGRAPHY (Layered behind 3D Canvas) */
 .cyber-giant-text-backdrop {
   position: absolute;
-  top: 35%;
+  top: 24%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 2;
   pointer-events: none;
   width: 90vw;
-  max-width: 1360px;
+  max-width: 1400px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -726,6 +776,67 @@
   user-select: none;
   white-space: nowrap;
   text-shadow: 0 0 60px rgba(244, 63, 94, 0.32);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.giant-bg-word {
+  display: inline-flex;
+  align-items: center;
+}
+
+.giant-bg-word + .giant-bg-word {
+  margin-left: 0.12em;
+}
+
+.giant-bg-txt {
+  display: inline-block;
+  line-height: inherit;
+  color: inherit;
+  -webkit-text-stroke: inherit;
+  background: inherit;
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.giant-bg-logo-slot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 0.84em;
+  width: auto;
+  margin: 0 0.035em 0 0.045em;
+  vertical-align: middle;
+  position: relative;
+  transform: translateY(-0.045em);
+}
+
+.giant-bg-logo-img {
+  height: 100%;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 0 28px rgba(244, 63, 94, 0.65)) drop-shadow(0 0 55px rgba(244, 63, 94, 0.35));
+  pointer-events: none;
+  user-select: none;
+  animation: logoFlaskPulse 4s ease-in-out infinite alternate;
+}
+
+body.theme-light .giant-bg-logo-img,
+.theme-light .giant-bg-logo-img {
+  opacity: 0.65;
+  filter: drop-shadow(0 0 15px rgba(244, 63, 94, 0.35));
+}
+
+@keyframes logoFlaskPulse {
+  0% {
+    filter: drop-shadow(0 0 22px rgba(244, 63, 94, 0.55)) drop-shadow(0 0 45px rgba(244, 63, 94, 0.25));
+    transform: scale(0.99);
+  }
+  100% {
+    filter: drop-shadow(0 0 36px rgba(244, 63, 94, 0.85)) drop-shadow(0 0 70px rgba(244, 63, 94, 0.45));
+    transform: scale(1.02);
+  }
 }
 
 .cyber-canvas-stage {
@@ -1173,10 +1284,35 @@
   position: relative;
   z-index: 25;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 0.75rem;
   width: 100%;
   margin: 1.5rem auto 0;
+}
+
+.hero-legal-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  font-size: 0.74rem;
+  color: rgba(148, 163, 184, 0.85);
+}
+
+.hero-legal-links a {
+  color: rgba(148, 163, 184, 0.92);
+  text-decoration: none;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  transition: color 0.18s ease;
+}
+
+.hero-legal-links a:hover {
+  color: #00e5a0;
+  text-decoration: underline;
 }
 
 .hud-start-build-btn.centered-start-btn {

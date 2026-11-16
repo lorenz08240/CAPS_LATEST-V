@@ -12,8 +12,14 @@ import './RigPickerTransitionOverlay.css';
  *  - Holds while window scrolls down to #build-station (~500ms)
  *  - Smoothly fades out (~320ms) into the settled 2D Builder and BOB intro
  */
-export default function RigPickerTransitionOverlay({ isOpen, onComplete }) {
+export default function RigPickerTransitionOverlay({
+  isOpen,
+  mode = 'explore',
+  learnerName = '',
+  onComplete,
+}) {
   const [phase, setPhase] = useState('hidden'); // 'entering' | 'holding' | 'leaving' | 'hidden'
+  const isLearn = mode === 'learn';
 
   useEffect(() => {
     if (!isOpen) {
@@ -23,22 +29,25 @@ export default function RigPickerTransitionOverlay({ isOpen, onComplete }) {
 
     setPhase('entering');
 
+    const holdMs = isLearn ? 1150 : 650;
+    const totalMs = isLearn ? 1500 : 1000;
+
     // Hold phase while scroll takes place
     const holdTimer = setTimeout(() => {
       setPhase('leaving');
-    }, 650);
+    }, holdMs);
 
     // Fade-out finish
     const exitTimer = setTimeout(() => {
       setPhase('hidden');
       if (onComplete) onComplete();
-    }, 1000);
+    }, totalMs);
 
     return () => {
       clearTimeout(holdTimer);
       clearTimeout(exitTimer);
     };
-  }, [isOpen, onComplete]);
+  }, [isOpen, isLearn, onComplete]);
 
   if (phase === 'hidden' && !isOpen) return null;
 
@@ -56,16 +65,20 @@ export default function RigPickerTransitionOverlay({ isOpen, onComplete }) {
       {/* 1. TOP HUD BAR */}
       <header className="rig-trans-top-bar">
         <div className="rig-trans-brand">
-          <div className="rig-trans-logo-icon">⚡</div>
+          <div className="rig-trans-logo-icon">{isLearn ? '🎓' : '⚡'}</div>
           <div className="rig-trans-brand-info">
             <span className="rig-trans-brand-title">BUILDLAB</span>
-            <span className="rig-trans-brand-sub">WORKSTATION MATRIX V2.4</span>
+            <span className="rig-trans-brand-sub">
+              {isLearn ? 'STUDENT CERTIFICATION TRACK V2.4' : 'WORKSTATION MATRIX V2.4'}
+            </span>
           </div>
         </div>
 
         <div className="rig-trans-status-chip">
           <span className="rig-trans-pulse-dot" />
-          <span className="rig-trans-status-text">TRANSITION OVERLAY • ENGAGING</span>
+          <span className="rig-trans-status-text">
+            {isLearn ? 'GOOGLE LEARNER SYNC • ENGAGING' : 'TRANSITION OVERLAY • ENGAGING'}
+          </span>
         </div>
       </header>
 
@@ -79,16 +92,30 @@ export default function RigPickerTransitionOverlay({ isOpen, onComplete }) {
 
           <div className="rig-trans-eyebrow">
             <span>✦</span>
-            <span>WORKSPACE TRANSITION // FREE MODE</span>
+            <span>
+              {isLearn ? 'WORKSPACE TRANSITION // LEARN MODE' : 'WORKSPACE TRANSITION // FREE MODE'}
+            </span>
             <span>✦</span>
           </div>
 
-          <h1 className="rig-trans-title">Rig Component Picker</h1>
+          <h1 className="rig-trans-title">
+            {isLearn ? 'Hardware Academy & Course Lab' : 'Rig Component Picker'}
+          </h1>
 
           <div className="rig-trans-underline" />
 
           <p className="rig-trans-subtext">
-            INITIALIZING 2D COMPONENT MATRIX • <span className="rig-cyan-hi">BOB AWAITING HARDWARE SELECTION</span>
+            {isLearn ? (
+              <>
+                SYNCING GOOGLE PROFILE{learnerName ? ` (${learnerName.toUpperCase()})` : ''} •{' '}
+                <span className="rig-cyan-hi">LAUNCHING HARDWARE ACADEMY</span>
+              </>
+            ) : (
+              <>
+                INITIALIZING 2D COMPONENT MATRIX •{' '}
+                <span className="rig-cyan-hi">BOB AWAITING HARDWARE SELECTION</span>
+              </>
+            )}
           </p>
 
           <div className="rig-trans-mini-loader">
@@ -99,7 +126,9 @@ export default function RigPickerTransitionOverlay({ isOpen, onComplete }) {
               <span className="rig-dot" />
               <span className="rig-dot" />
             </div>
-            <span className="rig-loader-label">SYNCING HARDWARE CATALOG</span>
+            <span className="rig-loader-label">
+              {isLearn ? 'PREPARING COURSE MODULES' : 'SYNCING HARDWARE CATALOG'}
+            </span>
           </div>
         </div>
       </main>
@@ -108,10 +137,14 @@ export default function RigPickerTransitionOverlay({ isOpen, onComplete }) {
       <footer className="rig-trans-bottom-bar">
         <div className="rig-trans-tag">
           <span className="tag-rose">■</span>
-          <span>STAGE: 2D WORKBENCH INITIALIZATION</span>
+          <span>
+            {isLearn ? 'STUDENT CERTIFICATION TRACK' : 'STAGE: 2D WORKBENCH INITIALIZATION'}
+          </span>
         </div>
         <div className="rig-trans-tag">
-          <span>OVERLAY FADE-THROUGH PROTOCOL</span>
+          <span>
+            {isLearn ? 'B.O.B. GUIDE PAUSED UNTIL READY' : 'OVERLAY FADE-THROUGH PROTOCOL'}
+          </span>
           <span className="tag-cyan">●</span>
         </div>
       </footer>

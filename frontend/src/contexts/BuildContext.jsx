@@ -9,8 +9,9 @@ const BuildContext = createContext();
 export const BuildProvider = ({ children }) => {
   const [currentBuild, setCurrentBuild] = useState(() => {
     try {
-      localStorage.removeItem("buildlab_current_build");
-      const saved = sessionStorage.getItem("buildlab_current_build");
+      const saved =
+        sessionStorage.getItem("buildlab_current_build") ||
+        localStorage.getItem("buildlab_current_build");
       if (saved) return JSON.parse(saved);
     } catch {}
     return {
@@ -35,10 +36,12 @@ export const BuildProvider = ({ children }) => {
   });
   const [selectedSaveSlot, setSelectedSaveSlot] = useState(0);
 
-  // Sync current build to sessionStorage (automatically resets when frontend/tab is closed)
+  // Sync current build to sessionStorage and localStorage so accidental tab closes retain progress
   useEffect(() => {
     try {
-      sessionStorage.setItem("buildlab_current_build", JSON.stringify(currentBuild));
+      const serialized = JSON.stringify(currentBuild);
+      sessionStorage.setItem("buildlab_current_build", serialized);
+      localStorage.setItem("buildlab_current_build", serialized);
     } catch {}
   }, [currentBuild]);
 
@@ -87,30 +90,95 @@ export const BuildProvider = ({ children }) => {
       .then(res => res.json())
       .then(data => {
         if (data && typeof data === 'object' && Object.keys(data).length > 0) {
-          const cleanedData = {};
-          for (const cat in data) {
-            cleanedData[cat] = data[cat].filter(item => {
-              const lowerName = (item.name || "").toLowerCase();
-              return !(
-                lowerName.includes("laptop") || 
-                lowerName.includes("vivobook") || 
-                lowerName.includes("ideapad") || 
-                lowerName.includes("aspire") || 
-                lowerName.includes("nitro") ||
-                lowerName.includes("desktop") ||
-                lowerName.includes("thin 15") ||
-                lowerName.includes("pro 15") ||
-                lowerName.includes("bluetti") ||
-                lowerName.includes("solar") ||
-                lowerName.includes("portable") ||
-                lowerName.includes("generator") ||
-                lowerName.includes("power station") ||
-                lowerName.includes("ac2p") ||
-                lowerName.includes("pv130")
-              );
-            });
+          const categories = ["case", "motherboard", "cpu", "ram", "storage", "gpu", "psu"];
+          const mergedCatalog = {};
+
+          for (const cat of categories) {
+            const backendItems = Array.isArray(data[cat])
+              ? data[cat]
+                  .filter(item => {
+                    const lowerName = (item.name || "").toLowerCase();
+                    return !(
+                      lowerName.includes("laptop") || 
+                      lowerName.includes("vivobook") || 
+                      lowerName.includes("ideapad") || 
+                      lowerName.includes("aspire") || 
+                      lowerName.includes("nitro") ||
+                      lowerName.includes("desktop") ||
+                      lowerName.includes("thin 15") ||
+                      lowerName.includes("pro 15") ||
+                      lowerName.includes("bluetti") ||
+                      lowerName.includes("solar") ||
+                      lowerName.includes("portable") ||
+                      lowerName.includes("generator") ||
+                      lowerName.includes("power station") ||
+                      lowerName.includes("ac2p") ||
+                      lowerName.includes("pv130")
+                    );
+                  })
+                  .map(item =>
+                    cat === "case" && !item.form_factor
+                      ? { ...item, form_factor: "Mid Tower" }
+                      : item
+                  )
+              : [];
+
+            const offlineItems = Array.isArray(OFFLINE_COMPONENTS[cat])
+              ? OFFLINE_COMPONENTS[cat]
+              : [];
+
+            const normalizeKeyName = (item) => {
+              const raw = (item.name || "").toLowerCase().trim();
+              const brand = (item.brand || "").toLowerCase().trim();
+              if (brand && raw.startsWith(brand + " ")) {
+                return raw.slice(brand.length).trim();
+              }
+              return raw;
+            };
+
+            // Index offline fallback metadata so DB rows missing non-essential specs (e.g. wattage/efficiency) inherit them cleanly
+            const offlineById = new Map();
+            const offlineByName = new Map();
+            for (const off of offlineItems) {
+              if (off.id) offlineById.set(String(off.id).toLowerCase(), off);
+              offlineByName.set(normalizeKeyName(off), off);
+            }
+
+            const seenIds = new Set();
+            const seenNames = new Set();
+            const combined = [];
+
+            for (const rawItem of [...backendItems, ...offlineItems]) {
+              const idKey = rawItem.id ? String(rawItem.id).toLowerCase() : null;
+              const nameKey = normalizeKeyName(rawItem);
+              if (!nameKey) continue;
+              if ((idKey && seenIds.has(idKey)) || seenNames.has(nameKey)) continue;
+
+              const offMatch = (idKey && offlineById.get(idKey)) || offlineByName.get(nameKey);
+              const merged = offMatch
+                ? {
+                    ...offMatch,
+                    ...rawItem,
+                    wattage: rawItem.wattage ?? offMatch.wattage,
+                    power_required: rawItem.power_required ?? offMatch.power_required,
+                    socket_type: rawItem.socket_type ?? offMatch.socket_type,
+                    ddr_type: rawItem.ddr_type ?? offMatch.ddr_type,
+                    form_factor: rawItem.form_factor ?? offMatch.form_factor,
+                    efficiency: rawItem.efficiency ?? offMatch.efficiency,
+                    type: rawItem.type ?? offMatch.type,
+                    capacity: rawItem.capacity ?? offMatch.capacity,
+                  }
+                : rawItem;
+
+              if (idKey) seenIds.add(idKey);
+              seenNames.add(nameKey);
+              combined.push(merged);
+            }
+
+            mergedCatalog[cat] = combined;
           }
-          setAllComponents(cleanedData);
+
+          setAllComponents(mergedCatalog);
         }
       })
       .catch(err => {

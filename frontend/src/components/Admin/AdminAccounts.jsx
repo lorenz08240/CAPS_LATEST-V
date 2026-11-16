@@ -96,7 +96,7 @@ export const AdminAccounts = () => {
 
           const result = await res.json();
           setRootAvatar(result.url);
-          showToast("Profile avatar uploaded!");
+          showToast("Photo uploaded.");
         } catch (uploadErr) {
           showToast(uploadErr.message || "Upload failed.", "error");
         } finally {
@@ -132,7 +132,7 @@ export const AdminAccounts = () => {
         throw new Error("Failed to update root credentials");
       }
 
-      showToast("Root administrator credentials updated successfully!");
+      showToast("Admin account saved.");
       setShowEditRootModal(false);
       fetchData();
     } catch (err) {
@@ -176,7 +176,7 @@ export const AdminAccounts = () => {
           <div className="admin-content-inner">
             {notification && (
               <div className={`admin-alert-banner ${notification.type === "error" ? "error" : "success"}`}>
-                <span className="alert-icon">{notification.type === "error" ? "⚠" : "✓"}</span>
+                <span className="alert-icon">{notification.type === "error" ? "âš " : "âœ“"}</span>
                 <span>{notification.message}</span>
               </div>
             )}
@@ -184,41 +184,20 @@ export const AdminAccounts = () => {
             {/* Banner Header */}
             <div className="accounts-header-banner">
               <div className="accounts-title-group">
-                <div className="accounts-kicker">CONTROL PANEL // ACCOUNTS &amp; GOOGLE AUTH</div>
-                <h1 className="accounts-title">Account Manager</h1>
+                <h1 className="accounts-title">Accounts</h1>
                 <p className="accounts-subtitle">
-                  Single shared Root Administrator credentials management and live directory of Google Sign-In learner accounts.
+                  The shared admin login, and the learners who signed in with Google.
                 </p>
-              </div>
-
-              <div className="accounts-actions-group">
-                <button type="button" className="btn-refresh-accounts" onClick={fetchData} title="Sync accounts data">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <polyline points="23 4 23 10 17 10"></polyline>
-                    <polyline points="1 20 1 14 7 14"></polyline>
-                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
-                  </svg>
-                  <span>Sync Directory</span>
-                </button>
               </div>
             </div>
 
-            {/* SECTION 1: SINGLE SHARED ROOT ADMINISTRATOR CARD */}
+            {/* Shared admin login */}
             <div className="root-admin-card-container">
-              <div className="section-header-row">
-                <div className="section-title-tag">
-                  <span className="tag-bracket">[</span>
-                  <span>SYSTEM AUTHORITY // SHARED CREDENTIAL</span>
-                  <span className="tag-bracket">]</span>
-                </div>
-                <span className="auth-level-tag">SINGLE ADMIN PROFILE</span>
-              </div>
-
-              <div className="root-admin-card wood-mahogany">
+              <div className="root-admin-card">
                 <div className="root-admin-profile-left">
                   <div className="root-avatar-wrap">
                     {rootAvatar ? (
-                      <img src={rootAvatar} alt="Root Admin" className="root-avatar-img" />
+                      <img src={rootAvatar} alt="Admin" className="root-avatar-img" />
                     ) : (
                       <div className="root-avatar-fallback">ROOT</div>
                     )}
@@ -226,14 +205,10 @@ export const AdminAccounts = () => {
                   <div className="root-meta-info">
                     <div className="root-display-title">
                       <h2>{rootAccount?.display_name || "Root Administrator"}</h2>
-                      <span className="root-badge">SUPER ADMIN</span>
                     </div>
                     <div className="root-credentials-preview">
-                      <span className="cred-chip"><strong>ID:</strong> root</span>
-                      <span className="cred-chip"><strong>PASS:</strong> {rootAccount?.passcode || "admin12345"}</span>
-                      <span className="cred-chip status-chip">
-                        <span className="status-dot-green" /> ACTIVE
-                      </span>
+                      <span className="cred-chip">ID: root</span>
+                      <span className="cred-chip">Password: â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢</span>
                     </div>
                   </div>
                 </div>
@@ -244,17 +219,13 @@ export const AdminAccounts = () => {
                     className="btn-edit-root"
                     onClick={() => setShowEditRootModal(true)}
                   >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M12 20h9"></path>
-                      <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-                    </svg>
-                    <span>Edit Root Passcode &amp; Avatar</span>
+                    Edit
                   </button>
                 </div>
               </div>
             </div>
 
-            {/* SECTION 2: GOOGLE LEARN MODE STUDENT DIRECTORY */}
+            {/* Google sign-in learners */}
             <div className="google-learners-container">
               <div className="learners-header-bar">
                 <div className="learners-header-title">
@@ -266,19 +237,19 @@ export const AdminAccounts = () => {
                       <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
                     </svg>
                   </span>
-                  <span>GOOGLE SIGN-IN LEARNER ACCOUNTS ({learners.length})</span>
+                  <span>Learners ({learners.length})</span>
                 </div>
 
                 <div className="learners-search-wrap">
                   <input
                     type="text"
-                    placeholder="Search learners by name or email..."
+                    placeholder="Search by name or email"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="learners-search-input"
                   />
                   {searchQuery && (
-                    <button type="button" className="btn-clear-search" onClick={() => setSearchQuery("")}>
+                    <button type="button" className="btn-clear-search" onClick={() => setSearchQuery("")} aria-label="Clear search">
                       &times;
                     </button>
                   )}
@@ -288,16 +259,20 @@ export const AdminAccounts = () => {
               {loading ? (
                 <div className="accounts-loading-state">
                   <div className="loading-spinner" />
-                  <span>Loading learner accounts...</span>
+                  <span>Loading learners...</span>
                 </div>
               ) : error ? (
                 <div className="accounts-error-state">
-                  <span>Error: {error}</span>
+                  <span>Couldn't load accounts: {error}</span>
                   <button type="button" onClick={fetchData} className="btn-retry">Retry</button>
                 </div>
               ) : filteredLearners.length === 0 ? (
                 <div className="accounts-empty-state">
-                  <p>No Google learner accounts found matching &quot;{searchQuery}&quot;.</p>
+                  <p>
+                    {searchQuery
+                      ? <>No learners match &quot;{searchQuery}&quot;.</>
+                      : "No one has signed in with Google yet."}
+                  </p>
                 </div>
               ) : (
                 <div className="accounts-table-card">
@@ -305,12 +280,12 @@ export const AdminAccounts = () => {
                     <table className="accounts-table">
                       <thead>
                         <tr>
-                          <th>STUDENT / LEARNER</th>
-                          <th>GOOGLE ACCOUNT</th>
-                          <th>INSTITUTION</th>
-                          <th>PROGRESS / STAGES</th>
-                          <th>LAST ACTIVE</th>
-                          <th className="text-right">ACTION</th>
+                          <th>Learner</th>
+                          <th>Email</th>
+                          <th>School</th>
+                          <th>Progress</th>
+                          <th>Last active</th>
+                          <th className="text-right"><span className="sr-only">Actions</span></th>
                         </tr>
                       </thead>
                       <tbody>
@@ -339,13 +314,12 @@ export const AdminAccounts = () => {
                                 </div>
                                 <div className="operator-names">
                                   <div className="operator-display-name">{learner.full_name}</div>
-                                  <div className="learner-google-tag">Google Verified</div>
                                 </div>
                               </div>
                             </td>
 
                             <td>
-                              <span className="email-cell font-mono">{learner.email}</span>
+                              <span className="email-cell">{learner.email}</span>
                             </td>
 
                             <td>
@@ -377,7 +351,7 @@ export const AdminAccounts = () => {
                                 type="button"
                                 className="btn-action-delete"
                                 onClick={() => handleDeleteLearner(learner.id, learner.full_name)}
-                                title="Remove learner profile"
+                                
                               >
                                 Remove
                               </button>
@@ -397,8 +371,7 @@ export const AdminAccounts = () => {
                 <div className="admin-modal-card wood-mahogany" onClick={(e) => e.stopPropagation()}>
                   <div className="modal-header">
                     <div className="modal-title-wrap">
-                      <span className="modal-kicker">ROOT SECURITY // SHARED CREDENTIALS</span>
-                      <h2 className="modal-title">Edit Root Administrator</h2>
+                      <h2 className="modal-title">Edit admin account</h2>
                     </div>
                     <button
                       type="button"
@@ -411,7 +384,7 @@ export const AdminAccounts = () => {
 
                   <form onSubmit={handleUpdateRoot} className="modal-form">
                     <div className="avatar-upload-field">
-                      <label className="form-label">ADMIN AVATAR</label>
+                      <label className="form-label">Photo</label>
                       <div className="avatar-picker-row">
                         <div className="avatar-preview-box">
                           {rootAvatar ? (
@@ -434,11 +407,11 @@ export const AdminAccounts = () => {
                             disabled={uploadingAvatar}
                             onClick={() => fileInputRef.current?.click()}
                           >
-                            {uploadingAvatar ? "Uploading..." : "Upload New Photo"}
+                            {uploadingAvatar ? "Uploading..." : "Upload photo"}
                           </button>
                           <input
                             type="text"
-                            placeholder="Or paste image URL..."
+                            placeholder="or paste an image URL"
                             className="form-input text-xs"
                             value={rootAvatar}
                             onChange={(e) => setRootAvatar(e.target.value)}
@@ -448,7 +421,7 @@ export const AdminAccounts = () => {
                     </div>
 
                     <div className="form-group">
-                      <label className="form-label">OPERATOR ID (SHARED)</label>
+                      <label className="form-label">Admin ID</label>
                       <input
                         type="text"
                         disabled
@@ -458,7 +431,7 @@ export const AdminAccounts = () => {
                     </div>
 
                     <div className="form-group">
-                      <label className="form-label">DISPLAY TITLE</label>
+                      <label className="form-label">Display name</label>
                       <input
                         type="text"
                         required
@@ -469,7 +442,7 @@ export const AdminAccounts = () => {
                     </div>
 
                     <div className="form-group">
-                      <label className="form-label">SHARED SECURITY PASSCODE *</label>
+                      <label className="form-label">Password</label>
                       <input
                         type="text"
                         required
@@ -477,9 +450,6 @@ export const AdminAccounts = () => {
                         value={rootPasscode}
                         onChange={(e) => setRootPasscode(e.target.value)}
                       />
-                      <span className="text-xs text-muted" style={{ marginTop: 4, display: "block" }}>
-                        Default: <code>admin12345</code>
-                      </span>
                     </div>
 
                     <div className="modal-actions-bar">

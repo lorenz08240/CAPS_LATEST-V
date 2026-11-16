@@ -5,6 +5,7 @@ import { OrbitControls, Grid, ContactShadows, Environment, Html } from '@react-t
 import * as THREE from 'three';
 import { buildSteps } from '../Build/Build';
 import { useBuild } from '../../contexts/BuildContext';
+import { useTheme } from '../../contexts/ThemeContext';
 import { calculateScores } from '../../utilities/scoringEngine';
 import { checkCompatibility } from '../../utilities/compatibilityEngine';
 import FullscreenGate from '../FullscreenGate/FullscreenGate';
@@ -240,6 +241,7 @@ function DropIndicator({ activeCategory, category, position, isPlaced }) {
 function PCBuilder3DWorkspace() {
   const navigate = useNavigate();
   const { currentBuild, allComponents, addComponent, removeComponent, resetBuild, loadDemoBuild } = useBuild();
+  const { isDark = true } = useTheme() || {};
 
   // Workspace Viewport Controls State
   const [cameraPreset, setCameraPreset] = useState('isometric');
@@ -360,6 +362,19 @@ function PCBuilder3DWorkspace() {
   const orbitRef = useRef();
   const pendingFocusRef = useRef(null);
   const focusFallbackTimerRef = useRef(null);
+  const glRef = useRef(null);
+
+  // Clean WebGL context disposal to prevent context collisions between views
+  useEffect(() => {
+    return () => {
+      if (glRef.current) {
+        try {
+          glRef.current.dispose();
+          glRef.current.forceContextLoss();
+        } catch {}
+      }
+    };
+  }, []);
 
   // The exact callback triggered THE MOMENT the 3D camera arrives and locks focus on the component
   const handleCameraFocusArrived = useCallback(() => {
@@ -1143,10 +1158,15 @@ function PCBuilder3DWorkspace() {
           <Canvas 
             camera={{ position: CAMERA_PRESETS.isometric.position, fov: 42 }}
             gl={{ 
+              powerPreference: "high-performance",
               antialias: true, 
               alpha: false,
+              preserveDrawingBuffer: false,
               toneMapping: THREE.ACESFilmicToneMapping,
               toneMappingExposure: 0.95
+            }}
+            onCreated={({ gl }) => {
+              glRef.current = gl;
             }}
             onPointerMissed={(e) => {
               // Click in empty space deselects active 3D part and closes inspector
@@ -1157,8 +1177,8 @@ function PCBuilder3DWorkspace() {
               }
             }}
           >
-            <color attach="background" args={['#0e1420']} />
-            <fog attach="fog" args={['#0e1420', 30, 80]} />
+            <color attach="background" args={[isDark ? '#0e1420' : '#eef2f6']} />
+            <fog attach="fog" args={[isDark ? '#0e1420' : '#eef2f6', 30, 80]} />
 
             <ambientLight intensity={0.85} color="#e2e8f0" />
             <directionalLight 
@@ -1252,12 +1272,12 @@ function PCBuilder3DWorkspace() {
                 }}
               >
                 <boxGeometry args={[48, 1.2, 38]} />
-                <meshStandardMaterial color="#181f2c" roughness={0.65} metalness={0.2} />
+                <meshStandardMaterial color={isDark ? "#181f2c" : "#cbd5e1"} roughness={0.65} metalness={0.2} />
               </mesh>
 
               <mesh position={[0, -4.89, 0]}>
                 <boxGeometry args={[48.3, 0.04, 38.3]} />
-                <meshBasicMaterial color="#38bdf8" transparent opacity={0.25} />
+                <meshBasicMaterial color={isDark ? "#38bdf8" : "#0284c7"} transparent opacity={0.25} />
               </mesh>
 
               <mesh 
@@ -1270,7 +1290,7 @@ function PCBuilder3DWorkspace() {
                 }}
               >
                 <boxGeometry args={[28, 0.04, 22]} />
-                <meshStandardMaterial color="#1e283a" roughness={0.88} metalness={0.1} />
+                <meshStandardMaterial color={isDark ? "#1e283a" : "#e2e8f0"} roughness={0.88} metalness={0.1} />
               </mesh>
 
               <mesh position={[0, -4.87, 0]}>
