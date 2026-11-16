@@ -2127,3 +2127,111 @@
 .component-card.compact-card.card-incompatible:not(.selected) {
   border-color: rgba(245, 158, 11, 0.45);
 }
+
+/* ── Dual Rig Target Switcher Banner ── */
+.build-target-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 1.5rem;
+  background: rgba(11, 15, 25, 0.95);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  gap: 1rem;
+  flex-wrap: wrap;
+  z-index: 20;
+}
+
+.build-target-switcher-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(15, 23, 42, 0.6);
+  padding: 0.3rem 0.5rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.build-target-label {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #94a3b8;
+  letter-spacing: 0.06em;
+  padding: 0 0.4rem;
+}
+
+.btn-target-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 6px;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  font-weight: 700;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-target-toggle:hover {
+  color: #cbd5e1;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.btn-target-toggle .target-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.btn-target-toggle .target-dot.green {
+  background: #00e5a0;
+  box-shadow: 0 0 6px #00e5a0;
+}
+
+.btn-target-toggle .target-dot.cyan {
+  background: #38bdf8;
+  box-shadow: 0 0 6px #38bdf8;
+}
+
+.btn-target-toggle.active-rig1 {
+  background: rgba(0, 229, 160, 0.12);
+  border-color: rgba(0, 229, 160, 0.45);
+  color: #00e5a0;
+  box-shadow: 0 0 12px rgba(0, 229, 160, 0.2);
+}
+
+.btn-target-toggle.active-rig2 {
+  background: rgba(56, 189, 248, 0.12);
+  border-color: rgba(56, 189, 248, 0.45);
+  color: #38bdf8;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.2);
+}
+
+.btn-matrix-compare-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #38bdf8;
+  text-decoration: none;
+  padding: 0.35rem 0.85rem;
+  border-radius: 6px;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  background: rgba(56, 189, 248, 0.08);
+  transition: all 0.2s ease;
+}
+
+.btn-matrix-compare-link:hover {
+  background: rgba(56, 189, 248, 0.2);
+  border-color: #38bdf8;
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+}

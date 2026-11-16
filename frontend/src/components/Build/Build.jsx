@@ -380,6 +380,8 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
   const { mode, unlockStage } = useLearnMode();
   const {
     currentBuild,
+    activeBuildTarget,
+    setActiveBuildTarget,
     allComponents,
     addComponent,
     removeComponent,
@@ -964,6 +966,45 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
   return (
     <div className={`build-page ${isIntegrated ? 'integrated-home' : 'standalone'}`}>
       {!isIntegrated && <GlobalHeader />}
+      
+      {/* Dual Rig Target Banner */}
+      <div className="build-target-banner">
+        <div className="build-target-switcher-pill">
+          <span className="build-target-label">ACTIVE ASSEMBLY:</span>
+          <button
+            type="button"
+            className={`btn-target-toggle ${activeBuildTarget === "rig1" ? "active-rig1" : ""}`}
+            onClick={() => {
+              try { soundManager.click(); } catch {}
+              setActiveBuildTarget("rig1");
+            }}
+          >
+            <span className="target-dot green" />
+            <span>RIG 01 // WORKBENCH</span>
+          </button>
+          <button
+            type="button"
+            className={`btn-target-toggle ${activeBuildTarget === "rig2" ? "active-rig2" : ""}`}
+            onClick={() => {
+              try { soundManager.click(); } catch {}
+              setActiveBuildTarget("rig2");
+            }}
+          >
+            <span className="target-dot cyan" />
+            <span>RIG 02 // MANUAL BUILD (+)</span>
+          </button>
+        </div>
+        <Link
+          to="/compatibility"
+          className="btn-matrix-compare-link"
+          onClick={() => {
+            try { soundManager.click(); } catch {}
+          }}
+        >
+          <span>Compare in Compatibility Matrix &rarr;</span>
+        </Link>
+      </div>
+
       <div className="build-main" id="build-main-area">
         <div className="build-sidebar">
           <div

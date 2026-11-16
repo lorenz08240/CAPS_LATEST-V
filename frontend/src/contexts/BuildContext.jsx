@@ -7,7 +7,22 @@ const BuildContext = createContext();
 
 // Build Provider component
 export const BuildProvider = ({ children }) => {
-  const [currentBuild, setCurrentBuild] = useState(() => {
+  const [activeBuildTarget, setActiveBuildTargetState] = useState(() => {
+    try {
+      return sessionStorage.getItem("buildlab_active_target") || "rig1";
+    } catch {
+      return "rig1";
+    }
+  });
+
+  const setActiveBuildTarget = (target) => {
+    setActiveBuildTargetState(target);
+    try {
+      sessionStorage.setItem("buildlab_active_target", target);
+    } catch {}
+  };
+
+  const [rig1Build, setRig1Build] = useState(() => {
     try {
       const saved =
         sessionStorage.getItem("buildlab_current_build") ||
@@ -25,6 +40,26 @@ export const BuildProvider = ({ children }) => {
     };
   });
 
+  const [rig2Build, setRig2Build] = useState(() => {
+    try {
+      const saved =
+        sessionStorage.getItem("buildlab_rig2_build") ||
+        localStorage.getItem("buildlab_rig2_build");
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return {
+      cpu: null,
+      motherboard: null,
+      ram: null,
+      storage: null,
+      gpu: null,
+      psu: null,
+      case: null,
+    };
+  });
+
+  const currentBuild = activeBuildTarget === "rig2" ? rig2Build : rig1Build;
+
   const [allComponents, setAllComponents] = useState(OFFLINE_COMPONENTS);
   const [compatibilityResults, setCompatibilityResults] = useState([]);
   const [savedBuilds, setSavedBuilds] = useState(() => {
@@ -36,32 +71,54 @@ export const BuildProvider = ({ children }) => {
   });
   const [selectedSaveSlot, setSelectedSaveSlot] = useState(0);
 
-  // Sync current build to sessionStorage and localStorage so accidental tab closes retain progress
+  // Sync builds to storage so accidental tab closes retain progress
   useEffect(() => {
     try {
-      const serialized = JSON.stringify(currentBuild);
+      const serialized = JSON.stringify(rig1Build);
       sessionStorage.setItem("buildlab_current_build", serialized);
       localStorage.setItem("buildlab_current_build", serialized);
     } catch {}
-  }, [currentBuild]);
+  }, [rig1Build]);
 
-  // Function to add a component to the build
+  useEffect(() => {
+    try {
+      const serialized = JSON.stringify(rig2Build);
+      sessionStorage.setItem("buildlab_rig2_build", serialized);
+      localStorage.setItem("buildlab_rig2_build", serialized);
+    } catch {}
+  }, [rig2Build]);
+
+  // Function to add a component to active build
   const addComponent = (category, component) => {
-    setCurrentBuild((prev) => ({
-      ...prev,
-      [category]: component,
-    }));
+    if (activeBuildTarget === "rig2") {
+      setRig2Build((prev) => ({
+        ...prev,
+        [category]: component,
+      }));
+    } else {
+      setRig1Build((prev) => ({
+        ...prev,
+        [category]: component,
+      }));
+    }
   };
 
-  // Function to remove a component from the build
+  // Function to remove a component from active build
   const removeComponent = (category) => {
-    setCurrentBuild((prev) => ({
-      ...prev,
-      [category]: null,
-    }));
+    if (activeBuildTarget === "rig2") {
+      setRig2Build((prev) => ({
+        ...prev,
+        [category]: null,
+      }));
+    } else {
+      setRig1Build((prev) => ({
+        ...prev,
+        [category]: null,
+      }));
+    }
   };
 
-  // Function to reset the full build
+  // Function to reset active build
   const resetBuild = () => {
     const emptyBuild = {
       cpu: null,
@@ -72,16 +129,45 @@ export const BuildProvider = ({ children }) => {
       psu: null,
       case: null,
     };
-    setCurrentBuild(emptyBuild);
+    if (activeBuildTarget === "rig2") {
+      setRig2Build(emptyBuild);
+      try {
+        sessionStorage.removeItem("buildlab_rig2_build");
+        localStorage.removeItem("buildlab_rig2_build");
+      } catch {}
+    } else {
+      setRig1Build(emptyBuild);
+      try {
+        sessionStorage.removeItem("buildlab_current_build");
+        localStorage.removeItem("buildlab_current_build");
+      } catch {}
+    }
     setCompatibilityResults([]);
+  };
+
+  const clearRig2Build = () => {
+    const emptyBuild = {
+      cpu: null,
+      motherboard: null,
+      ram: null,
+      storage: null,
+      gpu: null,
+      psu: null,
+      case: null,
+    };
+    setRig2Build(emptyBuild);
     try {
-      sessionStorage.removeItem("buildlab_current_build");
-      localStorage.removeItem("buildlab_current_build");
+      sessionStorage.removeItem("buildlab_rig2_build");
+      localStorage.removeItem("buildlab_rig2_build");
     } catch {}
   };
 
   const loadDemoBuild = (demo = DEMO_GAMING_RIG) => {
-    setCurrentBuild(demo);
+    if (activeBuildTarget === "rig2") {
+      setRig2Build(demo);
+    } else {
+      setRig1Build(demo);
+    }
   };
 
   // Fetch all components and saved builds from backend on load
@@ -239,8 +325,8 @@ export const BuildProvider = ({ children }) => {
   };
 
   // Function to get selected components as array
-  const getSelectedComponents = () => {
-    return Object.entries(currentBuild)
+  const getSelectedComponents = (build = currentBuild) => {
+    return Object.entries(build || {})
       .filter(([, value]) => value !== null)
       .map(([category, component]) => ({
         category,
@@ -252,6 +338,13 @@ export const BuildProvider = ({ children }) => {
     <BuildContext.Provider
       value={{
         currentBuild,
+        rig1Build,
+        rig2Build,
+        activeBuildTarget,
+        setActiveBuildTarget,
+        clearRig2Build,
+        setRig1Build,
+        setRig2Build,
         compatibilityResults,
         savedBuilds,
         selectedSaveSlot,

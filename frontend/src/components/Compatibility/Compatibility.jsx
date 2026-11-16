@@ -338,6 +338,11 @@ function CompatibilityView({ isIntegrated = false }) {
   const [showUnlockBanner, setShowUnlockBanner] = useState(() => isLearnMode && !seenBanners?.compatibility);
   const {
     currentBuild,
+    rig1Build,
+    rig2Build,
+    activeBuildTarget,
+    setActiveBuildTarget,
+    clearRig2Build,
     getSelectedComponents,
     savedBuilds,
     selectedSaveSlot,
@@ -348,13 +353,15 @@ function CompatibilityView({ isIntegrated = false }) {
     loadDemoBuild,
   } = useBuild();
 
+  const activeRig1 = rig1Build || currentBuild;
+
   const getSavedBuild = (slot) => {
     const b = savedBuilds?.[slot];
     if (!b) return null;
     return b;
   };
 
-  const selectedComponents = getSelectedComponents().sort((a, b) => {
+  const selectedComponents = getSelectedComponents(activeRig1).sort((a, b) => {
     const order = ["case", "motherboard", "cpu", "ram", "storage", "gpu", "psu"];
     return order.indexOf(a.category.toLowerCase()) - order.indexOf(b.category.toLowerCase());
   });
@@ -827,29 +834,42 @@ function CompatibilityView({ isIntegrated = false }) {
     setRig2Source(sourceKey);
   };
 
+  const handleStartRig2ManualBuild = () => {
+    try { soundManager.click(); } catch {}
+    setActiveBuildTarget("rig2");
+    setRig2Source("custom-manual");
+    navigate("/build#build-station");
+  };
+
   const handleDeleteRig2Assembly = () => {
     try { soundManager.click(); } catch {}
-    setRig2Source("blank");
-    setSaveMessage("Comparison recommendation cleared from Rig 02!");
+    if (rig2Source === "custom-manual") {
+      clearRig2Build();
+      setRig2Source("blank");
+      setSaveMessage("Custom Rig 02 cleared!");
+    } else {
+      setRig2Source("blank");
+      setSaveMessage("Comparison preset cleared from Rig 02!");
+    }
     setTimeout(() => setSaveMessage(""), 3500);
   };
 
   const rig2 = useMemo(() => {
     if (rig2Source === "preset-enthusiast") return PRESET_ENTHUSIAST_RIG;
     if (rig2Source === "preset-budget") return PRESET_BUDGET_RIG;
-    if (rig2Source === "blank") return null;
-    if (rig2Source.startsWith("slot-")) {
-      const slotIdx = parseInt(rig2Source.replace("slot-", ""), 10);
-      return savedBuilds?.[slotIdx] || null;
+    if (rig2Source === "custom-manual") {
+      const hasAny = rig2Build && Object.values(rig2Build).some(Boolean);
+      return hasAny ? rig2Build : null;
     }
+    if (rig2Source === "blank") return null;
     return null;
-  }, [rig2Source, savedBuilds]);
+  }, [rig2Source, rig2Build]);
 
   const rig1Components = useMemo(() => {
-    return Object.entries(currentBuild || {})
+    return Object.entries(activeRig1 || {})
       .filter(([, v]) => v !== null)
       .map(([category, comp]) => ({ category, ...comp }));
-  }, [currentBuild]);
+  }, [activeRig1]);
 
   const rig2Components = useMemo(() => {
     if (!rig2) return [];
@@ -862,13 +882,13 @@ function CompatibilityView({ isIntegrated = false }) {
   const hasRig2 = rig2Components.length > 0;
   const hasTwoRigs = hasRig1 && hasRig2;
 
-  const rig1Scores = useMemo(() => calculateScores(currentBuild || {}), [currentBuild]);
+  const rig1Scores = useMemo(() => calculateScores(activeRig1 || {}), [activeRig1]);
   const rig2Scores = useMemo(() => calculateScores(rig2 || {}), [rig2]);
 
-  const rig1Wattage = useMemo(() => estimateWattage(currentBuild), [currentBuild]);
+  const rig1Wattage = useMemo(() => estimateWattage(activeRig1), [activeRig1]);
   const rig2Wattage = useMemo(() => (rig2 ? estimateWattage(rig2) : 0), [rig2]);
 
-  const rig1Issues = useMemo(() => checkBuildCompatibility(currentBuild), [currentBuild, allComponents]);
+  const rig1Issues = useMemo(() => checkBuildCompatibility(activeRig1), [activeRig1, allComponents]);
   const rig2Issues = useMemo(() => (rig2 ? checkBuildCompatibility(rig2) : []), [rig2, allComponents]);
 
   const activeIssues = useMemo(() => {
@@ -968,8 +988,8 @@ function CompatibilityView({ isIntegrated = false }) {
         <>
           <div className="rig-preview-media-box">
             <img
-              src={currentBuild.case?.img || "/assets/component_picker_image_bg.png"}
-              alt={currentBuild.case?.name || "Rig 01"}
+              src={activeRig1.case?.img || "/assets/component_picker_image_bg.png"}
+              alt={activeRig1.case?.name || "Rig 01"}
               className="rig-preview-image"
               onError={(e) => {
                 e.target.src = "/assets/component_picker_image_bg.png";
@@ -986,16 +1006,20 @@ function CompatibilityView({ isIntegrated = false }) {
               </div>
               <div className="telemetry-pill">
                 <span className="pill-dot green-dot" />
-                <span>{selectedComponents.length}/7 PARTS</span>
+                <span>{rig1Components.length}/7 PARTS</span>
               </div>
             </div>
           </div>
 
           <div className="rig-quick-actions">
             <Link
-              to="/build"
+              to="/build#build-station"
               className="btn-rig-action btn-edit-workbench"
-              title="Modify components in Assembly Rig"
+              onClick={() => {
+                try { soundManager.click(); } catch {}
+                setActiveBuildTarget("rig1");
+              }}
+              title="Modify components in Rig 01 Workbench"
             >
               <span>EDIT IN ASSEMBLY RIG &rarr;</span>
             </Link>
@@ -1013,10 +1037,13 @@ function CompatibilityView({ isIntegrated = false }) {
         <div className="empty-rig1-card" style={{ minHeight: "240px" }}>
           <p className="empty-rig1-desc">No configuration loaded in this slot.</p>
           <Link
-            to="/build"
+            to="/build#build-station"
             className="btn-load-demo-ghost"
             style={{ textDecoration: "none", display: "inline-flex", alignItems: "center", justifyContent: "center" }}
-            onClick={() => { try { soundManager.click(); } catch {} }}
+            onClick={() => {
+              try { soundManager.click(); } catch {}
+              setActiveBuildTarget("rig1");
+            }}
           >
             Go to Component Picker
           </Link>
@@ -1029,7 +1056,7 @@ function CompatibilityView({ isIntegrated = false }) {
         <div className="specs-list-title">HARDWARE SPECIFICATIONS</div>
         {hasRig1 ? (
           COMPONENT_CATEGORIES.map(({ key, label, icon }) => {
-            const comp = currentBuild[key];
+            const comp = activeRig1[key];
             const spec = getCompSpecSummary(comp, key);
             const matchingIssue = rig1Issues.find((iss) =>
               iss.components?.some((c) => c.toLowerCase() === key.toLowerCase())
@@ -1074,7 +1101,9 @@ function CompatibilityView({ isIntegrated = false }) {
       <div className="rig-card-header">
         <div className="rig-badge-group">
           <span className="rig-badge-live badge-cyan">RIG 02 // COMPARISON</span>
-          <span className="rig-badge-subtitle">System Recommendation</span>
+          <span className="rig-badge-subtitle">
+            {rig2Source === "custom-manual" ? "Second Custom Build" : "System Recommendation"}
+          </span>
         </div>
         <div className="rig-header-controls">
           <div className="rig-source-dropdown-wrapper">
@@ -1083,18 +1112,37 @@ function CompatibilityView({ isIntegrated = false }) {
               value={rig2Source}
               onChange={(e) => {
                 try { soundManager.click(); } catch {}
-                handleSelectRig2Source(e.target.value);
+                if (e.target.value === "custom-manual") {
+                  setRig2Source("custom-manual");
+                  setActiveBuildTarget("rig2");
+                } else {
+                  handleSelectRig2Source(e.target.value);
+                }
               }}
-              title="Select system recommendation preset to compare"
+              title="Select system recommendation or manual build to compare"
             >
-              <option value="blank">Blank Comparison (No Recommendation)</option>
+              <option value="blank">Blank Comparison (No Selection)</option>
               <option value="preset-enthusiast">Recommendation: 4K Ultra Rig</option>
               <option value="preset-budget">Recommendation: Budget Rig</option>
+              <option value="custom-manual">
+                {rig2Build && Object.values(rig2Build).some(Boolean)
+                  ? "★ Custom: Rig 02 (My Second Build)"
+                  : "+ Custom: Build Rig 02 Manually"}
+              </option>
             </select>
             <div className="dropdown-chevron-icon" aria-hidden="true">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="6 9 12 15 18 9"/></svg>
             </div>
           </div>
+          <button
+            type="button"
+            className="btn-rig-header-plus"
+            onClick={handleStartRig2ManualBuild}
+            title="Build another manual rig (+) to compare against Rig 01"
+          >
+            <span className="plus-icon">+</span>
+            <span>Manual Build</span>
+          </button>
           <div className="rig-compat-status-chip">
             {hasRig2 ? (
               rig2Issues.length === 0 ? (
@@ -1137,11 +1185,24 @@ function CompatibilityView({ isIntegrated = false }) {
           </div>
 
           <div className="rig-quick-actions">
+            {rig2Source === "custom-manual" && (
+              <Link
+                to="/build#build-station"
+                className="btn-rig-action btn-edit-workbench"
+                onClick={() => {
+                  try { soundManager.click(); } catch {}
+                  setActiveBuildTarget("rig2");
+                }}
+                title="Modify components in Rig 02"
+              >
+                <span>EDIT RIG 02 ASSEMBLY &rarr;</span>
+              </Link>
+            )}
             <button
               type="button"
               className="btn-rig-action btn-delete-assembly"
               onClick={handleDeleteRig2Assembly}
-              title="Clear this comparison recommendation from Rig 02"
+              title="Clear this comparison from Rig 02"
             >
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="3 6 5 6 21 6" />
@@ -1149,23 +1210,32 @@ function CompatibilityView({ isIntegrated = false }) {
                 <line x1="10" y1="11" x2="10" y2="17" />
                 <line x1="14" y1="11" x2="14" y2="17" />
               </svg>
-              <span>CLEAR COMPARISON RIG</span>
+              <span>{rig2Source === "custom-manual" ? "CLEAR RIG 02" : "CLEAR PRESET"}</span>
             </button>
           </div>
         </>
       ) : (
         <div className="empty-rig1-card">
           <p className="empty-rig1-desc">
-            No system recommendation loaded for comparison yet.
+            No system recommendation or manual rig selected yet.
           </p>
           <div className="empty-rig-actions-row">
             <button
               type="button"
-              className="btn-load-demo-ghost btn-manual-build"
+              className="btn-load-demo-ghost btn-plus-action"
+              onClick={handleStartRig2ManualBuild}
+              title="Build a second custom rig manually (+) to compare"
+            >
+              <span className="plus-symbol">+</span>
+              <span>Build Manual Rig</span>
+            </button>
+            <button
+              type="button"
+              className="btn-load-demo-ghost"
               onClick={() => handleSelectRig2Source("preset-enthusiast")}
               title="Load 4K Ultra hardware recommendation"
             >
-              Load 4K Ultra Recommendation
+              Load 4K Ultra Preset
             </button>
             <button
               type="button"
@@ -1173,7 +1243,7 @@ function CompatibilityView({ isIntegrated = false }) {
               onClick={() => handleSelectRig2Source("preset-budget")}
               title="Load Budget hardware recommendation"
             >
-              Load Budget Recommendation
+              Load Budget Preset
             </button>
           </div>
         </div>

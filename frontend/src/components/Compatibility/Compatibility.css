@@ -2297,5 +2297,59 @@
   box-shadow: 0 0 12px rgba(56, 189, 248, 0.3);
 }
 
+/* ── Plus Button in Rig 02 Header ── */
+.btn-rig-header-plus {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.7rem;
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  border-radius: 6px;
+  color: #38bdf8;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.7rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+}
+
+.btn-rig-header-plus .plus-icon {
+  font-size: 0.95rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.btn-rig-header-plus:hover {
+  background: rgba(56, 189, 248, 0.25);
+  border-color: #38bdf8;
+  color: #ffffff;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.35);
+  transform: translateY(-1px);
+}
+
+/* Plus Action Button in Empty Rig Card */
+.empty-rig-actions-row .btn-plus-action {
+  border-color: rgba(56, 189, 248, 0.45);
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.12);
+}
+
+.empty-rig-actions-row .btn-plus-action:hover {
+  background: rgba(56, 189, 248, 0.25);
+  border-color: #38bdf8;
+  color: #ffffff;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+}
+
+.empty-rig-actions-row .btn-plus-action .plus-symbol {
+  font-size: 1.05rem;
+  font-weight: 900;
+  margin-right: 0.3rem;
+  line-height: 1;
+}
+
+
 
 
