@@ -137,13 +137,7 @@ function Home() {
     };
 
     const handleOpenCompatibility = () => {
-      if (mode === "learn" && !unlockedStages.includes("compatibility")) {
-        soundManager.warning();
-        alert("Compatibility Matrix is locked! Mount all 7 parts in the 2D Builder first.");
-        handleScrollToBuild("smooth");
-        return;
-      }
-      soundManager.click();
+      try { soundManager.click(); } catch {}
       navigate('/compatibility');
     };
 
@@ -464,7 +458,7 @@ function Home() {
                     className="cyber-btn-outline"
                     onClick={handleOpenCompatibility}
                   >
-                    <span>{mode === 'learn' && !unlockedStages.includes('compatibility') ? 'COMPATIBILITY MATRIX 🔒' : 'COMPATIBILITY MATRIX'}</span>
+                    <span>COMPATIBILITY MATRIX</span>
                     <span className="btn-arrow">&rarr;</span>
                   </button>
                 </div>

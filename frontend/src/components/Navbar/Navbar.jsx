@@ -452,9 +452,6 @@ function Navbar({ isPinned: propsIsPinned }) {
                         <polyline points="9 12 11 14 15 10"/>
                       </svg>
                       <span>Compatibility</span>
-                      {mode === "learn" && !unlockedStages.includes("compatibility") && (
-                        <span style={{ marginLeft: "auto", fontSize: "11px" }} title="Locked: 7 parts required">🔒</span>
-                      )}
                     </Link>
 
                     <Link 

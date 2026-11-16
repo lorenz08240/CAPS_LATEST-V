@@ -129,9 +129,7 @@ function AppContent() {
               path="/compatibility"
               element={
                 <MotionPage routeKey="/compatibility">
-                  <LearnModeGuard requiredStage="compatibility" featureName="Compatibility Matrix">
-                    <Compatibility />
-                  </LearnModeGuard>
+                  <Compatibility />
                 </MotionPage>
               }
             />
