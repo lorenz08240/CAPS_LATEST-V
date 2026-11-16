@@ -949,26 +949,32 @@
 }
 
 /* ═════════════════════════════════════════════════════════════════════
-   ── CINEMATIC SCROLL-REVEAL SYSTEM (R-19 & R-39 COMPLIANT) ──
+   ── GSAP BIDIRECTIONAL SCROLL-REVEAL SYSTEM ──
    ═════════════════════════════════════════════════════════════════════ */
 
 .scroll-reveal-target {
-  opacity: 0;
-  transform: translateY(28px) scale(0.985);
-  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: opacity, transform;
 }
 
-.scroll-reveal-target.is-visible {
-  opacity: 1;
-  transform: translateY(0) scale(1);
+.about-members-grid,
+.whitehats-projects-grid {
+  perspective: 1100px;
+}
+
+.about-member-card,
+.project-card,
+.showcase-flagship-card {
+  will-change: transform, opacity;
+  transform-style: preserve-3d;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .scroll-reveal-target {
+  .scroll-reveal-target,
+  .about-member-card,
+  .project-card,
+  .showcase-flagship-card {
     opacity: 1 !important;
     transform: none !important;
-    transition: none !important;
   }
 }
 

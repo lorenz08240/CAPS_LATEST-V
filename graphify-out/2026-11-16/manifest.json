@@ -126,9 +126,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Home/Home.jsx": {
-    "mtime": 1794819508.1432533,
-    "seen": 1794819581.1664083,
-    "ast_hash": "fb58cd15df1b0c9acbb6fd24714a73fa",
+    "mtime": 1794820006.3767283,
+    "seen": 1794820085.429422,
+    "ast_hash": "c36f1f16ffe16221a579e026cacd092e",
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/CourseShell.jsx": {
@@ -606,9 +606,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/AboutUs/AboutUs.jsx": {
-    "mtime": 1794688302.5473745,
-    "seen": 1794688320.5288513,
-    "ast_hash": "163de153245637df8f91e2da0aadf4e3",
+    "mtime": 1794820061.162109,
+    "seen": 1794820085.4156797,
+    "ast_hash": "5e8d784e3933cd8fb0ca02aadf1d93f7",
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/AdminLogs.jsx": {
@@ -900,9 +900,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Home/PlatformServices.jsx": {
-    "mtime": 1794819905.9636686,
-    "seen": 1794819911.0459888,
-    "ast_hash": "220abb327e4f3363f06642a503e2c45a",
+    "mtime": 1794819917.1986253,
+    "seen": 1794820085.430606,
+    "ast_hash": "9bb33def5e3406bf5d78d02a2ce70e87",
     "semantic_hash": ""
   },
   "frontend/src/assets/buildlab_logo_tight.png": {
