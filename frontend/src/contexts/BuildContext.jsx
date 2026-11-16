@@ -188,7 +188,12 @@ export const BuildProvider = ({ children }) => {
     apiFetch("/api/builds")
       .then(res => res.json())
       .then(data => {
-        if (Array.isArray(data)) setSavedBuilds(data);
+        if (Array.isArray(data)) {
+          setSavedBuilds(data);
+          try {
+            localStorage.setItem("buildlab_saved_builds", JSON.stringify(data));
+          } catch {}
+        }
       })
       .catch(err => console.warn("Backend builds offline:", err));
   }, []);

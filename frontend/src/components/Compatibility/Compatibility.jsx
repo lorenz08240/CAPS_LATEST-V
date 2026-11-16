@@ -782,7 +782,7 @@ function CompatibilityView({ isIntegrated = false }) {
       const slotIdx = parseInt(rig2Source.replace("slot-", ""), 10);
       return savedBuilds?.[slotIdx] || null;
     }
-    return PRESET_ENTHUSIAST_RIG;
+    return null;
   }, [rig2Source, savedBuilds]);
 
   const rig1Components = useMemo(() => {
@@ -890,6 +890,30 @@ function CompatibilityView({ isIntegrated = false }) {
           ) : (
             <span className="chip-badge status-empty">EMPTY WORKBENCH</span>
           )}
+        </div>
+      </div>
+
+      <div className="rig-source-control-bar">
+        <div className="rig-source-control-meta">
+          <span className="source-control-dot green-dot" />
+          <span className="source-control-label">TARGET SAVE SLOT:</span>
+        </div>
+        <div className="rig-source-dropdown-wrapper">
+          <select
+            className="rig-source-dropdown-select green-accent"
+            value={selectedSaveSlot}
+            onChange={(e) => {
+              try { soundManager.click(); } catch {}
+              setSelectedSaveSlot(Number(e.target.value));
+            }}
+          >
+            <option value={0}>{savedBuilds?.[0] ? "★ Slot 01 (Saved Custom Build)" : "Slot 01 (Empty - Ready to Save)"}</option>
+            <option value={1}>{savedBuilds?.[1] ? "★ Slot 02 (Saved Custom Build)" : "Slot 02 (Empty - Ready to Save)"}</option>
+            <option value={2}>{savedBuilds?.[2] ? "★ Slot 03 (Saved Custom Build)" : "Slot 03 (Empty - Ready to Save)"}</option>
+          </select>
+          <div className="dropdown-chevron-icon" aria-hidden="true">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
         </div>
       </div>
 
@@ -1004,38 +1028,31 @@ function CompatibilityView({ isIntegrated = false }) {
         </div>
       </div>
 
-      <div className="rig2-source-tabs">
-        <button
-          type="button"
-          className={`source-tab-btn ${rig2Source === "preset-enthusiast" ? "active" : ""}`}
-          onClick={() => handleSelectRig2Source("preset-enthusiast")}
-        >
-          Preset: 4K Ultra
-        </button>
-        <button
-          type="button"
-          className={`source-tab-btn ${rig2Source === "preset-budget" ? "active" : ""}`}
-          onClick={() => handleSelectRig2Source("preset-budget")}
-        >
-          Preset: Budget
-        </button>
-        {[0, 1, 2].map((slot) => (
-          <button
-            key={slot}
-            type="button"
-            className={`source-tab-btn ${rig2Source === `slot-${slot}` ? "active" : ""}`}
-            onClick={() => handleSelectRig2Source(`slot-${slot}`)}
+      <div className="rig-source-control-bar">
+        <div className="rig-source-control-meta">
+          <span className="source-control-dot cyan-dot" />
+          <span className="source-control-label">COMPARE SOURCE:</span>
+        </div>
+        <div className="rig-source-dropdown-wrapper">
+          <select
+            className="rig-source-dropdown-select"
+            value={rig2Source}
+            onChange={(e) => {
+              try { soundManager.click(); } catch {}
+              handleSelectRig2Source(e.target.value);
+            }}
           >
-            Slot 0{slot + 1} {savedBuilds?.[slot] ? "★" : ""}
-          </button>
-        ))}
-        <button
-          type="button"
-          className={`source-tab-btn ${rig2Source === "blank" ? "active" : ""}`}
-          onClick={() => handleSelectRig2Source("blank")}
-        >
-          Blank Build
-        </button>
+            <option value="blank">Blank Build (Empty Slot)</option>
+            <option value="preset-enthusiast">Preset: 4K Ultra Rig</option>
+            <option value="preset-budget">Preset: Budget Rig</option>
+            <option value="slot-0">{savedBuilds?.[0] ? "★ Slot 01 (Saved Custom Rig)" : "Slot 01 (Empty)"}</option>
+            <option value="slot-1">{savedBuilds?.[1] ? "★ Slot 02 (Saved Custom Rig)" : "Slot 02 (Empty)"}</option>
+            <option value="slot-2">{savedBuilds?.[2] ? "★ Slot 03 (Saved Custom Rig)" : "Slot 03 (Empty)"}</option>
+          </select>
+          <div className="dropdown-chevron-icon" aria-hidden="true">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
       </div>
 
       {hasRig2 ? (
@@ -1086,14 +1103,18 @@ function CompatibilityView({ isIntegrated = false }) {
           </div>
         </>
       ) : (
-        <div className="empty-rig1-card" style={{ minHeight: "240px" }}>
-          <p className="empty-rig1-desc">No configuration loaded in this slot.</p>
+        <div className="empty-rig1-card">
+          <p className="empty-rig1-desc">
+            {rig2Source.startsWith("slot-")
+              ? `No configuration saved in Slot 0${parseInt(rig2Source.replace("slot-", ""), 10) + 1} yet.`
+              : "No configuration loaded in this slot."}
+          </p>
           <button
             type="button"
             className="btn-load-demo-ghost"
             onClick={() => handleSelectRig2Source("preset-enthusiast")}
           >
-            Load Sample Preset
+            Load 4K Ultra Preset
           </button>
         </div>
       )}
@@ -1120,7 +1141,11 @@ function CompatibilityView({ isIntegrated = false }) {
         ) : (
           <div className="empty-rig2-prompt">
             <p>No configuration loaded in this slot.</p>
-            <span>Pick a preset above or save your workbench build to compare.</span>
+            <span>
+              {rig2Source.startsWith("slot-")
+                ? `Slot 0${parseInt(rig2Source.replace("slot-", ""), 10) + 1} is empty. Assemble parts in Rig 01 and save to Slot 0${parseInt(rig2Source.replace("slot-", ""), 10) + 1} to compare.`
+                : "Select a preset or saved slot from the dropdown above to compare."}
+            </span>
           </div>
         )}
       </div>

@@ -684,6 +684,18 @@ app.post("/api/builds/:slot", async (req, res) => {
   }
 });
 
+// API to delete/clear a build slot
+app.delete("/api/builds/:slot", async (req, res) => {
+  try {
+    const slot = parseInt(req.params.slot, 10);
+    await db.query("DELETE FROM saved_builds WHERE slot_id = ?", [slot]);
+    res.json({ success: true });
+  } catch (err) {
+    console.error(`DELETE /api/builds/${req.params.slot} error:`, err);
+    res.status(500).json({ error: "Failed to delete build slot" });
+  }
+});
+
 // Admin stats endpoint (KPI dashboard)
 app.get("/api/admin/stats", async (req, res) => {
   try {
