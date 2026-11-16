@@ -126,9 +126,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Home/Home.jsx": {
-    "mtime": 1794813920.3624303,
-    "seen": 1794813956.1433423,
-    "ast_hash": "8b5c130516292c75570dc2f103a5dc27",
+    "mtime": 1794814854.2873385,
+    "seen": 1794814871.0229838,
+    "ast_hash": "b6f5f9d0c267c49648f97f5c29a6a9c1",
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/CourseShell.jsx": {
@@ -150,9 +150,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Navbar/Navbar.jsx": {
-    "mtime": 1794813920.3634326,
-    "seen": 1794813956.1464002,
-    "ast_hash": "c55dc733b7f19feb9ccd542c0fcf0cd4",
+    "mtime": 1794814854.2916806,
+    "seen": 1794814871.0250483,
+    "ast_hash": "5352f8a291d8974b9187256177933059",
     "semantic_hash": ""
   },
   "frontend/src/contexts/AuthContext.jsx": {
@@ -744,9 +744,9 @@
     "semantic_hash": ""
   },
   "frontend/src/contexts/LearnModeContext.jsx": {
-    "mtime": 1794687207.137672,
-    "seen": 1794687462.3588626,
-    "ast_hash": "7034b00c274fedde8f2c0c8a7e81eefb",
+    "mtime": 1794814854.2921975,
+    "seen": 1794814871.0267394,
+    "ast_hash": "939bff24b1873caf4cc1749d3eb8e21d",
     "semantic_hash": ""
   },
   "backend/uploads/profiles/photo-1794176073655-f3qzal.gif": {
@@ -822,15 +822,15 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Home/ModeSelectionCards.jsx": {
-    "mtime": 1794181504.729296,
-    "seen": 1794183525.7059221,
-    "ast_hash": "fd254c9269c7e151066e560bdc1ca1b2",
+    "mtime": 1794814854.2896366,
+    "seen": 1794814871.0232034,
+    "ast_hash": "932429c6e95d85844807f7ded603f959",
     "semantic_hash": ""
   },
   "frontend/src/components/Home/RigPickerTransitionOverlay.jsx": {
-    "mtime": 1794573547.6969552,
-    "seen": 1794574627.645971,
-    "ast_hash": "3c9fce6a3ee320d3031c364edb2fd38c",
+    "mtime": 1794814854.2901936,
+    "seen": 1794814871.0233934,
+    "ast_hash": "62e370e9d86cba0d9d9d539e0bb4bf2e",
     "semantic_hash": ""
   },
   "frontend/public/sfx/audio/sidebar_close.wav": {
@@ -891,6 +891,12 @@
     "mtime": 1794687196.2478232,
     "seen": 1794687462.35886,
     "ast_hash": "2f38bf04a8a291519bcf99dba89aa9b9",
+    "semantic_hash": ""
+  },
+  "frontend/src/assets/system_logo_straight.png": {
+    "mtime": 1794814322.7745657,
+    "seen": 1794814871.0370097,
+    "ast_hash": "b5fb3025a0b979e67b23ef53d7b9ddcb",
     "semantic_hash": ""
   },
   "backend/package-lock.json": {
