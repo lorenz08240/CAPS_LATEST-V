@@ -1,12 +1,19 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { OFFLINE_COMPONENTS, DEMO_GAMING_RIG } from "../utilities/offlineParts";
 import { apiFetch } from "../utilities/api";
+import { useLearnMode } from "./LearnModeContext";
 
 // Build Context for managing selected components
 const BuildContext = createContext();
 
 // Build Provider component
 export const BuildProvider = ({ children }) => {
+  const { mode, userProfile } = useLearnMode();
+  const hasAccount = Boolean(
+    userProfile && (userProfile.fullName || userProfile.email) && userProfile.setupCompleted
+  );
+  const isStudent = mode === "learn" && hasAccount;
+
   const [activeBuildTarget, setActiveBuildTargetState] = useState(() => {
     try {
       return sessionStorage.getItem("buildlab_active_target") || "rig1";
@@ -22,40 +29,38 @@ export const BuildProvider = ({ children }) => {
     } catch {}
   };
 
+  const emptyBuild = {
+    cpu: null,
+    motherboard: null,
+    ram: null,
+    storage: null,
+    gpu: null,
+    psu: null,
+    case: null,
+  };
+
   const [rig1Build, setRig1Build] = useState(() => {
     try {
-      const saved =
-        sessionStorage.getItem("buildlab_current_build") ||
-        localStorage.getItem("buildlab_current_build");
+      // In Free Mode, never restore from persistent localStorage across tab/browser closures.
+      // Only authenticated students in Learn Mode retain builds in localStorage.
+      const isLearn = localStorage.getItem("buildlab_app_mode") === "learn";
+      const saved = isLearn
+        ? (sessionStorage.getItem("buildlab_current_build") || localStorage.getItem("buildlab_current_build"))
+        : sessionStorage.getItem("buildlab_current_build");
       if (saved) return JSON.parse(saved);
     } catch {}
-    return {
-      cpu: null,
-      motherboard: null,
-      ram: null,
-      storage: null,
-      gpu: null,
-      psu: null,
-      case: null,
-    };
+    return emptyBuild;
   });
 
   const [rig2Build, setRig2Build] = useState(() => {
     try {
-      const saved =
-        sessionStorage.getItem("buildlab_rig2_build") ||
-        localStorage.getItem("buildlab_rig2_build");
+      const isLearn = localStorage.getItem("buildlab_app_mode") === "learn";
+      const saved = isLearn
+        ? (sessionStorage.getItem("buildlab_rig2_build") || localStorage.getItem("buildlab_rig2_build"))
+        : sessionStorage.getItem("buildlab_rig2_build");
       if (saved) return JSON.parse(saved);
     } catch {}
-    return {
-      cpu: null,
-      motherboard: null,
-      ram: null,
-      storage: null,
-      gpu: null,
-      psu: null,
-      case: null,
-    };
+    return emptyBuild;
   });
 
   const currentBuild = activeBuildTarget === "rig2" ? rig2Build : rig1Build;
@@ -64,29 +69,45 @@ export const BuildProvider = ({ children }) => {
   const [compatibilityResults, setCompatibilityResults] = useState([]);
   const [savedBuilds, setSavedBuilds] = useState(() => {
     try {
-      const local = localStorage.getItem("buildlab_saved_builds");
-      if (local) return JSON.parse(local);
+      const isLearn = localStorage.getItem("buildlab_app_mode") === "learn";
+      if (isLearn) {
+        const local = localStorage.getItem("buildlab_saved_builds");
+        if (local) return JSON.parse(local);
+      } else {
+        const sess = sessionStorage.getItem("buildlab_saved_builds");
+        if (sess) return JSON.parse(sess);
+      }
     } catch {}
     return [null, null, null];
   });
   const [selectedSaveSlot, setSelectedSaveSlot] = useState(0);
 
-  // Sync builds to storage so accidental tab closes retain progress
+  // Sync builds to storage:
+  // - In Free Mode: strictly sessionStorage only (lost when window/tab is closed).
+  // - In Learn Mode (Student): saved to localStorage for permanent curriculum progress.
   useEffect(() => {
     try {
       const serialized = JSON.stringify(rig1Build);
       sessionStorage.setItem("buildlab_current_build", serialized);
-      localStorage.setItem("buildlab_current_build", serialized);
+      if (isStudent) {
+        localStorage.setItem("buildlab_current_build", serialized);
+      } else {
+        localStorage.removeItem("buildlab_current_build");
+      }
     } catch {}
-  }, [rig1Build]);
+  }, [rig1Build, isStudent]);
 
   useEffect(() => {
     try {
       const serialized = JSON.stringify(rig2Build);
       sessionStorage.setItem("buildlab_rig2_build", serialized);
-      localStorage.setItem("buildlab_rig2_build", serialized);
+      if (isStudent) {
+        localStorage.setItem("buildlab_rig2_build", serialized);
+      } else {
+        localStorage.removeItem("buildlab_rig2_build");
+      }
     } catch {}
-  }, [rig2Build]);
+  }, [rig2Build, isStudent]);
 
   // Function to add a component to active build
   const addComponent = (category, component) => {
@@ -271,37 +292,46 @@ export const BuildProvider = ({ children }) => {
         console.warn("Backend API offline or database disconnected; using offline fallback parts.", err);
       });
 
-    apiFetch("/api/builds")
-      .then(res => res.json())
-      .then(data => {
-        if (Array.isArray(data)) {
-          setSavedBuilds(data);
-          try {
-            localStorage.setItem("buildlab_saved_builds", JSON.stringify(data));
-          } catch {}
-        }
-      })
-      .catch(err => console.warn("Backend builds offline:", err));
-  }, []);
+    if (isStudent) {
+      apiFetch("/api/builds")
+        .then(res => res.json())
+        .then(data => {
+          if (Array.isArray(data)) {
+            setSavedBuilds(data);
+            try {
+              localStorage.setItem("buildlab_saved_builds", JSON.stringify(data));
+            } catch {}
+          }
+        })
+        .catch(err => console.warn("Backend builds offline:", err));
+    }
+  }, [isStudent]);
 
   const saveBuildSnapshot = (slotIndex = selectedSaveSlot) => {
     setSavedBuilds((prev) => {
       const newBuilds = [...prev];
       newBuilds[slotIndex] = currentBuild;
       try {
-        localStorage.setItem("buildlab_saved_builds", JSON.stringify(newBuilds));
+        if (isStudent) {
+          localStorage.setItem("buildlab_saved_builds", JSON.stringify(newBuilds));
+        } else {
+          sessionStorage.setItem("buildlab_saved_builds", JSON.stringify(newBuilds));
+          localStorage.removeItem("buildlab_saved_builds");
+        }
       } catch {}
       return newBuilds;
     });
 
-    // Save to database
-    apiFetch(`/api/builds/${slotIndex}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(currentBuild),
-    }).catch(err => console.error("Error saving build to database:", err));
+    // Save to database only for authenticated students in Learn Track
+    if (isStudent) {
+      apiFetch(`/api/builds/${slotIndex}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(currentBuild),
+      }).catch(err => console.error("Error saving build to database:", err));
+    }
   };
 
   const deleteBuildSnapshot = (slotIndex = selectedSaveSlot) => {
@@ -309,15 +339,21 @@ export const BuildProvider = ({ children }) => {
       const newBuilds = [...prev];
       newBuilds[slotIndex] = null;
       try {
-        localStorage.setItem("buildlab_saved_builds", JSON.stringify(newBuilds));
+        if (isStudent) {
+          localStorage.setItem("buildlab_saved_builds", JSON.stringify(newBuilds));
+        } else {
+          sessionStorage.setItem("buildlab_saved_builds", JSON.stringify(newBuilds));
+          localStorage.removeItem("buildlab_saved_builds");
+        }
       } catch {}
       return newBuilds;
     });
 
-    // Delete from database
-    apiFetch(`/api/builds/${slotIndex}`, {
-      method: "DELETE",
-    }).catch(err => console.error("Error deleting build from database:", err));
+    if (isStudent) {
+      apiFetch(`/api/builds/${slotIndex}`, {
+        method: "DELETE",
+      }).catch(err => console.error("Error deleting build from database:", err));
+    }
   };
 
   const getSavedBuild = (slotIndex = selectedSaveSlot) => {

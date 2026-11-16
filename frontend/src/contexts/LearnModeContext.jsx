@@ -196,8 +196,9 @@ export const LearnModeProvider = ({ children }) => {
     } catch {}
   }, []);
 
-  // Learner Log Out
+  // Learner Log Out: Complete reset to free mode as a brand new visitor
   const logoutLearner = useCallback(() => {
+    // 1. Reset learner profile state
     setUserProfileState({
       fullName: "",
       email: "",
@@ -206,12 +207,44 @@ export const LearnModeProvider = ({ children }) => {
       photo: "",
       setupCompleted: false,
     });
+    // 2. Reset app mode state to explore (Free Mode)
     setModeState("explore");
+    // 3. Reset curriculum progress & banners
+    setUnlockedStages(["build", "compatibility", "learn"]);
+    setSeenBanners({ compatibility: false, learn: false, certificate: false });
+
     try {
+      // Clear all student account data
       localStorage.removeItem("buildlab_user_profile");
+      localStorage.removeItem("user");
       localStorage.setItem("buildlab_app_mode", "explore");
+      localStorage.removeItem("buildlab_learn_unlocked_stages");
+      localStorage.removeItem("buildlab_learn_seen_banners");
+      localStorage.removeItem("buildlab_learn_theme");
+      localStorage.removeItem("buildlab_learn_syllabus_seen");
+      localStorage.removeItem("buildlab_cert_id");
+      localStorage.removeItem("buildlab_course_progress");
+      localStorage.removeItem("buildlab_quiz_scores");
+
+      // Clear all builds so free mode starts completely reset
+      localStorage.removeItem("buildlab_current_build");
+      localStorage.removeItem("buildlab_rig2_build");
+      localStorage.removeItem("buildlab_saved_builds");
+      localStorage.removeItem("buildlab_active_target");
+
       sessionStorage.removeItem("buildlab_pending_learner_welcome");
+      sessionStorage.removeItem("buildlab_current_build");
+      sessionStorage.removeItem("buildlab_rig2_build");
+      sessionStorage.removeItem("buildlab_active_target");
+      sessionStorage.removeItem("buildlab_saved_builds");
     } catch {}
+
+    // Fully reload to Home so all components and states reset to new visitor status
+    try {
+      window.location.replace("/#top");
+    } catch {
+      window.location.href = "/";
+    }
   }, []);
 
   return (
