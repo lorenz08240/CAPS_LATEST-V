@@ -292,6 +292,7 @@ function CompatibilityView({ isIntegrated = false }) {
     selectedSaveSlot,
     setSelectedSaveSlot,
     saveBuildSnapshot,
+    deleteBuildSnapshot,
     allComponents,
     loadDemoBuild,
   } = useBuild();
@@ -788,6 +789,20 @@ function CompatibilityView({ isIntegrated = false }) {
     setRig2Source(sourceKey);
   };
 
+  const handleDeleteRig2Assembly = () => {
+    try { soundManager.click(); } catch {}
+    if (rig2Source.startsWith("slot-")) {
+      const slotIdx = parseInt(rig2Source.replace("slot-", ""), 10);
+      deleteBuildSnapshot(slotIdx);
+      setSaveMessage(`Assembly deleted from Slot 0${slotIdx + 1}!`);
+      setTimeout(() => setSaveMessage(""), 3500);
+    } else {
+      setRig2Source("blank");
+      setSaveMessage("Assembly cleared from Rig 02!");
+      setTimeout(() => setSaveMessage(""), 3500);
+    }
+  };
+
   const rig2 = useMemo(() => {
     if (rig2Source === "preset-enthusiast") return PRESET_ENTHUSIAST_RIG;
     if (rig2Source === "preset-budget") return PRESET_BUDGET_RIG;
@@ -1084,7 +1099,25 @@ function CompatibilityView({ isIntegrated = false }) {
               }}
               title="Load this configuration into active workbench"
             >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M11 19l-7-7 7-7" />
+                <path d="M19 12H5" />
+              </svg>
               <span>LOAD INTO WORKBENCH</span>
+            </button>
+            <button
+              type="button"
+              className="btn-rig-action btn-delete-assembly"
+              onClick={handleDeleteRig2Assembly}
+              title="Delete or clear this assembly from Rig 02"
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="3 6 5 6 21 6" />
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                <line x1="10" y1="11" x2="10" y2="17" />
+                <line x1="14" y1="11" x2="14" y2="17" />
+              </svg>
+              <span>DELETE THIS ASSEMBLY</span>
             </button>
           </div>
         </>
@@ -1134,6 +1167,8 @@ function CompatibilityView({ isIntegrated = false }) {
           </div>
         </div>
       )}
+
+      {saveMessage && <div className="rig-save-toast">{saveMessage}</div>}
 
       <div className="rig-specs-list">
         <div className="specs-list-title">HARDWARE SPECIFICATIONS</div>

@@ -218,6 +218,22 @@ export const BuildProvider = ({ children }) => {
     }).catch(err => console.error("Error saving build to database:", err));
   };
 
+  const deleteBuildSnapshot = (slotIndex = selectedSaveSlot) => {
+    setSavedBuilds((prev) => {
+      const newBuilds = [...prev];
+      newBuilds[slotIndex] = null;
+      try {
+        localStorage.setItem("buildlab_saved_builds", JSON.stringify(newBuilds));
+      } catch {}
+      return newBuilds;
+    });
+
+    // Delete from database
+    apiFetch(`/api/builds/${slotIndex}`, {
+      method: "DELETE",
+    }).catch(err => console.error("Error deleting build from database:", err));
+  };
+
   const getSavedBuild = (slotIndex = selectedSaveSlot) => {
     return savedBuilds[slotIndex] || null;
   };
@@ -247,6 +263,7 @@ export const BuildProvider = ({ children }) => {
         loadDemoBuild,
         getSelectedComponents,
         saveBuildSnapshot,
+        deleteBuildSnapshot,
         getSavedBuild,
         setCompatibilityResults,
       }}

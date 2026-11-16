@@ -1920,3 +1920,94 @@
   box-shadow: 0 0 10px rgba(0, 229, 160, 0.35);
 }
 
+/* ── Rig Quick Actions (Action Bar below Preview) ── */
+.rig-quick-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.5rem;
+  margin-top: 0.4rem;
+  margin-bottom: 0.5rem;
+  background: rgba(15, 23, 42, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+.btn-rig-action {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.42rem 0.65rem;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-decoration: none;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+}
+
+/* Edit in Assembly Rig (Cyan accent) */
+.btn-rig-action.btn-edit-workbench {
+  background: rgba(56, 189, 248, 0.08);
+  border-color: rgba(56, 189, 248, 0.3);
+  color: #38bdf8;
+}
+
+.btn-rig-action.btn-edit-workbench:hover {
+  background: rgba(56, 189, 248, 0.2);
+  border-color: #38bdf8;
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+}
+
+/* Save Snapshot (Green accent) */
+.btn-rig-action.btn-snapshot-save {
+  background: rgba(0, 229, 160, 0.08);
+  border-color: rgba(0, 229, 160, 0.3);
+  color: #00e5a0;
+}
+
+.btn-rig-action.btn-snapshot-save:hover {
+  background: rgba(0, 229, 160, 0.2);
+  border-color: #00e5a0;
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(0, 229, 160, 0.3);
+}
+
+/* Load into Workbench (Cyan Cyber accent) */
+.btn-rig-action.btn-load-to-workbench {
+  background: rgba(56, 189, 248, 0.1);
+  border-color: rgba(56, 189, 248, 0.35);
+  color: #38bdf8;
+}
+
+.btn-rig-action.btn-load-to-workbench:hover {
+  background: rgba(56, 189, 248, 0.22);
+  border-color: #38bdf8;
+  color: #ffffff;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.35);
+}
+
+/* Delete this Assembly (Red/Rose accent) */
+.btn-rig-action.btn-delete-assembly {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #f87171;
+}
+
+.btn-rig-action.btn-delete-assembly:hover {
+  background: rgba(239, 68, 68, 0.22);
+  border-color: #ef4444;
+  color: #ffffff;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.35);
+}
+
+
