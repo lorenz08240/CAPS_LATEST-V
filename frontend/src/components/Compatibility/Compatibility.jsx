@@ -331,8 +331,13 @@ const getSmartSuggestion = (issue, build) => {
 
 function CompatibilityView({ isIntegrated = false }) {
   const navigate = useNavigate();
-  const { mode, seenBanners, markBannerSeen, unlockStage } = useLearnMode();
-  const isLearnMode = mode === "learn";
+  const { mode, userProfile, seenBanners, markBannerSeen, unlockStage } = useLearnMode();
+  const hasAccount = Boolean(
+    userProfile && (userProfile.fullName || userProfile.email) && userProfile.setupCompleted
+  );
+  // With-account mode: Student in learn track or authenticated user who hasn't explicitly chosen explore
+  const isWithAccount = mode === "learn" || (hasAccount && mode !== "explore");
+  const isLearnMode = isWithAccount;
   const compatContainerRef = useRef(null);
 
   const [showUnlockBanner, setShowUnlockBanner] = useState(() => isLearnMode && !seenBanners?.compatibility);
@@ -1675,56 +1680,541 @@ function CompatibilityView({ isIntegrated = false }) {
           )}
 
           {/* ══════════════════════════════════════════════════════════════════
-              UNIFIED WORKBENCH & LABS FLOW (IMAGE 1 & IMAGE 2)
+              BRANCH 1: WITH ACCOUNT / LEARN MODE (100% ORIGINAL STYLE & LAYOUT)
               ══════════════════════════════════════════════════════════════════ */}
-          {isLearnMode && isVerificationPassed && (
-            <div className="compat-learn-unlock-card glass-panel" {...bindBobInteract("Hardware Verification Complete: All 7 stages audited with zero conflicts! Unlock your coursework.")}>
-              <div className="learn-unlock-info">
-                <div className="learn-unlock-badge">
-                  <span className="telemetry-live-dot" />
-                  <span className="learn-unlock-badge-label">STAGE 02 COMPLETE // DIAGNOSTICS AUDITED</span>
-                  <span className="telemetry-bracket">[ 7/7 VERIFIED ]</span>
+          {isLearnMode ? (
+            <>
+              {isVerificationPassed && (
+                <div className="compat-learn-unlock-card glass-panel" {...bindBobInteract("Hardware Verification Complete: All 7 stages audited with zero conflicts! Unlock your coursework.")}>
+                  <div className="learn-unlock-info">
+                    <div className="learn-unlock-badge">
+                      <span className="telemetry-live-dot" />
+                      <span className="learn-unlock-badge-label">STAGE 02 COMPLETE // DIAGNOSTICS AUDITED</span>
+                      <span className="telemetry-bracket">[ 7/7 VERIFIED ]</span>
+                    </div>
+                    <h3 className="learn-unlock-title">Hardware Verification Complete</h3>
+                    <p className="learn-unlock-desc">
+                      Your 7-stage PC build passed comprehensive physical clearance, electrical TDP, and socket pinout inspection with zero conflicts. You are now authorized to unlock the BuildLab Hardware Academy and begin your certified coursework.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    className="learn-unlock-btn"
+                    onClick={() => {
+                      try { soundManager.granted(); } catch {}
+                      unlockStage("learn");
+                      navigate("/learn");
+                    }}
+                  >
+                    <span>UNLOCK &amp; PROCEED TO LEARN LAB</span>
+                    <span className="btn-arrow">&rarr;</span>
+                  </button>
                 </div>
-                <h3 className="learn-unlock-title">Hardware Verification Complete</h3>
-                <p className="learn-unlock-desc">
-                  Your 7-stage PC build passed comprehensive physical clearance, electrical TDP, and socket pinout inspection with zero conflicts. You are now authorized to unlock the BuildLab Hardware Academy and begin your certified coursework.
-                </p>
-              </div>
-              <button
-                type="button"
-                className="learn-unlock-btn"
-                onClick={() => {
-                  try { soundManager.granted(); } catch {}
-                  unlockStage("learn");
-                  navigate("/learn");
-                }}
-              >
-                <span>UNLOCK &amp; PROCEED TO LEARN LAB</span>
-                <span className="btn-arrow">&rarr;</span>
-              </button>
-            </div>
-          )}
+              )}
 
-          {compatibilityIssues.length > 0 && hasRig1 && (
-            <aside className="compat-top-banner" role="alert" {...bindBobInteract("Critical Warning: Compatibility issues found between your components!")}>
-              <div className="compat-banner-info">
-                <span className="banner-alert-badge">COMPATIBILITY WARNING:</span>
-                <span className="banner-alert-desc">
-                  {compatibilityIssues.length} critical issue{compatibilityIssues.length > 1 ? "s" : ""} detected in your current PC build.
-                </span>
-              </div>
-            </aside>
-          )}
+              {compatibilityIssues.length > 0 && (
+                <aside className="compat-top-banner" role="alert" {...bindBobInteract("Critical Warning: Compatibility issues found between your components!")}>
+                  <div className="compat-banner-info">
+                    <span className="banner-alert-badge">COMPATIBILITY WARNING:</span>
+                    <span className="banner-alert-desc">
+                      Several critical issues detected in your current PC build.
+                    </span>
+                  </div>
+                </aside>
+              )}
 
-          {/* Direct Dual Cards Layout ("rekta na dapat doon sa may card") */}
-          <div className="compare-mode-container" style={{ marginTop: "1.2rem" }}>
-            <div className="compare-dual-grid">
-              {renderFreeRig1Card()}
-              {renderFreeRig2Card()}
-            </div>
-            {activeIssues.length > 0 && renderIssuesAndSuggestionsCard()}
-            {hasTwoRigs && renderFreeDualOverview()}
-          </div>
+              {selectedComponents.length === 0 && (
+                <div className="empty-wrap">
+                  <div className="empty-card glass-panel" {...bindBobInteract("Workspace empty! Pick at least a CPU and Motherboard to begin checking.")}>
+                    <div className="empty-img-wrap">
+                      <img
+                        src="/assets/component_picker_image_bg.png"
+                        alt="PC Build"
+                        className="empty-img"
+                        onError={(e) => {
+                          e.target.style.display = "none";
+                        }}
+                      />
+                    </div>
+                    <h3>No Components Selected Yet</h3>
+                    <p>
+                      Head to the Component Picker and begin assembling your PC. Real-time compatibility
+                      checks and performance telemetry will appear here instantly.
+                    </p>
+                    <div style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap", marginTop: "16px" }}>
+                      <Link to="/build" className="btn-resolve-cta" style={{ maxWidth: "240px", margin: 0 }}>
+                        Go to Component Picker
+                      </Link>
+                      <button 
+                        type="button" 
+                        className="btn-resolve-cta"
+                        style={{ maxWidth: "240px", margin: 0, background: "rgba(0, 229, 255, 0.15)", borderColor: "#00e5ff", color: "#00e5ff", cursor: "pointer" }}
+                        onClick={() => {
+                          try { soundManager.click(); } catch {}
+                          if (loadDemoBuild) loadDemoBuild();
+                        }}
+                      >
+                        Load Sample Rig (Test Demo)
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {selectedComponents.length > 0 && (
+                <div className="dashboard-layout-v2">
+                  <section className="column-left-60">
+                    <div className="glass-panel components-container-card">
+                      <div className="components-card-header">
+                        <h3 className="section-title">
+                          Your Selected Components ({selectedComponents.length} parts)
+                        </h3>
+                        <button
+                          type="button"
+                          className="btn-export-manifest"
+                          onClick={handleExportManifestPDF}
+                          title="Download formatted Technical Manifest & Build Summary PDF"
+                        >
+                          <span>📄 EXPORT MANIFEST (PDF)</span>
+                        </button>
+                      </div>
+
+                      <div className="component-cards-stack">
+                        {selectedComponents.map((comp, i) => {
+                          const isOk = !compatibilityIssues.some((iss) =>
+                            iss.components.some(
+                              (c) => c.toLowerCase() === comp.category.toLowerCase()
+                            )
+                          );
+                          const brandTag = getBrandMonogram(comp);
+
+                          return (
+                            <div
+                              key={i}
+                              className={`component-row-card ${isOk ? "card-status-ready" : "card-status-issue"}`}
+                              {...bindBobInteract(getComponentBobHint(comp))}
+                            >
+                              <div
+                                className={`brand-monogram-pill ${isOk ? "brand-ready" : "brand-issue"}`}
+                              >
+                                {brandTag}
+                              </div>
+
+                              <div className="component-text-meta">
+                                <span className="component-category-tag">
+                                  {comp.category.toUpperCase()}
+                                </span>
+                                <h4 className="component-product-name" title={comp.name}>
+                                  {comp.brand} {comp.name}
+                                </h4>
+                              </div>
+
+                              <div className="status-badge-wrap">
+                                <span className={`status-pill ${isOk ? "pill-ready" : "pill-issue"}`}>
+                                  {isOk ? "READY" : "ISSUE"}
+                                </span>
+                              </div>
+
+                              <div className="component-thumb-wrap">
+                                {comp.img ? (
+                                  <img
+                                    src={comp.img}
+                                    alt={comp.name}
+                                    className="component-thumb-img"
+                                  />
+                                ) : (
+                                  <span className="thumb-placeholder-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {compatibilityIssues.length > 0 && !bottleneckDismissed ? (
+                      <div className="bottleneck-darkred-card" {...bindBobInteract("Bottleneck Analysis: Hardware mismatch detected! Review recommendations to resolve.")}>
+                        <div className="bottleneck-card-header">
+                          <h3 className="bottleneck-card-title">Bottleneck Analysis</h3>
+                        </div>
+
+                        <div className="bottleneck-conflicts-list">
+                          {compatibilityIssues.map((iss, i) => (
+                            <div key={i} className="bottleneck-conflict-item">
+                              <span className="conflict-dot" />
+                              <div className="conflict-copy">
+                                <strong className="conflict-headline">
+                                  {iss.components.join(" / ")} Conflict
+                                </strong>
+                                <span className="conflict-dash">•</span>
+                                <span className="conflict-desc">{iss.issue}</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        <Link
+                          to="/build"
+                          state={{
+                            scrollTo: "build-main-area",
+                            stepCategory: compatibilityIssues[0]?.components?.[0] || "case",
+                          }}
+                          className="btn-resolve-cta"
+                        >
+                          Fix Compatibility Issues
+                        </Link>
+                      </div>
+                    ) : compatibilityIssues.length === 0 ? (
+                      <div className="compatibility-all-clear-card glass-panel" {...bindBobInteract("100% Hardware Compatibility! Pinouts, DDR generation, and power rails are verified.")}>
+                        <span className="all-clear-icon">
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                        </span>
+                        <div className="all-clear-copy">
+                          <h4>All Components are 100% Compatible</h4>
+                          <p>No socket mismatches, clearance constraints, or wattage overdraw detected.</p>
+                        </div>
+                      </div>
+                    ) : null}
+
+                    <div className="sub-diagnostics-row">
+                      <div
+                        className={`sub-diag-card ${hasSocketIssue ? "diag-issue" : "diag-ready"}`}
+                        {...bindBobInteract("Socket Matching: Verifying pin-level socket compatibility between CPU and Motherboard.")}
+                      >
+                        <div className="diag-header">
+                          <span className="diag-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/></svg>
+                          </span>
+                          <h4 className="diag-label">Socket Matching</h4>
+                        </div>
+                        <p className="diag-desc">
+                          Pin-level socket and chipset verification between CPU and motherboard.
+                        </p>
+                      </div>
+
+                      <div
+                        className={`sub-diag-card ${hasRamIssue ? "diag-issue" : "diag-ready"}`}
+                        {...bindBobInteract("RAM Compatibility: Ensuring DDR4 vs DDR5 standard matches your motherboard slots.")}
+                      >
+                        <div className="diag-header">
+                          <span className="diag-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="6" width="20" height="12" rx="1"/><line x1="6" y1="18" x2="6" y2="15"/><line x1="10" y1="18" x2="10" y2="15"/><line x1="14" y1="18" x2="14" y2="15"/><line x1="18" y1="18" x2="18" y2="15"/></svg>
+                          </span>
+                          <h4 className="diag-label">RAM Compatibility</h4>
+                        </div>
+                        <p className="diag-desc">
+                          Memory generation (DDR4/DDR5) and slot speed validation against the board.
+                        </p>
+                      </div>
+
+                      <div
+                        className={`sub-diag-card ${hasPowerIssue ? "diag-issue" : "diag-ready"}`}
+                        {...bindBobInteract(`Power Requirements: System estimated at ${estWattage}W. 20-30% PSU headroom is recommended.`)}
+                      >
+                        <div className="diag-header">
+                          <span className="diag-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                          </span>
+                          <h4 className="diag-label">Power Requirements</h4>
+                        </div>
+                        <p className="diag-desc">
+                          Calculates system peak draw against PSU rated wattage with safety margin.
+                        </p>
+                      </div>
+                    </div>
+                  </section>
+
+                  <section className="column-right-40">
+                    <div className="glass-panel performance-analytics-panel">
+                      <h3 className="section-title">Performance Analytics</h3>
+
+                      <div className="kpi-grid-2x2">
+                        <div className="kpi-tile-box" {...bindBobInteract(`Est. Wattage (${estWattage}W): Combined peak draw of your CPU, GPU, and system baseline.`)}>
+                          <span className="kpi-icon-symbol kpi-icon-red">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                          </span>
+                          <div className="kpi-metric-info">
+                            <span className="kpi-metric-label">Est. Wattage</span>
+                            <span className="kpi-metric-value">{estWattage}W</span>
+                          </div>
+                        </div>
+
+                        <div className="kpi-tile-box" {...bindBobInteract(`Hardware Stages: ${selectedComponents.length} of 7 core components selected so far.`)}>
+                          <span className="kpi-icon-symbol kpi-icon-green">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                          </span>
+                          <div className="kpi-metric-info">
+                            <span className="kpi-metric-label">Components</span>
+                            <span className="kpi-metric-value">{selectedComponents.length}/7</span>
+                          </div>
+                        </div>
+
+                        <div className="kpi-tile-box" {...bindBobInteract("Gaming Score: Evaluates GPU rendering capabilities and frame throughput.")}>
+                          <span className="kpi-icon-symbol kpi-icon-purple">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="8" cy="12" r="1.5"/><circle cx="16" cy="12" r="1.5"/></svg>
+                          </span>
+                          <div className="kpi-metric-info">
+                            <span className="kpi-metric-label">Gaming Score</span>
+                            <span className="kpi-metric-value">
+                              {metricScore(currentBuild, "GPU")}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="kpi-tile-box" {...bindBobInteract("Productivity Score: Evaluates multi-threaded processing power and memory bandwidth.")}>
+                          <span className="kpi-icon-symbol kpi-icon-cyan">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                          </span>
+                          <div className="kpi-metric-info">
+                            <span className="kpi-metric-label">Productivity</span>
+                            <span className="kpi-metric-value">
+                              {metricScore(currentBuild, "CPU")}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="glass-panel performance-profile-panel">
+                      <div className="panel-headline-group">
+                        <h3 className="section-title">Performance Profile</h3>
+                        <span className="section-subcaption">Radar Performance Chart</span>
+                      </div>
+
+                      <div className="radar-canvas-container" {...bindBobInteract("5-Axis Balance Radar: Visualizing the performance equilibrium across all subsystems.")}>
+                        <svg className="radar-svg-canvas" viewBox="-25 -25 310 310">
+                          <defs>
+                            <radialGradient id="radarAuraWarm" cx="65%" cy="35%" r="60%">
+                              <stop offset="0%" stopColor="rgba(239, 68, 68, 0.28)" />
+                              <stop offset="50%" stopColor="rgba(245, 158, 11, 0.14)" />
+                              <stop offset="100%" stopColor="rgba(0, 0, 0, 0)" />
+                            </radialGradient>
+                            <radialGradient id="radarAuraCool" cx="35%" cy="65%" r="60%">
+                              <stop offset="0%" stopColor="rgba(0, 229, 160, 0.22)" />
+                              <stop offset="50%" stopColor="rgba(6, 182, 212, 0.1)" />
+                              <stop offset="100%" stopColor="rgba(0, 0, 0, 0)" />
+                            </radialGradient>
+                            <filter id="radarGlowFilter" x="-20%" y="-20%" width="140%" height="140%">
+                              <feGaussianBlur stdDeviation="2.5" result="glow" />
+                              <feMerge>
+                                <feMergeNode in={"glow"} />
+                                <feMergeNode in={"SourceGraphic"} />
+                              </feMerge>
+                            </filter>
+                          </defs>
+
+                          <circle cx="155" cy="105" r="95" fill="url(#radarAuraWarm)" />
+                          <circle cx="105" cy="155" r="95" fill="url(#radarAuraCool)" />
+
+                          {[100, 75, 50, 25].map((r, i) => (
+                            <polygon
+                              key={i}
+                              points={metrics
+                                .map((_, j) => {
+                                  const angle = -Math.PI / 2 + ((Math.PI * 2) / metrics.length) * j;
+                                  return `${130 + Math.cos(angle) * r},${130 + Math.sin(angle) * r}`;
+                                })
+                                .join(" ")}
+                              className="radar-web-ring"
+                              fill="none"
+                              stroke="rgba(255, 255, 255, 0.1)"
+                              strokeWidth="1"
+                            />
+                          ))}
+
+                          {metrics.map((_, i) => {
+                            const angle = -Math.PI / 2 + ((Math.PI * 2) / metrics.length) * i;
+                            return (
+                              <line
+                                key={`spoke-${i}`}
+                                x1="130"
+                                y1="130"
+                                x2={130 + Math.cos(angle) * 100}
+                                y2={130 + Math.sin(angle) * 100}
+                                stroke="rgba(255, 255, 255, 0.12)"
+                                strokeWidth="1"
+                              />
+                            );
+                          })}
+
+                          {metrics.map((_, i) => {
+                            const angle = -Math.PI / 2 + ((Math.PI * 2) / metrics.length) * i;
+                            const gx = 130 + Math.cos(angle) * 100;
+                            const gy = 130 + Math.sin(angle) * 100;
+                            const gridDots = ["#f59e0b", "#facc15", "#d97706", "rgba(0, 229, 160, 0.6)", "rgba(0, 229, 160, 0.6)"];
+                            return (
+                              <circle
+                                key={`grid-vertex-${i}`}
+                                cx={gx}
+                                cy={gy}
+                                r="2.5"
+                                fill={gridDots[i]}
+                                opacity="0.8"
+                              />
+                            );
+                          })}
+
+                          <polygon
+                            points={currentPoints}
+                            className="radar-polygon-glow"
+                            fill="rgba(0, 229, 160, 0.12)"
+                            stroke="#00e5a0"
+                            strokeWidth="2.2"
+                            filter="url(#radarGlowFilter)"
+                          />
+
+                          {metrics.map((m, i) => {
+                            let score = metricScore(currentBuild, m);
+                            if (radarProfileMode) {
+                              score = Math.min(100, Math.round(score * 1.12));
+                            }
+                            const norm = Math.max((score / 100) * 100, 25);
+                            const angle = -Math.PI / 2 + ((Math.PI * 2) / metrics.length) * i;
+                            const px = 130 + Math.cos(angle) * norm;
+                            const py = 130 + Math.sin(angle) * norm;
+
+                            return (
+                              <g key={`data-node-${i}`}>
+                                <circle cx={px} cy={py} r="7" fill="#00e5a0" opacity="0.4" />
+                                <circle cx={px} cy={py} r="3.5" fill="#a7f3d0" stroke="#00e5a0" strokeWidth="1.5" />
+                              </g>
+                            );
+                          })}
+
+                          {radarLabels.map(({ metric, x, y }) => {
+                            const dx = x - 130;
+                            const dy = y - 130;
+                            const nx = 130 + dx * 1.16;
+                            const ny = 130 + dy * 1.16;
+
+                            return (
+                              <text
+                                key={metric}
+                                x={nx}
+                                y={ny}
+                                className="radar-axis-label"
+                                dominantBaseline="middle"
+                                textAnchor="middle"
+                              >
+                                {metric}
+                              </text>
+                            );
+                          })}
+                        </svg>
+                      </div>
+
+                      <button
+                        className="btn-convert-profile"
+                        {...bindBobInteract("Convert Profile: Toggles between standard baseline and boosted performance profiles.")}
+                        onClick={() => setRadarProfileMode(!radarProfileMode)}
+                      >
+                        {radarProfileMode ? "Standard Profile" : "Convert Profile"}
+                      </button>
+                    </div>
+                  </section>
+                </div>
+              )}
+
+              {selectedComponents.length > 0 && (
+                <section
+                  className="compat-compare-launcher-card glass-panel"
+                  {...bindBobInteract("Rig Comparison Vault: Save your snapshot and compare side-by-side with other builds.")}
+                >
+                  <div className="compare-launcher-info">
+                    <div className="compare-launcher-badge">
+                      <span className="telemetry-live-dot" />
+                      <span className="compare-launcher-badge-label">RIG CONFIGURATION VAULT // DUAL-SLOT ARCHITECTURE</span>
+                      <span className="telemetry-bracket">[ READY ]</span>
+                    </div>
+                    <h3 className="compare-launcher-title">Compare Rigs &amp; Configuration Vault</h3>
+                    <p className="compare-launcher-desc">
+                      Save your active custom build snapshot into a profile slot or launch the side-by-side Rig Comparison Matrix to evaluate hardware clearances, memory bandwidth, and benchmark differentials against alternative configurations.
+                    </p>
+                    <div className="compare-launcher-slots-row">
+                      <span className="slots-label">STORAGE SLOT:</span>
+                      {[0, 1, 2].map((slot) => {
+                        const hasSlotData = Boolean(savedBuilds?.[slot]);
+                        return (
+                          <button
+                            key={slot}
+                            type="button"
+                            className={`launcher-slot-chip ${selectedSaveSlot === slot ? "slot-selected" : ""} ${hasSlotData ? "slot-occupied" : ""}`}
+                            onClick={() => {
+                              try { soundManager.click(); } catch {}
+                              setSelectedSaveSlot(slot);
+                            }}
+                            title={hasSlotData ? `Slot 0${slot + 1} has saved build` : `Slot 0${slot + 1} is empty`}
+                          >
+                            <span className="slot-dot" />
+                            <span>SLOT 0{slot + 1}</span>
+                            {hasSlotData && <span className="slot-tag-saved">SAVED</span>}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  <div className="compare-launcher-actions">
+                    <button
+                      type="button"
+                      className="btn-launcher-save"
+                      onClick={() => handleSave(selectedSaveSlot)}
+                      title="Save current workbench components into selected slot"
+                    >
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                      <span>SAVE RIG TO SLOT 0{selectedSaveSlot + 1}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      className="btn-launcher-compare"
+                      onClick={() => {
+                        try { soundManager.click(); } catch {}
+                        navigate("/compare-rigs");
+                      }}
+                      title="Open the Dual Rig Comparison Studio"
+                    >
+                      <span>OPEN COMPARE RIGS</span>
+                      <span className="compare-arrow">&rarr;</span>
+                    </button>
+
+                    {saveMessage && <div className="launcher-save-toast">{saveMessage}</div>}
+                  </div>
+                </section>
+              )}
+            </>
+          ) : (
+            /* ══════════════════════════════════════════════════════════════════
+               BRANCH 2: FREE WORKBENCH / NON-ACCOUNT (IMAGE 1 & IMAGE 2 FLOW)
+
+            /* ══════════════════════════════════════════════════════════════════
+               BRANCH 2: FREE WORKBENCH / NON-ACCOUNT (IMAGE 1 & IMAGE 2 FLOW)
+               ══════════════════════════════════════════════════════════════════ */
+            <>
+              {compatibilityIssues.length > 0 && hasRig1 && (
+                <aside className="compat-top-banner" role="alert" {...bindBobInteract("Critical Warning: Compatibility issues found between your components!")}>
+                  <div className="compat-banner-info">
+                    <span className="banner-alert-badge">COMPATIBILITY WARNING:</span>
+                    <span className="banner-alert-desc">
+                      {compatibilityIssues.length} critical issue{compatibilityIssues.length > 1 ? "s" : ""} detected in your current PC build.
+                    </span>
+                  </div>
+                </aside>
+              )}
+
+              {/* Direct Dual Cards Layout ("rekta na dapat doon sa may card") */}
+              <div className="compare-mode-container" style={{ marginTop: "1.2rem" }}>
+                <div className="compare-dual-grid">
+                  {renderFreeRig1Card()}
+                  {renderFreeRig2Card()}
+                </div>
+                {activeIssues.length > 0 && renderIssuesAndSuggestionsCard()}
+                {hasTwoRigs && renderFreeDualOverview()}
+              </div>
+            </>
+          )}
         </div>
 
         <div

@@ -377,7 +377,11 @@ const getCaseMaxGPU = (comp) => {
 };
 
 function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildInteracted }) {
-  const { mode, unlockStage } = useLearnMode();
+  const { mode, userProfile, unlockStage } = useLearnMode();
+  const hasAccount = Boolean(
+    userProfile && (userProfile.fullName || userProfile.email) && userProfile.setupCompleted
+  );
+  const isLearnMode = mode === "learn" || (hasAccount && mode !== "explore");
   const {
     currentBuild,
     activeBuildTarget,
@@ -967,43 +971,45 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
     <div className={`build-page ${isIntegrated ? 'integrated-home' : 'standalone'}`}>
       {!isIntegrated && <GlobalHeader />}
       
-      {/* Dual Rig Target Banner */}
-      <div className="build-target-banner">
-        <div className="build-target-switcher-pill">
-          <span className="build-target-label">ACTIVE ASSEMBLY:</span>
-          <button
-            type="button"
-            className={`btn-target-toggle ${activeBuildTarget === "rig1" ? "active-rig1" : ""}`}
+      {/* Dual Rig Target Banner - Only for non-account / free workbench exploration */}
+      {!isLearnMode && (
+        <div className="build-target-banner">
+          <div className="build-target-switcher-pill">
+            <span className="build-target-label">ACTIVE ASSEMBLY:</span>
+            <button
+              type="button"
+              className={`btn-target-toggle ${activeBuildTarget === "rig1" ? "active-rig1" : ""}`}
+              onClick={() => {
+                try { soundManager.click(); } catch {}
+                setActiveBuildTarget("rig1");
+              }}
+            >
+              <span className="target-dot green" />
+              <span>RIG 01 // WORKBENCH</span>
+            </button>
+            <button
+              type="button"
+              className={`btn-target-toggle ${activeBuildTarget === "rig2" ? "active-rig2" : ""}`}
+              onClick={() => {
+                try { soundManager.click(); } catch {}
+                setActiveBuildTarget("rig2");
+              }}
+            >
+              <span className="target-dot cyan" />
+              <span>RIG 02 // MANUAL BUILD (+)</span>
+            </button>
+          </div>
+          <Link
+            to="/compatibility"
+            className="btn-matrix-compare-link"
             onClick={() => {
               try { soundManager.click(); } catch {}
-              setActiveBuildTarget("rig1");
             }}
           >
-            <span className="target-dot green" />
-            <span>RIG 01 // WORKBENCH</span>
-          </button>
-          <button
-            type="button"
-            className={`btn-target-toggle ${activeBuildTarget === "rig2" ? "active-rig2" : ""}`}
-            onClick={() => {
-              try { soundManager.click(); } catch {}
-              setActiveBuildTarget("rig2");
-            }}
-          >
-            <span className="target-dot cyan" />
-            <span>RIG 02 // MANUAL BUILD (+)</span>
-          </button>
+            <span>Compare in Compatibility Matrix &rarr;</span>
+          </Link>
         </div>
-        <Link
-          to="/compatibility"
-          className="btn-matrix-compare-link"
-          onClick={() => {
-            try { soundManager.click(); } catch {}
-          }}
-        >
-          <span>Compare in Compatibility Matrix &rarr;</span>
-        </Link>
-      </div>
+      )}
 
       <div className="build-main" id="build-main-area">
         <div className="build-sidebar">
@@ -1506,63 +1512,6 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
                         </span>
                       </div>
                     </div>
-
-                    {/* SELECT COMPONENT BUTTON AT THE BOTTOM (EXACTLY MATCHING USER REFERENCE IMAGE) */}
-                    <div className="spec-action-box">
-                      <button
-                        type="button"
-                        className={`btn-select-component ${selectedComponent?.id === viewedComponent.id ? "is-selected" : ""}`}
-                        onClick={() => {
-                          if (selectedComponent?.id === viewedComponent?.id && currentStep < buildSteps.length - 1) {
-                            soundManager.click();
-                            const nextStepIndex = currentStep + 1;
-                            const nextKey = buildSteps[nextStepIndex].key;
-                            setCurrentStep(nextStepIndex);
-                            const nextMounted = currentBuild[nextKey];
-                            const nextCatalog = allComponents[nextKey] || [];
-                            setViewedComponent(nextMounted || nextCatalog[0] || null);
-                          } else {
-                            handleComponentSelect(viewedComponent);
-                          }
-                        }}
-                      >
-                        <span className="btn-label">
-                          {selectedComponent?.id === viewedComponent.id ? "✓ COMPONENT SELECTED" : "SELECT COMPONENT"}
-                        </span>
-                      </button>
-
-                      {selectedComponent?.id === viewedComponent.id && (
-                        <div className="spec-mounted-actions">
-                          {currentStep < buildSteps.length - 1 ? (
-                            <button
-                              type="button"
-                              className="btn-next-stage-spec"
-                              onClick={() => {
-                                soundManager.click();
-                                const nextStepIndex = currentStep + 1;
-                                const nextKey = buildSteps[nextStepIndex].key;
-                                setCurrentStep(nextStepIndex);
-                                const nextMounted = currentBuild[nextKey];
-                                const nextCatalog = allComponents[nextKey] || [];
-                                setViewedComponent(nextMounted || nextCatalog[0] || null);
-                              }}
-                            >
-                              <span>PROCEED TO STAGE 0{currentStep + 2} ({buildSteps[currentStep + 1]?.label})</span>
-                              <span className="btn-arrow">&rarr;</span>
-                            </button>
-                          ) : (
-                            <Link
-                              to="/compatibility"
-                              className="btn-next-stage-spec finish"
-                              onClick={() => soundManager.click()}
-                            >
-                              <span>ALL 7 STAGES LOCKED • VERIFY COMPATIBILITY</span>
-                              <span className="btn-arrow">&rarr;</span>
-                            </Link>
-                          )}
-                        </div>
-                      )}
-                    </div>
                   </>
                 ) : (
                   <div className="spec-overview-card">
@@ -1687,6 +1636,65 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
 
               {/* PERMANENT DOCKED ACTION FOOTER (ALWAYS VISIBLE - NEVER DISAPPEARS) */}
               <div className="spec-docked-footer">
+                {/* SELECT COMPONENT BUTTON DOCKED OUTSIDE SCROLLING SPECS (MATCHES COMPAT MATRIX FIXED BUTTON BEHAVIOR) */}
+                {viewedComponent && (
+                  <div className="spec-action-box docked-spec-action">
+                    <button
+                      type="button"
+                      className={`btn-select-component ${selectedComponent?.id === viewedComponent.id ? "is-selected" : ""}`}
+                      onClick={() => {
+                        if (selectedComponent?.id === viewedComponent?.id && currentStep < buildSteps.length - 1) {
+                          soundManager.click();
+                          const nextStepIndex = currentStep + 1;
+                          const nextKey = buildSteps[nextStepIndex].key;
+                          setCurrentStep(nextStepIndex);
+                          const nextMounted = currentBuild[nextKey];
+                          const nextCatalog = allComponents[nextKey] || [];
+                          setViewedComponent(nextMounted || nextCatalog[0] || null);
+                        } else {
+                          handleComponentSelect(viewedComponent);
+                        }
+                      }}
+                    >
+                      <span className="btn-label">
+                        {selectedComponent?.id === viewedComponent.id ? "✓ COMPONENT SELECTED" : "SELECT COMPONENT"}
+                      </span>
+                    </button>
+
+                    {selectedComponent?.id === viewedComponent.id && (
+                      <div className="spec-mounted-actions">
+                        {currentStep < buildSteps.length - 1 ? (
+                          <button
+                            type="button"
+                            className="btn-next-stage-spec"
+                            onClick={() => {
+                              soundManager.click();
+                              const nextStepIndex = currentStep + 1;
+                              const nextKey = buildSteps[nextStepIndex].key;
+                              setCurrentStep(nextStepIndex);
+                              const nextMounted = currentBuild[nextKey];
+                              const nextCatalog = allComponents[nextKey] || [];
+                              setViewedComponent(nextMounted || nextCatalog[0] || null);
+                            }}
+                          >
+                            <span>PROCEED TO STAGE 0{currentStep + 2} ({buildSteps[currentStep + 1]?.label})</span>
+                            <span className="btn-arrow">&rarr;</span>
+                          </button>
+                        ) : (
+                          <Link
+                            to="/compatibility"
+                            className="btn-next-stage-spec finish"
+                            onClick={() => soundManager.click()}
+                          >
+                            <span>ALL 7 STAGES LOCKED • VERIFY COMPATIBILITY</span>
+                            <span className="btn-arrow">&rarr;</span>
+                          </Link>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 <div className="spec-compat-banner">
                   <span className="compat-shield">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
