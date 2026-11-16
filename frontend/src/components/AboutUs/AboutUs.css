@@ -2547,8 +2547,12 @@ body.theme-light .about-stats-ribbon,
 [data-theme="light"] .about-hero-stats,
 [data-theme="light"] .about-stats-ribbon {
   background: #ffffff !important;
-  border: 1px solid rgba(15, 23, 42, 0.1) !important;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05) !important;
+  border: 1px solid rgba(15, 23, 42, 0.12) !important;
+  box-shadow: 
+    0 1px 2px rgba(15, 23, 42, 0.08),
+    0 4px 14px -2px rgba(15, 23, 42, 0.07),
+    0 16px 36px -4px rgba(15, 23, 42, 0.09),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95) !important;
 }
 
 body.theme-light .team-filter-bar,
@@ -2558,8 +2562,11 @@ body.theme-light .team-filter-buttons,
 [data-theme="light"] .team-filter-bar,
 [data-theme="light"] .team-filter-buttons {
   background: #ffffff !important;
-  border: 1px solid rgba(15, 23, 42, 0.1) !important;
-  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04) !important;
+  border: 1px solid rgba(15, 23, 42, 0.12) !important;
+  box-shadow: 
+    0 1px 2px rgba(15, 23, 42, 0.06),
+    0 4px 12px -2px rgba(15, 23, 42, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
 }
 
 body.theme-light .stat-num,
@@ -2596,22 +2603,18 @@ body.theme-light .about-hero-glass-card,
 .theme-light .about-hero-glass-card,
 [data-theme="light"] .about-hero-glass-card {
   background: rgba(255, 255, 255, 0.95);
-  border-color: rgba(15, 23, 42, 0.1);
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+  border-color: rgba(15, 23, 42, 0.12);
+  box-shadow: 
+    0 1px 2px rgba(15, 23, 42, 0.08),
+    0 4px 14px -2px rgba(15, 23, 42, 0.07),
+    0 16px 36px -4px rgba(15, 23, 42, 0.09),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
 }
 
 body.theme-light .about-hero-description,
 .theme-light .about-hero-description,
 [data-theme="light"] .about-hero-description {
   color: #475569;
-}
-
-body.theme-light .team-filter-bar,
-.theme-light .team-filter-bar,
-[data-theme="light"] .team-filter-bar {
-  background: #ffffff;
-  border-color: rgba(15, 23, 42, 0.1);
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
 }
 
 body.theme-light .filter-btn,
@@ -2639,8 +2642,12 @@ body.theme-light .team-member-card,
 .theme-light .team-member-card,
 [data-theme="light"] .team-member-card {
   background: #ffffff;
-  border-color: rgba(15, 23, 42, 0.1);
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
+  border-color: rgba(15, 23, 42, 0.12);
+  box-shadow: 
+    0 1px 2px rgba(15, 23, 42, 0.08),
+    0 4px 14px -2px rgba(15, 23, 42, 0.07),
+    0 16px 36px -4px rgba(15, 23, 42, 0.09),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
 }
 
 body.theme-light .team-member-card:hover,
@@ -2648,7 +2655,11 @@ body.theme-light .team-member-card:hover,
 [data-theme="light"] .team-member-card:hover {
   background: #ffffff;
   border-color: rgba(217, 119, 6, 0.4);
-  box-shadow: 0 16px 36px rgba(217, 119, 6, 0.12);
+  box-shadow: 
+    0 2px 4px rgba(15, 23, 42, 0.08),
+    0 8px 24px -2px rgba(15, 23, 42, 0.1),
+    0 24px 48px -6px rgba(217, 119, 6, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
 }
 
 body.theme-light .team-member-name,

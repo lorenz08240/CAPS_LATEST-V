@@ -90,9 +90,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Brands/Brands.jsx": {
-    "mtime": 1794819449.3689997,
-    "seen": 1794819581.1616447,
-    "ast_hash": "26c8778f39debbae1edf8b0e89699250",
+    "mtime": 1794822765.3247921,
+    "seen": 1794822790.5206256,
+    "ast_hash": "3e62411605b3ddbc2814319b9e366124",
     "semantic_hash": ""
   },
   "frontend/src/components/Build/Build.jsx": {
@@ -102,9 +102,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Compatibility/Compatibility.jsx": {
-    "mtime": 1794820877.2996922,
-    "seen": 1794821061.5990384,
-    "ast_hash": "9dece0a376eb8eaeca448299f5a9d0ff",
+    "mtime": 1794822765.3273053,
+    "seen": 1794822790.5219076,
+    "ast_hash": "4f1a152c1200a0c64561aa26c45374a9",
     "semantic_hash": ""
   },
   "frontend/src/components/FeatureCarousel/FeatureCarousel.jsx": {
@@ -114,9 +114,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Footer/Footer.jsx": {
-    "mtime": 1794819468.2651715,
-    "seen": 1794819581.164616,
-    "ast_hash": "666189ecee33c63065d8296e89da98b1",
+    "mtime": 1794822765.3283193,
+    "seen": 1794822790.5229094,
+    "ast_hash": "482489500ae0a5c0413c3aabd02a40cd",
     "semantic_hash": ""
   },
   "frontend/src/components/FullscreenGate/FullscreenGate.jsx": {
@@ -234,9 +234,9 @@
     "semantic_hash": "0a4eec1bc2d10c604a1e23e739035357"
   },
   "frontend/vite.config.js": {
-    "mtime": 1794679198.7228923,
-    "seen": 1794679418.2710803,
-    "ast_hash": "87582889ad6432cf8e1f8607b5b55e7c",
+    "mtime": 1794822765.277321,
+    "seen": 1794822790.5380046,
+    "ast_hash": "c3c83f23d6f50575d0f9ba056d53f071",
     "semantic_hash": ""
   },
   "CHANGELOG.md": {
@@ -606,9 +606,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/AboutUs/AboutUs.jsx": {
-    "mtime": 1794820906.925487,
-    "seen": 1794821061.595754,
-    "ast_hash": "c24f01095b010331413e157771cd61c1",
+    "mtime": 1794822765.3237927,
+    "seen": 1794822790.51337,
+    "ast_hash": "693ee5fc4010a6794566cbe1cd5b3a65",
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/AdminLogs.jsx": {
@@ -900,9 +900,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Home/PlatformServices.jsx": {
-    "mtime": 1794819917.1986253,
-    "seen": 1794820085.430606,
-    "ast_hash": "9bb33def5e3406bf5d78d02a2ce70e87",
+    "mtime": 1794822765.3298233,
+    "seen": 1794822790.5250928,
+    "ast_hash": "8eb53e071f214f0a75687c50ad473f94",
     "semantic_hash": ""
   },
   "frontend/src/assets/buildlab_logo_tight.png": {

@@ -24,9 +24,9 @@
     "semantic_hash": "56334efb046e514b2ae0f7347d921bc3"
   },
   "backend/server.js": {
-    "mtime": 1794679396.4369712,
-    "seen": 1794679418.2431588,
-    "ast_hash": "67d81d156a08605607944c047b34f9aa",
+    "mtime": 1794847392.7892163,
+    "seen": 1794847485.7303412,
+    "ast_hash": "c187cb0d358cb983a8d2e0d8e766f7ce",
     "semantic_hash": ""
   },
   "backend/tests/compatibility.test.js": {
@@ -54,9 +54,9 @@
     "semantic_hash": "8e5f2021f5b1721b527c842f43f78c73"
   },
   "frontend/src/App.jsx": {
-    "mtime": 1794813920.3581443,
-    "seen": 1794813956.1316328,
-    "ast_hash": "79b7bb174fec474c33b3b3714c789286",
+    "mtime": 1794853028.9272099,
+    "seen": 1794853290.2097611,
+    "ast_hash": "468d0712cfb9097c9d5fc39d34b3123f",
     "semantic_hash": ""
   },
   "frontend/src/components/3D/ComponentModels3D.jsx": {
@@ -66,9 +66,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/3D/GenericPCCase.jsx": {
-    "mtime": 1794172225.0879233,
-    "seen": 1794173179.6526177,
-    "ast_hash": "0b823d734aaa8cb56482aef7cdfc5536",
+    "mtime": 1794856066.77755,
+    "seen": 1794862135.788001,
+    "ast_hash": "320f4e9373fc92fb02c370fce1aace3d",
     "semantic_hash": ""
   },
   "frontend/src/components/3D/PCBuilder3D.jsx": {
@@ -96,15 +96,15 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Build/Build.jsx": {
-    "mtime": 1794812220.0056431,
-    "seen": 1794812240.378684,
-    "ast_hash": "9f8a1d38b623eb3b8af8cf693275b1fb",
+    "mtime": 1794847392.8090193,
+    "seen": 1794847485.7369056,
+    "ast_hash": "d55ae78b76be50faae32f1e672880133",
     "semantic_hash": ""
   },
   "frontend/src/components/Compatibility/Compatibility.jsx": {
-    "mtime": 1794822765.3273053,
-    "seen": 1794822790.5219076,
-    "ast_hash": "4f1a152c1200a0c64561aa26c45374a9",
+    "mtime": 1794847392.8221447,
+    "seen": 1794847485.7373092,
+    "ast_hash": "c257145ab1f0d66e9ea976e0c79d4337",
     "semantic_hash": ""
   },
   "frontend/src/components/FeatureCarousel/FeatureCarousel.jsx": {
@@ -126,15 +126,15 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Home/Home.jsx": {
-    "mtime": 1794820604.7595725,
-    "seen": 1794820725.154941,
-    "ast_hash": "06592f10f8e7f9c031804d81311f2934",
+    "mtime": 1794855440.1286383,
+    "seen": 1794862135.8196654,
+    "ast_hash": "58d2a685785a6be7e7a38d895c01f80e",
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/CourseShell.jsx": {
-    "mtime": 1794687406.4509828,
-    "seen": 1794687462.35689,
-    "ast_hash": "1b40e413543bfa3b56ac03cd1ef8cefb",
+    "mtime": 1794861993.059412,
+    "seen": 1794862135.8231297,
+    "ast_hash": "c7e5801e9afab3a694af31502d77bc01",
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/CourseVideoPlayer.jsx": {
@@ -150,9 +150,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Navbar/Navbar.jsx": {
-    "mtime": 1794814854.2916806,
-    "seen": 1794814871.0250483,
-    "ast_hash": "5352f8a291d8974b9187256177933059",
+    "mtime": 1794853539.9988396,
+    "seen": 1794853753.6269898,
+    "ast_hash": "b3ca5acf25ecdf67abfbc68b66bc276f",
     "semantic_hash": ""
   },
   "frontend/src/contexts/AuthContext.jsx": {
@@ -162,9 +162,9 @@
     "semantic_hash": ""
   },
   "frontend/src/contexts/BuildContext.jsx": {
-    "mtime": 1794563984.7423909,
-    "seen": 1794564089.1047685,
-    "ast_hash": "568f876105795c117543493d371ca7df",
+    "mtime": 1794847392.8598564,
+    "seen": 1794847485.7415767,
+    "ast_hash": "a416cf12ab6fa6195fd967b6000060af",
     "semantic_hash": ""
   },
   "frontend/src/contexts/ThemeContext.jsx": {
@@ -414,9 +414,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Home/Home3DHero.jsx": {
-    "mtime": 1794173873.0280595,
-    "seen": 1794174121.372634,
-    "ast_hash": "e5c8d58d270cf46fa97c25189a33641f",
+    "mtime": 1794861809.32382,
+    "seen": 1794862135.8196747,
+    "ast_hash": "275a93c3b44f8c9e3f04b72bccdfbc76",
     "semantic_hash": ""
   },
   "frontend/src/components/3D/DDR4RAMModel.jsx": {
@@ -534,9 +534,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Navigation/GlobalHeader.jsx": {
-    "mtime": 1794817296.0636923,
-    "seen": 1794817496.5591874,
-    "ast_hash": "615b79d4f078c11aead428fb3bd67d7a",
+    "mtime": 1794847392.8553233,
+    "seen": 1794847485.7408328,
+    "ast_hash": "60254340ec9a15d5fb942c98f68d8a20",
     "semantic_hash": ""
   },
   "frontend/src/components/Navigation/CyberBrand.jsx": {
@@ -606,9 +606,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/AboutUs/AboutUs.jsx": {
-    "mtime": 1794822765.3237927,
-    "seen": 1794822790.51337,
-    "ast_hash": "693ee5fc4010a6794566cbe1cd5b3a65",
+    "mtime": 1794852287.0155604,
+    "seen": 1794852649.24842,
+    "ast_hash": "cb60e7ab406de4f2591b0bbd71f8239a",
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/AdminLogs.jsx": {
@@ -714,15 +714,15 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Home/AccountSetupModal.jsx": {
-    "mtime": 1794686910.3597999,
-    "seen": 1794687462.3559341,
-    "ast_hash": "7978560c0ecd085f1b87be54e994affe",
+    "mtime": 1794853495.0029469,
+    "seen": 1794853528.5862885,
+    "ast_hash": "8af036838b9b7dd1338b28e7408e2512",
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/CertificationPage.jsx": {
-    "mtime": 1794563273.1356485,
-    "seen": 1794564089.1029315,
-    "ast_hash": "b6f9eba8c1c9f1c45f674b5775a1e340",
+    "mtime": 1794853502.3541875,
+    "seen": 1794853528.5874336,
+    "ast_hash": "368b9be6b7e512c3a1a68470a12109af",
     "semantic_hash": ""
   },
   "frontend/src/components/Navigation/CookieConsent.jsx": {
@@ -732,9 +732,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Navigation/LearnModeGuard.jsx": {
-    "mtime": 1794692510.8020551,
-    "seen": 1794692633.4881866,
-    "ast_hash": "40a6c1158a78f3e3043fedbbe4818a76",
+    "mtime": 1794853452.9929526,
+    "seen": 1794853528.5893571,
+    "ast_hash": "dcdbfecc3f3b3a59db0973efbb07055a",
     "semantic_hash": ""
   },
   "frontend/src/components/Navigation/StageUnlockBanner.jsx": {
@@ -744,9 +744,9 @@
     "semantic_hash": ""
   },
   "frontend/src/contexts/LearnModeContext.jsx": {
-    "mtime": 1794814854.2921975,
-    "seen": 1794814871.0267394,
-    "ast_hash": "939bff24b1873caf4cc1749d3eb8e21d",
+    "mtime": 1794853448.3089664,
+    "seen": 1794853528.5913887,
+    "ast_hash": "af366831bf371641ca5bf17047d81738",
     "semantic_hash": ""
   },
   "backend/uploads/profiles/photo-1794176073655-f3qzal.gif": {
@@ -822,9 +822,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Home/ModeSelectionCards.jsx": {
-    "mtime": 1794814854.2896366,
-    "seen": 1794814871.0232034,
-    "ast_hash": "932429c6e95d85844807f7ded603f959",
+    "mtime": 1794847392.8446865,
+    "seen": 1794847485.7387187,
+    "ast_hash": "9c1f09b63a685e4400d194aaae3a2519",
     "semantic_hash": ""
   },
   "frontend/src/components/Home/RigPickerTransitionOverlay.jsx": {
@@ -858,9 +858,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/LearnHardwareStage.jsx": {
-    "mtime": 1794682536.302305,
-    "seen": 1794683879.5984805,
-    "ast_hash": "bd9cd1c59a38166af67376a12c8d6865",
+    "mtime": 1794853258.4553883,
+    "seen": 1794853290.2168498,
+    "ast_hash": "623f9fed4de23202d90d2a29b4e2e777",
     "semantic_hash": ""
   },
   "frontend/src/components/Legal/LegalPage.jsx": {
@@ -870,9 +870,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/curriculumData.js": {
-    "mtime": 1794682364.6273487,
-    "seen": 1794683879.5984828,
-    "ast_hash": "76c2503d70e5a90ba2389493cfda171d",
+    "mtime": 1794847402.9207497,
+    "seen": 1794847485.739733,
+    "ast_hash": "e6bbc6f3eae7b5af3f2e5c98bb2eae9e",
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/curriculumTypes.d.ts": {
@@ -900,15 +900,33 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Home/PlatformServices.jsx": {
-    "mtime": 1794822765.3298233,
-    "seen": 1794822790.5250928,
-    "ast_hash": "8eb53e071f214f0a75687c50ad473f94",
+    "mtime": 1794847392.8517704,
+    "seen": 1794847485.7387216,
+    "ast_hash": "8bc01905d052b8c93696598a3df51ec9",
     "semantic_hash": ""
   },
   "frontend/src/assets/buildlab_logo_tight.png": {
     "mtime": 1794819280.1230443,
     "seen": 1794819581.1888938,
     "ast_hash": "8d2d26525629e84b7b62dccdd792a86d",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Dashboard/StudentDashboard.jsx": {
+    "mtime": 1794853053.082166,
+    "seen": 1794853290.214491,
+    "ast_hash": "61a6580ce747c0fe41596aab6dcf2dbf",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Learn/VirtualAssemblyLab.jsx": {
+    "mtime": 1794853643.399621,
+    "seen": 1794853753.6263623,
+    "ast_hash": "8c1dc692c249211d6bc3660914f66d9d",
+    "semantic_hash": ""
+  },
+  "frontend/public/assets/shin_ariane_pol.jpg": {
+    "mtime": 1794847392.7912502,
+    "seen": 1794847485.748801,
+    "ast_hash": "3dc676d04c76d86c50c3a05634f405ac",
     "semantic_hash": ""
   },
   "backend/package-lock.json": {

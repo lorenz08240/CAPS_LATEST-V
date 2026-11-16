@@ -965,8 +965,12 @@ body.theme-light .compare-rig-card,
 .theme-light .compare-rig-card,
 [data-theme="light"] .compare-rig-card {
   background: #ffffff;
-  border-color: rgba(15, 23, 42, 0.1);
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+  border-color: rgba(15, 23, 42, 0.12);
+  box-shadow: 
+    0 1px 2px rgba(15, 23, 42, 0.08),
+    0 4px 14px -2px rgba(15, 23, 42, 0.07),
+    0 16px 36px -4px rgba(15, 23, 42, 0.09),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
 }
 
 body.theme-light .source-tab-btn,
@@ -975,6 +979,7 @@ body.theme-light .source-tab-btn,
   background: #f8fafc;
   border-color: rgba(15, 23, 42, 0.08);
   color: #64748b;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
 }
 
 body.theme-light .source-tab-btn:hover,
@@ -990,14 +995,15 @@ body.theme-light .source-tab-btn.active,
   background: #ffffff;
   border-color: #0284c7;
   color: #0284c7;
-  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.1);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 3px 8px rgba(2, 132, 199, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
 body.theme-light .rig-viewport-3d-stage,
 .theme-light .rig-viewport-3d-stage,
 [data-theme="light"] .rig-viewport-3d-stage {
   background: radial-gradient(circle at center, #ffffff 0%, #f1f5f9 100%);
-  border-color: rgba(15, 23, 42, 0.08);
+  border-color: rgba(15, 23, 42, 0.1);
+  box-shadow: inset 0 1px 3px rgba(15, 23, 42, 0.05), 0 1px 0 rgba(255, 255, 255, 0.85);
 }
 
 body.theme-light .rig-title-block h3,
@@ -1028,8 +1034,12 @@ body.theme-light .diff-matrix-card,
 .theme-light .diff-matrix-card,
 [data-theme="light"] .diff-matrix-card {
   background: #ffffff;
-  border-color: rgba(15, 23, 42, 0.1);
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+  border-color: rgba(15, 23, 42, 0.12);
+  box-shadow: 
+    0 1px 2px rgba(15, 23, 42, 0.08),
+    0 4px 14px -2px rgba(15, 23, 42, 0.07),
+    0 16px 36px -4px rgba(15, 23, 42, 0.09),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
 }
 
 body.theme-light .empty-rig1-card,
@@ -1038,6 +1048,7 @@ body.theme-light .empty-rig1-card,
   background: #f8fafc !important;
   border: 1px solid rgba(15, 23, 42, 0.08) !important;
   color: #334155 !important;
+  box-shadow: inset 0 1px 3px rgba(15, 23, 42, 0.05), 0 1px 0 rgba(255, 255, 255, 0.85) !important;
 }
 
 body.theme-light .empty-rig2-prompt,
@@ -1057,6 +1068,7 @@ body.theme-light .rig-specs-list,
 [data-theme="light"] .rig-specs-list {
   background: #f8fafc !important;
   border: 1px solid rgba(15, 23, 42, 0.08) !important;
+  box-shadow: inset 0 1px 3px rgba(15, 23, 42, 0.05), 0 1px 0 rgba(255, 255, 255, 0.85) !important;
 }
 
 body.theme-light .specs-list-title,

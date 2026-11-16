@@ -26,6 +26,14 @@
   --border-color: rgba(255, 255, 255, 0.08);
   --border-subtle: rgba(255, 255, 255, 0.05);
   --card-shadow: 0 16px 36px rgba(0, 0, 0, 0.55);
+  --card-shadow-hover: 0 24px 48px rgba(0, 0, 0, 0.65);
+
+  /* Multi-tier Ambient Occlusion (AO) Depth Tokens */
+  --ao-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4), 0 2px 6px -1px rgba(0, 0, 0, 0.35);
+  --ao-shadow-md: 0 1px 2px rgba(0, 0, 0, 0.45), 0 4px 14px -2px rgba(0, 0, 0, 0.4), 0 16px 36px -4px rgba(0, 0, 0, 0.55);
+  --ao-shadow-lg: 0 2px 4px rgba(0, 0, 0, 0.5), 0 8px 24px -2px rgba(0, 0, 0, 0.45), 0 28px 56px -6px rgba(0, 0, 0, 0.65);
+  --ao-inset-crevice: inset 0 1px 3px rgba(0, 0, 0, 0.5), 0 1px 0 rgba(255, 255, 255, 0.05);
+  --ao-bevel: inset 0 1px 0 rgba(255, 255, 255, 0.1);
 
   /* Accents */
   --accent-emerald: #00e5a0;
@@ -102,7 +110,16 @@ body.theme-light {
   /* Boundaries & Elevations */
   --border-color: rgba(15, 23, 42, 0.1);
   --border-subtle: rgba(15, 23, 42, 0.06);
-  --card-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+
+  /* Multi-tier Ambient Occlusion (AO) Depth Tokens - Titanium Slate Laboratory */
+  --ao-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.06);
+  --ao-shadow-md: 0 1px 2px rgba(15, 23, 42, 0.08), 0 4px 14px -2px rgba(15, 23, 42, 0.07), 0 16px 36px -4px rgba(15, 23, 42, 0.09);
+  --ao-shadow-lg: 0 2px 4px rgba(15, 23, 42, 0.08), 0 8px 24px -2px rgba(15, 23, 42, 0.1), 0 28px 56px -6px rgba(15, 23, 42, 0.14);
+  --ao-inset-crevice: inset 0 1px 3px rgba(15, 23, 42, 0.07), 0 1px 0 rgba(255, 255, 255, 0.85);
+  --ao-bevel: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+
+  --card-shadow: 0 1px 2px rgba(15, 23, 42, 0.08), 0 4px 14px -2px rgba(15, 23, 42, 0.07), 0 16px 36px -4px rgba(15, 23, 42, 0.09);
+  --card-shadow-hover: 0 2px 4px rgba(15, 23, 42, 0.08), 0 8px 24px -2px rgba(15, 23, 42, 0.1), 0 28px 56px -6px rgba(15, 23, 42, 0.14);
 
   /* Accents tuned for light mode readability */
   --accent-emerald: #059669;
@@ -222,10 +239,8 @@ body.theme-light .cyber-ambient-grid,
     linear-gradient(90deg, rgba(15, 23, 42, 0.035) 1px, transparent 1px) !important;
 }
 
-body.theme-light .giant-bg-text,
-.theme-light .giant-bg-text {
-  color: rgba(15, 23, 42, 0.035) !important;
-}
+/* The homepage wordmark is handled in Home.css (stroke + gradient watermark).
+   A flat near-invisible color here used to erase it in light mode. */
 
 body.theme-light .cyber-editorial-title,
 .theme-light .cyber-editorial-title {

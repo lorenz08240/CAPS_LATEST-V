@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect, Suspense } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Environment, Sparkles, OrbitControls } from '@react-three/drei';
+import { Environment, Sparkles, OrbitControls, ContactShadows } from '@react-three/drei';
 import * as THREE from 'three';
 import NepotatoGPU from '../3D/NepotatoGPU';
 import ProceduralSickleFan from '../3D/ProceduralSickleFan';
@@ -10,6 +10,7 @@ import { HeroFloatingRAM } from '../3D/DDR4RAMModel';
 import { HeroFloatingSSD } from '../3D/NVMeSSDModel';
 import { HeroFloatingPSU } from '../3D/PSUModel';
 import { preloadRAMModel, preloadNVMeSSDModel, preloadPSUModel } from '../../utilities/modelPreloader';
+import { useTheme } from '../../contexts/ThemeContext';
 
 const HERO_STAGES = [
   { id: 'case', name: 'Computer Case', stageNum: 1, desc: 'PC Case' },
@@ -138,14 +139,14 @@ function SpecularFlashLight({ trigger, rgbColor }) {
 /**
  * Hardware Stage Model Renderer (Clean balanced scale, zero hover highlight)
  */
-function HardwareStageModel({ stageId, rgbColor }) {
+function HardwareStageModel({ stageId, rgbColor, caseColor = 'black' }) {
   switch (stageId) {
     case 'case':
       return (
         <group scale={[0.21, 0.21, 0.21]} position={[0, -0.15, 0]}>
           <GenericPCCase
             rgbColor={rgbColor}
-            caseColor="black"
+            caseColor={caseColor}
             glassMode="closed"
             explodedProgress={0}
             showTooltip={false}
@@ -204,7 +205,7 @@ function HardwareStageModel({ stageId, rgbColor }) {
  * 
  * Result: 100% mathematically and visually guaranteed that NO TWO MODELS CAN EVER OVERLAP!
  */
-function FluidScene({ onStageChange, rgbColor, scrollProgress = 0, isInteractingRef }) {
+function FluidScene({ onStageChange, rgbColor, scrollProgress = 0, isInteractingRef, caseColor = 'black' }) {
   const rootRef = useRef();
   const motionGroupRef = useRef();
   const turntableAngleRef = useRef(0);
@@ -387,6 +388,8 @@ function FluidScene({ onStageChange, rgbColor, scrollProgress = 0, isInteracting
     }
   });
 
+  const { isDark } = useTheme();
+
   return (
     <group ref={rootRef}>
       <HolographicShockwave trigger={landingProgress} rgbColor={rgbColor} />
@@ -394,8 +397,18 @@ function FluidScene({ onStageChange, rgbColor, scrollProgress = 0, isInteracting
       <SpecularFlashLight trigger={landingProgress} rgbColor={rgbColor} />
 
       <group ref={motionGroupRef}>
-        <HardwareStageModel stageId={currentStageId} rgbColor={rgbColor} />
+        <HardwareStageModel stageId={currentStageId} rgbColor={rgbColor} caseColor={caseColor} />
       </group>
+
+      {/* Physically-grounded Ambient Occlusion Contact Shadow */}
+      <ContactShadows 
+        position={[0, -1.65, 0]} 
+        opacity={isDark ? 0.45 : 0.72} 
+        scale={7.5} 
+        blur={2.4} 
+        far={4.0} 
+        color={isDark ? '#000000' : '#0f172a'} 
+      />
     </group>
   );
 }
@@ -414,6 +427,9 @@ export default function Home3DHero({
   scrollProgress = 0 
 }) {
   const isInteractingRef = useRef(false);
+  const { isDark } = useTheme();
+  const caseColor = isDark ? 'black' : 'white';
+  const envPreset = isDark ? 'night' : 'city';
 
   // Global window release failsafe so releasing mouse outside canvas reliably resumes timer
   useEffect(() => {
@@ -470,12 +486,13 @@ export default function Home3DHero({
           />
 
           <Suspense fallback={null}>
-            <Environment preset="night" />
+            <Environment preset={envPreset} />
             <FluidScene 
               onStageChange={setActiveModel}
               rgbColor={rgbColor} 
               scrollProgress={scrollProgress} 
               isInteractingRef={isInteractingRef}
+              caseColor={caseColor}
             />
           </Suspense>
         </Canvas>
