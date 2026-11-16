@@ -317,6 +317,20 @@ function CompatibilityView({ isIntegrated = false }) {
   // State for Free Workbench (non-account)
   const [rig2Source, setRig2Source] = useState("blank");
 
+  // Auto-save assembled build to Rig 02 Slot 01 when returning from Rig 02 Component Picker intent
+  useEffect(() => {
+    try {
+      const targetSlot = sessionStorage.getItem("buildlab_target_rig2_slot");
+      if (targetSlot === "0" && selectedComponents.length > 0) {
+        sessionStorage.removeItem("buildlab_target_rig2_slot");
+        saveBuildSnapshot(0);
+        setRig2Source("slot-0");
+        setSaveMessage("Assembled rig saved to Rig 02 (Slot 01)!");
+        setTimeout(() => setSaveMessage(""), 4000);
+      }
+    } catch {}
+  }, [selectedComponents.length, saveBuildSnapshot]);
+
   const triggerBobHint = useCallback((text) => {
     if (!text) return;
     try { soundManager.click(); } catch {}
@@ -1081,13 +1095,43 @@ function CompatibilityView({ isIntegrated = false }) {
               ? `No configuration saved in Slot 0${parseInt(rig2Source.replace("slot-", ""), 10) + 1} yet.`
               : "No configuration loaded in this slot."}
           </p>
-          <button
-            type="button"
-            className="btn-load-demo-ghost"
-            onClick={() => handleSelectRig2Source("preset-enthusiast")}
-          >
-            Load 4K Ultra Preset
-          </button>
+          <div className="empty-rig-actions-row">
+            <Link
+              to="/build"
+              className="btn-load-demo-ghost btn-manual-build"
+              onClick={() => {
+                try { soundManager.click(); } catch {}
+                try { sessionStorage.setItem("buildlab_target_rig2_slot", "0"); } catch {}
+              }}
+              title="Go to Component Picker to assemble a custom PC for Rig 02 (Slot 01)"
+            >
+              Go to Component Picker
+            </Link>
+            <button
+              type="button"
+              className="btn-load-demo-ghost"
+              onClick={() => handleSelectRig2Source("preset-enthusiast")}
+              title="Load 4K Ultra hardware preset"
+            >
+              Load 4K Ultra Preset
+            </button>
+            {hasRig1 && !savedBuilds?.[0] && (
+              <button
+                type="button"
+                className="btn-load-demo-ghost btn-save-slot1"
+                onClick={() => {
+                  try { soundManager.granted(); } catch {}
+                  saveBuildSnapshot(0);
+                  setRig2Source("slot-0");
+                  setSaveMessage("Current rig saved to Rig 02 (Slot 01)!");
+                  setTimeout(() => setSaveMessage(""), 3500);
+                }}
+                title="Save current workbench rig into Slot 01 for Rig 02 comparison"
+              >
+                Save Workbench to Slot 01
+              </button>
+            )}
+          </div>
         </div>
       )}
 

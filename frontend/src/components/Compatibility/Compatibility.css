@@ -1869,3 +1869,54 @@
   padding: 2.5rem 1rem !important;
   box-sizing: border-box !important;
 }
+
+/* ── Empty Rig Actions Row ── */
+.empty-rig-actions-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+.empty-rig-actions-row .btn-load-demo-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.45rem 0.95rem;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.empty-rig-actions-row .btn-manual-build {
+  border-color: rgba(56, 189, 248, 0.4);
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.08);
+}
+
+.empty-rig-actions-row .btn-manual-build:hover {
+  background: rgba(56, 189, 248, 0.2);
+  border-color: #38bdf8;
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.35);
+}
+
+.empty-rig-actions-row .btn-save-slot1 {
+  border-color: rgba(0, 229, 160, 0.4);
+  color: #00e5a0;
+  background: rgba(0, 229, 160, 0.08);
+}
+
+.empty-rig-actions-row .btn-save-slot1:hover {
+  background: rgba(0, 229, 160, 0.2);
+  border-color: #00e5a0;
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(0, 229, 160, 0.35);
+}
+
