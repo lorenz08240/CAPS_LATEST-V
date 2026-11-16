@@ -120,13 +120,21 @@ export const LearnModeProvider = ({ children }) => {
   // Route Accessibility Guard Checker
   const canAccessPath = useCallback(
     (pathname) => {
-      // Explore mode has unrestricted access to everything
-      if (mode !== "learn") return true;
-
       const path = pathname.toLowerCase();
 
       // Home and 2D Build are always accessible
       if (path === "/" || path === "/build") return true;
+
+      // Learn academy courseware and certificate require an active student account
+      const hasAccount = Boolean(
+        userProfile && (userProfile.fullName || userProfile.email) && userProfile.setupCompleted
+      );
+      if ((path.startsWith("/learn") || path.startsWith("/certificate")) && (!hasAccount || mode !== "learn")) {
+        return false;
+      }
+
+      // Explore mode has unrestricted access to sandbox/compatibility/3D studio
+      if (mode !== "learn") return true;
 
       // Helper to check stage unlock from state or local storage
       const isStageUnlocked = (key) => {

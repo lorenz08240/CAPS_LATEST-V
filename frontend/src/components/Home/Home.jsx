@@ -178,10 +178,21 @@ function Home() {
       try { soundManager.click(); } catch { }
       const brandsStation = document.getElementById("brands-station");
       if (brandsStation) {
-        unlockBuildScroll();
         brandsStation.scrollIntoView({ behavior: "smooth", block: "start" });
       } else {
-        navigate('/brands');
+        window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+      }
+    };
+
+    const handleLearnNavClick = () => {
+      try { soundManager.click(); } catch { }
+      const hasAccount = Boolean(
+        userProfile && (userProfile.fullName || userProfile.email) && userProfile.setupCompleted
+      );
+      if (hasAccount && mode === "learn") {
+        navigate('/learn');
+      } else {
+        setShowModeCards(true);
       }
     };
 
@@ -222,15 +233,21 @@ function Home() {
       handleScroll();
 
       // Support direct hash navigation (e.g. /#brands-station)
-      if (window.location.hash === "#brands-station") {
-        setTimeout(() => {
-          const el = document.getElementById("brands-station");
-          if (el) el.scrollIntoView({ behavior: "smooth" });
-        }, 400);
-      }
+      const checkAndScrollToBrands = () => {
+        if (window.location.hash === "#brands-station") {
+          setTimeout(() => {
+            const el = document.getElementById("brands-station");
+            if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+          }, 250);
+        }
+      };
+
+      checkAndScrollToBrands();
+      window.addEventListener("hashchange", checkAndScrollToBrands);
 
       return () => {
         window.removeEventListener("scroll", handleScroll);
+        window.removeEventListener("hashchange", checkAndScrollToBrands);
         document.documentElement.style.overflow = "";
         document.body.style.overflow = "";
       };
@@ -272,7 +289,7 @@ function Home() {
                 <button
                   type="button"
                   className="cyber-nav-link"
-                  onClick={() => { soundManager.click(); navigate('/learn'); }}
+                  onClick={handleLearnNavClick}
                 >
                   LEARN
                 </button>
@@ -443,7 +460,6 @@ function Home() {
           }}
           onSelectFree={() => {
             setShowModeCards(false);
-            unlockBuildScroll();
             setAppMode("explore");
             setTransitionMode("explore");
             setShowTransitionOverlay(true);
@@ -456,7 +472,6 @@ function Home() {
           onClose={() => setShowAccountModal(false)}
           onConfirmed={(targetMode, confirmedProfile) => {
             setShowAccountModal(false);
-            unlockBuildScroll();
             if (targetMode === "explore") {
               setAppMode("explore");
               setTransitionMode("explore");
@@ -476,7 +491,6 @@ function Home() {
           learnerName={welcomeLearnerProfile?.fullName || userProfile?.fullName || ""}
           onComplete={() => {
             setShowTransitionOverlay(false);
-            unlockBuildScroll();
             if (transitionMode === "learn") {
               navigate("/learn");
             } else {

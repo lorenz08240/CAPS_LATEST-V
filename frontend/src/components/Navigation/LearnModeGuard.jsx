@@ -58,6 +58,7 @@ export default function LearnModeGuard({ children, requiredStage, featureName = 
 
   const handleAccountConfirmed = () => {
     setShowAccountModal(false);
+    setAppMode("learn");
     try { soundManager.granted(); } catch {}
   };
 
