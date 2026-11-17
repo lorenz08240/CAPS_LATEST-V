@@ -333,6 +333,11 @@ export const LearnModeProvider = ({ children }) => {
       sessionStorage.removeItem("buildlab_rig2_build");
       sessionStorage.removeItem("buildlab_active_target");
       sessionStorage.removeItem("buildlab_saved_builds");
+      sessionStorage.removeItem("buildlab_guest_preview");
+      sessionStorage.removeItem("buildlab_start_build_intent");
+      try {
+        sessionStorage.clear();
+      } catch {}
     } catch {}
 
     // 4. Reset local React state
@@ -348,18 +353,17 @@ export const LearnModeProvider = ({ children }) => {
     setUnlockedStages(["build"]);
     setSeenBanners({ compatibility: false, learn: false, certificate: false });
 
-    // 5. If currently on a course or authenticated route, redirect to Home
+    // 5. Always redirect to Home at the top for a fresh website restart
     try {
-      const curPath = window.location.pathname.toLowerCase();
-      if (
-        curPath.startsWith("/learn") ||
-        curPath.startsWith("/certificate") ||
-        curPath.startsWith("/dashboard") ||
-        curPath.startsWith("/account")
-      ) {
-        window.location.replace("/#top");
+      window.scrollTo(0, 0);
+      if (window.location.pathname === "/" && !window.location.search && !window.location.hash) {
+        window.location.reload();
+      } else {
+        window.location.href = "/";
       }
-    } catch {}
+    } catch {
+      window.location.href = "/";
+    }
   }, [userProfile, unlockedStages]);
 
   return (

@@ -335,7 +335,7 @@ export default function PlatformServices() {
           </div>
         </div>
 
-        {/* ── SERVICE 2: COMPARE 2 RIGS (2 COLUMNS: LEFT NARRATIVE, RIGHT COMPARISON CARD) ── */}
+        {/* ── SERVICE 2: COMPATIBILITY CHECK & COMPARE (2 COLUMNS: LEFT NARRATIVE, RIGHT COMPARISON CARD) ── */}
         <div id="service-compare" className="service-showcase-row right-card-left-text">
           {/* Column 1: Editorial Narrative & Action */}
           <div className="service-text-bay">
@@ -349,7 +349,7 @@ export default function PlatformServices() {
               <button
                 type="button"
                 className="service-primary-btn btn-amber"
-                onClick={() => handleAction("/compare")}
+                onClick={() => handleAction("/compatibility")}
               >
                 <span>COMPARE TWO PCS NOW</span>
                 <span className="btn-arrow">&rarr;</span>
@@ -363,8 +363,8 @@ export default function PlatformServices() {
               className="interactive-preview-window window-amber"
               onMouseMove={handleCardMouseMove}
               onMouseLeave={handleCardMouseLeave}
-              onClick={() => handleAction("/compare")}
-              title="Click to launch Dual-Rig Compare"
+              onClick={() => handleAction("/compatibility")}
+              title="Click to launch Real-Time Compatibility Check"
             >
               <div className="preview-window-titlebar">
                 <div className="window-dots">
@@ -372,20 +372,20 @@ export default function PlatformServices() {
                   <span className="dot dot-yellow" />
                   <span className="dot dot-green" />
                 </div>
-                <div className="window-url-pill">buildlab.app/compare</div>
-                <div className="window-status-pill pill-amber">DUAL-RIG MATRIX</div>
+                <div className="window-url-pill">buildlab.app/compatibility</div>
+                <div className="window-status-pill pill-amber">REAL-TIME CHECK</div>
               </div>
 
               <div className="preview-screenshot-container">
                 <img
-                  src="/assets/preview_compare_page.png"
-                  alt="BuildLab Dual-Rig Real-time Comparison Preview"
+                  src="/assets/preview_compare_page.png?v=compat"
+                  alt="BuildLab Real-Time Compatibility Check Preview"
                   className="preview-viewport-img"
                   loading="lazy"
                 />
                 <div className="preview-glass-overlay">
                   <div className="overlay-badge-pill pill-amber">
-                    <span>LAUNCH DUAL-RIG COMPARISON</span>
+                    <span>LAUNCH COMPATIBILITY CHECK</span>
                     <span className="arrow">&rarr;</span>
                   </div>
                 </div>

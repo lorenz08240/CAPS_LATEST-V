@@ -19,7 +19,6 @@ import Footer from "./components/Footer/Footer";
 import Home from "./components/Home/Home";
 import Build from "./components/Build/Build";
 import Compatibility from "./components/Compatibility/Compatibility";
-import CompareRigs from "./components/Compare/CompareRigs";
 import Learn from "./components/Learn/Learn";
 import CertificationPage from "./components/Learn/CertificationPage";
 import HelpSupport from "./components/HelpSupport/HelpSupport";
@@ -141,19 +140,11 @@ function AppContent() {
             />
             <Route
               path="/compare"
-              element={
-                <MotionPage routeKey="/compare">
-                  <CompareRigs />
-                </MotionPage>
-              }
+              element={<Navigate to="/compatibility" replace />}
             />
             <Route
               path="/compare-rigs"
-              element={
-                <MotionPage routeKey="/compare-rigs">
-                  <CompareRigs />
-                </MotionPage>
-              }
+              element={<Navigate to="/compatibility" replace />}
             />
 
             <Route

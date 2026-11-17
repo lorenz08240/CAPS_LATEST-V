@@ -62,7 +62,7 @@ const HERO_DYNAMIC_CONTEXTS = {
     title: "COMPARE 2 PCS",
     desc: "Compare two computer builds side by side. See differences in price, gaming speed (FPS), and memory so you get the best value for your budget.",
     btnLabel: "COMPARE 2 BUILDS",
-    targetSection: "service-compare",
+    targetSection: "service-compatibility",
   },
   storage: {
     tag: "FEATURE 05 // POPULAR BRANDS",
@@ -90,7 +90,7 @@ const HERO_DYNAMIC_CONTEXTS = {
 function Home() {
   const navigate = useNavigate();
   const { toggleSidebar } = useSidebar();
-  const { mode, setAppMode, userProfile, unlockedStages } = useLearnMode();
+  const { mode, setAppMode, userProfile, unlockedStages, logoutLearner } = useLearnMode();
   const [showModeCards, setShowModeCards] = useState(false);
   const [showAccountModal, setShowAccountModal] = useState(false);
   const [showTransitionOverlay, setShowTransitionOverlay] = useState(false);
@@ -427,6 +427,19 @@ function Home() {
                 <div className="hero-learner-status-badge">
                   <span className="learner-dot" />
                   <span>Welcome back, {userProfile.fullName || "Student"} • Grade 11 CSS Track</span>
+                  <button
+                    type="button"
+                    className="hero-switch-free-btn"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      try { soundManager.click(); } catch {}
+                      logoutLearner();
+                    }}
+                    title="Reset website and switch back to Free Mode"
+                  >
+                    (Back to Free Mode)
+                  </button>
                 </div>
               )}
               <button

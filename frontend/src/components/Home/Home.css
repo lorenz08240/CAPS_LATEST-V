@@ -1319,6 +1319,26 @@ body.theme-light .giant-bg-logo-img,
   box-shadow: 0 0 8px #00e5a0;
 }
 
+.hero-switch-free-btn {
+  background: transparent;
+  border: none;
+  color: #fca5a5;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: 6px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: all 0.2s ease;
+  padding: 0 4px;
+  letter-spacing: 0.02em;
+}
+
+.hero-switch-free-btn:hover {
+  color: #ef4444;
+  transform: translateY(-1px);
+}
+
 .hud-start-build-btn.centered-start-btn.is-resume-mode {
   background: linear-gradient(135deg, #00e5a0 0%, #059669 100%);
   color: #ffffff;

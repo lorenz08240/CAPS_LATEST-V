@@ -6,7 +6,7 @@ import AccountSetupModal from "../Home/AccountSetupModal";
 import "./LearnModeGuard.css";
 
 export default function LearnModeGuard({ children, requiredStage, featureName = "This Feature" }) {
-  const { mode, canAccessPath, setAppMode, unlockedStages, userProfile } = useLearnMode();
+  const { mode, canAccessPath, setAppMode, unlockedStages, userProfile, logoutLearner } = useLearnMode();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -86,7 +86,7 @@ export default function LearnModeGuard({ children, requiredStage, featureName = 
 
   const handleSwitchToExplore = () => {
     try { soundManager.click(); } catch {}
-    setAppMode("explore");
+    logoutLearner();
   };
 
   const handleGoToCurrentStage = () => {
