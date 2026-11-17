@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import "./Admin.css";
@@ -14,6 +14,10 @@ const CATEGORIES = [
   { key: "psu", label: "Power Supply", step: "07", desc: "ATX / Modular" }
 ];
 
+// Keeps the Inventory accordion open across admin route changes
+// (the sidebar unmounts/remounts when switching admin pages).
+let inventoryOpenPersisted = false;
+
 export const AdminSidebar = ({
   activeCategory = "all",
   onSelectCategory,
@@ -27,6 +31,8 @@ export const AdminSidebar = ({
   const isAccounts = location.pathname.includes("/admin/accounts");
   const isContent = location.pathname.includes("/admin/content");
 
+  const [inventoryOpen, setInventoryOpen] = useState(() => isInventory && inventoryOpenPersisted);
+
   const handleCategoryClick = (catKey) => {
     if (onSelectCategory) {
       onSelectCategory(catKey);
@@ -35,6 +41,29 @@ export const AdminSidebar = ({
       navigate(`/admin/inventory?category=${catKey}`);
     }
   };
+
+  const handleInventoryToggle = () => {
+    const nextOpen = !inventoryOpen;
+    inventoryOpenPersisted = nextOpen;
+    setInventoryOpen(nextOpen);
+    // Opening Inventory always lands on All Components
+    if (nextOpen) {
+      handleCategoryClick("all");
+    }
+  };
+
+  const handleSectionChange = () => {
+    inventoryOpenPersisted = false;
+    setInventoryOpen(false);
+  };
+
+  // Any non-inventory admin section collapses the categories again
+  useEffect(() => {
+    if (!isInventory) {
+      inventoryOpenPersisted = false;
+      setInventoryOpen(false);
+    }
+  }, [isInventory]);
 
   return (
     <aside className="admin-sidebar" aria-label="Admin Navigation Sidebar">
@@ -66,6 +95,7 @@ export const AdminSidebar = ({
           <Link
             to="/admin/accounts"
             className={`admin-mgmt-item ${isAccounts ? "active" : ""}`}
+            onClick={handleSectionChange}
           >
             <div className="mgmt-item-icon">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -84,6 +114,7 @@ export const AdminSidebar = ({
           <Link
             to="/admin/content"
             className={`admin-mgmt-item ${isContent ? "active" : ""}`}
+            onClick={handleSectionChange}
           >
             <div className="mgmt-item-icon">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -101,42 +132,68 @@ export const AdminSidebar = ({
 
       {/* Hardware Inventory Stages */}
       <div className="admin-sidebar-section categories-section">
-        <div className="admin-section-tag">
-          <span className="tag-text">Inventory</span>
-        </div>
+        <button
+          type="button"
+          className={`admin-inventory-toggle ${isInventory ? "active" : ""}`}
+          onClick={handleInventoryToggle}
+          aria-expanded={inventoryOpen}
+        >
+          <span className="inventory-toggle-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 2L2 7l10 5 10-5-10-5z" />
+              <path d="M2 17l10 5 10-5" />
+              <path d="M2 12l10 5 10-5" />
+            </svg>
+          </span>
+          <span className="inventory-toggle-label">Inventory</span>
+          <span className="inventory-toggle-count">{categoryCounts.all ?? 0}</span>
+          <svg
+            className={`inventory-toggle-chevron ${inventoryOpen ? "open" : ""}`}
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.4"
+          >
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </button>
 
-        <div className="admin-category-list">
-          {CATEGORIES.map((cat) => {
-            const count = categoryCounts[cat.key] ?? (cat.key === "all" ? categoryCounts.all : 0) ?? 0;
-            const isSelected = isInventory && activeCategory === cat.key;
+        {inventoryOpen && (
+          <div className="admin-category-list">
+            {CATEGORIES.map((cat) => {
+              const count = categoryCounts[cat.key] ?? (cat.key === "all" ? categoryCounts.all : 0) ?? 0;
+              const isSelected = isInventory && activeCategory === cat.key;
 
-            return (
-              <div
-                key={cat.key}
-                className={`admin-category-item ${isSelected ? "active" : ""}`}
-                onClick={() => handleCategoryClick(cat.key)}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    handleCategoryClick(cat.key);
-                  }
-                }}
-              >
-                <div className="category-step-badge">
-                  <span>{cat.step}</span>
+              return (
+                <div
+                  key={cat.key}
+                  className={`admin-category-item ${isSelected ? "active" : ""}`}
+                  onClick={() => handleCategoryClick(cat.key)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      handleCategoryClick(cat.key);
+                    }
+                  }}
+                >
+                  <div className="category-step-badge">
+                    <span>{cat.step}</span>
+                  </div>
+                  <div className="category-info">
+                    <div className="category-title">{cat.label}</div>
+                    <div className="category-desc">{cat.desc}</div>
+                  </div>
+                  <div className="category-count-badge">
+                    <span>{count}</span>
+                  </div>
                 </div>
-                <div className="category-info">
-                  <div className="category-title">{cat.label}</div>
-                  <div className="category-desc">{cat.desc}</div>
-                </div>
-                <div className="category-count-badge">
-                  <span>{count}</span>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </aside>
   );

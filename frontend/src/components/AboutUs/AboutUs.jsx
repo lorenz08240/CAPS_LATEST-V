@@ -460,6 +460,7 @@ export default function AboutUs() {
       });
 
       // 2. Team Members Cards Batch (Smooth staggered reveal; reverses on scroll-back-up)
+      gsap.set(".team-member-card", { opacity: 0, y: 35, scale: 0.97 });
       ScrollTrigger.batch(".team-member-card", {
         interval: 0.08,
         batchMax: 3,
@@ -537,6 +538,9 @@ export default function AboutUs() {
           }),
       });
     }, aboutPageRef);
+
+    // Refresh so triggers measure the compact card layout correctly
+    ScrollTrigger.refresh();
 
     return () => ctx.revert();
   }, [teamMembers, projectFilter]);
@@ -673,16 +677,6 @@ export default function AboutUs() {
                 <div className="card-main-meta">
                   <span className="member-badge-pill">{member.avatarBadge}</span>
                   <h3 className="member-name">{member.name}</h3>
-                  <p className="member-designation">{member.designation}</p>
-                </div>
-
-                <p className="member-brief-bio">
-                  {member.bio}
-                </p>
-
-                <div className="card-footer-action">
-                  <span className="action-hint">VIEW FULL PROFILE</span>
-                  <span className="action-arrow">&rarr;</span>
                 </div>
               </div>
             ))}

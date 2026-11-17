@@ -41,13 +41,13 @@ const PRESET_BUDGET_RIG = {
 };
 
 const COMPONENT_CATEGORIES = [
-  { key: "case", label: "PC CASE", icon: "📦" },
-  { key: "motherboard", label: "MOTHERBOARD", icon: "🖲️" },
-  { key: "cpu", label: "PROCESSOR", icon: "⚡" },
-  { key: "ram", label: "MEMORY (RAM)", icon: "💾" },
-  { key: "storage", label: "STORAGE (SSD)", icon: "💿" },
-  { key: "gpu", label: "GRAPHICS (GPU)", icon: "🎮" },
-  { key: "psu", label: "POWER SUPPLY", icon: "🔌" },
+  { key: "case", label: "PC CASE" },
+  { key: "motherboard", label: "MOTHERBOARD" },
+  { key: "cpu", label: "PROCESSOR" },
+  { key: "ram", label: "MEMORY (RAM)" },
+  { key: "storage", label: "STORAGE (SSD)" },
+  { key: "gpu", label: "GRAPHICS (GPU)" },
+  { key: "psu", label: "POWER SUPPLY" },
 ];
 
 function ConcentricRings({ rigLabel, gamingScore, prodScore, overallScore, primaryColor = "#00e5a0" }) {
@@ -1073,7 +1073,7 @@ function CompatibilityView({ isIntegrated = false }) {
       <div className="rig-specs-list">
         <div className="specs-list-title">HARDWARE SPECIFICATIONS</div>
         {hasRig1 ? (
-          COMPONENT_CATEGORIES.map(({ key, label, icon }) => {
+          COMPONENT_CATEGORIES.map(({ key, label }) => {
             const comp = activeRig1[key];
             const spec = getCompSpecSummary(comp, key);
             const matchingIssue = rig1Issues.find((iss) =>
@@ -1087,7 +1087,6 @@ function CompatibilityView({ isIntegrated = false }) {
                 className={`spec-item-row ${spec.isSet ? "item-filled" : "item-empty"} ${hasIssue ? "item-has-issue" : ""}`}
               >
                 <div className="spec-item-label-group">
-                  <span className="spec-icon" aria-hidden="true">{icon}</span>
                   <span className="spec-category">{label}</span>
                 </div>
                 <div className="spec-item-val-group">
@@ -1247,7 +1246,7 @@ function CompatibilityView({ isIntegrated = false }) {
       <div className="rig-specs-list">
         <div className="specs-list-title">HARDWARE SPECIFICATIONS</div>
         {hasRig2 ? (
-          COMPONENT_CATEGORIES.map(({ key, label, icon }) => {
+          COMPONENT_CATEGORIES.map(({ key, label }) => {
             const comp = rig2?.[key];
             const spec = getCompSpecSummary(comp, key);
             const matchingIssue = rig2Issues.find((iss) =>
@@ -1261,7 +1260,6 @@ function CompatibilityView({ isIntegrated = false }) {
                 className={`spec-item-row ${spec.isSet ? "item-filled" : "item-empty"} ${hasIssue ? "item-has-issue" : ""}`}
               >
                 <div className="spec-item-label-group">
-                  <span className="spec-icon" aria-hidden="true">{icon}</span>
                   <span className="spec-category">{label}</span>
                 </div>
                 <div className="spec-item-val-group">
@@ -1466,7 +1464,6 @@ function CompatibilityView({ isIntegrated = false }) {
       </div>
 
       <div className="overview-summary-banner" style={{ marginTop: "1.5rem" }}>
-        <div className="summary-icon">🤖</div>
         <div className="summary-text">
           <h4 className="summary-title">BUILDLAB ARCHITECT VERDICT</h4>
           <p className="summary-copy">

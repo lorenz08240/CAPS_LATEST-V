@@ -2,12 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useBuild } from "../../contexts/BuildContext";
 import { useLearnMode } from "../../contexts/LearnModeContext";
-import {
-  DEMO_GAMING_RIG,
-  PRESET_1080P_GAMING,
-  PRESET_WORKSTATION,
-  PRESET_ENTRY_STUDENT,
-} from "../../utilities/offlineParts";
+import { DEMO_GAMING_RIG } from "../../utilities/offlineParts";
 import { checkCompatibility } from "../../utilities/compatibilityEngine";
 import soundManager from "../../utilities/soundManager";
 import FullscreenGate from "../FullscreenGate/FullscreenGate";
@@ -377,15 +372,9 @@ const getCaseMaxGPU = (comp) => {
 };
 
 function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildInteracted }) {
-  const { mode, userProfile, unlockStage } = useLearnMode();
-  const hasAccount = Boolean(
-    userProfile && (userProfile.fullName || userProfile.email) && userProfile.setupCompleted
-  );
-  const isLearnMode = mode === "learn" || (hasAccount && mode !== "explore");
+  const { mode, unlockStage } = useLearnMode();
   const {
     currentBuild,
-    activeBuildTarget,
-    setActiveBuildTarget,
     allComponents,
     addComponent,
     removeComponent,
@@ -940,15 +929,6 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
     return { state: "neutral", label: null, reason: "" };
   };
 
-  const handleLoadPurposePreset = (presetRig, label, speech) => {
-    dismissGuideTour();
-    onBuildInteracted?.();
-    try { soundManager.granted(); } catch {}
-    if (loadDemoBuild) loadDemoBuild(presetRig);
-    if (mode === "learn") unlockStage("compatibility");
-    setBobSpeech(speech);
-  };
-
   // Filter components based on search query and category filters
   const filteredComponents = currentComponents.filter((component) => {
     const searchLower = searchQuery.toLowerCase();
@@ -971,46 +951,6 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
     <div className={`build-page ${isIntegrated ? 'integrated-home' : 'standalone'}`}>
       {!isIntegrated && <GlobalHeader />}
       
-      {/* Dual Rig Target Banner - Only for non-account / free workbench exploration */}
-      {!isLearnMode && (
-        <div className="build-target-banner">
-          <div className="build-target-switcher-pill">
-            <span className="build-target-label">ACTIVE ASSEMBLY:</span>
-            <button
-              type="button"
-              className={`btn-target-toggle ${activeBuildTarget === "rig1" ? "active-rig1" : ""}`}
-              onClick={() => {
-                try { soundManager.click(); } catch {}
-                setActiveBuildTarget("rig1");
-              }}
-            >
-              <span className="target-dot green" />
-              <span>RIG 01 // WORKBENCH</span>
-            </button>
-            <button
-              type="button"
-              className={`btn-target-toggle ${activeBuildTarget === "rig2" ? "active-rig2" : ""}`}
-              onClick={() => {
-                try { soundManager.click(); } catch {}
-                setActiveBuildTarget("rig2");
-              }}
-            >
-              <span className="target-dot cyan" />
-              <span>RIG 02 // MANUAL BUILD (+)</span>
-            </button>
-          </div>
-          <Link
-            to="/compatibility"
-            className="btn-matrix-compare-link"
-            onClick={() => {
-              try { soundManager.click(); } catch {}
-            }}
-          >
-            <span>Compare in Compatibility Matrix &rarr;</span>
-          </Link>
-        </div>
-      )}
-
       <div className="build-main" id="build-main-area">
         <div className="build-sidebar">
           <div
@@ -1040,7 +980,6 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
                   <span className="tag-text">HARDWARE STAGES</span>
                   <span className="tag-bracket">]</span>
                 </div>
-                <h3>ASSEMBLY RIG</h3>
               </div>
               <span className="build-step-progress-badge">
                 <span className="badge-prefix">STAGE</span>
@@ -1185,85 +1124,6 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
                 </button>
               ))}
             </div>
-          </div>
-
-          <div className="build-guide-subbar">
-            <div className="guide-dot" />
-            <span className="build-guide-text">
-              STAGE {currentStep + 1} OF {buildSteps.length} // Select compatible {currentStepData.label} to advance assembly
-            </span>
-            <div className="guide-subbar-actions">
-              {guideTarget ? (
-                <button
-                  type="button"
-                  className="bob-tour-pill-btn active"
-                  onClick={dismissGuideTour}
-                  title="Dismiss highlight guide"
-                >
-                  <span className="tour-pill-pulse" />
-                  <span>✕ SKIP TOUR</span>
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  className="bob-tour-pill-btn"
-                  onClick={() => {
-                    try { soundManager.click(); } catch {}
-                    startGuideTour(currentStepData.key);
-                  }}
-                  title="Ask B.O.B. to guide you through this stage"
-                >
-                  <span className="tour-pill-icon">💡</span>
-                  <span>GUIDE ME</span>
-                </button>
-              )}
-            </div>
-          </div>
-
-          <div className="purpose-presets-bar" aria-label="Purpose-driven build recommendations">
-            <span className="presets-bar-label">RECOMMENDED GOALS:</span>
-            <button
-              type="button"
-              className="preset-pill-btn preset-gaming"
-              onClick={() =>
-                handleLoadPurposePreset(
-                  PRESET_1080P_GAMING,
-                  "1080p Gaming",
-                  "Loaded our 1080p Gaming Preset! Ryzen 5 AM5 + RTX 4070 + DDR5, 100% verified compatible!"
-                )
-              }
-              title="Auto-fill a balanced 1080p/1440p Gaming PC rig"
-            >
-              <span>🎮 1080p Gaming</span>
-            </button>
-            <button
-              type="button"
-              className="preset-pill-btn preset-workstation"
-              onClick={() =>
-                handleLoadPurposePreset(
-                  PRESET_WORKSTATION,
-                  "Workstation",
-                  "Loaded the Creator Workstation Preset! Intel Core i7 16-core + 32GB DDR5 + RX 6800 XT 16GB!"
-                )
-              }
-              title="Auto-fill a high-core Workstation / Content Creation PC"
-            >
-              <span>🖥️ Workstation / Creator</span>
-            </button>
-            <button
-              type="button"
-              className="preset-pill-btn preset-student"
-              onClick={() =>
-                handleLoadPurposePreset(
-                  PRESET_ENTRY_STUDENT,
-                  "Entry Student",
-                  "Loaded the Entry Student Preset! Budget-friendly AM4 Ryzen 7 + DDR4 + RTX 3050, 100% compatible!"
-                )
-              }
-              title="Auto-fill an affordable Entry Student / Academic PC rig"
-            >
-              <span>🎓 Entry Student Build</span>
-            </button>
           </div>
 
           <div className="build-grid-and-panel">

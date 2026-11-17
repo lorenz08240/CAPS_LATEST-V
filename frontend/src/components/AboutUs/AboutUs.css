@@ -157,12 +157,12 @@
   width: 100%;
 }
 
-/* ── TEAM CARDS GRID (ELEVATED BORDERLESS CARDS WITH OVERLAPPING AVATAR) ── */
+/* ── TEAM CARDS GRID (COMPACT CARDS WITH OVERLAPPING AVATAR) ── */
 .team-cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 4.5rem 2.2rem;
-  padding-top: 3.5rem; /* Room for overlapping avatar */
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 3rem 1.2rem;
+  padding-top: 2.8rem; /* Room for overlapping avatar */
   margin-top: 1rem;
 }
 
@@ -172,13 +172,13 @@
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border: none; /* NO visible border lines */
-  border-radius: 20px;
-  padding: 4.2rem 2rem 2.2rem 2rem;
+  border-radius: 14px;
+  padding: 2.8rem 1.2rem 1.4rem 1.2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 1.1rem;
+  gap: 0.55rem;
   cursor: pointer;
   overflow: visible; /* allows avatar to overlap above the card */
   box-shadow: 0 20px 45px -12px rgba(0, 0, 0, 0.85), 0 0 25px rgba(0, 0, 0, 0.4);
@@ -194,11 +194,11 @@
 /* Centered Overlapping Avatar Frame (Material Kit 2 Profile Style) */
 .card-avatar-wrap {
   position: absolute;
-  top: -48px;
+  top: -38px;
   left: 50%;
   transform: translateX(-50%);
-  width: 96px;
-  height: 96px;
+  width: 76px;
+  height: 76px;
   margin: 0;
   z-index: 5;
 }
@@ -376,54 +376,11 @@
 }
 
 .member-name {
-  font-size: 1.35rem;
+  font-size: 1.1rem;
   font-weight: 800;
   color: #ffffff;
   margin: 0;
   letter-spacing: -0.3px;
-}
-
-.member-designation {
-  font-size: 0.85rem;
-  color: #94a3b8;
-  font-weight: 600;
-  margin: 0;
-  line-height: 1.4;
-}
-
-.member-brief-bio {
-  font-size: 0.88rem;
-  line-height: 1.6;
-  color: #cbd5e1;
-  margin: 0;
-  flex: 1;
-}
-
-.card-footer-action {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding-top: 0.8rem;
-  margin-top: auto;
-}
-
-.action-hint {
-  font-size: 0.74rem;
-  font-weight: 800;
-  font-family: ui-monospace, SFMono-Regular, monospace;
-  letter-spacing: 1.2px;
-  color: #d4a34b;
-}
-
-.action-arrow {
-  color: #d4a34b;
-  font-size: 0.95rem;
-  transition: transform 0.25s ease;
-}
-
-.team-member-card:hover .action-arrow {
-  transform: translateX(4px);
 }
 
 /* ── FULL VITAE DOSSIER MODAL ── */
@@ -772,6 +729,7 @@
 }
 
 .about-members-grid,
+.team-cards-grid,
 .whitehats-bento-grid,
 .projects-cards-grid {
   perspective: 1100px;

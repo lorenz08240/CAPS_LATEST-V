@@ -15,7 +15,7 @@ export const AdminContent = () => {
   const [editingMember, setEditingMember] = useState(null);
   const [activeTab, setActiveTab] = useState("profile"); // 'profile' | 'specs'
   const [uploadingPhotoId, setUploadingPhotoId] = useState(null);
-  const cardFileInputRefs = useRef({});
+  const [isNewMember, setIsNewMember] = useState(false);
   const modalFileInputRef = useRef(null);
 
   const getAdminKey = () => localStorage.getItem("adminKey") || "admin12345";
@@ -129,21 +129,64 @@ export const AdminContent = () => {
         tech_stack
       };
 
-      const res = await fetch(`/api/content/team/${editingMember.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "x-admin-key": getAdminKey()
-        },
-        body: JSON.stringify(payload)
-      });
+      const res = await fetch(
+        isNewMember ? "/api/content/team" : `/api/content/team/${editingMember.id}`,
+        {
+          method: isNewMember ? "POST" : "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "x-admin-key": getAdminKey()
+          },
+          body: JSON.stringify(payload)
+        }
+      );
 
       if (!res.ok) {
-        throw new Error("Failed to save profile changes");
+        throw new Error(isNewMember ? "Failed to create team member" : "Failed to save profile changes");
       }
 
-      showToast(`${editingMember.name || editingMember.id} saved.`);
+      showToast(isNewMember ? `${editingMember.name} added to the team roster.` : `${editingMember.name || editingMember.id} saved.`);
+      setIsNewMember(false);
       setEditingMember(null);
+      fetchMembers();
+    } catch (err) {
+      showToast(err.message, "error");
+    }
+  };
+
+  const handleCreateMember = () => {
+    try { soundManager.click(); } catch {}
+    setActiveTab("profile");
+    setIsNewMember(true);
+    setEditingMember({
+      id: `DEV-${Date.now().toString().slice(-6)}`,
+      name: "",
+      designation: "",
+      codename: "",
+      role_category: "core",
+      avatar_badge: "DEV",
+      photo_url: "",
+      highlight: "",
+      bio: "",
+      key_contributions: "",
+      tech_stack: "",
+      rig_specs: {},
+      fav_tip: "",
+      github: "https://github.com",
+      linkedin: "https://linkedin.com",
+      sort_order: members.length + 1
+    });
+  };
+
+  const handleDeleteMember = async (member) => {
+    if (!window.confirm(`Delete ${member.name || member.id} from the team roster?`)) return;
+    try {
+      const res = await fetch(`/api/content/team/${member.id}`, {
+        method: "DELETE",
+        headers: { "x-admin-key": getAdminKey() }
+      });
+      if (!res.ok) throw new Error("Failed to delete team member");
+      showToast(`${member.name || member.id} removed from roster.`);
       fetchMembers();
     } catch (err) {
       showToast(err.message, "error");
@@ -177,6 +220,9 @@ export const AdminContent = () => {
               </div>
 
               <div className="roster-header-actions" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <button type="button" className="btn-refresh-accounts" onClick={handleCreateMember} title="Add a new developer to the roster">
+                  + Add Developer
+                </button>
                 <button type="button" className="btn-refresh-accounts" onClick={fetchMembers} title="Fetch latest team data from database">
                   Sync
                 </button>
@@ -213,13 +259,9 @@ export const AdminContent = () => {
                         <span className="operative-role-pill">{member.avatar_badge || "DEV"}</span>
                       </div>
 
-                      {/* Hexagonal Avatar with 1-Click Upload Trigger */}
+                      {/* Circular Avatar */}
                       <div className="operative-avatar-preview-wrap">
-                        <div className="avatar-hex-frame-admin">
-                          <svg viewBox="0 0 100 100" className="avatar-hex-svg">
-                            <polygon points="50 3, 93 26, 93 74, 50 97, 7 74, 7 26" className="hex-outer" />
-                            <polygon points="50 10, 85 29, 85 71, 50 90, 15 71, 15 29" className="hex-inner" />
-                          </svg>
+                        <div className="avatar-profile-frame-admin">
                           {member.photo_url ? (
                             <img
                               src={member.photo_url}
@@ -241,32 +283,6 @@ export const AdminContent = () => {
                           </div>
                         </div>
 
-                        {/* Quick 1-click change photo button */}
-                        <input
-                          type="file"
-                          ref={(el) => (cardFileInputRefs.current[member.id] = el)}
-                          style={{ display: "none" }}
-                          accept="image/*"
-                          onChange={(e) => {
-                            if (e.target.files?.[0]) {
-                              handlePhotoUpload(e.target.files[0], member.id);
-                            }
-                            e.target.value = "";
-                          }}
-                        />
-                        <button
-                          type="button"
-                          className="btn-quick-photo-change"
-                          disabled={uploadingPhotoId === member.id}
-                          onClick={() => cardFileInputRefs.current[member.id]?.click()}
-                          title="Upload new profile photo"
-                        >
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
-                            <circle cx="12" cy="13" r="4"></circle>
-                          </svg>
-                          <span>{uploadingPhotoId === member.id ? "Uploading..." : "Change Photo"}</span>
-                        </button>
                       </div>
 
                       <div className="operative-card-body">
@@ -282,11 +298,13 @@ export const AdminContent = () => {
                       </div>
 
                       <div className="operative-card-footer">
+                        <div className="operative-card-actions">
                         <button
                           type="button"
                           className="btn-edit-operative"
                           onClick={() => {
                             setActiveTab("profile");
+                            setIsNewMember(false);
                             setEditingMember({
                               ...member,
                               key_contributions: Array.isArray(member.key_contributions)
@@ -305,6 +323,15 @@ export const AdminContent = () => {
                           </svg>
                           <span>Edit</span>
                         </button>
+                        <button
+                          type="button"
+                          className="btn-delete-operative"
+                          onClick={() => handleDeleteMember(member)}
+                          title={`Delete ${member.name || member.id}`}
+                        >
+                          &times;
+                        </button>
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -318,8 +345,8 @@ export const AdminContent = () => {
                 <div className="admin-modal-card modal-lg wood-mahogany" onClick={(e) => e.stopPropagation()}>
                   <div className="modal-header">
                     <div className="modal-title-wrap">
-                      <span className="modal-kicker">LIVE DOSSIER SYNC // {editingMember.id}</span>
-                      <h2 className="modal-title">Edit Operative &bull; {editingMember.name || editingMember.id}</h2>
+                      <span className="modal-kicker">{isNewMember ? "NEW OPERATIVE // DRAFT" : `LIVE DOSSIER SYNC // ${editingMember.id}`}</span>
+                      <h2 className="modal-title">{isNewMember ? "Add New Developer" : <>Edit Operative &bull; {editingMember.name || editingMember.id}</>}</h2>
                     </div>
                     <button
                       type="button"
@@ -356,11 +383,7 @@ export const AdminContent = () => {
                           <label className="form-label">AVATAR PHOTO</label>
                           <div className="photo-editor-row">
                             <div className="photo-preview-hex-wrap">
-                              <div className="avatar-hex-frame-admin hex-large">
-                                <svg viewBox="0 0 100 100" className="avatar-hex-svg">
-                                  <polygon points="50 3, 93 26, 93 74, 50 97, 7 74, 7 26" className="hex-outer" />
-                                  <polygon points="50 10, 85 29, 85 71, 50 90, 15 71, 15 29" className="hex-inner" />
-                                </svg>
+                              <div className="avatar-profile-frame-admin profile-large">
                                 {editingMember.photo_url ? (
                                   <img src={editingMember.photo_url} alt="Preview" className="avatar-img-admin" />
                                 ) : null}

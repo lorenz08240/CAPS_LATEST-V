@@ -8,15 +8,6 @@ import "./Brands.css";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const categories = [
-  { key: "all", label: "ALL BRANDS", count: 8 },
-  { key: "cpu", label: "CPUS & SILICON", count: 2 },
-  { key: "gpu", label: "GRAPHICS & AI", count: 2 },
-  { key: "motherboard", label: "MOTHERBOARDS", count: 2 },
-  { key: "case", label: "COOLING & CHASSIS", count: 2 },
-  { key: "ram", label: "MEMORY & POWER", count: 1 },
-];
-
 const brandData = [
   { 
     id: 1, 
@@ -183,7 +174,6 @@ const brandData = [
 
 function Brands({ isIntegrated = false }) {
   const navigate = useNavigate();
-  const [activeCategory, setActiveCategory] = useState("all");
   const [selectedBrand, setSelectedBrand] = useState(null);
   const containerRef = useRef(null);
   const gridRef = useRef(null);
@@ -223,16 +213,10 @@ function Brands({ isIntegrated = false }) {
     });
   };
 
-  // Filtered brands based on active category
-  const filteredBrands = brandData.filter((brand) => {
-    if (activeCategory === "all") return true;
-    return brand.categoryKey === activeCategory || brand.secondaryKey === activeCategory;
-  });
-
   // GSAP ScrollTrigger batch animations for entrance & scroll replayability
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // 1. Header & Telemetry Ribbon reveal
+      // 1. Header reveal
       ScrollTrigger.create({
         trigger: ".brands-header",
         start: "top 80%",
@@ -339,12 +323,31 @@ function Brands({ isIntegrated = false }) {
     ScrollTrigger.refresh();
 
     return () => ctx.revert();
-  }, [activeCategory]);
+  }, []);
 
-  const handleCategorySelect = (key) => {
-    try { soundManager.click(); } catch {}
-    setActiveCategory(key);
-  };
+  // Lock background scrolling while the inspection modal is open
+  useEffect(() => {
+    if (!selectedBrand) return;
+
+    const html = document.documentElement;
+    const body = document.body;
+    const prevHtmlOverflow = html.style.overflow;
+    const prevBodyOverflow = body.style.overflow;
+    const prevBodyPaddingRight = body.style.paddingRight;
+    const scrollbarWidth = window.innerWidth - html.clientWidth;
+
+    html.style.overflow = "hidden";
+    body.style.overflow = "hidden";
+    if (scrollbarWidth > 0) {
+      body.style.paddingRight = `${scrollbarWidth}px`;
+    }
+
+    return () => {
+      html.style.overflow = prevHtmlOverflow;
+      body.style.overflow = prevBodyOverflow;
+      body.style.paddingRight = prevBodyPaddingRight;
+    };
+  }, [selectedBrand]);
 
   const handleBrandClick = (brand) => {
     try { soundManager.click(); } catch {}
@@ -367,56 +370,16 @@ function Brands({ isIntegrated = false }) {
       <div className="brands-container-wrap">
         {/* Header Section */}
         <header className="brands-header">
-          <div className="brands-badge-kicker">
-            <span className="dot" />
-            <span>CERTIFIED HARDWARE ECOSYSTEM // RIGOROUSLY BENCHED</span>
-          </div>
-
           <h2 className="brands-headline">All Supported Brands &amp; Silicon Partners</h2>
 
           <p className="brands-subheadline">
             BuildLab curates the world's most trusted computer hardware manufacturers. Every brand featured is verified for socket clearances, thermal dissipation limits, and bus communication compatibility.
           </p>
-
-          {/* Hardware Certification Telemetry Ribbon */}
-          <div className="brands-telemetry-ribbon">
-            <div className="ribbon-item">
-              <span className="ribbon-dot dot-cyan" />
-              <span className="ribbon-text">100% SOCKET VALIDATED</span>
-            </div>
-            <div className="ribbon-item">
-              <span className="ribbon-dot dot-emerald" />
-              <span className="ribbon-text">1,400+ CLEARANCES TESTED</span>
-            </div>
-            <div className="ribbon-item">
-              <span className="ribbon-dot dot-amber" />
-              <span className="ribbon-text">ZERO-BOTTLENECK DATABASE</span>
-            </div>
-            <div className="ribbon-item">
-              <span className="ribbon-dot dot-rose" />
-              <span className="ribbon-text">DEPED &bull; TVL-CSS ALIGNED</span>
-            </div>
-          </div>
-
-          {/* Interactive Category Filter Tabs */}
-          <div className="brands-category-tabs">
-            {categories.map((cat) => (
-              <button
-                key={cat.key}
-                type="button"
-                className={`brand-cat-pill ${activeCategory === cat.key ? "active" : ""}`}
-                onClick={() => handleCategorySelect(cat.key)}
-              >
-                <span>{cat.label}</span>
-                <span className="cat-count">({cat.count})</span>
-              </button>
-            ))}
-          </div>
         </header>
 
         {/* Brand Showcase Grid */}
         <div className="brands-showcase-grid" ref={gridRef}>
-          {filteredBrands.map((brand) => (
+          {brandData.map((brand) => (
             <div 
               key={brand.id} 
               className={`brand-card-item ${selectedBrand?.id === brand.id ? 'active-brand' : ''}`}
@@ -429,12 +392,6 @@ function Brands({ isIntegrated = false }) {
               onMouseLeave={handleCardMouseLeave}
               title={`Click to inspect ${brand.name} specifications and components`}
             >
-              {/* Brand Top Identity Row */}
-              <div className="brand-card-topbar">
-                <span className="brand-category-badge">{brand.categoryLabel}</span>
-                <span className="brand-cert-badge">{brand.verifiedBadge}</span>
-              </div>
-
               {/* High-Craft Frosted Logo Pedestal */}
               <div className="brand-pedestal-container">
                 <div className="pedestal-ambient-flare" />
@@ -459,20 +416,9 @@ function Brands({ isIntegrated = false }) {
               <div className="brand-card-meta">
                 <div className="brand-title-row">
                   <h3 className="brand-name">{brand.name}</h3>
-                  <span className="brand-status-dot" />
                 </div>
                 <p className="brand-role">{brand.role}</p>
                 <p className="brand-tagline">{brand.tagline}</p>
-              </div>
-
-              {/* Hardware Architecture Spec Chips */}
-              <div className="brand-specs-matrix">
-                {brand.specs.map((spec, i) => (
-                  <div key={i} className="spec-micro-tile">
-                    <span className="spec-k">{spec.label}</span>
-                    <span className="spec-v">{spec.val}</span>
-                  </div>
-                ))}
               </div>
 
               {/* Interactive Inspect Trigger Button */}
@@ -486,7 +432,6 @@ function Brands({ isIntegrated = false }) {
                   }}
                 >
                   <span>INSPECT HARDWARE SPECS</span>
-                  <span className="btn-arrow">&rarr;</span>
                 </button>
               </div>
             </div>
