@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-11-16T11:25:08.773Z" agent="BuildLab ERD Generator" version="21.0.0" type="device">
+  <diagram id="buildlab_erd_diagram" name="BuildLab Database ERD">
+    <mxGraphModel dx="1434" dy="850" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1150" pageHeight="1400" background="#0b0f17" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+    <mxCell id="table_admin_accounts" value="&lt;b&gt;ADMIN_ACCOUNTS&lt;/b&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;align=center;fontSize=13;fillColor=#064e3b;strokeColor=#10b981;fontColor=#ffffff;swimlaneFillColor=#0f172a;rounded=1;arcSize=8;shadow=1;" vertex="1" parent="1">
+      <mxGeometry x="40" y="90" width="280" height="296" as="geometry" />
+    </mxCell>
+
+      <mxCell id="col_admin_accounts_id" value="&lt;font color=&quot;#fbbf24&quot;&gt;&lt;b&gt;🔑 PK&lt;/b&gt;&lt;/font&gt; id &lt;font color=&quot;#94a3b8&quot;&gt;(int(11))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_admin_accounts">
+        <mxGeometry y="32" width="280" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_admin_accounts_username" value="&lt;font color=&quot;#38bdf8&quot;&gt;&lt;b&gt;⚡ UK&lt;/b&gt;&lt;/font&gt; username &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(50))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_admin_accounts">
+        <mxGeometry y="56" width="280" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_admin_accounts_display_name" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; display_name &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(100))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_admin_accounts">
+        <mxGeometry y="80" width="280" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_admin_accounts_email" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; email &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(120))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_admin_accounts">
+        <mxGeometry y="104" width="280" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_admin_accounts_role" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; role &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(50))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_admin_accounts">
+        <mxGeometry y="128" width="280" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_admin_accounts_avatar_url" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; avatar_url &lt;font color=&quot;#94a3b8&quot;&gt;(longtext)&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_admin_accounts">
+        <mxGeometry y="152" width="280" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_admin_accounts_passcode" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; passcode &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(100))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_admin_accounts">
+        <mxGeometry y="176" width="280" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_admin_accounts_status" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; status &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(30))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_admin_accounts">
+        <mxGeometry y="200" width="280" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_admin_accounts_last_login" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; last_login &lt;font color=&quot;#94a3b8&quot;&gt;(timestamp)&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_admin_accounts">
+        <mxGeometry y="224" width="280" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_admin_accounts_created_at" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; created_at &lt;font color=&quot;#94a3b8&quot;&gt;(timestamp)&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_admin_accounts">
+        <mxGeometry y="248" width="280" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_admin_accounts_updated_at" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; updated_at &lt;font color=&quot;#94a3b8&quot;&gt;(timestamp)&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_admin_accounts">
+        <mxGeometry y="272" width="280" height="24" as="geometry" />
+      </mxCell>
+
+    <mxCell id="table_google_learner_accounts" value="&lt;b&gt;GOOGLE_LEARNER_ACCOUNTS&lt;/b&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;align=center;fontSize=13;fillColor=#1e3a8a;strokeColor=#3b82f6;fontColor=#ffffff;swimlaneFillColor=#0f172a;rounded=1;arcSize=8;shadow=1;" vertex="1" parent="1">
+      <mxGeometry x="380" y="90" width="320" height="272" as="geometry" />
+    </mxCell>
+
+      <mxCell id="col_google_learner_accounts_id" value="&lt;font color=&quot;#fbbf24&quot;&gt;&lt;b&gt;🔑 PK&lt;/b&gt;&lt;/font&gt; id &lt;font color=&quot;#94a3b8&quot;&gt;(int(11))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_google_learner_accounts">
+        <mxGeometry y="32" width="320" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_google_learner_accounts_google_id" value="&lt;font color=&quot;#38bdf8&quot;&gt;&lt;b&gt;⚡ UK&lt;/b&gt;&lt;/font&gt; google_id &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(100))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_google_learner_accounts">
+        <mxGeometry y="56" width="320" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_google_learner_accounts_email" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; email &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(150))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_google_learner_accounts">
+        <mxGeometry y="80" width="320" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_google_learner_accounts_full_name" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; full_name &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(150))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_google_learner_accounts">
+        <mxGeometry y="104" width="320" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_google_learner_accounts_avatar_url" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; avatar_url &lt;font color=&quot;#94a3b8&quot;&gt;(longtext)&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_google_learner_accounts">
+        <mxGeometry y="128" width="320" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_google_learner_accounts_institution" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; institution &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(150))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_google_learner_accounts">
+        <mxGeometry y="152" width="320" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_google_learner_accounts_mode" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; mode &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(50))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_google_learner_accounts">
+        <mxGeometry y="176" width="320" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_google_learner_accounts_unlocked_stages" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; unlocked_stages &lt;font color=&quot;#94a3b8&quot;&gt;(longtext)&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_google_learner_accounts">
+        <mxGeometry y="200" width="320" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_google_learner_accounts_last_active" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; last_active &lt;font color=&quot;#94a3b8&quot;&gt;(timestamp)&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_google_learner_accounts">
+        <mxGeometry y="224" width="320" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_google_learner_accounts_created_at" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; created_at &lt;font color=&quot;#94a3b8&quot;&gt;(timestamp)&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_google_learner_accounts">
+        <mxGeometry y="248" width="320" height="24" as="geometry" />
+      </mxCell>
+
+    <mxCell id="table_pc_parts" value="&lt;b&gt;PC_PARTS&lt;/b&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;align=center;fontSize=13;fillColor=#164e63;strokeColor=#06b6d4;fontColor=#ffffff;swimlaneFillColor=#0f172a;rounded=1;arcSize=8;shadow=1;" vertex="1" parent="1">
+      <mxGeometry x="40" y="520" width="300" height="512" as="geometry" />
+    </mxCell>
+
+      <mxCell id="col_pc_parts_id" value="&lt;font color=&quot;#fbbf24&quot;&gt;&lt;b&gt;🔑 PK&lt;/b&gt;&lt;/font&gt; id &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(100))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_pc_parts">
+        <mxGeometry y="32" width="300" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_pc_parts_category" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; category &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(50))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_pc_parts">
+        <mxGeometry y="56" width="300" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_pc_parts_img" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; img &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(255))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_pc_parts">
+        <mxGeometry y="80" width="300" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_pc_parts_brand" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; brand &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(100))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_pc_parts">
+        <mxGeometry y="104" width="300" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_pc_parts_name" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; name &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(100))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_pc_parts">
+        <mxGeometry y="128" width="300" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_pc_parts_desc" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; desc &lt;font color=&quot;#94a3b8&quot;&gt;(text)&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_pc_parts">
+        <mxGeometry y="152" width="300" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_pc_parts_price" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; price &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(50))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_pc_parts">
+        <mxGeometry y="176" width="300" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_pc_parts_tags" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; tags &lt;font color=&quot;#94a3b8&quot;&gt;(longtext)&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_pc_parts">
+        <mxGeometry y="200" width="300" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_pc_parts_socket_type" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; socket_type &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(50))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_pc_parts">
+        <mxGeometry y="224" width="300" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_pc_parts_ddr_type" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; ddr_type &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(50))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_pc_parts">
+        <mxGeometry y="248" width="300" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_pc_parts_form_factor" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; form_factor &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(50))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_pc_parts">
+        <mxGeometry y="272" width="300" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_pc_parts_power_required" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; power_required &lt;font color=&quot;#94a3b8&quot;&gt;(int(11))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_pc_parts">
+        <mxGeometry y="296" width="300" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_pc_parts_wattage" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; wattage &lt;font color=&quot;#94a3b8&quot;&gt;(int(11))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_pc_parts">
+        <mxGeometry y="320" width="300" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_pc_parts_capacity" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; capacity &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(50))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_pc_parts">
+        <mxGeometry y="344" width="300" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_pc_parts_speed" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; speed &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(50))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_pc_parts">
+        <mxGeometry y="368" width="300" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_pc_parts_type" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; type &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(50))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_pc_parts">
+        <mxGeometry y="392" width="300" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_pc_parts_efficiency" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; efficiency &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(50))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_pc_parts">
+        <mxGeometry y="416" width="300" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_pc_parts_created_at" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; created_at &lt;font color=&quot;#94a3b8&quot;&gt;(timestamp)&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_pc_parts">
+        <mxGeometry y="440" width="300" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_pc_parts_is_archived" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; is_archived &lt;font color=&quot;#94a3b8&quot;&gt;(tinyint(1))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_pc_parts">
+        <mxGeometry y="464" width="300" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_pc_parts_deleted_at" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; deleted_at &lt;font color=&quot;#94a3b8&quot;&gt;(timestamp)&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_pc_parts">
+        <mxGeometry y="488" width="300" height="24" as="geometry" />
+      </mxCell>
+
+    <mxCell id="table_saved_builds" value="&lt;b&gt;SAVED_BUILDS&lt;/b&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;align=center;fontSize=13;fillColor=#78350f;strokeColor=#f59e0b;fontColor=#ffffff;swimlaneFillColor=#0f172a;rounded=1;arcSize=8;shadow=1;" vertex="1" parent="1">
+      <mxGeometry x="400" y="520" width="280" height="80" as="geometry" />
+    </mxCell>
+
+      <mxCell id="col_saved_builds_slot_id" value="&lt;font color=&quot;#fbbf24&quot;&gt;&lt;b&gt;🔑 PK&lt;/b&gt;&lt;/font&gt; slot_id &lt;font color=&quot;#94a3b8&quot;&gt;(int(11))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_saved_builds">
+        <mxGeometry y="32" width="280" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_saved_builds_build_data" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; build_data &lt;font color=&quot;#94a3b8&quot;&gt;(longtext)&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_saved_builds">
+        <mxGeometry y="56" width="280" height="24" as="geometry" />
+      </mxCell>
+
+    <mxCell id="table_scraped_queue" value="&lt;b&gt;SCRAPED_QUEUE&lt;/b&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;align=center;fontSize=13;fillColor=#831843;strokeColor=#ec4899;fontColor=#ffffff;swimlaneFillColor=#0f172a;rounded=1;arcSize=8;shadow=1;" vertex="1" parent="1">
+      <mxGeometry x="740" y="640" width="340" height="560" as="geometry" />
+    </mxCell>
+
+      <mxCell id="col_scraped_queue_id" value="&lt;font color=&quot;#fbbf24&quot;&gt;&lt;b&gt;🔑 PK&lt;/b&gt;&lt;/font&gt; id &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(255))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_scraped_queue">
+        <mxGeometry y="32" width="340" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_scraped_queue_source" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; source &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(100))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_scraped_queue">
+        <mxGeometry y="56" width="340" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_scraped_queue_source_name" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; source_name &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(100))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_scraped_queue">
+        <mxGeometry y="80" width="340" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_scraped_queue_date" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; date &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(50))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_scraped_queue">
+        <mxGeometry y="104" width="340" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_scraped_queue_scraped_name" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; scraped_name &lt;font color=&quot;#94a3b8&quot;&gt;(text)&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_scraped_queue">
+        <mxGeometry y="128" width="340" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_scraped_queue_category" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; category &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(50))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_scraped_queue">
+        <mxGeometry y="152" width="340" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_scraped_queue_brand" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; brand &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(100))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_scraped_queue">
+        <mxGeometry y="176" width="340" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_scraped_queue_form_factor" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; form_factor &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(50))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_scraped_queue">
+        <mxGeometry y="200" width="340" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_scraped_queue_socket_type" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; socket_type &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(50))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_scraped_queue">
+        <mxGeometry y="224" width="340" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_scraped_queue_ddr_type" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; ddr_type &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(50))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_scraped_queue">
+        <mxGeometry y="248" width="340" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_scraped_queue_wattage" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; wattage &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(50))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_scraped_queue">
+        <mxGeometry y="272" width="340" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_scraped_queue_power_required" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; power_required &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(50))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_scraped_queue">
+        <mxGeometry y="296" width="340" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_scraped_queue_capacity" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; capacity &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(50))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_scraped_queue">
+        <mxGeometry y="320" width="340" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_scraped_queue_speed" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; speed &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(50))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_scraped_queue">
+        <mxGeometry y="344" width="340" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_scraped_queue_type" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; type &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(50))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_scraped_queue">
+        <mxGeometry y="368" width="340" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_scraped_queue_efficiency" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; efficiency &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(50))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_scraped_queue">
+        <mxGeometry y="392" width="340" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_scraped_queue_price" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; price &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(50))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_scraped_queue">
+        <mxGeometry y="416" width="340" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_scraped_queue_img" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; img &lt;font color=&quot;#94a3b8&quot;&gt;(text)&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_scraped_queue">
+        <mxGeometry y="440" width="340" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_scraped_queue_desc" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; desc &lt;font color=&quot;#94a3b8&quot;&gt;(text)&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_scraped_queue">
+        <mxGeometry y="464" width="340" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_scraped_queue_tags" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; tags &lt;font color=&quot;#94a3b8&quot;&gt;(text)&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_scraped_queue">
+        <mxGeometry y="488" width="340" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_scraped_queue_approved" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; approved &lt;font color=&quot;#94a3b8&quot;&gt;(tinyint(1))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_scraped_queue">
+        <mxGeometry y="512" width="340" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_scraped_queue_created_at" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; created_at &lt;font color=&quot;#94a3b8&quot;&gt;(timestamp)&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_scraped_queue">
+        <mxGeometry y="536" width="340" height="24" as="geometry" />
+      </mxCell>
+
+    <mxCell id="table_system_logs" value="&lt;b&gt;SYSTEM_LOGS&lt;/b&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;align=center;fontSize=13;fillColor=#1e293b;strokeColor=#64748b;fontColor=#ffffff;swimlaneFillColor=#0f172a;rounded=1;arcSize=8;shadow=1;" vertex="1" parent="1">
+      <mxGeometry x="400" y="720" width="280" height="248" as="geometry" />
+    </mxCell>
+
+      <mxCell id="col_system_logs_id" value="&lt;font color=&quot;#fbbf24&quot;&gt;&lt;b&gt;🔑 PK&lt;/b&gt;&lt;/font&gt; id &lt;font color=&quot;#94a3b8&quot;&gt;(int(11))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_system_logs">
+        <mxGeometry y="32" width="280" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_system_logs_action_type" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; action_type &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(50))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_system_logs">
+        <mxGeometry y="56" width="280" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_system_logs_admin_user" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; admin_user &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(100))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_system_logs">
+        <mxGeometry y="80" width="280" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_system_logs_details" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; details &lt;font color=&quot;#94a3b8&quot;&gt;(text)&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_system_logs">
+        <mxGeometry y="104" width="280" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_system_logs_target_id" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; target_id &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(100))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_system_logs">
+        <mxGeometry y="128" width="280" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_system_logs_target_category" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; target_category &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(50))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_system_logs">
+        <mxGeometry y="152" width="280" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_system_logs_status" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; status &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(30))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_system_logs">
+        <mxGeometry y="176" width="280" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_system_logs_ip_address" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; ip_address &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(45))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_system_logs">
+        <mxGeometry y="200" width="280" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_system_logs_created_at" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; created_at &lt;font color=&quot;#94a3b8&quot;&gt;(timestamp)&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_system_logs">
+        <mxGeometry y="224" width="280" height="24" as="geometry" />
+      </mxCell>
+
+    <mxCell id="table_team_members" value="&lt;b&gt;TEAM_MEMBERS&lt;/b&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;align=center;fontSize=13;fillColor=#4c1d95;strokeColor=#8b5cf6;fontColor=#ffffff;swimlaneFillColor=#0f172a;rounded=1;arcSize=8;shadow=1;" vertex="1" parent="1">
+      <mxGeometry x="760" y="90" width="320" height="464" as="geometry" />
+    </mxCell>
+
+      <mxCell id="col_team_members_id" value="&lt;font color=&quot;#fbbf24&quot;&gt;&lt;b&gt;🔑 PK&lt;/b&gt;&lt;/font&gt; id &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(50))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_team_members">
+        <mxGeometry y="32" width="320" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_team_members_name" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; name &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(100))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_team_members">
+        <mxGeometry y="56" width="320" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_team_members_designation" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; designation &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(150))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_team_members">
+        <mxGeometry y="80" width="320" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_team_members_codename" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; codename &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(50))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_team_members">
+        <mxGeometry y="104" width="320" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_team_members_role_category" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; role_category &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(50))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_team_members">
+        <mxGeometry y="128" width="320" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_team_members_avatar_badge" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; avatar_badge &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(30))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_team_members">
+        <mxGeometry y="152" width="320" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_team_members_photo_url" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; photo_url &lt;font color=&quot;#94a3b8&quot;&gt;(longtext)&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_team_members">
+        <mxGeometry y="176" width="320" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_team_members_highlight" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; highlight &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(200))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_team_members">
+        <mxGeometry y="200" width="320" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_team_members_bio" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; bio &lt;font color=&quot;#94a3b8&quot;&gt;(text)&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_team_members">
+        <mxGeometry y="224" width="320" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_team_members_key_contributions" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; key_contributions &lt;font color=&quot;#94a3b8&quot;&gt;(longtext)&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_team_members">
+        <mxGeometry y="248" width="320" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_team_members_tech_stack" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; tech_stack &lt;font color=&quot;#94a3b8&quot;&gt;(longtext)&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_team_members">
+        <mxGeometry y="272" width="320" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_team_members_rig_specs" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; rig_specs &lt;font color=&quot;#94a3b8&quot;&gt;(longtext)&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_team_members">
+        <mxGeometry y="296" width="320" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_team_members_fav_tip" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; fav_tip &lt;font color=&quot;#94a3b8&quot;&gt;(text)&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_team_members">
+        <mxGeometry y="320" width="320" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_team_members_github" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; github &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(255))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_team_members">
+        <mxGeometry y="344" width="320" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_team_members_linkedin" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; linkedin &lt;font color=&quot;#94a3b8&quot;&gt;(varchar(255))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_team_members">
+        <mxGeometry y="368" width="320" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_team_members_sort_order" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; sort_order &lt;font color=&quot;#94a3b8&quot;&gt;(int(11))&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_team_members">
+        <mxGeometry y="392" width="320" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_team_members_created_at" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; created_at &lt;font color=&quot;#94a3b8&quot;&gt;(timestamp)&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_team_members">
+        <mxGeometry y="416" width="320" height="24" as="geometry" />
+      </mxCell>
+
+      <mxCell id="col_team_members_updated_at" value="&lt;font color=&quot;#64748b&quot;&gt;&lt;b&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/b&gt;&lt;/font&gt; updated_at &lt;font color=&quot;#94a3b8&quot;&gt;(timestamp)&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;spacingRight=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;fontColor=#e2e8f0;" vertex="1" parent="table_team_members">
+        <mxGeometry y="440" width="320" height="24" as="geometry" />
+      </mxCell>
+
+  <mxCell id="rel_parts_builds" value="Selected Components (JSON)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#f59e0b;strokeWidth=2;dashed=1;fontColor=#fbbf24;fontSize=11;" edge="1" parent="1" source="table_pc_parts" target="table_saved_builds">
+    <mxGeometry relative="1" as="geometry" />
+  </mxCell>
+
+  <mxCell id="rel_scrape_parts" value="Approved Ingestion" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#ec4899;strokeWidth=2;dashed=1;fontColor=#f472b6;fontSize=11;" edge="1" parent="1" source="table_scraped_queue" target="table_pc_parts">
+    <mxGeometry relative="1" as="geometry" />
+  </mxCell>
+
+  <mxCell id="rel_admin_logs" value="Audit Log (admin_user)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#10b981;strokeWidth=2;fontColor=#34d399;fontSize=11;" edge="1" parent="1" source="table_admin_accounts" target="table_system_logs">
+    <mxGeometry relative="1" as="geometry" />
+  </mxCell>
+
+  <mxCell id="title_banner" value="&lt;h1 style=&quot;margin:0;font-size:22px;color:#38bdf8;&quot;&gt;BUILDLAB ARCHITECTURE — ENTITY RELATIONSHIP DIAGRAM&lt;/h1&gt;&lt;p style=&quot;margin:4px 0 0;font-size:12px;color:#94a3b8;&quot;&gt;Database: &lt;b style=&quot;color:#f8fafc;&quot;&gt;buildlab_db&lt;/b&gt; &amp;nbsp;|&amp;nbsp; Total Tables: &lt;b style=&quot;color:#34d399;&quot;&gt;7 Production Tables&lt;/b&gt; &amp;nbsp;|&amp;nbsp; Host: localhost:3306 (MySQL / XAMPP)&lt;/p&gt;" style="text;html=1;strokeColor=#0284c7;fillColor=#082f49;spacingLeft=16;spacingTop=8;spacingBottom=8;rounded=1;arcSize=10;whiteSpace=wrap;" vertex="1" parent="1">
+    <mxGeometry x="40" y="10" width="1040" height="60" as="geometry" />
+  </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

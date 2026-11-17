@@ -436,10 +436,102 @@ body.theme-light .mode-btn-free,
   color: #e11d48;
 }
 
-body.theme-light .mode-btn-free:hover,
-.theme-light .mode-btn-free:hover {
-  background: #e11d48;
-  color: #ffffff;
-  box-shadow: 0 4px 16px rgba(225, 29, 72, 0.25);
+/* ── UNIFIED COURSE CARD (NO NESTED CARDS) ── */
+.mode-selection-container.unified-course-card {
+  max-width: 520px;
+  padding: 2.25rem 2.25rem 2.5rem;
+  text-align: center;
+  position: relative;
+}
+
+.mode-course-icon-wrap {
+  width: 68px;
+  height: 68px;
+  margin: 0.5rem auto 1.25rem;
+  border-radius: 18px;
+  background: rgba(0, 229, 160, 0.1);
+  border: 1px solid rgba(0, 229, 160, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 25px rgba(0, 229, 160, 0.15);
+}
+
+.mode-course-emoji {
+  font-size: 2.2rem;
+}
+
+.mode-card-perks.clean-list {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem auto 1.75rem;
+  text-align: left;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mode-card-perks.clean-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: #cbd5e1;
+}
+
+.mode-card-perks.clean-list .perk-check {
+  color: #00e5a0;
+  font-weight: 800;
+  font-size: 0.95rem;
+  line-height: 1.3;
+}
+
+.mode-action-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 440px;
+  margin: 0 auto;
+}
+
+.mode-btn-secondary {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 0.86rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 6px 12px;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.mode-btn-secondary:hover {
+  color: #38bdf8;
+  text-decoration: underline;
+}
+
+/* Light theme support */
+body.theme-light .mode-course-icon-wrap,
+.theme-light .mode-course-icon-wrap {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+body.theme-light .mode-card-perks.clean-list li,
+.theme-light .mode-card-perks.clean-list li {
+  color: #334155;
+}
+
+body.theme-light .mode-btn-secondary,
+.theme-light .mode-btn-secondary {
+  color: #64748b;
+}
+
+body.theme-light .mode-btn-secondary:hover,
+.theme-light .mode-btn-secondary:hover {
+  color: #0284c7;
 }
 

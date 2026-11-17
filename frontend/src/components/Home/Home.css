@@ -1294,6 +1294,44 @@ body.theme-light .giant-bg-logo-img,
   margin: 1.5rem auto 0;
 }
 
+.hero-learner-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border-radius: 9999px;
+  background: rgba(0, 229, 160, 0.12);
+  border: 1px solid rgba(0, 229, 160, 0.35);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #00e5a0;
+  letter-spacing: 0.06em;
+  margin-bottom: 2px;
+  animation: fadeIn 0.4s ease-out;
+  backdrop-filter: blur(8px);
+}
+
+.hero-learner-status-badge .learner-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #00e5a0;
+  box-shadow: 0 0 8px #00e5a0;
+}
+
+.hud-start-build-btn.centered-start-btn.is-resume-mode {
+  background: linear-gradient(135deg, #00e5a0 0%, #059669 100%);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.45);
+  box-shadow: 0 0 42px rgba(0, 229, 160, 0.65), 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+
+.hud-start-build-btn.centered-start-btn.is-resume-mode:hover {
+  background: linear-gradient(135deg, #34d399 0%, #00e5a0 100%);
+  box-shadow: 0 0 55px rgba(0, 229, 160, 0.9), 0 14px 36px rgba(0, 0, 0, 0.7);
+  border-color: #ffffff;
+}
+
 .hero-legal-links {
   display: flex;
   align-items: center;

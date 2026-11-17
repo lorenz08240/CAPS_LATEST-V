@@ -23,6 +23,7 @@ import soundManager from "../../utilities/soundManager";
 
 const DEFAULT_CAMERAS = {
   composite: { pos: [-8.6, 2.9, 6.8], target: [-0.35, 0.05, 0.0], scale: 0.96 },
+  "assembly-lab": { pos: [-9.4, 3.2, 7.8], target: [0, 0, 0], scale: 0.94 },
   motherboard: { pos: [-7.4, 1.6, 5.2], target: [0, 0.15, 0], scale: 1.05 },
   cpu: { pos: [-5.8, 2.2, 5.2], target: [-0.15, 0.65, 0.25], scale: 0.96 },
   ram: { pos: [-4.6, 1.4, 3.8], target: [0, 0.1, 0], scale: 1.6 },
@@ -97,6 +98,7 @@ function CameraRig({
   zoomFactor,
   resetNonce,
   onUserZoomChange,
+  isPaused = false,
 }) {
   const { camera } = useThree();
   const controlsRef = useRef();
@@ -124,6 +126,7 @@ function CameraRig({
   }, [specimenKey, activeHotspot, rotationAngle, zoomFactor, resetNonce, preset]);
 
   useFrame((_, delta) => {
+    if (isPaused) return;
     const controls = controlsRef.current;
     if (!controls) return;
     if (isTransitioning.current) {
@@ -158,7 +161,7 @@ function CameraRig({
   );
 }
 
-function SignalFlowBeams({ specimenKey, visible }) {
+function SignalFlowBeams({ specimenKey, visible, isPaused = false }) {
   const dotRef1 = useRef();
   const dotRef2 = useRef();
   const dotRef3 = useRef();
@@ -194,7 +197,7 @@ function SignalFlowBeams({ specimenKey, visible }) {
   }, [specimenKey]);
 
   useFrame(({ clock }) => {
-    if (!visible) return;
+    if (isPaused || !visible) return;
     const t = (clock.getElapsedTime() * 0.65) % 1;
     const refs = [dotRef1, dotRef2, dotRef3];
     paths.forEach((pts, idx) => {
@@ -242,44 +245,140 @@ function StageSpecimen({
   selectedHotspotId,
   showHotspots,
   onSelectHotspot,
+  isExploded = false,
+  isPaused = false,
 }) {
-  const isComposite = specimenKey === "composite";
+  const isComposite = specimenKey === "composite" || specimenKey === "assembly-lab";
   const stageScale = (DEFAULT_CAMERAS[specimenKey] || DEFAULT_CAMERAS.motherboard).scale;
+
+  // Smooth exploded interpolation ratio
+  const explodeRatioRef = useRef(0);
+  const [explodeRatio, setExplodeRatio] = useState(0);
+
+  useFrame((_, delta) => {
+    if (isPaused) return;
+    const target = isExploded ? 1.0 : 0.0;
+    const next = THREE.MathUtils.damp(explodeRatioRef.current, target, 7, delta);
+    explodeRatioRef.current = next;
+    if (Math.abs(next - explodeRatio) > 0.015) {
+      setExplodeRatio(next);
+    }
+  });
+
+  const ex = explodeRatio;
 
   return (
     <group scale={[stageScale, stageScale, stageScale]}>
       {isComposite && (
         <group>
+          {/* Motherboard Base */}
           <ComponentModels3D
             part={{ category: "motherboard", name: selectedPartName || "ATX Reference Board", targetPosition: [0, 0, 0] }}
             rgbColor="#00A896"
             enableHighlight={false}
           />
-          {/* Embedded CPU chip visual on socket */}
-          <mesh position={[-0.14, 1.4, -0.6]}>
-            <boxGeometry args={[0.06, 0.95, 0.95]} />
-            <meshStandardMaterial color="#e2e8f0" metalness={0.92} roughness={0.18} />
-          </mesh>
-          {/* Embedded RAM sticks */}
-          <group position={[-0.12, 1.4, 0.8]}>
+
+          {/* Embedded / Floating CPU on socket */}
+          <group position={[-0.14 - 1.2 * ex, 1.4 + 0.25 * ex, -0.6]}>
+            <mesh>
+              <boxGeometry args={[0.06, 0.95, 0.95]} />
+              <meshStandardMaterial color="#e2e8f0" metalness={0.92} roughness={0.18} />
+            </mesh>
+            {/* Cooler Assembly hovering above CPU when exploded */}
+            {ex > 0.1 && (
+              <group position={[-1.6 * ex, 0.3 * ex, 0]}>
+                <mesh>
+                  <boxGeometry args={[0.3, 1.1, 1.1]} />
+                  <meshStandardMaterial color="#64748b" metalness={0.8} roughness={0.2} />
+                </mesh>
+                <mesh position={[-0.18, 0, 0]}>
+                  <cylinderGeometry args={[0.45, 0.45, 0.06, 16]} />
+                  <meshStandardMaterial color="#0f172a" />
+                </mesh>
+              </group>
+            )}
+          </group>
+
+          {/* Embedded / Floating RAM sticks in DIMM slots A2 / B2 */}
+          <group position={[-0.12, 1.4 + 0.35 * ex, 0.8 + 1.2 * ex]}>
             <ComponentModels3D
               part={{ category: "ram", name: "DDR5 Dual-Channel Kit", targetPosition: [0, 0, 0] }}
               rgbColor="#00A896"
               enableHighlight={false}
             />
           </group>
-          {/* Embedded NVMe SSD */}
-          <group position={[-0.12, 0.35, -0.6]}>
+
+          {/* Embedded / Floating NVMe SSD */}
+          <group position={[-0.12 - 0.7 * ex, 0.35 + 0.45 * ex, -0.6]}>
             <ComponentModels3D
               part={{ category: "storage", name: "PCIe 4.0 M.2 NVMe", targetPosition: [0, 0, 0] }}
               rgbColor="#00A896"
               enableHighlight={false}
             />
           </group>
-          {/* Embedded GPU positioned outward along PCIe x16 */}
-          <group position={[-0.85, -0.7, -0.3]} scale={[0.72, 0.72, 0.72]}>
+
+          {/* Embedded / Floating GPU positioned outward along PCIe x16 slot */}
+          <group position={[-0.85 - 2.1 * ex, -0.7 - 0.5 * ex, -0.3]} scale={[0.72, 0.72, 0.72]}>
             <NepotatoGPU rgbColor="#00A896" />
           </group>
+
+          {/* Exploded Modular PSU in lower quadrant */}
+          {ex > 0.08 && (
+            <group position={[1.4 * ex, -2.4 * ex, 1.1 * ex]} scale={[0.85, 0.85, 0.85]}>
+              <PSUModel rgbColor="#00A896" isMounted={false} isStandalone={true} enableHighlight={false} />
+            </group>
+          )}
+
+          {/* Exploded Chassis frame behind board */}
+          {ex > 0.08 && (
+            <group position={[0, 0, -2.4 * ex]} scale={[0.88, 0.88, 0.88]}>
+              <GenericPCCase
+                rgbColor="#00A896"
+                caseColor="black"
+                glassMode="open"
+                explodedProgress={0.4}
+                enableHighlight={false}
+              />
+            </group>
+          )}
+
+          {/* Exploded Connection Beams */}
+          {ex > 0.25 && (
+            <group>
+              {/* CPU to socket line */}
+              <Line
+                points={[[-0.14 - 1.2 * ex, 1.4 + 0.25 * ex, -0.6], [-0.14, 1.4, -0.6]]}
+                color="#00e5a0"
+                lineWidth={1.5}
+                dashed
+                dashScale={10}
+              />
+              {/* RAM to DIMM slots line */}
+              <Line
+                points={[[-0.12, 1.4 + 0.35 * ex, 0.8 + 1.2 * ex], [-0.12, 1.4, 0.8]]}
+                color="#00e5a0"
+                lineWidth={1.5}
+                dashed
+                dashScale={10}
+              />
+              {/* GPU to PCIe x16 slot line */}
+              <Line
+                points={[[-0.85 - 2.1 * ex, -0.7 - 0.5 * ex, -0.3], [-0.85, -0.7, -0.3]]}
+                color="#00e5a0"
+                lineWidth={1.5}
+                dashed
+                dashScale={10}
+              />
+              {/* SSD to M.2 slot line */}
+              <Line
+                points={[[-0.12 - 0.7 * ex, 0.35 + 0.45 * ex, -0.6], [-0.12, 0.35, -0.6]]}
+                color="#00e5a0"
+                lineWidth={1.5}
+                dashed
+                dashScale={10}
+              />
+            </group>
+          )}
         </group>
       )}
 
@@ -333,7 +432,7 @@ function StageSpecimen({
         />
       )}
 
-      <SignalFlowBeams specimenKey={specimenKey} visible={showSignalFlow} />
+      <SignalFlowBeams specimenKey={specimenKey} visible={showSignalFlow} isPaused={isPaused} />
 
       {/* 3D Interactive Callout Hotspots matching learn-arduino-red.vercel.app */}
       {showHotspots &&
@@ -364,6 +463,7 @@ function StageSpecimen({
 
 export default function LearnHardwareStage({
   lessonKey,
+  specimenKey: propSpecimenKey,
   lessonType,
   lessonTitle,
   componentData,
@@ -372,8 +472,14 @@ export default function LearnHardwareStage({
   onSelectHotspotId,
   onOpenVideo,
   onRunDiagnosticForHotspot,
+  isExploded: propExploded,
+  onToggleExploded,
+  isPaused = false,
 }) {
-  const specimenKey = lessonType === "component" ? lessonKey : "composite";
+  const [internalExploded, setInternalExploded] = useState(false);
+  const isExploded = propExploded !== undefined ? propExploded : internalExploded;
+  const toggleExploded = onToggleExploded || (() => setInternalExploded((x) => !x));
+  const specimenKey = propSpecimenKey || (lessonType === "component" ? lessonKey : "composite");
   const hotspots = useMemo(() => {
     if (lessonType === "component" && componentData?.hotspots?.length) {
       return componentData.hotspots;
@@ -438,6 +544,7 @@ export default function LearnHardwareStage({
 
       {/* 3D Interactive Hardware Canvas */}
       <Canvas
+        frameloop={isPaused ? "demand" : "always"}
         camera={{ position: [-7.4, 1.8, 5.4], fov: 40, near: 0.1, far: 100 }}
         dpr={[1, 2]}
         className="workbench-canvas"
@@ -458,6 +565,8 @@ export default function LearnHardwareStage({
           selectedHotspotId={selectedHotspotId}
           showHotspots={showHotspots}
           onSelectHotspot={(hs) => onSelectHotspotId(hs ? hs.id : null)}
+          isExploded={isExploded}
+          isPaused={isPaused}
         />
 
         <CameraRig
@@ -467,6 +576,7 @@ export default function LearnHardwareStage({
           zoomFactor={zoomFactor}
           resetNonce={resetNonce}
           onUserZoomChange={(z) => setZoomedMode(z)}
+          isPaused={isPaused}
         />
       </Canvas>
 
@@ -643,6 +753,18 @@ export default function LearnHardwareStage({
           ⌖
         </button>
         <span className="wb-tool-sep" />
+        <button
+          type="button"
+          className={`wb-tool-btn ${isExploded ? "is-active" : ""}`}
+          onClick={() => {
+            try { soundManager.click(); } catch {}
+            toggleExploded();
+          }}
+          data-tooltip={isExploded ? "Collapse Rig (💥)" : "Explode 3D Subassemblies (💥)"}
+          aria-label="Toggle Exploded View"
+        >
+          💥
+        </button>
         <button
           type="button"
           className={`wb-tool-btn ${showSignalFlow ? "is-active" : ""}`}

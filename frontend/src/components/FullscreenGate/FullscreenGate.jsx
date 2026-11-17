@@ -266,15 +266,6 @@ export default function FullscreenGate({ children, requireFullscreen = true, dis
               type="button"
               className="fs-gate-btn-secondary"
               onClick={handleDismissToWindowed}
-              style={{
-                marginTop: "12px",
-                background: "transparent",
-                border: "none",
-                color: "#94a3b8",
-                fontSize: "0.82rem",
-                cursor: "pointer",
-                textDecoration: "underline",
-              }}
             >
               Continue in windowed view →
             </button>

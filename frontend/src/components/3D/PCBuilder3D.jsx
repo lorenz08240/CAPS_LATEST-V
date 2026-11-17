@@ -1,5 +1,5 @@
 import React, { useState, Suspense, useRef, useEffect, useMemo, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Grid, ContactShadows, Environment, Html } from '@react-three/drei';
 import * as THREE from 'three';
@@ -72,6 +72,115 @@ const BOB_MOUNT_FOCUS_LINES = {
     (name) => `PSU mounted and cables routed! ${name} provides clean, stable power. Hit Compatibility to verify your build!`,
     (name) => `Boom! ${name} is locked down. Every single hardware stage is assembled! She's ready to test!`
   ]
+};
+
+// Standardized Generic CSS Lab Components (Zero commercial brand lock-in)
+const GENERIC_CSS_COMPONENTS = {
+  case: {
+    id: 'learn-case-atx',
+    name: 'CSS Standard Mid-Tower ATX Chassis',
+    brand: 'CSS Standard Lab',
+    type: 'case',
+    form_factor: 'ATX Mid Tower',
+    img: '/assets/favicon.svg',
+    description: 'Dual-chamber enclosure with pre-installed standoffs, front mesh intake, and bottom PSU basement compartment.',
+    wattage: null,
+  },
+  motherboard: {
+    id: 'learn-mobo-atx',
+    name: 'CSS Standard ATX Motherboard (LGA1700)',
+    brand: 'CSS Standard Lab',
+    type: 'motherboard',
+    socket_type: 'LGA1700',
+    form_factor: 'ATX',
+    ddr_type: 'DDR5',
+    img: '/assets/favicon.svg',
+    description: 'Reference ATX motherboard with 9 standoff mounting points, keyed PCIe 4.0 x16 slot, and dual-channel DIMM lanes.',
+    wattage: '50W',
+  },
+  cpu: {
+    id: 'learn-cpu-generic',
+    name: 'Standard Desktop Multi-Core Processor',
+    brand: 'CSS Standard Lab',
+    type: 'cpu',
+    socket_type: 'LGA1700',
+    wattage: '65W',
+    img: '/assets/favicon.svg',
+    description: 'Desktop CPU with golden triangle orientation mark and Zero Insertion Force (ZIF) socket latching.',
+  },
+  ram: {
+    id: 'learn-ram-ddr5',
+    name: 'Dual-Channel Memory Kit (2× 16GB)',
+    brand: 'CSS Standard Lab',
+    type: 'ram',
+    capacity: '32GB (2× 16GB)',
+    ddr_type: 'DDR5',
+    img: '/assets/favicon.svg',
+    description: 'Unbuffered memory kit with keyed center notch. Mount into slots A2 and B2 for dual-channel bandwidth.',
+    wattage: '15W',
+  },
+  storage: {
+    id: 'learn-storage-nvme',
+    name: 'PCIe 4.0 x4 M.2 NVMe SSD (1TB)',
+    brand: 'CSS Standard Lab',
+    type: 'storage',
+    form_factor: 'M.2 2280',
+    capacity: '1TB',
+    img: '/assets/favicon.svg',
+    description: 'High-speed M.2 2280 NVMe SSD. Slide at 30° angle, press flush, and secure standoff screw.',
+    wattage: '7W',
+  },
+  gpu: {
+    id: 'learn-gpu-pcie',
+    name: 'Dedicated PCIe 4.0 x16 Graphics Card',
+    brand: 'CSS Standard Lab',
+    type: 'gpu',
+    wattage: '220W',
+    form_factor: 'Dual-Slot PCIe',
+    img: '/assets/favicon.svg',
+    description: 'Dedicated graphics card. Align with PCIe x16 slot, engage retention latch, and secure rear bracket.',
+  },
+  psu: {
+    id: 'learn-psu-gold',
+    name: '80 PLUS Gold 750W Modular Power Supply',
+    brand: 'CSS Standard Lab',
+    type: 'psu',
+    wattage: '750W',
+    form_factor: 'ATX',
+    img: '/assets/favicon.svg',
+    description: 'Standard ATX modular power supply. Slide into lower PSU basement compartment with fan facing ventilation intake.',
+  }
+};
+
+const LEARN_STEP_TIPS = {
+  case: {
+    rule: 'Place chassis on workbench. Verify all brass motherboard standoffs match ATX alignment before mounting the board.',
+    avoid: 'Never screw a motherboard directly against bare case sheet metal without standoffs (creates immediate electrical shorts).'
+  },
+  motherboard: {
+    rule: 'Align rear I/O shield with chassis cutouts, lower motherboard onto brass standoffs, and tighten in a gentle cross-pattern.',
+    avoid: 'Do not overtighten screws; excessive torque cracks internal copper PCB signal traces.'
+  },
+  cpu: {
+    rule: 'Lift socket retention arm. Align the golden triangle on the CPU corner with the socket dot. Zero insertion force required.',
+    avoid: 'Never force or drop the CPU diagonally. Forcing pins causes irreversible socket pin damage.'
+  },
+  ram: {
+    rule: 'Open DIMM slot clips. Align the keyed center notch with socket divider. Press firmly on both ends until clips snap shut.',
+    avoid: 'Populating adjacent slots A1/A2 instead of A2/B2 disables dual-channel memory bandwidth.'
+  },
+  storage: {
+    rule: 'Slide M.2 NVMe into M-key socket at a 30° angle until pins are seated, press down flush, and tighten the standoff screw.',
+    avoid: 'Do not forget to peel the protective plastic film off motherboard M.2 heatsink thermal pads.'
+  },
+  gpu: {
+    rule: 'Remove chassis PCIe slot covers. Align GPU gold fingers with primary PCIe x16 slot, click latch, and fasten rear bracket.',
+    avoid: 'Never move the PC case with an unfastened GPU installed; bracket sag can rip the PCIe slot off the board.'
+  },
+  psu: {
+    rule: 'Slide power supply into lower PSU basement shroud with intake fan facing filtered bottom vent. Fasten 4 rear screws.',
+    avoid: 'Never mix modular cables from different PSU brands or models; pinout assignments on the PSU end are non-standard.'
+  }
 };
 
 // Predefined snap positions inside the PC Case
@@ -240,8 +349,16 @@ function DropIndicator({ activeCategory, category, position, isPlaced }) {
 
 function PCBuilder3DWorkspace() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const searchParams = useMemo(() => new URLSearchParams(location.search), [location.search]);
+  const isLearnMode = searchParams.get('mode') === 'learn' || searchParams.get('learn') === 'true';
+
   const { currentBuild, allComponents, addComponent, removeComponent, resetBuild, loadDemoBuild } = useBuild();
   const { isDark = true } = useTheme() || {};
+
+  // POST diagnostic test state in Learn Mode
+  const [postStatus, setPostStatus] = useState('idle'); // 'idle' | 'testing' | 'passed'
+  const [showPostModal, setShowPostModal] = useState(false);
 
   // Workspace Viewport Controls State
   const [cameraPreset, setCameraPreset] = useState('isometric');
@@ -496,6 +613,46 @@ function PCBuilder3DWorkspace() {
   const scores = useMemo(() => calculateScores(currentBuild), [currentBuild]);
   const activeCategory = buildSteps[activeStep]?.key || 'case';
 
+  // Run POST diagnostic test in Learn Mode
+  const handleRunPOSTTest = useCallback(() => {
+    if (placedParts.length < 7) {
+      showToast('All 7 hardware stages must be assembled before running POST test.');
+      return;
+    }
+    setPostStatus('testing');
+    playSound('click');
+    showToast('⚡ Running Power-On Self-Test (POST)...');
+
+    setTimeout(() => {
+      playSound('install');
+      setPostStatus('passed');
+      setShowPostModal(true);
+      setBob3DSpeech("POST OK! All 7 status LEDs green. Zero pin faults detected. Practical Lab 7.2 Complete!");
+
+      try {
+        let email = null;
+        try {
+          const u = JSON.parse(localStorage.getItem('user') || '{}');
+          email = u?.email || null;
+        } catch {}
+
+        const keysToUpdate = ['buildlab.learn.progress.v1'];
+        if (email) keysToUpdate.push(`buildlab.learn.progress.${email}`);
+
+        keysToUpdate.forEach((k) => {
+          try {
+            const raw = localStorage.getItem(k);
+            const list = raw ? JSON.parse(raw) : [];
+            if (Array.isArray(list) && !list.includes('7.2-hands-on-assembly')) {
+              list.push('7.2-hands-on-assembly');
+              localStorage.setItem(k, JSON.stringify(list));
+            }
+          } catch {}
+        });
+      } catch {}
+    }, 1600);
+  }, [placedParts.length, soundEnabled]);
+
   // Check if a stage is locked based on progression requirements
   const isStageLocked = (stepKey) => {
     if (buildMode === 'free') return false;
@@ -659,11 +816,17 @@ function PCBuilder3DWorkspace() {
   };
 
   // Category filter
-  const currentCategoryComponents = allComponents[activeCategory] || [];
-  const filteredComponents = currentCategoryComponents.filter((comp) => {
-    const s = searchQuery.toLowerCase();
-    return (comp.name || '').toLowerCase().includes(s) || (comp.brand || '').toLowerCase().includes(s);
-  });
+  const filteredComponents = useMemo(() => {
+    if (isLearnMode) {
+      const genericComp = GENERIC_CSS_COMPONENTS[activeCategory];
+      return genericComp ? [genericComp] : [];
+    }
+    const currentCategoryComponents = allComponents[activeCategory] || [];
+    return currentCategoryComponents.filter((comp) => {
+      const s = searchQuery.toLowerCase();
+      return (comp.name || '').toLowerCase().includes(s) || (comp.brand || '').toLowerCase().includes(s);
+    });
+  }, [isLearnMode, activeCategory, allComponents, searchQuery]);
 
   // RGB Palette presets
   const RGB_PRESETS = [
@@ -679,9 +842,15 @@ function PCBuilder3DWorkspace() {
     <div className="pc-builder-workspace cyber">
       <header className="workspace-header">
         <div className="header-left">
-          <button className="back-build-btn" onClick={() => navigate('/build')} title="Return to 2D Component Configurator">
-            ← Back to Build
-          </button>
+          {isLearnMode ? (
+            <button className="back-build-btn learn-mode-back" onClick={() => navigate('/learn')} title="Return to CSS Hardware Curriculum">
+              ← Back to Learn Hardware
+            </button>
+          ) : (
+            <button className="back-build-btn" onClick={() => navigate('/build')} title="Return to 2D Component Configurator">
+              ← Back to Build
+            </button>
+          )}
           <div className="workspace-brand-wrap">
             <div className="system-logo-mini" title="BuildLab System Logo (Canva 1000x1000 asset pending)">
               <img
@@ -710,8 +879,8 @@ function PCBuilder3DWorkspace() {
               </div>
             </div>
             <div className="workspace-title-box">
-              <span className="workspace-tag">HARDWARE SIMULATION</span>
-              <h1 className="workspace-title">BuildLab 3D Studio</h1>
+              <span className="workspace-tag">{isLearnMode ? 'CSS CAPSTONE LAB • TOPIC 7.2' : 'HARDWARE SIMULATION'}</span>
+              <h1 className="workspace-title">{isLearnMode ? 'Virtual PC Assembly Lab' : 'BuildLab 3D Studio'}</h1>
             </div>
           </div>
         </div>
@@ -732,22 +901,28 @@ function PCBuilder3DWorkspace() {
           <div className="metric-divider"></div>
           <div className="metric-badge">
             <span className="metric-label">MODE</span>
-            <div className="mode-toggle-pill">
-              <button 
-                className={`mode-btn ${buildMode === 'guided' ? 'active' : ''}`}
-                onClick={() => setBuildMode('guided')}
-                title="Step-by-step lock-out progression"
-              >
-                Guided Lock
-              </button>
-              <button 
-                className={`mode-btn ${buildMode === 'free' ? 'active' : ''}`}
-                onClick={() => setBuildMode('free')}
-                title="Unlock all stages freely"
-              >
-                Free Mode
-              </button>
-            </div>
+            {isLearnMode ? (
+              <span className="metric-val" style={{ color: '#00e5ff', fontSize: '0.82rem' }}>
+                Standard CSS Lab
+              </span>
+            ) : (
+              <div className="mode-toggle-pill">
+                <button 
+                  className={`mode-btn ${buildMode === 'guided' ? 'active' : ''}`}
+                  onClick={() => setBuildMode('guided')}
+                  title="Step-by-step lock-out progression"
+                >
+                  Guided Lock
+                </button>
+                <button 
+                  className={`mode-btn ${buildMode === 'free' ? 'active' : ''}`}
+                  onClick={() => setBuildMode('free')}
+                  title="Unlock all stages freely"
+                >
+                  Free Mode
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
@@ -767,39 +942,66 @@ function PCBuilder3DWorkspace() {
             )}
           </button>
 
-          <button 
-            className="header-action-btn demo-btn" 
-            onClick={() => {
-              loadDemoBuild();
-              playSound('install');
-              showToast('Demo Gaming Rig Loaded (7/7 Parts Assembled)');
-              handleCameraPreset('whole');
-              setBob3DSpeech("Boom! Fully assembled demo gaming rig loaded up. Take her for a spin in 360°!");
-            }}
-            title="Instantly assemble full demo PC"
-          >
-            Load Demo Rig
-          </button>
+          {isLearnMode ? (
+            <>
+              {placedParts.length === 7 && (
+                <button 
+                  className="header-action-btn post-btn-glow"
+                  onClick={handleRunPOSTTest}
+                  title="Simulate Power-On Self-Test (POST)"
+                >
+                  ⚡ Run POST / Boot Test
+                </button>
+              )}
+              <button 
+                className="header-action-btn clear-btn" 
+                onClick={() => {
+                  playSound('click');
+                  setConfirmDisassemble(true);
+                }}
+                disabled={placedParts.length === 0}
+                title="Disassemble PC"
+              >
+                Disassemble
+              </button>
+            </>
+          ) : (
+            <>
+              <button 
+                className="header-action-btn demo-btn" 
+                onClick={() => {
+                  loadDemoBuild();
+                  playSound('install');
+                  showToast('Demo Gaming Rig Loaded (7/7 Parts Assembled)');
+                  handleCameraPreset('whole');
+                  setBob3DSpeech("Boom! Fully assembled demo gaming rig loaded up. Take her for a spin in 360°!");
+                }}
+                title="Instantly assemble full demo PC"
+              >
+                Load Demo Rig
+              </button>
 
-          <button 
-            className="header-action-btn compat-btn" 
-            onClick={() => navigate('/compatibility')}
-            title="Inspect Compatibility Matrix"
-          >
-            Compatibility
-          </button>
+              <button 
+                className="header-action-btn compat-btn" 
+                onClick={() => navigate('/compatibility')}
+                title="Inspect Compatibility Matrix"
+              >
+                Compatibility
+              </button>
 
-          <button 
-            className="header-action-btn clear-btn" 
-            onClick={() => {
-              playSound('click');
-              setConfirmDisassemble(true);
-            }}
-            disabled={placedParts.length === 0}
-            title="Disassemble PC"
-          >
-            Disassemble
-          </button>
+              <button 
+                className="header-action-btn clear-btn" 
+                onClick={() => {
+                  playSound('click');
+                  setConfirmDisassemble(true);
+                }}
+                disabled={placedParts.length === 0}
+                title="Disassemble PC"
+              >
+                Disassemble
+              </button>
+            </>
+          )}
         </div>
       </header>
 
@@ -856,24 +1058,35 @@ function PCBuilder3DWorkspace() {
                     <h4 className="active-stage-name">{buildSteps[activeStep]?.label}</h4>
                   </div>
                   <span className="inventory-count-badge">
-                    {filteredComponents.length} Models Available
+                    {isLearnMode ? 'Standardized CSS Component' : `${filteredComponents.length} Models Available`}
                   </span>
                 </div>
 
-                <div className="drawer-search-bar">
-                  <input
-                    type="text"
-                    placeholder={`Search ${buildSteps[activeStep]?.label}...`}
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="drawer-search-input"
-                  />
-                  {searchQuery && (
-                    <button className="search-clear-btn" onClick={() => setSearchQuery('')}>✕</button>
-                  )}
-                </div>
-
-
+                {isLearnMode ? (
+                  <div className="learn-step-brief-box">
+                    <div className="learn-step-rule">
+                      <span className="rule-badge">CSS PROCEDURE</span>
+                      <p>{LEARN_STEP_TIPS[activeCategory]?.rule}</p>
+                    </div>
+                    <div className="learn-step-avoid">
+                      <span className="avoid-badge">AVOID IN LAB</span>
+                      <p>{LEARN_STEP_TIPS[activeCategory]?.avoid}</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="drawer-search-bar">
+                    <input
+                      type="text"
+                      placeholder={`Search ${buildSteps[activeStep]?.label}...`}
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="drawer-search-input"
+                    />
+                    {searchQuery && (
+                      <button className="search-clear-btn" onClick={() => setSearchQuery('')}>✕</button>
+                    )}
+                  </div>
+                )}
 
                 <div className="catalog-cards-container">
                   {filteredComponents.length === 0 ? (
@@ -888,7 +1101,7 @@ function PCBuilder3DWorkspace() {
                       return (
                         <div 
                           key={comp.id} 
-                          className={`catalog-card ${isSelected ? 'installed-active' : ''} ${!isCompatible ? 'incompatible' : ''}`}
+                          className={`catalog-card ${isSelected ? 'installed-active' : ''} ${!isCompatible && !isLearnMode ? 'incompatible' : ''} ${isLearnMode ? 'learn-catalog-card' : ''}`}
                           draggable
                           onDragStart={(e) => handleDragStart(e, comp, activeCategory)}
                         >
@@ -901,13 +1114,18 @@ function PCBuilder3DWorkspace() {
                                 e.currentTarget.classList.add('img-fallback');
                               }}
                             />
-                            {isSelected && <span className="installed-chip">INSTALLED</span>}
-                            {!isCompatible && <span className="warning-chip">MISMATCH</span>}
+                            {isSelected && <span className="installed-chip">MOUNTED</span>}
+                            {!isCompatible && !isLearnMode && <span className="warning-chip">MISMATCH</span>}
+                            {isLearnMode && !isSelected && <span className="learn-drag-chip">DRAG TO CASE</span>}
                           </div>
 
                           <div className="card-body">
                             <div className="card-brand">{comp.brand || 'GENERIC'}</div>
                             <div className="card-name" title={comp.name}>{comp.name}</div>
+
+                            {comp.description && (
+                              <p className="learn-comp-desc">{comp.description}</p>
+                            )}
 
                             <div className="card-meta">
                               {comp.wattage && <span className="meta-tag">{comp.wattage}</span>}
@@ -917,7 +1135,7 @@ function PCBuilder3DWorkspace() {
                               {comp.form_factor && <span className="meta-tag">{comp.form_factor}</span>}
                             </div>
 
-                            {!isCompatible && (
+                            {!isCompatible && !isLearnMode && (
                               <div className="compatibility-note">{reason}</div>
                             )}
 
@@ -927,14 +1145,14 @@ function PCBuilder3DWorkspace() {
                                   className="action-btn remove-btn"
                                   onClick={() => handleRemovePart(activeCategory)}
                                 >
-                                  Uninstall
+                                  Disassemble Part
                                 </button>
                               ) : (
                                 <button 
-                                  className="action-btn install-btn"
+                                  className="action-btn install-btn learn-install-btn"
                                   onClick={() => handleInstallPart(comp, activeCategory)}
                                 >
-                                  Install
+                                  Mount into Case
                                 </button>
                               )}
                             </div>
@@ -942,6 +1160,18 @@ function PCBuilder3DWorkspace() {
                         </div>
                       );
                     })
+                  )}
+
+                  {isLearnMode && placedParts.length === 7 && (
+                    <div className="learn-ready-post-box">
+                      <div className="ready-post-header">
+                        <span className="status-dot-pulse">●</span> ALL 7 STAGES MOUNTED
+                      </div>
+                      <p>Every component is seated. Run the hardware POST test to verify power flow and complete the lab.</p>
+                      <button className="btn-run-post-prominent" onClick={handleRunPOSTTest}>
+                        ⚡ Run POST / Boot Test
+                      </button>
+                    </div>
                   )}
                 </div>
               </div>
@@ -1697,6 +1927,56 @@ function PCBuilder3DWorkspace() {
                 }}
               >
                 Yes, Disassemble
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showPostModal && (
+        <div className="learn-post-modal-backdrop" onClick={() => setShowPostModal(false)}>
+          <div className="learn-post-modal-card" onClick={(e) => e.stopPropagation()}>
+            <div className="post-modal-badge">
+              <span className="post-badge-dot">●</span> POST OK • SYSTEM BOOT VERIFIED
+            </div>
+            <h2 className="post-modal-title">Hardware Assembly Complete!</h2>
+            <p className="post-modal-desc">
+              All 7 standardized CSS PC hardware stages were mounted in the correct physical sequence without bent pins, standoff shorts, or loose retention clips.
+            </p>
+            <div className="post-diagnostics-grid">
+              <div className="post-led-chip green">
+                <span className="led-indicator">●</span>
+                <span className="led-name">CPU</span>
+                <span className="led-state">VERIFIED</span>
+              </div>
+              <div className="post-led-chip green">
+                <span className="led-indicator">●</span>
+                <span className="led-name">DRAM</span>
+                <span className="led-state">DUAL-CH OK</span>
+              </div>
+              <div className="post-led-chip green">
+                <span className="led-indicator">●</span>
+                <span className="led-name">VGA</span>
+                <span className="led-state">PCIe 4.0 OK</span>
+              </div>
+              <div className="post-led-chip green">
+                <span className="led-indicator">●</span>
+                <span className="led-name">BOOT</span>
+                <span className="led-state">NVMe READY</span>
+              </div>
+            </div>
+            <div className="post-modal-actions">
+              <button 
+                className="btn-modal-return-learn"
+                onClick={() => navigate('/learn')}
+              >
+                ← Return to Learn Hardware
+              </button>
+              <button 
+                className="btn-modal-inspect-rig"
+                onClick={() => setShowPostModal(false)}
+              >
+                Keep Inspecting 3D Rig
               </button>
             </div>
           </div>

@@ -160,14 +160,14 @@ function Navbar({ isPinned: propsIsPinned }) {
 
                 <div className="sidebar-account-info">
                   <div className="account-title-row">
-                    <span className="account-title-main" title={userProfile?.fullName || "Account"}>
-                      {userProfile?.fullName || "Account"}
+                    <span className="account-title-main" title={userProfile?.setupCompleted && userProfile?.fullName ? userProfile.fullName : "Guest / Open Lab"}>
+                      {userProfile?.setupCompleted && userProfile?.fullName ? userProfile.fullName : "Guest / Open Lab"}
                     </span>
-                    <span className="account-role-tag">{mode === "learn" ? "LEARN" : "EXPLORE"}</span>
+                    <span className="account-role-tag">{userProfile?.setupCompleted ? "LEARN" : "GUEST"}</span>
                   </div>
                   <div className="account-action-row">
-                    <span className="account-action-text">{userProfile?.setupCompleted ? "Verified Profile" : "Mode Setup"}</span>
-                    <span className="account-google-tag">{mode === "learn" ? "GOOGLE SYNC" : "OPEN LAB"}</span>
+                    <span className="account-action-text">{userProfile?.setupCompleted ? "Verified Profile" : "Connect Account"}</span>
+                    <span className="account-google-tag">{userProfile?.setupCompleted ? "GOOGLE SYNC" : "OPEN LAB"}</span>
                   </div>
                 </div>
 
@@ -204,7 +204,37 @@ function Navbar({ isPinned: propsIsPinned }) {
               </div>
 
               <div className="subpanel-menu-list">
-                {/* 1. Dedicated Settings Page Link */}
+                {/* 1. Student Dashboard */}
+                <Link
+                  to="/dashboard"
+                  className="subpanel-menu-item"
+                  onClick={(e) => {
+                    try { soundManager.click(); } catch {}
+                    closeSidebar();
+                    setAccountSubmenuOpen(false);
+                    if (location.pathname === "/learn" || location.pathname.startsWith("/learn")) {
+                      e.preventDefault();
+                      window.dispatchEvent(
+                        new CustomEvent("buildlab:toggle-dashboard", { detail: { open: true } })
+                      );
+                    }
+                  }}
+                  title="Open Student Dashboard & Course Status"
+                >
+                  <div className="subpanel-icon-box" style={{ background: "rgba(0, 229, 160, 0.12)", color: "#00e5a0" }}>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                    </svg>
+                  </div>
+                  <div className="subpanel-item-content">
+                    <span className="subpanel-item-label">Student Dashboard</span>
+                    <span className="subpanel-item-desc">Course status &amp; curriculum progress</span>
+                  </div>
+                  <span className="subpanel-nav-arrow">→</span>
+                </Link>
+
+                {/* 2. Dedicated Settings Page Link */}
                 <Link
                   to="/settings"
                   className="subpanel-menu-item"
@@ -246,12 +276,12 @@ function Navbar({ isPinned: propsIsPinned }) {
                     </svg>
                   </div>
                   <div className="subpanel-item-content">
-                    <span className="subpanel-item-label">{t("manageAccount", "Manage Account")}</span>
+                    <span className="subpanel-item-label">{userProfile?.setupCompleted ? t("manageAccount", "Manage Account") : "Connect Account"}</span>
                     <span className="subpanel-item-desc">
                       {userProfile?.setupCompleted ? "Profile & Google account" : "Connect Google Account"}
                     </span>
                   </div>
-                  <span className="subpanel-nav-badge">{userProfile?.setupCompleted ? "EDIT" : "SETUP"}</span>
+                  <span className="subpanel-nav-badge">{userProfile?.setupCompleted ? "EDIT" : "CONNECT"}</span>
                 </button>
 
                 {/* 3. Quick Language Selection */}
@@ -465,18 +495,6 @@ function Navbar({ isPinned: propsIsPinned }) {
                       </svg>
                       <span>Academy &amp; Learn</span>
                     </Link>
-
-                    {unlockedStages.includes("certificate") && (
-                      <Link 
-                        to="/certificate" 
-                        onClick={handleLinkClick} 
-                        className={`sidebar-link ${location.pathname === "/certificate" ? "active" : ""}`}
-                      >
-                        <span style={{ fontSize: "15px" }}>🎓</span>
-                        <span>Certificate</span>
-                        <span style={{ marginLeft: "auto", fontSize: "9px", fontWeight: "800", color: "#fbbf24", background: "rgba(251,191,36,0.15)", padding: "2px 6px", borderRadius: "4px" }}>VERIFIED</span>
-                      </Link>
-                    )}
 
                     <Link 
                       to="/about" 

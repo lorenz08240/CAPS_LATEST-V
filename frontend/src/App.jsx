@@ -28,6 +28,7 @@ import Brands from "./components/Brands/Brands";
 import LegalPage from "./components/Legal/LegalPage";
 import SettingsPage from "./components/Settings/SettingsPage";
 import PCBuilder3D from "./components/3D/PCBuilder3D";
+import StudentDashboard from "./components/Dashboard/StudentDashboard";
 import FullscreenGate from "./components/FullscreenGate/FullscreenGate";
 import Preloader from "./components/Home/Preloader";
 import CookieConsent from "./components/Navigation/CookieConsent";
@@ -180,12 +181,24 @@ function AppContent() {
               path="/certificate"
               element={
                 <MotionPage routeKey="/certificate">
-                  <LearnModeGuard requiredStage="certificate" featureName="Official Certification">
+                  <LearnModeGuard requiredStage="learn" featureName="Official Certification">
                     <CertificationPage />
                   </LearnModeGuard>
                 </MotionPage>
               }
             />
+
+            <Route
+              path="/dashboard"
+              element={
+                <MotionPage routeKey="/dashboard">
+                  <LearnModeGuard requiredStage="learn" featureName="Student Dashboard">
+                    <StudentDashboard />
+                  </LearnModeGuard>
+                </MotionPage>
+              }
+            />
+            <Route path="/account" element={<Navigate to="/dashboard" replace />} />
 
             <Route path="/brands" element={<MotionPage routeKey="/brands"><Brands /></MotionPage>} />
 

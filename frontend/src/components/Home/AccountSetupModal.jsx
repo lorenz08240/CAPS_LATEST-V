@@ -238,7 +238,6 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
     unlockStage("compatibility");
     unlockStage("learn");
     unlockStage("studio");
-    unlockStage("certificate");
 
     // Save complete student identity to localStorage.user so all app parts recognize them immediately
     try {
@@ -338,7 +337,7 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
             </div>
             <h2 className="account-title">Student Certification Profile</h2>
             <p className="account-subtitle">
-              Sign in with your Google account to unlock the full 6-module curriculum, track progress across all 19 topics, and earn your verified PTC-IICT E-Certificate.
+              Sign in with Google to save your PC builds, track lesson progress, and earn an official PTC-IICT certificate.
             </p>
 
             {error && <div className="account-error-alert">{error}</div>}
@@ -385,12 +384,12 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
                   setStep("tester_email");
                 }}
               >
-                🧪 Using another Google account as a tester? Click to enter your Gmail &rarr;
+                🧪 Enter tester email manually &rarr;
               </button>
             </div>
 
             <p className="account-trust-note">
-              🔒 We only access your basic Google identity to save your custom rig builds and Academy certificate. No private drive data requested.
+              🔒 We only access your basic Google profile (name and email) to issue your certificate. No private drive data requested.
             </p>
             <div className="account-legal-links">
               <Link to="/privacy" onClick={onClose}>Privacy Policy</Link>
@@ -494,7 +493,7 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
 
             <h3 className="details-heading">Enter Your Legal Name</h3>
             <p className="details-sub">
-              Please enter your full legal name exactly as you wish it to appear on your verified Certificate of Completion and school submission records:
+              Enter your full legal name as you want it to appear on your verified Certificate of Completion:
             </p>
 
             {error && <div className="account-error-alert">{error}</div>}

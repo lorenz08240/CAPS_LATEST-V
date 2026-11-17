@@ -102,8 +102,21 @@ function Home() {
   const [isScrolledDown, setIsScrolledDown] = useState(false);
   const [startBuildRequested, setStartBuildRequested] = useState(false);
   const leftColRef = useRef(null);
+  const hasClickedBuildRef = useRef(hasSessionUnlockedBuild);
 
-  const activeContext = HERO_DYNAMIC_CONTEXTS[activeModel] || HERO_DYNAMIC_CONTEXTS.case;
+  const isStudentSignedIn = Boolean(
+    userProfile && (userProfile.setupCompleted || userProfile.email || userProfile.fullName) && (userProfile.fullName || userProfile.email)
+  );
+
+  const unlockBuildScroll = useCallback(() => {
+    hasClickedBuildRef.current = true;
+    hasSessionUnlockedBuild = true;
+  }, []);
+
+  const rawContext = HERO_DYNAMIC_CONTEXTS[activeModel] || HERO_DYNAMIC_CONTEXTS.case;
+  const activeContext = (activeModel === "cpu" && isStudentSignedIn)
+    ? { ...rawContext, btnLabel: "RESUME LEARNING NOW" }
+    : rawContext;
 
   // Seamlessly transition left editorial context in sync with 3D model rotation
   useEffect(() => {
@@ -153,6 +166,7 @@ function Home() {
   const handleStartBuildTrigger = () => {
     // Always present the 2 Mode Selection Cards on START BUILD so the user can choose or switch modes
     try { soundManager.click(); } catch { }
+    unlockBuildScroll();
     setShowModeCards(true);
   };
 
@@ -407,25 +421,34 @@ function Home() {
               </div>
             </div>
 
-            {/* Centered START COURSE Action Button */}
+            {/* Centered START / RESUME COURSE Action Button */}
             <div className="cyber-hero-center-action">
+              {isStudentSignedIn && (
+                <div className="hero-learner-status-badge">
+                  <span className="learner-dot" />
+                  <span>Welcome back, {userProfile.fullName || "Student"} • Grade 11 CSS Track</span>
+                </div>
+              )}
               <button
                 type="button"
-                className="hud-start-build-btn centered-start-btn"
+                className={`hud-start-build-btn centered-start-btn ${isStudentSignedIn ? "is-resume-mode" : ""}`}
                 onClick={(e) => {
                   e.preventDefault();
                   try { soundManager.click(); } catch {}
-                  // If user is already set up in Learn mode, go directly to Learn page
-                  if (mode === "learn" && (userProfile?.fullName || userProfile?.email)) {
+                  unlockBuildScroll();
+                  // If user is already set up in Learn mode or has an active student profile, go directly to Learn page
+                  if (isStudentSignedIn || (mode === "learn" && (userProfile?.fullName || userProfile?.email))) {
                     navigate('/learn');
                     return;
                   }
                   // Otherwise open the student certification track modal
                   setShowModeCards(true);
                 }}
-                title="Start Course"
+                title={isStudentSignedIn ? "Resume Course & Return to Learn" : "Start Course"}
               >
-                <span className="btn-label">START COURSE</span>
+                <span className="btn-label">
+                  {isStudentSignedIn ? "RESUME COURSE" : "START COURSE"}
+                </span>
                 <span className="btn-arrow">&rarr;</span>
               </button>
               <div className="hero-legal-links">

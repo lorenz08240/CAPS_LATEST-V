@@ -11,13 +11,56 @@ export default function LearnModeGuard({ children, requiredStage, featureName = 
   const navigate = useNavigate();
 
   const [showAccountModal, setShowAccountModal] = useState(false);
+  const [isGuestPreview, setIsGuestPreview] = useState(() => {
+    try {
+      return sessionStorage.getItem("buildlab_guest_preview") === "true";
+    } catch {
+      return false;
+    }
+  });
 
-  const isAllowed = canAccessPath(location.pathname);
+  const hasAccount = Boolean(
+    userProfile && (userProfile.fullName || userProfile.email) && (userProfile.setupCompleted || userProfile.email || userProfile.fullName)
+  );
+
+  const isCourseRoute =
+    location.pathname.startsWith("/learn") ||
+    location.pathname.startsWith("/certificate") ||
+    location.pathname.startsWith("/dashboard") ||
+    location.pathname.startsWith("/account");
+
+  // Helper to check stage unlock from state or local storage
+  const searchParams = new URLSearchParams(location.search);
+  const isLearnModeLab = searchParams.get('mode') === 'learn' || searchParams.get('learn') === 'true';
+
+  const isStageUnlocked = (key) => {
+    if (key === "3d-builder" || key === "studio" || key === "3d") {
+      if (isLearnModeLab) return true;
+      if (unlockedStages.includes("3d-builder") || unlockedStages.includes("studio") || unlockedStages.includes("3d")) return true;
+    }
+    if (unlockedStages.includes(key)) return true;
+    try {
+      const saved = JSON.parse(localStorage.getItem("buildlab_learn_unlocked_stages") || "[]");
+      if (Array.isArray(saved)) {
+        if (key === "3d-builder" || key === "studio" || key === "3d") {
+          return saved.includes("3d-builder") || saved.includes("studio") || saved.includes("3d");
+        }
+        return saved.includes(key);
+      }
+      return false;
+    } catch {
+      return false;
+    }
+  };
+
+  const isStageAllowed =
+    !requiredStage ||
+    (requiredStage === "learn" ? (hasAccount || isGuestPreview) : isStageUnlocked(requiredStage));
+
+  const isAllowed = ((canAccessPath(location.pathname) || (location.pathname.startsWith("/3d-builder") && isLearnModeLab) || (location.pathname.startsWith("/learn") && isGuestPreview))) && isStageAllowed;
   if (isAllowed) {
     return children;
   }
-
-  const hasAccount = Boolean(userProfile && userProfile.setupCompleted && userProfile.email);
 
   // Determine milestone destination
   let nextAction = "Return to 2D Build Station to select all 7 PC parts.";
@@ -80,13 +123,13 @@ export default function LearnModeGuard({ children, requiredStage, featureName = 
 
             <h1 className="guard-title">Sign In to Access {featureName}</h1>
             <p className="guard-reason">
-              The Academic Hardware Syllabus tracks your syllabus module progression, records real-time bus probe diagnostics, and issues an accredited completion certificate in your verified student name.
+              Sign in with Google to save your lesson progress, take interactive quizzes, and earn an accredited PTC-IICT certificate. Or preview the lessons directly as a guest.
             </p>
 
             <div className="guard-account-benefits">
               <div className="benefit-item">
                 <span className="benefit-bullet">✓</span>
-                <span>Automatic Google Cloud sync for rig builds & test telemetry</span>
+                <span>Automatic Google Cloud sync for lesson progress & custom builds</span>
               </div>
               <div className="benefit-item">
                 <span className="benefit-bullet">✓</span>
@@ -94,7 +137,7 @@ export default function LearnModeGuard({ children, requiredStage, featureName = 
               </div>
               <div className="benefit-item">
                 <span className="benefit-bullet">✓</span>
-                <span>B.O.B. Interactive Hardware Guide companion</span>
+                <span>Guided interactive 3D assembly workbench & companion</span>
               </div>
             </div>
 
@@ -111,10 +154,27 @@ export default function LearnModeGuard({ children, requiredStage, featureName = 
               <button
                 type="button"
                 className="guard-btn-secondary"
-                onClick={handleSwitchToExplore}
-                title="Browse freely without progress saving or certification"
+                onClick={() => {
+                  try { soundManager.click(); } catch {}
+                  try {
+                    sessionStorage.setItem("buildlab_guest_preview", "true");
+                  } catch {}
+                  setIsGuestPreview(true);
+                }}
+                title="Preview lessons without saving progress"
               >
-                <span>Explore Workbench as Guest</span>
+                <span>PREVIEW LESSONS AS GUEST &rarr;</span>
+              </button>
+
+              <button
+                type="button"
+                className="guard-link-home"
+                onClick={() => {
+                  try { soundManager.click(); } catch {}
+                  navigate('/');
+                }}
+              >
+                &larr; Return to Home
               </button>
             </div>
           </>
@@ -197,17 +257,20 @@ export default function LearnModeGuard({ children, requiredStage, featureName = 
                 className="guard-btn-primary guard-btn-milestone"
                 onClick={handleGoToCurrentStage}
               >
-                <span>🚀 START 2D ASSEMBLY (STAGE 01)</span>
+                <span>🚀 GO TO ACTIVE STAGE</span>
                 <span className="btn-arrow">&rarr;</span>
               </button>
 
               <button
                 type="button"
                 className="guard-btn-secondary"
-                onClick={handleSwitchToExplore}
-                title="Switch to Explore Mode to preview this stage immediately without losing your student profile"
+                onClick={() => {
+                  try { soundManager.click(); } catch {}
+                  navigate('/build');
+                }}
+                title="Return to the 2D Builder"
               >
-                <span>👁️ PREVIEW ACADEMY (EXPLORE PREVIEW)</span>
+                <span>&larr; RETURN TO 2D BUILD STATION</span>
               </button>
             </div>
           </>

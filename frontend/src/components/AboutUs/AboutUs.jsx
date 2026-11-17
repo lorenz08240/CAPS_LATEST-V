@@ -358,6 +358,7 @@ export default function AboutUs() {
   const [selectedMember, setSelectedMember] = useState(null);
   const [teamMembers, setTeamMembers] = useState(TEAM_MEMBERS);
   const aboutPageRef = useRef(null);
+  const ambientGlowRef = useRef(null);
 
   // WhiteHats Built Projects Showcase states
   const [projectFilter, setProjectFilter] = useState("all");
@@ -410,26 +411,46 @@ export default function AboutUs() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [selectedProject, selectedMember]);
 
-  // GSAP ScrollTrigger bidirectional cinematic reveals (Down & Up scroll)
+  // GSAP ScrollTrigger bidirectional cinematic reveals (matching Home and Compatibility)
   useEffect(() => {
     if (!aboutPageRef.current) return;
 
     const ctx = gsap.context(() => {
-      // 1. Hero Intel Section
+      // Ambient lighting parallax scrub (matching PlatformServices in Home)
+      if (ambientGlowRef.current) {
+        gsap.to(ambientGlowRef.current, {
+          yPercent: 35,
+          ease: "none",
+          scrollTrigger: {
+            trigger: aboutPageRef.current,
+            start: "top top",
+            end: "bottom bottom",
+            scrub: 1.2,
+          },
+        });
+      }
+
+      // 1. Meet the Developers Hero Section Reveal & Scroll Adaptation
       ScrollTrigger.create({
-        trigger: ".about-hero-section",
+        trigger: ".meet-devs-hero",
         start: "top 90%",
-        onEnter: () =>
-          gsap.to(".about-hero-section", {
+        onEnter: () => {
+          gsap.to(".meet-devs-hero", {
             opacity: 1,
             y: 0,
             scale: 1,
-            duration: 0.7,
-            ease: "power2.out",
+            duration: 0.8,
+            ease: "power3.out",
             overwrite: "auto",
-          }),
+          });
+          gsap.fromTo(
+            ".meet-devs-main-title",
+            { opacity: 0, y: 35, scale: 0.96 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.85, ease: "power3.out", overwrite: "auto" }
+          );
+        },
         onLeaveBack: () =>
-          gsap.to(".about-hero-section", {
+          gsap.to(".meet-devs-hero", {
             opacity: 0,
             y: 25,
             duration: 0.35,
@@ -438,8 +459,60 @@ export default function AboutUs() {
           }),
       });
 
-      // 2. Team Members Cards Batch (Smooth staggered reveal; reverses only on scroll-back-up)
-      ScrollTrigger.batch(".team-member-card, .about-member-card", {
+      // 2. Team Members Cards Batch (Smooth staggered reveal; reverses on scroll-back-up)
+      ScrollTrigger.batch(".team-member-card", {
+        interval: 0.08,
+        batchMax: 3,
+        start: "top 86%",
+        onEnter: (batch) =>
+          gsap.to(batch, {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            stagger: 0.1,
+            duration: 0.75,
+            ease: "power3.out",
+            overwrite: "auto",
+          }),
+        onLeaveBack: (batch) =>
+          gsap.to(batch, {
+            opacity: 0,
+            y: 35,
+            scale: 0.97,
+            duration: 0.35,
+            ease: "power2.in",
+            overwrite: "auto",
+          }),
+      });
+
+      // 3. WhiteHats Ecosystem Bento Tiles Batch
+      ScrollTrigger.batch(".bento-tile", {
+        interval: 0.08,
+        batchMax: 3,
+        start: "top 86%",
+        onEnter: (batch) =>
+          gsap.to(batch, {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            stagger: 0.1,
+            duration: 0.75,
+            ease: "power3.out",
+            overwrite: "auto",
+          }),
+        onLeaveBack: (batch) =>
+          gsap.to(batch, {
+            opacity: 0,
+            y: 30,
+            scale: 0.98,
+            duration: 0.35,
+            ease: "power2.in",
+            overwrite: "auto",
+          }),
+      });
+
+      // 4. Institutional Project Cards Batch
+      ScrollTrigger.batch(".project-showcase-card", {
         interval: 0.06,
         batchMax: 3,
         start: "top 88%",
@@ -450,57 +523,6 @@ export default function AboutUs() {
             scale: 1,
             stagger: 0.08,
             duration: 0.65,
-            ease: "power2.out",
-            overwrite: "auto",
-          }),
-        onLeaveBack: (batch) =>
-          gsap.to(batch, {
-            opacity: 0,
-            y: 35,
-            scale: 0.96,
-            duration: 0.35,
-            ease: "power2.in",
-            overwrite: "auto",
-          }),
-      });
-
-      // 3. Showcase Flagship & Project Cards Batch
-      ScrollTrigger.batch(".flagship-atelier-card, .project-showcase-card, .manifesto-card, .showcase-flagship-card, .project-card", {
-        interval: 0.06,
-        batchMax: 3,
-        start: "top 88%",
-        onEnter: (batch) =>
-          gsap.to(batch, {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            stagger: 0.08,
-            duration: 0.65,
-            ease: "power2.out",
-            overwrite: "auto",
-          }),
-        onLeaveBack: (batch) =>
-          gsap.to(batch, {
-            opacity: 0,
-            y: 35,
-            scale: 0.96,
-            duration: 0.35,
-            ease: "power2.in",
-            overwrite: "auto",
-          }),
-      });
-
-      // 4. Origin & Tech Stack Sections
-      ScrollTrigger.batch(".origin-card, .arch-card, .stat-card, .tech-category-card", {
-        interval: 0.06,
-        batchMax: 3,
-        start: "top 88%",
-        onEnter: (batch) =>
-          gsap.to(batch, {
-            opacity: 1,
-            y: 0,
-            stagger: 0.06,
-            duration: 0.6,
             ease: "power2.out",
             overwrite: "auto",
           }),
@@ -508,6 +530,7 @@ export default function AboutUs() {
           gsap.to(batch, {
             opacity: 0,
             y: 30,
+            scale: 0.98,
             duration: 0.35,
             ease: "power2.in",
             overwrite: "auto",
@@ -516,26 +539,14 @@ export default function AboutUs() {
     }, aboutPageRef);
 
     return () => ctx.revert();
-  }, [teamMembers, projectFilter, filter]);
-
-  const filteredMembers = filter === "all" 
-    ? teamMembers 
-    : teamMembers.filter((m) => m.roleCategory === filter);
+  }, [teamMembers, projectFilter]);
 
   const filteredProjects = projectFilter === "all"
     ? WHITEHATS_PROJECTS
     : WHITEHATS_PROJECTS.filter((p) => p.category === projectFilter);
 
   const flagshipProject = WHITEHATS_PROJECTS.find((p) => p.id === "WH-SYS-01");
-  const showFlagship = (projectFilter === "all" || projectFilter === "labs") && flagshipProject;
-  const matrixProjects = showFlagship 
-    ? filteredProjects.filter((p) => p.id !== "WH-SYS-01") 
-    : filteredProjects;
-
-  const handleFilterClick = (cat) => {
-    try { soundManager.click(); } catch { }
-    setFilter(cat);
-  };
+  const matrixProjects = filteredProjects.filter((p) => p.id !== "WH-SYS-01");
 
   const handleOpenDossier = (member) => {
     try { soundManager.snap(); } catch { }
@@ -548,7 +559,6 @@ export default function AboutUs() {
   };
 
   const handleProjectFilterClick = (cat) => {
-    try { soundManager.snap(); } catch {}
     setProjectFilter(cat);
   };
 
@@ -562,126 +572,76 @@ export default function AboutUs() {
     setSelectedProject(null);
   };
 
-  // Luxury mouse-tracking spotlight for metallic chassis
+  // Dynamic 3D interactive tilt on pointer move (matching Home & PlatformServices)
   const handleCardMouseMove = (e) => {
     const card = e.currentTarget;
     const rect = card.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateX = ((y - centerY) / centerY) * -5;
+    const rotateY = ((x - centerX) / centerX) * 5;
+
     card.style.setProperty("--mouse-x", `${x}px`);
     card.style.setProperty("--mouse-y", `${y}px`);
+
+    gsap.to(card, {
+      rotateX,
+      rotateY,
+      duration: 0.3,
+      ease: "power2.out",
+      transformPerspective: 900,
+      overwrite: "auto",
+    });
   };
 
-  const handleCardHover = () => {
-    try { soundManager.interact(); } catch {}
+  const handleCardMouseLeave = (e) => {
+    const card = e.currentTarget;
+    gsap.to(card, {
+      rotateX: 0,
+      rotateY: 0,
+      duration: 0.5,
+      ease: "power2.out",
+      overwrite: "auto",
+    });
   };
 
   return (
     <div className="about-us-page" ref={aboutPageRef}>
       <GlobalHeader />
 
-      <div className="about-ambient-glow" aria-hidden="true" />
+      <div className="about-ambient-glow" ref={ambientGlowRef} aria-hidden="true" />
       <div className="about-grid-overlay" aria-hidden="true" />
 
       <div className="about-container">
-        {/* HERO INTEL SECTION */}
-        <section className="about-hero-section">
-          <div className="about-telemetry-badge">
+        {/* HERO INTEL SECTION / MEET THE DEVELOPERS (CENTERED WITH GSAP REVEAL) */}
+        <section className="about-hero-section meet-devs-hero">
+          <div className="about-telemetry-badge telemetry-badge-minimal">
             <span className="telemetry-live-dot" />
             <span className="telemetry-label">PATEROS TECHNOLOGICAL COLLEGE // WHITEHATS COLLECTIVE</span>
-            <span className="telemetry-bracket">[ DEPLOYED ]</span>
           </div>
 
-          <h1 className="about-hero-title">
-            THE ARCHITECTS BEHIND <span className="title-accent">BUILDLAB</span>
+          <h1 className="about-hero-title meet-devs-main-title">
+            MEET THE <span className="title-accent">DEVELOPERS</span>
           </h1>
 
-          <p className="about-hero-description">
-            BuildLab was conceived and engineered by five student developers and researchers known as the 
-            <strong> WhiteHats</strong> at Pateros Technological College. Our mission is to eliminate 
-            PC assembly intimidation through real-time 3D simulation while building reliable, modern software 
-            solutions that solve real-world operational bottlenecks for academic institutions.
+          <p className="meet-devs-lead">
+            The five student architects behind BuildLab and modern academic software solutions.
           </p>
-
-          <div className="about-stats-ribbon">
-            <div className="stat-card">
-              <span className="stat-num">05</span>
-              <span className="stat-label">ENGINEERS</span>
-              <span className="stat-sub">WhiteHats Team</span>
-            </div>
-            <div className="stat-divider">/</div>
-            <div className="stat-card">
-              <span className="stat-num">10+</span>
-              <span className="stat-label">SYSTEMS BUILT</span>
-              <span className="stat-sub">School &amp; Community</span>
-            </div>
-            <div className="stat-divider">/</div>
-            <div className="stat-card">
-              <span className="stat-num">100%</span>
-              <span className="stat-label">ZERO CONFLICT</span>
-              <span className="stat-sub">Logic Verification</span>
-            </div>
-            <div className="stat-divider">/</div>
-            <div className="stat-card">
-              <span className="stat-num">PTC</span>
-              <span className="stat-label">INSTITUTION</span>
-              <span className="stat-sub">College of ICT</span>
-            </div>
-          </div>
         </section>
 
-        {/* TEAM DOSSIER SECTION */}
+        {/* TEAM MEMBERS DIRECTORY (5 DEVELOPERS) */}
         <section className="about-team-section">
-          <div className="team-section-header">
-            <div className="team-header-left">
-              <span className="team-section-kicker">TEAM DIRECTORY</span>
-              <h2 className="team-section-heading">Meet the Developers</h2>
-            </div>
-
-            <div className="team-filter-buttons">
-              <button
-                type="button"
-                className={`filter-btn ${filter === "all" ? "active" : ""}`}
-                onClick={() => handleFilterClick("all")}
-              >
-                ALL ({teamMembers.length})
-              </button>
-              <button
-                type="button"
-                className={`filter-btn ${filter === "core" ? "active" : ""}`}
-                onClick={() => handleFilterClick("core")}
-              >
-                CORE &amp; 3D ({teamMembers.filter((m) => m.roleCategory === "core").length})
-              </button>
-              <button
-                type="button"
-                className={`filter-btn ${filter === "frontend" ? "active" : ""}`}
-                onClick={() => handleFilterClick("frontend")}
-              >
-                FRONTEND &amp; UX ({teamMembers.filter((m) => m.roleCategory === "frontend").length})
-              </button>
-              <button
-                type="button"
-                className={`filter-btn ${filter === "backend" ? "active" : ""}`}
-                onClick={() => handleFilterClick("backend")}
-              >
-                DOCS &amp; TESTING ({teamMembers.filter((m) => m.roleCategory === "backend").length})
-              </button>
-            </div>
-          </div>
-
           <div className="team-cards-grid">
-            {filteredMembers.map((member) => (
+            {teamMembers.map((member) => (
               <div
                 key={member.id}
                 className="team-member-card"
                 onClick={() => handleOpenDossier(member)}
+                onMouseMove={handleCardMouseMove}
+                onMouseLeave={handleCardMouseLeave}
               >
-                <div className="card-top-bar">
-                  <span className="member-id-tag">{member.id}</span>
-                  <span className="member-badge-pill">{member.avatarBadge}</span>
-                </div>
-
                 <div className="card-avatar-wrap">
                   <div className="avatar-photo-frame fb-profile-frame">
                     {(member.image || member.photoUrl || member.photo_url) ? (
@@ -706,29 +666,19 @@ export default function AboutUs() {
                       </svg>
                       <span className="fb-fallback-code">{member.codename.slice(0, 3)}</span>
                     </div>
-                    <span className="fb-active-dot" title="Active now" />
+                    <span className="fb-active-dot" title="Active developer" />
                   </div>
-                  <div className="avatar-glow-ring" />
                 </div>
 
                 <div className="card-main-meta">
+                  <span className="member-badge-pill">{member.avatarBadge}</span>
                   <h3 className="member-name">{member.name}</h3>
                   <p className="member-designation">{member.designation}</p>
-                  <span className="member-highlight-tag">{member.highlight}</span>
                 </div>
 
                 <p className="member-brief-bio">
                   {member.bio}
                 </p>
-
-                <div className="member-tech-pills">
-                  {member.techStack.slice(0, 3).map((tech, i) => (
-                    <span key={i} className="tech-tag">{tech}</span>
-                  ))}
-                  {member.techStack.length > 3 && (
-                    <span className="tech-tag-more">+{member.techStack.length - 3}</span>
-                  )}
-                </div>
 
                 <div className="card-footer-action">
                   <span className="action-hint">VIEW FULL PROFILE</span>
@@ -902,238 +852,218 @@ export default function AboutUs() {
           </div>
         )}
 
-        {/* ── WHITEHATS DEVELOPER CONSORTIUM & RESEARCH ATELIER ── */}
-        <section className="whitehats-showcase-section scroll-reveal-target">
-          {/* Company Identity Header Banner */}
-          <div 
-            className="whitehats-banner-card"
-            onMouseMove={handleCardMouseMove}
-          >
-            <div className="whitehats-banner-ambient-glow" aria-hidden="true" />
-            
-            <div className="whitehats-badge-row">
-              <span className="whitehats-tag-pill">WHITEHATS DEVELOPER CONSORTIUM</span>
-              <span className="whitehats-subtag">PATEROS TECHNOLOGICAL COLLEGE &bull; RESEARCH ATELIER</span>
-              <span className="whitehats-status-live">
-                <span className="status-live-beacon" />
-                ACTIVE DEPLOYMENT
-              </span>
+        {/* ── WHITEHATS ECOSYSTEM BENTO GRID ── */}
+        <section className="whitehats-bento-section">
+          <div className="bento-section-header">
+            <span className="bento-eyebrow">WHITEHATS ECOSYSTEM</span>
+            <h2 className="bento-main-heading">
+              BUILT FOR <span className="title-accent">ACADEMIC EXCELLENCE</span>
+            </h2>
+            <p className="bento-subhead">
+              Production-ready web architectures and simulation tools engineered for schools.
+            </p>
+          </div>
+
+          <div className="whitehats-bento-grid">
+            {/* BENTO TILE 1: FLAGSHIP BUILDLAB 3D ATELIER (2 Columns Wide) */}
+            {flagshipProject && (
+              <div 
+                className="bento-tile bento-hero-tile"
+                onMouseMove={handleCardMouseMove}
+                onMouseLeave={handleCardMouseLeave}
+              >
+                <div className="bento-tile-top">
+                  <div className="bento-badge-group">
+                    <span className="bento-badge-gold">{flagshipProject.id}</span>
+                    <span className="bento-badge-live">
+                      <span className="bento-live-dot" /> ACTIVE DEPLOYMENT
+                    </span>
+                  </div>
+                  <span className="bento-client-tag">{flagshipProject.targetClient}</span>
+                </div>
+
+                <div className="bento-hero-grid">
+                  <div className="bento-hero-left">
+                    <h3 className="bento-hero-title">{flagshipProject.title}</h3>
+                    <p className="bento-hero-desc">{flagshipProject.summary}</p>
+
+                    <div className="bento-hero-metrics">
+                      <div className="bento-metric-chip">
+                        <span className="chip-val">100%</span>
+                        <span className="chip-label">Socket Clearance Free</span>
+                      </div>
+                      <div className="bento-metric-chip">
+                        <span className="chip-val">7-Stage</span>
+                        <span className="chip-label">Interactive 3D Viewport</span>
+                      </div>
+                    </div>
+
+                    <div className="bento-hero-actions">
+                      <Link
+                        to={flagshipProject.actionLink || "/build"}
+                        className="bento-btn primary"
+                        onClick={() => { try { soundManager.click(); } catch {} }}
+                      >
+                        <span>LAUNCH 3D BUILDER</span>
+                        <span className="btn-arrow">&rarr;</span>
+                      </Link>
+                      <button
+                        type="button"
+                        className="bento-btn secondary"
+                        onClick={() => handleOpenBlueprint(flagshipProject)}
+                      >
+                        <span>INSPECT BLUEPRINT</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="bento-hero-right">
+                    <div className="bento-capability-panel">
+                      <span className="bento-panel-title">VERIFIED CAPABILITIES</span>
+                      <ul className="bento-checklist">
+                        <li>
+                          <span className="check-bullet">✓</span>
+                          <span>LGA1700 &amp; AM5 Pinout Clearance Engine</span>
+                        </li>
+                        <li>
+                          <span className="check-bullet">✓</span>
+                          <span>Modular PSU TDP &amp; Thermal Headroom</span>
+                        </li>
+                        <li>
+                          <span className="check-bullet">✓</span>
+                          <span>B.O.B. Interactive Audio Hardware Assistant</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* BENTO TILE 2: WHITEHATS CONSORTIUM (1 Column) */}
+            <div 
+              className="bento-tile bento-consortium-tile"
+              onMouseMove={handleCardMouseMove}
+              onMouseLeave={handleCardMouseLeave}
+            >
+              <div className="bento-tile-top">
+                <span className="bento-badge-cyan">STUDENT COLLECTIVE</span>
+              </div>
+              <h3 className="bento-tile-title">WhiteHats</h3>
+              <p className="bento-tile-desc">
+                Five student researchers at Pateros Technological College building focused, reliable web software for academic workflows.
+              </p>
+              <div className="bento-consortium-stats">
+                <div className="mini-stat">
+                  <span className="mini-num">05</span>
+                  <span className="mini-lbl">Engineers</span>
+                </div>
+                <div className="mini-stat">
+                  <span className="mini-num">10+</span>
+                  <span className="mini-lbl">Systems Built</span>
+                </div>
+                <div className="mini-stat">
+                  <span className="mini-num">PTC</span>
+                  <span className="mini-lbl">College of ICT</span>
+                </div>
+              </div>
             </div>
 
-            <div className="whitehats-banner-content">
-              <div className="whitehats-title-group">
-                <h2 className="whitehats-main-title">
-                  PRECISION DIGITAL INFRASTRUCTURE FOR <span className="whitehats-gold">ACADEMIC INSTITUTIONS</span>
-                </h2>
-                <p className="whitehats-summary-p">
-                  <strong>WhiteHats</strong> is a multidisciplinary consortium of five student developers and researchers from 
-                  Pateros Technological College. We engineer production-ready software architectures, 3D simulation platforms, 
-                  and automated campus workflows. Our core focus is eliminating manual paper bottlenecks, hardware assembly intimidation, 
-                  and fragmented administrative procedures across collegiate departments and technical laboratories.
-                </p>
+            {/* BENTO TILE 3: BUILT TO STANDARDS (1 Column) */}
+            <div 
+              className="bento-tile bento-standards-tile"
+              onMouseMove={handleCardMouseMove}
+              onMouseLeave={handleCardMouseLeave}
+            >
+              <div className="bento-tile-top">
+                <span className="bento-badge-emerald">STANDARDS &amp; RIGOR</span>
               </div>
+              <h3 className="bento-tile-title">Built to Standards</h3>
+              <p className="bento-tile-desc">
+                Verified against ISO/IEC 25010 software quality benchmarks and aligned with CHED &amp; DepEd institutional standards.
+              </p>
+              <ul className="bento-checklist">
+                <li>
+                  <span className="check-bullet">✓</span>
+                  <span>44px+ accessible touch targets</span>
+                </li>
+                <li>
+                  <span className="check-bullet">✓</span>
+                  <span>Zero-latency client state engine</span>
+                </li>
+                <li>
+                  <span className="check-bullet">✓</span>
+                  <span>Tested hardware compatibility matrices</span>
+                </li>
+              </ul>
+            </div>
 
-              {/* Three Engineered Pillars with Custom Technical Vectors */}
-              <div className="whitehats-manifesto-grid">
-                <div className="manifesto-card" onMouseEnter={handleCardHover}>
-                  <div className="manifesto-icon-box">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d4a34b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M3 21h18M5 21V7l7-4 7 4v14M9 10a2 2 0 1 0 0-4 2 2 0 0 0 0 4M9 18v-4h6v4M15 10a2 2 0 1 0 0-4 2 2 0 0 0 0 4" />
-                    </svg>
-                  </div>
-                  <h4>Targeted Campus Systems</h4>
-                  <p>Tailored workflows engineered specifically for college registrars, computer laboratories, student bodies, and scholarship desks.</p>
-                </div>
+            {/* BENTO TILE 4: CAMPUS SYSTEMS (1 Column) */}
+            <div 
+              className="bento-tile bento-campus-tile"
+              onMouseMove={handleCardMouseMove}
+              onMouseLeave={handleCardMouseLeave}
+            >
+              <div className="bento-tile-top">
+                <span className="bento-badge-purple">CAMPUS WORKFLOWS</span>
+              </div>
+              <h3 className="bento-tile-title">Targeted Workflows</h3>
+              <p className="bento-tile-desc">
+                Replacing manual queues and paper slips with streamlined web platforms for registrars, laboratories, and student councils.
+              </p>
+              <div className="bento-tags-row">
+                <span className="bento-tag">Lab Queuing</span>
+                <span className="bento-tag">Clearance</span>
+                <span className="bento-tag">RFID Pass</span>
+                <span className="bento-tag">Enrollment</span>
+              </div>
+            </div>
 
-                <div className="manifesto-card" onMouseEnter={handleCardHover}>
-                  <div className="manifesto-icon-box">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d4a34b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-                    </svg>
-                  </div>
-                  <h4>Zero-Friction Pipelines</h4>
-                  <p>Eliminating multi-day queue lines, physical paper index cards, and manual prerequisite checks with instant digital engines.</p>
-                </div>
-
-                <div className="manifesto-card" onMouseEnter={handleCardHover}>
-                  <div className="manifesto-icon-box">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d4a34b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                      <path d="M9 12l2 2 4-4" />
-                    </svg>
-                  </div>
-                  <h4>Research-Grade Rigor</h4>
-                  <p>Every system is benchmarked against CHED and DepEd regulatory frameworks and ISO/IEC 25010 software quality metrics.</p>
-                </div>
+            {/* BENTO TILE 5: MODERN ARCHITECTURE (1 Column) */}
+            <div 
+              className="bento-tile bento-tech-tile"
+              onMouseMove={handleCardMouseMove}
+              onMouseLeave={handleCardMouseLeave}
+            >
+              <div className="bento-tile-top">
+                <span className="bento-badge-gold">MODERN STACK</span>
+              </div>
+              <h3 className="bento-tile-title">Engineered for Speed</h3>
+              <p className="bento-tile-desc">
+                React 19 single-page architecture, procedural Three.js WebGL graphics, and RESTful Node.js services with MySQL storage.
+              </p>
+              <div className="bento-tech-chips">
+                <span className="tech-chip">React 19</span>
+                <span className="tech-chip">Three.js</span>
+                <span className="tech-chip">Node.js</span>
+                <span className="tech-chip">MySQL</span>
+                <span className="tech-chip">Web Audio</span>
               </div>
             </div>
           </div>
 
-          {/* 10 Built Projects Header & Filter Bar */}
-          <div className="projects-showcase-header scroll-reveal-target">
+          {/* ── INSTITUTIONAL SYSTEMS SHOWCASE (9 SYSTEMS) ── */}
+          <div className="bento-projects-header">
             <div className="projects-header-left">
               <span className="projects-eyebrow">COMMUNITY &amp; INSTITUTIONAL PORTFOLIO</span>
-              <h2 className="projects-heading">10 Built Systems &amp; Software Workflows</h2>
+              <h3 className="projects-heading">Institutional Systems &amp; Tools</h3>
               <p className="projects-subhead">
-                Explore the applications, simulation engines, and IoT kiosks engineered by the WhiteHats collective for our school and community partners.
+                Other applications and simulation engines engineered by WhiteHats for schools and academic operations.
               </p>
-            </div>
-
-            <div className="projects-filter-bar">
-              <button
-                type="button"
-                className={`proj-filter-btn ${projectFilter === "all" ? "active" : ""}`}
-                onClick={() => handleProjectFilterClick("all")}
-              >
-                ALL SYSTEMS ({WHITEHATS_PROJECTS.length})
-              </button>
-              <button
-                type="button"
-                className={`proj-filter-btn ${projectFilter === "academic" ? "active" : ""}`}
-                onClick={() => handleProjectFilterClick("academic")}
-              >
-                ACADEMIC &amp; SIS ({WHITEHATS_PROJECTS.filter(p => p.category === "academic").length})
-              </button>
-              <button
-                type="button"
-                className={`proj-filter-btn ${projectFilter === "labs" ? "active" : ""}`}
-                onClick={() => handleProjectFilterClick("labs")}
-              >
-                LABS &amp; IOT ({WHITEHATS_PROJECTS.filter(p => p.category === "labs").length})
-              </button>
-              <button
-                type="button"
-                className={`proj-filter-btn ${projectFilter === "workflow" ? "active" : ""}`}
-                onClick={() => handleProjectFilterClick("workflow")}
-              >
-                WORKFLOW &amp; TRIAGE ({WHITEHATS_PROJECTS.filter(p => p.category === "workflow").length})
-              </button>
             </div>
           </div>
 
-          {/* FLAGSHIP ATELIER COMMAND CONSOLE (WH-SYS-01 BUILDLAB) */}
-          {showFlagship && (
-            <div 
-              className="flagship-atelier-card scroll-reveal-target"
-              onMouseMove={handleCardMouseMove}
-              onMouseEnter={handleCardHover}
-            >
-              <div className="flagship-chassis-top">
-                <div className="flagship-id-cluster">
-                  <span className="flagship-hex-tag">{flagshipProject.id}</span>
-                  <span className="flagship-badge-pill">{flagshipProject.statusBadge}</span>
-                </div>
-                <div className="flagship-clock-telemetry">
-                  <span className="telemetry-live-dot" />
-                  <span className="telemetry-text">60 FPS // RUNTIME SYNC</span>
-                </div>
-              </div>
-
-              <div className="flagship-atelier-grid">
-                <div className="flagship-meta-column">
-                  <span className="flagship-subtitle">LABORATORY FLAGSHIP PLATFORM</span>
-                  <h3 className="flagship-title">{flagshipProject.title}</h3>
-                  
-                  <div className="flagship-client-row">
-                    <span className="client-tag-label">DEPLOYED TARGET:</span>
-                    <span className="client-tag-val">{flagshipProject.targetClient}</span>
-                  </div>
-
-                  <p className="flagship-summary">{flagshipProject.summary}</p>
-
-                  <div className="flagship-problem-box">
-                    <span className="problem-label">INSTITUTIONAL BOTTLENECK RESOLVED:</span>
-                    <p className="problem-text">{flagshipProject.problemSolved}</p>
-                  </div>
-
-                  <div className="flagship-impact-row">
-                    <span className="impact-kicker">PROVEN VALIDATION IMPACT:</span>
-                    <span className="impact-hero-metric">{flagshipProject.impactMetric}</span>
-                  </div>
-
-                  <div className="flagship-action-deck">
-                    <Link
-                      to={flagshipProject.actionLink || "/build"}
-                      className="flagship-btn primary"
-                      onClick={() => { try { soundManager.click(); } catch {} }}
-                    >
-                      <span>LAUNCH 3D PC BUILDER</span>
-                      <span className="btn-arrow">&rarr;</span>
-                    </Link>
-                    <button
-                      type="button"
-                      className="flagship-btn secondary"
-                      onClick={() => handleOpenBlueprint(flagshipProject)}
-                    >
-                      <span>INSPECT BLUEPRINT</span>
-                    </button>
-                  </div>
-                </div>
-
-                <div className="flagship-schematic-column" aria-hidden="true">
-                  <div className="schematic-viewport-frame">
-                    <div className="schematic-laser-scanner" />
-                    <div className="schematic-header-bar">
-                      <span className="schematic-title">THREE.JS HARDWARE CAD MATRIX</span>
-                      <span className="schematic-ver">LGA1700 / AM5</span>
-                    </div>
-
-                    <div className="schematic-hud-body">
-                      <div className="schematic-radar-circle">
-                        <div className="radar-sweep" />
-                        <div className="radar-crosshair" />
-                        <div className="radar-center-dot" />
-                      </div>
-
-                      <div className="schematic-telemetry-stack">
-                        <div className="telemetry-hud-item">
-                          <span className="hud-label">CLEARANCE LOGIC:</span>
-                          <span className="hud-val success">100% 0-PIN CONFLICT</span>
-                        </div>
-                        <div className="telemetry-hud-item">
-                          <span className="hud-label">RAM HEIGHT PROFILE:</span>
-                          <span className="hud-val">44.00mm TOLERANCE</span>
-                        </div>
-                        <div className="telemetry-hud-item">
-                          <span className="hud-label">TDP HEADROOM (850W):</span>
-                          <span className="hud-val highlight">42% PEAK RESERVE</span>
-                        </div>
-                        <div className="telemetry-hud-item">
-                          <span className="hud-label">DIAGNOSTIC AGENT:</span>
-                          <span className="hud-val">B.O.B. ACTIVE TRIAGE</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="schematic-footer-bar">
-                      <span>CHASSIS: ANODIZED ALUMINUM</span>
-                      <span>STATUS: ONLINE</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* MACHINED HARDWARE MATRIX (REMAINING 9 SYSTEMS) */}
           <div className="projects-cards-grid">
-            {matrixProjects.map((project, idx) => (
+            {matrixProjects.map((project) => (
               <div 
                 key={project.id}
-                className="project-showcase-card scroll-reveal-target"
+                className="project-showcase-card"
                 onClick={() => handleOpenBlueprint(project)}
                 onMouseMove={handleCardMouseMove}
-                onMouseEnter={handleCardHover}
-                style={{ "--stagger-index": idx }}
+                onMouseLeave={handleCardMouseLeave}
               >
-                <div className="card-machined-crosshair top-left" aria-hidden="true">+</div>
-                <div className="card-machined-crosshair top-right" aria-hidden="true">+</div>
-
                 <div className="project-card-top">
-                  <div className="project-id-wrap">
-                    <span className="project-id-badge">{project.id}</span>
-                    <span className="project-year-badge">{project.year}</span>
-                  </div>
+                  <span className="project-id-badge">{project.id}</span>
                   <span 
                     className="project-status-pill"
                     style={{ borderColor: project.statusColor, color: project.statusColor }}
@@ -1144,16 +1074,15 @@ export default function AboutUs() {
                 </div>
 
                 <div className="project-card-body">
-                  <h3 className="project-title">{project.title}</h3>
+                  <h4 className="project-title">{project.title}</h4>
                   <div className="project-target-client">
-                    <span className="target-label">DEPLOYED TARGET:</span>
                     <span className="target-name">{project.targetClient}</span>
                   </div>
                   <p className="project-summary-text">{project.summary}</p>
                 </div>
 
                 <div className="project-impact-box">
-                  <span className="impact-label">PROVEN WORKFLOW IMPACT:</span>
+                  <span className="impact-label">KEY IMPACT:</span>
                   <span className="impact-value">{project.impactMetric}</span>
                 </div>
 
@@ -1162,9 +1091,6 @@ export default function AboutUs() {
                     {project.techStack.slice(0, 3).map((tech, i) => (
                       <span key={i} className="proj-tech-pill">{tech}</span>
                     ))}
-                    {project.techStack.length > 3 && (
-                      <span className="proj-tech-pill more">+{project.techStack.length - 3}</span>
-                    )}
                   </div>
                   <button 
                     type="button" 
@@ -1305,124 +1231,6 @@ export default function AboutUs() {
             </div>
           </div>
         )}
-
-        {/* PROJECT ORIGIN & MISSION SECTION */}
-        <section className="about-origin-section scroll-reveal-target">
-          <div className="origin-card">
-            <div className="origin-eyebrow">
-              <span className="origin-dot" />
-              <span>THE WHITEHATS MISSION</span>
-            </div>
-            <h2 className="origin-title">Why We Built BuildLab</h2>
-            <div className="origin-text-columns">
-              <p>
-                First-time PC builders face a daunting challenge: components are expensive, technical jargon 
-                is confusing, and physical mismatches (such as a cooler blocking tall RAM heat spreaders or 
-                an underpowered power supply) lead to wasted money or damaged parts.
-              </p>
-              <p>
-                As students at <strong>Pateros Technological College</strong>, the WhiteHats team wanted to
-                solve this problem directly. We combined real-time 3D rendering with an exhaustive compatibility
-                matrix and interactive step-by-step assembly guides, giving students and enthusiasts a safe,
-                zero-risk environment to learn and experiment.
-              </p>
-            </div>
-
-            <div className="origin-actions">
-              <Link
-                to="/build"
-                className="origin-cta-btn primary"
-                onClick={() => { try { soundManager.click(); } catch { } }}
-              >
-                <span>OPEN PC BUILDER</span>
-                <span className="btn-arrow">&rarr;</span>
-              </Link>
-              <Link
-                to="/3d-builder"
-                className="origin-cta-btn secondary"
-                onClick={() => { try { soundManager.click(); } catch { } }}
-              >
-                <span>LAUNCH 3D STUDIO</span>
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* SYSTEM ARCHITECTURE MATRIX */}
-        <section className="about-tech-section">
-          <div className="section-head-bar">
-            <div className="section-title-group">
-              <span className="section-eyebrow">SYSTEM ARCHITECTURE</span>
-              <h2 className="section-heading">Built With Industry Standards</h2>
-            </div>
-            <span className="tech-badge-sub">Full Stack Implementation</span>
-          </div>
-
-          <div className="tech-architecture-grid">
-            <div className="arch-card">
-              <div className="arch-header">
-                <span className="arch-stage-num">01</span>
-                <h3>Frontend &amp; UI</h3>
-              </div>
-              <p className="arch-desc">
-                High-performance React single-page application built on Vite with hardware-accelerated CSS custom properties and custom cyberpunk visual themes.
-              </p>
-              <div className="arch-tags">
-                <span>React 19</span>
-                <span>Vite</span>
-                <span>Motion</span>
-                <span>Tailwind CSS</span>
-              </div>
-            </div>
-
-            <div className="arch-card">
-              <div className="arch-header">
-                <span className="arch-stage-num">02</span>
-                <h3>3D Simulation Engine</h3>
-              </div>
-              <p className="arch-desc">
-                Real-time WebGL rendering via Three.js with orbit controls, custom materials, lighting rigs, and procedural geometry for PC cases, coolers, and memory modules.
-              </p>
-              <div className="arch-tags">
-                <span>Three.js</span>
-                <span>WebGL</span>
-                <span>PBR Shaders</span>
-                <span>Canvas API</span>
-              </div>
-            </div>
-
-            <div className="arch-card">
-              <div className="arch-header">
-                <span className="arch-stage-num">03</span>
-                <h3>Backend &amp; Database</h3>
-              </div>
-              <p className="arch-desc">
-                Node.js and Express REST API backed by normalized MySQL relational tables for parts inventory, socket classifications, and crawler queues.
-              </p>
-              <div className="arch-tags">
-                <span>Node.js</span>
-                <span>Express</span>
-                <span>MySQL / MariaDB</span>
-                <span>JWT Auth</span>
-              </div>
-            </div>
-
-            <div className="arch-card">
-              <div className="arch-header">
-                <span className="arch-stage-num">04</span>
-                <h3>Sound &amp; Telemetry</h3>
-              </div>
-              <p className="arch-desc">
-                Web Audio API procedural sound synthesizer delivering mechanical clicks, snap confirmations, and tactile auditory feedback without external audio bloat.
-              </p>
-              <div className="arch-tags">
-                <span>Web Audio API</span>
-                <span>SynthAudio</span>
-                <span>SoundManager</span>
-              </div>
-            </div>
-          </div>
-        </section>
       </div>
     </div>
   );

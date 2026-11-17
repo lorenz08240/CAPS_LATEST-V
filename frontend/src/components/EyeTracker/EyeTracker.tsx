@@ -597,7 +597,12 @@ export function EyeTracker({
           className="eyt-say"
           data-on={talking || undefined}
           aria-live="polite"
-          style={{ "--tint": tint } as React.CSSProperties}
+          style={{ "--tint": tint, cursor: "pointer" } as React.CSSProperties}
+          onClick={() => {
+            setTalking(false);
+            setTyped("");
+          }}
+          title="Click to dismiss tip"
         >
           <span className="eyt-say-body">
             <span className="eyt-say-text">{typed}</span>

@@ -24,15 +24,17 @@
   transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
-/* When on /learn or when workbench shell is present, lift and dock to bottom-right so it never crowds BOB or the carousel track */
+/* When on /learn or when workbench shell is present, center in the 3D viewport so it NEVER obstructs the right-hand lesson reader dock */
 body:has(.wb-shell) .buildlab-cookie-banner,
 .wb-shell ~ .buildlab-cookie-banner {
-  bottom: 82px !important;
-  right: 24px !important;
-  left: auto !important;
-  width: calc(100% - 48px) !important;
-  max-width: 440px !important;
+  bottom: 24px !important;
+  left: 45% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+  width: min(540px, calc(100vw - 48px)) !important;
+  max-width: 540px !important;
   margin: 0 !important;
+  z-index: 9995 !important;
 }
 
 body:has(.wb-shell) .buildlab-cookie-banner .cookie-banner-content,
@@ -57,15 +59,21 @@ body:has(.wb-shell) .buildlab-cookie-banner .cookie-actions-col,
   justify-content: flex-end !important;
 }
 
-/* While the first-time tour, welcome overlay, unlock banner, or fullscreen gate is active, suppress the banner */
+/* While any modal, dialog, first-time tour, welcome overlay, or fullscreen gate is active, suppress the banner to eliminate prompt stacking */
 body:has(.is-tour-active) .buildlab-cookie-banner,
 body:has(.wb-welcome-overlay-backdrop) .buildlab-cookie-banner,
 body:has(.wb-welcome-overlay-card) .buildlab-cookie-banner,
 body:has(.stage-unlock-overlay) .buildlab-cookie-banner,
-body:has(.fs-gate-overlay) .buildlab-cookie-banner {
+body:has(.fs-gate-overlay) .buildlab-cookie-banner,
+body:has(.account-modal-overlay) .buildlab-cookie-banner,
+body:has(.mode-selection-overlay) .buildlab-cookie-banner,
+body:has(.learn-guard-screen) .buildlab-cookie-banner,
+body:has(.learn-guard-card) .buildlab-cookie-banner,
+body:has([role="dialog"]:not(.buildlab-cookie-banner)) .buildlab-cookie-banner {
   opacity: 0 !important;
   pointer-events: none !important;
   transform: translateY(20px) !important;
+  visibility: hidden !important;
 }
 
 @keyframes bannerSlideUp {

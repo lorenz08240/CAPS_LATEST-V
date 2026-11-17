@@ -185,6 +185,7 @@
 .wb-rail-footer {
   border-top: 1px solid var(--wb-border);
   padding-top: 10px;
+  width: 100%;
 }
 
 .wb-learner-chip {
@@ -195,6 +196,42 @@
   border: 1px solid var(--wb-border);
   border-radius: 10px;
   padding: 8px 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.wb-learner-chip:hover {
+  border-color: var(--wb-accent);
+  background: rgba(0, 229, 160, 0.08);
+}
+
+.wb-learner-chip:focus-visible {
+  outline: 2px solid var(--wb-accent);
+  outline-offset: 2px;
+}
+
+.wb-shell.rail-collapsed .wb-rail-footer {
+  display: flex;
+  justify-content: center;
+  padding-top: 10px;
+}
+
+.wb-shell.rail-collapsed .wb-learner-chip {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+.wb-shell.rail-collapsed .wb-learner-chip .wb-rail-icon {
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .wb-learner-dot {
@@ -212,7 +249,7 @@
 }
 
 .wb-learner-meta strong {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   white-space: nowrap;
   overflow: hidden;
@@ -220,7 +257,8 @@
 }
 
 .wb-learner-meta span {
-  font-size: 9.5px;
+  font-size: 10.5px;
+  line-height: 1.3;
   color: var(--wb-muted);
   white-space: nowrap;
   overflow: hidden;
@@ -519,6 +557,23 @@
   background: var(--wb-accent);
   color: #09101a;
   border-color: var(--wb-accent);
+}
+
+.wb-stage-cta.wb-cta-cert.is-unlocked {
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.25) 0%, rgba(245, 158, 11, 0.3) 100%);
+  border-color: #fbbf24;
+  color: #fbbf24;
+  box-shadow: 0 0 16px rgba(251, 191, 36, 0.35);
+}
+
+.wb-stage-cta.wb-cta-cert.is-unlocked:hover {
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.4) 0%, rgba(245, 158, 11, 0.45) 100%);
+  box-shadow: 0 0 24px rgba(251, 191, 36, 0.55);
+}
+
+.wb-stage-cta.wb-cta-cert.is-locked {
+  opacity: 0.72;
+  color: var(--wb-subtext);
 }
 
 /* ── WORKBENCH BODY: CENTER 3D STAGE + RIGHT DUAL STACKED CARDS ── */
@@ -1918,14 +1973,26 @@
   min-width: 140px !important;
   width: max-content !important;
   max-width: clamp(260px, 34vw, 440px) !important;
-  font-size: 13.5px !important;
+  font-size: 14.5px !important;
+  font-weight: 700 !important; /* Bold context text for crisp readability */
+  letter-spacing: 0.015em !important;
   line-height: 1.5 !important;
-  padding: 11px 16px !important;
+  padding: 12px 18px !important;
   white-space: normal !important;
   overflow-wrap: break-word !important;
   word-break: normal !important;
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.85), 0 0 20px rgba(0, 229, 160, 0.22) !important;
+  color: #ffffff !important;
+  background: rgba(6, 11, 22, 0.96) !important; /* Deep dark high contrast */
+  border: 1.5px solid #00e5a0 !important;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.92), 0 0 24px rgba(0, 229, 160, 0.28) !important;
   z-index: 100002 !important;
+}
+
+.wb-shell .bob-floating-free .eyt-say .eyt-say-text,
+.wb-shell .bob-floating-free .eyt-say .eyt-say-body {
+  font-weight: 700 !important;
+  color: #ffffff !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9) !important;
 }
 
 .wb-shell .bob-floating-free.bob-centered .eyt-say {
@@ -1940,6 +2007,8 @@
 .wb-shell .bob-floating-free .eyt-say::after {
   right: auto !important;
   left: 22px !important;
+  background: rgba(6, 11, 22, 0.96) !important;
+  border-color: #00e5a0 !important;
 }
 
 .wb-shell .bob-floating-free.bob-centered .eyt-say::after {
@@ -1999,7 +2068,7 @@
   inset: 0;
   z-index: 99998;
   pointer-events: none;
-  animation: wbFadeIn 0.35s ease;
+  animation: wbFadeIn 0.3s ease;
 }
 
 @keyframes wbFadeIn {
@@ -2012,15 +2081,15 @@
   pointer-events: none;
   z-index: 99998;
   box-sizing: border-box;
-  /* Windows 11 Snipping Tool effect: darkens everything outside the cutout smoothly */
-  box-shadow: 0 0 0 9999px rgba(3, 5, 10, 0.82), 0 0 35px rgba(0, 229, 160, 0.42);
-  border: 2px solid rgba(0, 229, 160, 0.95);
+  /* Hardware-accelerated smooth dimming overlay — zero tearing, zero SVG mask lag */
+  box-shadow: 0 0 0 9999px rgba(3, 6, 14, 0.86), 0 0 28px rgba(0, 229, 160, 0.42);
+  border: 2px solid #00e5a0;
   transition:
-    top 0.48s cubic-bezier(0.16, 1, 0.3, 1),
-    left 0.48s cubic-bezier(0.16, 1, 0.3, 1),
-    width 0.48s cubic-bezier(0.16, 1, 0.3, 1),
-    height 0.48s cubic-bezier(0.16, 1, 0.3, 1),
-    border-radius 0.48s cubic-bezier(0.16, 1, 0.3, 1);
+    top 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    left 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    width 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    height 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    border-radius 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: top, left, width, height, border-radius;
 }
 
@@ -2028,8 +2097,34 @@
   position: absolute;
   inset: -1px;
   border-radius: inherit;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.28);
   pointer-events: none;
+}
+
+/* Precision corner reticles for high-tech workbench polish */
+.wb-snipping-corner-reticle {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-color: #00e5a0;
+  border-style: solid;
+  pointer-events: none;
+}
+.wb-snipping-corner-reticle.tl { top: -2px; left: -2px; border-width: 2px 0 0 2px; border-top-left-radius: 6px; }
+.wb-snipping-corner-reticle.tr { top: -2px; right: -2px; border-width: 2px 2px 0 0; border-top-right-radius: 6px; }
+.wb-snipping-corner-reticle.bl { bottom: -2px; left: -2px; border-width: 0 0 2px 2px; border-bottom-left-radius: 6px; }
+.wb-snipping-corner-reticle.br { bottom: -2px; right: -2px; border-width: 0 2px 2px 0; border-bottom-right-radius: 6px; }
+
+/* Light & Blueprint Theme Overrides */
+.wb-shell.theme-light .wb-snipping-cutout,
+.wb-shell.theme-blueprint .wb-snipping-cutout {
+  box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.68), 0 0 28px rgba(2, 132, 199, 0.35);
+  border-color: #0284c7;
+}
+
+.wb-shell.theme-light .wb-snipping-corner-reticle,
+.wb-shell.theme-blueprint .wb-snipping-corner-reticle {
+  border-color: #0284c7;
 }
 
 /* ── B.O.B. TOUR CALLOUT ATTACHED DIRECTLY TO HIGHLIGHTED ZONE ── */
@@ -2153,9 +2248,11 @@
 
 .wb-callout-body-text {
   margin: 0 0 16px;
-  font-size: 13.5px;
+  font-size: 14.5px;
+  font-weight: 700;
   line-height: 1.55;
-  color: #cbd5e1;
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
 }
 
 .wb-callout-foot {
@@ -2954,38 +3051,46 @@
 
 .wb-shell.theme-light .bob-floating-free .eyt-say,
 .wb-shell.theme-blueprint .bob-floating-free .eyt-say {
-  background: rgba(255, 255, 255, 0.96) !important;
+  background: #ffffff !important;
   border-color: #0284c7 !important;
-  color: #0f172a !important;
-  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12) !important;
+  color: #020617 !important;
+  font-weight: 700 !important;
+  box-shadow: 0 14px 32px rgba(15, 23, 42, 0.22) !important;
+}
+
+.wb-shell.theme-light .bob-floating-free .eyt-say .eyt-say-text,
+.wb-shell.theme-blueprint .bob-floating-free .eyt-say .eyt-say-text {
+  color: #020617 !important;
+  font-weight: 700 !important;
 }
 
 .wb-shell.theme-light .bob-floating-free .eyt-say::after,
 .wb-shell.theme-blueprint .bob-floating-free .eyt-say::after {
-  background: rgba(255, 255, 255, 0.96) !important;
+  background: #ffffff !important;
   border-color: #0284c7 !important;
 }
 
 .wb-shell.theme-light .wb-snip-callout-card,
 .wb-shell.theme-blueprint .wb-snip-callout-card {
-  background: rgba(255, 255, 255, 0.96) !important;
-  border: 1.5px solid rgba(2, 132, 199, 0.5) !important;
-  color: #0f172a !important;
-  box-shadow: 0 20px 48px rgba(15, 23, 42, 0.15) !important;
+  background: rgba(255, 255, 255, 0.98) !important;
+  border: 2px solid #0284c7 !important;
+  color: #020617 !important;
+  box-shadow: 0 20px 48px rgba(15, 23, 42, 0.18) !important;
 }
 
 .wb-shell.theme-light .wb-callout-zone-title,
 .wb-shell.theme-blueprint .wb-callout-zone-title,
 .wb-shell.theme-light .wb-callout-title,
 .wb-shell.theme-blueprint .wb-callout-title {
-  color: #0f172a !important;
+  color: #020617 !important;
 }
 
 .wb-shell.theme-light .wb-callout-body-text,
 .wb-shell.theme-blueprint .wb-callout-body-text,
 .wb-shell.theme-light .wb-callout-body,
 .wb-shell.theme-blueprint .wb-callout-body {
-  color: #334155 !important;
+  color: #0f172a !important;
+  font-weight: 700 !important;
 }
 
 .wb-shell.theme-light .wb-callout-action-btn.wb-btn-gotit,
@@ -3257,6 +3362,30 @@
   white-space: nowrap;
 }
 
+.wb-video-paused-pill {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: rgba(245, 158, 11, 0.16);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  margin-left: 8px;
+  white-space: nowrap;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.wb-learner-chip.is-active-dashboard {
+  border-color: rgba(0, 229, 160, 0.6) !important;
+  background: rgba(0, 229, 160, 0.1) !important;
+  box-shadow: 0 0 14px rgba(0, 229, 160, 0.2);
+}
+
+.wb-center-stage.has-dashboard-active {
+  background: var(--wb-bg, #070b12);
+}
+
 .wb-video-frame-wrap {
   width: 100%;
   aspect-ratio: 16 / 9;
@@ -3425,58 +3554,6 @@
   margin-bottom: 16px;
 }
 
-.wb-inspect-3d-banner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 12px 14px;
-  border-radius: 11px;
-  background: rgba(0, 229, 160, 0.06);
-  border: 1px solid rgba(0, 229, 160, 0.3);
-  margin-bottom: 14px;
-}
-
-.wb-inspect-3d-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.wb-inspect-icon {
-  font-size: 18px;
-}
-
-.wb-inspect-3d-info strong {
-  display: block;
-  font-size: 13px;
-  font-weight: 800;
-  color: var(--wb-text);
-}
-
-.wb-inspect-3d-info span {
-  font-size: 11px;
-  color: var(--wb-muted);
-}
-
-.wb-inspect-3d-btn {
-  padding: 8px 14px;
-  border-radius: 8px;
-  background: var(--wb-accent);
-  border: 1px solid var(--wb-accent);
-  color: #09101a;
-  font-size: 12px;
-  font-weight: 800;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.wb-inspect-3d-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 14px rgba(0, 229, 160, 0.4);
-}
-
 /* ── SPOT THE LAB MISTAKE QUIZ ── */
 .wb-quick-check-card {
   border-radius: 12px;
@@ -3570,17 +3647,41 @@
 }
 
 .wb-quiz-explanation-box {
-  margin-top: 12px;
-  padding: 10px 12px;
-  border-radius: 8px;
-  font-size: 12.5px;
-  line-height: 1.5;
+  margin-top: 14px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.55;
+  animation: quizExplFadeIn 0.25s ease-out;
+}
+
+@keyframes quizExplFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.wb-quiz-expl-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.wb-quiz-expl-icon {
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.wb-quiz-expl-title {
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  font-size: 13px;
 }
 
 .wb-quiz-explanation-box.success {
   background: rgba(16, 185, 129, 0.12);
   border: 1px solid #10b981;
-  color: #10b981;
+  color: #34d399;
 }
 
 .wb-quiz-explanation-box.error {
@@ -3589,14 +3690,9 @@
   color: #fca5a5;
 }
 
-.wb-quiz-expl-title {
-  display: block;
-  font-weight: 800;
-  margin-bottom: 3px;
-}
-
 .wb-quiz-explanation-box p {
   margin: 0;
+  color: #e2e8f0;
 }
 
 /* ── DOCK NAVIGATION FOOTER ── */
@@ -3915,19 +4011,6 @@
   color: #78350f !important;
 }
 
-.wb-shell.theme-light .wb-inspect-3d-banner,
-.wb-shell.theme-blueprint .wb-inspect-3d-banner {
-  background: rgba(2, 132, 199, 0.06) !important;
-  border: 1px solid rgba(2, 132, 199, 0.25) !important;
-}
-
-.wb-shell.theme-light .wb-inspect-3d-btn,
-.wb-shell.theme-blueprint .wb-inspect-3d-btn {
-  background: linear-gradient(135deg, #0284c7, #0369a1) !important;
-  border-color: #0284c7 !important;
-  color: #ffffff !important;
-}
-
 .wb-shell.theme-light .wb-quick-check-card,
 .wb-shell.theme-blueprint .wb-quick-check-card {
   background: #f8fafc !important;
@@ -4198,4 +4281,146 @@
 .wb-shell.theme-light .wb-learner-chip.is-guest-chip strong,
 .wb-shell.theme-blueprint .wb-learner-chip.is-guest-chip strong {
   color: #92400e !important;
+}
+
+/* 3D Action Banners in Right Dock */
+.wb-inspect-3d-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: rgba(0, 229, 160, 0.05);
+  border: 1px solid rgba(0, 229, 160, 0.2);
+}
+
+.wb-inspect-3d-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.wb-inspect-icon {
+  font-size: 18px;
+}
+
+.wb-inspect-3d-info strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--wb-text);
+}
+
+.wb-inspect-3d-info span {
+  display: block;
+  font-size: 11px;
+  color: var(--wb-muted);
+}
+
+.wb-inspect-3d-btn {
+  background: rgba(0, 229, 160, 0.14);
+  color: #00e5a0;
+  border: 1px solid rgba(0, 229, 160, 0.35);
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.wb-inspect-3d-btn:hover {
+  background: rgba(0, 229, 160, 0.25);
+  transform: translateY(-1px);
+}
+
+/* Capstone Virtual PC Assembly Studio Launch Card */
+.wb-launch-assembly-banner {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(6, 182, 212, 0.08) 100%);
+  border: 1.5px solid rgba(16, 185, 129, 0.4);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+}
+
+.wb-launch-tag {
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #10b981;
+}
+
+.wb-launch-banner-head h4 {
+  font-size: 14px;
+  font-weight: 800;
+  color: #f8fafc;
+  margin: 3px 0 4px;
+}
+
+.wb-launch-banner-head p {
+  font-size: 12px;
+  line-height: 1.45;
+  color: #cbd5e1;
+  margin: 0;
+}
+
+.btn-launch-assembly-studio {
+  background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+  color: #070b12;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: center;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+}
+
+.btn-launch-assembly-studio:hover {
+  opacity: 0.94;
+  transform: translateY(-1px);
+}
+
+/* Right Dock Header 3D Studio CTA */
+.wb-guide-meta-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wb-dock-studio-cta {
+  background: rgba(0, 229, 160, 0.1);
+  border: 1px solid rgba(0, 229, 160, 0.35);
+  color: #00e5a0;
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.wb-dock-studio-cta:hover {
+  background: rgba(0, 229, 160, 0.2);
+  transform: translateY(-1px);
+}
+
+.wb-cta-briefing {
+  border-color: rgba(2, 132, 199, 0.4) !important;
+  color: #38bdf8 !important;
+}
+
+.wb-cta-briefing.is-active {
+  background: rgba(2, 132, 199, 0.2) !important;
+  border-color: #38bdf8 !important;
 }

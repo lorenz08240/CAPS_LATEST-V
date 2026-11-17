@@ -30,14 +30,14 @@ export default function GenericPCCase({
   const chassisMetalness = isWhite ? 0.12 : 0.65;
   const chassisRoughness = isWhite ? 0.72 : 0.55;
 
-  const interiorColor = isWhite ? '#273142' : '#2d3748';
-  const meshColor = isWhite ? '#334155' : '#0f172a';
-  const accentColor = isWhite ? '#475569' : '#475569';
-  const psuShroudColor = isWhite ? '#3b4759' : '#1f2937';
-  const backPanelColor = isWhite ? '#334155' : '#242c3d';
-  const glassBorderColor = isWhite ? '#334155' : '#0f172a';
-  const rubberGrommetColor = isWhite ? '#0f172a' : '#111827';
-  const structuralFrameColor = isWhite ? '#1e293b' : '#0b0f19';
+  const interiorColor = isWhite ? '#e2e8f0' : '#2d3748';
+  const meshColor = isWhite ? '#cbd5e1' : '#0f172a';
+  const accentColor = isWhite ? '#94a3b8' : '#475569';
+  const psuShroudColor = isWhite ? '#e2e8f0' : '#1f2937';
+  const backPanelColor = isWhite ? '#cbd5e1' : '#242c3d';
+  const glassBorderColor = isWhite ? '#94a3b8' : '#0f172a';
+  const rubberGrommetColor = isWhite ? '#64748b' : '#111827';
+  const structuralFrameColor = isWhite ? '#94a3b8' : '#0b0f19';
 
   // Selection / Hover Emissive highlights
   const highlightEmissive = activeSelected ? '#00e5ff' : effectiveHover ? '#38bdf8' : '#000000';
@@ -131,7 +131,7 @@ export default function GenericPCCase({
         {[[-1.8, -0.2, -3.8], [1.8, -0.2, -3.8], [-1.8, -0.2, 3.8], [1.8, -0.2, 3.8]].map((pos, idx) => (
           <mesh key={idx} position={pos}>
             <cylinderGeometry args={[0.35, 0.4, 0.4, 16]} />
-            <meshStandardMaterial color="#1e293b" metalness={0.85} roughness={0.25} />
+            <meshStandardMaterial color={isWhite ? '#94a3b8' : '#1e293b'} metalness={0.85} roughness={0.25} />
           </mesh>
         ))}
       </group>
@@ -174,11 +174,11 @@ export default function GenericPCCase({
         </mesh>
         <mesh position={[1.4, 1.4, 0.11]}>
           <boxGeometry args={[1.2, 2.0, 0.02]} />
-          <meshStandardMaterial color="#0f172a" roughness={0.9} />
+          <meshStandardMaterial color={isWhite ? '#cbd5e1' : '#0f172a'} roughness={0.9} />
         </mesh>
         <mesh position={[0, -3.5, 0.11]}>
           <boxGeometry args={[2.8, 1.6, 0.02]} />
-          <meshStandardMaterial color="#0f172a" roughness={0.9} />
+          <meshStandardMaterial color={isWhite ? '#cbd5e1' : '#0f172a'} roughness={0.9} />
         </mesh>
       </group>
 
@@ -210,7 +210,7 @@ export default function GenericPCCase({
         </mesh>
         <mesh position={[-0.01, 1.4, -0.2]}>
           <boxGeometry args={[0.1, 2.0, 2.0]} />
-          <meshStandardMaterial color="#0f172a" roughness={0.95} />
+          <meshStandardMaterial color={isWhite ? '#cbd5e1' : '#0f172a'} roughness={0.95} />
         </mesh>
       </group>
 
@@ -299,7 +299,7 @@ export default function GenericPCCase({
         {/* Cable Grommet Cutout */}
         <mesh position={[0.8, 0.91, 0.5]}>
           <boxGeometry args={[0.4, 0.03, 1.0]} />
-          <meshStandardMaterial color="#0b0f19" roughness={0.95} />
+          <meshStandardMaterial color={isWhite ? '#94a3b8' : '#0b0f19'} roughness={0.95} />
         </mesh>
       </group>
 
@@ -341,7 +341,7 @@ export default function GenericPCCase({
 
         <mesh position={[1.46, -2.59, -0.6]}>
           <boxGeometry args={[0.08, 0.04, 6.2]} />
-          <meshBasicMaterial color="#090d16" />
+          <meshBasicMaterial color={isWhite ? '#94a3b8' : '#090d16'} />
         </mesh>
       </group>
 
@@ -390,7 +390,7 @@ export default function GenericPCCase({
             {[2.5, -2.5].map((yHinge, idx) => (
               <mesh key={`hinge-${idx}`} position={[0.02, yHinge, -4.4]} rotation={[0, 0, 0]}>
                 <cylinderGeometry args={[0.1, 0.1, 0.6, 16]} />
-                <meshStandardMaterial color="#334155" metalness={0.95} roughness={0.2} />
+                <meshStandardMaterial color={isWhite ? '#94a3b8' : '#334155'} metalness={0.95} roughness={0.2} />
               </mesh>
             ))}
           </group>

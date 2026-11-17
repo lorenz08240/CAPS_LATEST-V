@@ -7,40 +7,74 @@ import soundManager from "../../utilities/soundManager";
 import GlobalHeader from "../Navigation/GlobalHeader";
 import "./CertificationPage.css";
 
+const TOTAL_TOPICS_COUNT = 17;
+
+const readProgress = (email) => {
+  try {
+    const accountKey = email ? `buildlab.learn.progress.${email}` : null;
+    const rawStr =
+      (accountKey && localStorage.getItem(accountKey)) ||
+      localStorage.getItem("buildlab.learn.progress.v1") ||
+      localStorage.getItem("buildlab.learn.progress") ||
+      "[]";
+    const raw = JSON.parse(rawStr);
+    return Array.isArray(raw) ? raw.filter((x) => typeof x === "string") : [];
+  } catch {
+    return [];
+  }
+};
+
 export default function CertificationPage() {
-  const { userProfile, setUserProfile, mode, unlockStage } = useLearnMode();
+  const { userProfile, setUserProfile, mode, unlockedStages, unlockStage } = useLearnMode();
   const navigate = useNavigate();
   const certRef = useRef(null);
 
   const [isGenerating, setIsGenerating] = useState(false);
   const [downloadSuccess, setDownloadSuccess] = useState(false);
   const [isEditingName, setIsEditingName] = useState(false);
-  const [nameInput, setNameInput] = useState(userProfile.fullName || "Certified PC Architect");
+  const [nameInput, setNameInput] = useState(userProfile?.fullName || "Verified Student");
+
+  const completed = readProgress(userProfile?.email);
+  const isAllComplete =
+    completed.length >= TOTAL_TOPICS_COUNT ||
+    (unlockedStages && unlockedStages.includes("certificate"));
 
   // Certificate ID generation
   const [certId] = useState(() => {
     try {
       const saved = localStorage.getItem("buildlab_cert_id");
       if (saved) return saved;
-      const gen = "BL-CERT-" + Math.random().toString(36).substring(2, 8).toUpperCase() + "-2026";
+      const gen = "PTC-CSS-" + Math.random().toString(36).substring(2, 8).toUpperCase() + "-2026";
       localStorage.setItem("buildlab_cert_id", gen);
       return gen;
     } catch {
-      return "BL-CERT-A892F1-2026";
+      return "PTC-CSS-A892F1-2026";
     }
   });
 
-  const issueDate = userProfile.joinedDate || new Date().toLocaleDateString("en-US", {
+  const issueDate = userProfile?.joinedDate || new Date().toLocaleDateString("en-US", {
     month: "long",
     day: "numeric",
     year: "numeric",
   });
 
   useEffect(() => {
-    try {
-      soundManager.complete();
-    } catch {}
-  }, []);
+    if (!userProfile?.setupCompleted && !userProfile?.email) {
+      navigate("/learn", { replace: true });
+      return;
+    }
+    if (isAllComplete) {
+      try {
+        soundManager.complete();
+      } catch {}
+    }
+  }, [userProfile, navigate, isAllComplete]);
+
+  useEffect(() => {
+    if (userProfile?.fullName) {
+      setNameInput(userProfile.fullName);
+    }
+  }, [userProfile?.fullName]);
 
   const handleSaveName = () => {
     if (nameInput.trim()) {
@@ -77,7 +111,8 @@ export default function CertificationPage() {
       const pdfHeight = pdf.internal.pageSize.getHeight();
 
       pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-      const filename = `BuildLab_Certificate_${(userProfile.fullName || "Architect").replace(/\s+/g, "_")}.pdf`;
+      const studentSlug = (userProfile?.fullName || nameInput || "Student").replace(/\s+/g, "_");
+      const filename = `PTC_IICT_Certificate_${studentSlug}.pdf`;
       pdf.save(filename);
 
       try {
@@ -97,11 +132,61 @@ export default function CertificationPage() {
     try {
       soundManager.click();
       navigator.clipboard.writeText(
-        `https://buildlab.app/verify/${certId}?student=${encodeURIComponent(userProfile.fullName || "Student")}`
+        `https://buildlab.app/verify/${certId}?student=${encodeURIComponent(userProfile?.fullName || nameInput || "Student")}`
       );
       alert("Verification URL copied to clipboard!");
     } catch {}
   };
+
+  // If user has not completed the course, render the locked warning screen
+  if (!isAllComplete) {
+    return (
+      <div className="certification-page-wrap">
+        <GlobalHeader
+          pageTitle="OFFICIAL CERTIFICATION"
+          pageSubtitle="Institutional Accredited Credential"
+          badgeText="STAGE 04 // GRADUATION CREDENTIAL"
+        />
+
+        <div className="cert-locked-container">
+          <div className="cert-locked-card">
+            <div className="cert-locked-badge">
+              <span className="locked-badge-dot" />
+              <span>ACADEMIC CREDENTIAL // LOCKED</span>
+            </div>
+            <div className="cert-locked-icon">🔒</div>
+            <h1 className="cert-locked-title">Syllabus Completion Required</h1>
+            <p className="cert-locked-desc">
+              Pateros Technological College (PTC-IICT) and BuildLab issue accredited credentials exclusively to students who have verified mastery across all 17 topics of the Computer Systems Servicing (CSS) NC II curriculum.
+            </p>
+
+            <div className="cert-locked-progress-card">
+              <div className="cert-locked-progress-head">
+                <span>Curriculum Progress:</span>
+                <strong>{completed.length} of {TOTAL_TOPICS_COUNT} Topics Completed ({Math.round((completed.length / TOTAL_TOPICS_COUNT) * 100)}%)</strong>
+              </div>
+              <div className="cert-locked-progress-track">
+                <div
+                  className="cert-locked-progress-fill"
+                  style={{ width: `${Math.round((completed.length / TOTAL_TOPICS_COUNT) * 100)}%` }}
+                />
+              </div>
+            </div>
+
+            <div className="cert-locked-actions">
+              <button
+                type="button"
+                className="cert-locked-return-btn"
+                onClick={() => navigate("/learn")}
+              >
+                <span>&larr; Return to Academy to Complete Remaining Topics</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="certification-page-wrap">
@@ -183,7 +268,7 @@ export default function CertificationPage() {
               value={nameInput}
               onChange={(e) => setNameInput(e.target.value)}
               className="name-edit-input"
-              placeholder="e.g. Alex J. Mercer"
+              placeholder="e.g. Mia Fernandez"
             />
             <button
               type="button"
@@ -216,28 +301,26 @@ export default function CertificationPage() {
           {/* Certificate Header */}
           <div className="cert-header">
             <div className="cert-brand-row">
-              <span className="cert-brand-icon">⬢</span>
-              <span className="cert-brand-name">BUILDLAB</span>
+              <span className="cert-brand-icon">🏛️</span>
+              <span className="cert-brand-name">PATEROS TECHNOLOGICAL COLLEGE</span>
               <span className="cert-brand-sep">//</span>
-              <span className="cert-brand-division">ACADEMY OF COMPUTER ENGINEERING</span>
+              <span className="cert-brand-division">INSTITUTE OF INFORMATION AND COMPUTING TECHNOLOGY</span>
             </div>
-            <h1 className="cert-main-title">Certificate of Hardware Mastery</h1>
+            <h1 className="cert-main-title">Certificate of Completion</h1>
             <p className="cert-title-sub">
-              THIS IS TO CERTIFY THAT THE SPECIALIST NAMED HEREIN HAS DEMONSTRATED VERIFIED COMPETENCY IN
-              COMPUTER ARCHITECTURE, SYSTEM COMPATIBILITY AUDITING, AND RIG ASSEMBLY
+              COMPUTER SYSTEMS SERVICING (CSS) NC II // VIRTUAL HARDWARE ARCHITECTURE &amp; PC ASSEMBLY
             </p>
           </div>
 
           {/* Recipient Name Area */}
           <div className="cert-recipient-block">
-            <span className="cert-awarded-to">PROUDLY PRESENTED TO</span>
+            <span className="cert-awarded-to">THIS IS OFFICIALLY CONFERRED TO</span>
             <div className="cert-recipient-name">
-              {userProfile.fullName || nameInput || "Alex J. Mercer"}
+              {userProfile?.fullName || nameInput || "Verified Student"}
             </div>
             <div className="cert-recipient-underline" />
             <p className="cert-recipient-desc">
-              Having fulfilled all curriculum criteria of the BuildLab Hardware Academy — including 2D Component Hierarchy,
-              Socket & Bus Clearance Matching, Thermal Dissipation Modeling, and Modular System Integration.
+              Having satisfactorily fulfilled all curriculum criteria of the BuildLab Hardware Academy — including 2D Component Hierarchy, Socket &amp; Bus Clearance Matching, Thermal Dissipation Modeling, and 3D Virtual PC Assembly under the standards of the Institute of Information and Computing Technology.
             </p>
           </div>
 
@@ -252,12 +335,20 @@ export default function CertificationPage() {
               <span className="meta-val">{issueDate}</span>
             </div>
             <div className="cert-meta-col">
-              <span className="meta-label">VERIFIED GOOGLE ACCOUNT</span>
-              <span className="meta-val">{userProfile.email || "student@gmail.com"}</span>
+              <span className="meta-label">VERIFIED STUDENT ACCOUNT</span>
+              <span className="meta-val">{userProfile?.email || "student@ptc.edu.ph"}</span>
             </div>
             <div className="cert-meta-col">
-              <span className="meta-label">INSTITUTION / DIVISION</span>
-              <span className="meta-val">{userProfile.institution || "BuildLab Engineering"}</span>
+              <span className="meta-label">ACADEMIC PROGRAM / STRAND</span>
+              <span className="meta-val">{userProfile?.strand || "Grade 11 TVL - Computer Systems Servicing (CSS)"}</span>
+            </div>
+            <div className="cert-meta-col">
+              <span className="meta-label">INSTITUTION</span>
+              <span className="meta-val">{userProfile?.institution || "Pateros Technological College (PTC-IICT)"}</span>
+            </div>
+            <div className="cert-meta-col">
+              <span className="meta-label">CURRICULUM MASTERY</span>
+              <span className="meta-val meta-emerald">17 / 17 Topics (100% Passed)</span>
             </div>
           </div>
 
@@ -265,8 +356,8 @@ export default function CertificationPage() {
           <div className="cert-signatures-row">
             <div className="cert-signature-box">
               <div className="signature-line" />
-              <div className="signature-font">B.O.B. System</div>
-              <span className="signature-role">B.O.B. // Lead Diagnostics Companion</span>
+              <div className="signature-font">Engr. J. Marquez</div>
+              <span className="signature-role">CSS Laboratory Custodian &amp; Instructor</span>
             </div>
 
             <div className="cert-gold-seal">
@@ -274,8 +365,8 @@ export default function CertificationPage() {
                 <div className="seal-rosette">
                   <div className="seal-center">
                     <span className="seal-star">★</span>
-                    <span className="seal-text">BUILDLAB</span>
-                    <span className="seal-sub">VERIFIED 2026</span>
+                    <span className="seal-text">PTC-IICT</span>
+                    <span className="seal-sub">ACCREDITED 2026</span>
                   </div>
                 </div>
               </div>
@@ -283,13 +374,13 @@ export default function CertificationPage() {
 
             <div className="cert-signature-box">
               <div className="signature-line" />
-              <div className="signature-font">J. Marquez</div>
-              <span className="signature-role">Director of Hardware Engineering</span>
+              <div className="signature-font">Prof. Maria Elena Cruz</div>
+              <span className="signature-role">Dean, Institute of Information &amp; Computing Technology</span>
             </div>
           </div>
 
           <div className="cert-footer-legal">
-            Issued under BuildLab Open System Architecture v2.4 • Verification key cryptographically hashed • buildlab.systems/verify
+            Pateros Technological College (PTC-IICT) • DepEd &amp; TESDA NC II Standards Compliant • Cryptographic Verification: buildlab.systems/verify/{certId}
           </div>
         </div>
       </div>

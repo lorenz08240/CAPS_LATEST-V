@@ -70,6 +70,12 @@
 .bob-floating-free .eyt-say[data-on] {
   opacity: 1 !important;
   transform: translateY(0) scale(1) !important;
+  cursor: pointer !important;
+}
+
+.bob-floating-free .eyt-say[data-on]:hover {
+  border-color: #38bdf8 !important;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.85), 0 0 25px rgba(56, 189, 248, 0.3) !important;
 }
 
 .bob-floating-free .eyt-say::after {

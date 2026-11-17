@@ -495,3 +495,157 @@
   border-top: 1px solid rgba(255, 255, 255, 0.06);
   padding-top: 10px;
 }
+
+/* ==========================================================================
+   Curriculum Locked Guard Screen
+   ========================================================================== */
+.cert-locked-container {
+  max-width: 680px;
+  margin: 60px auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 16px;
+}
+
+.cert-locked-card {
+  width: 100%;
+  background: rgba(13, 19, 33, 0.85);
+  border: 1px solid rgba(244, 63, 94, 0.25);
+  border-radius: 20px;
+  padding: 40px 32px;
+  text-align: center;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(244, 63, 94, 0.08);
+  backdrop-filter: blur(16px);
+  position: relative;
+  overflow: hidden;
+}
+
+.cert-locked-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #f43f5e, #fb7185, transparent);
+}
+
+.cert-locked-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: rgba(244, 63, 94, 0.12);
+  border: 1px solid rgba(244, 63, 94, 0.3);
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: #fb7185;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.locked-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #f43f5e;
+  box-shadow: 0 0 8px #f43f5e;
+  animation: certLockPulse 2s infinite ease-in-out;
+}
+
+@keyframes certLockPulse {
+  0%, 100% { opacity: 0.5; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+.cert-locked-icon {
+  font-size: 3.5rem;
+  margin-bottom: 16px;
+  filter: drop-shadow(0 0 16px rgba(244, 63, 94, 0.4));
+}
+
+.cert-locked-title {
+  font-size: 1.65rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 12px;
+  letter-spacing: -0.02em;
+}
+
+.cert-locked-desc {
+  font-size: 0.92rem;
+  color: #94a3b8;
+  line-height: 1.65;
+  max-width: 520px;
+  margin: 0 auto 28px;
+}
+
+.cert-locked-progress-card {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 28px;
+  text-align: left;
+}
+
+.cert-locked-progress-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.82rem;
+  color: #94a3b8;
+  margin-bottom: 10px;
+}
+
+.cert-locked-progress-head strong {
+  color: #38bdf8;
+  font-weight: 700;
+}
+
+.cert-locked-progress-track {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.cert-locked-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #0ea5e9, #00e5a0);
+  border-radius: 999px;
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 0 10px rgba(0, 229, 160, 0.5);
+}
+
+.cert-locked-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.cert-locked-return-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 8px 24px rgba(2, 132, 199, 0.3);
+}
+
+.cert-locked-return-btn:hover {
+  background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(2, 132, 199, 0.45);
+  border-color: rgba(56, 189, 248, 0.8);
+}
+

@@ -28,19 +28,18 @@ export const LearnModeProvider = ({ children }) => {
     };
   });
 
-  // Unlocked stages in Learn Mode: ['build', 'compatibility', 'learn', 'certificate']
+  // Unlocked stages in Learn Mode: ['build', 'compatibility', 'learn', 'studio', 'certificate']
   const [unlockedStages, setUnlockedStages] = useState(() => {
     try {
       const saved = localStorage.getItem("buildlab_learn_unlocked_stages");
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && !parsed.includes("learn")) {
-          parsed.push("learn");
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed;
         }
-        return parsed;
       }
     } catch {}
-    return ["build", "compatibility", "learn"];
+    return ["build"];
   });
 
   // Seen unlock animations (so the entrance banner plays once upon first unlock)
@@ -133,12 +132,35 @@ export const LearnModeProvider = ({ children }) => {
       // Home and 2D Build are always accessible
       if (path === "/" || path === "/build") return true;
 
-      // Learn academy courseware and certificate require an active student account
+      // An active student account is strictly required for Courseware, Certificate, and Student Dashboard
       const hasAccount = Boolean(
-        userProfile && (userProfile.fullName || userProfile.email) && userProfile.setupCompleted
+        userProfile && (userProfile.fullName || userProfile.email) && (userProfile.setupCompleted || userProfile.email || userProfile.fullName)
       );
-      if ((path.startsWith("/learn") || path.startsWith("/certificate")) && (!hasAccount || mode !== "learn")) {
-        return false;
+
+      const isCourseRoute =
+        path.startsWith("/learn") ||
+        path.startsWith("/certificate") ||
+        path.startsWith("/dashboard") ||
+        path.startsWith("/account");
+
+      if (isCourseRoute) {
+        if (!hasAccount) {
+          // Allow guest preview on /learn route
+          try {
+            if (path.startsWith("/learn") && sessionStorage.getItem("buildlab_guest_preview") === "true") {
+              return true;
+            }
+          } catch {}
+          return false;
+        }
+        // If authenticated student enters course routes, ensure learn mode is active
+        if (mode !== "learn") {
+          setModeState("learn");
+          try {
+            localStorage.setItem("buildlab_app_mode", "learn");
+          } catch {}
+        }
+        return true;
       }
 
       // Explore mode has unrestricted access to sandbox/compatibility/3D studio
@@ -161,23 +183,17 @@ export const LearnModeProvider = ({ children }) => {
         return isStageUnlocked("compatibility");
       }
 
-      // 2. Learn academy courseware is directly accessible in Learn track
-      if (path.startsWith("/learn")) {
-        return true;
-      }
-
-      // 3. 3D Studio workspace requires Stage 4 unlocked
+      // 2. 3D Studio workspace requires Stage 4 unlocked or learn mode virtual assembly lab
       if (path.startsWith("/3d-builder")) {
-        return isStageUnlocked("studio") || isStageUnlocked("3d");
-      }
-
-      // Certificate requires certification unlocked
-      if (path.startsWith("/certificate")) {
-        return isStageUnlocked("certificate");
+        try {
+          const search = typeof window !== "undefined" ? window.location.search : "";
+          if (search.includes("learn=true") || search.includes("mode=learn")) return true;
+        } catch {}
+        return isStageUnlocked("studio") || isStageUnlocked("3d") || isStageUnlocked("3d-builder");
       }
 
       // Standard utility pages
-      if (path === "/about" || path === "/help" || path === "/brands") {
+      if (path === "/about" || path === "/help" || path === "/brands" || path === "/settings") {
         return true;
       }
 
@@ -188,7 +204,7 @@ export const LearnModeProvider = ({ children }) => {
 
       return true;
     },
-    [mode, unlockedStages]
+    [mode, unlockedStages, userProfile]
   );
 
   // Reset Learn Progress
@@ -329,15 +345,21 @@ export const LearnModeProvider = ({ children }) => {
       setupCompleted: false,
     });
     setModeState("explore");
-    setUnlockedStages(["build", "compatibility", "learn"]);
+    setUnlockedStages(["build"]);
     setSeenBanners({ compatibility: false, learn: false, certificate: false });
 
-    // 5. Fully reload to Home so all components and states reset to new visitor status
+    // 5. If currently on a course or authenticated route, redirect to Home
     try {
-      window.location.replace("/#top");
-    } catch {
-      window.location.href = "/";
-    }
+      const curPath = window.location.pathname.toLowerCase();
+      if (
+        curPath.startsWith("/learn") ||
+        curPath.startsWith("/certificate") ||
+        curPath.startsWith("/dashboard") ||
+        curPath.startsWith("/account")
+      ) {
+        window.location.replace("/#top");
+      }
+    } catch {}
   }, [userProfile, unlockedStages]);
 
   return (

@@ -357,6 +357,23 @@
   border-color: rgba(255, 255, 255, 0.3);
 }
 
+.guard-link-home {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 6px;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  font-family: inherit;
+}
+
+.guard-link-home:hover {
+  color: #38bdf8;
+  text-decoration: underline;
+}
+
 @media (max-width: 600px) {
   .guard-roadmap {
     flex-direction: column;
