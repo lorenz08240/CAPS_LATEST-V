@@ -423,19 +423,6 @@
   box-shadow: 0 14px 34px rgba(0, 229, 160, 0.48);
 }
 
-.unlock-windowed-sub-btn {
-  background: transparent;
-  border: none;
-  color: #94a3b8;
-  font-size: 0.76rem;
-  cursor: pointer;
-  text-decoration: underline;
-  padding: 4px 8px;
-}
-
-.unlock-windowed-sub-btn:hover {
-  color: #e2e8f0;
-}
 
 /* ═════════════════════════════════════════════════════════════════════
    LIGHT MODE COMPREHENSIVE STYLING (Soft Titanium / Crisp Slate Laboratory)

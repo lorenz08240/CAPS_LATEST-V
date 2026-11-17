@@ -16,6 +16,7 @@ const BOB_PHRASES = [
 export default function BobCompanion({
   speechLines,
   externalSpeech,
+  muted = false,
   dockRight = 32,
   size = 112,
   isCenter = false,
@@ -41,6 +42,7 @@ export default function BobCompanion({
           bounce={55}
           speechLines={activePool}
           externalSpeech={externalSpeech}
+          muted={muted}
         />
       </div>
     </div>

@@ -3,7 +3,7 @@
   "1": "server.js",
   "2": "App.jsx",
   "4": "crawler.js",
-  "5": "devDependencies",
+  "5": "EyeTracker.tsx",
   "6": "Compatibility.jsx",
   "7": "frontend/package.json",
   "8": "db.js",
@@ -25,7 +25,5 @@
   "27": "[2026-10-23] Learn Page: NotebookLLM Master Source Script for Module 1",
   "28": "AppContent",
   "29": "[2026-10-23] Learn Page: Video Player Overhaul + 9 Dead Videos Replaced (OC)",
-  "30": "[2026-10-23] 3D Studio: Clean Button Design (Icons & Emojis Removed)",
-  "31": "🖥️ Fullscreen Gating (`FullscreenGate.jsx`)",
   "32": "[2026-10-23] Learn: Course-Outline Sidebar REWORK REVERTED to the previous design (OC — user request)"
 }

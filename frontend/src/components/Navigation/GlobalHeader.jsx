@@ -8,7 +8,7 @@ import AccountSetupModal from '../Home/AccountSetupModal';
 import './GlobalHeader.css';
 
 export default function GlobalHeader({ onSearchClick, hideBuildPill = false }) {
-  const { mode, userProfile, setAppMode } = useLearnMode();
+  const { mode, userProfile, setAppMode, hasCompletedProfile } = useLearnMode();
   const location = useLocation();
   const navigate = useNavigate();
   const currentPath = location.pathname;
@@ -122,7 +122,12 @@ export default function GlobalHeader({ onSearchClick, hideBuildPill = false }) {
         onClose={() => setShowModeCards(false)}
         onSelectLearn={() => {
           setShowModeCards(false);
-          setShowAccountModal(true);
+          if (hasCompletedProfile) {
+            setAppMode("learn");
+            navigate("/learn");
+          } else {
+            setShowAccountModal(true);
+          }
         }}
         onSelectFree={() => {
           setShowModeCards(false);

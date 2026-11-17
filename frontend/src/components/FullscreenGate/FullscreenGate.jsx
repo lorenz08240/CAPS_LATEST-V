@@ -30,13 +30,6 @@ export default function FullscreenGate({ children, requireFullscreen = true, dis
   const [fullscreenActive, setFullscreenActive] = useState(() => isFullscreenActive());
   const [engaged, setEngaged] = useState(() => hasEngagedFullscreen());
   const [rotateNeeded, setRotateNeeded] = useState(() => needsRotation());
-  const [windowedMode, setWindowedMode] = useState(() => {
-    try {
-      return sessionStorage.getItem("buildlab_windowed_mode") === "true";
-    } catch {
-      return false;
-    }
-  });
   const [hasSeenPreloader, setHasSeenPreloader] = useState(() => {
     try {
       return sessionStorage.getItem("buildlab_preloader_seen") === "true";
@@ -51,6 +44,13 @@ export default function FullscreenGate({ children, requireFullscreen = true, dis
       return false;
     }
   });
+
+  // Purge any legacy windowed-mode flag so fullscreen focus mode is strictly enforced
+  useEffect(() => {
+    try {
+      sessionStorage.removeItem("buildlab_windowed_mode");
+    } catch {}
+  }, []);
 
   useEffect(() => {
     const checkOnboarding = () => {
@@ -70,20 +70,6 @@ export default function FullscreenGate({ children, requireFullscreen = true, dis
     };
   }, []);
 
-  const handleDismissToWindowed = useCallback(() => {
-    try {
-      sessionStorage.setItem("buildlab_windowed_mode", "true");
-    } catch {}
-    setWindowedMode(true);
-    window.dispatchEvent(new Event("buildlab:windowed-mode"));
-  }, []);
-
-  useEffect(() => {
-    const syncWindowed = () => setWindowedMode(true);
-    window.addEventListener("buildlab:windowed-mode", syncWindowed);
-    return () => window.removeEventListener("buildlab:windowed-mode", syncWindowed);
-  }, []);
-
   // Listen for preloader completion so we don't flash the gate underneath the welcome splash
   useEffect(() => {
     const handlePreloaderDone = () => {
@@ -91,7 +77,6 @@ export default function FullscreenGate({ children, requireFullscreen = true, dis
       const active = isFullscreenActive();
       setFullscreenActive(active);
       if (active) {
-        setWindowedMode(false);
         markFullscreenEngaged();
         setEngaged(true);
       }
@@ -108,7 +93,6 @@ export default function FullscreenGate({ children, requireFullscreen = true, dis
       setFullscreenActive(active);
       setRotateNeeded(needsRotation());
       if (active) {
-        setWindowedMode(false);
         markFullscreenEngaged();
         setEngaged(true);
       }
@@ -122,8 +106,6 @@ export default function FullscreenGate({ children, requireFullscreen = true, dis
   const showRotation = !disabled && rotateNeeded;
   const showFullscreen =
     !disabled &&
-    !windowedMode &&
-    !(typeof sessionStorage !== "undefined" && sessionStorage.getItem("buildlab_windowed_mode") === "true") &&
     !onboardingPending &&
     !showRotation &&
     isFullscreenSupported() &&
@@ -148,7 +130,6 @@ export default function FullscreenGate({ children, requireFullscreen = true, dis
       markFullscreenEngaged();
       setEngaged(true);
       setFullscreenActive(true);
-      setWindowedMode(false);
     }
   }, []);
 
@@ -261,14 +242,6 @@ export default function FullscreenGate({ children, requireFullscreen = true, dis
             <p className="fs-card-esc-hint">
               Press <kbd className="fs-kbd-f11">F11</kbd> at any time to toggle fullscreen.
             </p>
-
-            <button
-              type="button"
-              className="fs-gate-btn-secondary"
-              onClick={handleDismissToWindowed}
-            >
-              Continue in windowed view →
-            </button>
           </div>
         </div>
       )}

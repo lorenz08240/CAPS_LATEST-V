@@ -97,7 +97,6 @@ function CameraRig({
   rotationAngle,
   zoomFactor,
   resetNonce,
-  onUserZoomChange,
   isPaused = false,
 }) {
   const { camera } = useThree();
@@ -155,7 +154,6 @@ function CameraRig({
       maxDistance={19}
       onStart={() => {
         isTransitioning.current = false;
-        if (onUserZoomChange) onUserZoomChange(true);
       }}
     />
   );
@@ -498,21 +496,13 @@ export default function LearnHardwareStage({
   const [showSignalFlow, setShowSignalFlow] = useState(true);
   const [showSchematic, setShowSchematic] = useState(false);
   const [showHotspots, setShowHotspots] = useState(true);
-  const [zoomedMode, setZoomedMode] = useState(false);
 
   // Reset camera & inspector smoothly when switching lesson
   useEffect(() => {
     setRotationAngle(0);
     setZoomFactor(1);
-    setZoomedMode(false);
     setResetNonce((n) => n + 1);
   }, [lessonKey]);
-
-  useEffect(() => {
-    if (activeHotspot) {
-      setZoomedMode(true);
-    }
-  }, [activeHotspot]);
 
   const handleTurn = (dir) => {
     try { soundManager.click(); } catch {}
@@ -521,18 +511,15 @@ export default function LearnHardwareStage({
 
   const handleZoom = (delta) => {
     try { soundManager.click(); } catch {}
-    setZoomFactor((prev) => {
-      const next = Math.max(0.65, Math.min(1.85, Number((prev + delta).toFixed(2))));
-      if (next > 1.08) setZoomedMode(true);
-      return next;
-    });
+    setZoomFactor((prev) =>
+      Math.max(0.65, Math.min(1.85, Number((prev + delta).toFixed(2))))
+    );
   };
 
   const handleResetView = () => {
     try { soundManager.snap(); } catch {}
     setRotationAngle(0);
     setZoomFactor(1);
-    setZoomedMode(false);
     onSelectHotspotId(null);
     setResetNonce((n) => n + 1);
   };
@@ -575,7 +562,6 @@ export default function LearnHardwareStage({
           rotationAngle={rotationAngle}
           zoomFactor={zoomFactor}
           resetNonce={resetNonce}
-          onUserZoomChange={(z) => setZoomedMode(z)}
           isPaused={isPaused}
         />
       </Canvas>
@@ -682,24 +668,6 @@ export default function LearnHardwareStage({
             >
               ▶ RUN DIAGNOSTIC
             </button>
-          </div>
-        </div>
-      )}
-
-      {/* Bottom-Left Orientation Minimap (appears on zoom or hotspot focus) */}
-      {(zoomedMode || activeHotspot) && (
-        <div className="workbench-minimap" title="3D Viewport Orientation">
-          <div className="minimap-grid">
-            <div
-              className="minimap-board-rect"
-              style={{
-                transform: `rotate(${Math.round((rotationAngle * 180) / Math.PI) - 24}deg) scale(${(
-                  1 / Math.max(0.7, zoomFactor)
-                ).toFixed(2)})`,
-              }}
-            />
-            <div className="minimap-frustum" />
-            <span className="minimap-north">▲ FRONT</span>
           </div>
         </div>
       )}

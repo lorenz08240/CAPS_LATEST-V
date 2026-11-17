@@ -55,6 +55,40 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
   const [testerEmailInput, setTesterEmailInput] = useState("");
   const [showConfigGuide, setShowConfigGuide] = useState(false);
 
+  // Reset the entry point each time the modal opens so a completed profile is
+  // never dragged back through the name and interests questions.
+  useEffect(() => {
+    if (!isOpen) return;
+    setError("");
+    setStep(
+      userProfile?.setupCompleted && (userProfile.fullName || userProfile.email)
+        ? "profile_ready"
+        : "connect"
+    );
+  }, [isOpen]);
+
+  // Browsers only grant fullscreen during a user gesture, so fire it immediately
+  // from the sign-in action instead of after async profile work.
+  const engageFullscreen = () => {
+    try {
+      sessionStorage.removeItem("buildlab_windowed_mode");
+      if (isFullscreenActive()) return;
+      const request = enterFullscreen();
+      if (request && typeof request.then === "function") {
+        request
+          .then((ok) => {
+            if (ok) markFullscreenEngaged();
+            else sessionStorage.removeItem("buildlab_pending_learner_welcome");
+          })
+          .catch(() => {
+            sessionStorage.removeItem("buildlab_pending_learner_welcome");
+          });
+      }
+    } catch {
+      sessionStorage.removeItem("buildlab_pending_learner_welcome");
+    }
+  };
+
   const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || "";
   const currentOrigin = typeof window !== "undefined" ? window.location.origin : "http://localhost:5173";
 
@@ -113,6 +147,7 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
                   });
                   if (restored) {
                     try { soundManager.granted(); } catch {}
+                    engageFullscreen();
                     setIsLinking(false);
                     if (onConfirmed) {
                       onConfirmed("learn", restored);
@@ -170,6 +205,7 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
       const restored = restoreStudentAccount(cleanEmail);
       if (restored) {
         try { soundManager.granted(); } catch {}
+        engageFullscreen();
         if (onConfirmed) {
           onConfirmed("learn", restored);
         } else {
@@ -216,6 +252,7 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
     }
 
     try { soundManager.granted(); } catch {}
+    engageFullscreen();
     const finalProfile = {
       fullName: fullName.trim(),
       email: email.trim() || "learner.tester@gmail.com",
@@ -258,22 +295,11 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
       );
       localStorage.setItem("buildlab_app_mode", "learn");
       localStorage.setItem("buildlab_user_profile", JSON.stringify(finalProfile));
+      localStorage.setItem("buildlab_last_learner_email", finalProfile.email.toLowerCase().trim());
       const emailKey = finalProfile.email.toLowerCase().trim();
       localStorage.setItem(`buildlab_student_profile_${emailKey}`, JSON.stringify(finalProfile));
       localStorage.setItem(`buildlab_student_stages_${emailKey}`, JSON.stringify(["build", "compatibility", "learn", "studio", "certificate"]));
       sessionStorage.setItem("buildlab_pending_learner_welcome", finalProfile.fullName);
-    } catch {}
-
-    // Auto fullscreen if windowed not preferred
-    try {
-      const isWindowedPref = sessionStorage.getItem("buildlab_windowed_mode") === "true";
-      if (!isWindowedPref && !isFullscreenActive()) {
-        enterFullscreen()
-          .then((ok) => {
-            if (ok) markFullscreenEngaged();
-          })
-          .catch(() => {});
-      }
     } catch {}
 
     // Sync to backend Google Learner Directory
@@ -307,12 +333,14 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
         <div className="account-modal-header">
           <div className="account-step-tag">
             <span className="step-badge">
+              {step === "profile_ready" && "[ SAVED ]"}
               {step === "connect" && "[ 01 / 03 ]"}
               {step === "tester_email" && "[ 01 / 03 ]"}
               {step === "name_input" && "[ 02 / 03 ]"}
               {step === "about_you" && "[ 03 / 03 ]"}
             </span>
             <span className="step-title">
+              {step === "profile_ready" && "ACCOUNT READY"}
               {step === "connect" && "LEARN MODE // GOOGLE AUTH"}
               {step === "tester_email" && "LEARN MODE // TESTER EMAIL"}
               {step === "name_input" && "STUDENT CERTIFICATION NAME"}
@@ -328,6 +356,44 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
             ✕
           </button>
         </div>
+
+        {/* RETURNING USER: profile already saved, skip the onboarding questions */}
+        {step === "profile_ready" && (
+          <div className="account-step-body">
+            <div className="verified-google-badge">
+              <img src={avatar} alt="Avatar" className="verified-avatar" />
+              <div className="verified-text">
+                <span className="verified-pill">✓ Google Account Linked</span>
+                <span className="verified-email">{userProfile.email}</span>
+              </div>
+            </div>
+
+            <h3 className="details-heading">Welcome back, {userProfile.fullName || fullName || "Builder"}</h3>
+            <p className="details-sub">
+              Your student profile is saved. You will not be asked to enter your name or interests again.
+            </p>
+
+            <div className="account-form-actions">
+              <button
+                type="button"
+                className="btn-back-step"
+                onClick={() => setStep("about_you")}
+              >
+                Edit interests
+              </button>
+              <button
+                type="button"
+                className="btn-confirm-track"
+                onClick={() => {
+                  if (onConfirmed) onConfirmed("learn", userProfile);
+                  else onClose();
+                }}
+              >
+                <span>CONTINUE TO ACADEMY →</span>
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* STEP 1: CONNECT GOOGLE ACCOUNT */}
         {step === "connect" && (

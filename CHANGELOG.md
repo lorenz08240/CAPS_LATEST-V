@@ -4,6 +4,53 @@ All notable project changes, UI/UX refinements, and compatibility fixes will be 
 
 ---
 
+## [2026-11-18] - Fullscreen Auto-Engage on Sign-In
+- **`AccountSetupModal.jsx`**:
+  - Auto-fullscreen now fires from every successful sign-in path (new profile, tester email, and returning-account restore) at the start of the user gesture.
+  - If the browser denies the request, the welcome hold is cleared so `FullscreenGate` takes over instead of leaving the user in windowed mode.
+- **`LearnModeContext.jsx`**:
+  - Auto-restored returning users on a fresh page load skip the welcome hold so the fullscreen gate appears (a page load cannot legally request fullscreen).
+
+---
+
+## [2026-11-18] - Returning Learner Account Persistence
+- **Backend (`server.js`)**:
+  - Added `GET /api/learn/profile?email=` so a returning learner's saved identity and unlocked stages can be restored from the learner directory.
+- **Frontend (`LearnModeContext.jsx`, `AccountSetupModal.jsx`, `GlobalHeader.jsx`)**:
+  - Remember the last signed-in email and auto-restore the active profile on a fresh session, from the local archive first and the server directory as fallback.
+  - Reset the setup wizard to the correct entry point each time it opens; completed profiles now see an "ACCOUNT READY / Welcome back" screen instead of the name and "Tell Us About You" steps.
+  - Returning users selecting LEARN from the global header go straight to the Academy instead of being sent into account setup.
+  - Explicit learner log out still clears the remembered email so the next visit starts clean.
+  - Guest state in the global sidebar now shows a single SIGN IN control instead of the empty "Guest / Open Lab" card; it opens the sign-in wizard directly.
+
+---
+
+## [2026-11-18] - Learn Header & Global Sidebar Cleanup
+- **Learn Header (`CourseShell.jsx` / `CourseShell.css`)**:
+  - Replaced the GUIDE ME text button with a compact `?` icon that keeps the theme-aligned hover tooltip ("Tour the 3 workbench zones with B.O.B.").
+  - Removed the BRIEFING and CERT (progress %) buttons from the header; remaining HUD items reflow naturally via the existing flex layout.
+  - Removed the now-unused `handleCertClick` handler; certificate access after completing all topics remains intact.
+- **Global Sidebar (`Navbar.jsx` / `Navbar.css`)**:
+  - Removed PC Builder, 3D Studio, Compatibility, and About Us links from the frontend Workspace group; Academy & Learn remains.
+  - Removed the now-unused `scrollToBuild` helper and its fullscreen import.
+  - Redesigned the account header for both states: larger 44px avatar, larger two-line name, roomier padding, and a short status line with a single theme-colored dot.
+  - Removed the LEARNER / GUEST role badge and the VERIFIED subpanel badge; status copy is now "Google Sync" (signed in) or "Connect to save work" (guest).
+
+---
+
+## [2026-11-17] - Custom /graphify OpenCode Skill & Learn Rail Cleanup
+- **Knowledge Graph Tooling**:
+  - Added `.agents/skills/graphify/SKILL.md` as a project-local slash command for OpenCode CLI.
+  - Routes locate / path / explain / affected / god-nodes / update intents to the venv CLI against `graphify-out/graph.json`.
+  - Documents the venv CLI path, 0.9.94 vs 0.9.102 version warning, ambiguous-name handling, and post-edit `update . --force`.
+- **Learn Workbench Sidebar (/learn)**:
+  - Removed VIDEO FILM, COMPAT CHECK, and LIGHT STUDIO buttons from the left navigation rail in `CourseShell.jsx`.
+  - Kept the underlying video, theme, and compatibility handlers intact since the student dashboard overlay still uses them.
+- **Global Sidebar (`Navbar.jsx` / `Navbar.css`)**:
+  - Anchored the Support group (Help & Support, Privacy Policy, Terms of Service, Cookie Policy) to the bottom of the scroll area so it sits directly above the Theme/Audio footer.
+
+---
+
 ## [2026-11-06] - Codebase Audit, CSS Compatibility, Comment Optimization & Graphify Sync
 - **Codebase Audit & Hygiene**:
   - Removed unused boilerplate markdown (frontend/README.md) and legacy scratch instructions (.agents/rules/cleanse.md).

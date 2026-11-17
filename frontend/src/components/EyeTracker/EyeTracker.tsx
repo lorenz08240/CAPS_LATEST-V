@@ -206,6 +206,8 @@ export function EyeTracker({
   speechLines,
   /* externally requested phrase to speak */
   externalSpeech,
+  /* hold all speech — no typewriter lines and no poke response */
+  muted = false,
   /* explicit target for eyes to track (selector string like '#build-catalog' or {x, y} coords) */
   lookTarget,
   className = "",
@@ -226,6 +228,7 @@ export function EyeTracker({
   eyeColor?: string;
   speechLines?: string[];
   externalSpeech?: string | null;
+  muted?: boolean;
   lookTarget?: { x: number; y: number } | string | null;
   className?: string;
   style?: React.CSSProperties;
@@ -265,7 +268,7 @@ export function EyeTracker({
   };
 
   const poke = async () => {
-    if (idle) return;
+    if (idle || muted) return;
     const activeLines = speechLines && speechLines.length > 0 ? speechLines : LINES;
     let i: number;
     // On first interaction, always introduce himself cleanly!
@@ -280,11 +283,20 @@ export function EyeTracker({
     await speakText(activeLines[i]);
   };
 
+  // Cutting the mute switch also cancels any line already being typed out.
   useEffect(() => {
-    if (externalSpeech) {
+    if (muted) {
+      turn.current++;
+      setTalking(false);
+      setTyped("");
+    }
+  }, [muted]);
+
+  useEffect(() => {
+    if (externalSpeech && !muted) {
       speakText(externalSpeech);
     }
-  }, [externalSpeech]);
+  }, [externalSpeech, muted]);
   const eyes = useRef<(SVGGElement | null)[]>([]);
   const knobs = useRef({ follow, bounce, eyeScale });
   knobs.current = { follow, bounce, eyeScale };
@@ -568,7 +580,7 @@ export function EyeTracker({
       <svg
         className="eyt-ball"
         viewBox="0 0 100 100"
-        data-poke={idle ? undefined : true}
+        data-poke={idle || muted ? undefined : true}
         onClick={poke}
       >
         <defs>

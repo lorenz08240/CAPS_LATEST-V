@@ -5,7 +5,6 @@ import { useTheme } from "../../contexts/ThemeContext";
 import { useSidebar } from "../../contexts/SidebarContext";
 import { useLearnMode } from "../../contexts/LearnModeContext";
 import { useLanguage } from "../../contexts/LanguageContext";
-import { enterFullscreen } from "../../utilities/fullscreen";
 import soundManager from "../../utilities/soundManager";
 import AccountSetupModal from "../Home/AccountSetupModal";
 import "./Navbar.css";
@@ -57,18 +56,6 @@ function Navbar({ isPinned: propsIsPinned }) {
     if (!isPinned) {
       closeSidebar();
     }
-  };
-
-  const scrollToBuild = (e) => {
-    e.preventDefault();
-    enterFullscreen();
-    if (location.pathname !== "/") {
-      navigate("/");
-    }
-    window.dispatchEvent(new Event("buildlab:enter-build"));
-    setTimeout(() => {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }, 150);
   };
 
   const handleAdminLogout = () => {
@@ -134,7 +121,7 @@ function Navbar({ isPinned: propsIsPinned }) {
                   </div>
                 </Link>
               </div>
-            ) : (
+            ) : userProfile?.setupCompleted ? (
               <div
                 className={`sidebar-account-card ${accountSubmenuOpen ? "expanded" : ""}`}
                 onClick={() => {
@@ -150,7 +137,7 @@ function Navbar({ isPinned: propsIsPinned }) {
                   {userProfile?.photo ? (
                     <img src={userProfile.photo} alt={userProfile.fullName || "User"} className="sidebar-account-avatar-img" />
                   ) : (
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                       <circle cx="12" cy="7" r="4" />
                     </svg>
@@ -163,11 +150,12 @@ function Navbar({ isPinned: propsIsPinned }) {
                     <span className="account-title-main" title={userProfile?.setupCompleted && userProfile?.fullName ? userProfile.fullName : "Guest / Open Lab"}>
                       {userProfile?.setupCompleted && userProfile?.fullName ? userProfile.fullName : "Guest / Open Lab"}
                     </span>
-                    <span className="account-role-tag">{userProfile?.setupCompleted ? "LEARN" : "GUEST"}</span>
                   </div>
                   <div className="account-action-row">
-                    <span className="account-action-text">{userProfile?.setupCompleted ? "Verified Profile" : "Connect Account"}</span>
-                    <span className="account-google-tag">{userProfile?.setupCompleted ? "GOOGLE SYNC" : "OPEN LAB"}</span>
+                    <span className={`account-status-dot ${userProfile?.setupCompleted ? "is-verified" : ""}`} aria-hidden="true" />
+                    <span className="account-action-text">
+                      {userProfile?.setupCompleted ? "Google Sync" : "Connect to save work"}
+                    </span>
                   </div>
                 </div>
 
@@ -177,6 +165,26 @@ function Navbar({ isPinned: propsIsPinned }) {
                   </svg>
                 </div>
               </div>
+            ) : (
+              <button
+                type="button"
+                className="sidebar-signin-card"
+                onClick={() => {
+                  try { soundManager.click(); } catch {}
+                  setShowAccountModal(true);
+                }}
+                aria-label="Sign in to your student account"
+              >
+                <span className="sidebar-signin-icon" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                    <polyline points="10 17 15 12 10 7" />
+                    <line x1="15" y1="12" x2="3" y2="12" />
+                  </svg>
+                </span>
+                <span className="sidebar-signin-label">SIGN IN</span>
+                <span className="sidebar-signin-arrow" aria-hidden="true">→</span>
+              </button>
             )}
 
             <div className="sidebar-header-controls">
@@ -196,11 +204,10 @@ function Navbar({ isPinned: propsIsPinned }) {
           </div>
 
           {/* ── ACCOUNT SUB-OPTIONS ACCORDION / DRAWER ── */}
-          {accountSubmenuOpen && !isAdminRoute && (
+          {accountSubmenuOpen && !isAdminRoute && userProfile?.setupCompleted && (
             <div className="sidebar-account-subpanel" role="region" aria-label="Account Sub-Options">
               <div className="subpanel-badge-bar">
                 <span className="subpanel-badge-title">ACCOUNT & PREFERENCES</span>
-                <span className="subpanel-badge-mode">{userProfile?.setupCompleted ? "VERIFIED" : "GUEST"}</span>
               </div>
 
               <div className="subpanel-menu-list">
@@ -447,43 +454,6 @@ function Navbar({ isPinned: propsIsPinned }) {
                 <div className="sidebar-nav-group">
                   <div className="sidebar-group-title">Workspace</div>
                   <div className="sidebar-group-links">
-                    <a
-                      href="#build-station"
-                      onClick={(e) => { scrollToBuild(e); handleLinkClick(); }}
-                      className={`sidebar-link ${location.pathname === "/" ? "active" : ""}`}
-                    >
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
-                      </svg>
-                      <span>PC Builder</span>
-                    </a>
-
-                    <Link
-                      to="/3d-builder"
-                      onClick={handleLinkClick}
-                      className={`sidebar-link ${location.pathname.startsWith("/3d-builder") ? "active" : ""}`}
-                    >
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-                        <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
-                        <line x1="12" y1="22.08" x2="12" y2="12" />
-                      </svg>
-                      <span>3D Studio</span>
-                      {mode === "learn" && <span style={{ marginLeft: "auto", fontSize: "11px" }} title="Locked in Learn Track">🔒</span>}
-                    </Link>
-
-                    <Link
-                      to="/compatibility"
-                      onClick={handleLinkClick}
-                      className={`sidebar-link ${location.pathname.startsWith("/compatibility") ? "active" : ""}`}
-                    >
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                        <polyline points="9 12 11 14 15 10" />
-                      </svg>
-                      <span>Compatibility</span>
-                    </Link>
-
                     <Link
                       to="/learn"
                       onClick={handleLinkClick}
@@ -494,20 +464,6 @@ function Navbar({ isPinned: propsIsPinned }) {
                         <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
                       </svg>
                       <span>Academy &amp; Learn</span>
-                    </Link>
-
-                    <Link
-                      to="/about"
-                      onClick={handleLinkClick}
-                      className={`sidebar-link ${location.pathname === "/about" ? "active" : ""}`}
-                    >
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                        <circle cx="9" cy="7" r="4" />
-                        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                      </svg>
-                      <span>About Us</span>
                     </Link>
                   </div>
                 </div>

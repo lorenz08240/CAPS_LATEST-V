@@ -490,25 +490,6 @@ export default function CourseShell() {
     }
   }, [currentIndex, isAuthenticated, unlockStage, navigate]);
 
-  const handleCertClick = () => {
-    if (!isAuthenticated) {
-      try { soundManager.warning(); } catch {}
-      setShowAccountModal(true);
-      return;
-    }
-    const isAllComplete = completed.length >= FLAT_TOPICS.length;
-    if (!isAllComplete) {
-      try { soundManager.warning(); } catch {}
-      setBobSpeech(
-        `You've mastered ${completed.length} of ${FLAT_TOPICS.length} topics! Complete all syllabus lessons to unlock your verified certificate.`
-      );
-      return;
-    }
-    try { soundManager.complete(); } catch {}
-    unlockStage("certificate");
-    navigate("/certificate");
-  };
-
   const handlePrevTopic = useCallback(() => {
     if (currentIndex > 0) {
       try { soundManager.click(); } catch {}
@@ -767,42 +748,6 @@ export default function CourseShell() {
             {leftRailOpen && <span className="wb-rail-label">LESSONS</span>}
           </button>
 
-          <button
-            type="button"
-            className="wb-rail-item"
-            onClick={handleOpenLectureFilm}
-            data-tooltip="Toggle Current Lecture Video"
-            aria-label="Watch Video Lecture"
-          >
-            <span className="wb-rail-icon">▶</span>
-            {leftRailOpen && <span className="wb-rail-label">VIDEO FILM</span>}
-          </button>
-
-          <button
-            type="button"
-            className="wb-rail-item"
-            onClick={() => navigate("/compatibility")}
-            data-tooltip="Stage 02: Compatibility Matrix"
-            aria-label="Compatibility Matrix"
-          >
-            <span className="wb-rail-icon">✓</span>
-            {leftRailOpen && <span className="wb-rail-label">COMPAT CHECK</span>}
-          </button>
-
-          <button
-            type="button"
-            className="wb-rail-item wb-theme-switch-btn"
-            onClick={toggleTheme}
-            data-tooltip={isLight ? "Switch to Dark Studio" : "Switch to Light Studio"}
-            aria-label={isLight ? "Switch to Dark Studio" : "Switch to Light Studio"}
-          >
-            <span className="wb-rail-icon">{isLight ? "🌙" : "☀️"}</span>
-            {leftRailOpen && (
-              <span className="wb-rail-label">
-                {isLight ? "DARK STUDIO" : "LIGHT STUDIO"}
-              </span>
-            )}
-          </button>
         </nav>
 
         <div className="wb-rail-footer">
@@ -979,13 +924,12 @@ export default function CourseShell() {
           <div className="wb-header-right">
             <button
               type="button"
-              className={`wb-hud-pill wb-tour-btn ${tourActive ? "is-active" : ""}`}
+              className={`wb-hud-pill wb-tour-btn wb-tour-icon-only ${tourActive ? "is-active" : ""}`}
               onClick={tourActive ? () => dismissTour(false) : () => startTour(0)}
               data-tooltip={tourActive ? "Close guided tour (Esc)" : "Tour the 3 workbench zones with B.O.B."}
               aria-label={tourActive ? "Stop tour" : "Start guide tour"}
             >
-              <span className="wb-tour-icon">{tourActive ? "✕" : "💡"}</span>
-              <span>{tourActive ? "STOP TOUR" : "GUIDE ME"}</span>
+              <span className="wb-tour-icon" aria-hidden="true">?</span>
             </button>
 
             {/* Dynamic Module & Topic Progress Indicator */}
@@ -1006,33 +950,6 @@ export default function CourseShell() {
                 </div>
               </div>
             </div>
-
-            <button
-              type="button"
-              className={`wb-stage-cta wb-cta-briefing ${showBriefingOverlay ? "is-active" : ""}`}
-              onClick={() => {
-                try { soundManager.click(); } catch {}
-                setShowBriefingOverlay((v) => !v);
-              }}
-              data-tooltip={showBriefingOverlay ? "Close Course Briefing (Esc)" : "Review 7-Module Course Briefing"}
-              aria-label="Course Briefing"
-            >
-              📋 BRIEFING
-            </button>
-
-            <button
-              type="button"
-              className={`wb-stage-cta wb-cta-cert ${completed.length >= FLAT_TOPICS.length ? "is-unlocked" : "is-locked"}`}
-              onClick={handleCertClick}
-              data-tooltip={
-                completed.length >= FLAT_TOPICS.length
-                  ? "Claim and Download Official Certificate"
-                  : `Certificate Locked (${completed.length}/${FLAT_TOPICS.length} topics mastered)`
-              }
-              aria-label="View Certificate"
-            >
-              {completed.length >= FLAT_TOPICS.length ? "🎓 CLAIM CERTIFICATE" : `🔒 CERT (${progressPct}%)`}
-            </button>
           </div>
         </header>
 
@@ -1113,19 +1030,6 @@ export default function CourseShell() {
                     MODULE {currentTopic.moduleNum} // {currentTopic.moduleTitle.toUpperCase()}
                   </span>
                   <div className="wb-guide-meta-right">
-                    <button
-                      type="button"
-                      className="wb-dock-studio-cta"
-                      onClick={() => {
-                        try { soundManager.install(); } catch {}
-                        unlockStage("studio");
-                        navigate("/3d-builder?learn=true");
-                      }}
-                      data-tooltip="Launch Full 3D Assembly Studio"
-                      aria-label="Open 3D Studio"
-                    >
-                      ◈ 3D STUDIO
-                    </button>
                     {completed.includes(currentTopic.id) && (
                       <span className="wb-topic-done-badge">✓ COMPLETED</span>
                     )}
@@ -1581,7 +1485,8 @@ export default function CourseShell() {
       <BobCompanion
         context="learn"
         activeTopic={currentTopic.title}
-        externalSpeech={bobSpeech}
+        externalSpeech={showBriefingOverlay ? null : bobSpeech}
+        muted={showBriefingOverlay}
         dockRight={20}
         size={bobIsCenter ? 88 : leftRailOpen ? 64 : 46}
         isCenter={bobIsCenter}

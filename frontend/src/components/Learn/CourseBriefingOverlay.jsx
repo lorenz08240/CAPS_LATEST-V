@@ -2,37 +2,67 @@ import React, { useEffect } from "react";
 import soundManager from "../../utilities/soundManager";
 import "./CourseBriefingOverlay.css";
 
-const SYLLABUS_SECTIONS = [
+const LEARNING_PATH = [
   {
-    step: "PART 01",
-    title: "Safety Protocols & Motherboard Architecture",
-    overview: "Electro-static discharge (ESD) safety, grounded workstation setup, and core motherboard layout and socket identification.",
-    duration: "Module 1 – 2"
+    step: "MODULE 01",
+    title: "Lab Safety, Workspace & Tools",
+    topics: "3 topics",
+    overview: "Ground yourself, choose a static-safe surface, and learn to handle a motherboard without destroying it.",
   },
   {
-    step: "PART 02",
-    title: "Processor Mounting & Thermal Management",
-    overview: "Zero-insertion-force CPU socketing, orientation key alignment, thermal compound application, and cooling installation.",
-    duration: "Module 3"
+    step: "MODULE 02",
+    title: "The Motherboard",
+    topics: "3 topics",
+    overview: "Read the board like a map: form factors, chipset and VRM power delivery, rear I/O and internal headers.",
   },
   {
-    step: "PART 03",
-    title: "High-Speed Memory & Solid-State Storage",
-    overview: "Dual-channel memory channel priority (A2/B2), key notch latching, and high-speed M.2 NVMe solid-state drive installation.",
-    duration: "Module 4 – 5"
+    step: "MODULE 03",
+    title: "CPU & Cooling",
+    topics: "2 topics",
+    overview: "Align the socket key, drop in the processor without bending a pin, and apply thermal compound the right way.",
   },
   {
-    step: "PART 04",
-    title: "Power Supply Delivery & Cable Management",
-    overview: "ATX 24-pin and EPS 8-pin distribution, PSU efficiency ratings, and safe single-rail modular cable routing.",
-    duration: "Module 6"
+    step: "MODULE 04",
+    title: "Memory & M.2 Storage",
+    topics: "2 topics",
+    overview: "Populate DDR4/DDR5 in the A2/B2 slots for true dual channel, then seat an NVMe drive on the PCIe bus.",
   },
   {
-    step: "PART 05",
-    title: "Capstone: 3D Virtual PC Assembly & POST",
-    overview: "Hands-on component-by-component PC assembly inside the 3D Studio, followed by real-time Power-On Self-Test (POST) verification.",
-    duration: "Module 7 (Capstone)"
-  }
+    step: "MODULE 05",
+    title: "Graphics Card & Power Supply",
+    topics: "2 topics",
+    overview: "Match the PCIe x16 slot and display outputs, then identify keyed modular cables and 80 PLUS ratings.",
+  },
+  {
+    step: "MODULE 06",
+    title: "Chassis, Airflow & Cabling",
+    topics: "2 topics",
+    overview: "Build positive pressure, wire the front-panel headers, and route cables so air actually moves.",
+  },
+  {
+    step: "MODULE 07",
+    title: "Capstone: Build & POST",
+    topics: "3 topics",
+    overview: "Stage the bench, assemble the entire system in 3D, then diagnose a first boot with EZ Debug LEDs.",
+  },
+];
+
+const OUTCOMES = [
+  {
+    num: "01",
+    title: "Inspect before you install",
+    desc: "Spot a bent socket pin, read a PSU label, and pick a safe work surface without guessing.",
+  },
+  {
+    num: "02",
+    title: "Build in the right order",
+    desc: "Follow the canonical sequence — CPU, cooler, RAM, M.2, GPU, power — instead of learning the hard way.",
+  },
+  {
+    num: "03",
+    title: "Prove it actually boots",
+    desc: "Run POST, interpret debug LEDs, and work a repeatable diagnostic flow when the screen stays dark.",
+  },
 ];
 
 export default function CourseBriefingOverlay({ onClose, onStartLearning }) {
@@ -63,8 +93,8 @@ export default function CourseBriefingOverlay({ onClose, onStartLearning }) {
             <span>PDF</span>
           </div>
           <div className="wb-pdf-file-info">
-            <span className="wb-pdf-filename">PTC_IICT_CSS_Course_Overview.pdf</span>
-            <span className="wb-pdf-file-badge">OFFICIAL SYLLABUS · V2.4</span>
+            <span className="wb-pdf-filename">BuildLab_CSS_Course_Overview.pdf</span>
+            <span className="wb-pdf-file-badge">COURSE BRIEF · V2.4</span>
           </div>
         </div>
 
@@ -87,50 +117,63 @@ export default function CourseBriefingOverlay({ onClose, onStartLearning }) {
 
       {/* ── PDF DOCUMENT CANVAS (SCROLLABLE VIEWPORT) ── */}
       <div className="wb-pdf-viewport">
-        {/* ── AUTHENTIC PRINT-READY DOCUMENT SHEET ── */}
+        {/* ── PRINT-READY COURSE BRIEF SHEET ── */}
         <article className="wb-pdf-sheet">
-          {/* Institutional Header */}
           <header className="wb-pdf-doc-header">
-            <div className="wb-pdf-institution">
-              <div className="wb-pdf-institution-crest" aria-hidden="true">
-                <span>PTC</span>
+            <div className="wb-pdf-brand">
+              <div className="wb-pdf-brand-mark" aria-hidden="true">
+                BL
               </div>
-              <div className="wb-pdf-institution-text">
-                <h1 className="wb-pdf-school-name">PATEROS TECHNOLOGICAL COLLEGE</h1>
-                <p className="wb-pdf-dept-name">Institute of Information and Computing Technology // TVL-CSS NC-II Aligned</p>
+              <div className="wb-pdf-brand-text">
+                <h1 className="wb-pdf-brand-name">BUILDLAB HARDWARE ACADEMY</h1>
+                <p className="wb-pdf-brand-sub">Computer Systems Servicing · Guided 3D practicum</p>
               </div>
             </div>
-
-            <div className="wb-pdf-doc-meta-badge">
-              <span className="wb-pdf-doc-ref">DOC ID: BL-CSS-2026-SYLLABUS</span>
-              <span className="wb-pdf-doc-accreditation">PTC-IICT ACCREDITED COURSEWARE</span>
+            <div className="wb-pdf-doc-stamp">
+              <span className="wb-pdf-stamp-main">COURSE BRIEF</span>
+              <span className="wb-pdf-stamp-sub">REV 2.4 · SELF-PACED</span>
             </div>
           </header>
 
           <div className="wb-pdf-rule" />
 
-          {/* Document Title & Overview */}
+          {/* Welcome / Hook */}
           <section className="wb-pdf-hero-section">
-            <div className="wb-pdf-hero-tag">COURSE OVERVIEW & PRACTICAL SYLLABUS</div>
-            <h2 className="wb-pdf-title">Computer Systems Servicing (CSS)</h2>
+            <div className="wb-pdf-hero-tag">START HERE · COURSE OVERVIEW</div>
+            <h2 className="wb-pdf-title">
+              Welcome to <span className="wb-pdf-title-accent">COMPUTER SYSTEM SERVICING</span> Related Course!
+            </h2>
+            <p className="wb-pdf-lede">
+              This isn&apos;t a chapter to memorise — it&apos;s a bench to work at. Across 7 modules and 17 short topics you&apos;ll take a desktop PC from a box of parts to a clean first boot, learning the reason behind every move as you go.
+            </p>
             <p className="wb-pdf-summary">
-              Welcome to BuildLab Hardware Academy. This curriculum delivers structured, hands-on training in personal computer hardware architecture, assembly protocols, and system diagnostics inside a real-time interactive 3D simulation environment.
+              Each lesson pairs a real-world explanation with a live 3D component you can rotate, inspect and assemble. Get it wrong and nothing catches fire. Get it right and the skill sticks.
             </p>
           </section>
 
-          {/* Key Facts / Metadata Grid */}
+          {/* Outcomes — what the learner actually gains */}
+          <section className="wb-pdf-outcomes">
+            <h3 className="wb-pdf-mini-heading">What you&apos;ll be able to do</h3>
+            <div className="wb-pdf-outcome-grid">
+              {OUTCOMES.map((item) => (
+                <div key={item.num} className="wb-pdf-outcome">
+                  <span className="wb-pdf-outcome-num">{item.num}</span>
+                  <strong className="wb-pdf-outcome-title">{item.title}</strong>
+                  <p className="wb-pdf-outcome-desc">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* At-a-glance facts */}
           <section className="wb-pdf-meta-table">
             <div className="wb-pdf-meta-cell">
-              <span className="wb-pdf-meta-label">TARGET AUDIENCE</span>
-              <span className="wb-pdf-meta-val">Grade 11 TVL-CSS & BSIT Students</span>
-            </div>
-            <div className="wb-pdf-meta-cell">
               <span className="wb-pdf-meta-label">COURSE SCOPE</span>
-              <span className="wb-pdf-meta-val">7 Practical Modules · 20 Topics</span>
+              <span className="wb-pdf-meta-val">7 Modules · 17 Topics</span>
             </div>
             <div className="wb-pdf-meta-cell">
               <span className="wb-pdf-meta-label">LEARNING MODE</span>
-              <span className="wb-pdf-meta-val">3D Studio & Guided Workbench</span>
+              <span className="wb-pdf-meta-val">Guided 3D Workbench</span>
             </div>
             <div className="wb-pdf-meta-cell">
               <span className="wb-pdf-meta-label">AWARD</span>
@@ -138,15 +181,18 @@ export default function CourseBriefingOverlay({ onClose, onStartLearning }) {
             </div>
           </section>
 
-          {/* Clean Syllabus Sequence (Overview, Larger Text, No Dense Clutter) */}
+          {/* Full, accurate learning path */}
           <section className="wb-pdf-curriculum-section">
-            <h3 className="wb-pdf-section-heading">Curriculum Overview</h3>
+            <div className="wb-pdf-curriculum-head">
+              <h3 className="wb-pdf-section-heading">Curriculum Overview</h3>
+              <span className="wb-pdf-path-count">7 MODULES · 17 TOPICS</span>
+            </div>
             <div className="wb-pdf-syllabus-list">
-              {SYLLABUS_SECTIONS.map((sec, idx) => (
+              {LEARNING_PATH.map((sec) => (
                 <div key={sec.step} className="wb-pdf-syllabus-item">
                   <div className="wb-pdf-item-marker">
                     <span className="wb-pdf-step-tag">{sec.step}</span>
-                    <span className="wb-pdf-duration-tag">{sec.duration}</span>
+                    <span className="wb-pdf-duration-tag">{sec.topics}</span>
                   </div>
                   <div className="wb-pdf-item-body">
                     <h4 className="wb-pdf-item-title">{sec.title}</h4>
@@ -157,29 +203,29 @@ export default function CourseBriefingOverlay({ onClose, onStartLearning }) {
             </div>
           </section>
 
-          {/* Competency Guarantee & Lab Standards */}
+          {/* Why this format works */}
           <section className="wb-pdf-competency-box">
             <div className="wb-pdf-competency-item">
               <span className="wb-pdf-competency-icon">🎖️</span>
               <div className="wb-pdf-competency-info">
-                <strong>Verified Certification</strong>
-                <p>Complete all module checks and pass the 3D Capstone Build to earn your official PTC-IICT Certificate of Competency.</p>
+                <strong>Earn proof, not just progress</strong>
+                <p>Clear every module check and finish the capstone build to unlock your verified Certificate of Competency.</p>
               </div>
             </div>
             <div className="wb-pdf-competency-item">
               <span className="wb-pdf-competency-icon">🛡️</span>
               <div className="wb-pdf-competency-info">
-                <strong>Zero Hardware Risk</strong>
-                <p>Learn and practice safely in interactive 3D with zero risk of electrostatic damage or costly bent socket pins.</p>
+                <strong>Zero hardware risk</strong>
+                <p>Bend a pin or short a rail in the simulator and you&apos;ll learn from it — with no replacement parts to buy.</p>
               </div>
             </div>
           </section>
 
-          {/* Document Sign-Off & Official Footnote */}
+          {/* Document Sign-Off & Footnote */}
           <footer className="wb-pdf-doc-footer">
             <div className="wb-pdf-auth-block">
               <span className="wb-pdf-auth-prepared">Curriculum Design: BuildLab Academic Team</span>
-              <span className="wb-pdf-auth-approved">Approved: Pateros Technological College (PTC-IICT)</span>
+              <span className="wb-pdf-auth-approved">Guided practice · Seven modules · One capstone build</span>
             </div>
 
             <div className="wb-pdf-actions">

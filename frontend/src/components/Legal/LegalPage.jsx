@@ -141,11 +141,6 @@ const LEGAL_DOCS = {
                 scope: "PERSISTENT",
                 desc: "Maintains your authenticated student profile, full name, and unlocked Academy milestones.",
               },
-              {
-                name: "buildlab_windowed_mode",
-                scope: "SESSION",
-                desc: "Remembers if you chose windowed view instead of fullscreen workstation mode.",
-              },
             ],
           },
           {

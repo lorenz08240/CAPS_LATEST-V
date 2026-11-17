@@ -59,35 +59,18 @@ export default function StageUnlockBanner({
     };
   }, [onComplete, requireConfirm]);
 
-  const handleDismissNow = async (forceWindowed = false) => {
+  const handleDismissNow = async () => {
     try {
       soundManager.click();
     } catch {}
 
-    if (forceWindowed) {
+    if (autoFullscreenOnConfirm && !isFullscreenActive()) {
       try {
-        sessionStorage.setItem("buildlab_windowed_mode", "true");
-        window.dispatchEvent(new Event("buildlab:windowed-mode"));
-      } catch {}
-    } else if (autoFullscreenOnConfirm && !isFullscreenActive()) {
-      const isWindowedPref =
-        typeof sessionStorage !== "undefined" &&
-        sessionStorage.getItem("buildlab_windowed_mode") === "true";
-      if (!isWindowedPref) {
-        try {
-          const ok = await enterFullscreen();
-          if (ok) {
-            markFullscreenEngaged();
-          } else {
-            // Browser prevented fullscreen: seamlessly allow windowed view so user isn't gated
-            sessionStorage.setItem("buildlab_windowed_mode", "true");
-            window.dispatchEvent(new Event("buildlab:windowed-mode"));
-          }
-        } catch {
-          sessionStorage.setItem("buildlab_windowed_mode", "true");
-          window.dispatchEvent(new Event("buildlab:windowed-mode"));
+        const ok = await enterFullscreen();
+        if (ok) {
+          markFullscreenEngaged();
         }
-      }
+      } catch {}
     }
 
     setAnimState("exiting");
@@ -203,7 +186,7 @@ export default function StageUnlockBanner({
               <button
                 type="button"
                 className="unlock-primary-cta-btn"
-                onClick={() => handleDismissNow(false)}
+                onClick={handleDismissNow}
                 autoFocus
               >
                 <span>
@@ -213,21 +196,12 @@ export default function StageUnlockBanner({
                       : "START STAGE 01 & LAUNCH B.O.B. GUIDE →")}
                 </span>
               </button>
-              {!fsActive && autoFullscreenOnConfirm && (
-                <button
-                  type="button"
-                  className="unlock-windowed-sub-btn"
-                  onClick={() => handleDismissNow(true)}
-                >
-                  Continue in windowed view &rarr;
-                </button>
-              )}
             </div>
           ) : (
             <button
               type="button"
               className="unlock-skip-btn"
-              onClick={() => handleDismissNow(false)}
+              onClick={handleDismissNow}
             >
               {ctaLabel || "CONTINUE NOW →"}
             </button>

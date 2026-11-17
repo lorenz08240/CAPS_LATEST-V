@@ -67,7 +67,6 @@ function Footer() {
         {/* Brand & Institutional Profile Column */}
         <div className="footer-brand">
           <div className="footer-brand-header">
-            <span className="footer-system-badge">BUILDLAB SYSTEM V2.4</span>
             <h2>BUILDLAB</h2>
           </div>
           <p className="footer-tagline">
@@ -77,11 +76,11 @@ function Footer() {
           <div className="footer-credits-card">
             <div className="credit-line">
               <span className="credit-label">DEVELOPED BY:</span>
-              <strong className="credit-val">WhiteHats Developer Consortium</strong>
+              <strong className="credit-val">WhiteHats Development Team</strong>
             </div>
             <div className="credit-line">
               <span className="credit-label">INSTITUTION:</span>
-              <strong className="credit-val">Pateros Technological College (PTC-IICT)</strong>
+              <strong className="credit-val">Pateros Technological College</strong>
             </div>
             <div className="credit-line">
               <span className="credit-label">ACCREDITATION:</span>

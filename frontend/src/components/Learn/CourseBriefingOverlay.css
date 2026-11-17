@@ -134,6 +134,9 @@
   padding: 2.25rem 1.5rem 3.5rem;
   display: flex;
   justify-content: center;
+  /* Default `stretch` squashes the sheet to the viewport height, so its content
+     (notably the curriculum overview) spills outside the page background. */
+  align-items: flex-start;
   background: radial-gradient(circle at 50% 20%, rgba(30, 41, 59, 0.6) 0%, rgba(10, 15, 26, 0.98) 100%);
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.2) rgba(15, 23, 42, 0.6);
@@ -188,82 +191,83 @@
   }
 }
 
-/* ── DOCUMENT HEADER & EMBLEM ── */
+/* ── DOCUMENT HEADER & BUILDLAB BRAND ── */
 .wb-pdf-doc-header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 1.5rem;
   flex-wrap: wrap;
 }
 
-.wb-pdf-institution {
+.wb-pdf-brand {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.9rem;
 }
 
-.wb-pdf-institution-crest {
-  width: 48px;
-  height: 48px;
+.wb-pdf-brand-mark {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
   background: linear-gradient(135deg, #00e5a0 0%, #0284c7 100%);
-  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #070b12;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 900;
-  letter-spacing: 0.05em;
-  box-shadow: 0 4px 14px rgba(0, 229, 160, 0.35);
+  letter-spacing: -0.04em;
+  box-shadow: 0 4px 16px rgba(0, 229, 160, 0.28);
   flex-shrink: 0;
 }
 
-.wb-pdf-institution-text {
+.wb-pdf-brand-text {
   display: flex;
   flex-direction: column;
   gap: 3px;
 }
 
-.wb-pdf-school-name {
-  font-size: 16px;
+.wb-pdf-brand-name {
+  font-size: 15px;
   font-weight: 900;
   color: #f8fafc;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.1em;
   margin: 0;
 }
 
-.wb-pdf-dept-name {
-  font-size: 12px;
+.wb-pdf-brand-sub {
+  font-size: 11.5px;
   color: #94a3b8;
   margin: 0;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.02em;
 }
 
-.wb-pdf-doc-meta-badge {
+.wb-pdf-doc-stamp {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 4px;
+  gap: 5px;
+  text-align: right;
 }
 
-.wb-pdf-doc-ref {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+.wb-pdf-stamp-main {
   font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  color: #00e5a0;
+  background: rgba(0, 229, 160, 0.1);
+  border: 1px solid rgba(0, 229, 160, 0.28);
+  padding: 4px 9px;
+  border-radius: 4px;
+}
+
+.wb-pdf-stamp-sub {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 10px;
   font-weight: 700;
   color: #64748b;
-  letter-spacing: 0.05em;
-}
-
-.wb-pdf-doc-accreditation {
-  font-size: 10.5px;
-  font-weight: 800;
   letter-spacing: 0.06em;
-  color: #00e5a0;
-  background: rgba(0, 229, 160, 0.12);
-  padding: 3px 8px;
-  border-radius: 4px;
-  border: 1px solid rgba(0, 229, 160, 0.28);
 }
 
 .wb-pdf-rule {
@@ -276,7 +280,7 @@
 .wb-pdf-hero-section {
   display: flex;
   flex-direction: column;
-  gap: 0.65rem;
+  gap: 0.8rem;
 }
 
 .wb-pdf-hero-tag {
@@ -288,25 +292,90 @@
 }
 
 .wb-pdf-title {
-  font-size: 26px;
+  font-size: 24px;
   font-weight: 900;
   color: #ffffff;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.015em;
   margin: 0;
-  line-height: 1.25;
+  line-height: 1.3;
+}
+
+.wb-pdf-title-accent {
+  color: #00e5a0;
+}
+
+.wb-pdf-lede {
+  font-size: 15px;
+  line-height: 1.7;
+  color: #e2e8f0;
+  margin: 0;
+  font-weight: 500;
 }
 
 .wb-pdf-summary {
-  font-size: 14.5px;
+  font-size: 13.5px;
   line-height: 1.65;
+  color: #94a3b8;
+  margin: 0;
+}
+
+/* ── LEARNING OUTCOMES ── */
+.wb-pdf-outcomes {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.wb-pdf-mini-heading {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
   color: #cbd5e1;
+  margin: 0;
+}
+
+.wb-pdf-outcome-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.wb-pdf-outcome {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 1rem 1.05rem;
+  border-radius: 8px;
+  background: rgba(0, 229, 160, 0.06);
+  border: 1px solid rgba(0, 229, 160, 0.18);
+}
+
+.wb-pdf-outcome-num {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: #00e5a0;
+}
+
+.wb-pdf-outcome-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: #f1f5f9;
+  line-height: 1.35;
+}
+
+.wb-pdf-outcome-desc {
+  font-size: 12px;
+  line-height: 1.5;
+  color: #94a3b8;
   margin: 0;
 }
 
 /* ── METADATA GRID TABLE ── */
 .wb-pdf-meta-table {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 0.75rem;
   background: rgba(15, 23, 42, 0.65);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -334,11 +403,29 @@
   color: #f1f5f9;
 }
 
-/* ── CURRICULUM SYLLABUS LIST (CLEAN, LARGER TEXT, FEWER TERMS) ── */
+/* ── CURRICULUM SYLLABUS LIST ── */
 .wb-pdf-curriculum-section {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+}
+
+.wb-pdf-curriculum-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.wb-pdf-path-count {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: #64748b;
+  white-space: nowrap;
 }
 
 .wb-pdf-section-heading {
@@ -347,21 +434,19 @@
   letter-spacing: -0.01em;
   color: #f8fafc;
   margin: 0;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .wb-pdf-syllabus-list {
   display: flex;
   flex-direction: column;
-  gap: 0.9rem;
+  gap: 0.7rem;
 }
 
 .wb-pdf-syllabus-item {
   display: flex;
   align-items: flex-start;
   gap: 1.25rem;
-  padding: 1rem 1.2rem;
+  padding: 0.85rem 1.1rem;
   border-radius: 8px;
   background: rgba(30, 41, 59, 0.45);
   border: 1px solid rgba(255, 255, 255, 0.06);
@@ -379,7 +464,7 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 4px;
-  min-width: 95px;
+  min-width: 104px;
   flex-shrink: 0;
 }
 
@@ -600,13 +685,27 @@
     0 2px 8px rgba(15, 23, 42, 0.04);
 }
 
-.wb-shell.theme-light .wb-pdf-school-name,
-.wb-shell.theme-blueprint .wb-pdf-school-name {
+.wb-shell.theme-light .wb-pdf-brand-name,
+.wb-shell.theme-blueprint .wb-pdf-brand-name {
   color: #0f172a;
 }
 
-.wb-shell.theme-light .wb-pdf-dept-name,
-.wb-shell.theme-blueprint .wb-pdf-dept-name {
+.wb-shell.theme-light .wb-pdf-brand-sub,
+.wb-shell.theme-blueprint .wb-pdf-brand-sub {
+  color: #64748b;
+}
+
+.wb-shell.theme-light .wb-pdf-stamp-main,
+.wb-shell.theme-blueprint .wb-pdf-stamp-main {
+  color: #0284c7;
+  background: rgba(2, 132, 199, 0.1);
+  border-color: rgba(2, 132, 199, 0.28);
+}
+
+.wb-shell.theme-light .wb-pdf-stamp-sub,
+.wb-shell.theme-light .wb-pdf-path-count,
+.wb-shell.theme-blueprint .wb-pdf-stamp-sub,
+.wb-shell.theme-blueprint .wb-pdf-path-count {
   color: #64748b;
 }
 
@@ -615,9 +714,45 @@
   color: #0f172a;
 }
 
+.wb-shell.theme-light .wb-pdf-title-accent,
+.wb-shell.theme-blueprint .wb-pdf-title-accent {
+  color: #0284c7;
+}
+
+.wb-shell.theme-light .wb-pdf-lede,
+.wb-shell.theme-blueprint .wb-pdf-lede {
+  color: #1e293b;
+}
+
 .wb-shell.theme-light .wb-pdf-summary,
 .wb-shell.theme-blueprint .wb-pdf-summary {
+  color: #475569;
+}
+
+.wb-shell.theme-light .wb-pdf-mini-heading,
+.wb-shell.theme-blueprint .wb-pdf-mini-heading {
   color: #334155;
+}
+
+.wb-shell.theme-light .wb-pdf-outcome,
+.wb-shell.theme-blueprint .wb-pdf-outcome {
+  background: rgba(2, 132, 199, 0.06);
+  border-color: rgba(2, 132, 199, 0.2);
+}
+
+.wb-shell.theme-light .wb-pdf-outcome-num,
+.wb-shell.theme-blueprint .wb-pdf-outcome-num {
+  color: #0284c7;
+}
+
+.wb-shell.theme-light .wb-pdf-outcome-title,
+.wb-shell.theme-blueprint .wb-pdf-outcome-title {
+  color: #0f172a;
+}
+
+.wb-shell.theme-light .wb-pdf-outcome-desc,
+.wb-shell.theme-blueprint .wb-pdf-outcome-desc {
+  color: #475569;
 }
 
 .wb-shell.theme-light .wb-pdf-meta-table,
@@ -634,6 +769,10 @@
 .wb-shell.theme-light .wb-pdf-section-heading,
 .wb-shell.theme-blueprint .wb-pdf-section-heading {
   color: #0f172a;
+}
+
+.wb-shell.theme-light .wb-pdf-curriculum-head,
+.wb-shell.theme-blueprint .wb-pdf-curriculum-head {
   border-color: #e2e8f0;
 }
 
@@ -710,7 +849,8 @@
   .wb-pdf-sheet {
     padding: 1.5rem 1.25rem;
   }
-  .wb-pdf-meta-table {
+  .wb-pdf-meta-table,
+  .wb-pdf-outcome-grid {
     grid-template-columns: 1fr 1fr;
   }
   .wb-pdf-competency-box {
@@ -720,7 +860,17 @@
     flex-direction: column;
     align-items: flex-start;
   }
-  .wb-pdf-doc-meta-badge {
+  .wb-pdf-doc-stamp {
     align-items: flex-start;
+    text-align: left;
+  }
+}
+
+@media (max-width: 520px) {
+  .wb-pdf-outcome-grid {
+    grid-template-columns: 1fr;
+  }
+  .wb-pdf-meta-table {
+    grid-template-columns: 1fr;
   }
 }

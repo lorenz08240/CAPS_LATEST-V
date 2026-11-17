@@ -120,9 +120,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/FullscreenGate/FullscreenGate.jsx": {
-    "mtime": 1794866018.0751057,
-    "seen": 1794867017.5922525,
-    "ast_hash": "5db656c3f8dd5a4db58e6515565b39a8",
+    "mtime": 1794916877.3041873,
+    "seen": 1794916952.668704,
+    "ast_hash": "474d8496f3ba9021382733ce4da34c7d",
     "semantic_hash": ""
   },
   "frontend/src/components/Home/Home.jsx": {
@@ -714,9 +714,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Home/AccountSetupModal.jsx": {
-    "mtime": 1794866115.6714244,
-    "seen": 1794867017.5924037,
-    "ast_hash": "91d64fc747c9ca2e231d4a0e1cd655dd",
+    "mtime": 1794916914.9923136,
+    "seen": 1794916952.6688778,
+    "ast_hash": "879cbb238c0a43c684a1f4a64ee6ba75",
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/CertificationPage.jsx": {
@@ -738,9 +738,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Navigation/StageUnlockBanner.jsx": {
-    "mtime": 1794574206.3425074,
-    "seen": 1794574627.6575923,
-    "ast_hash": "3bb86721acb16c6644551bb59cae1f5a",
+    "mtime": 1794916904.0476625,
+    "seen": 1794916952.672698,
+    "ast_hash": "eee9cabd4be3a25ded57050a84fe1ba0",
     "semantic_hash": ""
   },
   "frontend/src/contexts/LearnModeContext.jsx": {
@@ -864,9 +864,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Legal/LegalPage.jsx": {
-    "mtime": 1794571499.1346052,
-    "seen": 1794571661.48576,
-    "ast_hash": "0b435e19d7a4668517c24dab78d5dba7",
+    "mtime": 1794916921.2796538,
+    "seen": 1794916952.6717606,
+    "ast_hash": "f96108e7bd4768655564c6cdacd8219c",
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/curriculumData.js": {

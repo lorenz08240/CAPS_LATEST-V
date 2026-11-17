@@ -1194,6 +1194,44 @@ app.get("/api/admin/learners", adminAuth, async (req, res) => {
   }
 });
 
+// Returning learner lookup: lets the app restore a signed-in profile without re-running setup.
+app.get("/api/learn/profile", async (req, res) => {
+  try {
+    const email = String(req.query.email || "").trim().toLowerCase();
+    if (!email) {
+      return res.status(400).json({ error: "Email is required" });
+    }
+
+    const [rows] = await db.query(
+      "SELECT email, full_name, avatar_url, institution, unlocked_stages FROM google_learner_accounts WHERE LOWER(email) = ? LIMIT 1",
+      [email]
+    );
+    if (!rows.length) {
+      return res.status(404).json({ error: "No learner account found" });
+    }
+
+    const row = rows[0];
+    let stages = ["build"];
+    try {
+      const parsed = typeof row.unlocked_stages === "string"
+        ? JSON.parse(row.unlocked_stages)
+        : row.unlocked_stages;
+      if (Array.isArray(parsed) && parsed.length) stages = parsed;
+    } catch (_) {}
+
+    res.json({
+      email: row.email,
+      fullName: row.full_name,
+      photo: row.avatar_url || "",
+      institution: row.institution || "Pateros Technological College",
+      unlockedStages: stages,
+    });
+  } catch (err) {
+    console.error("Fetch learner profile error:", err);
+    res.status(500).json({ error: "Failed to fetch learner profile" });
+  }
+});
+
 app.post("/api/learn/sync-profile", async (req, res) => {
   try {
     const { googleId, email, fullName, photo, institution, unlockedStages } = req.body;

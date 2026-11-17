@@ -225,6 +225,7 @@ export const LearnModeProvider = ({ children }) => {
     try {
       const emailKey = (targetEmail || "").trim().toLowerCase();
       if (!emailKey) return false;
+      localStorage.setItem("buildlab_last_learner_email", emailKey);
       const rawArchived = localStorage.getItem(`buildlab_student_profile_${emailKey}`);
       if (!rawArchived) return false;
 
@@ -292,6 +293,76 @@ export const LearnModeProvider = ({ children }) => {
     }
   }, []);
 
+  // Remember returning learners: restore the last signed-in account on a fresh session.
+  useEffect(() => {
+    let cancelled = false;
+
+    const restoreReturningLearner = async () => {
+      try {
+        const active = JSON.parse(localStorage.getItem("buildlab_user_profile") || "null");
+        if (active?.setupCompleted && (active.fullName || active.email)) return;
+      } catch {}
+
+      let lastEmail = "";
+      try {
+        lastEmail = (localStorage.getItem("buildlab_last_learner_email") || "").trim().toLowerCase();
+      } catch {}
+      if (!lastEmail || cancelled) return;
+
+      // Local archive first: it also holds strand, interests, and saved build.
+      if (restoreStudentAccount(lastEmail)) {
+        // A page load has no user gesture for fullscreen, so let the gate handle it.
+        sessionStorage.removeItem("buildlab_pending_learner_welcome");
+        return;
+      }
+
+      // Fallback to the server-side learner directory.
+      try {
+        const res = await fetch(`/api/learn/profile?email=${encodeURIComponent(lastEmail)}`);
+        if (!res.ok || cancelled) return;
+        const data = await res.json();
+        if (!data?.email || cancelled) return;
+
+        const profile = {
+          fullName: data.fullName || "",
+          email: data.email,
+          photo: data.photo || "",
+          institution: data.institution || "",
+          googleId: "google-oauth2|restored",
+          strand: "",
+          interests: [],
+          experienceLevel: "",
+          setupCompleted: true,
+        };
+        setUserProfileState(profile);
+        localStorage.setItem("buildlab_user_profile", JSON.stringify(profile));
+        localStorage.setItem(`buildlab_student_profile_${data.email.toLowerCase().trim()}`, JSON.stringify(profile));
+        localStorage.setItem(
+          "user",
+          JSON.stringify({
+            id: "student_restored",
+            fullName: profile.fullName,
+            name: profile.fullName,
+            email: profile.email,
+            photo: profile.photo,
+            accountType: "student",
+          })
+        );
+        if (Array.isArray(data.unlockedStages) && data.unlockedStages.length) {
+          setUnlockedStages(data.unlockedStages);
+          localStorage.setItem("buildlab_learn_unlocked_stages", JSON.stringify(data.unlockedStages));
+        }
+        localStorage.setItem("buildlab_app_mode", "learn");
+        setModeState("learn");
+      } catch {
+        // Offline is fine: the local archive above already covers returning users.
+      }
+    };
+
+    restoreReturningLearner();
+    return () => { cancelled = true; };
+  }, [restoreStudentAccount]);
+
   // Learner Log Out: Archive student progress, then reset website to clean Free Mode
   const logoutLearner = useCallback(() => {
     try {
@@ -314,6 +385,7 @@ export const LearnModeProvider = ({ children }) => {
 
       // 2. Clear ACTIVE student session so free mode has no student credentials
       localStorage.removeItem("buildlab_user_profile");
+      localStorage.removeItem("buildlab_last_learner_email");
       localStorage.removeItem("user");
       localStorage.setItem("buildlab_app_mode", "explore");
       localStorage.removeItem("buildlab_learn_unlocked_stages");
@@ -385,6 +457,9 @@ export const LearnModeProvider = ({ children }) => {
         resetLearnProgress,
         logoutLearner,
         restoreStudentAccount,
+        hasCompletedProfile: Boolean(
+          userProfile?.setupCompleted && (userProfile?.fullName || userProfile?.email)
+        ),
       }}
     >
       {children}
