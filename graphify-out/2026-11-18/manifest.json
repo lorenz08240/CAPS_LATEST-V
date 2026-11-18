@@ -714,9 +714,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Home/AccountSetupModal.jsx": {
-    "mtime": 1794938536.7358284,
-    "seen": 1794938580.31503,
-    "ast_hash": "40f07a30ccd115486556f08a7a7a6e86",
+    "mtime": 1795014645.127047,
+    "seen": 1795014743.63847,
+    "ast_hash": "81e6b140d75721cccae6a6cbbffa38fe",
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/CertificationPage.jsx": {
@@ -822,9 +822,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Home/ModeSelectionCards.jsx": {
-    "mtime": 1795004552.4975784,
-    "seen": 1795004738.2989633,
-    "ast_hash": "4606b5379986613d6b02e4c5e5b1765a",
+    "mtime": 1795014633.603023,
+    "seen": 1795014743.6388886,
+    "ast_hash": "e4c3115916e9a20d4669c72832c698ef",
     "semantic_hash": ""
   },
   "frontend/src/components/Home/RigPickerTransitionOverlay.jsx": {
@@ -948,9 +948,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/CourseBriefingOverlay.jsx": {
-    "mtime": 1795014478.2564461,
-    "seen": 1795014557.8588343,
-    "ast_hash": "3a31e1a5b77fd08187d440f51599cd33",
+    "mtime": 1795014613.4724061,
+    "seen": 1795014743.6396236,
+    "ast_hash": "6b72ba2493b246a2d8d621fda66741ec",
     "semantic_hash": ""
   },
   "backend/uploads/profiles/photo-1794931704599-b2bbc1.jpg": {

@@ -1,12 +1,12 @@
 # Graph Report - CAPS_LATEST-V  (2026-11-18)
 
 ## Corpus Check
-- 99 files · ~161,844 words
+- 99 files · ~161,945 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 53 file(s) not represented in the graph (top: .css 38, (none) 5, .glb 3)
 
 ## Summary
-- 615 nodes · 1544 edges · 36 communities (27 shown, 9 thin omitted)
+- 615 nodes · 1541 edges · 36 communities (27 shown, 9 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 17 edges (avg confidence: 0.9)
 - Token cost: 0 input · 0 output
 
@@ -53,7 +53,7 @@
 
 ## God Nodes (most connected - your core abstractions)
 1. `react` - 72 edges
-2. `soundManager` - 63 edges
+2. `soundManager` - 61 edges
 3. `react-router-dom` - 37 edges
 4. `BuildLab Changelog` - 32 edges
 5. `AppContent()` - 31 edges
@@ -68,10 +68,10 @@
   CHANGELOG.md → frontend/src/components/Footer/Footer.jsx
 - `🧹 Cleaned Button Typography in `frontend/src/components/3D/PCBuilder3D.jsx`` --references--> `Compatibility()`  [INFERRED]
   CHANGELOG.md → frontend/src/components/Compatibility/Compatibility.jsx
-- `🖥️ Fullscreen Gating (`FullscreenGate.jsx`)` --references--> `CourseShell()`  [INFERRED]
-  CHANGELOG.md → frontend/src/components/Learn/CourseShell.jsx
 - `⚡ Upgrades to `frontend/src/utilities/soundManager.js`` --references--> `SynthAudio`  [INFERRED]
   CHANGELOG.md → frontend/src/utilities/soundManager.js
+- `🖥️ Fullscreen Gating (`FullscreenGate.jsx`)` --references--> `CourseShell()`  [INFERRED]
+  CHANGELOG.md → frontend/src/components/Learn/CourseShell.jsx
 - `[2026-11-18] - Fullscreen Auto-Engage on Sign-In` --references--> `FullscreenGate()`  [INFERRED]
   CHANGELOG.md → frontend/src/components/FullscreenGate/FullscreenGate.jsx
 
@@ -89,8 +89,8 @@ Cohesion: 0.15
 Nodes (5): app, distPath, uploadsDir, cors, express
 
 ### Community 2 - "App.jsx"
-Cohesion: 0.10
-Nodes (43): AdminAccounts(), AdminAddComponent(), CATEGORIES, DEFAULT_FORM_DATA, AdminAuthGuard(), AdminContent(), AdminCrawler(), CATEGORIES (+35 more)
+Cohesion: 0.09
+Nodes (45): AdminAccounts(), AdminAddComponent(), CATEGORIES, DEFAULT_FORM_DATA, AdminAuthGuard(), AdminContent(), AdminCrawler(), CATEGORIES (+37 more)
 
 ### Community 3 - "PCBuilder3D.jsx"
 Cohesion: 0.07
@@ -130,7 +130,7 @@ Nodes (14): [2026-10-23] - OpenCode Session - Immersive Fullscreen System & UX C
 
 ### Community 16 - "soundManager.js"
 Cohesion: 0.08
-Nodes (60): AdminEditRedirect(), App(), AppContent(), ScrollToTop(), AboutUs(), TEAM_MEMBERS, WHITEHATS_PROJECTS, AdminLogin() (+52 more)
+Nodes (59): AdminEditRedirect(), App(), AppContent(), ScrollToTop(), AboutUs(), TEAM_MEMBERS, WHITEHATS_PROJECTS, brandData (+51 more)
 
 ### Community 17 - "dependencies"
 Cohesion: 0.17
@@ -145,8 +145,8 @@ Cohesion: 0.25
 Nodes (7): CurriculumModule, CurriculumTopic, FieldFact, FieldFactItem, MistakeWarning, QuizOption, TopicQuiz
 
 ### Community 20 - "CourseVideoPlayer.jsx"
-Cohesion: 0.43
-Nodes (5): CourseVideoPlayer(), fmtTime(), loadYouTubeApi(), VideoOverlayModal(), react-dom
+Cohesion: 0.90
+Nodes (4): CourseVideoPlayer(), fmtTime(), loadYouTubeApi(), VideoOverlayModal()
 
 ### Community 21 - "[2026-10-23 03:54] - Build Layout Stability, Dynamic Category Filters & Price Removal"
 Cohesion: 0.40
@@ -205,7 +205,7 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `react` connect `soundManager.js` to `EyeTracker.tsx`, `App.jsx`, `PCBuilder3D.jsx`, `FeatureCarousel.jsx`, `CourseShell.jsx`, `Compatibility.jsx`, `frontend/package.json`, `[2026-10-23] - OpenCode Session - Immersive Fullscreen System & UX Cleanups (OC)`, `CourseVideoPlayer.jsx`?**
   _High betweenness centrality (0.249) - this node is a cross-community bridge._
 - **Should `App.jsx` be split into smaller, more focused modules?**
-  _Cohesion score 0.10153358011634056 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.09463869463869463 - nodes in this community are weakly interconnected._
 - **Why does `FullscreenGate()` connect `Compatibility.jsx` to `soundManager.js`, `CourseShell.jsx`?**
   _High betweenness centrality (0.164) - this node is a cross-community bridge._
 - **Should `PCBuilder3D.jsx` be split into smaller, more focused modules?**

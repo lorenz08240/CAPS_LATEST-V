@@ -96,15 +96,15 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Build/Build.jsx": {
-    "mtime": 1795004552.4939275,
-    "seen": 1795004738.2975886,
-    "ast_hash": "d98c89a233896ee4be5d2026717fdaf6",
+    "mtime": 1795017038.9496322,
+    "seen": 1795017150.9466412,
+    "ast_hash": "081322ab6240e290e316d4cc3f6d30d9",
     "semantic_hash": ""
   },
   "frontend/src/components/Compatibility/Compatibility.jsx": {
-    "mtime": 1795011355.6985662,
-    "seen": 1795011909.0556965,
-    "ast_hash": "700f58a37edb51d7acacb398a2ce964a",
+    "mtime": 1795017065.66026,
+    "seen": 1795017150.9470572,
+    "ast_hash": "f2dd4f387610666d40b201711d694c47",
     "semantic_hash": ""
   },
   "frontend/src/components/FeatureCarousel/FeatureCarousel.jsx": {
@@ -534,9 +534,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Navigation/GlobalHeader.jsx": {
-    "mtime": 1794938536.7551765,
-    "seen": 1794938580.3201041,
-    "ast_hash": "e552fea80ccca00b42a6174876931568",
+    "mtime": 1795017038.9635227,
+    "seen": 1795017150.953555,
+    "ast_hash": "63e73ae3956285627151a4275efc13a4",
     "semantic_hash": ""
   },
   "frontend/src/components/Navigation/CyberBrand.jsx": {
@@ -744,9 +744,9 @@
     "semantic_hash": ""
   },
   "frontend/src/contexts/LearnModeContext.jsx": {
-    "mtime": 1794938536.7604716,
-    "seen": 1794938580.3215687,
-    "ast_hash": "c4fe0368c9b76df1222a07873e145cc2",
+    "mtime": 1795017038.965034,
+    "seen": 1795017150.9552884,
+    "ast_hash": "9c5b6c933412f5c951b7d521832de7df",
     "semantic_hash": ""
   },
   "backend/uploads/profiles/photo-1794176073655-f3qzal.gif": {
