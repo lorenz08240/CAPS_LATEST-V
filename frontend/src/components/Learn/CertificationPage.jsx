@@ -154,7 +154,6 @@ export default function CertificationPage() {
               <span className="locked-badge-dot" />
               <span>ACADEMIC CREDENTIAL // LOCKED</span>
             </div>
-            <div className="cert-locked-icon">🔒</div>
             <h1 className="cert-locked-title">Syllabus Completion Required</h1>
             <p className="cert-locked-desc">
               Pateros Technological College (PTC-IICT) and BuildLab issue accredited credentials exclusively to students who have verified mastery across all 17 topics of the Computer Systems Servicing (CSS) NC II curriculum.
@@ -214,7 +213,7 @@ export default function CertificationPage() {
             onClick={() => setIsEditingName(!isEditingName)}
             title="Edit student name on certificate"
           >
-            ✏️ {isEditingName ? "Save Name" : "Edit Name"}
+            {isEditingName ? "Save Name" : "Edit Name"}
           </button>
 
           <button
@@ -222,7 +221,7 @@ export default function CertificationPage() {
             className="cert-btn-share"
             onClick={handleCopyVerification}
           >
-            🔗 Copy Share Link
+            Copy Share Link
           </button>
 
           <button
@@ -250,7 +249,7 @@ export default function CertificationPage() {
               navigate("/3d-builder");
             }}
           >
-            <span>🚀 LAUNCH 3D STUDIO</span>
+            <span>LAUNCH 3D STUDIO</span>
             <span className="btn-arrow">&rarr;</span>
           </button>
         </div>
@@ -301,7 +300,6 @@ export default function CertificationPage() {
           {/* Certificate Header */}
           <div className="cert-header">
             <div className="cert-brand-row">
-              <span className="cert-brand-icon">🏛️</span>
               <span className="cert-brand-name">PATEROS TECHNOLOGICAL COLLEGE</span>
               <span className="cert-brand-sep">//</span>
               <span className="cert-brand-division">INSTITUTE OF INFORMATION AND COMPUTING TECHNOLOGY</span>

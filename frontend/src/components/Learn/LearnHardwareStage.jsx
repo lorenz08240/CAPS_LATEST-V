@@ -756,10 +756,10 @@ export default function LearnHardwareStage({
               try { soundManager.click(); } catch {}
               toggleExploded();
             }}
-            data-tooltip={isExploded ? "Collapse Rig (💥)" : "Explode 3D Subassemblies (💥)"}
+            data-tooltip={isExploded ? "Collapse Rig" : "Explode 3D Subassemblies"}
             aria-label="Toggle Exploded View"
           >
-            💥
+            {isExploded ? "COLLAPSE" : "EXPLODE"}
           </button>
           <button
             type="button"
@@ -768,10 +768,10 @@ export default function LearnHardwareStage({
               try { soundManager.click(); } catch {}
               setShowSignalFlow((s) => !s);
             }}
-            data-tooltip="Toggle Bus Power Flow (⚡)"
+            data-tooltip="Toggle Bus Power Flow"
             aria-label="Toggle signal flow"
           >
-            ⚡
+            POWER
           </button>
           <button
             type="button"

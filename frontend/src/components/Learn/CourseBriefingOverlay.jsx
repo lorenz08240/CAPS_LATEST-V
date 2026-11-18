@@ -219,14 +219,12 @@ export default function CourseBriefingOverlay({ onClose, onStartLearning }) {
           {/* Why this format works */}
           <section className="wb-pdf-competency-box">
             <div className="wb-pdf-competency-item">
-              <span className="wb-pdf-competency-icon">🎖️</span>
               <div className="wb-pdf-competency-info">
                 <strong>Earn proof, not just progress</strong>
                 <p>Clear every module check and finish the capstone build to unlock your verified Certificate of Competency.</p>
               </div>
             </div>
             <div className="wb-pdf-competency-item">
-              <span className="wb-pdf-competency-icon">🛡️</span>
               <div className="wb-pdf-competency-info">
                 <strong>Zero hardware risk</strong>
                 <p>Bend a pin or short a rail in the simulator and you&apos;ll learn from it with zero replacement parts to buy.</p>
