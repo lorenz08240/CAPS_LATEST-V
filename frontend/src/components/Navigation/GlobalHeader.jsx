@@ -7,7 +7,7 @@ import ModeSelectionCards from '../Home/ModeSelectionCards';
 import AccountSetupModal from '../Home/AccountSetupModal';
 import './GlobalHeader.css';
 
-export default function GlobalHeader({ onSearchClick, hideBuildPill = false }) {
+export default function GlobalHeader({ onSearchClick, hideBuildPill = false, hideBrand = false, hiddenNavItems = [] }) {
   const { mode, userProfile, setAppMode, hasCompletedProfile } = useLearnMode();
   const location = useLocation();
   const navigate = useNavigate();
@@ -59,14 +59,16 @@ export default function GlobalHeader({ onSearchClick, hideBuildPill = false }) {
 
   return (
     <>
-      <header className="global-cyber-nav">
-        <CyberBrand onNavigateHome={() => {
-          try { soundManager.click(); } catch {}
-          navigate('/');
-        }} />
+      <header className={`global-cyber-nav ${hideBrand ? "nav-brand-hidden" : ""}`}>
+        {!hideBrand && (
+          <CyberBrand onNavigateHome={() => {
+            try { soundManager.click(); } catch {}
+            navigate('/');
+          }} />
+        )}
 
         <nav className="global-nav-links">
-          {navItems.map((item) => {
+          {navItems.filter((item) => !hiddenNavItems.includes(item.label)).map((item) => {
             const isActive = item.label === 'HOME'
               ? currentPath === '/' && !location.hash
               : item.label === 'BRANDS'
