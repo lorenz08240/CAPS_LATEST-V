@@ -414,9 +414,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Home/Home3DHero.jsx": {
-    "mtime": 1794861809.32382,
-    "seen": 1794862135.8196747,
-    "ast_hash": "275a93c3b44f8c9e3f04b72bccdfbc76",
+    "mtime": 1794980287.9514072,
+    "seen": 1794983940.9973974,
+    "ast_hash": "0b53a7340a59bed74a3d41354f471183",
     "semantic_hash": ""
   },
   "frontend/src/components/3D/DDR4RAMModel.jsx": {
@@ -995,15 +995,21 @@
     "ast_hash": "d5ad9330e8a0ced83759a02c988f3415",
     "semantic_hash": ""
   },
+  "frontend/src/components/3D/NorthChalkWhiteCase.jsx": {
+    "mtime": 1794980284.7087002,
+    "seen": 1794983940.9909341,
+    "ast_hash": "6d759fe315ab5bf0da0ab09e16dcad85",
+    "semantic_hash": ""
+  },
   "backend/package-lock.json": {
     "mtime": 1791800606.1768937,
-    "seen": 1794206128.4804482,
+    "seen": 1794985897.1036026,
     "ast_hash": "661be6875e353b32cc107be3856a3c63",
     "semantic_hash": ""
   },
   "frontend/package-lock.json": {
     "mtime": 1794818386.6978264,
-    "seen": 1794818982.0814998,
+    "seen": 1794985897.1036096,
     "ast_hash": "0c6fc47eaf8415fe284f5df235694a53",
     "semantic_hash": ""
   }

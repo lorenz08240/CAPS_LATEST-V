@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import NepotatoGPU from '../3D/NepotatoGPU';
 import ProceduralSickleFan from '../3D/ProceduralSickleFan';
 import GenericPCCase from '../3D/GenericPCCase';
+import NorthChalkWhiteCase from '../3D/NorthChalkWhiteCase';
 import ComponentModels3D from '../3D/ComponentModels3D';
 import { HeroFloatingRAM } from '../3D/DDR4RAMModel';
 import { HeroFloatingSSD } from '../3D/NVMeSSDModel';
@@ -143,13 +144,11 @@ function HardwareStageModel({ stageId, rgbColor, caseColor = 'black' }) {
   switch (stageId) {
     case 'case':
       return (
-        <group scale={[0.21, 0.21, 0.21]} position={[0, -0.15, 0]}>
-          <GenericPCCase
+        <group scale={[0.18, 0.18, 0.18]} position={[0, -0.15, 0]}>
+          <NorthChalkWhiteCase
+            sidePanelMode="glass"
             rgbColor={rgbColor}
-            caseColor={caseColor}
-            glassMode="closed"
             explodedProgress={0}
-            showTooltip={false}
             enableHighlight={false}
           />
         </group>
