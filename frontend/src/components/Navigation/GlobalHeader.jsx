@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import soundManager from '../../utilities/soundManager';
 import CyberBrand from './CyberBrand';
@@ -118,34 +119,42 @@ export default function GlobalHeader({ onSearchClick, hideBuildPill = false, hid
         </div>
       </header>
 
-      {/* ── Mode Selection Card (Lockout / Continue with Google) ── */}
-      <ModeSelectionCards
-        isOpen={showModeCards}
-        onClose={() => setShowModeCards(false)}
-        onSelectLearn={() => {
-          setShowModeCards(false);
-          if (hasCompletedProfile) {
-            setAppMode("learn");
-            navigate("/learn");
-          } else {
-            setShowAccountModal(true);
-          }
-        }}
-        onSelectFree={() => {
-          setShowModeCards(false);
-        }}
-      />
+      {/* Modals are portaled to <body> so `position: fixed` always anchors to
+          the viewport — pages like /compatibility use `perspective`, which
+          otherwise makes fixed overlays size against the whole tall page. */}
+      {createPortal(
+        <>
+          {/* ── Mode Selection Card (Lockout / Continue with Google) ── */}
+          <ModeSelectionCards
+            isOpen={showModeCards}
+            onClose={() => setShowModeCards(false)}
+            onSelectLearn={() => {
+              setShowModeCards(false);
+              if (hasCompletedProfile) {
+                setAppMode("learn");
+                navigate("/learn");
+              } else {
+                setShowAccountModal(true);
+              }
+            }}
+            onSelectFree={() => {
+              setShowModeCards(false);
+            }}
+          />
 
-      {/* ── Google Sign-In & Name Verification Modal ── */}
-      <AccountSetupModal
-        isOpen={showAccountModal}
-        onClose={() => setShowAccountModal(false)}
-        onConfirmed={(targetMode, confirmedProfile) => {
-          setShowAccountModal(false);
-          setAppMode("learn");
-          navigate("/learn");
-        }}
-      />
+          {/* ── Google Sign-In & Name Verification Modal ── */}
+          <AccountSetupModal
+            isOpen={showAccountModal}
+            onClose={() => setShowAccountModal(false)}
+            onConfirmed={(targetMode, confirmedProfile) => {
+              setShowAccountModal(false);
+              setAppMode("learn");
+              navigate("/learn");
+            }}
+          />
+        </>,
+        document.body
+      )}
     </>
   );
 }
