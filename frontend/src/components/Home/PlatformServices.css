@@ -1779,8 +1779,8 @@ body.theme-light .feat-chip,
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: #38bdf8;
-  box-shadow: 0 0 6px #38bdf8;
+  background: #ffffff;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.4);
 }
 
 .demo-badge-bracket {
@@ -1836,7 +1836,7 @@ body.theme-light .feat-chip,
 }
 
 .ring-rig1 {
-  background: conic-gradient(#f43f5e 0 32%, #a855f7 32% 60%, #f59e0b 60% 82%, #38bdf8 82% 100%);
+  background: conic-gradient(#f43f5e 0 32%, #a855f7 32% 60%, #f59e0b 60% 82%, #ffffff 82% 100%);
 }
 
 .ring-rig2 {
@@ -1952,7 +1952,7 @@ body.theme-light .feat-chip,
 }
 
 .legend-dot.rig1 { background: #f43f5e; }
-.legend-dot.rig2 { background: #00e5a0; }
+.legend-dot.rig2 { background: #ffffff; }
 
 .dual-demo-stats {
   border: 1px solid rgba(148, 163, 184, 0.12);

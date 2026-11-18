@@ -1,17 +1,17 @@
-# Graph Report - CAPS_LATEST-V  (2026-11-18)
+# Graph Report - CAPS_LATEST-V  (2026-11-19)
 
 ## Corpus Check
-- 99 files · ~161,542 words
+- 99 files · ~161,680 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 53 file(s) not represented in the graph (top: .css 38, (none) 5, .glb 3)
 
 ## Summary
-- 615 nodes · 1535 edges · 41 communities (34 shown, 7 thin omitted)
+- 615 nodes · 1535 edges · 41 communities (33 shown, 8 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 17 edges (avg confidence: 0.9)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `31fbc2cb`
+- Built from commit: `30d01a9b`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -54,7 +54,7 @@
 - Build.jsx
 - compatibilityEngine.js
 - BuildContext.jsx
-- pageTransitions.jsx
+- adminAuth
 
 ## God Nodes (most connected - your core abstractions)
 1. `react` - 72 edges
@@ -69,29 +69,29 @@
 10. `AccountSetupModal()` - 17 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `🧹 Cleaned Button Typography in `frontend/src/components/3D/PCBuilder3D.jsx`` --references--> `Compatibility()`  [INFERRED]
-  CHANGELOG.md → frontend/src/components/Compatibility/Compatibility.jsx
 - `[2026-10-23] - Symmetrical Dual-Sidebar Architecture & Course Outline Fix (Learn Page)` --references--> `Footer()`  [INFERRED]
   CHANGELOG.md → frontend/src/components/Footer/Footer.jsx
+- `🧹 Cleaned Button Typography in `frontend/src/components/3D/PCBuilder3D.jsx`` --references--> `Compatibility()`  [INFERRED]
+  CHANGELOG.md → frontend/src/components/Compatibility/Compatibility.jsx
 - `⚡ Upgrades to `frontend/src/utilities/soundManager.js`` --references--> `SynthAudio`  [INFERRED]
   CHANGELOG.md → frontend/src/utilities/soundManager.js
-- `🖥️ Fullscreen Gating (`FullscreenGate.jsx`)` --references--> `CourseShell()`  [INFERRED]
-  CHANGELOG.md → frontend/src/components/Learn/CourseShell.jsx
 - `[2026-11-18] - Fullscreen Auto-Engage on Sign-In` --references--> `FullscreenGate()`  [INFERRED]
   CHANGELOG.md → frontend/src/components/FullscreenGate/FullscreenGate.jsx
+- `🖥️ Fullscreen Gating (`FullscreenGate.jsx`)` --references--> `CourseShell()`  [INFERRED]
+  CHANGELOG.md → frontend/src/components/Learn/CourseShell.jsx
 
 ## Import Cycles
 - None detected.
 
-## Communities (41 total, 7 thin omitted)
+## Communities (41 total, 8 thin omitted)
 
 ### Community 0 - "devDependencies"
 Cohesion: 0.14
 Nodes (14): devDependencies, autoprefixer, eslint, @eslint/js, eslint-plugin-react-hooks, eslint-plugin-react-refresh, globals, postcss (+6 more)
 
 ### Community 1 - "server.js"
-Cohesion: 0.13
-Nodes (7): adminAuth(), app, distPath, uploadsDir, [2026-10-31] - Security Hardening & Architecture Consolidation (OpenCode Audit), cors, express
+Cohesion: 0.15
+Nodes (5): app, distPath, uploadsDir, cors, express
 
 ### Community 2 - "App.jsx"
 Cohesion: 0.09
@@ -130,8 +130,8 @@ Cohesion: 0.10
 Nodes (19): [2026-10-23 03:34] - /clean Linter & Safari Prefix Fixes, [2026-10-23] - Admin Dashboard Syntax Error Fix (Vite Parse Error Resolved), [2026-10-23] - Server Deployment (/deploy), [2026-10-23] - Symmetrical Dual-Sidebar Architecture & Course Outline Fix (Learn Page), [2026-10-25] - Audio Deduplication: `Error2.mp3` Purged & Unified to `error.mp3`, [2026-10-25] - Audio Deduplication: `UI_Denied_2.mp3` Purged & Unified to `denied.mp3`, [2026-10-25] - Git Exclusion & Local Developer Privacy, [2026-10-25] - Graphify Architecture Concept & Visualizer Guide (+11 more)
 
 ### Community 15 - "[2026-10-23] - OpenCode Session - Immersive Fullscreen System & UX Cleanups (OC)"
-Cohesion: 0.22
-Nodes (9): [2026-10-23] - OpenCode Session - Immersive Fullscreen System & UX Cleanups (OC), 🧊 3D Builder (`/3d-builder`), 🔧 3D Drawer UI Optimization (PCBuilder3D.css), 🧱 Build Page Round 2 (OC), 🧱 Build Page — Viewport-Fitted Workspace (Build.jsx / Build.css / App.jsx), 🖥️ Fullscreen Gate (New Feature), 🏠 Home & Build Consolidation, 🤖 Integrations (+1 more)
+Cohesion: 0.13
+Nodes (14): [2026-10-23] - OpenCode Session - Immersive Fullscreen System & UX Cleanups (OC), 🧊 3D Builder (`/3d-builder`), 🔧 3D Drawer UI Optimization (PCBuilder3D.css), 🧱 Build Page Round 2 (OC), 🧱 Build Page — Viewport-Fitted Workspace (Build.jsx / Build.css / App.jsx), 🖥️ Fullscreen Gate (New Feature), 🏠 Home & Build Consolidation, 🤖 Integrations (+6 more)
 
 ### Community 16 - "soundManager.js"
 Cohesion: 0.08
@@ -217,29 +217,25 @@ Nodes (9): calculateRequiredWattage(), checkCompatibility(), findAlternatives(),
 Cohesion: 0.32
 Nodes (6): BuildContext, DEMO_GAMING_RIG, OFFLINE_COMPONENTS, PRESET_1080P_GAMING, PRESET_ENTRY_STUDENT, PRESET_WORKSTATION
 
-### Community 40 - "pageTransitions.jsx"
-Cohesion: 0.33
-Nodes (5): 🎬 Page Transition Animations (OC), EASE, MOTION_PROPS, MotionPage(), motion
-
 ## Knowledge Gaps
 - **9 isolated node(s):** `dotenv`, `nodemon`, `autoprefixer`, `postcss`, `puppeteer-core` (+4 more)
   These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 233 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **7 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **8 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `BuildLab Changelog` connect `BuildLab Changelog` to `[2026-10-23] Learn: Course-Outline Sidebar REWORK REVERTED to the previous design (OC — user request)`, `server.js`, `FullscreenGate`, `[2026-10-23] - Master Checklist & Safari Compatibility Updates`, `[2026-10-23] - OpenCode Session - Immersive Fullscreen System & UX Cleanups (OC)`, `[2026-10-23 03:54] - Build Layout Stability, Dynamic Category Filters & Price Removal`, `[2026-10-23 04:52] - Scrolling Elimination, Red Warning Removal & Redundancy Fix`, `[2026-10-23] Compatibility Checker SFX & Cute Sound Effects Update`, `[2026-10-23] Learn Page: NotebookLLM Master Source Script for Module 1`, `SynthAudio`, `[2026-10-23] Learn Page: Video Player Overhaul + 9 Dead Videos Replaced (OC)`, `[2026-10-23] 3D Studio: Clean Button Design (Icons & Emojis Removed)`?**
+- **Why does `BuildLab Changelog` connect `BuildLab Changelog` to `[2026-10-23] Learn: Course-Outline Sidebar REWORK REVERTED to the previous design (OC — user request)`, `FullscreenGate`, `adminAuth`, `[2026-10-23] - Master Checklist & Safari Compatibility Updates`, `[2026-10-23] - OpenCode Session - Immersive Fullscreen System & UX Cleanups (OC)`, `[2026-10-23 03:54] - Build Layout Stability, Dynamic Category Filters & Price Removal`, `[2026-10-23 04:52] - Scrolling Elimination, Red Warning Removal & Redundancy Fix`, `[2026-10-23] Compatibility Checker SFX & Cute Sound Effects Update`, `[2026-10-23] Learn Page: NotebookLLM Master Source Script for Module 1`, `SynthAudio`, `[2026-10-23] Learn Page: Video Player Overhaul + 9 Dead Videos Replaced (OC)`, `[2026-10-23] 3D Studio: Clean Button Design (Icons & Emojis Removed)`?**
   _High betweenness centrality (0.283) - this node is a cross-community bridge._
 - **What connects `dotenv`, `nodemon`, `autoprefixer` to the rest of the system?**
   _9 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `devDependencies` be split into smaller, more focused modules?**
   _Cohesion score 0.14285714285714285 - nodes in this community are weakly interconnected._
-- **Why does `react` connect `App.jsx` to `EyeTracker.tsx`, `FullscreenGate`, `PCBuilder3D.jsx`, `CompareRigs.jsx`, `Build.jsx`, `PCBuilder3D.jsx`, `frontend/package.json`, `Compatibility.jsx`, `CourseShell.jsx`, `BuildContext.jsx`, `pageTransitions.jsx`, `soundManager.js`, `CourseVideoPlayer.jsx`?**
-  _High betweenness centrality (0.250) - this node is a cross-community bridge._
-- **Should `server.js` be split into smaller, more focused modules?**
-  _Cohesion score 0.13333333333333333 - nodes in this community are weakly interconnected._
-- **Why does `FullscreenGate()` connect `FullscreenGate` to `Compatibility.jsx`, `CompareRigs.jsx`, `Build.jsx`, `PCBuilder3D.jsx`, `CourseShell.jsx`, `soundManager.js`?**
-  _High betweenness centrality (0.156) - this node is a cross-community bridge._
+- **Why does `react` connect `App.jsx` to `EyeTracker.tsx`, `FullscreenGate`, `PCBuilder3D.jsx`, `CompareRigs.jsx`, `Build.jsx`, `PCBuilder3D.jsx`, `frontend/package.json`, `Compatibility.jsx`, `CourseShell.jsx`, `BuildContext.jsx`, `[2026-10-23] - OpenCode Session - Immersive Fullscreen System & UX Cleanups (OC)`, `soundManager.js`, `CourseVideoPlayer.jsx`?**
+  _High betweenness centrality (0.249) - this node is a cross-community bridge._
 - **Should `App.jsx` be split into smaller, more focused modules?**
   _Cohesion score 0.08994032395566923 - nodes in this community are weakly interconnected._
+- **Why does `FullscreenGate()` connect `FullscreenGate` to `Compatibility.jsx`, `CompareRigs.jsx`, `Build.jsx`, `PCBuilder3D.jsx`, `CourseShell.jsx`, `soundManager.js`?**
+  _High betweenness centrality (0.156) - this node is a cross-community bridge._
+- **Should `PCBuilder3D.jsx` be split into smaller, more focused modules?**
+  _Cohesion score 0.07315315315315316 - nodes in this community are weakly interconnected._

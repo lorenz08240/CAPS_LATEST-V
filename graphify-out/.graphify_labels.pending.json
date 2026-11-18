@@ -29,11 +29,8 @@
   "31": "[2026-10-23] 3D Studio: Clean Button Design (Icons & Emojis Removed)",
   "32": "[2026-10-23] Learn: Course-Outline Sidebar REWORK REVERTED to the previous design (OC — user request)",
   "33": "EyeTracker.tsx",
-  "34": "FullscreenGate",
   "35": "Compatibility.jsx",
-  "36": "CompareRigs.jsx",
   "37": "Build.jsx",
   "38": "compatibilityEngine.js",
-  "39": "BuildContext.jsx",
-  "40": "adminAuth"
+  "39": "CompareRigs.jsx"
 }

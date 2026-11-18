@@ -6,6 +6,8 @@ import NepotatoGPU from '../3D/NepotatoGPU';
 import ProceduralSickleFan from '../3D/ProceduralSickleFan';
 import GenericPCCase from '../3D/GenericPCCase';
 import NorthChalkWhiteCase from '../3D/NorthChalkWhiteCase';
+import ROGStrixMotherboard from '../3D/ROGStrixMotherboard';
+import DeepCoolLE240Cooler from '../3D/DeepCoolLE240Cooler';
 import ComponentModels3D from '../3D/ComponentModels3D';
 import { HeroFloatingRAM } from '../3D/DDR4RAMModel';
 import { HeroFloatingSSD } from '../3D/NVMeSSDModel';
@@ -155,17 +157,24 @@ function HardwareStageModel({ stageId, rgbColor, caseColor = 'black' }) {
       );
     case 'motherboard':
       return (
-        <group scale={[0.40, 0.40, 0.40]} rotation={[0, Math.PI / 2, 0]}>
-          <ComponentModels3D
-            part={{ category: 'motherboard', name: 'ATX Motherboard' }}
+        <group scale={[0.34, 0.34, 0.34]} position={[0, -0.05, 0]}>
+          <ROGStrixMotherboard
             rgbColor={rgbColor}
-            showTooltip={false}
+            explodedProgress={0}
             enableHighlight={false}
           />
         </group>
       );
     case 'cpu':
-      return <FloatingCooler rgbColor={rgbColor} />;
+      return (
+        <group scale={[0.55, 0.55, 0.55]} position={[0, -0.1, 0]}>
+          <DeepCoolLE240Cooler
+            rgbColor={rgbColor}
+            explodedProgress={0}
+            enableHighlight={false}
+          />
+        </group>
+      );
     case 'ram':
       return <HeroFloatingRAM rgbColor={rgbColor} enableHighlight={false} />;
     case 'storage':

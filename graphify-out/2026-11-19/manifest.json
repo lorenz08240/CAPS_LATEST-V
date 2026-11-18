@@ -102,9 +102,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Compatibility/Compatibility.jsx": {
-    "mtime": 1795017065.66026,
-    "seen": 1795017150.9470572,
-    "ast_hash": "f2dd4f387610666d40b201711d694c47",
+    "mtime": 1795017827.7723463,
+    "seen": 1795017863.643348,
+    "ast_hash": "c85f944d1c4f876e0e8b8c8181855dd8",
     "semantic_hash": ""
   },
   "frontend/src/components/FeatureCarousel/FeatureCarousel.jsx": {
@@ -534,9 +534,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Navigation/GlobalHeader.jsx": {
-    "mtime": 1795017038.9635227,
-    "seen": 1795017150.953555,
-    "ast_hash": "63e73ae3956285627151a4275efc13a4",
+    "mtime": 1795019111.6961653,
+    "seen": 1795019143.9231036,
+    "ast_hash": "26c00af6299760675cb2caf1fa99f3c1",
     "semantic_hash": ""
   },
   "frontend/src/components/Navigation/CyberBrand.jsx": {
