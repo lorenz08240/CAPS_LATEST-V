@@ -1,802 +1,699 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import soundManager from "../../utilities/soundManager";
+import { getLessonModuleContent } from "./lessonModuleContent";
 import "./LessonPresentationView.css";
 
 /**
- * LessonPresentationView // Center-stage Educational Lecture & Visual Report
+ * LessonPresentationView — 2-page lesson curriculum.
  *
- * Provides a slide/report presentation experience with:
- * • High-res form factor diagrams and dimension comparison tables
- * • Photographic spec cards, socket schematics, and pinout guides
- * • Slide navigation with smooth animations
- * • Clear, unmissable "Proceed to 3D Inspection Lab" progression CTA
+ * Page 1: one continuous, PDF-syllabus-style module (no split cards).
+ * Page 2: YouTube lecture with our own controls (no native YouTube UI)
+ *         plus a bulleted summary aligned to the current topic.
+ *
+ * Every topic in CSS_CURRICULUM is rendered by this same component,
+ * so the curriculum looks and behaves consistently across all lessons.
  */
 
-const MOTHERBOARD_FORM_FACTORS = [
-  {
-    code: "E-ATX",
-    name: "Extended ATX",
-    dims: "305 × 330 mm",
-    dimsInches: '12.0" × 13.0"',
-    standoffs: "9 to 12 Standoffs",
-    ramSlots: "4 to 8 DIMMs",
-    pcieSlots: "4 to 7 Slots",
-    targetChassis: "Full-Tower / E-ATX Case",
-    color: "#b08d57",
-    badge: "WORKSTATION / ENTHUSIAST",
-    description:
-      "Widest consumer form factor designed for high-end desktop (HEDT) platforms, dual-CPU server sockets, or 4-way GPU rendering arrays. Requires full-depth chassis cable grommet clearance."
-  },
-  {
-    code: "ATX",
-    name: "Standard ATX",
-    dims: "305 × 244 mm",
-    dimsInches: '12.0" × 9.6"',
-    standoffs: "9 Standoffs (3×3 Grid)",
-    ramSlots: "4 DIMM Slots",
-    pcieSlots: "Up to 7 Expansion Slots",
-    targetChassis: "Mid-Tower & Full-Tower",
-    color: "#ffffff",
-    badge: "DESKTOP STANDARD",
-    description:
-      "The undisputed desktop computer standard since 1995. Features optimal spacing for dual-slot graphics cards, multiple M.2 NVMe heatsinks, and robust VRM power phases."
-  },
-  {
-    code: "Micro-ATX",
-    name: "mATX",
-    dims: "244 × 244 mm",
-    dimsInches: '9.6" × 9.6"',
-    standoffs: "8 Standoffs",
-    ramSlots: "2 to 4 DIMM Slots",
-    pcieSlots: "Up to 4 Expansion Slots",
-    targetChassis: "Mini-Tower & Mid-Tower",
-    color: "#f59e0b",
-    badge: "BEST VALUE / COMPACT",
-    description:
-      "Square 244mm footprint offering the best price-to-performance ratio. Shares ATX top mounting screw patterns while shortening height by 61mm, cutting out rarely used bottom expansion slots."
-  },
-  {
-    code: "Mini-ITX",
-    name: "mITX",
-    dims: "170 × 170 mm",
-    dimsInches: '6.7" × 6.7"',
-    standoffs: "4 Corner Standoffs",
-    ramSlots: "2 DIMM Slots Max",
-    pcieSlots: "1 PCIe x16 Slot Only",
-    targetChassis: "Small Form Factor (SFF) Cube",
-    color: "#ec4899",
-    badge: "SMALL FORM FACTOR (SFF)",
-    description:
-      "Ultra-compact 170mm square board for portable LAN rigs and living room home-theater PCs. Maximizes density with back-mounted M.2 slots, stacked daughterboards, and external antennas."
+/* ── YouTube IFrame API (single shared promise) ── */
+let ytApiPromise = null;
+const loadYouTubeApi = () => {
+  if (window.YT && window.YT.Player) return Promise.resolve(window.YT);
+  if (!ytApiPromise) {
+    ytApiPromise = new Promise((resolve) => {
+      const prevReady = window.onYouTubeIframeAPIReady;
+      window.onYouTubeIframeAPIReady = () => {
+        if (prevReady) prevReady();
+        resolve(window.YT);
+      };
+      if (!document.querySelector('script[data-lp-yt-api="1"]')) {
+        const tag = document.createElement("script");
+        tag.src = "https://www.youtube.com/iframe_api";
+        tag.dataset.lpYtApi = "1";
+        document.head.appendChild(tag);
+      }
+    });
   }
-];
+  return ytApiPromise;
+};
 
-export default function LessonPresentationView({
-  topic,
-  moduleNum = 2,
-  onProceedTo3D,
-  onProceedToQuiz,
-  theme = "dark"
-}) {
-  const [activeSlide, setActiveSlide] = useState(0);
-  const [selectedFormFactor, setSelectedFormFactor] = useState("ATX");
+const fmtTime = (s) => {
+  const t = Math.max(0, Math.floor(s || 0));
+  const m = Math.floor(t / 60);
+  return `${m}:${String(t % 60).padStart(2, "0")}`;
+};
 
-  const totalSlides = moduleNum === 2 ? 4 : 3;
+const PLAYBACK_RATES = [1, 1.25, 1.5, 2, 0.75];
 
-  const handleNextSlide = () => {
-    try { soundManager.click(); } catch {}
-    if (activeSlide < totalSlides - 1) {
-      setActiveSlide((s) => s + 1);
-    } else if (onProceedTo3D) {
-      onProceedTo3D();
+/* ═══════════════════════════════════════════════════════════════════
+   Custom video player — YouTube IFrame API with controls:0 and a
+   fully in-house control deck (play, seek, skip, volume, speed).
+   ═══════════════════════════════════════════════════════════════════ */
+function CustomVideoPlayer({ videoId, title }) {
+  const mountRef = useRef(null);
+  const playerRef = useRef(null);
+  const barRef = useRef(null);
+  const draggingRef = useRef(false);
+  const durationRef = useRef(0);
+
+  const [ready, setReady] = useState(false);
+  const [error, setError] = useState(false);
+  const [started, setStarted] = useState(false);
+  const [playing, setPlaying] = useState(false);
+  const [buffering, setBuffering] = useState(false);
+  const [current, setCurrent] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [muted, setMuted] = useState(false);
+  const [volume, setVolume] = useState(80);
+  const [rate, setRate] = useState(1);
+  const [theater, setTheater] = useState(false);
+
+  useEffect(() => {
+    durationRef.current = duration;
+  }, [duration]);
+
+  /* Create / destroy the underlying YouTube player when the topic changes. */
+  useEffect(() => {
+    if (!videoId || !mountRef.current) return undefined;
+    let dead = false;
+
+    setReady(false);
+    setError(false);
+    setStarted(false);
+    setPlaying(false);
+    setBuffering(false);
+    setCurrent(0);
+    setDuration(0);
+    setMuted(false);
+    setVolume(80);
+    setRate(1);
+
+    const host = document.createElement("div");
+    host.className = "lp-yt-host";
+    mountRef.current.appendChild(host);
+
+    loadYouTubeApi().then((YT) => {
+      if (dead) return;
+      try {
+        playerRef.current = new YT.Player(host, {
+          videoId,
+          width: "100%",
+          height: "100%",
+          playerVars: {
+            autoplay: 0,
+            controls: 0,
+            disablekb: 1,
+            fs: 0,
+            modestbranding: 1,
+            rel: 0,
+            playsinline: 1,
+            iv_load_policy: 3,
+            origin: window.location.origin,
+          },
+          events: {
+            onReady: (e) => {
+              if (dead) return;
+              e.target.setVolume(80);
+              e.target.setPlaybackRate(1);
+              setDuration(e.target.getDuration() || 0);
+              setReady(true);
+            },
+            onStateChange: (e) => {
+              if (dead) return;
+              if (e.data === 1) {
+                setPlaying(true);
+                setStarted(true);
+                setBuffering(false);
+              } else if (e.data === 2) {
+                setPlaying(false);
+                setBuffering(false);
+              } else if (e.data === 3) {
+                setBuffering(true);
+              } else if (e.data === 0) {
+                setPlaying(false);
+                setBuffering(false);
+                setCurrent(e.target.getDuration?.() || durationRef.current || 0);
+              } else {
+                setBuffering(false);
+              }
+            },
+            onError: () => {
+              if (!dead) setError(true);
+            },
+          },
+        });
+      } catch {
+        if (!dead) setError(true);
+      }
+    });
+
+    return () => {
+      dead = true;
+      try {
+        playerRef.current?.destroy?.();
+      } catch {}
+      playerRef.current = null;
+      host.remove();
+    };
+  }, [videoId]);
+
+  /* Progress ticker */
+  useEffect(() => {
+    if (!ready) return undefined;
+    const tick = setInterval(() => {
+      const p = playerRef.current;
+      if (!p?.getCurrentTime) return;
+      try {
+        const t = p.getCurrentTime() || 0;
+        setCurrent(t);
+        const d = p.getDuration();
+        if (d && Math.abs(d - durationRef.current) > 0.5) {
+          durationRef.current = d;
+          setDuration(d);
+        }
+      } catch {}
+    }, 250);
+    return () => clearInterval(tick);
+  }, [ready]);
+
+  const togglePlay = useCallback(() => {
+    const p = playerRef.current;
+    if (!p || error) return;
+    try {
+      soundManager.click();
+    } catch {}
+    if (playing) p.pauseVideo();
+    else p.playVideo();
+  }, [playing, error]);
+
+  const seekBy = (delta) => {
+    const p = playerRef.current;
+    if (!p?.getCurrentTime) return;
+    const t = p.getCurrentTime() || 0;
+    p.seekTo(Math.max(0, Math.min(durationRef.current || Infinity, t + delta)), true);
+    try {
+      soundManager.click();
+    } catch {}
+  };
+
+  const replay = () => {
+    const p = playerRef.current;
+    if (!p) return;
+    p.seekTo(0, true);
+    p.playVideo();
+  };
+
+  const seekFromPointer = (e) => {
+    if (!barRef.current || !durationRef.current) return;
+    const rect = barRef.current.getBoundingClientRect();
+    if (rect.width <= 0) return;
+    const frac = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+    playerRef.current?.seekTo(frac * durationRef.current, true);
+  };
+
+  const onBarDown = (e) => {
+    if (!ready || error) return;
+    draggingRef.current = true;
+    barRef.current?.setPointerCapture?.(e.pointerId);
+    seekFromPointer(e);
+  };
+  const onBarMove = (e) => {
+    if (draggingRef.current) seekFromPointer(e);
+  };
+  const onBarUp = (e) => {
+    draggingRef.current = false;
+    try {
+      barRef.current?.releasePointerCapture?.(e.pointerId);
+    } catch {}
+  };
+  const onBarKey = (e) => {
+    if (e.key === "ArrowRight") {
+      e.preventDefault();
+      seekBy(5);
+    } else if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      seekBy(-5);
     }
   };
 
-  const handlePrevSlide = () => {
-    try { soundManager.click(); } catch {}
-    if (activeSlide > 0) {
-      setActiveSlide((s) => s - 1);
+  const toggleMute = () => {
+    const p = playerRef.current;
+    if (!p) return;
+    if (muted) {
+      p.unMute();
+      p.setVolume(volume || 80);
+      setMuted(false);
+    } else {
+      p.mute();
+      setMuted(true);
     }
+  };
+
+  const changeVolume = (e) => {
+    const v = Number(e.target.value);
+    const p = playerRef.current;
+    setVolume(v);
+    if (!p || !Number.isFinite(v)) return;
+    p.setVolume(v);
+    if (v > 0) {
+      p.unMute();
+      setMuted(false);
+    } else {
+      p.mute();
+      setMuted(true);
+    }
+  };
+
+  const cycleRate = () => {
+    const p = playerRef.current;
+    if (!p) return;
+    const next = PLAYBACK_RATES[(PLAYBACK_RATES.indexOf(rate) + 1) % PLAYBACK_RATES.length];
+    setRate(next);
+    p.setPlaybackRate(next);
+  };
+
+  const pct = duration ? Math.min(100, (current / duration) * 100) : 0;
+  const ended = started && !playing && duration > 0 && current >= duration - 1.5;
+
+  return (
+    <div className={`lp-player ${theater ? "is-theater" : ""}`}>
+      <div className="lp-player-stage">
+        <div className="lp-player-frame" ref={mountRef} />
+
+        {!ready && !error && <div className="lp-player-loading">Loading lesson video…</div>}
+
+        {error && (
+          <div className="lp-player-error">
+            <span>⚠️ This video could not be loaded.</span>
+            <a href={`https://www.youtube.com/watch?v=${videoId}`} target="_blank" rel="noopener noreferrer">
+              Open on YouTube ↗
+            </a>
+          </div>
+        )}
+
+        {ready && !started && !error && (
+          <button type="button" className="lp-big-play" onClick={togglePlay} aria-label="Play lesson video">
+            <span className="lp-big-play-icon">▶</span>
+            <span className="lp-big-play-label">Play lecture video</span>
+          </button>
+        )}
+
+        {buffering && ready && started && <div className="lp-player-spinner" aria-label="Buffering" />}
+
+        <div className="lp-player-watermark" aria-hidden="true">BUILDLAB // CSS NC II</div>
+      </div>
+
+      {/* Our own controls — no native YouTube control bar */}
+      <div className="lp-controls">
+        <button
+          type="button"
+          className="lp-ctrl lp-ctrl-play"
+          onClick={ended ? replay : togglePlay}
+          disabled={!ready || error}
+          title={ended ? "Replay video" : playing ? "Pause" : "Play"}
+        >
+          {ended ? "↻" : playing ? "❚❚" : "▶"}
+        </button>
+        <button type="button" className="lp-ctrl" onClick={() => seekBy(-10)} disabled={!ready || error} title="Back 10 seconds">
+          ↶10
+        </button>
+        <button type="button" className="lp-ctrl" onClick={() => seekBy(10)} disabled={!ready || error} title="Forward 10 seconds">
+          10↷
+        </button>
+
+        <span className="lp-time">{fmtTime(current)} <span>/</span> {fmtTime(duration)}</span>
+
+        <div
+          className="lp-seek"
+          ref={barRef}
+          onPointerDown={onBarDown}
+          onPointerMove={onBarMove}
+          onPointerUp={onBarUp}
+          onKeyDown={onBarKey}
+          role="slider"
+          tabIndex={0}
+          aria-label="Video timeline"
+          aria-valuemin={0}
+          aria-valuemax={Math.floor(duration)}
+          aria-valuenow={Math.floor(current)}
+        >
+          <div className="lp-seek-track">
+            <div className="lp-seek-fill" style={{ width: `${pct}%` }} />
+            <div className="lp-seek-knob" style={{ left: `${pct}%` }} />
+          </div>
+        </div>
+
+        <button type="button" className="lp-ctrl lp-ctrl-volume" onClick={toggleMute} disabled={!ready || error} title={muted ? "Unmute" : "Mute"}>
+          {muted || volume === 0 ? "🔇" : "🔊"}
+        </button>
+        <input
+          className="lp-volume-range"
+          type="range"
+          min="0"
+          max="100"
+          value={muted ? 0 : volume}
+          onChange={changeVolume}
+          disabled={!ready || error}
+          aria-label="Volume"
+        />
+        <button type="button" className="lp-ctrl lp-ctrl-rate" onClick={cycleRate} disabled={!ready || error} title="Playback speed">
+          {rate}×
+        </button>
+        <button
+          type="button"
+          className={`lp-ctrl lp-ctrl-theater ${theater ? "is-active" : ""}`}
+          onClick={() => setTheater((v) => !v)}
+          title={theater ? "Exit theater mode" : "Theater mode"}
+        >
+          ▣
+        </button>
+      </div>
+
+      <div className="lp-player-caption">
+        <span className="lp-caption-icon">📺</span>
+        <strong>{title}</strong>
+        <span className="lp-caption-tag">CUSTOM CONTROLS</span>
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Page 1 — continuous PDF-syllabus-style module document
+   ═══════════════════════════════════════════════════════════════════ */
+function ModuleDocument({ topic, doc }) {
+  const fieldFact = topic.fieldFact;
+
+  return (
+    <div className="lp-module-page">
+      <article className="lp-doc-sheet">
+        <div className="lp-doc-masthead">
+          <div className="lp-mast-left">
+            <span className="lp-doc-brand">BUILDLAB</span>
+            <span className="lp-doc-brand-sub">CSS NC II • SELF-PACED MODULE</span>
+          </div>
+          <div className="lp-mast-right">
+            <span>MODULE {topic.moduleNum}</span>
+            <span className="lp-mast-divider">/</span>
+            <span>TOPIC {topic.topicCode}</span>
+          </div>
+        </div>
+
+        <header className="lp-doc-title-block">
+          <div className="lp-doc-stripe" />
+          <div>
+            <span className="lp-doc-kicker">LESSON MODULE · {topic.moduleTitle}</span>
+            <h1>{topic.title}</h1>
+            <div className="lp-doc-meta">
+              <span>📘 DepEd TVL / TESDA NC II Aligned</span>
+              <span>⏱ Self-Paced</span>
+              <span>🧪 With 3D Lab Practical</span>
+            </div>
+          </div>
+        </header>
+
+        <section className="lp-doc-intro">
+          <span className="lp-doc-intro-mark">§</span>
+          <p>{doc.intro}</p>
+        </section>
+
+        <section className="lp-doc-block lp-objectives">
+          <h2 className="lp-block-heading"><span>01</span> Learning Objectives</h2>
+          <p className="lp-block-hint">At the end of this module, the learner should be able to:</p>
+          <ol className="lp-objective-list">
+            {doc.objectives.map((item, i) => (
+              <li key={i}><span className="lp-obj-num">{i + 1}</span><span>{item}</span></li>
+            ))}
+          </ol>
+        </section>
+
+        {doc.sections.map((section, sIdx) => (
+          <section className="lp-doc-block" key={sIdx}>
+            <h2 className="lp-block-heading">
+              <span>{String(sIdx + 2).padStart(2, "0")}</span> {section.heading}
+            </h2>
+            {section.paragraphs?.map((para, pIdx) => (
+              <p className="lp-body-para" key={pIdx}>{para}</p>
+            ))}
+            {section.bullets?.length > 0 && (
+              <ul className="lp-bullet-list">
+                {section.bullets.map((b, bIdx) => (
+                  <li key={bIdx}><span className="lp-bullet-dot">▪</span><span>{b}</span></li>
+                ))}
+              </ul>
+            )}
+            {section.note && (
+              <div className={`lp-doc-note note-${section.note.tone || "standard"}`}>
+                <span className="lp-note-icon">{section.note.tone === "warning" ? "⚠" : section.note.tone === "tip" ? "💡" : "ℹ"}</span>
+                <div><strong>{section.note.title}</strong><p>{section.note.text}</p></div>
+              </div>
+            )}
+          </section>
+        ))}
+
+        {fieldFact && (
+          <section className="lp-doc-block">
+            <h2 className="lp-block-heading"><span>{String(doc.sections.length + 2).padStart(2, "0")}</span> {fieldFact.title}</h2>
+            <p className="lp-block-hint">{fieldFact.badge} — study each item carefully before the lab.</p>
+            <div className="lp-doc-table-wrap">
+              <table className="lp-doc-table">
+                <thead>
+                  <tr><th>Item / Condition</th><th>Technician Note</th><th>Status</th></tr>
+                </thead>
+                <tbody>
+                  {fieldFact.items?.map((it, i) => (
+                    <tr key={i}>
+                      <td><strong>{it.label}</strong></td>
+                      <td>{it.value}</td>
+                      <td><span className="lp-status-chip" style={{ color: it.color, borderColor: it.color }}>{it.tag}</span></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )}
+
+        {topic.mistakeWarning && (
+          <div className="lp-doc-hazard">
+            <div className="lp-hazard-head">
+              <span className="lp-hazard-icon">⚠</span>
+              <div><span className="lp-hazard-kicker">COMMON LABORATORY MISTAKE</span><h3>{topic.mistakeWarning.title}</h3></div>
+            </div>
+            <p>{topic.mistakeWarning.desc}</p>
+          </div>
+        )}
+
+        <section className="lp-doc-block lp-takeaways">
+          <h2 className="lp-block-heading"><span>✓</span> Key Takeaways</h2>
+          <ul className="lp-takeaway-list">
+            {doc.takeaways.map((t, i) => (
+              <li key={i}><span className="lp-takeaway-check">✓</span><span>{t}</span></li>
+            ))}
+          </ul>
+        </section>
+
+        <section className="lp-doc-references">
+          <h3>References &amp; Standards</h3>
+          <ul>
+            {doc.references.map((r, i) => (
+              <li key={i}>
+                <a href={r.url} target="_blank" rel="noopener noreferrer">{r.label} ↗</a>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <footer className="lp-doc-footer">
+          <span>End of Module — Topic {topic.topicCode} · {topic.title}</span>
+          <span>BuildLab Learning System · Page 1 of 2</span>
+        </footer>
+      </article>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Main lesson view
+   ═══════════════════════════════════════════════════════════════════ */
+export default function LessonPresentationView({
+  topic,
+  moduleNum = 1,
+  onProceedTo3D,
+  onProceedToQuiz,
+  theme = "dark",
+}) {
+  const [pageState, setPageState] = useState({ id: topic?.id, page: 0 });
+  const totalPages = 2;
+  const content = getLessonModuleContent(topic);
+  const activePage = pageState.id === topic?.id ? pageState.page : 0;
+  const setActivePage = (updater) =>
+    setPageState((prev) => {
+      const base = prev.id === topic?.id ? prev.page : 0;
+      const next = typeof updater === "function" ? updater(base) : updater;
+      return { id: topic?.id, page: next };
+    });
+
+  const goTo = (page) => {
+    if (page < 0 || page >= totalPages) return;
+    try {
+      soundManager.click();
+    } catch {}
+    setActivePage(page);
+  };
+
+  const nextPage = () => {
+    try {
+      soundManager.click();
+    } catch {}
+    if (activePage < totalPages - 1) setActivePage((p) => p + 1);
+    else if (onProceedTo3D) onProceedTo3D();
+  };
+
+  const prevPage = () => {
+    try {
+      soundManager.click();
+    } catch {}
+    if (activePage > 0) setActivePage((p) => p - 1);
   };
 
   return (
     <div className={`lesson-presentation-view theme-${theme}`}>
-      {/* ── PRESENTATION TOP NAV BAR ── */}
+      {/* TOP BAR */}
       <div className="lp-top-bar">
         <div className="lp-badge-group">
-          <span className="lp-module-badge">MODULE {moduleNum} // LECTURE SLIDES</span>
-          <span className="lp-slide-indicator">
-            Slide {activeSlide + 1} of {totalSlides}
-          </span>
+          <span className="lp-module-badge">MODULE {moduleNum} // LESSON MODULE</span>
+          <span className="lp-slide-indicator">Page {activePage + 1} of {totalPages}</span>
         </div>
-
-        {/* Slide Selector Tabs */}
         <div className="lp-slide-tabs" role="tablist">
-          {moduleNum === 2 ? (
-            <>
-              <button
-                type="button"
-                className={`lp-tab-btn ${activeSlide === 0 ? "is-active" : ""}`}
-                onClick={() => { try { soundManager.click(); } catch {} setActiveSlide(0); }}
-              >
-                1. Form Factors &amp; Sizes
-              </button>
-              <button
-                type="button"
-                className={`lp-tab-btn ${activeSlide === 1 ? "is-active" : ""}`}
-                onClick={() => { try { soundManager.click(); } catch {} setActiveSlide(1); }}
-              >
-                2. Sockets, VRM &amp; Power
-              </button>
-              <button
-                type="button"
-                className={`lp-tab-btn ${activeSlide === 2 ? "is-active" : ""}`}
-                onClick={() => { try { soundManager.click(); } catch {} setActiveSlide(2); }}
-              >
-                3. Headers, I/O &amp; USB Codes
-              </button>
-              <button
-                type="button"
-                className={`lp-tab-btn ${activeSlide === 3 ? "is-active" : ""}`}
-                onClick={() => { try { soundManager.click(); } catch {} setActiveSlide(3); }}
-              >
-                4. Video &amp; Field Checklist
-              </button>
-            </>
-          ) : (
-            <>
-              <button
-                type="button"
-                className={`lp-tab-btn ${activeSlide === 0 ? "is-active" : ""}`}
-                onClick={() => { try { soundManager.click(); } catch {} setActiveSlide(0); }}
-              >
-                1. Theory &amp; Visual Breakdown
-              </button>
-              <button
-                type="button"
-                className={`lp-tab-btn ${activeSlide === 1 ? "is-active" : ""}`}
-                onClick={() => { try { soundManager.click(); } catch {} setActiveSlide(1); }}
-              >
-                2. Technical Specifications &amp; Pinouts
-              </button>
-              <button
-                type="button"
-                className={`lp-tab-btn ${activeSlide === 2 ? "is-active" : ""}`}
-                onClick={() => { try { soundManager.click(); } catch {} setActiveSlide(2); }}
-              >
-                3. Video &amp; Lab Safety Checklist
-              </button>
-            </>
-          )}
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activePage === 0}
+            className={`lp-tab-btn ${activePage === 0 ? "is-active" : ""}`}
+            onClick={() => goTo(0)}
+          >
+            <span className="lp-tab-icon">📄</span> 1. Syllabus Module
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activePage === 1}
+            className={`lp-tab-btn ${activePage === 1 ? "is-active" : ""}`}
+            onClick={() => goTo(1)}
+          >
+            <span className="lp-tab-icon">🎬</span> 2. Video &amp; Summary
+          </button>
         </div>
       </div>
 
-      {/* ── SLIDE CONTENT AREA ── */}
+      {/* CONTENT */}
       <div className="lp-slide-viewport">
-        {/* =========================================================================
-            MODULE 2: SLIDE 0 // MOTHERBOARD FORM FACTORS & DIMENSIONAL COMPARISON
-           ========================================================================= */}
-        {moduleNum === 2 && activeSlide === 0 && (
-          <div className="lp-slide-page animate-fade-in">
-            <header className="lp-slide-header">
-              <h2>Motherboard Form Factors &amp; Physical Dimensions</h2>
-              <p>
-                Motherboards adhere to strict physical standards governing outer dimensions, chassis mounting standoff
-                screw holes, rear I/O shield opening sizes, and power delivery standards.
-              </p>
+        {activePage === 0 && <ModuleDocument topic={topic} doc={content.moduleDoc} />}
+
+        {activePage === 1 && (
+          <div className="lp-video-page">
+            <header className="lp-page-header">
+              <span className="lp-page-eyebrow">PAGE 2 OF 2 · TOPIC {topic.topicCode}</span>
+              <h2>Video Demonstration &amp; Lesson Summary</h2>
+              <p>Watch the demonstration aligned to this topic, then check the bulleted notes beside it.</p>
             </header>
 
-            {/* VISUAL SCALE COMPARISON DIAGRAM (NESTED DIMENSIONS) */}
-            <div className="lp-scale-diagram-card">
-              <div className="diagram-card-head">
-                <span className="diagram-title">PHYSICAL SCALE COMPARISON (TOP-DOWN DIMENSIONAL MATRIX)</span>
-                <span className="diagram-sub">Nested scale comparison showing millimeter boundaries &amp; screw locations</span>
-              </div>
-
-              <div className="lp-svg-wrap">
-                <svg
-                  viewBox="0 0 680 380"
-                  className="lp-motherboard-scale-svg"
-                  aria-label="Motherboard Form Factors Scale Comparison"
-                >
-                  <defs>
-                    <linearGradient id="eatxGrad" x1="0" y1="0" x2="1" y2="1">
-                      <stop offset="0%" stopColor="rgba(176, 141, 87, 0.18)" />
-                      <stop offset="100%" stopColor="rgba(176, 141, 87, 0.04)" />
-                    </linearGradient>
-                    <linearGradient id="atxGrad" x1="0" y1="0" x2="1" y2="1">
-                      <stop offset="0%" stopColor="rgba(255, 255, 255, 0.12)" />
-                      <stop offset="100%" stopColor="rgba(255, 255, 255, 0.03)" />
-                    </linearGradient>
-                    <linearGradient id="matxGrad" x1="0" y1="0" x2="1" y2="1">
-                      <stop offset="0%" stopColor="rgba(245, 158, 11, 0.18)" />
-                      <stop offset="100%" stopColor="rgba(245, 158, 11, 0.04)" />
-                    </linearGradient>
-                    <linearGradient id="itxGrad" x1="0" y1="0" x2="1" y2="1">
-                      <stop offset="0%" stopColor="rgba(236, 72, 153, 0.22)" />
-                      <stop offset="100%" stopColor="rgba(236, 72, 153, 0.06)" />
-                    </linearGradient>
-                  </defs>
-
-                  {/* 1. Extended ATX (E-ATX): 305mm H x 330mm W -> scaled */}
-                  <rect
-                    x="20"
-                    y="20"
-                    width="640"
-                    height="340"
-                    rx="8"
-                    fill="url(#eatxGrad)"
-                    stroke="#b08d57"
-                    strokeWidth="2"
-                    strokeDasharray="4 4"
-                  />
-                  <text x="32" y="44" fill="#b08d57" fontSize="13" fontWeight="bold">
-                    E-ATX: 305 mm × 330 mm (12.0" × 13.0") · Enthusiast / Dual CPU
-                  </text>
-
-                  {/* 2. Standard ATX: 305mm H x 244mm W */}
-                  <rect
-                    x="20"
-                    y="20"
-                    width="474"
-                    height="340"
-                    rx="8"
-                    fill="url(#atxGrad)"
-                    stroke="#ffffff"
-                    strokeWidth="2.5"
-                  />
-                  <text x="32" y="70" fill="#ffffff" fontSize="13" fontWeight="bold">
-                    Standard ATX: 305 mm × 244 mm (12.0" × 9.6") · 9 Standoffs (Desktop Standard)
-                  </text>
-
-                  {/* 3. Micro-ATX (mATX): 244mm H x 244mm W */}
-                  <rect
-                    x="20"
-                    y="20"
-                    width="474"
-                    height="272"
-                    rx="8"
-                    fill="url(#matxGrad)"
-                    stroke="#f59e0b"
-                    strokeWidth="2"
-                  />
-                  <text x="32" y="96" fill="#f59e0b" fontSize="13" fontWeight="bold">
-                    Micro-ATX: 244 mm × 244 mm (9.6" × 9.6") · 8 Standoffs (Budget / Mainstream)
-                  </text>
-
-                  {/* 4. Mini-ITX (mITX): 170mm H x 170mm W */}
-                  <rect
-                    x="20"
-                    y="20"
-                    width="330"
-                    height="190"
-                    rx="8"
-                    fill="url(#itxGrad)"
-                    stroke="#ec4899"
-                    strokeWidth="2.5"
-                  />
-                  <text x="32" y="122" fill="#ec4899" fontSize="13" fontWeight="bold">
-                    Mini-ITX: 170 mm × 170 mm (6.7" × 6.7") · 4 Corner Standoffs (SFF)
-                  </text>
-
-                  {/* Key Motherboard Components Outlined */}
-                  {/* Rear I/O */}
-                  <rect x="24" y="24" width="40" height="90" rx="3" fill="#1e293b" stroke="#64748b" strokeWidth="1" />
-                  <text x="30" y="72" fill="#94a3b8" fontSize="9" transform="rotate(-90 30,72)">REAR I/O</text>
-
-                  {/* CPU Socket Area */}
-                  <rect x="135" y="45" width="80" height="80" rx="4" fill="#0f172a" stroke="#ffffff" strokeWidth="1.5" />
-                  <text x="145" y="88" fill="#ffffff" fontSize="10" fontWeight="bold">CPU SOCKET</text>
-                  <text x="145" y="102" fill="#64748b" fontSize="8">LGA / PGA</text>
-
-                  {/* RAM Slots */}
-                  <rect x="235" y="35" width="8" height="100" rx="2" fill="#ffffff" opacity="0.8" />
-                  <rect x="250" y="35" width="8" height="100" rx="2" fill="#ffffff" opacity="0.8" />
-                  <rect x="265" y="35" width="8" height="100" rx="2" fill="#ffffff" opacity="0.8" />
-                  <rect x="280" y="35" width="8" height="100" rx="2" fill="#ffffff" opacity="0.8" />
-                  <text x="240" y="150" fill="#ffffff" fontSize="9" fontWeight="bold">DDR5 RAM SLOTS (A1/A2/B1/B2)</text>
-
-                  {/* Primary PCIe x16 Slot */}
-                  <rect x="80" y="160" width="220" height="14" rx="3" fill="#ffffff" />
-                  <text x="90" y="171" fill="#04121a" fontSize="9" fontWeight="bold">PRIMARY PCIe 4.0/5.0 x16 GRAPHICS SLOT</text>
-
-                  {/* Secondary Expansion Slots (ATX only) */}
-                  <rect x="80" y="200" width="160" height="10" rx="2" fill="#475569" opacity="0.7" />
-                  <rect x="80" y="235" width="160" height="10" rx="2" fill="#475569" opacity="0.7" />
-                  <rect x="80" y="270" width="220" height="12" rx="2" fill="#ffffff" opacity="0.5" />
-                  <rect x="80" y="305" width="160" height="10" rx="2" fill="#475569" opacity="0.7" />
-                  <text x="310" y="295" fill="#64748b" fontSize="9">7 ATX EXPANSION SLOTS</text>
-
-                  {/* 24-Pin ATX Main Power */}
-                  <rect x="445" y="80" width="18" height="90" rx="2" fill="#f59e0b" />
-                  <text x="430" y="130" fill="#f59e0b" fontSize="9" transform="rotate(-90 430,130)">24-PIN ATX</text>
-
-                  {/* Standard Standoff Screw Holes (Brass circles) */}
-                  {[
-                    [35, 35], [235, 35], [455, 35],       // Top row
-                    [35, 170], [235, 170], [455, 170],     // Middle row
-                    [35, 345], [235, 345], [455, 345]      // Bottom row (ATX)
-                  ].map(([cx, cy], idx) => (
-                    <g key={idx}>
-                      <circle cx={cx} cy={cy} r="6" fill="#eab308" stroke="#713f12" strokeWidth="1.5" />
-                      <circle cx={cx} cy={cy} r="2" fill="#000" />
-                    </g>
-                  ))}
-                </svg>
-              </div>
-
-              <div className="diagram-legend">
-                <span className="legend-chip"><span className="dot dot-eatx" /> E-ATX (305×330mm)</span>
-                <span className="legend-chip"><span className="dot dot-atx" /> Standard ATX (305×244mm)</span>
-                <span className="legend-chip"><span className="dot dot-matx" /> Micro-ATX (244×244mm)</span>
-                <span className="legend-chip"><span className="dot dot-itx" /> Mini-ITX (170×170mm)</span>
-                <span className="legend-chip"><span className="dot dot-brass" /> Standoff Anchor Screw</span>
-              </div>
-            </div>
-
-            {/* FORM FACTOR DETAILS MATRIX */}
-            <div className="lp-cards-grid">
-              {MOTHERBOARD_FORM_FACTORS.map((ff) => (
-                <div
-                  key={ff.code}
-                  className={`lp-ff-card ${selectedFormFactor === ff.code ? "is-selected" : ""}`}
-                  onClick={() => {
-                    try { soundManager.click(); } catch {}
-                    setSelectedFormFactor(ff.code);
-                  }}
-                >
-                  <div className="ff-card-top">
-                    <span className="ff-badge" style={{ borderColor: ff.color, color: ff.color }}>
-                      {ff.badge}
-                    </span>
-                    <strong className="ff-code">{ff.code}</strong>
-                  </div>
-                  <h3 className="ff-name">{ff.name}</h3>
-                  <div className="ff-spec-row">
-                    <span className="spec-label">Dimensions:</span>
-                    <strong className="spec-value">{ff.dims} ({ff.dimsInches})</strong>
-                  </div>
-                  <div className="ff-spec-row">
-                    <span className="spec-label">Mounting:</span>
-                    <span className="spec-value">{ff.standoffs}</span>
-                  </div>
-                  <div className="ff-spec-row">
-                    <span className="spec-label">Expansion:</span>
-                    <span className="spec-value">{ff.pcieSlots} • {ff.ramSlots}</span>
-                  </div>
-                  <p className="ff-desc">{ff.description}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* =========================================================================
-            MODULE 2: SLIDE 1 // SOCKET ARCHITECTURE & VRM POWER PHASES
-           ========================================================================= */}
-        {moduleNum === 2 && activeSlide === 1 && (
-          <div className="lp-slide-page animate-fade-in">
-            <header className="lp-slide-header">
-              <h2>CPU Sockets (LGA vs. PGA) &amp; VRM Power Delivery</h2>
-              <p>
-                The central processing unit attaches to the motherboard through precision high-pin-density sockets,
-                energized by multi-phase Voltage Regulator Modules (VRMs).
-              </p>
-            </header>
-
-            <div className="lp-two-col-grid">
-              {/* LGA Card */}
-              <div className="lp-feature-card">
-                <div className="card-tag tag-cyan">INTEL LGA 1700 / AMD AM5</div>
-                <h3>Land Grid Array (LGA) Sockets</h3>
-                <p>
-                  In LGA architecture, the delicate, microscopic gold spring pins reside directly inside the motherboard
-                  socket. The processor silicon features flat gold contact pads underneath.
-                </p>
-                <ul className="lp-bullet-list">
-                  <li><strong>Zero Pin Pressure:</strong> Never apply downward force; chip drops in by gravity alone (ZIF).</li>
-                  <li><strong>Protective Cap:</strong> Keep the plastic socket cover in place until the CPU is seated; clamping the lever will pop the cover off automatically.</li>
-                  <li><strong>Pin Count:</strong> LGA 1700 has 1,700 spring pins; AMD AM5 has 1,718 spring pins.</li>
-                </ul>
-                <div className="lp-warning-box">
-                  ⚠️ <strong>Critical Warning:</strong> A single bent pin in an LGA socket can permanently prevent memory channels from detecting or cause boot failure.
-                </div>
-              </div>
-
-              {/* VRM Card */}
-              <div className="lp-feature-card">
-                <div className="card-tag tag-emerald">12V TO 1.2V STEP-DOWN</div>
-                <h3>Voltage Regulator Module (VRM)</h3>
-                <p>
-                  Modern CPUs draw up to 250+ Watts at ultra-low voltages (1.1V–1.4V). The VRM circuit steps down 12V DC
-                  from the PSU 8-pin EPS cable through balanced power phases.
-                </p>
-                <div className="vrm-spec-chips">
-                  <div className="vrm-chip">
-                    <strong>MOSFETs</strong>
-                    <span>High/Low-side switches cycling at 500,000+ Hz</span>
-                  </div>
-                  <div className="vrm-chip">
-                    <strong>Chokes / Inductors</strong>
-                    <span>Smooth rapid pulsed voltage into steady DC</span>
-                  </div>
-                  <div className="vrm-chip">
-                    <strong>Solid Capacitors</strong>
-                    <span>Filter out micro-ripple to prevent voltage sag</span>
-                  </div>
-                </div>
-                <p className="vrm-tip">
-                  💡 <strong>Heatsink Requirement:</strong> High core-count processors require motherboards with heavy aluminum heatsinks over the VRM to prevent thermal throttling.
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* =========================================================================
-            MODULE 2: SLIDE 2 // FRONT PANEL HEADERS & USB COLOR CODES
-           ========================================================================= */}
-        {moduleNum === 2 && activeSlide === 2 && (
-          <div className="lp-slide-page animate-fade-in">
-            <header className="lp-slide-header">
-              <h2>Front Panel Headers &amp; Rear I/O Color Coding</h2>
-              <p>
-                Connecting front panel case wiring and identifying high-speed USB ports requires strict adherence to
-                pinout schematics and industry color-coding standards.
-              </p>
-            </header>
-
-            <div className="lp-two-col-grid">
-              {/* Front Panel Header Pinout Matrix */}
-              <div className="lp-feature-card">
-                <div className="card-tag tag-amber">9-PIN JFP1 HEADER SCHEMATIC</div>
-                <h3>Standard Front Panel Header (F_PANEL)</h3>
-                <p>
-                  Standardized 9-pin block located at the bottom-right corner of the motherboard. Switches are non-polarized,
-                  while LEDs must match positive (+) and negative (-).
-                </p>
-
-                <div className="fpanel-diagram-table">
-                  <div className="fpanel-row top-row">
-                    <div className="fpanel-pin p-led-pos">Pin 1: Power LED (+)</div>
-                    <div className="fpanel-pin p-led-neg">Pin 3: Power LED (-)</div>
-                    <div className="fpanel-pin p-sw-pos">Pin 5: Power Switch</div>
-                    <div className="fpanel-pin p-sw-neg">Pin 7: Power Ground</div>
-                    <div className="fpanel-pin p-key">Pin 9: KEY (No Pin)</div>
-                  </div>
-                  <div className="fpanel-row btm-row">
-                    <div className="fpanel-pin h-led-pos">Pin 2: HDD LED (+)</div>
-                    <div className="fpanel-pin h-led-neg">Pin 4: HDD LED (-)</div>
-                    <div className="fpanel-pin r-sw-pos">Pin 6: Reset Switch</div>
-                    <div className="fpanel-pin r-sw-neg">Pin 8: Reset Ground</div>
-                    <div className="fpanel-pin empty">Pin 10: Empty</div>
-                  </div>
-                </div>
-
-                <div className="fpanel-rule-chips">
-                  <span className="rule-chip safe">✓ Power SW &amp; Reset SW: Non-polarized momentary shorts</span>
-                  <span className="rule-chip warning">⚡ HDD LED &amp; Power LED: Polarity Sensitive (+ / -)</span>
-                </div>
-              </div>
-
-              {/* USB Port Color Code Guide */}
-              <div className="lp-feature-card">
-                <div className="card-tag tag-cyan">INDUSTRY PORT COLOR SPECIFICATIONS</div>
-                <h3>USB Port Color Codes &amp; Transfer Speeds</h3>
-                <div className="usb-color-list">
-                  <div className="usb-color-item">
-                    <span className="usb-color-swatch black" />
-                    <div className="usb-color-details">
-                      <strong>Black Port: USB 2.0 (Hi-Speed)</strong>
-                      <span>Max Speed: 480 Mbps • Best for keyboards, mice, and audio DACs.</span>
-                    </div>
-                  </div>
-                  <div className="usb-color-item">
-                    <span className="usb-color-swatch blue" />
-                    <div className="usb-color-details">
-                      <strong>Blue Port: USB 3.0 / 3.1 Gen 1 (SuperSpeed)</strong>
-                      <span>Max Speed: 5 Gbps • Standard for external flash drives and webcams.</span>
-                    </div>
-                  </div>
-                  <div className="usb-color-item">
-                    <span className="usb-color-swatch teal" />
-                    <div className="usb-color-details">
-                      <strong>Teal / Cyan Port: USB 3.1 Gen 2 (SuperSpeed+)</strong>
-                      <span>Max Speed: 10 Gbps • High-speed backup drives and fast SSD enclosures.</span>
-                    </div>
-                  </div>
-                  <div className="usb-color-item">
-                    <span className="usb-color-swatch red" />
-                    <div className="usb-color-details">
-                      <strong>Red Port: USB 3.2 Gen 2x2 (20 Gbps)</strong>
-                      <span>Max Speed: 20 Gbps • Extreme NVMe external enclosures &amp; fast charging.</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* =========================================================================
-            SLIDE 3 / FINAL: LECTURE FILM & PRACTICAL FIELD CHECKLIST
-           ========================================================================= */}
-        {activeSlide === (totalSlides - 1) && (
-          <div className="lp-slide-page animate-fade-in">
-            <header className="lp-slide-header">
-              <h2>Practical Video Lecture &amp; Hands-On Lab Readiness</h2>
-              <p>
-                Watch the complete demonstration video, verify critical servicing protocols, and transition smoothly
-                into the interactive 3D inspection workbench.
-              </p>
-            </header>
-
-            {/* Embedded 16:9 Lecture Video Player in Center Stage */}
-            <div className="lp-center-video-stage">
-              <div className="lp-video-aspect-wrap">
-                <iframe
-                  className="lp-center-iframe"
-                  src={`https://www.youtube-nocookie.com/embed/${topic.youtubeId}?enablejsapi=1&rel=0&modestbranding=1`}
-                  title={`${topic.title} Lecture Video`}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                />
-              </div>
-              <div className="lp-video-meta-bar">
-                <div className="lp-video-title-info">
-                  <span className="lp-video-icon">📺</span>
-                  <strong>{topic.videoTitle}</strong>
-                </div>
+            <div className="lp-video-layout">
+              <div className="lp-video-main">
+                <CustomVideoPlayer videoId={topic.youtubeId} title={topic.videoTitle} />
                 <a
+                  className="lp-video-external"
                   href={`https://www.youtube.com/watch?v=${topic.youtubeId}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="lp-video-external-btn"
                 >
-                  Open on YouTube ↗
+                  Having trouble playing? Open on YouTube ↗
                 </a>
               </div>
-            </div>
 
-            {/* Transition Action Bar */}
-            <div className="lp-video-bottom-action-grid">
-              <div className="lp-next-stage-prompt">
-                <div className="prompt-head">
-                  <span className="prompt-badge">PHASE 2 WORKBENCH</span>
-                  <h4>Ready for 3D Hands-On Inspection?</h4>
-                </div>
-                <p>
-                  Proceed to the 3D Hardware Inspection Lab to orbit, zoom, and inspect each component socket,
-                  DIMM keyway, and standoff anchor in interactive 3D space with B.O.B.
-                </p>
-                <div className="prompt-buttons-row">
-                  <button
-                    type="button"
-                    className="lp-start-3d-btn"
-                    onClick={() => {
-                      try { soundManager.snap(); } catch {}
-                      if (onProceedTo3D) onProceedTo3D();
-                    }}
-                  >
-                    🧊 Launch 3D Component Inspection Lab →
-                  </button>
-                  <button
-                    type="button"
-                    className="lp-start-quiz-btn"
-                    onClick={() => {
-                      try { soundManager.click(); } catch {}
-                      if (onProceedToQuiz) onProceedToQuiz();
-                    }}
-                  >
-                    📝 Take 15-Item Assessment
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Fallback for other modules slide 0 */}
-        {moduleNum !== 2 && activeSlide === 0 && (
-          <div className="lp-slide-page animate-fade-in">
-            <header className="lp-slide-header">
-              <h2>{topic.title} // Technical Architecture</h2>
-              <p>{topic.explanation}</p>
-            </header>
-
-            <div className="lp-two-col-grid">
-              <div className="lp-feature-card">
-                <div className="card-tag tag-cyan">THEORY &amp; SERVICING PROTOCOLS</div>
-                <h3>Standard Operating Procedure</h3>
-                <p>
-                  Adhere to DepEd TVL CSS NC II occupational health and safety guidelines. Proper ESD grounding,
-                  correct tool selection, and careful torque prevent costly laboratory component failure.
-                </p>
-                {topic.fieldFact && (
-                  <div className="lp-field-facts">
-                    <strong className="fact-title">{topic.fieldFact.title}</strong>
-                    <div className="fact-items">
-                      {topic.fieldFact.items?.map((it, idx) => (
-                        <div key={idx} className="fact-item-row">
-                          <span className="fact-tag" style={{ color: it.color, borderColor: it.color }}>
-                            {it.tag}
-                          </span>
-                          <div>
-                            <strong>{it.label}: </strong>
-                            <span>{it.value}</span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+              <aside className="lp-summary-panel">
+                <div className="lp-summary-head">
+                  <span className="lp-summary-icon">📌</span>
+                  <div>
+                    <h3>Bulleted Summary</h3>
+                    <p>What to remember from this lesson</p>
                   </div>
-                )}
-              </div>
-
-              <div className="lp-feature-card">
-                {topic.mistakeWarning && (
-                  <div className="lp-mistake-card">
-                    <div className="card-tag tag-rose">COMMON LABORATORY HAZARD</div>
-                    <h4>{topic.mistakeWarning.title}</h4>
-                    <p>{topic.mistakeWarning.desc}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Fallback for other modules slide 1 (NON-BLANK: FULL SPECIFICATIONS & HARDWARE MATRIX) */}
-        {moduleNum !== 2 && activeSlide === 1 && (
-          <div className="lp-slide-page animate-fade-in">
-            <header className="lp-slide-header">
-              <h2>{topic.title} // Technical Specifications &amp; Field Standards</h2>
-              <p>
-                Comprehensive laboratory reference standards, pin tolerances, and tool torque specifications
-                prescribed for Computer Systems Servicing technicians.
-              </p>
-            </header>
-
-            <div className="lp-two-col-grid">
-              {/* Technical Specifications Matrix */}
-              <div className="lp-feature-card">
-                <div className="card-tag tag-emerald">HARDWARE ENGINEERING STANDARDS</div>
-                <h3>Critical Laboratory Checklist</h3>
-                <ul className="lp-checklist">
-                  <li>
-                    <strong>Fastener Standards:</strong> Standard 6-32 coarse screws (chassis panels, PSU), M3 fine screws (2.5" drives), and M2 micro-fasteners (M.2 NVMe SSDs).
-                  </li>
-                  <li>
-                    <strong>Tooling Compatibility:</strong> Standard #2 Phillips screwdriver fits 90%+ of PC screws. Never use power drills or overtighten into fiberglass.
-                  </li>
-                  <li>
-                    <strong>Grounding Continuity:</strong> Regularly discharge body capacitance against the unpainted chassis metal while plugged into a grounded wall socket with power OFF.
-                  </li>
-                  <li>
-                    <strong>Zero-Force Assembly:</strong> Components (CPUs, RAM, GPUs) are physically keyed with notches; if excessive resistance is felt, re-verify pinout alignment.
-                  </li>
+                </div>
+                <ul className="lp-summary-list">
+                  {content.videoSummary.map((point, i) => (
+                    <li key={i}><span className="lp-summary-num">{i + 1}</span><span>{point}</span></li>
+                  ))}
                 </ul>
-
-                <div className="lp-warning-box">
-                  💡 <strong>Technician Golden Rule:</strong> Always test boot components outside the chassis on top of the non-conductive motherboard box before final internal cable management.
+                <div className="lp-summary-foot">
+                  Aligned to Topic {topic.topicCode} — {topic.title}
                 </div>
+              </aside>
+            </div>
+
+            <div className="lp-next-stage-bar">
+              <div className="lp-next-stage-copy">
+                <span className="lp-next-badge">NEXT: HANDS-ON PHASE</span>
+                <h4>Ready to inspect the hardware in 3D?</h4>
+                <p>Orbit, zoom, and click hotspots on the interactive workbench, then take the assessment.</p>
               </div>
-
-              {/* Servicing Protocol Card */}
-              <div className="lp-feature-card">
-                <div className="card-tag tag-amber">DEPED / TESDA CSS NC II REQUIREMENT</div>
-                <h3>Occupational Health &amp; Safety Compliance</h3>
-                <p>
-                  Laboratory safety protocols mandate non-static footwear, clean non-conductive assembly mats, and anti-static wrist straps connected to earth ground during hardware maintenance.
-                </p>
-
-                <div className="vrm-spec-chips">
-                  <div className="vrm-chip">
-                    <strong>ESD Ground</strong>
-                    <span>Drain static safely before touching sensitive silicon</span>
-                  </div>
-                  <div className="vrm-chip">
-                    <strong>Torque Care</strong>
-                    <span>Hand-tighten only to avoid stripping threads or cracking PCB</span>
-                  </div>
-                  <div className="vrm-chip">
-                    <strong>Visual Inspection</strong>
-                    <span>Verify pin alignment and thermal paste spread before clamping</span>
-                  </div>
-                </div>
-
-                <p className="vrm-tip">
-                  ⚡ <strong>Advance to Video:</strong> Click Next Slide to watch the practical step-by-step lecture film and preview the 3D model!
-                </p>
-              </div>
-
-              {/* Quick Glossary Strip for Non-STEM / Novice Learners */}
-              <div className="lp-glossary-banner">
-                <div className="glossary-head">
-                  <span className="glossary-badge">📖 NON-STEM / BEGINNER GLOSSARY</span>
-                  <span className="glossary-sub">Hover or tap any hardware acronym for plain-English explanation</span>
-                </div>
-                <div className="glossary-chips-row">
-                  <abbr className="glossary-chip" title="Electrostatic Discharge: Unfelt static electricity from clothes/carpet that can zap and fry microscopic silicon circuits.">
-                    <span className="chip-term">ESD</span>
-                    <span className="chip-def">Static Zap Hazard</span>
-                  </abbr>
-                  <abbr className="glossary-chip" title="Voltage Regulator Module: Clean power distributor around the socket that regulates exact voltages to your processor.">
-                    <span className="chip-term">VRM</span>
-                    <span className="chip-def">CPU Power Delivery</span>
-                  </abbr>
-                  <abbr className="glossary-chip" title="Power-On Self-Test: Automatic pre-boot check where motherboard tests CPU, RAM, and GPU before showing display.">
-                    <span className="chip-term">POST</span>
-                    <span className="chip-def">Pre-Boot Diagnostic</span>
-                  </abbr>
-                  <abbr className="glossary-chip" title="Non-Volatile Memory Express: Ultra-fast solid-state drive that screws directly into the motherboard without cables.">
-                    <span className="chip-term">NVMe</span>
-                    <span className="chip-def">Direct Fast SSD</span>
-                  </abbr>
-                  <abbr className="glossary-chip" title="Peripheral Component Interconnect Express: High-speed motherboard slot used for dedicated graphics cards.">
-                    <span className="chip-term">PCIe</span>
-                    <span className="chip-def">Expansion Card Slot</span>
-                  </abbr>
-                  <abbr className="glossary-chip" title="Zero Insertion Force: Lever-locked CPU socket that requires absolutely no downward pushing force.">
-                    <span className="chip-term">ZIF</span>
-                    <span className="chip-def">No-Force Socket</span>
-                  </abbr>
-                </div>
+              <div className="lp-next-stage-buttons">
+                <button
+                  type="button"
+                  className="lp-btn-primary lp-btn-3d"
+                  onClick={() => {
+                    try {
+                      soundManager.snap();
+                    } catch {}
+                    if (onProceedTo3D) onProceedTo3D();
+                  }}
+                >
+                  🧊 Launch 3D Inspection Lab →
+                </button>
+                <button
+                  type="button"
+                  className="lp-btn-quiz"
+                  onClick={() => {
+                    try {
+                      soundManager.click();
+                    } catch {}
+                    if (onProceedToQuiz) onProceedToQuiz();
+                  }}
+                >
+                  📝 Take 15-Item Assessment
+                </button>
               </div>
             </div>
           </div>
         )}
       </div>
 
-      {/* ── PRESENTATION BOTTOM STEPPER FOOTER ── */}
+      {/* FOOTER STEPPER */}
       <footer className="lp-bottom-footer">
         <div className="lp-footer-left">
-          <button
-            type="button"
-            className="lp-btn-nav lp-btn-prev"
-            disabled={activeSlide === 0}
-            onClick={handlePrevSlide}
-          >
-            ← Previous Slide
+          <button type="button" className="lp-btn-nav lp-btn-prev" disabled={activePage === 0} onClick={prevPage}>
+            ← Previous Page
           </button>
-          <div className="lp-slide-dots">
-            {Array.from({ length: totalSlides }).map((_, idx) => (
-              <span
+          <div className="lp-slide-dots" role="tablist" aria-label="Lesson pages">
+            {Array.from({ length: totalPages }).map((_, idx) => (
+              <button
+                type="button"
                 key={idx}
-                className={`lp-dot ${activeSlide === idx ? "is-active" : ""}`}
-                onClick={() => { try { soundManager.click(); } catch {} setActiveSlide(idx); }}
+                className={`lp-dot ${activePage === idx ? "is-active" : ""}`}
+                onClick={() => goTo(idx)}
+                aria-label={`Go to page ${idx + 1}`}
               />
             ))}
           </div>
         </div>
-
         <div className="lp-footer-right">
-          {activeSlide < totalSlides - 1 ? (
-            <button type="button" className="lp-btn-nav lp-btn-next" onClick={handleNextSlide}>
-              Next Slide →
+          {activePage < totalPages - 1 ? (
+            <button type="button" className="lp-btn-nav lp-btn-next" onClick={nextPage}>
+              Next Page: Video →
             </button>
           ) : (
-            <div className="lp-footer-actions">
-              <button
-                type="button"
-                className="lp-btn-primary lp-btn-3d"
-                onClick={() => {
-                  try { soundManager.snap(); } catch {}
-                  if (onProceedTo3D) onProceedTo3D();
-                }}
-              >
-                🧊 Step 2: 3D Inspection Lab →
-              </button>
-              <button
-                type="button"
-                className="lp-btn-quiz"
-                onClick={() => {
-                  try { soundManager.click(); } catch {}
-                  if (onProceedToQuiz) onProceedToQuiz();
-                }}
-              >
-                📝 Take 15-Item Assessment
-              </button>
-            </div>
+            <button type="button" className="lp-btn-nav lp-btn-next" onClick={() => onProceedTo3D?.()}>
+              Continue to 3D Lab →
+            </button>
           )}
         </div>
       </footer>

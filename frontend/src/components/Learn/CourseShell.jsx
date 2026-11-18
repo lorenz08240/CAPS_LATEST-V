@@ -1008,7 +1008,7 @@ export default function CourseShell() {
                   }}
                 >
                   <span className="tab-icon">📄</span>
-                  <span>1. Lecture &amp; Visual Report</span>
+                  <span>1. Lesson Module</span>
                 </button>
                 <button
                   type="button"

@@ -19,8 +19,8 @@ export const CSS_CURRICULUM = [
         moduleTitle: "Lab Safety, Workspace & Tools",
         specimenKey: "composite",
         hotspotId: null,
-        youtubeId: "BL4DCEp7blY",
-        videoTitle: "PC Building Safety, ESD Grounding & Workspace Setup",
+        youtubeId: "UPo2-1y0pso",
+        videoTitle: "How to Set Up an ESD-Safe Workbench",
         explanation:
           "Electrostatic discharge (ESD) can destroy delicate silicon microchips with voltages too low for humans to feel. Always assemble on a clean, non-conductive surface like bare wood or an anti-static mat, and ground yourself regularly by touching an unpainted metal surface on the plugged-in (switched OFF) PSU chassis.",
         fieldFact: {
@@ -56,8 +56,8 @@ export const CSS_CURRICULUM = [
         moduleTitle: "Lab Safety, Workspace & Tools",
         specimenKey: "composite",
         hotspotId: "sys-cpu",
-        youtubeId: "PrXwe21biJo",
-        videoTitle: "Proper Handling of Motherboards and Delicate Sockets",
+        youtubeId: "v7MYOpFONCU",
+        videoTitle: "First Person View PC BUILD Guide! (POV) — Safe Component Handling",
         explanation:
           "Printed Circuit Boards (PCBs) are layered with microscopic copper traces and tiny surface-mount components (SMDs) like capacitors and resistors. Never lift or grip a motherboard by its CPU socket retention lever, cooler mounting brackets, or delicate capacitor cylinders.",
         fieldFact: {
@@ -93,8 +93,8 @@ export const CSS_CURRICULUM = [
         moduleTitle: "Lab Safety, Workspace & Tools",
         specimenKey: "case",
         hotspotId: null,
-        youtubeId: "vBdf2N0_zXo",
-        videoTitle: "PC Building Screws, Standoffs and Essential Tools Guide",
+        youtubeId: "oc0yMoNMwek",
+        videoTitle: "How to Build a Gaming Computer: DIY Step-by-Step Tutorial",
         explanation:
           "Desktop computers use three primary screw thread standards: 6-32 coarse screws (for PSU, GPU brackets, and case panels), M3 fine thread screws (for 2.5-inch SSDs and optical drives), and tiny M2 screws for M.2 NVMe drives. Using the wrong thread will strip the metal holes.",
         fieldFact: {
@@ -138,8 +138,8 @@ export const CSS_CURRICULUM = [
         moduleTitle: "The Motherboard (Mainboard Backbone)",
         specimenKey: "motherboard",
         hotspotId: null,
-        youtubeId: "k5i_lE8P0E4",
-        videoTitle: "Motherboard Form Factors & Architecture Explained",
+        youtubeId: "8PkfPoA5-mw",
+        videoTitle: "Every Motherboard Form Factor Explained in 9 Minutes",
         explanation:
           "The motherboard is the primary printed circuit board that interconnects all hardware subsystems. Standard consumer form factors are ATX (305x244mm), Micro-ATX (244x244mm), and Mini-ITX (170x170mm). Standoff screw holes align strictly to these standardized form factor dimensions.",
         fieldFact: {
@@ -175,8 +175,8 @@ export const CSS_CURRICULUM = [
         moduleTitle: "The Motherboard (Mainboard Backbone)",
         specimenKey: "motherboard",
         hotspotId: "sys-vrm",
-        youtubeId: "p_6q1D6qf5A",
-        videoTitle: "Motherboard VRM Phases and Chipsets Demystified",
+        youtubeId: "dAg1H7JsVN0",
+        videoTitle: "All Motherboard Components Explained In a SINGLE VIDEO",
         explanation:
           "The Voltage Regulator Module (VRM) surrounds the CPU socket and steps down the raw 12V DC input from the power supply into ripple-free, microvolt-level power (1.1V - 1.35V) for the CPU. Large ribbed aluminum heatsinks cover these MOSFETs to keep them cool under load.",
         fieldFact: {
@@ -212,8 +212,8 @@ export const CSS_CURRICULUM = [
         moduleTitle: "The Motherboard (Mainboard Backbone)",
         specimenKey: "motherboard",
         hotspotId: null,
-        youtubeId: "Wc8vQ9p-8yY",
-        videoTitle: "Motherboard Rear IO Ports and Front Panel Headers",
+        youtubeId: "lfeFA22UFXk",
+        videoTitle: "Motherboard Connections Explained — All Connection Types",
         explanation:
           "The motherboard rear I/O cluster provides external connections (USB, LAN, Display, Audio), while bottom pins connect front panel buttons (Power SW, Reset SW, Power LED, HDD LED) and USB 3.0/USB-C header cables from the chassis.",
         fieldFact: {
@@ -257,8 +257,8 @@ export const CSS_CURRICULUM = [
         moduleTitle: "Central Processing Unit (CPU) & Cooling",
         specimenKey: "cpu",
         hotspotId: "sys-cpu",
-        youtubeId: "U4mGZ_2xQyE",
-        videoTitle: "How to Install a CPU Without Bending Any Pins",
+        youtubeId: "skzpDVarSpI",
+        videoTitle: "PC Building Basics: Installing Your CPU",
         explanation:
           "The CPU is the primary calculation brain of the PC. Sockets use either LGA (Land Grid Array, where spring pins are on the motherboard) or PGA (Pin Grid Array, where pins are on the CPU bottom). All CPUs feature a golden triangle mark in one corner that matches the socket's alignment indicator.",
         fieldFact: {
@@ -294,8 +294,8 @@ export const CSS_CURRICULUM = [
         moduleTitle: "Central Processing Unit (CPU) & Cooling",
         specimenKey: "cpu",
         hotspotId: "sys-cpu",
-        youtubeId: "R73e1h3AeVc",
-        videoTitle: "How to Apply Thermal Paste and Mount CPU Coolers Correctly",
+        youtubeId: "NXIrV70AxJk",
+        videoTitle: "How to Apply Thermal Paste to a CPU",
         explanation:
           "Microscopic imperfections on the metal surfaces of the CPU integrated heat spreader (IHS) and cooler cold plate trap microscopic air pockets. Thermal paste fills these microscopic gaps because thermal compound conducts heat over 100 times better than air.",
         fieldFact: {
@@ -339,8 +339,8 @@ export const CSS_CURRICULUM = [
         moduleTitle: "Memory (RAM) & Solid State Storage (M.2 NVMe)",
         specimenKey: "ram",
         hotspotId: "sys-ram",
-        youtubeId: "D8A_V5wQx0o",
-        videoTitle: "RAM Installation Guide - Dual Channel Slots Explained",
+        youtubeId: "AnlBHwSSCWc",
+        videoTitle: "How to Setup Dual Channel RAM | GET MORE FPS",
         explanation:
           "Random Access Memory (RAM) serves as the CPU's ultra-fast volatile workspace. Motherboards feature an off-center physical key notch preventing wrong-generation insertion. Dual-channel memory doubles memory bus bandwidth from 64-bit to 128-bit, requiring modules to be seated in slots 2 and 4 (A2 and B2).",
         fieldFact: {
@@ -376,8 +376,8 @@ export const CSS_CURRICULUM = [
         moduleTitle: "Memory (RAM) & Solid State Storage (M.2 NVMe)",
         specimenKey: "storage",
         hotspotId: "sys-nvme",
-        youtubeId: "J8J90s5E-iQ",
-        videoTitle: "How to Install M.2 NVMe SSD Correctly",
+        youtubeId: "mXp1GwHQMng",
+        videoTitle: "How to Install a M.2 NVMe SSD in PC — Step by Step",
         explanation:
           "M.2 NVMe solid-state drives connect directly to CPU PCIe lanes at transfer rates up to 7,500+ MB/s, vastly outperforming legacy SATA 2.5-inch SSDs (550 MB/s). They insert at an upward 25-degree angle, swing down flush against a brass standoff, and are secured with an M2 screw or toolless latch.",
         fieldFact: {
@@ -421,8 +421,8 @@ export const CSS_CURRICULUM = [
         moduleTitle: "Graphics Card (GPU) & Power Supply (PSU)",
         specimenKey: "gpu",
         hotspotId: "sys-gpu",
-        youtubeId: "vB0X_vWwT_8",
-        videoTitle: "How to Install a Graphics Card (GPU) Step by Step",
+        youtubeId: "GoX-6rGZPiI",
+        videoTitle: "How to Install a Graphics Card or GPU into a PC",
         explanation:
           "The dedicated Graphics Processing Unit (GPU) handles complex 3D rasterization and ray tracing. It installs into the topmost PCIe x16 slot for full 16-lane bandwidth. Once seated until the plastic retention latch clicks, the metal rear bracket is screwed into the case chassis to support card weight.",
         fieldFact: {
@@ -458,8 +458,8 @@ export const CSS_CURRICULUM = [
         moduleTitle: "Graphics Card (GPU) & Power Supply (PSU)",
         specimenKey: "psu",
         hotspotId: null,
-        youtubeId: "J8J90s5E-iQ",
-        videoTitle: "Power Supply Buying Guide & Cable Connections",
+        youtubeId: "ZW1wcoERoDU",
+        videoTitle: "Power Supplies (PSU) and 80 Plus Ratings Explained",
         explanation:
           "The Power Supply Unit (PSU) converts hazardous 115V/230V alternating current (AC) from the wall outlet into regulated +12V, +5V, and +3.3V direct current (DC) for computer electronics. The 80 PLUS certification guarantees that at least 80% to 90% of drawn electricity is converted into power rather than dissipated heat.",
         fieldFact: {
@@ -503,8 +503,8 @@ export const CSS_CURRICULUM = [
         moduleTitle: "PC Chassis, Airflow Physics & Cabling",
         specimenKey: "case",
         hotspotId: null,
-        youtubeId: "8Omkqum-qNw",
-        videoTitle: "PC Case Airflow and Fan Direction Physics",
+        youtubeId: "YNcd-IGMj2c",
+        videoTitle: "PC Case AIRFLOW: A Visual Guide for Optimal Cooling",
         explanation:
           "Desktop computers rely on directed airflow to draw cool room air across hot heatsinks and expel hot exhaust. All standard chassis fans intake air through their open blade face and exhaust air out through the frame side supported by plastic cross-arms ('Faces Suck, Crosses Blow').",
         fieldFact: {
@@ -540,8 +540,8 @@ export const CSS_CURRICULUM = [
         moduleTitle: "PC Chassis, Airflow Physics & Cabling",
         specimenKey: "case",
         hotspotId: null,
-        youtubeId: "Wc8vQ9p-8yY",
-        videoTitle: "Cable Management and Front Panel Wiring Guide",
+        youtubeId: "nBJJj3FB2P8",
+        videoTitle: "Explaining PC Front Panel Connectors",
         explanation:
           "Clean cable management is not just for aesthetics—routing cables through rear grommets behind the motherboard tray ensures unobstructed airflow across VRM and GPU heatsinks, while preventing loose cables from brushing against spinning fan blades.",
         fieldFact: {
@@ -585,8 +585,8 @@ export const CSS_CURRICULUM = [
         moduleTitle: "Capstone Practical — Hands-On 3D Virtual PC Assembly",
         specimenKey: "composite",
         hotspotId: null,
-        youtubeId: "p_6q1D6qf5A",
-        videoTitle: "Out-of-Case Motherboard Bench Test Before Case Assembly",
+        youtubeId: "IhX0fOUYd8Q",
+        videoTitle: "How to Build a PC! Step-by-step (Bench Test & First Boot)",
         explanation:
           "Professional technicians always execute an 'out-of-case bench test' before installing the motherboard into the chassis. Setting the motherboard on its cardboard box with CPU, RAM, and PSU connected lets you verify that the core components POST before spending hours securing standoffs and cabling inside the case.",
         fieldFact: {
@@ -624,7 +624,7 @@ export const CSS_CURRICULUM = [
         isAssemblyLab: true,
         hotspotId: null,
         youtubeId: "BL4DCEp7blY",
-        videoTitle: "Complete PC Assembly Demonstration - From Bare Case to Boot",
+        videoTitle: "How to build a PC, the last guide you'll ever need!",
         explanation:
           "Put theory into practice! In this interactive capstone lab, you will build a complete desktop computer step-by-step in the 3D Studio. With zero commercial brand distractions, follow B.O.B.'s guidance to physically assemble each standardized component in proper order—from chassis prep to final PCIe lock.",
         fieldFact: {
@@ -664,8 +664,8 @@ export const CSS_CURRICULUM = [
         moduleTitle: "Capstone Practical — Hands-On 3D Virtual PC Assembly",
         specimenKey: "composite",
         hotspotId: null,
-        youtubeId: "8Omkqum-qNw",
-        videoTitle: "Understanding Motherboard EZ Debug LEDs and Beep Codes",
+        youtubeId: "dAg1H7JsVN0",
+        videoTitle: "All Motherboard Components Explained — POST & Diagnostics",
         explanation:
           "Power-On Self-Test (POST) is the firmware pre-boot diagnostic sequence that verifies CPU, RAM, GPU, and boot storage before handing control to the operating system. Modern motherboards feature four EZ Debug LEDs that illuminate sequentially to pinpoint hardware initialization faults.",
         fieldFact: {
