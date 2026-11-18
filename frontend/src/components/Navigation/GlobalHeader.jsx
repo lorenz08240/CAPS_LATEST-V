@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import soundManager from '../../utilities/soundManager';
+import useGoogleSignIn from '../../utilities/useGoogleSignIn';
 import CyberBrand from './CyberBrand';
 import { useLearnMode } from '../../contexts/LearnModeContext';
 import ModeSelectionCards from '../Home/ModeSelectionCards';
-import AccountSetupModal from '../Home/AccountSetupModal';
 import './GlobalHeader.css';
 
 export default function GlobalHeader({ onSearchClick, hideBuildPill = false, hideBrand = false, hiddenNavItems = [] }) {
@@ -17,7 +17,14 @@ export default function GlobalHeader({ onSearchClick, hideBuildPill = false, hid
   const shouldHideBuildPill = hideBuildPill || isFreeWorkbench || currentPath.startsWith('/learn') || currentPath.startsWith('/compatibility') || currentPath.startsWith('/build');
 
   const [showModeCards, setShowModeCards] = useState(false);
-  const [showAccountModal, setShowAccountModal] = useState(false);
+
+  const { signIn, isLinking, error: authError } = useGoogleSignIn({
+    onSuccess: () => {
+      setShowModeCards(false);
+      setAppMode("learn");
+      navigate("/learn");
+    },
+  });
 
   const navItems = [
     { label: 'HOME', path: '/' },
@@ -128,28 +135,19 @@ export default function GlobalHeader({ onSearchClick, hideBuildPill = false, hid
           <ModeSelectionCards
             isOpen={showModeCards}
             onClose={() => setShowModeCards(false)}
+            isLinking={isLinking}
+            authError={authError}
             onSelectLearn={() => {
-              setShowModeCards(false);
               if (hasCompletedProfile) {
+                setShowModeCards(false);
                 setAppMode("learn");
                 navigate("/learn");
               } else {
-                setShowAccountModal(true);
+                signIn();
               }
             }}
             onSelectFree={() => {
               setShowModeCards(false);
-            }}
-          />
-
-          {/* ── Google Sign-In & Name Verification Modal ── */}
-          <AccountSetupModal
-            isOpen={showAccountModal}
-            onClose={() => setShowAccountModal(false)}
-            onConfirmed={(targetMode, confirmedProfile) => {
-              setShowAccountModal(false);
-              setAppMode("learn");
-              navigate("/learn");
             }}
           />
         </>,

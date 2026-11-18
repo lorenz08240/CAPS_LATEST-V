@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import PixelCanvas from "../Common/PixelCanvas";
 import soundManager from "../../utilities/soundManager";
 import "./ModeSelectionCards.css";
@@ -8,6 +9,8 @@ export default function ModeSelectionCards({
   onClose,
   onSelectLearn,
   onSelectFree,
+  isLinking = false,
+  authError = "",
 }) {
   React.useEffect(() => {
     if (!isOpen) return;
@@ -84,9 +87,11 @@ export default function ModeSelectionCards({
           </ul>
 
           <div className="mode-action-stack">
+            {authError && <p className="mode-auth-error">{authError}</p>}
             <button
               type="button"
               className="mode-btn mode-btn-learn"
+              disabled={isLinking}
               onClick={() => {
                 try { soundManager.click(); } catch {}
                 onSelectLearn();
@@ -98,7 +103,7 @@ export default function ModeSelectionCards({
                 <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
                 <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
               </svg>
-              <span>CONTINUE WITH GOOGLE</span>
+              <span>{isLinking ? "CONNECTING GOOGLE ACCOUNT…" : "CONTINUE WITH GOOGLE"}</span>
               <span className="btn-arrow">&rarr;</span>
             </button>
 
@@ -114,6 +119,17 @@ export default function ModeSelectionCards({
                 <span>Preview Lessons as Guest &rarr;</span>
               </button>
             )}
+          </div>
+
+          <p className="mode-trust-note">
+            🔒 We only access your basic Google profile (name and email) to issue your certificate. No private drive data requested.
+          </p>
+          <div className="mode-legal-links">
+            <Link to="/privacy" onClick={onClose}>Privacy Policy</Link>
+            <span>&middot;</span>
+            <Link to="/terms" onClick={onClose}>Terms of Service</Link>
+            <span>&middot;</span>
+            <Link to="/cookies" onClick={onClose}>Cookie Policy</Link>
           </div>
         </div>
       </div>

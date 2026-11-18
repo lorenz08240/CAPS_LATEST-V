@@ -15,7 +15,6 @@ export default function PlatformServices() {
   const isStudentSignedIn = Boolean(
     userProfile && (userProfile.setupCompleted || userProfile.email || userProfile.fullName) && (userProfile.fullName || userProfile.email)
   );
-  const [activeSocketDemo, setActiveSocketDemo] = useState("intel");
   const [rigCompareMode, setRigCompareMode] = useState("gaming");
 
   const sectionRef = useRef(null);
@@ -216,14 +215,16 @@ export default function PlatformServices() {
           </p>
         </div>
 
-        {/* ── SERVICE 1: COMPATIBILITY CHECKER (2 COLUMNS: LEFT TELEMETRY, RIGHT NARRATIVE) ── */}
-        <div id="service-compatibility" className="service-showcase-row left-card-right-text">
-          {/* Column 1: Interactive Telemetry Card housed in Precision Lab Frame */}
+        {/* ── SERVICE 1: 2D BUILD STATION (2 COLUMNS: LEFT CARD, RIGHT NARRATIVE) ── */}
+        <div id="service-2d-build" className="service-showcase-row left-card-right-text">
+          {/* Column 1: 2D Build Station Preview Mockup */}
           <div className="service-card-bay">
             <div
-              className="interactive-preview-window telemetry-window"
+              className="interactive-preview-window window-rose"
               onMouseMove={handleCardMouseMove}
               onMouseLeave={handleCardMouseLeave}
+              onClick={() => handleAction("/build")}
+              title="Open the 2D Build Station"
             >
               <div className="preview-window-titlebar">
                 <div className="window-dots">
@@ -231,107 +232,42 @@ export default function PlatformServices() {
                   <span className="dot dot-yellow" />
                   <span className="dot dot-green" />
                 </div>
-                <div className="window-url-pill">buildlab.app/compatibility</div>
-                <div className="window-status-pill pill-cyan">LIVE CHECKER v2.4</div>
+                <div className="window-url-pill">buildlab.app/build</div>
+                <div className="window-status-pill pill-rose">2D WORKbench</div>
               </div>
 
-              <div className="telemetry-demo-card">
-                <div className="telemetry-card-header">
-                  <div className="telemetry-header-meta">
-                    <span className="telemetry-id">LIVE PART FIT CHECKER</span>
-                    <span className="telemetry-status-ok">ALL PARTS COMPATIBLE</span>
-                  </div>
-                  <div className="telemetry-platform-toggle">
-                    <button
-                      type="button"
-                      className={`toggle-pill ${activeSocketDemo === "intel" ? "active" : ""}`}
-                      onClick={() => setActiveSocketDemo("intel")}
-                    >
-                      LGA 1700
-                    </button>
-                    <button
-                      type="button"
-                      className={`toggle-pill ${activeSocketDemo === "amd" ? "active" : ""}`}
-                      onClick={() => setActiveSocketDemo("amd")}
-                    >
-                      AM5
-                    </button>
+              <div className="preview-screenshot-container">
+                <img
+                  src="/assets/preview_build_page.png"
+                  alt="BuildLab 2D Build Station"
+                  className="preview-viewport-img"
+                  loading="lazy"
+                />
+                <div className="preview-glass-overlay">
+                  <div className="overlay-badge-pill pill-rose">
+                    <span>OPEN 2D BUILD STATION</span>
+                    <span className="arrow">&rarr;</span>
                   </div>
                 </div>
+              </div>
 
-                <div className="telemetry-body-grid">
-                  <div className="telemetry-metric-tile">
-                    <div className="metric-eyebrow">PROCESSOR SOCKET</div>
-                    <div className="metric-val">
-                      {activeSocketDemo === "intel" ? "Intel Core i5-12600K" : "AMD Ryzen 7 7800X3D"}
-                    </div>
-                    <div className="metric-sub">
-                      {activeSocketDemo === "intel" ? "Matches with Intel B660 Motherboard" : "Matches with AMD B650 AM5 Motherboard"}
-                    </div>
-                    <span className="metric-tag tag-verified">Socket Fits Perfectly</span>
-                  </div>
-
-                  <div className="telemetry-metric-tile">
-                    <div className="metric-eyebrow">MEMORY SLOTS</div>
-                    <div className="metric-val">32GB (2x16GB) DDR5-5600</div>
-                    <div className="metric-sub">Installed in Dual-Channel Slots (A2 &amp; B2)</div>
-                    <span className="metric-tag tag-verified">No Cooler Clearance Conflict</span>
-                  </div>
-
-                  <div className="telemetry-metric-tile full-width">
-                    <div className="metric-eyebrow">ESTIMATED ELECTRICITY &amp; POWER USAGE</div>
-                    <div className="power-bar-wrap">
-                      <div
-                        className="power-bar-fill"
-                        style={{ width: activeSocketDemo === "intel" ? "48%" : "54%" }}
-                      />
-                    </div>
-                    <div className="power-data-row">
-                      <span>Estimated Consumption: <strong>{activeSocketDemo === "intel" ? "360 Watts" : "410 Watts"}</strong></span>
-                      <span>Recommended Power Supply: <strong>750W 80+ Gold (+52% Safe Buffer)</strong></span>
-                    </div>
-                  </div>
-
-                  <div className="telemetry-metric-tile full-width">
-                    <div className="metric-eyebrow">CASE &amp; GRAPHICS CARD SPACE CHECK</div>
-                    <div className="clearance-spec-row">
-                      <div className="clearance-item">
-                        <span className="c-label">Card Length:</span>
-                        <span className="c-val">242 mm</span>
-                      </div>
-                      <div className="clearance-item">
-                        <span className="c-label">Max Case Space:</span>
-                        <span className="c-val">381 mm</span>
-                      </div>
-                      <div className="clearance-item clearance-ok">
-                        <span className="c-label">Extra Airflow Space:</span>
-                        <span className="c-val">+139 mm</span>
-                      </div>
-                    </div>
-                  </div>
+              <div className="preview-window-footer">
+                <div className="preview-footer-pills">
+                  <span className="feat-chip chip-rose">7 Hardware Stages</span>
+                  <span className="feat-chip chip-rose">Live Compatibility Verification</span>
+                  <span className="feat-chip chip-rose">Component Specs Inspector</span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Column 2: Editorial Narrative & Action */}
+          {/* Column 2: Editorial Narrative */}
           <div className="service-text-bay">
-            <div className="service-kicker-tag">FEATURE 01 // COMPATIBILITY CHECK</div>
-            <h3 className="service-title">Make Sure Every Part Fits &amp; Works Together</h3>
+            <div className="service-kicker-tag">FEATURE 01 // 2D BUILD STATION</div>
+            <h3 className="service-title">Assemble Your Rig Step by Step in 2D</h3>
             <p className="service-description">
-              Avoid buying the wrong parts. BuildLab automatically checks if your processor fits your motherboard, if your graphics card fits your case, and if your power supply has enough wattage.
+              Pick a part across seven hardware stages, compare options side by side, and get instant compatibility feedback while you build. Every choice is verified before you commit to a full configuration.
             </p>
-
-            <div className="service-cta-wrap">
-              <button
-                type="button"
-                className="service-primary-btn"
-                onClick={() => handleAction("/compatibility")}
-              >
-                <span>CHECK PART COMPATIBILITY</span>
-                <span className="btn-arrow">&rarr;</span>
-              </button>
-            </div>
           </div>
         </div>
 
@@ -345,16 +281,6 @@ export default function PlatformServices() {
               Not sure which PC fits your budget? Compare two computer builds side by side. Easily see differences in price, gaming speed (FPS), parts, and future upgrade options so you pick the best one for your needs.
             </p>
 
-            <div className="service-cta-wrap">
-              <button
-                type="button"
-                className="service-primary-btn btn-amber"
-                onClick={() => handleAction("/compatibility")}
-              >
-                <span>COMPARE TWO PCS NOW</span>
-                <span className="btn-arrow">&rarr;</span>
-              </button>
-            </div>
           </div>
 
           {/* Column 2: Dual-Rig Comparison Visual Preview Card with Real Screen Preview */}
@@ -402,8 +328,134 @@ export default function PlatformServices() {
           </div>
         </div>
 
-        {/* ── SERVICE 3: HARDWARE ACADEMY & COURSEWARE (2 COLUMNS: LEFT CARD, RIGHT NARRATIVE) ── */}
-        <div id="service-academy" className="service-showcase-row left-card-right-text">
+        {/* ── SERVICE 3: COMPATIBILITY CHECKER (2 COLUMNS: LEFT TELEMETRY, RIGHT NARRATIVE) ── */}
+        <div id="service-compatibility" className="service-showcase-row left-card-right-text">
+          {/* Column 1: Interactive Telemetry Card housed in Precision Lab Frame */}
+          <div className="service-card-bay">
+            <div
+              className="interactive-preview-window telemetry-window"
+              onMouseMove={handleCardMouseMove}
+              onMouseLeave={handleCardMouseLeave}
+            >
+              <div className="preview-window-titlebar">
+                <div className="window-dots">
+                  <span className="dot dot-red" />
+                  <span className="dot dot-yellow" />
+                  <span className="dot dot-green" />
+                </div>
+                <div className="window-url-pill">buildlab.app/compatibility</div>
+                <div className="window-status-pill pill-cyan">DUAL AUDIT</div>
+              </div>
+
+              <div className="dual-overview-demo">
+                <div className="dual-demo-badge">
+                  <span className="demo-badge-dot" />
+                  <span>HEAD-TO-HEAD COMPATIBILITY AUDIT</span>
+                  <span className="demo-badge-bracket">[ ACTIVE COMPARISON ]</span>
+                </div>
+                <div className="dual-demo-title">DUAL-RIG COMPATIBILITY &amp; PERFORMANCE OVERVIEW</div>
+                <div className="dual-demo-subtitle">
+                  Real-time differential analysis between Rig 01 (Workbench) and Rig 02 (Custom Manual).
+                </div>
+
+                <div className="dual-demo-chart">
+                  <div className="demo-rig-card">
+                    <div className="demo-ring ring-rig1"><span>Rig 01</span></div>
+                    <div className="demo-rig-meta">
+                      <div><span>Gaming Rating</span><b>100</b></div>
+                      <div><span>Productivity</span><b>88</b></div>
+                      <div><span>System Balance</span><b>88</b></div>
+                    </div>
+                  </div>
+
+                  <div className="demo-radar">
+                    <svg viewBox="0 0 160 150" aria-hidden="true">
+                      <polygon className="demo-radar-grid" points="80,12 148,58 123,138 37,138 12,58" />
+                      <polygon className="demo-radar-grid inner" points="80,42 122,72 106,120 54,120 38,72" />
+                      <line className="demo-radar-axis" x1="80" y1="75" x2="80" y2="12" />
+                      <line className="demo-radar-axis" x1="80" y1="75" x2="148" y2="58" />
+                      <line className="demo-radar-axis" x1="80" y1="75" x2="123" y2="138" />
+                      <line className="demo-radar-axis" x1="80" y1="75" x2="37" y2="138" />
+                      <line className="demo-radar-axis" x1="80" y1="75" x2="12" y2="58" />
+                      <polygon className="demo-radar-fill" points="80,20 138,62 112,130 44,130 22,62" />
+                    </svg>
+                    <span className="demo-radar-label lbl-cpu">CPU</span>
+                    <span className="demo-radar-label lbl-gpu">GPU</span>
+                    <span className="demo-radar-label lbl-ram">RAM</span>
+                    <span className="demo-radar-label lbl-ssd">SSD</span>
+                    <span className="demo-radar-label lbl-psu">PSU</span>
+                  </div>
+
+                  <div className="demo-rig-card">
+                    <div className="demo-ring ring-rig2"><span>Rig 02</span></div>
+                    <div className="demo-rig-meta">
+                      <div><span>Gaming Rating</span><b>83</b></div>
+                      <div><span>Productivity</span><b>88</b></div>
+                      <div><span>System Balance</span><b>88</b></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="demo-legend">
+                  <span><i className="legend-dot rig1" /> Rig 01 (Workbench)</span>
+                  <span><i className="legend-dot rig2" /> Rig 02 (Comparison)</span>
+                </div>
+
+                <div className="dual-demo-stats">
+                  <div className="demo-stat-row">
+                    <div className="demo-stat-head"><span>ESTIMATED SYSTEM WATTAGE</span><small>Combined CPU, GPU &amp; motherboard baseline draw</small></div>
+                    <div className="demo-stat-values"><b>380W</b><span className="demo-stat-track"><i style={{ width: "74%" }} /></span><b>310W</b></div>
+                    <div className="demo-stat-note">Rig 02 is <b>70W</b> more efficient</div>
+                  </div>
+                  <div className="demo-stat-row">
+                    <div className="demo-stat-head"><span>GAMING BENCHMARK SCORE</span><small>Calculated CPU rasterization, VRAM &amp; single-core clock weighting</small></div>
+                    <div className="demo-stat-values"><b>100</b><span className="demo-stat-track"><i style={{ width: "83%" }} /></span><b>83</b></div>
+                    <div className="demo-stat-note">Rig 01 leads by <b>+17</b> pts</div>
+                  </div>
+                  <div className="demo-stat-row">
+                    <div className="demo-stat-head"><span>PRODUCTIVITY &amp; RENDERING</span><small>Multi-threaded CPU &amp; RAM bandwidth throughput</small></div>
+                    <div className="demo-stat-values"><b>88</b><span className="demo-stat-track"><i style={{ width: "88%" }} /></span><b>88</b></div>
+                    <div className="demo-stat-note">Balanced Productivity</div>
+                  </div>
+                </div>
+
+                <div className="demo-conflict-banner">
+                  ⚠ DUAL-CONFIGURATION COMPATIBILITY MATRIX AUDITED — 2 TOTAL CONFLICT(S) DETECTED
+                </div>
+
+                <div className="demo-verdict">
+                  <strong>BUILDLAB ARCHITECT VERDICT</strong>
+                  <p>
+                    Rig 01 provides superior graphical horsepower (+17 Gaming Score) with your current component combination. Rig 02 is more energy-conscious, consuming approximately 70W less power.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Column 2: Editorial Narrative & Action */}
+          <div className="service-text-bay">
+            <div className="service-kicker-tag">FEATURE 03 // HEAD-TO-HEAD COMPATIBILITY AUDIT</div>
+            <h3 className="service-title">Dual-Rig Compatibility &amp; Performance Overview</h3>
+            <p className="service-description">
+              Real-time differential analysis between Rig 01 (Workbench) and Rig 02 (Custom Manual). Compare wattage, gaming scores, and productivity at a glance while BuildLab audits both configurations for conflicts.
+            </p>
+
+          </div>
+        </div>
+
+        {/* ── SERVICE 4: HARDWARE ACADEMY & COURSEWARE (2 COLUMNS: LEFT NARRATIVE, RIGHT CARD) ── */}
+        <div id="service-academy" className="service-showcase-row right-card-left-text">
+          {/* Column 2: Editorial Narrative & Action */}
+          <div className="service-text-bay">
+            <div className="service-kicker-tag kicker-emerald">FEATURE 04 // STEP-BY-STEP LESSONS</div>
+            <h3 className="service-title">Learn How to Build a PC with Interactive Lessons</h3>
+            <p className="service-description">
+              Designed for students and beginners. Learn how computer hardware works through 5 interactive modules and 13 easy lessons. Practice online at your own pace so you can assemble a real PC with confidence without breaking expensive parts.
+            </p>
+
+          </div>
+
           {/* Column 1: Interactive Academy Card with Real Screen Preview */}
           <div className="service-card-bay">
             <div
@@ -449,50 +501,10 @@ export default function PlatformServices() {
               </div>
             </div>
           </div>
-
-          {/* Column 2: Editorial Narrative & Action */}
-          <div className="service-text-bay">
-            <div className="service-kicker-tag kicker-emerald">FEATURE 03 // STEP-BY-STEP LESSONS</div>
-            <h3 className="service-title">Learn How to Build a PC with Interactive Lessons</h3>
-            <p className="service-description">
-              Designed for students and beginners. Learn how computer hardware works through 5 interactive modules and 13 easy lessons. Practice online at your own pace so you can assemble a real PC with confidence without breaking expensive parts.
-            </p>
-
-            <div className="service-cta-wrap">
-              <button
-                type="button"
-                className="service-primary-btn btn-emerald"
-                onClick={() => handleAction("/learn")}
-              >
-                <span>{isStudentSignedIn ? "RESUME LEARNING LESSONS" : "START LEARNING LESSONS"}</span>
-                <span className="btn-arrow">&rarr;</span>
-              </button>
-            </div>
-          </div>
         </div>
 
-        {/* ── SERVICE 4: 3D VIRTUAL PC STUDIO (2 COLUMNS: LEFT NARRATIVE, RIGHT 3D PREVIEW) ── */}
-        <div id="service-3d-studio" className="service-showcase-row right-card-left-text">
-          {/* Column 1: Editorial Narrative & Action */}
-          <div className="service-text-bay">
-            <div className="service-kicker-tag kicker-sky">FEATURE 04 // 3D VIRTUAL SIMULATOR</div>
-            <h3 className="service-title">Inspect &amp; Assemble in Full 360&deg; 3D</h3>
-            <p className="service-description">
-              Explore your computer in full 3D before you build it in real life. Rotate the case 360 degrees, zoom in on parts, and use Exploded View to see how the motherboard, graphics card, cooler, and fans fit together inside.
-            </p>
-
-            <div className="service-cta-wrap">
-              <button
-                type="button"
-                className="service-primary-btn btn-sky"
-                onClick={() => handleAction("/3d-builder")}
-              >
-                <span>OPEN 3D BUILDER STUDIO</span>
-                <span className="btn-arrow">&rarr;</span>
-              </button>
-            </div>
-          </div>
-
+        {/* ── SERVICE 5: 3D VIRTUAL PC STUDIO (2 COLUMNS: LEFT 3D PREVIEW, RIGHT NARRATIVE) ── */}
+        <div id="service-3d-studio" className="service-showcase-row left-card-right-text">
           {/* Column 2: 3D Studio Preview Card with Real 3D Studio Screen Preview */}
           <div className="service-card-bay">
             <div
@@ -537,6 +549,16 @@ export default function PlatformServices() {
               </div>
             </div>
           </div>
+          {/* Column 1: Editorial Narrative & Action */}
+          <div className="service-text-bay">
+            <div className="service-kicker-tag kicker-sky">FEATURE 05 // 3D VIRTUAL SIMULATOR</div>
+            <h3 className="service-title">Inspect &amp; Assemble in Full 360&deg; 3D</h3>
+            <p className="service-description">
+              Explore your computer in full 3D before you build it in real life. Rotate the case 360 degrees, zoom in on parts, and use Exploded View to see how the motherboard, graphics card, cooler, and fans fit together inside.
+            </p>
+
+          </div>
+
         </div>
       </div>
     </section>

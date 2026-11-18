@@ -171,7 +171,7 @@
 .cyber-brand-info {
   display: flex;
   flex-direction: column;
-  cursor: pointer;
+  cursor: default;
   line-height: 1.15;
 }
 

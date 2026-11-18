@@ -1581,23 +1581,6 @@ function CompatibilityView({ isIntegrated = false }) {
         )}
 
         <div className="compat-container-wrap">
-          {!isIntegrated && (
-            <div className="compat-action-bar">
-              <button
-                type="button"
-                className="compat-back-build-btn"
-                onClick={() => {
-                  try { soundManager.click(); } catch { }
-                  navigate("/build");
-                }}
-                title="Return to Build Workbench"
-              >
-                <span className="back-btn-arrow">&larr;</span>
-                <span className="back-btn-text">BACK TO BUILD WORKBENCH</span>
-              </button>
-            </div>
-          )}
-
           {/* Unified Page Header */}
           {!isIntegrated && (
             <header className="compat-hero-title-header">

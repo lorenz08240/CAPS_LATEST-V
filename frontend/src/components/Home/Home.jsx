@@ -9,13 +9,13 @@ import Home3DHero from "./Home3DHero";
 import PlatformServices from "./PlatformServices";
 import CyberBrand from "../Navigation/CyberBrand";
 import StageUnlockBanner from "../Navigation/StageUnlockBanner";
-import AccountSetupModal from "./AccountSetupModal";
 import ModeSelectionCards from "./ModeSelectionCards";
 import RigPickerTransitionOverlay from "./RigPickerTransitionOverlay";
 import { useSidebar } from "../../contexts/SidebarContext";
 import { useLearnMode } from "../../contexts/LearnModeContext";
 import { enterFullscreen } from "../../utilities/fullscreen";
 import soundManager from "../../utilities/soundManager";
+import useGoogleSignIn from "../../utilities/useGoogleSignIn";
 import systemLogo from "../../assets/system_logo.png";
 import buildlabLogoTight from "../../assets/buildlab_logo_tight.png";
 
@@ -78,8 +78,18 @@ function Home() {
   const { toggleSidebar } = useSidebar();
   const { mode, setAppMode, userProfile, unlockedStages, logoutLearner } = useLearnMode();
   const [showModeCards, setShowModeCards] = useState(false);
-  const [showAccountModal, setShowAccountModal] = useState(false);
   const [showTransitionOverlay, setShowTransitionOverlay] = useState(false);
+
+  const { signIn, isLinking, error: authError } = useGoogleSignIn({
+    onSuccess: (profile) => {
+      setShowModeCards(false);
+      setAppMode("learn");
+      setWelcomeLearnerProfile(profile || userProfile);
+      setTransitionMode("learn");
+      setShowTransitionOverlay(true);
+    },
+  });
+
   const [transitionMode, setTransitionMode] = useState("explore");
   const [showLearnerWelcomeBanner, setShowLearnerWelcomeBanner] = useState(false);
   const [welcomeLearnerProfile, setWelcomeLearnerProfile] = useState(null);
@@ -89,6 +99,7 @@ function Home() {
   latestActiveModelRef.current = activeModel;
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isScrolledDown, setIsScrolledDown] = useState(false);
+  const [showLearnNav, setShowLearnNav] = useState(false);
   const [startBuildRequested, setStartBuildRequested] = useState(false);
   const leftColRef = useRef(null);
   const leftContentRef = useRef(null);
@@ -241,13 +252,11 @@ function Home() {
 
     const handleLearnNavClick = () => {
       try { soundManager.click(); } catch { }
-      const hasAccount = Boolean(
-        userProfile && (userProfile.fullName || userProfile.email) && userProfile.setupCompleted
-      );
-      if (hasAccount && mode === "learn") {
-        navigate('/learn');
+      const academySection = document.getElementById("service-academy");
+      if (academySection) {
+        academySection.scrollIntoView({ behavior: "smooth", block: "start" });
       } else {
-        setShowModeCards(true);
+        window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
       }
     };
 
@@ -275,6 +284,12 @@ function Home() {
       const handleScroll = () => {
         const currentScroll = window.scrollY || window.pageYOffset || 0;
         setIsScrolledDown(currentScroll > 90);
+
+        // LEARN nav item only appears once the services/course plate comes into view.
+        const servicesPlate = document.getElementById("platform-services");
+        if (servicesPlate) {
+          setShowLearnNav(servicesPlate.getBoundingClientRect().top < window.innerHeight * 0.7);
+        }
 
         const hero = document.getElementById("cyber-hero");
         if (hero) {
@@ -341,13 +356,15 @@ function Home() {
                     COMPATIBILITY
                   </button>
                 )}
-                <button
-                  type="button"
-                  className="cyber-nav-link"
-                  onClick={handleLearnNavClick}
-                >
-                  LEARN
-                </button>
+                {showLearnNav && (
+                  <button
+                    type="button"
+                    className="cyber-nav-link nav-reveal-item"
+                    onClick={handleLearnNavClick}
+                  >
+                    LEARN
+                  </button>
+                )}
                 <button
                   type="button"
                   className="cyber-nav-link"
@@ -522,34 +539,16 @@ function Home() {
         <ModeSelectionCards
           isOpen={showModeCards}
           onClose={() => setShowModeCards(false)}
+          isLinking={isLinking}
+          authError={authError}
           onSelectLearn={() => {
-            setShowModeCards(false);
-            setShowAccountModal(true);
+            signIn();
           }}
           onSelectFree={() => {
             setShowModeCards(false);
             setAppMode("explore");
             setTransitionMode("explore");
             setShowTransitionOverlay(true);
-          }}
-        />
-
-        {/* ── Google Sign-In & Name Verification Modal ── */}
-        <AccountSetupModal
-          isOpen={showAccountModal}
-          onClose={() => setShowAccountModal(false)}
-          onConfirmed={(targetMode, confirmedProfile) => {
-            setShowAccountModal(false);
-            if (targetMode === "explore") {
-              setAppMode("explore");
-              setTransitionMode("explore");
-              setShowTransitionOverlay(true);
-            } else {
-              setAppMode("learn");
-              setWelcomeLearnerProfile(confirmedProfile || userProfile);
-              setTransitionMode("learn");
-              setShowTransitionOverlay(true);
-            }
           }}
         />
         {/* ── Rig Component Picker Transition Overlay ── */}

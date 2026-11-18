@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
 import { useSidebar } from "../../contexts/SidebarContext";
-import soundManager from "../../utilities/soundManager";
 import systemLogo from "../../assets/system_logo.png";
 import "./CyberBrand.css";
 
@@ -13,11 +11,10 @@ const TELEMETRY_METRICS = [
   { label: "MATRIX SYNC: 12ms", icon: "●", status: "ping" },
 ];
 
-export default function CyberBrand({ onNavigateHome }) {
+export default function CyberBrand() {
   const { isSidebarOpen, toggleSidebar } = useSidebar();
   const [metricIndex, setMetricIndex] = useState(0);
   const [logoError, setLogoError] = useState(false);
-  const navigate = useNavigate();
 
   // Rotate telemetry metrics when sidebar is open
   useEffect(() => {
@@ -32,17 +29,6 @@ export default function CyberBrand({ onNavigateHome }) {
     e.stopPropagation();
     e.preventDefault();
     toggleSidebar();
-  };
-
-  const handleBrandTextClick = (e) => {
-    try {
-      soundManager.click();
-    } catch {}
-    if (onNavigateHome) {
-      onNavigateHome(e);
-    } else {
-      navigate("/");
-    }
   };
 
   const currentMetric = TELEMETRY_METRICS[metricIndex];
@@ -86,7 +72,7 @@ export default function CyberBrand({ onNavigateHome }) {
         )}
       </button>
 
-      <div className="cyber-brand-info" onClick={handleBrandTextClick}>
+      <div className="cyber-brand-info">
         {isSidebarOpen ? (
           /* 100x Cooler Telemetry HUD Readout (Replaces Redundant Logo) */
           <div className="cyber-telemetry-hud" title="Live Hardware Lab Telemetry">

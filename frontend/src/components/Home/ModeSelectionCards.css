@@ -535,3 +535,47 @@ body.theme-light .mode-btn-secondary:hover,
   color: #0284c7;
 }
 
+/* ── Google sign-in trust note + legal links ── */
+.mode-auth-error {
+  margin: 0 0 2px;
+  color: #f87171;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.mode-btn-learn:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.mode-trust-note {
+  margin: 18px 0 0;
+  font-size: 0.72rem;
+  line-height: 1.5;
+  color: #94a3b8;
+  text-align: center;
+}
+
+.mode-legal-links {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 0.7rem;
+  color: #64748b;
+}
+
+.mode-legal-links a {
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.mode-legal-links a:hover {
+  color: #38bdf8;
+  text-decoration: underline;
+}
+
