@@ -399,7 +399,7 @@ export default function LessonPresentationView({
                   <li><strong>Pin Count:</strong> LGA 1700 has 1,700 spring pins; AMD AM5 has 1,718 spring pins.</li>
                 </ul>
                 <div className="lp-warning-box">
-                  ⚠️ <strong>Critical Warning:</strong> A single bent pin in an LGA socket can permanently prevent memory channels from detecting or cause boot failure.
+                  <strong>Critical Warning:</strong> A single bent pin in an LGA socket can permanently prevent memory channels from detecting or cause boot failure.
                 </div>
               </div>
 
@@ -426,7 +426,7 @@ export default function LessonPresentationView({
                   </div>
                 </div>
                 <p className="vrm-tip">
-                  💡 <strong>Heatsink Requirement:</strong> High core-count processors require motherboards with heavy aluminum heatsinks over the VRM to prevent thermal throttling.
+                  <strong>Heatsink Requirement:</strong> High core-count processors require motherboards with heavy aluminum heatsinks over the VRM to prevent thermal throttling.
                 </p>
               </div>
             </div>
@@ -475,7 +475,7 @@ export default function LessonPresentationView({
 
                 <div className="fpanel-rule-chips">
                   <span className="rule-chip safe">✓ Power SW &amp; Reset SW: Non-polarized momentary shorts</span>
-                  <span className="rule-chip warning">⚡ HDD LED &amp; Power LED: Polarity Sensitive (+ / -)</span>
+                  <span className="rule-chip warning">HDD LED &amp; Power LED: Polarity Sensitive (+ / -)</span>
                 </div>
               </div>
 
@@ -544,7 +544,6 @@ export default function LessonPresentationView({
               </div>
               <div className="lp-video-meta-bar">
                 <div className="lp-video-title-info">
-                  <span className="lp-video-icon">📺</span>
                   <strong>{topic.videoTitle}</strong>
                 </div>
                 <a
@@ -578,7 +577,7 @@ export default function LessonPresentationView({
                       if (onProceedTo3D) onProceedTo3D();
                     }}
                   >
-                    🧊 Launch 3D Component Inspection Lab →
+                    Launch 3D Component Inspection Lab →
                   </button>
                   <button
                     type="button"
@@ -588,7 +587,7 @@ export default function LessonPresentationView({
                       if (onProceedToQuiz) onProceedToQuiz();
                     }}
                   >
-                    📝 Take 15-Item Assessment
+                    Take 15-Item Assessment
                   </button>
                 </div>
               </div>
@@ -677,7 +676,7 @@ export default function LessonPresentationView({
                 </ul>
 
                 <div className="lp-warning-box">
-                  💡 <strong>Technician Golden Rule:</strong> Always test boot components outside the chassis on top of the non-conductive motherboard box before final internal cable management.
+                  <strong>Technician Golden Rule:</strong> Always test boot components outside the chassis on top of the non-conductive motherboard box before final internal cable management.
                 </div>
               </div>
 
@@ -705,14 +704,14 @@ export default function LessonPresentationView({
                 </div>
 
                 <p className="vrm-tip">
-                  ⚡ <strong>Advance to Video:</strong> Click Next Slide to watch the practical step-by-step lecture film and preview the 3D model!
+                  <strong>Advance to Video:</strong> Click Next Slide to watch the practical step-by-step lecture film and preview the 3D model!
                 </p>
               </div>
 
               {/* Quick Glossary Strip for Non-STEM / Novice Learners */}
               <div className="lp-glossary-banner">
                 <div className="glossary-head">
-                  <span className="glossary-badge">📖 NON-STEM / BEGINNER GLOSSARY</span>
+                  <span className="glossary-badge">NON-STEM / BEGINNER GLOSSARY</span>
                   <span className="glossary-sub">Hover or tap any hardware acronym for plain-English explanation</span>
                 </div>
                 <div className="glossary-chips-row">
@@ -784,7 +783,7 @@ export default function LessonPresentationView({
                   if (onProceedTo3D) onProceedTo3D();
                 }}
               >
-                🧊 Step 2: 3D Inspection Lab →
+                Step 2: 3D Inspection Lab →
               </button>
               <button
                 type="button"
@@ -794,7 +793,7 @@ export default function LessonPresentationView({
                   if (onProceedToQuiz) onProceedToQuiz();
                 }}
               >
-                📝 Take 15-Item Assessment
+                Take 15-Item Assessment
               </button>
             </div>
           )}

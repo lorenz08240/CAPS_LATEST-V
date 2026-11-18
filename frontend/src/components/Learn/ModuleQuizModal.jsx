@@ -31,7 +31,7 @@ export default function ModuleQuizModal({
   const [examResult, setExamResult] = useState(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
-  // 🔒 HARD CODED MONITORING / LOCKDOWN MECHANISM
+  // HARD CODED MONITORING / LOCKDOWN MECHANISM
   useEffect(() => {
     if (!isOpen || isSubmitted) return;
 
@@ -152,7 +152,7 @@ export default function ModuleQuizModal({
           {!isSubmitted ? (
             <div className="quiz-lockdown-badge" title="Lockdown active: finish and submit the exam to exit">
               <span className="lockdown-pulse-dot" />
-              <span>🔒 SECURE EXAM LOCKDOWN</span>
+              <span>SECURE EXAM LOCKDOWN</span>
             </div>
           ) : (
             <button
@@ -304,7 +304,7 @@ export default function ModuleQuizModal({
                   onClose();
                 }}
               >
-                📊 View in Student Learner Portal &amp; Gradebook →
+                View in Student Learner Portal &amp; Gradebook →
               </button>
 
               <button
@@ -325,7 +325,7 @@ export default function ModuleQuizModal({
                     onClose();
                   }}
                 >
-                  🚀 Proceed to Next Module →
+                  Proceed to Next Module →
                 </button>
               )}
             </div>
@@ -360,7 +360,7 @@ export default function ModuleQuizModal({
                         )}
                       </div>
                       <div className="review-explanation">
-                        💡 <strong>Technical Rationale:</strong> {q.explanation}
+                        <strong>Technical Rationale:</strong> {q.explanation}
                       </div>
                     </div>
                   );
@@ -374,13 +374,12 @@ export default function ModuleQuizModal({
         {showConfirmModal && (
           <div className="mqm-confirm-overlay animate-fade-in" role="dialog" aria-modal="true">
             <div className="mqm-confirm-card">
-              <div className="confirm-icon-wrap">🔒</div>
               <h3>Ready to Submit 15-Item Exam?</h3>
               <p className="confirm-summary">
                 {answeredCount === totalQuestions ? (
                   <span className="confirm-complete-tag">✓ All {totalQuestions} questions completed ({progressPct}%)</span>
                 ) : (
-                  <span className="confirm-incomplete-tag">⚠️ You have {totalQuestions - answeredCount} unanswered question(s)</span>
+                  <span className="confirm-incomplete-tag">You have {totalQuestions - answeredCount} unanswered question(s)</span>
                 )}
               </p>
               <p className="confirm-note">

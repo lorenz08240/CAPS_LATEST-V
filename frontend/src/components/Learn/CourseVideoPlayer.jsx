@@ -339,7 +339,6 @@ function VideoOverlayModal({
         {/* Lock Notice */}
         {lockNotice && (
           <div className="cvp-lock-alert" role="status" aria-live="polite">
-            <span className="cvp-lock-alert-icon">🔒</span>
             <span className="cvp-lock-alert-text">
               Fast-forwarding is restricted. Finish watching this lesson once to unlock full timeline seeking.
             </span>
@@ -381,7 +380,7 @@ function VideoOverlayModal({
             title={localFinished ? "Forward 10 seconds" : "Forwarding locked until lesson finished once"}
             type="button"
           >
-            {localFinished ? "⏩" : "🔒"}
+            {localFinished ? "⏩" : "LOCK"}
           </button>
           <span className="cvp-time">
             {fmtTime(time)} / {fmtTime(duration)}
@@ -424,7 +423,7 @@ function VideoOverlayModal({
             title="Minimize player (Esc)"
             type="button"
           >
-            🗗
+            −
           </button>
         </div>
       </div>
@@ -737,7 +736,6 @@ export default function CourseVideoPlayer({
         <div className="cvp-container">
           {lockNotice && (
             <div className="cvp-lock-alert" role="status" aria-live="polite">
-              <span className="cvp-lock-alert-icon">🔒</span>
               <span className="cvp-lock-alert-text">
                 Fast-forwarding is restricted. Finish watching this lesson once to unlock full timeline seeking.
               </span>
@@ -808,7 +806,7 @@ export default function CourseVideoPlayer({
               title={isFinished ? "Forward 10 seconds" : "Forwarding locked until lesson finished once"}
               type="button"
             >
-              {isFinished ? "⏩" : "🔒"}
+              {isFinished ? "⏩" : "LOCK"}
             </button>
 
             <span className="cvp-time">

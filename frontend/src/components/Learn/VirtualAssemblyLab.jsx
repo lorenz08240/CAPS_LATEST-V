@@ -20,7 +20,6 @@ export const ASSEMBLY_STAGES = [
     partName: "ATX Mid-Tower Clean Airflow Chassis",
     category: "Chassis",
     shortName: "Case Chassis",
-    icon: "🖥️",
     action: "Stage Chassis on Workspace",
     bobTip:
       "Step 1: Set up your PC case and make sure all 9 brass standoffs are screwed in.",
@@ -34,7 +33,6 @@ export const ASSEMBLY_STAGES = [
     partName: "ATX Reference Motherboard",
     category: "Motherboard",
     shortName: "Motherboard",
-    icon: "🟩",
     action: "Fasten Motherboard to Standoffs",
     bobTip:
       "Step 2: Line up the motherboard with the rear shield, set it on the standoffs, and screw it in gently.",
@@ -48,7 +46,6 @@ export const ASSEMBLY_STAGES = [
     partName: "Multi-Core Desktop Processor",
     category: "CPU",
     shortName: "Processor (CPU)",
-    icon: "🔲",
     action: "Align Golden Triangle & Lock Socket Lever",
     bobTip:
       "Step 3: Match the gold triangle on the corner, gently drop the CPU in, and clamp the lever down.",
@@ -62,7 +59,6 @@ export const ASSEMBLY_STAGES = [
     partName: "Tower Heatsink & PWM Fan Cooler",
     category: "Cooler",
     shortName: "CPU Cooler",
-    icon: "❄️",
     action: "Spread Thermal Paste & Mount Heatsink",
     bobTip:
       "Step 4: Put a small dot of thermal paste on the CPU, peel the cooler sticker, and screw the cooler down.",
@@ -76,7 +72,6 @@ export const ASSEMBLY_STAGES = [
     partName: "High-Speed Dual-Channel Memory Kit (2x 16GB)",
     category: "Memory",
     shortName: "Dual-Channel RAM",
-    icon: "⚡",
     action: "Snap Sticks into DIMM Slots A2 & B2",
     bobTip:
       "Step 5: Put RAM into slots 2 and 4. Line up the notch and press down until both ends click!",
@@ -90,7 +85,6 @@ export const ASSEMBLY_STAGES = [
     partName: "PCIe 4.0 x4 M.2 NVMe Solid-State Drive (1TB)",
     category: "Storage",
     shortName: "M.2 NVMe SSD",
-    icon: "💾",
     action: "Insert at 25° Angle & Secure Screw",
     bobTip:
       "Step 6: Slide the M.2 SSD in at an angle, push it down onto the standoff, and tighten the small screw.",
@@ -104,7 +98,6 @@ export const ASSEMBLY_STAGES = [
     partName: "80 PLUS Gold 750W Modular Power Supply",
     category: "Power Supply",
     shortName: "Modular PSU",
-    icon: "🔌",
     action: "Slide into Shroud & Connect 24-Pin + 8-Pin",
     bobTip:
       "Step 7: Slide the power supply into the bottom, then plug in the 24-pin and 8-pin CPU power cables.",
@@ -118,7 +111,6 @@ export const ASSEMBLY_STAGES = [
     partName: "Dedicated PCIe 4.0 x16 Graphics Card",
     category: "Graphics Card",
     shortName: "PCIe GPU",
-    icon: "🎮",
     action: "Seat in PCIe x16 Slot & Connect PCIe Power",
     bobTip:
       "Step 8: Push your graphics card into the top slot until it clicks, then plug in its power cable.",
@@ -423,7 +415,6 @@ export default function VirtualAssemblyLab({
           {/* B.O.B. Interactive Dialogue Bar */}
           <div className="wb-assembly-bob-callout">
             <div className="bob-avatar-circle">
-              <span>🤖</span>
             </div>
             <div className="bob-callout-text">
               <strong>B.O.B. Assembly Guide</strong>
@@ -476,7 +467,7 @@ export default function VirtualAssemblyLab({
                         className="btn-install-part"
                         onClick={() => handleMountPart(stg.key)}
                       >
-                        ⚡ Install {stg.shortName}
+                        Install {stg.shortName}
                       </button>
                     </div>
                   )}
@@ -496,7 +487,7 @@ export default function VirtualAssemblyLab({
                 onClick={triggerPostSequence}
                 disabled={postRunning}
               >
-                {postRunning ? "Executing POST..." : "🚀 Power On & Test POST"}
+                {postRunning ? "Executing POST..." : "Power On & Test POST"}
               </button>
             </div>
           )}

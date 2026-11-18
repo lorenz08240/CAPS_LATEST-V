@@ -777,7 +777,6 @@ export default function CourseShell() {
             data-tooltip={`Browse all ${TOTAL_TOPICS_COUNT} Topics across ${TOTAL_MODULES_COUNT} Modules`}
             aria-label="Browse Curriculum Lessons"
           >
-            <span className="wb-rail-icon">📖</span>
             {leftRailOpen && <span className="wb-rail-label">LESSONS</span>}
           </button>
 
@@ -820,9 +819,7 @@ export default function CourseShell() {
                 </div>
                 <span className="wb-learner-unlock-arrow">{showDashboardOverlay ? "✕" : "→"}</span>
               </>
-            ) : (
-              <span className="wb-rail-icon">👤</span>
-            )}
+            ) : null}
           </div>
         </div>
       </aside>
@@ -866,7 +863,7 @@ export default function CourseShell() {
                       <span className="wb-module-tag">M{mod.moduleNum}</span>
                       <strong>{mod.title}</strong>
                       {isModLocked && (
-                        <span className="wb-module-lock-tag">🔒 STUDENT TRACK</span>
+                        <span className="wb-module-lock-tag">STUDENT TRACK</span>
                       )}
                     </div>
                     <div className="wb-module-header-meta">
@@ -901,7 +898,7 @@ export default function CourseShell() {
                             }}
                           >
                             <span className={`wb-topic-status-dot ${isDone ? "is-done" : ""} ${isLocked ? "is-locked-dot" : ""}`}>
-                              {isDone ? "✓" : isLocked ? "🔒" : t.topicCode}
+                              {isDone ? "✓" : isLocked ? "" : t.topicCode}
                             </span>
                             <span className="wb-topic-name">{t.title}</span>
                             {isLocked && (
@@ -919,7 +916,6 @@ export default function CourseShell() {
             {!isAuthenticated && (
               <div className="wb-syllabus-unlock-banner">
                 <div className="wb-unlock-banner-content">
-                  <span className="wb-unlock-banner-icon">🎓</span>
                   <div className="wb-unlock-banner-text">
                     <strong>Unlock All 6 Modules &amp; Verified E-Certificate</strong>
                     <p>
@@ -970,7 +966,6 @@ export default function CourseShell() {
             {/* Dynamic Module & Topic Progress Indicator */}
             <div className="wb-hud-pill" id="wb-zone-hud">
               <div className="wb-hud-track">
-                <span className="wb-hud-icon">📖</span>
                 <div className="wb-hud-bar-wrap">
                   <div className="wb-hud-bar-top">
                     <span>MODULE {currentTopic.moduleNum}</span>
@@ -1007,7 +1002,6 @@ export default function CourseShell() {
                     setCenterMode("presentation");
                   }}
                 >
-                  <span className="tab-icon">📄</span>
                   <span>1. Lecture &amp; Visual Report</span>
                 </button>
                 <button
@@ -1018,7 +1012,6 @@ export default function CourseShell() {
                     setCenterMode("3d-lab");
                   }}
                 >
-                  <span className="tab-icon">🧊</span>
                   <span>2. Interactive 3D Lab</span>
                 </button>
                 <button
@@ -1030,7 +1023,6 @@ export default function CourseShell() {
                     setShowQuizModal(true);
                   }}
                 >
-                  <span className="tab-icon">📝</span>
                   <span>3. 15-Item Assessment</span>
                 </button>
               </div>
@@ -1154,7 +1146,7 @@ export default function CourseShell() {
                                 setShowQuizModal(true);
                               }}
                             >
-                              🎓 Take 15-Item Exam ▶
+                              Take 15-Item Exam ▶
                             </button>
                           )}
                         </div>
@@ -1216,9 +1208,6 @@ export default function CourseShell() {
               {/* 1. Header & YouTube Lecture Player */}
               <div className="wb-guide-header">
                 <div className="wb-guide-meta-row">
-                  <span className="wb-module-badge">
-                    MODULE {currentTopic.moduleNum} // {currentTopic.moduleTitle.toUpperCase()}
-                  </span>
                   <div className="wb-guide-meta-right">
                     {completed.includes(currentTopic.id) && (
                       <span className="wb-topic-done-badge">✓ COMPLETED</span>
@@ -1234,10 +1223,7 @@ export default function CourseShell() {
                 <div className="wb-dock-mini-stage-card">
                   <div className="wb-mini-stage-header">
                     <div className="wb-mini-tag-group">
-                      <span className="wb-dock-pill-3d">🧊 3D WORKBENCH PREVIEW</span>
-                      <span className="wb-dock-specimen-name">
-                        {currentTopic.specimenKey?.toUpperCase() || "HARDWARE"}
-                      </span>
+                      <span className="wb-dock-pill-3d">3D WORKBENCH PREVIEW</span>
                     </div>
                     <button
                       type="button"
@@ -1248,7 +1234,7 @@ export default function CourseShell() {
                       }}
                       title="Switch 3D workbench to center stage"
                     >
-                      Expand to Center ↗
+                      Click to Expand ↗
                     </button>
                   </div>
 
@@ -1268,9 +1254,6 @@ export default function CourseShell() {
                       isPaused={showDashboardOverlay || showBriefingOverlay}
                     />
                   </div>
-                  <div className="wb-mini-stage-caption">
-                    <span>Auto-orbiting preview · Tap to expand into full 360° interactive workbench</span>
-                  </div>
                 </div>
               ) : (
                 /* IN 3D LAB MODE: Right Dock holds the Docked 16:9 Lecture Video Player */
@@ -1282,7 +1265,6 @@ export default function CourseShell() {
                     aria-expanded={videoExpanded}
                   >
                     <div className="wb-video-head-left">
-                      <span className="wb-video-play-icon">📺</span>
                       <strong>Lecture Video: {currentTopic.videoTitle}</strong>
                       {showDashboardOverlay && !isVideoPlaying && (
                         <span className="wb-video-paused-pill" title="Playback paused while reviewing dashboard">
@@ -1322,45 +1304,9 @@ export default function CourseShell() {
                 </div>
               )}
 
-              {/* Quick Workbench Action Strip */}
-              <div className="wb-dock-quick-strip">
-                <button
-                  type="button"
-                  className="wb-dock-quick-btn"
-                  onClick={() => {
-                    try { soundManager.click(); } catch {}
-                    setIsExploded((e) => !e);
-                  }}
-                  title="Toggle Exploded Subassemblies"
-                >
-                  💥 {isExploded ? "Assemble Rig" : "Explode Rig"}
-                </button>
-                <button
-                  type="button"
-                  className="wb-dock-quick-btn"
-                  onClick={toggleTheme}
-                  title="Toggle Workbench Theme"
-                >
-                  {isLight ? "🌙 Dark Mode" : "☀️ Light Mode"}
-                </button>
-                <button
-                  type="button"
-                  className="wb-dock-quick-btn wb-btn-assessment-link"
-                  onClick={() => {
-                    try { soundManager.snap(); } catch {}
-                    setQuizModuleNum(currentTopic.moduleNum);
-                    setShowQuizModal(true);
-                  }}
-                  title="Launch 15-Item Assessment"
-                >
-                  📝 15-Item Exam
-                </button>
-              </div>
-
               {/* Spot The Lab Mistake // 1-Question Quick Check (Non-redundant, required for topic completion) */}
               <div className="wb-quick-check-card">
                 <div className="wb-quiz-header">
-                  <span className="wb-quiz-icon">📝</span>
                   <strong>SPOT THE LAB MISTAKE // 1-QUESTION QUICK CHECK</strong>
                 </div>
                 <p className="wb-quiz-question">{currentTopic.quiz.question}</p>
@@ -1404,7 +1350,6 @@ export default function CourseShell() {
                 {quizAnswerStatus === "incorrect" && (
                   <div className="wb-quiz-explanation-box error" role="alert">
                     <div className="wb-quiz-expl-header">
-                      <span className="wb-quiz-expl-icon">⚠️</span>
                       <span className="wb-quiz-expl-title">Hardware Safety Warning</span>
                     </div>
                     <p>
@@ -1448,9 +1393,9 @@ export default function CourseShell() {
                       }
                     >
                       {currentIndex + 1 === FLAT_TOPICS.length
-                        ? "Claim Certificate 🎓"
+                        ? "Claim Certificate"
                         : isPreviewEnd
-                        ? "Unlock Full Academy 🎓"
+                        ? "Unlock Full Academy"
                         : "Next Topic →"}
                     </button>
                   </div>
@@ -1610,21 +1555,18 @@ export default function CourseShell() {
 
             <div className="wb-welcome-highlights">
               <div className="wb-welcome-chip">
-                <span className="chip-icon">🎓</span>
                 <div>
                   <strong>Official Verified E-Certificate</strong>
                   <span>Earn an official credential with your full name, student ID, and accredited course hours.</span>
                 </div>
               </div>
               <div className="wb-welcome-chip">
-                <span className="chip-icon">🔓</span>
                 <div>
                   <strong>Complete 6 Modules • 19 Topics</strong>
                   <span>Unlock CPU socket pins, RAM dual-channel rules, USB color codes, PSU safety, airflow physics, and POST debugging.</span>
                 </div>
               </div>
               <div className="wb-welcome-chip">
-                <span className="chip-icon">✨</span>
                 <div>
                   <strong>Personalized Interest Matching</strong>
                   <span>Tailor learning challenges to your specific strand (CSS, ICT, BSIT) and hardware goals.</span>
@@ -1641,7 +1583,7 @@ export default function CourseShell() {
                   setShowAccountModal(true);
                 }}
               >
-                🚀 Connect Google Account &amp; Unlock Free
+                Connect Google Account &amp; Unlock Free
               </button>
               <button
                 type="button"

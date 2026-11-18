@@ -890,7 +890,7 @@ const componentGuide = [
     ],
     brands: [
       { name: "Fractal Design", icon: "FD", desc: "Scandinavian aesthetic, real wood accents, and benchmark airflow" },
-      { name: "NZXT", icon: "⬛", desc: "Clean minimalist design, cable management bar, and tempered glass" },
+      { name: "NZXT", icon: "NX", desc: "Clean minimalist design, cable management bar, and tempered glass" },
       { name: "Lian Li", icon: "LL", desc: "Dual-chamber aquarium chassis (O11 series) and premium aluminum" },
       { name: "Corsair", icon: "COR", desc: "4000D / 5000D airflow series with RapidRoute cable channels" }
     ]
