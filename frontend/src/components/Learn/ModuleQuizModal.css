@@ -328,6 +328,57 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
+.quiz-footer-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* ── Inline submission confirmation beside the Submit button ── */
+.mqm-inline-confirm {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px 8px 14px;
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(248, 113, 113, 0.45);
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+}
+
+.mqm-inline-confirm-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mqm-inline-confirm-copy strong {
+  font-size: 12px;
+  color: #f8fafc;
+  white-space: nowrap;
+}
+
+.mqm-inline-confirm-copy span {
+  font-size: 11px;
+  color: #94a3b8;
+  white-space: nowrap;
+}
+
+.mqm-inline-confirm-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mqm-inline-confirm .btn-confirm-cancel,
+.mqm-inline-confirm .btn-confirm-finalize {
+  padding: 8px 12px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
 /* ── RESULTS VIEW ── */
 .quiz-results-container {
   flex: 1;
@@ -710,4 +761,161 @@
 .btn-confirm-finalize:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+}
+
+/* ── Slide-to-confirm gate before the no-exit exam ── */
+.mqm-start-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100010;
+  background: rgba(4, 8, 18, 0.92);
+  backdrop-filter: blur(16px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.mqm-start-card {
+  width: min(520px, 94vw);
+  background: #0b1120;
+  border: 1px solid rgba(248, 113, 113, 0.35);
+  border-radius: 18px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.7), 0 0 28px rgba(239, 68, 68, 0.12);
+  padding: 28px 30px 24px;
+  text-align: center;
+  color: #f8fafc;
+  box-sizing: border-box;
+}
+
+.mqm-start-kicker {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #f87171;
+}
+
+.mqm-start-title {
+  font-family: var(--font-display, "Space Grotesk", sans-serif);
+  font-size: 1.5rem;
+  font-weight: 900;
+  margin: 8px 0 10px;
+  color: #ffffff;
+}
+
+.mqm-start-desc {
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: #cbd5e1;
+  margin: 0 0 16px;
+}
+
+.mqm-start-desc strong {
+  color: #ffffff;
+}
+
+.mqm-start-rules {
+  list-style: none;
+  margin: 0 0 22px;
+  padding: 14px 16px;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 10px;
+  text-align: left;
+}
+
+.mqm-start-rules li {
+  position: relative;
+  padding-left: 20px;
+  font-size: 0.79rem;
+  line-height: 1.5;
+  color: #94a3b8;
+}
+
+.mqm-start-rules li + li {
+  margin-top: 8px;
+}
+
+.mqm-start-rules li::before {
+  content: "•";
+  position: absolute;
+  left: 4px;
+  color: #f87171;
+  font-weight: 900;
+}
+
+.mqm-slide-track {
+  position: relative;
+  height: 56px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(34, 197, 94, 0.4);
+  overflow: hidden;
+  touch-action: none;
+  user-select: none;
+  cursor: grab;
+}
+
+.mqm-slide-track.is-dragging {
+  cursor: grabbing;
+}
+
+.mqm-slide-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: linear-gradient(90deg, rgba(22, 163, 74, 0.75), rgba(34, 197, 94, 0.55));
+  transition: width 0.05s linear;
+}
+
+.mqm-slide-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 52px;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: #e2e8f0;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.mqm-slide-knob {
+  position: absolute;
+  top: 3px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+  font-size: 1.3rem;
+  font-weight: 900;
+  box-shadow: 0 4px 14px rgba(34, 197, 94, 0.45);
+  pointer-events: none;
+  transition: left 0.05s linear;
+}
+
+.mqm-slide-track.is-complete {
+  border-color: #22c55e;
+}
+
+.mqm-start-cancel {
+  margin-top: 16px;
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 6px 12px;
+}
+
+.mqm-start-cancel:hover {
+  color: #f87171;
 }

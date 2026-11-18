@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import soundManager from "../../utilities/soundManager";
 import { getModuleQuiz, saveStudentQuizScore } from "./moduleQuizzes";
 import "./ModuleQuizModal.css";
@@ -13,6 +13,109 @@ import "./ModuleQuizModal.css";
  * • Navigation / beforeunload guarded to prevent abandoning exam
  * • Student CANNOT leave or go back anywhere until exam is completed & submitted
  */
+
+/** Slide-to-confirm gate shown before the no-exit assessment begins. */
+function SlideToStartGate({ moduleNum, moduleTitle, questionCount, onStart, onCancel }) {
+  const trackRef = useRef(null);
+  const progressRef = useRef(0);
+  const [progress, setProgress] = useState(0);
+  const [dragging, setDragging] = useState(false);
+
+  const setSlideProgress = (value) => {
+    const clamped = Math.min(1, Math.max(0, value));
+    progressRef.current = clamped;
+    setProgress(clamped);
+  };
+
+  const progressFromClientX = (clientX) => {
+    const track = trackRef.current;
+    if (!track) return 0;
+    const rect = track.getBoundingClientRect();
+    const knobWidth = 52;
+    const travel = Math.max(1, rect.width - knobWidth - 8);
+    return (clientX - rect.left - 4 - knobWidth / 2) / travel;
+  };
+
+  const handlePointerDown = (e) => {
+    e.preventDefault();
+    setDragging(true);
+    if (e.currentTarget.setPointerCapture) {
+      e.currentTarget.setPointerCapture(e.pointerId);
+    }
+    setSlideProgress(progressFromClientX(e.clientX));
+  };
+
+  const handlePointerMove = (e) => {
+    if (!dragging) return;
+    setSlideProgress(progressFromClientX(e.clientX));
+  };
+
+  const finishDrag = () => {
+    if (!dragging) return;
+    setDragging(false);
+    if (progressRef.current >= 0.9) {
+      setSlideProgress(1);
+      try { soundManager.snap(); } catch { }
+      onStart();
+    } else {
+      setSlideProgress(0);
+    }
+  };
+
+  // Esc can still dismiss the gate — lockdown is not active yet.
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape" && onCancel) onCancel();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onCancel]);
+
+  return (
+    <div className="mqm-start-overlay" role="dialog" aria-modal="true">
+      <div className="mqm-start-card animate-pop-in">
+        <span className="mqm-start-kicker">
+          MODULE {moduleNum} // FORMATIVE ASSESSMENT
+        </span>
+        <h2 className="mqm-start-title">Start Formative Assessment</h2>
+        <p className="mqm-start-desc">
+          You are about to begin the secure {questionCount}-item assessment for{" "}
+          <strong>{moduleTitle}</strong>.
+        </p>
+
+        <ul className="mqm-start-rules">
+          <li>Once you start, you cannot exit or go back until you submit.</li>
+          <li>Answers are locked after submission and recorded to your academic transcript.</li>
+          <li>Make sure you are ready before continuing.</li>
+        </ul>
+
+        <div
+          ref={trackRef}
+          className={`mqm-slide-track ${dragging ? "is-dragging" : ""} ${progress >= 1 ? "is-complete" : ""}`}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={finishDrag}
+          onPointerCancel={finishDrag}
+        >
+          <div className="mqm-slide-fill" style={{ width: `${progress * 100}%` }} />
+          <span className="mqm-slide-label">
+            {progress >= 1 ? "Starting assessment…" : "Slide to confirm & start"}
+          </span>
+          <div
+            className="mqm-slide-knob"
+            style={{ left: `calc(4px + ${progress} * (100% - 60px))` }}
+          >
+            →
+          </div>
+        </div>
+
+        <button type="button" className="mqm-start-cancel" onClick={onCancel}>
+          Cancel
+        </button>
+      </div>
+    </div>
+  );
+}
 
 export default function ModuleQuizModal({
   isOpen = false,
@@ -30,10 +133,18 @@ export default function ModuleQuizModal({
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [examResult, setExamResult] = useState(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  // Gate: the exam / lockdown only begins after the student slides to confirm.
+  const [examStarted, setExamStarted] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setExamStarted(false);
+    }
+  }, [isOpen]);
 
   // HARD CODED MONITORING / LOCKDOWN MECHANISM
   useEffect(() => {
-    if (!isOpen || isSubmitted) return;
+    if (!isOpen || !examStarted || isSubmitted) return;
 
     // 1. Prevent accidental window / tab close or reload
     const handleBeforeUnload = (e) => {
@@ -67,9 +178,22 @@ export default function ModuleQuizModal({
       window.removeEventListener("keydown", handleKeyDown, true);
       window.removeEventListener("popstate", handlePopState);
     };
-  }, [isOpen, isSubmitted]);
+  }, [isOpen, examStarted, isSubmitted]);
 
   if (!isOpen) return null;
+
+  // ── SLIDE-TO-CONFIRM GATE (before the no-exit exam begins) ──
+  if (!examStarted) {
+    return (
+      <SlideToStartGate
+        moduleNum={moduleNum}
+        moduleTitle={quizData.moduleTitle}
+        questionCount={questions.length}
+        onStart={() => setExamStarted(true)}
+        onCancel={onClose}
+      />
+    );
+  }
 
   const currentQ = questions[currentQIndex] || questions[0];
   const totalQuestions = questions.length;
@@ -255,16 +379,50 @@ export default function ModuleQuizModal({
                     Next Question →
                   </button>
                 ) : (
-                  <button
-                    type="button"
-                    className="q-btn-submit"
-                    onClick={() => {
-                      try { soundManager.snap(); } catch {}
-                      setShowConfirmModal(true);
-                    }}
-                  >
-                    ✓ Submit 15-Item Exam
-                  </button>
+                  <>
+                    <button
+                      type="button"
+                      className="q-btn-submit"
+                      onClick={() => {
+                        try { soundManager.snap(); } catch {}
+                        setShowConfirmModal(true);
+                      }}
+                    >
+                      ✓ Submit 15-Item Exam
+                    </button>
+
+                    {showConfirmModal && (
+                      <div className="mqm-inline-confirm animate-fade-in">
+                        <div className="mqm-inline-confirm-copy">
+                          <strong>Review your exam before submitting</strong>
+                          <span>
+                            {answeredCount === totalQuestions
+                              ? `✓ All ${totalQuestions} questions answered`
+                              : `⚠ ${totalQuestions - answeredCount} unanswered — go back if needed`}
+                          </span>
+                        </div>
+                        <div className="mqm-inline-confirm-actions">
+                          <button
+                            type="button"
+                            className="btn-confirm-cancel"
+                            onClick={() => setShowConfirmModal(false)}
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            type="button"
+                            className="btn-confirm-finalize"
+                            onClick={() => {
+                              setShowConfirmModal(false);
+                              handleSubmitExam();
+                            }}
+                          >
+                            ✓ Confirm Submission
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             </footer>
@@ -370,43 +528,6 @@ export default function ModuleQuizModal({
           </div>
         )}
 
-        {/* ── PRE-SUBMISSION CONFIRMATION DIALOG ── */}
-        {showConfirmModal && (
-          <div className="mqm-confirm-overlay animate-fade-in" role="dialog" aria-modal="true">
-            <div className="mqm-confirm-card">
-              <h3>Ready to Submit 15-Item Exam?</h3>
-              <p className="confirm-summary">
-                {answeredCount === totalQuestions ? (
-                  <span className="confirm-complete-tag">✓ All {totalQuestions} questions completed ({progressPct}%)</span>
-                ) : (
-                  <span className="confirm-incomplete-tag">You have {totalQuestions - answeredCount} unanswered question(s)</span>
-                )}
-              </p>
-              <p className="confirm-note">
-                Once submitted, your final score is recorded directly to your official PTC-IICT student academic transcript. You cannot modify answers after submitting.
-              </p>
-              <div className="confirm-actions-row">
-                <button
-                  type="button"
-                  className="btn-confirm-cancel"
-                  onClick={() => setShowConfirmModal(false)}
-                >
-                  ← Return &amp; Review Answers
-                </button>
-                <button
-                  type="button"
-                  className="btn-confirm-finalize"
-                  onClick={() => {
-                    setShowConfirmModal(false);
-                    handleSubmitExam();
-                  }}
-                >
-                  ✓ Finalize &amp; Submit Score
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
