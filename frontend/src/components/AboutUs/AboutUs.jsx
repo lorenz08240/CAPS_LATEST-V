@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { Link, useNavigate } from "react-router-dom";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -177,7 +178,7 @@ const WHITEHATS_PROJECTS = [
     codename: "CAMPUS_PULSE",
     category: "academic",
     statusBadge: "ACADEMIC SIS // ACTIVE",
-    statusColor: "#10b981",
+    statusColor: "#ffffff",
     year: "2025",
     targetClient: "Pateros Technological College Registrar & Academic Affairs",
     summary: "Enterprise-grade academic registrar suite automating enrollment validation, prerequisite tree verification, deficiency flags, and real-time student evaluation.",
@@ -197,7 +198,7 @@ const WHITEHATS_PROJECTS = [
     codename: "SCHOLAR_NET",
     category: "workflow",
     statusBadge: "STUDENT AID // DEPLOYED",
-    statusColor: "#38bdf8",
+    statusColor: "#b08d57",
     year: "2025",
     targetClient: "Municipal Scholarship Office & Student Affairs",
     summary: "Automated student grant portal managing documentary compliance, GWA threshold sorting, and batch payout dispatch for municipal scholars.",
@@ -237,7 +238,7 @@ const WHITEHATS_PROJECTS = [
     codename: "LAB_GUARD",
     category: "labs",
     statusBadge: "HARDWARE OPS // ACTIVE",
-    statusColor: "#10b981",
+    statusColor: "#ffffff",
     year: "2025",
     targetClient: "PTC Computer Laboratory Custodians & College IT",
     summary: "Workstation component health and hardware asset tracker preventing unauthorized part swaps, tracking thermal duty cycles, and logging maintenance.",
@@ -277,7 +278,7 @@ const WHITEHATS_PROJECTS = [
     codename: "FACULTY_DESK",
     category: "academic",
     statusBadge: "E-LEARNING // DEPLOYED",
-    statusColor: "#38bdf8",
+    statusColor: "#b08d57",
     year: "2024",
     targetClient: "Academic Faculty & Distance Education Students",
     summary: "Bandwidth-optimized learning and assessment environment engineered for provincial internet constraints, featuring offline exam caches and auto-grading.",
@@ -297,7 +298,7 @@ const WHITEHATS_PROJECTS = [
     codename: "CLEARANCE_FLOW",
     category: "workflow",
     statusBadge: "WORKFLOW // DEPLOYED",
-    statusColor: "#10b981",
+    statusColor: "#ffffff",
     year: "2024",
     targetClient: "Graduating Batches, Library, Cashier & Clinic",
     summary: "Paperless graduation and semester clearance portal replacing physical multi-stop paper index cards with concurrent digital clearance approvals.",
@@ -337,7 +338,7 @@ const WHITEHATS_PROJECTS = [
     codename: "ALUMNI_CONNECT",
     category: "workflow",
     statusBadge: "ALUMNI HUB // ACTIVE",
-    statusColor: "#38bdf8",
+    statusColor: "#b08d57",
     year: "2023",
     targetClient: "Alumni Affairs, Guidance & CHED Accreditation",
     summary: "Longitudinal graduate career tracker mapping employment timelines, salary bands, licensure pass rates, and industry relevance.",
@@ -410,6 +411,36 @@ export default function AboutUs() {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [selectedProject, selectedMember]);
+
+  // Background scroll lock mechanism: Prevents background jumping and scrolling when modal is open
+  useEffect(() => {
+    if (selectedMember || selectedProject) {
+      const originalOverflow = document.body.style.overflow;
+      const originalDocOverflow = document.documentElement.style.overflow;
+      const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
+
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+      if (scrollBarWidth > 0) {
+        document.body.style.paddingRight = `${scrollBarWidth}px`;
+      }
+
+      const handleTouchMove = (e) => {
+        if (!e.target.closest('.dossier-modal-window') && !e.target.closest('.blueprint-modal-window')) {
+          e.preventDefault();
+        }
+      };
+
+      document.addEventListener("touchmove", handleTouchMove, { passive: false });
+
+      return () => {
+        document.body.style.overflow = originalOverflow;
+        document.documentElement.style.overflow = originalDocOverflow;
+        document.body.style.paddingRight = "";
+        document.removeEventListener("touchmove", handleTouchMove);
+      };
+    }
+  }, [selectedMember, selectedProject]);
 
   // GSAP ScrollTrigger bidirectional cinematic reveals (matching Home and Compatibility)
   useEffect(() => {
@@ -684,53 +715,31 @@ export default function AboutUs() {
         </section>
 
         {/* FULL VITAE DOSSIER MODAL */}
-        {selectedMember && (
-          <div className="dossier-modal-backdrop" onClick={handleCloseDossier}>
+        {selectedMember && typeof document !== "undefined" && createPortal(
+          <div
+            className="dossier-modal-backdrop"
+            onClick={handleCloseDossier}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="dossier-modal-title"
+          >
             <div
-              className="dossier-modal-window wood-mahogany"
+              className="dossier-modal-window"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="dossier-header-bar">
-                <div className="dossier-avatar-hex-wrap">
-                  <div className="avatar-hex-frame hex-dossier">
-                    <svg viewBox="0 0 100 100" className="avatar-hex-svg">
-                      <polygon points="50 3, 93 26, 93 74, 50 97, 7 74, 7 26" className="hex-outer" />
-                      <polygon points="50 10, 85 29, 85 71, 50 90, 15 71, 15 29" className="hex-inner" />
-                    </svg>
-                    {(selectedMember.photoUrl || selectedMember.photo_url) ? (
-                      <img
-                        src={selectedMember.photoUrl || selectedMember.photo_url}
-                        alt={selectedMember.name}
-                        className="avatar-img-hex"
-                        onError={(e) => {
-                          e.currentTarget.style.display = "none";
-                          const parent = e.currentTarget.parentElement;
-                          const fallback = parent?.querySelector(".avatar-icon-content");
-                          if (fallback) fallback.style.display = "flex";
-                        }}
-                      />
-                    ) : null}
-                    <div
-                      className="avatar-icon-content"
-                      style={{ display: (selectedMember.photoUrl || selectedMember.photo_url) ? "none" : "flex" }}
-                    >
-                      <span className="avatar-code">{selectedMember.codename.slice(0, 3)}</span>
-                    </div>
-                  </div>
-                </div>
-
                 <div className="dossier-title-group">
-                  <span className="dossier-kicker">DEVELOPER PROFILE // {selectedMember.id} &bull; {selectedMember.avatarBadge}</span>
-                  <h2 className="dossier-name">{selectedMember.name}</h2>
+                  <span className="dossier-kicker">{selectedMember.id} &bull; {selectedMember.avatarBadge}</span>
+                  <h2 id="dossier-modal-title" className="dossier-name">{selectedMember.name}</h2>
                   <span className="dossier-designation">{selectedMember.designation}</span>
                 </div>
                 <button
                   type="button"
                   className="dossier-close-btn"
                   onClick={handleCloseDossier}
-                  aria-label="Close Profile"
+                  aria-label="Close Profile Modal"
                 >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <line x1="18" y1="6" x2="6" y2="18" />
                     <line x1="6" y1="6" x2="18" y2="18" />
                   </svg>
@@ -739,12 +748,12 @@ export default function AboutUs() {
 
               <div className="dossier-body-grid">
                 <div className="dossier-left-col">
-                  {/* Operative Photo Dossier Card (Facebook Profile Format) */}
+                  {/* Clean Profile Photo Card without redundant metadata */}
                   <div className="dossier-photo-card">
                     <div className="dossier-photo-frame fb-modal-frame">
-                      {selectedMember.image ? (
+                      {(selectedMember.image || selectedMember.photoUrl || selectedMember.photo_url) ? (
                         <img
-                          src={selectedMember.image}
+                          src={selectedMember.image || selectedMember.photoUrl || selectedMember.photo_url}
                           alt={selectedMember.name}
                           className="dossier-photo-img fb-profile-pic"
                           onError={(e) => {
@@ -756,46 +765,21 @@ export default function AboutUs() {
                       ) : null}
                       <div
                         className="fb-modal-fallback"
-                        style={{ display: selectedMember.image ? "none" : "flex" }}
+                        style={{ display: (selectedMember.image || selectedMember.photoUrl || selectedMember.photo_url) ? "none" : "flex" }}
                       >
                         <svg viewBox="0 0 24 24" className="fb-placeholder-svg" fill="currentColor">
                           <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z" />
                         </svg>
-                        <span className="dossier-fallback-code">{selectedMember.codename.slice(0, 3)}</span>
+                        <span className="dossier-fallback-code">{(selectedMember.codename || selectedMember.id || "DEV").slice(0, 3)}</span>
                       </div>
-                      <span className="fb-active-dot modal" title="Active now" />
-                    </div>
-                    <div className="dossier-photo-meta">
-                      <span className="dossier-photo-id">{selectedMember.id} // {selectedMember.codename}</span>
-                      <span className="dossier-live-status">
-                        <span className="telemetry-live-dot" /> ACTIVE NOW
-                      </span>
+                      <span className="fb-active-dot modal" title="Active developer" />
                     </div>
                   </div>
 
+                  {/* Architecture Specialty Focus */}
                   <div className="dossier-meta-card">
-                    <span className="meta-card-title">SPECIALTY</span>
-                    <p className="meta-card-text">{selectedMember.highlight}</p>
-                  </div>
-
-                  <div className="dossier-meta-card">
-                    <span className="meta-card-title">TECHNOLOGIES USED</span>
-                    <div className="dossier-tech-wrap">
-                      {selectedMember.techStack.map((tech, i) => (
-                        <span key={i} className="dossier-tech-badge">{tech}</span>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="dossier-meta-card rig-card">
-                    <span className="meta-card-title">PERSONAL PC SPECS</span>
-                    <ul className="dossier-rig-list">
-                      <li><strong>CPU:</strong> {selectedMember.rigSpecs.cpu}</li>
-                      <li><strong>GPU:</strong> {selectedMember.rigSpecs.gpu}</li>
-                      <li><strong>RAM:</strong> {selectedMember.rigSpecs.ram}</li>
-                      <li><strong>Storage:</strong> {selectedMember.rigSpecs.storage}</li>
-                      <li><strong>Chassis:</strong> {selectedMember.rigSpecs.chassis}</li>
-                    </ul>
+                    <span className="meta-card-title">SPECIALTY &amp; ARCHITECTURE</span>
+                    <p className="meta-card-text">{selectedMember.highlight || selectedMember.bio || "Core Software Architecture"}</p>
                   </div>
                 </div>
 
@@ -803,37 +787,35 @@ export default function AboutUs() {
                   <div className="dossier-section-block">
                     <h4 className="dossier-subhead">KEY CONTRIBUTIONS</h4>
                     <ul className="dossier-contributions-list">
-                      {selectedMember.keyContributions.map((contrib, idx) => (
+                      {(selectedMember.keyContributions || []).map((contrib, idx) => (
                         <li key={idx}>
-                          <span className="bullet-point">▸</span>
+                          <span className="bullet-point" aria-hidden="true">&bull;</span>
                           <span>{contrib}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
 
-                  <div className="dossier-section-block">
-                    <h4 className="dossier-subhead">FAVORITE PC BUILDING TIP</h4>
-                    <blockquote className="dossier-quote">
-                      "{selectedMember.favTip}"
-                    </blockquote>
-                  </div>
+                  {selectedMember.favTip ? (
+                    <div className="dossier-section-block">
+                      <h4 className="dossier-subhead">FAVORITE PC BUILDING TIP</h4>
+                      <blockquote className="dossier-quote">
+                        "{selectedMember.favTip}"
+                      </blockquote>
+                    </div>
+                  ) : null}
 
                   <div className="dossier-section-block">
                     <h4 className="dossier-subhead">SCHOOL &amp; PROGRAM</h4>
-                    <p className="dossier-academic-text">
-                      Bachelor of Science in Information Technology / Computer Science
-                      <br />
-                      Pateros Technological College : WhiteHats Capstone Group
-                    </p>
+                    <div className="dossier-academic-card">
+                      <p className="dossier-academic-degree">Bachelor of Science in Information Technology</p>
+                      <p className="dossier-academic-dept">Pateros Technological College &bull; WhiteHats Capstone Group</p>
+                    </div>
                   </div>
                 </div>
               </div>
 
               <div className="dossier-footer-bar">
-                <span className="dossier-status-text">
-                  STATUS: ACTIVE DEVELOPER &bull; BUILDLAB
-                </span>
                 <button
                   type="button"
                   className="dossier-done-btn"
@@ -843,7 +825,8 @@ export default function AboutUs() {
                 </button>
               </div>
             </div>
-          </div>
+          </div>,
+          document.body
         )}
 
         {/* ── WHITEHATS ECOSYSTEM BENTO GRID ── */}
@@ -1105,7 +1088,7 @@ export default function AboutUs() {
         </section>
 
         {/* ── PROJECT BLUEPRINT & ARCHITECTURE MODAL ── */}
-        {selectedProject && (
+        {selectedProject && typeof document !== "undefined" && createPortal(
           <div 
             className="blueprint-modal-backdrop" 
             onClick={handleCloseBlueprint}
@@ -1223,7 +1206,8 @@ export default function AboutUs() {
                 </div>
               </div>
             </div>
-          </div>
+          </div>,
+          document.body
         )}
       </div>
     </div>

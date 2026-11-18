@@ -4,8 +4,8 @@
 .compare-rigs-page {
   position: relative;
   min-height: 100vh;
-  background-color: #06080e;
-  color: #f1f5f9;
+  background-color: #1a120b;
+  color: #e5e5cb;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   overflow-x: hidden;
   box-sizing: border-box;
@@ -18,7 +18,7 @@
   transform: translate(-50%, -50%);
   width: 75vw;
   height: 55vh;
-  background: radial-gradient(circle, rgba(0, 229, 160, 0.08) 0%, rgba(56, 189, 248, 0.05) 50%, transparent 80%);
+  background: radial-gradient(circle, rgba(213, 206, 163, 0.08) 0%, rgba(60, 42, 33, 0.25) 50%, transparent 80%);
   filter: blur(80px);
   pointer-events: none;
   z-index: 0;
@@ -75,11 +75,11 @@
 }
 
 .compare-nav-back-btn:hover {
-  background: rgba(0, 229, 160, 0.15);
-  border-color: #00e5a0;
-  color: #00e5a0;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #ffffff;
   transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(0, 229, 160, 0.25);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
 .compare-nav-back-btn.btn-secondary-nav:hover {
@@ -105,13 +105,13 @@
   gap: 0.6rem;
   padding: 0.35rem 0.9rem;
   background: rgba(15, 23, 42, 0.85);
-  border: 1px solid rgba(0, 229, 160, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 4px;
   font-size: 0.72rem;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-weight: 700;
   letter-spacing: 1.2px;
-  color: #00e5a0;
+  color: #ffffff;
   margin-bottom: 1.25rem;
 }
 
@@ -119,8 +119,8 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background-color: #10b981;
-  box-shadow: 0 0 8px #10b981;
+  background: #ffffff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
   animation: pulseDot 2s infinite ease-in-out;
 }
 
@@ -154,7 +154,7 @@
 }
 
 .compare-hero-title .title-accent {
-  background: linear-gradient(135deg, #00e5a0 0%, #38bdf8 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #d4d4d8 100%);
   -webkit-text-fill-color: transparent;
 }
 
@@ -217,19 +217,19 @@
 }
 
 .card-primary-workbench {
-  border-color: rgba(0, 229, 160, 0.25);
+  border-color: rgba(255, 255, 255, 0.18);
 }
 
 .card-primary-workbench:hover {
-  border-color: rgba(0, 229, 160, 0.45);
+  border-color: rgba(255, 255, 255, 0.18);
 }
 
 .card-secondary-comparison {
-  border-color: rgba(56, 189, 248, 0.25);
+  border-color: rgba(255, 255, 255, 0.18);
 }
 
 .card-secondary-comparison:hover {
-  border-color: rgba(56, 189, 248, 0.45);
+  border-color: rgba(255, 255, 255, 0.18);
 }
 
 /* Rig Card Header */
@@ -252,12 +252,12 @@
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-size: 0.82rem;
   font-weight: 800;
-  color: #00e5a0;
+  color: #ffffff;
   letter-spacing: 1.2px;
 }
 
 .rig-badge-live.badge-cyan {
-  color: #38bdf8;
+  color: #ffffff;
 }
 
 .rig-badge-subtitle {
@@ -326,9 +326,9 @@
 }
 
 .source-tab-btn.active {
-  background: rgba(56, 189, 248, 0.18);
-  border-color: #38bdf8;
-  color: #38bdf8;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #ffffff;
 }
 
 /* Preview Image Box at Top of Rig Card */
@@ -431,15 +431,15 @@
 }
 
 .btn-edit-workbench {
-  background: rgba(0, 229, 160, 0.12);
-  border: 1px solid rgba(0, 229, 160, 0.4);
-  color: #00e5a0;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #ffffff;
 }
 
 .btn-edit-workbench:hover {
-  background: #00e5a0;
-  color: #06080e;
-  box-shadow: 0 0 16px rgba(0, 229, 160, 0.4);
+  background: #ffffff;
+  color: #1a120b;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
 .btn-snapshot-save {
@@ -454,25 +454,25 @@
 }
 
 .btn-load-to-workbench {
-  background: rgba(56, 189, 248, 0.15);
-  border: 1px solid rgba(56, 189, 248, 0.4);
-  color: #38bdf8;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #ffffff;
 }
 
 .btn-load-to-workbench:hover {
-  background: #38bdf8;
-  color: #06080e;
-  box-shadow: 0 0 16px rgba(56, 189, 248, 0.4);
+  background: #ffffff;
+  color: #1a120b;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
 .rig-save-toast {
   padding: 0.4rem 0.8rem;
-  background: rgba(16, 185, 129, 0.15);
-  border: 1px solid rgba(16, 185, 129, 0.4);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 4px;
   font-family: ui-monospace, SFMono-Regular, monospace;
   font-size: 0.7rem;
-  color: #10b981;
+  color: #ffffff;
   text-align: center;
 }
 
@@ -558,7 +558,7 @@
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 3px;
-  color: #00e5a0;
+  color: #ffffff;
   white-space: nowrap;
 }
 
@@ -584,10 +584,10 @@
   margin: 1rem auto 0 auto;
   width: 100%;
   background: rgba(14, 18, 27, 0.9);
-  border: 1px solid rgba(0, 229, 160, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 12px;
   padding: 2.2rem 2.5rem;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 229, 160, 0.08);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(16px);
   display: flex;
   flex-direction: column;
@@ -785,7 +785,7 @@
 }
 
 .diff-cyan {
-  color: #38bdf8;
+  color: #ffffff;
 }
 
 .diff-neutral {
@@ -798,8 +798,8 @@
   align-items: flex-start;
   gap: 1rem;
   padding: 1.25rem 1.5rem;
-  background: rgba(0, 229, 160, 0.08);
-  border: 1px solid rgba(0, 229, 160, 0.3);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 8px;
 }
 
@@ -819,7 +819,7 @@
   font-size: 0.78rem;
   font-weight: 800;
   letter-spacing: 1.2px;
-  color: #00e5a0;
+  color: #ffffff;
   margin: 0;
 }
 
@@ -836,7 +836,7 @@
   align-items: center;
   justify-content: center;
   gap: 0.6rem;
-  background: linear-gradient(90deg, #00f2fe 0%, #00ff87 100%);
+  background: linear-gradient(90deg, #ffffff 0%, #00ff87 100%);
   color: #020617 !important; /* text-slate-950 */
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-size: 0.88rem;
@@ -847,7 +847,7 @@
   text-decoration: none;
   cursor: pointer;
   border: none;
-  box-shadow: 0 10px 25px -5px rgba(0, 242, 254, 0.45), 0 8px 10px -6px rgba(0, 255, 135, 0.35);
+  box-shadow: 0 10px 25px -5px rgba(255, 255, 255, 0.14), 0 8px 10px -6px rgba(0, 255, 135, 0.35);
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   text-transform: uppercase;
 }
@@ -855,7 +855,7 @@
 .btn-start-assembly-cta:hover {
   filter: brightness(1.12);
   transform: translateY(-2px);
-  box-shadow: 0 16px 32px -5px rgba(0, 242, 254, 0.6), 0 12px 14px -5px rgba(0, 255, 135, 0.45);
+  box-shadow: 0 16px 32px -5px rgba(255, 255, 255, 0.14), 0 12px 14px -5px rgba(0, 255, 135, 0.45);
   color: #020617 !important;
 }
 
@@ -883,13 +883,13 @@
   height: 96px;
   margin-bottom: 1.25rem;
   border-radius: 16px;
-  background: rgba(0, 242, 254, 0.06);
-  border: 1px solid rgba(0, 242, 254, 0.2);
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  box-shadow: 0 0 24px rgba(0, 242, 254, 0.12);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
 }
 
 .empty-rig1-img {

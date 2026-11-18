@@ -27,7 +27,7 @@ export default function NorthChalkWhiteCase({
   scale = 1,
   sidePanelMode = 'glass', // 'glass' | 'mesh' | 'open'
   caseColor = 'black', // 'black' | 'white'
-  rgbColor = '#00e5ff',
+  rgbColor = '#ffffff',
   explodedProgress = 0,
   isSelected = false,
   isHovered = false,
@@ -66,7 +66,7 @@ export default function NorthChalkWhiteCase({
   const brassLip = '#e2c158';
 
   // Highlight
-  const highlightEmissive = isSelected ? '#00e5ff' : isHovered ? '#38bdf8' : '#000000';
+  const highlightEmissive = isSelected ? '#ffffff' : isHovered ? '#f5e6c7' : '#000000';
   const highlightIntensity = isSelected ? 0.35 : isHovered ? 0.18 : 0;
 
   // Real Case Dimensions (standard ATX proportion)

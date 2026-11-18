@@ -6,7 +6,7 @@
   position: fixed;
   inset: 0;
   z-index: 1000000;
-  background: #06080e;
+  background: #1a120b;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -26,7 +26,7 @@
   width: 340px;
   height: 340px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(0, 229, 160, 0.16) 0%, rgba(56, 189, 248, 0.08) 45%, transparent 70%);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.12) 45%, transparent 70%);
   filter: blur(36px);
   pointer-events: none;
   animation: glowBreathe 2.4s ease-in-out infinite alternate;
@@ -55,10 +55,10 @@
   height: 48px;
   border-radius: 50%;
   border: 2px solid rgba(255, 255, 255, 0.08);
-  border-top-color: #00e5a0;
-  border-right-color: #38bdf8;
+  border-top-color: #ffffff;
+  border-right-color: #ffffff;
   animation: spinMinimal 0.9s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-  box-shadow: 0 0 20px rgba(0, 229, 160, 0.28);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
 .spinner-spark {
@@ -68,8 +68,8 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #00e5a0;
-  box-shadow: 0 0 10px #00e5a0, 0 0 20px #00e5a0;
+  background: #ffffff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
 @keyframes spinMinimal {
@@ -96,8 +96,8 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #00e5a0;
-  box-shadow: 0 0 8px #00e5a0;
+  background: #ffffff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
   animation: cyberPulse 1.2s infinite alternate;
 }
 
@@ -136,10 +136,10 @@
   justify-content: center;
   gap: 10px;
   padding: 11px 32px;
-  background: linear-gradient(135deg, rgba(0, 229, 160, 0.14) 0%, rgba(56, 189, 248, 0.14) 100%);
-  border: 1px solid rgba(0, 229, 160, 0.5);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.12) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 9999px;
-  color: #00e5a0;
+  color: #ffffff;
   font-family: 'JetBrains Mono', 'Consolas', monospace;
   font-size: 0.84rem;
   font-weight: 800;
@@ -147,15 +147,15 @@
   text-transform: uppercase;
   cursor: pointer;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 4px 20px rgba(0, 229, 160, 0.18), inset 0 0 14px rgba(0, 229, 160, 0.08);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
 .minimal-enter-btn:hover {
-  background: linear-gradient(135deg, #00e5a0 0%, #38bdf8 100%);
-  border-color: #00e5a0;
-  color: #06080e;
+  background: linear-gradient(135deg, #d5cea3 0%, #e5e5cb 100%);
+  border-color: #d5cea3;
+  color: #1a120b;
   transform: translateY(-2px) scale(1.03);
-  box-shadow: 0 8px 30px rgba(0, 229, 160, 0.45), 0 0 20px rgba(56, 189, 248, 0.3);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
 .minimal-enter-btn:active {

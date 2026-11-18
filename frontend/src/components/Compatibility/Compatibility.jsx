@@ -50,7 +50,7 @@ const COMPONENT_CATEGORIES = [
   { key: "psu", label: "POWER SUPPLY" },
 ];
 
-function ConcentricRings({ rigLabel, gamingScore, prodScore, overallScore, primaryColor = "#00e5a0" }) {
+function ConcentricRings({ rigLabel, gamingScore, prodScore, overallScore, primaryColor = "#ffffff" }) {
   const cx = 55;
   const cy = 55;
   const rings = [
@@ -137,23 +137,6 @@ function DualOverlaidRadar({ rig1, rig2, metrics, metricScore }) {
 
   return (
     <svg className="dual-radar-svg" width="280" height="270" viewBox="0 0 280 270">
-      <defs>
-        <filter id="dualGlowMint" x="-20%" y="-20%" width="140%" height="140%">
-          <feGaussianBlur stdDeviation="2.5" result="glow" />
-          <feMerge>
-            <feMergeNode in="glow" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-        <filter id="dualGlowRose" x="-20%" y="-20%" width="140%" height="140%">
-          <feGaussianBlur stdDeviation="2.5" result="glow" />
-          <feMerge>
-            <feMergeNode in="glow" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-      </defs>
-
       {[1, 0.75, 0.5, 0.25].map((scale, i) => (
         <polygon
           key={i}
@@ -190,16 +173,16 @@ function DualOverlaidRadar({ rig1, rig2, metrics, metricScore }) {
           fill="rgba(244, 63, 94, 0.16)"
           stroke="#f43f5e"
           strokeWidth="2.2"
-          filter="url(#dualGlowRose)"
+          
         />
       )}
 
       <polygon
         points={rig1Points}
-        fill="rgba(0, 229, 160, 0.18)"
-        stroke="#00e5a0"
+        fill="rgba(255, 255, 255, 0.10)"
+        stroke="#ffffff"
         strokeWidth="2.2"
-        filter="url(#dualGlowMint)"
+        
       />
 
       {metrics.map((m, i) => {
@@ -208,7 +191,7 @@ function DualOverlaidRadar({ rig1, rig2, metrics, metricScore }) {
         const angle = -Math.PI / 2 + step * i;
         const px = cx + Math.cos(angle) * norm;
         const py = cy + Math.sin(angle) * norm;
-        return <circle key={`r1-dot-${i}`} cx={px} cy={py} r="3" fill="#00e5a0" />;
+        return <circle key={`r1-dot-${i}`} cx={px} cy={py} r="3" fill="#ffffff" />;
       })}
 
       {rig2 &&
@@ -1056,7 +1039,7 @@ function CompatibilityView({ isIntegrated = false }) {
             <button
               type="button"
               className="btn-load-demo-ghost"
-              style={{ background: "rgba(0, 229, 255, 0.15)", borderColor: "#00e5ff", color: "#00e5ff", cursor: "pointer" }}
+              style={{ cursor: "pointer" }}
               onClick={() => {
                 try { soundManager.click(); } catch { }
                 if (loadDemoBuild) loadDemoBuild();
@@ -1310,7 +1293,7 @@ function CompatibilityView({ isIntegrated = false }) {
               gamingScore={rig1Scores.gaming}
               prodScore={rig1Scores.productivity}
               overallScore={getBuildScore(currentBuild)}
-              primaryColor="#00e5a0"
+              primaryColor="#ffffff"
             />
           </div>
           <div className="gauge-rating-badges">
@@ -1337,8 +1320,8 @@ function CompatibilityView({ isIntegrated = false }) {
             metricScore={metricScore}
           />
           <div style={{ display: "flex", gap: "1rem", marginTop: "0.5rem", fontSize: "0.72rem", fontFamily: "var(--font-mono, monospace)" }}>
-            <span style={{ color: "#00e5a0", display: "inline-flex", alignItems: "center", gap: "4px" }}>
-              <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#00e5a0", display: "inline-block" }} /> Rig 01 (Workbench)
+            <span style={{ color: "#ffffff", display: "inline-flex", alignItems: "center", gap: "4px" }}>
+              <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#ffffff", display: "inline-block" }} /> Rig 01 (Workbench)
             </span>
             <span style={{ color: "#f43f5e", display: "inline-flex", alignItems: "center", gap: "4px" }}>
               <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#f43f5e", display: "inline-block" }} /> Rig 02 (Comparison)
@@ -1686,7 +1669,7 @@ function CompatibilityView({ isIntegrated = false }) {
             stageNumber="02"
             title="COMPATIBILITY MATRIX UNLOCKED"
             subtitle="All 7 hardware components assembled. Automated socket, power, and thermal clearance auditing online."
-            accentColor="#00e5a0"
+            accentColor="#ffffff"
             badge="LEARN TRACK // STAGE 02"
             onComplete={handleUnlockBannerComplete}
           />
@@ -1801,8 +1784,8 @@ function CompatibilityView({ isIntegrated = false }) {
             size={94}
             shape="Cube"
             eyes="Squares"
-            bodyColor="#00e5a0"
-            eyeColor="#06080e"
+            bodyColor="#1c1b16"
+            eyeColor="#ffffff"
             follow={90}
             bounce={55}
             speechLines={COMPAT_BOB_PHRASES}

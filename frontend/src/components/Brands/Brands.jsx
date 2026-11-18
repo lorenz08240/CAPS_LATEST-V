@@ -16,8 +16,8 @@ const brandData = [
     categoryKey: "case",
     secondaryKey: null,
     categoryLabel: "CHASSIS & COOLING",
-    accentColor: "#10b981", // Philippine Emerald
-    accentGlow: "rgba(16, 185, 129, 0.4)",
+    accentColor: "#b08d57", // Obsidian Gold
+    accentGlow: "rgba(176, 141, 87, 0.25)",
     verifiedBadge: "AIRFLOW VALIDATED",
     tagline: "Philippine-engineered high-airflow PC cases & battle-tested mechanical gear.",
     description: "Engineered specifically for tropical ambient temperatures with full-mesh intake panels, magnetic dust filtration, and toolless PCIe drive sleds. Thoroughly bench-tested in BuildLab for radiator clearance up to 360mm.",
@@ -116,7 +116,7 @@ const brandData = [
     categoryKey: "motherboard",
     secondaryKey: "gpu",
     categoryLabel: "MOTHERBOARDS & HARDWARE",
-    accentColor: "#00e5ff", // ROG Cyan
+    accentColor: "#ffffff", // ROG Cyan
     accentGlow: "rgba(0, 229, 255, 0.4)",
     verifiedBadge: "TUF 24/7 MILITARY RATED",
     tagline: "Republic of Gamers engineering, AI Overclocking & TUF military durability.",

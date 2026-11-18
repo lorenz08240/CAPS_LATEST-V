@@ -148,9 +148,9 @@ export default function CookieConsent() {
               </div>
               <p className="cookie-description">
                 BuildLab uses cookies and browser storage to preserve your PC component builds, session preferences, and student certification progress. Read our{" "}
-                <Link to="/cookies" style={{ color: "#38bdf8", textDecoration: "underline" }}>Cookie Policy</Link>{" "}
+                <Link to="/cookies" style={{ color: "#ffffff", textDecoration: "underline" }}>Cookie Policy</Link>{" "}
                 and{" "}
-                <Link to="/privacy" style={{ color: "#38bdf8", textDecoration: "underline" }}>Privacy Policy</Link>.
+                <Link to="/privacy" style={{ color: "#ffffff", textDecoration: "underline" }}>Privacy Policy</Link>.
               </p>
             </div>
 

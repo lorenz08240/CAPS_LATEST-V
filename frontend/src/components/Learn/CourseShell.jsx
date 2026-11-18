@@ -21,7 +21,7 @@ import {
 import "./CourseShell.css";
 
 /* ═══════════════════════════════════════════════════════════════════
-   BUILDLAB HARDWARE WORKBENCH — COMPUTER SYSTEMS SERVICING (CSS)
+   BUILDLAB HARDWARE WORKBENCH // COMPUTER SYSTEMS SERVICING (CSS)
    Grade 11 Pre-Lab Curriculum: 6 Modules • 19 Sequential Topics
    2-Zone Layout: 3D Hardware Workbench + CSS Pre-Lab Guide & Video
    ═══════════════════════════════════════════════════════════════════ */
@@ -186,8 +186,8 @@ export default function CourseShell() {
   const [spotlightRect, setSpotlightRect] = useState(null);
   const tourTimerRef = useRef(null);
 
-  // Left Rail & Popover Drawers
-  const [leftRailOpen, setLeftRailOpen] = useState(true);
+  // Left Rail & Popover Drawers (collapsed by default)
+  const [leftRailOpen, setLeftRailOpen] = useState(false);
   const [activePopover, setActivePopover] = useState(null); // null | 'lessons'
   const [expandedModules, setExpandedModules] = useState({
     m1: true,
@@ -948,9 +948,11 @@ export default function CourseShell() {
         {/* ══ CLEAN TOP HUD: TITLE + DYNAMIC TOPIC PROGRESS + ACTIONS (NO CLOCK BLOAT) ══ */}
         <header className="wb-top-header" role="banner">
           <div className="wb-title-block">
-            <h1 className="wb-app-title">LEARN HARDWARE</h1>
+            <h1 className="wb-app-title">
+              MODULE {currentTopic?.moduleNum}: {currentTopic?.moduleTitle?.toUpperCase()}
+            </h1>
             <p className="wb-app-sub">
-              EXPLORE &middot; UNDERSTAND &middot; BUILD &mdash; COMPUTER SYSTEMS SERVICING (CSS)
+              TOPIC {currentTopic?.topicCode} &middot; {currentTopic?.title?.toUpperCase()}
             </p>
           </div>
 
@@ -987,7 +989,7 @@ export default function CourseShell() {
         </header>
 
         {/* ══ 2-FOCUSED ZONE WORKBENCH: CENTER 3D CANVAS + RIGHT CSS PRE-LAB GUIDE ══ */}
-        <div className="wb-workbench-body">
+        <div className={`wb-workbench-body ${showBriefingOverlay ? "is-briefing-mode" : ""}`}>
           {/* ══ ZONE 1: CENTER 3D HARDWARE / LESSON PRESENTATION STAGE ══ */}
           <section
             id="wb-zone-stage"
@@ -1163,7 +1165,7 @@ export default function CourseShell() {
               </>
             )}
 
-            {/* Quick Course Briefing / Overview Overlay — covers center workspace on first arrival or on request */}
+            {/* Quick Course Briefing / Overview Overlay: covers center workspace on first arrival or on request */}
             {showBriefingOverlay && !showDashboardOverlay && (
               <CourseBriefingOverlay
                 onClose={() => {
@@ -1181,7 +1183,7 @@ export default function CourseShell() {
               />
             )}
 
-            {/* Embedded Student Account Dashboard Overlay — covers ONLY the 3D workspace zone */}
+            {/* Embedded Student Account Dashboard Overlay: covers ONLY the 3D workspace zone */}
             {showDashboardOverlay && (
               <StudentDashboard
                 isEmbedded={true}
@@ -1202,13 +1204,14 @@ export default function CourseShell() {
             )}
           </section>
 
-          {/* ══ ZONE 2: RIGHT PRACTICAL CSS PRE-LAB GUIDE CARD ══ */}
-          <aside
-            id="wb-zone-dock"
-            className="wb-right-dock"
-            ref={rightDockRef}
-            aria-label="CSS Pre-Lab Guide & Practical Reference"
-          >
+          {/* ══ ZONE 2: RIGHT PRACTICAL CSS PRE-LAB GUIDE CARD (HIDDEN DURING COURSE BRIEFING) ══ */}
+          {!showBriefingOverlay && (
+            <aside
+              id="wb-zone-dock"
+              className="wb-right-dock"
+              ref={rightDockRef}
+              aria-label="CSS Pre-Lab Guide & Practical Reference"
+            >
             <div className="wb-css-guide-card" ref={guideCardRef}>
               {/* 1. Header & YouTube Lecture Player */}
               <div className="wb-guide-header">
@@ -1455,6 +1458,7 @@ export default function CourseShell() {
               })()}
             </div>
           </aside>
+          )}
         </div>
       </div>
 
@@ -1466,7 +1470,7 @@ export default function CourseShell() {
           title="STAGE 03 AUTHORIZED"
           subtitle="Hardware Academy & Virtual Assembly Laboratory"
           badge="ACADEMIC TRACK // STAGE 03"
-          accentColor="#00e5a0"
+          accentColor="#ffffff"
           learnerProfile={userProfile}
           requireConfirm={false}
           onComplete={() => {
@@ -1483,7 +1487,7 @@ export default function CourseShell() {
       {/* ══ WINDOWS 11 SNIPPING TOOL SPOTLIGHT WALKTHROUGH PORTAL ══ */}
       {tourActive && spotlightRect && (
         <div className="wb-snipping-portal" aria-live="polite">
-          {/* Hardware-accelerated unified spotlight cutout — zero tearing, zero mask flicker */}
+          {/* Hardware-accelerated unified spotlight cutout: zero tearing, zero mask flicker */}
           <div
             className="wb-snipping-cutout"
             style={{

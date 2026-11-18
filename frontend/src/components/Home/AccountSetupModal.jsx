@@ -31,6 +31,18 @@ const EXPERIENCE_OPTIONS = [
 export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
   const { userProfile, setUserProfile, setAppMode, unlockStage, restoreStudentAccount } = useLearnMode();
 
+  useEffect(() => {
+    if (!isOpen) return;
+    const originalOverflow = document.body.style.overflow;
+    const originalDocOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      document.documentElement.style.overflow = originalDocOverflow;
+    };
+  }, [isOpen]);
+
   const [step, setStep] = useState("connect"); // 'connect' | 'tester_email' | 'name_input' | 'about_you'
   const [fullName, setFullName] = useState(userProfile.fullName || "");
   const [email, setEmail] = useState(userProfile.email || "");

@@ -1,13 +1,13 @@
 /* ═════════════════════════════════════════════════════════════════
    ModeSelectionCards.css — Split Staggered Reveal Cards with Pixel Shimmer
-   Tailored to BuildLab Dark Cyber Palette (#06080e, #00e5a0, #f43f5e, #38bdf8)
+   Tailored to BuildLab Dark Cyber Palette (#090909, #ffffff, #f43f5e, #ffffff)
    ═════════════════════════════════════════════════════════════════ */
 
 .mode-selection-overlay {
   position: fixed;
   inset: 0;
   z-index: 10000;
-  background: rgba(4, 7, 14, 0.85);
+  background: rgba(26, 18, 11, 0.9);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
   display: flex;
@@ -20,10 +20,10 @@
 .mode-selection-container {
   width: 100%;
   max-width: 960px;
-  background: linear-gradient(180deg, #0b111e 0%, #060911 100%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(180deg, #2a1e17 0%, #1a120b 100%);
+  border: 1px solid rgba(213, 206, 163, 0.25);
   border-radius: 20px;
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.85), 0 0 50px rgba(0, 229, 160, 0.08);
+  box-shadow: 0 16px 48px rgba(10, 7, 4, 0.85);
   padding: 2rem 2.25rem 2.25rem;
   box-sizing: border-box;
   animation: modeScaleUp 0.32s cubic-bezier(0.16, 1, 0.3, 1);
@@ -43,7 +43,7 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, transparent 0%, #00e5a0 30%, #38bdf8 70%, transparent 100%);
+  background: linear-gradient(135deg, #d5cea3 0%, #e5e5cb 100%);
 }
 
 .mode-selection-header {
@@ -61,15 +61,15 @@
   font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.12em;
-  color: #38bdf8;
+  color: #ffffff;
 }
 
 .tag-pulse-dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #38bdf8;
-  box-shadow: 0 0 8px #38bdf8;
+  background: #ffffff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
   animation: cyberPulse 1.4s infinite alternate;
 }
 
@@ -132,9 +132,9 @@
 
 .mode-card {
   position: relative;
-  background: rgba(13, 20, 36, 0.7);
+  background: rgba(42, 30, 23, 0.85);
   border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(213, 206, 163, 0.22);
   padding: 1.75rem;
   box-sizing: border-box;
   cursor: pointer;
@@ -170,8 +170,8 @@
 }
 
 .mode-card-learn:hover {
-  border-color: rgba(0, 229, 160, 0.5);
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.7), 0 0 35px rgba(0, 229, 160, 0.18);
+  border-color: rgba(255, 255, 255, 0.18);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
 .mode-card-free:hover {
@@ -202,9 +202,9 @@
 }
 
 .learn-badge {
-  background: rgba(0, 229, 160, 0.1);
-  border: 1px solid rgba(0, 229, 160, 0.3);
-  color: #00e5a0;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #ffffff;
 }
 
 .free-badge {
@@ -233,8 +233,8 @@
 }
 
 .learn-icon-wrap {
-  background: rgba(0, 229, 160, 0.12);
-  border: 1px solid rgba(0, 229, 160, 0.3);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
 }
 
 .free-icon-wrap {
@@ -282,7 +282,7 @@
 }
 
 .perk-check {
-  color: #00e5a0;
+  color: #ffffff;
   font-weight: 900;
   font-size: 0.85rem;
 }
@@ -312,15 +312,15 @@
 }
 
 .mode-btn-learn {
-  background: linear-gradient(135deg, #00e5a0 0%, #059669 100%);
-  border: 1px solid rgba(0, 229, 160, 0.6);
+  background: linear-gradient(135deg, #ffffff 0%, #d4d4d8 100%);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   color: #060911;
-  box-shadow: 0 4px 18px rgba(0, 229, 160, 0.35);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
 .mode-btn-learn:hover {
-  background: linear-gradient(135deg, #10b981 0%, #047857 100%);
-  box-shadow: 0 6px 24px rgba(0, 229, 160, 0.5);
+  background: linear-gradient(135deg, #ffffff 0%, #d4d4d8 100%);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
   transform: translateY(-2px);
 }
 
@@ -449,12 +449,12 @@ body.theme-light .mode-btn-free,
   height: 68px;
   margin: 0.5rem auto 1.25rem;
   border-radius: 18px;
-  background: rgba(0, 229, 160, 0.1);
-  border: 1px solid rgba(0, 229, 160, 0.3);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 25px rgba(0, 229, 160, 0.15);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
 .mode-course-emoji {
@@ -482,7 +482,7 @@ body.theme-light .mode-btn-free,
 }
 
 .mode-card-perks.clean-list .perk-check {
-  color: #00e5a0;
+  color: #ffffff;
   font-weight: 800;
   font-size: 0.95rem;
   line-height: 1.3;
@@ -509,15 +509,15 @@ body.theme-light .mode-btn-free,
 }
 
 .mode-btn-secondary:hover {
-  color: #38bdf8;
+  color: #ffffff;
   text-decoration: underline;
 }
 
 /* Light theme support */
 body.theme-light .mode-course-icon-wrap,
 .theme-light .mode-course-icon-wrap {
-  background: rgba(16, 185, 129, 0.1);
-  border-color: rgba(16, 185, 129, 0.3);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.18);
 }
 
 body.theme-light .mode-card-perks.clean-list li,

@@ -9,6 +9,18 @@ export default function ModeSelectionCards({
   onSelectLearn,
   onSelectFree,
 }) {
+  React.useEffect(() => {
+    if (!isOpen) return;
+    const originalOverflow = document.body.style.overflow;
+    const originalDocOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      document.documentElement.style.overflow = originalDocOverflow;
+    };
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   return (
@@ -21,7 +33,7 @@ export default function ModeSelectionCards({
         aria-label="Start Guided Course"
       >
         <PixelCanvas
-          colors={["#00e5a0", "#10b981", "#38bdf8", "#facc15"]}
+          colors={["#ffffff", "#f5e6c7", "#b08d57", "#3a2e1e"]}
           gap={8}
         />
 

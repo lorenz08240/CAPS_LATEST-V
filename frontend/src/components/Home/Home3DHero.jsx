@@ -98,7 +98,7 @@ function HolographicShockwave({ trigger, rgbColor }) {
       <mesh>
         <ringGeometry args={[0.98, 1.02, 64]} />
         <meshBasicMaterial 
-          color="#38bdf8" 
+          color="#ffffff" 
           transparent 
           opacity={0} 
           side={THREE.DoubleSide} 

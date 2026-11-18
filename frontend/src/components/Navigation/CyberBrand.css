@@ -259,14 +259,14 @@
 }
 
 .dot-ready, .dot-ok, .dot-ping {
-  background: #10b981;
-  box-shadow: 0 0 8px #10b981;
+  background: #ffffff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
   animation: pingDot 1.5s infinite;
 }
 
 .dot-cool {
-  background: #06b6d4;
-  box-shadow: 0 0 8px #06b6d4;
+  background: #ffffff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
 .dot-power {

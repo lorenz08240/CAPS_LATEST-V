@@ -154,7 +154,7 @@ function VirtualRigStage({ installedKeys, activeKey, postPassed, isPaused = fals
       {hasCase && (
         <group position={[0, -0.2, 0]} scale={[0.42, 0.42, 0.42]}>
           <NorthChalkWhiteCase
-            rgbColor={postPassed ? "#00e5a0" : "#00A896"}
+            rgbColor={postPassed ? "#ffffff" : "#b08d57"}
             caseColor="black"
             sidePanelMode={hasGpu && postPassed ? "glass" : "open"}
             explodedProgress={0}
@@ -168,7 +168,7 @@ function VirtualRigStage({ installedKeys, activeKey, postPassed, isPaused = fals
         <group position={[-0.2, 0.35, -0.2]}>
           <ComponentModels3D
             part={{ category: "motherboard", name: "ATX Reference Motherboard", targetPosition: [0, 0, 0] }}
-            rgbColor={postPassed ? "#00e5a0" : "#00A896"}
+            rgbColor={postPassed ? "#ffffff" : "#b08d57"}
             enableHighlight={activeKey === "motherboard"}
           />
 
@@ -180,7 +180,7 @@ function VirtualRigStage({ installedKeys, activeKey, postPassed, isPaused = fals
                 color="#e2e8f0"
                 metalness={0.94}
                 roughness={0.16}
-                emissive={postPassed ? "#00e5a0" : "#000000"}
+                emissive={postPassed ? "#ffffff" : "#000000"}
                 emissiveIntensity={postPassed ? 0.35 : 0}
               />
             </mesh>
@@ -206,7 +206,7 @@ function VirtualRigStage({ installedKeys, activeKey, postPassed, isPaused = fals
             <group position={[-0.12, 1.4, 0.8]}>
               <ComponentModels3D
                 part={{ category: "ram", name: "DDR5 Dual-Channel Kit", targetPosition: [0, 0, 0] }}
-                rgbColor={postPassed ? "#00e5a0" : "#00A896"}
+                rgbColor={postPassed ? "#ffffff" : "#b08d57"}
                 enableHighlight={activeKey === "ram"}
               />
             </group>
@@ -217,7 +217,7 @@ function VirtualRigStage({ installedKeys, activeKey, postPassed, isPaused = fals
             <group position={[-0.12, 0.35, -0.6]}>
               <ComponentModels3D
                 part={{ category: "storage", name: "PCIe 4.0 M.2 NVMe", targetPosition: [0, 0, 0] }}
-                rgbColor={postPassed ? "#00e5a0" : "#00A896"}
+                rgbColor={postPassed ? "#ffffff" : "#b08d57"}
                 enableHighlight={activeKey === "storage"}
               />
             </group>
@@ -226,7 +226,7 @@ function VirtualRigStage({ installedKeys, activeKey, postPassed, isPaused = fals
           {/* 8. Dedicated GPU */}
           {hasGpu && (
             <group position={[-0.85, -0.7, -0.3]} scale={[0.72, 0.72, 0.72]}>
-              <NepotatoGPU rgbColor={postPassed ? "#00e5a0" : "#00A896"} />
+              <NepotatoGPU rgbColor={postPassed ? "#ffffff" : "#b08d57"} />
             </group>
           )}
         </group>
@@ -235,7 +235,7 @@ function VirtualRigStage({ installedKeys, activeKey, postPassed, isPaused = fals
       {/* 7. PSU Mounted Properly in Lower Rear Shroud Compartment */}
       {hasPsu && (
         <group position={[0.1, -1.48, -0.85]} scale={[0.48, 0.48, 0.48]} rotation={[0, Math.PI, 0]}>
-          <PSUModel rgbColor={postPassed ? "#00e5a0" : "#00A896"} isMounted={true} isStandalone={false} />
+          <PSUModel rgbColor={postPassed ? "#ffffff" : "#b08d57"} isMounted={true} isStandalone={false} />
         </group>
       )}
 
@@ -402,7 +402,7 @@ export default function VirtualAssemblyLab({
             <hemisphereLight args={["#ffffff", "#64748b", 1.4]} />
             <directionalLight position={[-8, 12, 10]} intensity={2.2} />
             <directionalLight position={[8, 8, -6]} intensity={1.2} />
-            <pointLight position={[0, 2, 2]} intensity={0.9} color="#00e5a0" />
+            <pointLight position={[0, 2, 2]} intensity={0.9} color="#ffffff" />
 
             <VirtualRigStage
               installedKeys={installedKeys}

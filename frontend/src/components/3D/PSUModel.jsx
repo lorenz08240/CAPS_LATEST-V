@@ -8,7 +8,7 @@ import { PSU_MODEL_URL } from '../../utilities/modelPreloader';
  * Procedural Fallback ATX Power Supply
  * Used while GLTF parses, during initial hydration, or in error states.
  */
-export function ProceduralPSUFallback({ rgbColor = '#00e5ff', isSelected = false }) {
+export function ProceduralPSUFallback({ rgbColor = '#ffffff', isSelected = false }) {
   return (
     <group>
       {/* Main PSU Box */}
@@ -18,7 +18,7 @@ export function ProceduralPSUFallback({ rgbColor = '#00e5ff', isSelected = false
           color="#1e2229" 
           roughness={0.4} 
           metalness={0.7} 
-          emissive={isSelected ? '#00e5ff' : '#000000'}
+          emissive={isSelected ? '#ffffff' : '#000000'}
           emissiveIntensity={isSelected ? 0.8 : 0}
         />
       </mesh>
@@ -83,7 +83,7 @@ export class PSUErrorBoundary extends Component {
  * 80-Plus Gold / Titanium spec plate, and modular cable harnesses.
  */
 function PSUModelMesh({
-  rgbColor = '#00e5ff',
+  rgbColor = '#ffffff',
   isSelected = false,
   isHovered = false,
   enableHighlight = true,
@@ -222,7 +222,7 @@ function PSUModelMesh({
 
   const effectiveHover = enableHighlight && isHovered;
   const activeSelected = enableHighlight && isSelected;
-  const accentColor = activeSelected ? '#facc15' : effectiveHover ? '#38bdf8' : rgbColor;
+  const accentColor = activeSelected ? '#facc15' : effectiveHover ? '#ffffff' : rgbColor;
 
   return (
     <group dispose={null}>
@@ -396,7 +396,7 @@ function PSUModelMesh({
           <mesh position={[0, 0, 0]}>
             <boxGeometry args={[3.26, 1.84, 3.14]} />
             <meshBasicMaterial 
-              color={activeSelected ? '#00e5ff' : '#facc15'} 
+              color={activeSelected ? '#ffffff' : '#facc15'} 
               wireframe 
               transparent 
               opacity={activeSelected ? 0.65 : 0.35} 
@@ -406,7 +406,7 @@ function PSUModelMesh({
           <mesh position={[0, -0.92, 0]} rotation={[-Math.PI / 2, 0, 0]}>
             <ringGeometry args={[1.7, 1.9, 48]} />
             <meshBasicMaterial 
-              color={activeSelected ? '#00e5ff' : '#facc15'} 
+              color={activeSelected ? '#ffffff' : '#facc15'} 
               transparent 
               opacity={0.7} 
               side={THREE.DoubleSide} 
@@ -423,7 +423,7 @@ function PSUModelMesh({
  * Supports mounted mode (inside PC case) and standalone mode (Hero showcase)
  */
 export default function PSUModel({
-  rgbColor = '#00e5ff',
+  rgbColor = '#ffffff',
   isSelected = false,
   isHovered = false,
   enableHighlight = true,
@@ -495,7 +495,7 @@ export default function PSUModel({
 /**
  * Dedicated Hero Section Floating PSU Showcase Component
  */
-export function HeroFloatingPSU({ rgbColor = '#00e5ff', enableHighlight = false }) {
+export function HeroFloatingPSU({ rgbColor = '#ffffff', enableHighlight = false }) {
   const groupRef = useRef();
 
   return (

@@ -20,9 +20,9 @@
   background: rgba(14, 20, 36, 0.94);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid rgba(56, 189, 248, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 22px;
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.8), 0 0 32px rgba(56, 189, 248, 0.12);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
   padding: 36px 34px;
   text-align: center;
   display: flex;
@@ -63,29 +63,29 @@
 }
 
 .guard-badge.badge-account {
-  background: rgba(0, 229, 160, 0.12);
-  border: 1px solid rgba(0, 229, 160, 0.35);
-  color: #00e5a0;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #ffffff;
 }
 
 .guard-badge.badge-milestone {
-  background: rgba(56, 189, 248, 0.12);
-  border: 1px solid rgba(56, 189, 248, 0.35);
-  color: #38bdf8;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #ffffff;
 }
 
 .guard-badge-pulse {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #00e5a0;
-  box-shadow: 0 0 10px #00e5a0;
+  background: #ffffff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
   animation: guardPulse 1.4s infinite;
 }
 
 .guard-badge-pulse.pulse-milestone {
-  background: #38bdf8;
-  box-shadow: 0 0 10px #38bdf8;
+  background: #ffffff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
 @keyframes guardPulse {
@@ -109,7 +109,7 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #00e5a0;
+  background: #ffffff;
 }
 
 .guard-student-pill strong {
@@ -127,15 +127,15 @@
 }
 
 .guard-icon-wrap.icon-academic {
-  background: rgba(0, 229, 160, 0.1);
-  border: 1px solid rgba(0, 229, 160, 0.3);
-  box-shadow: inset 0 0 20px rgba(0, 229, 160, 0.15);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
 .guard-icon-wrap.icon-milestone {
-  background: rgba(56, 189, 248, 0.1);
-  border: 1px solid rgba(56, 189, 248, 0.3);
-  box-shadow: inset 0 0 20px rgba(56, 189, 248, 0.15);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
 .guard-title {
@@ -178,7 +178,7 @@
 }
 
 .benefit-bullet {
-  color: #00e5a0;
+  color: #ffffff;
   font-weight: 800;
   font-size: 14px;
   flex-shrink: 0;
@@ -219,19 +219,19 @@
 }
 
 .roadmap-step.is-active .roadmap-num {
-  background: #38bdf8;
+  background: #ffffff;
   color: #060911;
-  box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
 .roadmap-step.is-completed .roadmap-num {
-  background: #10b981;
+  background: #ffffff;
   color: #060911;
-  box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
 .roadmap-step.is-completed .roadmap-info span {
-  color: #10b981;
+  color: #ffffff;
   font-weight: 600;
 }
 
@@ -247,11 +247,11 @@
 }
 
 .roadmap-connector.is-active {
-  background: rgba(56, 189, 248, 0.5);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .roadmap-connector.is-completed {
-  background: rgba(16, 185, 129, 0.5);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .roadmap-step.is-locked .roadmap-num {
@@ -260,9 +260,9 @@
 }
 
 .roadmap-step.is-target .roadmap-num {
-  background: rgba(56, 189, 248, 0.15);
-  border: 1px solid rgba(56, 189, 248, 0.4);
-  color: #38bdf8;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #ffffff;
 }
 
 .roadmap-info {
@@ -282,7 +282,7 @@
 }
 
 .roadmap-step.is-active .roadmap-info span {
-  color: #38bdf8;
+  color: #ffffff;
   font-weight: 700;
 }
 
@@ -318,24 +318,24 @@
 }
 
 .guard-btn-google {
-  background: linear-gradient(135deg, #00e5a0 0%, #00b480 100%);
-  box-shadow: 0 8px 24px rgba(0, 229, 160, 0.35);
+  background: linear-gradient(135deg, #ffffff 0%, #d4d4d8 100%);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
 .guard-btn-google:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(0, 229, 160, 0.5);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
 .guard-btn-milestone {
-  background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #d4d4d8 100%);
   color: #ffffff;
-  box-shadow: 0 8px 24px rgba(56, 189, 248, 0.35);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
 .guard-btn-milestone:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(56, 189, 248, 0.5);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
 .guard-btn-secondary {
@@ -370,7 +370,7 @@
 }
 
 .guard-link-home:hover {
-  color: #38bdf8;
+  color: #ffffff;
   text-decoration: underline;
 }
 

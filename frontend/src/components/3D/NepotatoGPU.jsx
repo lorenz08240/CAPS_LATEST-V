@@ -456,7 +456,7 @@ function buildNepotatoCard() {
 }
 
 export default function NepotatoGPU({
-  rgbColor = '#00e5ff',
+  rgbColor = '#ffffff',
   explodedProgress = 0,
   isSelected = false,
   isHovered = false,
@@ -492,7 +492,7 @@ export default function NepotatoGPU({
         coatedMetal.emissive.set('#facc15');
         coatedMetal.emissiveIntensity = 0.5;
       } else if (isHovered) {
-        coatedMetal.emissive.set('#38bdf8');
+        coatedMetal.emissive.set('#ffffff');
         coatedMetal.emissiveIntensity = 0.35;
       } else {
         coatedMetal.emissive.set(0x000000);

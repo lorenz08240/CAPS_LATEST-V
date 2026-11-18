@@ -40,10 +40,8 @@
   background: rgba(15, 23, 42, 0.78); /* sleek semi-transparent dark slate */
   -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(56, 189, 248, 0.25); /* refined subtle cyan border */
-  box-shadow:
-    0 10px 30px -10px rgba(0, 0, 0, 0.8),
-    0 0 20px -5px rgba(6, 182, 212, 0.15); /* soft ambient glow/shadow */
+  border: 1px solid rgba(255, 255, 255, 0.16); /* refined subtle cyan border */
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6); /* soft ambient glow/shadow */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -136,7 +134,7 @@
   font-size: clamp(26px, 3.2vw, 34px);
   font-weight: 800;
   line-height: 1.1;
-  background: linear-gradient(to right, #22d3ee, #34d399); /* cyan-to-emerald gradient */
+  background: linear-gradient(to right, #ffffff, #ffffff); /* cyan-to-emerald gradient */
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -167,7 +165,7 @@
   font-weight: 700;
   letter-spacing: 0.1em;
   color: #020617; /* dark/slate text-slate-950 font-semibold */
-  background: linear-gradient(to right, #22d3ee, #34d399); /* from-cyan-400 to-emerald-400 */
+  background: linear-gradient(to right, #ffffff, #ffffff); /* from-cyan-400 to-emerald-400 */
   border: none;
   border-radius: 9999px;
   cursor: pointer;
@@ -199,7 +197,7 @@
 }
 
 .fs-card-btn:focus-visible {
-  outline: 2px solid #22d3ee;
+  outline: 2px solid #ffffff;
   outline-offset: 3px;
 }
 
@@ -241,10 +239,8 @@
   padding: 40px 30px;
   border-radius: 1.25rem;
   background: rgba(15, 23, 42, 0.85);
-  border: 1px solid rgba(56, 189, 248, 0.25);
-  box-shadow:
-    0 10px 30px -10px rgba(0, 0, 0, 0.8),
-    0 0 20px -5px rgba(6, 182, 212, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -256,7 +252,7 @@
   position: relative;
   width: 52px;
   height: 94px;
-  border: 3px solid #22d3ee;
+  border: 3px solid #ffffff;
   border-radius: 12px;
   margin-bottom: 6px;
   box-shadow: 0 0 18px rgba(34, 211, 238, 0.35);
@@ -271,7 +267,7 @@
   width: 16px;
   height: 3.5px;
   border-radius: 9999px;
-  background: #22d3ee;
+  background: #ffffff;
 }
 
 @keyframes fs-gate-rotate-device {
@@ -290,7 +286,7 @@
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.14em;
-  color: #22d3ee;
+  color: #ffffff;
   text-transform: uppercase;
 }
 

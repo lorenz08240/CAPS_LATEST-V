@@ -65,7 +65,7 @@ export default function ProceduralSickleFan({
   position = [0, 0, 0],
   rotation = [0, 0, 0],
   scale = 1,
-  rgbColor = '#00e5ff',
+  rgbColor = '#ffffff',
   speed = 7,
   size = 2.45,
   radius = 1.15,

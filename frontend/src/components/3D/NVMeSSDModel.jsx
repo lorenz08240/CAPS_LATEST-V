@@ -146,7 +146,7 @@ function NVMeSSDMesh({
         <mesh position={[0, 0, 0]}>
           <boxGeometry args={[1.96, 0.48, 0.25]} />
           <meshBasicMaterial
-            color={isSelected ? '#00e5ff' : '#facc15'}
+            color={isSelected ? '#ffffff' : '#facc15'}
             wireframe
             transparent
             opacity={0.4}

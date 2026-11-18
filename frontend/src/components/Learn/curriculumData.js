@@ -27,8 +27,8 @@ export const CSS_CURRICULUM = [
           title: "Safe Work Surfaces & Grounding",
           badge: "SAFETY CHECKLIST",
           items: [
-            { label: "Bare Wood / Silicone Mat", value: "Recommended — non-conductive and static safe", tag: "SAFE", color: "#10b981" },
-            { label: "Cardboard Mobo Box", value: "Ideal test-bench surface for pre-assembly", tag: "SAFE", color: "#10b981" },
+            { label: "Bare Wood / Silicone Mat", value: "Recommended — non-conductive and static safe", tag: "SAFE", color: "#b08d57" },
+            { label: "Cardboard Mobo Box", value: "Ideal test-bench surface for pre-assembly", tag: "SAFE", color: "#b08d57" },
             { label: "Anti-Static Bag Exterior", value: "Never assemble on top — outside is conductive", tag: "HAZARD", color: "#ef4444" },
             { label: "Carpet / Rugs / Socks", value: "Generates high static friction; avoid entirely", tag: "HAZARD", color: "#ef4444" }
           ]
@@ -64,8 +64,8 @@ export const CSS_CURRICULUM = [
           title: "Grip & Holding Rules",
           badge: "HANDLING PROTOCOL",
           items: [
-            { label: "Outer Edge Fiberglass", value: "Grip firmly by bare outer PCB edges", tag: "SAFE", color: "#10b981" },
-            { label: "VRM Metal Heatsink", value: "Solid structural metal; safe lifting point", tag: "SAFE", color: "#10b981" },
+            { label: "Outer Edge Fiberglass", value: "Grip firmly by bare outer PCB edges", tag: "SAFE", color: "#b08d57" },
+            { label: "VRM Metal Heatsink", value: "Solid structural metal; safe lifting point", tag: "SAFE", color: "#b08d57" },
             { label: "Capacitor Cylinders", value: "Never grip — leads will snap from solder pads", tag: "FORBIDDEN", color: "#ef4444" },
             { label: "Socket Pins Area", value: "Keep plastic protective cover installed until CPU drop", tag: "CRITICAL", color: "#ef4444" }
           ]
@@ -101,8 +101,8 @@ export const CSS_CURRICULUM = [
           title: "Essential Hardware Tooling",
           badge: "TOOLING GUIDE",
           items: [
-            { label: "#2 Phillips Screwdriver", value: "Universal tool for 95% of PC screws", tag: "PRIMARY", color: "#10b981" },
-            { label: "#1 or #0 Phillips", value: "Required for tiny M.2 SSD mounting screws", tag: "PRECISION", color: "#06b6d4" },
+            { label: "#2 Phillips Screwdriver", value: "Universal tool for 95% of PC screws", tag: "PRIMARY", color: "#b08d57" },
+            { label: "#1 or #0 Phillips", value: "Required for tiny M.2 SSD mounting screws", tag: "PRECISION", color: "#ffffff" },
             { label: "Brass Hex Standoffs", value: "Elevate PCB 6-8mm off metal case tray", tag: "MANDATORY", color: "#f59e0b" },
             { label: "Magnetic Parts Tray", value: "Prevents loose screws dropping inside case", tag: "HELPFUL", color: "#8b5cf6" }
           ]
@@ -146,8 +146,8 @@ export const CSS_CURRICULUM = [
           title: "Form Factor Standards",
           badge: "FORM FACTORS",
           items: [
-            { label: "ATX (Full Size)", value: "305 x 244 mm · 7 expansion slots · 9 standoffs", tag: "STANDARD", color: "#10b981" },
-            { label: "Micro-ATX (mATX)", value: "244 x 244 mm · 4 expansion slots · 6-8 standoffs", tag: "COMPACT", color: "#06b6d4" },
+            { label: "ATX (Full Size)", value: "305 x 244 mm · 7 expansion slots · 9 standoffs", tag: "STANDARD", color: "#b08d57" },
+            { label: "Micro-ATX (mATX)", value: "244 x 244 mm · 4 expansion slots · 6-8 standoffs", tag: "COMPACT", color: "#ffffff" },
             { label: "Mini-ITX (mITX)", value: "170 x 170 mm · 1 expansion slot · 4 standoffs", tag: "SFF", color: "#f59e0b" },
             { label: "Brass Standoffs", value: "Mandatory insulators preventing chassis steel shorts", tag: "CRITICAL", color: "#ef4444" }
           ]
@@ -183,8 +183,8 @@ export const CSS_CURRICULUM = [
           title: "VRM Components & Power Rails",
           badge: "POWER CIRCUITRY",
           items: [
-            { label: "MOSFETs & Power Stages", value: "High-speed electronic switches delivering clean current", tag: "CIRCUIT", color: "#10b981" },
-            { label: "Chokes & Ferrite Cores", value: "Rectangular blocks smoothing current flow", tag: "FILTER", color: "#06b6d4" },
+            { label: "MOSFETs & Power Stages", value: "High-speed electronic switches delivering clean current", tag: "CIRCUIT", color: "#b08d57" },
+            { label: "Chokes & Ferrite Cores", value: "Rectangular blocks smoothing current flow", tag: "FILTER", color: "#ffffff" },
             { label: "Solid Capacitors", value: "Silver cylinders storing charge and reducing ripple", tag: "BUFFER", color: "#f59e0b" },
             { label: "8-Pin EPS 12V Connector", value: "Dedicated top-left power feed for the CPU VRM", tag: "SUPPLY", color: "#8b5cf6" }
           ]
@@ -221,9 +221,9 @@ export const CSS_CURRICULUM = [
           badge: "PORT STANDARDS",
           items: [
             { label: "Black USB Type-A", value: "USB 2.0 (480 Mbps) · Keyboards, mice & headsets", tag: "USB 2.0", color: "#64748b" },
-            { label: "Blue USB Type-A", value: "USB 3.2 Gen 1 (5 Gbps) · High speed flash drives", tag: "USB 3.0", color: "#0ea5e9" },
+            { label: "Blue USB Type-A", value: "USB 3.2 Gen 1 (5 Gbps) · High speed flash drives", tag: "USB 3.0", color: "#ffffff" },
             { label: "Teal / Red USB", value: "USB 3.2 Gen 2 (10 Gbps) · External NVMe SSDs", tag: "USB 3.2", color: "#ef4444" },
-            { label: "Front Panel Headers", value: "Power SW, Reset SW, Power LED+, HDD LED", tag: "JFP1", color: "#10b981" }
+            { label: "Front Panel Headers", value: "Power SW, Reset SW, Power LED+, HDD LED", tag: "JFP1", color: "#b08d57" }
           ]
         },
         mistakeWarning: {
@@ -265,8 +265,8 @@ export const CSS_CURRICULUM = [
           title: "LGA vs PGA Socket Comparison",
           badge: "SOCKET COMPARISON",
           items: [
-            { label: "LGA (Intel & AMD AM5)", value: "Motherboard has delicate gold pins; CPU has flat pads", tag: "LGA", color: "#10b981" },
-            { label: "PGA (Legacy AMD AM4)", value: "CPU has hundreds of needle pins; socket has holes", tag: "PGA", color: "#06b6d4" },
+            { label: "LGA (Intel & AMD AM5)", value: "Motherboard has delicate gold pins; CPU has flat pads", tag: "LGA", color: "#b08d57" },
+            { label: "PGA (Legacy AMD AM4)", value: "CPU has hundreds of needle pins; socket has holes", tag: "PGA", color: "#ffffff" },
             { label: "Golden Triangle", value: "Indicates Pin 1 corner for foolproof orientation", tag: "KEYING", color: "#f59e0b" },
             { label: "Zero Insertion Force (ZIF)", value: "CPU must drop flat by gravity with ZERO force", tag: "RULE", color: "#ef4444" }
           ]
@@ -302,8 +302,8 @@ export const CSS_CURRICULUM = [
           title: "Thermal Application Rules",
           badge: "COOLING PROTOCOL",
           items: [
-            { label: "Pea / Rice Grain Method", value: "Small dot in the center spreads evenly under pressure", tag: "METHOD", color: "#10b981" },
-            { label: "Crisscross Tightening", value: "Screw diagonally 1-2 turns each for even pressure", tag: "TECHNIQUE", color: "#06b6d4" },
+            { label: "Pea / Rice Grain Method", value: "Small dot in the center spreads evenly under pressure", tag: "METHOD", color: "#b08d57" },
+            { label: "Crisscross Tightening", value: "Screw diagonally 1-2 turns each for even pressure", tag: "TECHNIQUE", color: "#ffffff" },
             { label: "Peel Protective Sticker", value: "Transparent plastic film under cooler MUST be removed", tag: "CRITICAL", color: "#ef4444" },
             { label: "CPU_FAN Header", value: "Plug cooler 4-pin PWM into CPU_FAN, not SYS_FAN", tag: "HEADER", color: "#8b5cf6" }
           ]
@@ -347,9 +347,9 @@ export const CSS_CURRICULUM = [
           title: "Dual-Channel Populating Rules",
           badge: "RAM STANDARDS",
           items: [
-            { label: "Slot A2 (2nd from CPU)", value: "First DIMM stick destination", tag: "PRIMARY", color: "#10b981" },
-            { label: "Slot B2 (4th from CPU)", value: "Second DIMM stick destination", tag: "PRIMARY", color: "#10b981" },
-            { label: "Off-Center Notch", value: "Keyed slot prevents installing upside down", tag: "KEYING", color: "#06b6d4" },
+            { label: "Slot A2 (2nd from CPU)", value: "First DIMM stick destination", tag: "PRIMARY", color: "#b08d57" },
+            { label: "Slot B2 (4th from CPU)", value: "Second DIMM stick destination", tag: "PRIMARY", color: "#b08d57" },
+            { label: "Off-Center Notch", value: "Keyed slot prevents installing upside down", tag: "KEYING", color: "#ffffff" },
             { label: "Solid End Clicks", value: "Retention wings must snap completely closed on both ends", tag: "SEATING", color: "#f59e0b" }
           ]
         },
@@ -384,8 +384,8 @@ export const CSS_CURRICULUM = [
           title: "M.2 SSD Installation Protocol",
           badge: "STORAGE TECH",
           items: [
-            { label: "25-Degree Entry Angle", value: "Slide golden pins gently into M.2 socket at angle", tag: "STEP 1", color: "#10b981" },
-            { label: "Level Standoff Screw", value: "Drive must lie flat parallel to the motherboard", tag: "STEP 2", color: "#06b6d4" },
+            { label: "25-Degree Entry Angle", value: "Slide golden pins gently into M.2 socket at angle", tag: "STEP 1", color: "#b08d57" },
+            { label: "Level Standoff Screw", value: "Drive must lie flat parallel to the motherboard", tag: "STEP 2", color: "#ffffff" },
             { label: "Peel Blue Heatsink Film", value: "Peel plastic protector off motherboard thermal pad", tag: "CRITICAL", color: "#ef4444" },
             { label: "Primary CPU M.2 Slot", value: "Top slot closest to CPU has direct x4 PCIe lanes", tag: "LANES", color: "#8b5cf6" }
           ]
@@ -429,8 +429,8 @@ export const CSS_CURRICULUM = [
           title: "GPU Installation & Display Protocol",
           badge: "GRAPHICS GUIDE",
           items: [
-            { label: "Topmost PCIe x16 Slot", value: "Wired directly to CPU with maximum 16 lanes", tag: "PRIMARY", color: "#10b981" },
-            { label: "PCIe Retention Latch", value: "Must click shut automatically when card is pressed in", tag: "LOCK", color: "#06b6d4" },
+            { label: "Topmost PCIe x16 Slot", value: "Wired directly to CPU with maximum 16 lanes", tag: "PRIMARY", color: "#b08d57" },
+            { label: "PCIe Retention Latch", value: "Must click shut automatically when card is pressed in", tag: "LOCK", color: "#ffffff" },
             { label: "Case Bracket Screws", value: "Prevents GPU sag and tearing the PCIe slot", tag: "SUPPORT", color: "#f59e0b" },
             { label: "Display Cable Rule", value: "Monitor cable MUST connect to GPU, NOT motherboard", tag: "RULE", color: "#ef4444" }
           ]
@@ -466,8 +466,8 @@ export const CSS_CURRICULUM = [
           title: "PSU Cable Pinout Identification",
           badge: "CABLE STANDARDS",
           items: [
-            { label: "24-Pin ATX Main", value: "Powers motherboard chipset, RAM, and PCIe bus", tag: "24-PIN", color: "#10b981" },
-            { label: "8-Pin (4+4) EPS CPU", value: "Splits into two 4-pin halves; powers CPU VRM only", tag: "CPU", color: "#06b6d4" },
+            { label: "24-Pin ATX Main", value: "Powers motherboard chipset, RAM, and PCIe bus", tag: "24-PIN", color: "#b08d57" },
+            { label: "8-Pin (4+4) EPS CPU", value: "Splits into two 4-pin halves; powers CPU VRM only", tag: "CPU", color: "#ffffff" },
             { label: "8-Pin (6+2) PCIe GPU", value: "Splits into 6-pin + 2-pin; powers graphics cards", tag: "GPU", color: "#f59e0b" },
             { label: "80 PLUS Gold", value: "Operates at 90% efficiency at typical 50% workload", tag: "RATING", color: "#eab308" }
           ]
@@ -511,9 +511,9 @@ export const CSS_CURRICULUM = [
           title: "Airflow Configurations Compared",
           badge: "AIRFLOW PHYSICS",
           items: [
-            { label: "Positive Pressure", value: "Intake CFM > Exhaust CFM · Forces air out of unsealed seams; keeps dust out", tag: "OPTIMAL", color: "#10b981" },
+            { label: "Positive Pressure", value: "Intake CFM > Exhaust CFM · Forces air out of unsealed seams; keeps dust out", tag: "OPTIMAL", color: "#b08d57" },
             { label: "Negative Pressure", value: "Exhaust CFM > Intake CFM · Sucks unfiltered dust into cracks", tag: "DUST TRAP", color: "#ef4444" },
-            { label: "Balanced Airflow", value: "Equal intake and exhaust; neutral pressure loop", tag: "NEUTRAL", color: "#06b6d4" },
+            { label: "Balanced Airflow", value: "Equal intake and exhaust; neutral pressure loop", tag: "NEUTRAL", color: "#ffffff" },
             { label: "Front Intake / Rear Exhaust", value: "Natural front-to-back, bottom-to-top thermal convection", tag: "PATHWAY", color: "#8b5cf6" }
           ]
         },
@@ -548,8 +548,8 @@ export const CSS_CURRICULUM = [
           title: "Cable Routing Best Practices",
           badge: "ROUTING RULES",
           items: [
-            { label: "Velcro Straps & Ties", value: "Bundle cables along chassis perimeter channels", tag: "CLEAN", color: "#10b981" },
-            { label: "Rubber Grommets", value: "Pass cables through closest grommet to motherboard port", tag: "DIRECT", color: "#06b6d4" },
+            { label: "Velcro Straps & Ties", value: "Bundle cables along chassis perimeter channels", tag: "CLEAN", color: "#b08d57" },
+            { label: "Rubber Grommets", value: "Pass cables through closest grommet to motherboard port", tag: "DIRECT", color: "#ffffff" },
             { label: "Clear Fan Blades", value: "Ensure no loose SATA or fan leads touch rotating blades", tag: "SAFETY", color: "#f59e0b" },
             { label: "PSU Shroud Basement", value: "Stash excess unused power leads in bottom compartment", tag: "STORAGE", color: "#8b5cf6" }
           ]
@@ -593,8 +593,8 @@ export const CSS_CURRICULUM = [
           title: "Pre-Assembly Checklist",
           badge: "BENCH TEST",
           items: [
-            { label: "Box Top Staging", value: "Place board on non-conductive cardboard box", tag: "SETUP", color: "#10b981" },
-            { label: "Core Trio Installed", value: "CPU + 1 stick of RAM in A2 + cooler mounted", tag: "TRIO", color: "#06b6d4" },
+            { label: "Box Top Staging", value: "Place board on non-conductive cardboard box", tag: "SETUP", color: "#b08d57" },
+            { label: "Core Trio Installed", value: "CPU + 1 stick of RAM in A2 + cooler mounted", tag: "TRIO", color: "#ffffff" },
             { label: "Screwdriver Jump", value: "Momentarily bridge Power SW pins with flathead screwdriver", tag: "BOOT", color: "#f59e0b" },
             { label: "Confirm Video Signal", value: "Verify BIOS screen appears before mounting into chassis", tag: "VERIFY", color: "#8b5cf6" }
           ]
@@ -631,14 +631,14 @@ export const CSS_CURRICULUM = [
           title: "8-Step Canonical Build Sequence",
           badge: "ASSEMBLY ORDER",
           items: [
-            { label: "1. Chassis Prep", value: "Inspect standoffs, remove side panels & pre-route front I/O", tag: "STEP 1", color: "#10b981" },
-            { label: "2. Motherboard Mount", value: "Align rear I/O shield & secure 9 brass standoff screws", tag: "STEP 2", color: "#06b6d4" },
+            { label: "1. Chassis Prep", value: "Inspect standoffs, remove side panels & pre-route front I/O", tag: "STEP 1", color: "#b08d57" },
+            { label: "2. Motherboard Mount", value: "Align rear I/O shield & secure 9 brass standoff screws", tag: "STEP 2", color: "#ffffff" },
             { label: "3. CPU Drop & Latch", value: "Align golden triangle, drop into socket, lock lever", tag: "STEP 3", color: "#f59e0b" },
             { label: "4. Thermal & Cooler", value: "Dot thermal compound and secure heatsink crisscross", tag: "STEP 4", color: "#8b5cf6" },
             { label: "5. Dual-Channel RAM", value: "Snap sticks into slots A2 and B2 until latches click", tag: "STEP 5", color: "#ec4899" },
-            { label: "6. M.2 NVMe SSD", value: "25° angle entry, press flat onto standoff, tighten screw", tag: "STEP 6", color: "#0ea5e9" },
+            { label: "6. M.2 NVMe SSD", value: "25° angle entry, press flat onto standoff, tighten screw", tag: "STEP 6", color: "#ffffff" },
             { label: "7. Power Supply (PSU)", value: "Slide into shroud, plug 24-pin ATX and 8-pin EPS leads", tag: "STEP 7", color: "#eab308" },
-            { label: "8. Dedicated GPU", value: "Seat in PCIe x16 slot until latch locks, connect PCIe power", tag: "STEP 8", color: "#10b981" }
+            { label: "8. Dedicated GPU", value: "Seat in PCIe x16 slot until latch locks, connect PCIe power", tag: "STEP 8", color: "#b08d57" }
           ]
         },
         mistakeWarning: {
@@ -675,7 +675,7 @@ export const CSS_CURRICULUM = [
             { label: "CPU LED (Solid)", value: "Processor unseated, bent pins, or missing 8-pin EPS cable", tag: "FAULT 1", color: "#ef4444" },
             { label: "DRAM LED (Solid)", value: "RAM unclicked, improper dual-channel slot, or dirt on pins", tag: "FAULT 2", color: "#f59e0b" },
             { label: "VGA LED (Solid)", value: "GPU not fully clicked into PCIe slot or missing PCIe power", tag: "FAULT 3", color: "#eab308" },
-            { label: "BOOT LED (Green)", value: "All hardware passed POST; system ready to load OS", tag: "SUCCESS", color: "#10b981" }
+            { label: "BOOT LED (Green)", value: "All hardware passed POST; system ready to load OS", tag: "SUCCESS", color: "#b08d57" }
           ]
         },
         mistakeWarning: {

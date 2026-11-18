@@ -211,7 +211,7 @@ function SignalFlowBeams({ specimenKey, visible, isPaused = false }) {
 
   if (!visible) return null;
   const refs = [dotRef1, dotRef2, dotRef3];
-  const colors = ["#00A896", "#38bdf8", "#f59e0b"];
+  const colors = ["#ffffff", "#b08d57", "#f59e0b"];
 
   return (
     <group>
@@ -272,7 +272,7 @@ function StageSpecimen({
           {/* Motherboard Base */}
           <ComponentModels3D
             part={{ category: "motherboard", name: selectedPartName || "ATX Reference Board", targetPosition: [0, 0, 0] }}
-            rgbColor="#00A896"
+            rgbColor="#ffffff"
             enableHighlight={false}
           />
 
@@ -301,7 +301,7 @@ function StageSpecimen({
           <group position={[-0.12, 1.4 + 0.35 * ex, 0.8 + 1.2 * ex]}>
             <ComponentModels3D
               part={{ category: "ram", name: "DDR5 Dual-Channel Kit", targetPosition: [0, 0, 0] }}
-              rgbColor="#00A896"
+              rgbColor="#ffffff"
               enableHighlight={false}
             />
           </group>
@@ -310,20 +310,20 @@ function StageSpecimen({
           <group position={[-0.12 - 0.7 * ex, 0.35 + 0.45 * ex, -0.6]}>
             <ComponentModels3D
               part={{ category: "storage", name: "PCIe 4.0 M.2 NVMe", targetPosition: [0, 0, 0] }}
-              rgbColor="#00A896"
+              rgbColor="#ffffff"
               enableHighlight={false}
             />
           </group>
 
           {/* Embedded / Floating GPU positioned outward along PCIe x16 slot */}
           <group position={[-0.85 - 2.1 * ex, -0.7 - 0.5 * ex, -0.3]} scale={[0.72, 0.72, 0.72]}>
-            <NepotatoGPU rgbColor="#00A896" />
+            <NepotatoGPU rgbColor="#ffffff" />
           </group>
 
           {/* Exploded Modular PSU in lower quadrant */}
           {ex > 0.08 && (
             <group position={[1.4 * ex, -2.4 * ex, 1.1 * ex]} scale={[0.85, 0.85, 0.85]}>
-              <PSUModel rgbColor="#00A896" isMounted={false} isStandalone={true} enableHighlight={false} />
+              <PSUModel rgbColor="#ffffff" isMounted={false} isStandalone={true} enableHighlight={false} />
             </group>
           )}
 
@@ -331,7 +331,7 @@ function StageSpecimen({
           {ex > 0.08 && (
             <group position={[0, 0, -2.4 * ex]} scale={[0.88, 0.88, 0.88]}>
               <GenericPCCase
-                rgbColor="#00A896"
+                rgbColor="#ffffff"
                 caseColor="black"
                 glassMode="open"
                 explodedProgress={0.4}
@@ -346,7 +346,7 @@ function StageSpecimen({
               {/* CPU to socket line */}
               <Line
                 points={[[-0.14 - 1.2 * ex, 1.4 + 0.25 * ex, -0.6], [-0.14, 1.4, -0.6]]}
-                color="#00e5a0"
+                color="#ffffff"
                 lineWidth={1.5}
                 dashed
                 dashScale={10}
@@ -354,7 +354,7 @@ function StageSpecimen({
               {/* RAM to DIMM slots line */}
               <Line
                 points={[[-0.12, 1.4 + 0.35 * ex, 0.8 + 1.2 * ex], [-0.12, 1.4, 0.8]]}
-                color="#00e5a0"
+                color="#ffffff"
                 lineWidth={1.5}
                 dashed
                 dashScale={10}
@@ -362,7 +362,7 @@ function StageSpecimen({
               {/* GPU to PCIe x16 slot line */}
               <Line
                 points={[[-0.85 - 2.1 * ex, -0.7 - 0.5 * ex, -0.3], [-0.85, -0.7, -0.3]]}
-                color="#00e5a0"
+                color="#ffffff"
                 lineWidth={1.5}
                 dashed
                 dashScale={10}
@@ -370,7 +370,7 @@ function StageSpecimen({
               {/* SSD to M.2 slot line */}
               <Line
                 points={[[-0.12 - 0.7 * ex, 0.35 + 0.45 * ex, -0.6], [-0.12, 0.35, -0.6]]}
-                color="#00e5a0"
+                color="#ffffff"
                 lineWidth={1.5}
                 dashed
                 dashScale={10}
@@ -383,7 +383,7 @@ function StageSpecimen({
       {specimenKey === "motherboard" && (
         <ComponentModels3D
           part={{ category: "motherboard", name: selectedPartName || "Motherboard", targetPosition: [0, 0, 0] }}
-          rgbColor="#00A896"
+          rgbColor="#ffffff"
           enableHighlight={false}
         />
       )}
@@ -391,39 +391,39 @@ function StageSpecimen({
       {specimenKey === "cpu" && (
         <ComponentModels3D
           part={{ category: "cpu", name: selectedPartName || "Processor (CPU)", targetPosition: [0, 0, 0] }}
-          rgbColor="#00A896"
+          rgbColor="#ffffff"
           enableHighlight={false}
         />
       )}
 
       {specimenKey === "ram" && (
         <group rotation={[Math.PI * 0.42, 0.1, 0]}>
-          <SingleDDR4RAM scale={1.15} rgbColor="#00A896" enableHighlight={false} />
+          <SingleDDR4RAM scale={1.15} rgbColor="#ffffff" enableHighlight={false} />
         </group>
       )}
 
       {specimenKey === "storage" && (
         <group rotation={[0.25, Math.PI / 2, 0]}>
-          <SingleNVMeSSD scale={1.3} rgbColor="#00A896" enableHighlight={false} />
+          <SingleNVMeSSD scale={1.3} rgbColor="#ffffff" enableHighlight={false} />
         </group>
       )}
 
       {specimenKey === "gpu" && (
         <ComponentModels3D
           part={{ category: "gpu", name: selectedPartName || "Graphics Card", targetPosition: [0, 0, 0] }}
-          rgbColor="#00A896"
+          rgbColor="#ffffff"
           enableHighlight={false}
         />
       )}
 
       {specimenKey === "psu" && (
-        <PSUModel rgbColor="#00A896" isMounted={false} isStandalone={true} enableHighlight={false} />
+        <PSUModel rgbColor="#ffffff" isMounted={false} isStandalone={true} enableHighlight={false} />
       )}
 
       {specimenKey === "case" && (
         <group scale={[0.42, 0.42, 0.42]} position={[0, -0.2, 0]}>
           <NorthChalkWhiteCase
-            rgbColor="#00A896"
+            rgbColor="#ffffff"
             caseColor="black"
             sidePanelMode={isExploded ? "open" : "glass"}
             explodedProgress={isExploded ? 0.35 : 0}
@@ -560,7 +560,7 @@ export default function LearnHardwareStage({
         <directionalLight position={[-10, 9, 10]} intensity={2.1} color="#fffcf5" />
         <directionalLight position={[8, 12, 8]} intensity={1.4} color="#ffffff" />
         <directionalLight position={[8, 8, -8]} intensity={1.1} color="#d6f5f0" />
-        <pointLight position={[-3, 4, 4]} intensity={0.85} color="#00A896" />
+        <pointLight position={[-3, 4, 4]} intensity={0.85} color="#ffffff" />
 
         <StageSpecimen
           specimenKey={specimenKey}
@@ -613,20 +613,20 @@ export default function LearnHardwareStage({
               {/* Main Data / Power Bus Paths */}
               <rect x="10" y="14" width="64" height="32" rx="5" fill="none" stroke="currentColor" strokeWidth="1.5" />
               <text x="42" y="29" textAnchor="middle" fontSize="8.5" fontWeight="700" fill="currentColor">PSU +12V</text>
-              <text x="42" y="40" textAnchor="middle" fontSize="7" fill="#00A896">DC RAILS</text>
+              <text x="42" y="40" textAnchor="middle" fontSize="7" fill="#ffffff">DC RAILS</text>
 
-              <line x1="74" y1="30" x2="98" y2="30" stroke="#00A896" strokeWidth="2" />
-              <rect x="98" y="10" width="66" height="40" rx="5" fill="rgba(0,168,150,0.08)" stroke="#00A896" strokeWidth="1.6" />
+              <line x1="74" y1="30" x2="98" y2="30" stroke="#ffffff" strokeWidth="2" />
+              <rect x="98" y="10" width="66" height="40" rx="5" fill="rgba(255, 255, 255, 0.05)" stroke="#ffffff" strokeWidth="1.6" />
               <text x="131" y="27" textAnchor="middle" fontSize="8.5" fontWeight="800" fill="currentColor">CPU / VRM</text>
-              <text x="131" y="39" textAnchor="middle" fontSize="7" fill="#00A896">CORE BUS</text>
+              <text x="131" y="39" textAnchor="middle" fontSize="7" fill="#ffffff">CORE BUS</text>
 
-              <line x1="164" y1="30" x2="188" y2="30" stroke="#38bdf8" strokeWidth="2" />
+              <line x1="164" y1="30" x2="188" y2="30" stroke="#b08d57" strokeWidth="2" />
               <rect x="188" y="14" width="62" height="32" rx="5" fill="none" stroke="currentColor" strokeWidth="1.5" />
               <text x="219" y="29" textAnchor="middle" fontSize="8.5" fontWeight="700" fill="currentColor">DDR5 RAM</text>
               <text x="219" y="40" textAnchor="middle" fontSize="7" fill="#028090">128-BIT</text>
 
               {/* Lower PCIe / NVMe Trunk */}
-              <line x1="131" y1="50" x2="131" y2="70" stroke="#00A896" strokeWidth="1.8" />
+              <line x1="131" y1="50" x2="131" y2="70" stroke="#ffffff" strokeWidth="1.8" />
               <line x1="56" y1="70" x2="206" y2="70" stroke="currentColor" strokeWidth="1.4" strokeDasharray="3 2" />
               <line x1="56" y1="70" x2="56" y2="78" stroke="currentColor" strokeWidth="1.4" />
               <line x1="206" y1="70" x2="206" y2="78" stroke="currentColor" strokeWidth="1.4" />

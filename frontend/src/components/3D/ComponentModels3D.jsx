@@ -11,7 +11,7 @@ import PSUModel from './PSUModel';
 // Procedural high-detail 3D models for all PC components (Clean Generic Models per Panel Specs)
 export default function ComponentModels3D({ 
   part, 
-  rgbColor = '#00e5ff', 
+  rgbColor = '#ffffff', 
   explodedProgress = 0,
   isSelected = false,
   isHovered = false,
@@ -62,7 +62,7 @@ export default function ComponentModels3D({
 
   const effectiveHover = enableHighlight && (isHovered || localHover);
   const activeSelected = enableHighlight && isSelected;
-  const highlightEmissive = activeSelected ? '#00e5ff' : effectiveHover ? '#475569' : '#000000';
+  const highlightEmissive = activeSelected ? '#ffffff' : effectiveHover ? '#475569' : '#000000';
   const highlightIntensity = activeSelected ? 1.5 : effectiveHover ? 0.8 : 0;
 
   return (
@@ -93,7 +93,7 @@ export default function ComponentModels3D({
         <mesh position={[-0.2, 0, 0]} rotation={[0, Math.PI / 2, 0]}>
           <ringGeometry args={[1.5, 1.6, 32]} />
           <meshBasicMaterial 
-            color={activeSelected ? '#00e5ff' : '#facc15'} 
+            color={activeSelected ? '#ffffff' : '#facc15'} 
             transparent 
             opacity={0.75} 
             side={THREE.DoubleSide} 
@@ -123,7 +123,7 @@ export default function ComponentModels3D({
           {[-1.5, 0, 1.5].map((y, idx) => (
             <mesh key={`htrace-${idx}`} position={[-0.052, y, 0]}>
               <boxGeometry args={[0.005, 0.04, 4.8]} />
-              <meshStandardMaterial color="#00e5ff" emissive="#00e5ff" emissiveIntensity={0.6} />
+              <meshStandardMaterial color="#ffffff" emissive="#ffffff" emissiveIntensity={0.6} />
             </mesh>
           ))}
 
@@ -186,7 +186,7 @@ export default function ComponentModels3D({
           <group position={[-0.07, 0.35, -0.6]}>
             <mesh position={[0, 0, 0]}>
               <boxGeometry args={[0.01, 0.42, 1.9]} />
-              <meshStandardMaterial color="#00e5ff" emissive="#00e5ff" emissiveIntensity={0.8} />
+              <meshStandardMaterial color="#ffffff" emissive="#ffffff" emissiveIntensity={0.8} />
             </mesh>
             <mesh position={[-0.02, 0, 0.88]}>
               <boxGeometry args={[0.06, 0.34, 0.12]} />
@@ -205,7 +205,7 @@ export default function ComponentModels3D({
             </mesh>
             <mesh position={[0, 0, 1.85]}>
               <boxGeometry args={[0.1, 0.28, 0.2]} />
-              <meshStandardMaterial color="#00e5ff" emissive="#00e5ff" emissiveIntensity={1.0} />
+              <meshStandardMaterial color="#ffffff" emissive="#ffffff" emissiveIntensity={1.0} />
             </mesh>
           </group>
 
@@ -396,7 +396,7 @@ export default function ComponentModels3D({
         <Html center position={[0, 1.6, 0]} distanceFactor={15}>
           <div style={{
             background: 'rgba(15, 23, 42, 0.95)',
-            border: `1px solid ${isSelected ? '#00e5ff' : rgbColor}`,
+            border: `1px solid ${isSelected ? '#ffffff' : rgbColor}`,
             padding: '6px 12px',
             borderRadius: '6px',
             color: '#fff',

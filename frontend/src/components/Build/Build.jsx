@@ -1042,8 +1042,8 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
                   size={86}
                   shape="Cube"
                   eyes="Squares"
-                  bodyColor="#00e5a0"
-                  eyeColor="#06080e"
+                  bodyColor="#1c1b16"
+                  eyeColor="#ffffff"
                   follow={90}
                   bounce={55}
                   speechLines={BOB_STAGE_TIPS[currentStepData.key] || BOB_GENERAL_BUILD_LINES}

@@ -3,7 +3,7 @@ import soundManager from "../../utilities/soundManager";
 import "./LessonPresentationView.css";
 
 /**
- * LessonPresentationView — Center-stage Educational Lecture & Visual Report
+ * LessonPresentationView // Center-stage Educational Lecture & Visual Report
  *
  * Provides a slide/report presentation experience with:
  * • High-res form factor diagrams and dimension comparison tables
@@ -22,7 +22,7 @@ const MOTHERBOARD_FORM_FACTORS = [
     ramSlots: "4 to 8 DIMMs",
     pcieSlots: "4 to 7 Slots",
     targetChassis: "Full-Tower / E-ATX Case",
-    color: "#38bdf8",
+    color: "#b08d57",
     badge: "WORKSTATION / ENTHUSIAST",
     description:
       "Widest consumer form factor designed for high-end desktop (HEDT) platforms, dual-CPU server sockets, or 4-way GPU rendering arrays. Requires full-depth chassis cable grommet clearance."
@@ -36,7 +36,7 @@ const MOTHERBOARD_FORM_FACTORS = [
     ramSlots: "4 DIMM Slots",
     pcieSlots: "Up to 7 Expansion Slots",
     targetChassis: "Mid-Tower & Full-Tower",
-    color: "#00e5a0",
+    color: "#ffffff",
     badge: "DESKTOP STANDARD",
     description:
       "The undisputed desktop computer standard since 1995. Features optimal spacing for dual-slot graphics cards, multiple M.2 NVMe heatsinks, and robust VRM power phases."
@@ -174,7 +174,7 @@ export default function LessonPresentationView({
       {/* ── SLIDE CONTENT AREA ── */}
       <div className="lp-slide-viewport">
         {/* =========================================================================
-            MODULE 2: SLIDE 0 — MOTHERBOARD FORM FACTORS & DIMENSIONAL COMPARISON
+            MODULE 2: SLIDE 0 // MOTHERBOARD FORM FACTORS & DIMENSIONAL COMPARISON
            ========================================================================= */}
         {moduleNum === 2 && activeSlide === 0 && (
           <div className="lp-slide-page animate-fade-in">
@@ -201,12 +201,12 @@ export default function LessonPresentationView({
                 >
                   <defs>
                     <linearGradient id="eatxGrad" x1="0" y1="0" x2="1" y2="1">
-                      <stop offset="0%" stopColor="rgba(56, 189, 248, 0.15)" />
-                      <stop offset="100%" stopColor="rgba(56, 189, 248, 0.03)" />
+                      <stop offset="0%" stopColor="rgba(176, 141, 87, 0.18)" />
+                      <stop offset="100%" stopColor="rgba(176, 141, 87, 0.04)" />
                     </linearGradient>
                     <linearGradient id="atxGrad" x1="0" y1="0" x2="1" y2="1">
-                      <stop offset="0%" stopColor="rgba(0, 229, 160, 0.18)" />
-                      <stop offset="100%" stopColor="rgba(0, 229, 160, 0.04)" />
+                      <stop offset="0%" stopColor="rgba(255, 255, 255, 0.12)" />
+                      <stop offset="100%" stopColor="rgba(255, 255, 255, 0.03)" />
                     </linearGradient>
                     <linearGradient id="matxGrad" x1="0" y1="0" x2="1" y2="1">
                       <stop offset="0%" stopColor="rgba(245, 158, 11, 0.18)" />
@@ -226,12 +226,12 @@ export default function LessonPresentationView({
                     height="340"
                     rx="8"
                     fill="url(#eatxGrad)"
-                    stroke="#38bdf8"
+                    stroke="#b08d57"
                     strokeWidth="2"
                     strokeDasharray="4 4"
                   />
-                  <text x="32" y="44" fill="#38bdf8" fontSize="13" fontWeight="bold">
-                    E-ATX: 305 mm × 330 mm (12.0" × 13.0") — Enthusiast / Dual CPU
+                  <text x="32" y="44" fill="#b08d57" fontSize="13" fontWeight="bold">
+                    E-ATX: 305 mm × 330 mm (12.0" × 13.0") · Enthusiast / Dual CPU
                   </text>
 
                   {/* 2. Standard ATX: 305mm H x 244mm W */}
@@ -242,11 +242,11 @@ export default function LessonPresentationView({
                     height="340"
                     rx="8"
                     fill="url(#atxGrad)"
-                    stroke="#00e5a0"
+                    stroke="#ffffff"
                     strokeWidth="2.5"
                   />
-                  <text x="32" y="70" fill="#00e5a0" fontSize="13" fontWeight="bold">
-                    Standard ATX: 305 mm × 244 mm (12.0" × 9.6") — 9 Standoffs (Desktop Standard)
+                  <text x="32" y="70" fill="#ffffff" fontSize="13" fontWeight="bold">
+                    Standard ATX: 305 mm × 244 mm (12.0" × 9.6") · 9 Standoffs (Desktop Standard)
                   </text>
 
                   {/* 3. Micro-ATX (mATX): 244mm H x 244mm W */}
@@ -261,7 +261,7 @@ export default function LessonPresentationView({
                     strokeWidth="2"
                   />
                   <text x="32" y="96" fill="#f59e0b" fontSize="13" fontWeight="bold">
-                    Micro-ATX: 244 mm × 244 mm (9.6" × 9.6") — 8 Standoffs (Budget / Mainstream)
+                    Micro-ATX: 244 mm × 244 mm (9.6" × 9.6") · 8 Standoffs (Budget / Mainstream)
                   </text>
 
                   {/* 4. Mini-ITX (mITX): 170mm H x 170mm W */}
@@ -276,7 +276,7 @@ export default function LessonPresentationView({
                     strokeWidth="2.5"
                   />
                   <text x="32" y="122" fill="#ec4899" fontSize="13" fontWeight="bold">
-                    Mini-ITX: 170 mm × 170 mm (6.7" × 6.7") — 4 Corner Standoffs (SFF)
+                    Mini-ITX: 170 mm × 170 mm (6.7" × 6.7") · 4 Corner Standoffs (SFF)
                   </text>
 
                   {/* Key Motherboard Components Outlined */}
@@ -285,25 +285,25 @@ export default function LessonPresentationView({
                   <text x="30" y="72" fill="#94a3b8" fontSize="9" transform="rotate(-90 30,72)">REAR I/O</text>
 
                   {/* CPU Socket Area */}
-                  <rect x="135" y="45" width="80" height="80" rx="4" fill="#0f172a" stroke="#38bdf8" strokeWidth="1.5" />
-                  <text x="145" y="88" fill="#38bdf8" fontSize="10" fontWeight="bold">CPU SOCKET</text>
+                  <rect x="135" y="45" width="80" height="80" rx="4" fill="#0f172a" stroke="#ffffff" strokeWidth="1.5" />
+                  <text x="145" y="88" fill="#ffffff" fontSize="10" fontWeight="bold">CPU SOCKET</text>
                   <text x="145" y="102" fill="#64748b" fontSize="8">LGA / PGA</text>
 
                   {/* RAM Slots */}
-                  <rect x="235" y="35" width="8" height="100" rx="2" fill="#00e5a0" opacity="0.8" />
-                  <rect x="250" y="35" width="8" height="100" rx="2" fill="#00e5a0" opacity="0.8" />
-                  <rect x="265" y="35" width="8" height="100" rx="2" fill="#00e5a0" opacity="0.8" />
-                  <rect x="280" y="35" width="8" height="100" rx="2" fill="#00e5a0" opacity="0.8" />
-                  <text x="240" y="150" fill="#00e5a0" fontSize="9" fontWeight="bold">DDR5 RAM SLOTS (A1/A2/B1/B2)</text>
+                  <rect x="235" y="35" width="8" height="100" rx="2" fill="#ffffff" opacity="0.8" />
+                  <rect x="250" y="35" width="8" height="100" rx="2" fill="#ffffff" opacity="0.8" />
+                  <rect x="265" y="35" width="8" height="100" rx="2" fill="#ffffff" opacity="0.8" />
+                  <rect x="280" y="35" width="8" height="100" rx="2" fill="#ffffff" opacity="0.8" />
+                  <text x="240" y="150" fill="#ffffff" fontSize="9" fontWeight="bold">DDR5 RAM SLOTS (A1/A2/B1/B2)</text>
 
                   {/* Primary PCIe x16 Slot */}
-                  <rect x="80" y="160" width="220" height="14" rx="3" fill="#00e5a0" />
+                  <rect x="80" y="160" width="220" height="14" rx="3" fill="#ffffff" />
                   <text x="90" y="171" fill="#04121a" fontSize="9" fontWeight="bold">PRIMARY PCIe 4.0/5.0 x16 GRAPHICS SLOT</text>
 
                   {/* Secondary Expansion Slots (ATX only) */}
                   <rect x="80" y="200" width="160" height="10" rx="2" fill="#475569" opacity="0.7" />
                   <rect x="80" y="235" width="160" height="10" rx="2" fill="#475569" opacity="0.7" />
-                  <rect x="80" y="270" width="220" height="12" rx="2" fill="#00e5a0" opacity="0.5" />
+                  <rect x="80" y="270" width="220" height="12" rx="2" fill="#ffffff" opacity="0.5" />
                   <rect x="80" y="305" width="160" height="10" rx="2" fill="#475569" opacity="0.7" />
                   <text x="310" y="295" fill="#64748b" fontSize="9">7 ATX EXPANSION SLOTS</text>
 
@@ -372,7 +372,7 @@ export default function LessonPresentationView({
         )}
 
         {/* =========================================================================
-            MODULE 2: SLIDE 1 — SOCKET ARCHITECTURE & VRM POWER PHASES
+            MODULE 2: SLIDE 1 // SOCKET ARCHITECTURE & VRM POWER PHASES
            ========================================================================= */}
         {moduleNum === 2 && activeSlide === 1 && (
           <div className="lp-slide-page animate-fade-in">
@@ -434,7 +434,7 @@ export default function LessonPresentationView({
         )}
 
         {/* =========================================================================
-            MODULE 2: SLIDE 2 — FRONT PANEL HEADERS & USB COLOR CODES
+            MODULE 2: SLIDE 2 // FRONT PANEL HEADERS & USB COLOR CODES
            ========================================================================= */}
         {moduleNum === 2 && activeSlide === 2 && (
           <div className="lp-slide-page animate-fade-in">
@@ -487,28 +487,28 @@ export default function LessonPresentationView({
                   <div className="usb-color-item">
                     <span className="usb-color-swatch black" />
                     <div className="usb-color-details">
-                      <strong>Black Port — USB 2.0 (Hi-Speed)</strong>
+                      <strong>Black Port: USB 2.0 (Hi-Speed)</strong>
                       <span>Max Speed: 480 Mbps • Best for keyboards, mice, and audio DACs.</span>
                     </div>
                   </div>
                   <div className="usb-color-item">
                     <span className="usb-color-swatch blue" />
                     <div className="usb-color-details">
-                      <strong>Blue Port — USB 3.0 / 3.1 Gen 1 (SuperSpeed)</strong>
+                      <strong>Blue Port: USB 3.0 / 3.1 Gen 1 (SuperSpeed)</strong>
                       <span>Max Speed: 5 Gbps • Standard for external flash drives and webcams.</span>
                     </div>
                   </div>
                   <div className="usb-color-item">
                     <span className="usb-color-swatch teal" />
                     <div className="usb-color-details">
-                      <strong>Teal / Cyan Port — USB 3.1 Gen 2 (SuperSpeed+)</strong>
+                      <strong>Teal / Cyan Port: USB 3.1 Gen 2 (SuperSpeed+)</strong>
                       <span>Max Speed: 10 Gbps • High-speed backup drives and fast SSD enclosures.</span>
                     </div>
                   </div>
                   <div className="usb-color-item">
                     <span className="usb-color-swatch red" />
                     <div className="usb-color-details">
-                      <strong>Red Port — USB 3.2 Gen 2x2 (20 Gbps)</strong>
+                      <strong>Red Port: USB 3.2 Gen 2x2 (20 Gbps)</strong>
                       <span>Max Speed: 20 Gbps • Extreme NVMe external enclosures &amp; fast charging.</span>
                     </div>
                   </div>
@@ -600,7 +600,7 @@ export default function LessonPresentationView({
         {moduleNum !== 2 && activeSlide === 0 && (
           <div className="lp-slide-page animate-fade-in">
             <header className="lp-slide-header">
-              <h2>{topic.title} — Technical Architecture</h2>
+              <h2>{topic.title} // Technical Architecture</h2>
               <p>{topic.explanation}</p>
             </header>
 
@@ -649,7 +649,7 @@ export default function LessonPresentationView({
         {moduleNum !== 2 && activeSlide === 1 && (
           <div className="lp-slide-page animate-fade-in">
             <header className="lp-slide-header">
-              <h2>{topic.title} — Technical Specifications &amp; Field Standards</h2>
+              <h2>{topic.title} // Technical Specifications &amp; Field Standards</h2>
               <p>
                 Comprehensive laboratory reference standards, pin tolerances, and tool torque specifications
                 prescribed for Computer Systems Servicing technicians.

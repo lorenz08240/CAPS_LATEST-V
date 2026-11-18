@@ -112,7 +112,7 @@
   vertical-align: -2.5px;
   margin-left: 3px;
   border-radius: 1px;
-  background: var(--tint, #00e5a0);
+  background: var(--tint, #ffffff);
   animation: pet-caret 1s steps(1) infinite;
 }
 

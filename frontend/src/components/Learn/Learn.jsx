@@ -24,10 +24,10 @@ const componentGuide = [
       { label: "TDP Envelope", value: "65W - 253W" }
     ],
     pinouts: [
-      { pin: "LGA / AM5 PADS", connectsTo: "Motherboard Socket", desc: "Gold contact pads delivering core voltage and memory channels", color: "#00A896", hotspotId: "cpu-ihs" },
-      { pin: "DDR5 IMC", connectsTo: "DIMM Slots A2 / B2", desc: "Integrated Dual-Channel Memory Controller (128-bit)", color: "#38bdf8", hotspotId: "cpu-triangle" },
+      { pin: "LGA / AM5 PADS", connectsTo: "Motherboard Socket", desc: "Gold contact pads delivering core voltage and memory channels", color: "#ffffff", hotspotId: "cpu-ihs" },
+      { pin: "DDR5 IMC", connectsTo: "DIMM Slots A2 / B2", desc: "Integrated Dual-Channel Memory Controller (128-bit)", color: "#b08d57", hotspotId: "cpu-triangle" },
       { pin: "PCIe 5.0 x16", connectsTo: "Primary GPU Slot", desc: "16 direct high-bandwidth lanes dedicated to graphics", color: "#f59e0b", hotspotId: "cpu-substrate" },
-      { pin: "PCIe 5.0 x4", connectsTo: "M.2_1 NVMe Slot", desc: "Direct-to-CPU lanes for OS drive zero-latency reads", color: "#10b981", hotspotId: "cpu-cooler" },
+      { pin: "PCIe 5.0 x4", connectsTo: "M.2_1 NVMe Slot", desc: "Direct-to-CPU lanes for OS drive zero-latency reads", color: "#f5e6c7", hotspotId: "cpu-cooler" },
       { pin: "CPU_FAN / AIO_PUMP", connectsTo: "4-Pin PWM Header", desc: "Closed-loop thermal feedback and pump tachometer telemetry", color: "#ef4444", hotspotId: "cpu-radiator" }
     ],
     hotspots: [
@@ -192,10 +192,10 @@ const componentGuide = [
       { label: "SATA 3.0", value: "4 - 6 Storage Ports" }
     ],
     pinouts: [
-      { pin: "LGA / AM5", connectsTo: "Desktop CPU", desc: "Main processor socket under aluminum VRM heatsinks", color: "#00A896", hotspotId: "mb-socket" },
-      { pin: "DIMM A2 / B2", connectsTo: "DDR5 / DDR4 RAM", desc: "Dual-channel memory slots (populate 2nd & 4th first)", color: "#38bdf8", hotspotId: "mb-dimm" },
+      { pin: "LGA / AM5", connectsTo: "Desktop CPU", desc: "Main processor socket under aluminum VRM heatsinks", color: "#ffffff", hotspotId: "mb-socket" },
+      { pin: "DIMM A2 / B2", connectsTo: "DDR5 / DDR4 RAM", desc: "Dual-channel memory slots (populate 2nd & 4th first)", color: "#b08d57", hotspotId: "mb-dimm" },
       { pin: "PCIEX16_1", connectsTo: "Graphics Card (GPU)", desc: "Reinforced steel slot carrying 16 direct PCIe CPU lanes", color: "#f59e0b", hotspotId: "mb-pcie" },
-      { pin: "M2_1 SOCKET", connectsTo: "NVMe M.2 SSD", desc: "Cable-free high-speed storage slot with thermal pad", color: "#10b981", hotspotId: "mb-m2" },
+      { pin: "M2_1 SOCKET", connectsTo: "NVMe M.2 SSD", desc: "Cable-free high-speed storage slot with thermal pad", color: "#f5e6c7", hotspotId: "mb-m2" },
       { pin: "ATX_PWR 24P", connectsTo: "Power Supply Harness", desc: "Primary +12V, +5V, +3.3V board power distribution", color: "#ef4444", hotspotId: "mb-vrm" },
       { pin: "PCH CHIPSET", connectsTo: "USB / SATA / Audio I/O", desc: "Southbridge hub managing peripheral and expansion buses", color: "#8b5cf6", hotspotId: "mb-pch" }
     ],
@@ -358,10 +358,10 @@ const componentGuide = [
       { label: "Form Factor", value: "288-Pin DIMM" }
     ],
     pinouts: [
-      { pin: "288 GOLD PINS", connectsTo: "DIMM Motherboard Slot", desc: "Split contact edge carrying 64-bit channel + ECC lines", color: "#00A896", hotspotId: "ram-contacts" },
+      { pin: "288 GOLD PINS", connectsTo: "DIMM Motherboard Slot", desc: "Split contact edge carrying 64-bit channel + ECC lines", color: "#ffffff", hotspotId: "ram-contacts" },
       { pin: "OFFSET KEY NOTCH", connectsTo: "Slot Plastic Bridge", desc: "DDR5 notch sits near center-right so DDR4 cannot fit", color: "#ef4444", hotspotId: "ram-notch" },
       { pin: "PMIC (ON-DIMM)", connectsTo: "5V Board Supply", desc: "DDR5 regulates voltage cleanly right on the stick itself", color: "#f59e0b", hotspotId: "ram-heatsink" },
-      { pin: "A2 + B2 CHANNELS", connectsTo: "CPU Memory Controller", desc: "Doubles effective bus width from 64-bit to 128-bit", color: "#38bdf8", hotspotId: "ram-diffuser" }
+      { pin: "A2 + B2 CHANNELS", connectsTo: "CPU Memory Controller", desc: "Doubles effective bus width from 64-bit to 128-bit", color: "#b08d57", hotspotId: "ram-diffuser" }
     ],
     hotspots: [
       {
@@ -500,10 +500,10 @@ const componentGuide = [
       { label: "Form Length", value: "240mm - 340mm" }
     ],
     pinouts: [
-      { pin: "PCIe 4.0/5.0 x16", connectsTo: "Motherboard Top Slot", desc: "16 high-speed serial lanes + 75W slot power feed", color: "#00A896", hotspotId: "gpu-pcie" },
+      { pin: "PCIe 4.0/5.0 x16", connectsTo: "Motherboard Top Slot", desc: "16 high-speed serial lanes + 75W slot power feed", color: "#ffffff", hotspotId: "gpu-pcie" },
       { pin: "12V-2x6 / 8-PIN", connectsTo: "PSU PCIe Harness", desc: "150W-600W direct dedicated 12V GPU power input", color: "#ef4444", hotspotId: "gpu-power" },
-      { pin: "HDMI 2.1 / DP 2.1", connectsTo: "Gaming Monitor", desc: "ALWAYS plug display cables here, not on motherboard", color: "#38bdf8", hotspotId: "gpu-io" },
-      { pin: "TRI-AXIAL FANS", connectsTo: "Vapor Chamber Fin Stack", desc: "Pulls cool chassis air across copper heatpipes", color: "#10b981", hotspotId: "gpu-shroud" }
+      { pin: "HDMI 2.1 / DP 2.1", connectsTo: "Gaming Monitor", desc: "ALWAYS plug display cables here, not on motherboard", color: "#b08d57", hotspotId: "gpu-io" },
+      { pin: "TRI-AXIAL FANS", connectsTo: "Vapor Chamber Fin Stack", desc: "Pulls cool chassis air across copper heatpipes", color: "#f5e6c7", hotspotId: "gpu-shroud" }
     ],
     hotspots: [
       {
@@ -641,8 +641,8 @@ const componentGuide = [
       { label: "Acoustics", value: "Zero-RPM Fan Mode" }
     ],
     pinouts: [
-      { pin: "24-PIN ATX", connectsTo: "Motherboard Main Edge", desc: "Provides +12V, +5V, +3.3V and PWR_OK signal", color: "#00A896", hotspotId: "psu-modular" },
-      { pin: "8-PIN EPS 12V", connectsTo: "Top-Left CPU Header", desc: "Dedicated 12V feed powering CPU VRM stages", color: "#38bdf8", hotspotId: "psu-modular" },
+      { pin: "24-PIN ATX", connectsTo: "Motherboard Main Edge", desc: "Provides +12V, +5V, +3.3V and PWR_OK signal", color: "#ffffff", hotspotId: "psu-modular" },
+      { pin: "8-PIN EPS 12V", connectsTo: "Top-Left CPU Header", desc: "Dedicated 12V feed powering CPU VRM stages", color: "#b08d57", hotspotId: "psu-modular" },
       { pin: "12V-2x6 / PCIe", connectsTo: "Graphics Card (GPU)", desc: "High-amperage direct 12V lines with sense telemetry", color: "#f59e0b", hotspotId: "psu-modular" },
       { pin: "C13 AC INLET", connectsTo: "Wall Surge Protector", desc: "100-240V AC input with physical master rocker switch", color: "#ef4444", hotspotId: "psu-switch" }
     ],
@@ -772,10 +772,10 @@ const componentGuide = [
       { label: "Dust Filters", value: "Magnetic Top & Bottom" }
     ],
     pinouts: [
-      { pin: "F_PANEL HEADER", connectsTo: "Power Switch & LED", desc: "Tiny 2-pin leads that boot your motherboard from the case", color: "#00A896", hotspotId: "case-front" },
-      { pin: "USB 3.2 TYPE-E", connectsTo: "Front USB-C Port", desc: "Keyed high-speed 10-20Gbps front chassis header", color: "#38bdf8", hotspotId: "case-front" },
+      { pin: "F_PANEL HEADER", connectsTo: "Power Switch & LED", desc: "Tiny 2-pin leads that boot your motherboard from the case", color: "#ffffff", hotspotId: "case-front" },
+      { pin: "USB 3.2 TYPE-E", connectsTo: "Front USB-C Port", desc: "Keyed high-speed 10-20Gbps front chassis header", color: "#b08d57", hotspotId: "case-front" },
       { pin: "BRASS STANDOFFS", connectsTo: "Motherboard Holes", desc: "Keeps solder traces elevated away from bare case steel", color: "#f59e0b", hotspotId: "case-tray" },
-      { pin: "PWM FAN HUB", connectsTo: "SYS_FAN Headers", desc: "Coordinates front intake & rear exhaust positive pressure", color: "#10b981", hotspotId: "case-mesh" }
+      { pin: "PWM FAN HUB", connectsTo: "SYS_FAN Headers", desc: "Coordinates front intake & rear exhaust positive pressure", color: "#f5e6c7", hotspotId: "case-mesh" }
     ],
     hotspots: [
       {
@@ -913,10 +913,10 @@ const componentGuide = [
       { label: "Power Draw", value: "3.3V Rail (5W - 9W)" }
     ],
     pinouts: [
-      { pin: "M-KEY EDGE (75P)", connectsTo: "Motherboard M2_1 Slot", desc: "Carries 4 direct PCIe lanes straight to CPU without cables", color: "#00A896", hotspotId: "ssd-connector" },
-      { pin: "NVMe CONTROLLER", connectsTo: "Host PCIe Bus", desc: "Multi-core ARM ASIC translating host queues to NAND blocks", color: "#38bdf8", hotspotId: "ssd-controller" },
+      { pin: "M-KEY EDGE (75P)", connectsTo: "Motherboard M2_1 Slot", desc: "Carries 4 direct PCIe lanes straight to CPU without cables", color: "#ffffff", hotspotId: "ssd-connector" },
+      { pin: "NVMe CONTROLLER", connectsTo: "Host PCIe Bus", desc: "Multi-core ARM ASIC translating host queues to NAND blocks", color: "#b08d57", hotspotId: "ssd-controller" },
       { pin: "DRAM / SLC CACHE", connectsTo: "Lookup Mapping Table", desc: "Prevents write slowdowns during multi-gigabyte file copies", color: "#f59e0b", hotspotId: "ssd-dram" },
-      { pin: "2280 STANDOFF", connectsTo: "M.2 Retention Screw", desc: "Holds module flat after inserting at a 20-30 degree angle", color: "#10b981", hotspotId: "ssd-screw" }
+      { pin: "2280 STANDOFF", connectsTo: "M.2 Retention Screw", desc: "Holds module flat after inserting at a 20-30 degree angle", color: "#f5e6c7", hotspotId: "ssd-screw" }
     ],
     hotspots: [
       {

@@ -36,8 +36,8 @@ export default function BobCompanion({
           size={size}
           shape="Cube"
           eyes="Squares"
-          bodyColor="#00e5a0"
-          eyeColor="#06080e"
+          bodyColor="#1c1b16"
+          eyeColor="#ffffff"
           follow={90}
           bounce={55}
           speechLines={activePool}

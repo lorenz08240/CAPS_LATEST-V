@@ -60,15 +60,11 @@ const HERO_DYNAMIC_CONTEXTS = {
     tag: "FEATURE 05 // POPULAR BRANDS",
     title: "TRUSTED BRANDS",
     desc: "Pick from trusted brands like Corsair, Kingston, and Cooler Master. All parts are verified to work well together.",
-    btnLabel: "BROWSE TRUSTED BRANDS",
-    targetSection: "brands-station",
   },
   gpu: {
     tag: "FEATURE 06 // 3D WORKBENCH",
     title: "3D ASSEMBLY STUDIO",
     desc: "Rotate your PC 360 degrees in full 3D. Zoom in, look inside the case, and see exactly where each part goes before you build in real life.",
-    btnLabel: "EXPLORE 3D STUDIO",
-    targetSection: "service-3d-studio",
   },
   psu: {
     tag: "FEATURE 07 // POWER CALCULATOR",
@@ -183,16 +179,6 @@ function Home() {
 
     return () => ctx.revert();
   }, [displayedModel]);
-
-  const handleHeroDynamicScroll = (targetSection) => {
-    try { soundManager.click(); } catch {}
-    const target = document.getElementById(targetSection);
-    if (target) {
-      target.scrollIntoView({ behavior: "smooth", block: "start" });
-    } else {
-      navigate("/compatibility");
-    }
-  };
 
   const handleSelectMode = (targetMode) => {
     if (targetMode === "learn") {
@@ -442,19 +428,6 @@ function Home() {
                   </div>
                   <h2 className="cyber-col-title">{activeContext.title}</h2>
                   <p className="cyber-col-desc">{activeContext.desc}</p>
-                  {activeContext.btnLabel && (
-                    <div className="cyber-btn-group">
-                      <button
-                        type="button"
-                        className="cyber-btn-primary"
-                        onClick={() => handleHeroDynamicScroll(activeContext.targetSection)}
-                        title={`Explore ${activeContext.title}`}
-                      >
-                        <span>{activeContext.btnLabel}</span>
-                        <span className="btn-notch">&darr;</span>
-                      </button>
-                    </div>
-                  )}
                 </div>
               </div>
 
@@ -606,7 +579,7 @@ function Home() {
               "BUILDER"
             ).toUpperCase()}!`}
             subtitle="Your Google student profile is connected. Stage 01 (PC Builder) is ready — click below to start your guided tour with B.O.B.!"
-            accentColor="#00e5a0"
+            accentColor="#ffffff"
             requireConfirm={true}
             autoFullscreenOnConfirm={true}
             learnerProfile={welcomeLearnerProfile || userProfile}

@@ -101,7 +101,7 @@ function DDR4StickMesh({ rgbColor = '#f43f5e', isSelected = false, isHovered = f
           <mesh position={[0, 0, 0.3]}>
             <boxGeometry args={[7.25, 0.22, 1.8]} />
             <meshBasicMaterial
-              color={isSelected ? '#00e5ff' : '#facc15'}
+              color={isSelected ? '#ffffff' : '#facc15'}
               wireframe
               transparent
               opacity={0.35}

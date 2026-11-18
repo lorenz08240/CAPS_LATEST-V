@@ -21,6 +21,17 @@ export const FullscreenGateContext = createContext(false);
  * clean typography, vibrant gradient CTA button, and keyboard shortcut note.
  */
 export default function FullscreenGate({ children, requireFullscreen = true, disabled = false }) {
+  // DEV OVERRIDE: Temporarily suspended so developers can capture full-page screenshots
+  // and audits without modal obstruction or forced fullscreen. Set to false to restore.
+  const SUSPENDED = true;
+  if (SUSPENDED) {
+    return (
+      <FullscreenGateContext.Provider value={true}>
+        {children}
+      </FullscreenGateContext.Provider>
+    );
+  }
+
   const isNested = useContext(FullscreenGateContext);
   if (isNested) {
     // If nested inside an active global FullscreenGate, pass children through directly

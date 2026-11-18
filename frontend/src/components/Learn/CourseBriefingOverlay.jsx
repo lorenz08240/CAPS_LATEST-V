@@ -56,7 +56,7 @@ const OUTCOMES = [
   {
     num: "02",
     title: "Build in the right order",
-    desc: "Follow the canonical sequence — CPU, cooler, RAM, M.2, GPU, power — instead of learning the hard way.",
+    desc: "Follow the canonical sequence (CPU, cooler, RAM, M.2, GPU, power) instead of learning the hard way.",
   },
   {
     num: "03",
@@ -66,6 +66,18 @@ const OUTCOMES = [
 ];
 
 export default function CourseBriefingOverlay({ onClose, onStartLearning }) {
+  // Background scroll lock mechanism
+  useEffect(() => {
+    const originalOverflow = document.body.style.overflow;
+    const originalDocOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      document.documentElement.style.overflow = originalDocOverflow;
+    };
+  }, []);
+
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "Escape") {
@@ -106,11 +118,12 @@ export default function CourseBriefingOverlay({ onClose, onStartLearning }) {
         <div className="wb-pdf-toolbar-right">
           <button
             type="button"
-            className="btn-pdf-close"
+            className="btn-pdf-close-icon"
             onClick={onClose}
+            title="Close Document (Esc)"
             aria-label="Close Document"
           >
-            ✕ Close Document <kbd>Esc</kbd>
+            ✕
           </button>
         </div>
       </header>
@@ -144,14 +157,14 @@ export default function CourseBriefingOverlay({ onClose, onStartLearning }) {
               Welcome to <span className="wb-pdf-title-accent">COMPUTER SYSTEM SERVICING</span> Related Course!
             </h2>
             <p className="wb-pdf-lede">
-              This isn&apos;t a chapter to memorise — it&apos;s a bench to work at. Across 7 modules and 17 short topics you&apos;ll take a desktop PC from a box of parts to a clean first boot, learning the reason behind every move as you go.
+              This is not a chapter to memorize; it is a bench to work at. Across 7 modules and 17 short topics you&apos;ll take a desktop PC from a box of parts to a clean first boot, learning the reason behind every move as you go.
             </p>
             <p className="wb-pdf-summary">
               Each lesson pairs a real-world explanation with a live 3D component you can rotate, inspect and assemble. Get it wrong and nothing catches fire. Get it right and the skill sticks.
             </p>
           </section>
 
-          {/* Outcomes — what the learner actually gains */}
+          {/* Outcomes: what the learner actually gains */}
           <section className="wb-pdf-outcomes">
             <h3 className="wb-pdf-mini-heading">What you&apos;ll be able to do</h3>
             <div className="wb-pdf-outcome-grid">
@@ -216,7 +229,7 @@ export default function CourseBriefingOverlay({ onClose, onStartLearning }) {
               <span className="wb-pdf-competency-icon">🛡️</span>
               <div className="wb-pdf-competency-info">
                 <strong>Zero hardware risk</strong>
-                <p>Bend a pin or short a rail in the simulator and you&apos;ll learn from it — with no replacement parts to buy.</p>
+                <p>Bend a pin or short a rail in the simulator and you&apos;ll learn from it with zero replacement parts to buy.</p>
               </div>
             </div>
           </section>

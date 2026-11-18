@@ -4,10 +4,10 @@ import "./PixelCanvas.css";
 /**
  * PixelCanvas — Lightweight interactive pixel grid hover effect
  * Inspired by Ryan Mulligan (@hexagoncircle/pixel-canvas)
- * Tailored to BuildLab dark cyber palette (#00e5a0, #38bdf8, #f43f5e, #facc15)
+ * Tailored to BuildLab obsidian & white lines palette (#ffffff, #f5e6c7, #b08d57, #3a2e1e)
  */
 export default function PixelCanvas({
-  colors = ["#00e5a0", "#38bdf8", "#f43f5e", "#facc15"],
+  colors = ["#ffffff", "#f5e6c7", "#b08d57", "#3a2e1e"],
   gap = 6,
   speed = 30,
   noFocus = false,

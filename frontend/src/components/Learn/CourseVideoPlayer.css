@@ -60,7 +60,7 @@
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgba(56, 189, 248, 0.8);
+  color: rgba(255, 255, 255, 0.12);
   font-family: "JetBrains Mono", monospace;
   background: radial-gradient(circle at center, rgba(14, 23, 42, 0.95), #020408);
 }
@@ -80,18 +80,18 @@
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: #030712;
-  background: linear-gradient(135deg, #38bdf8, #0284c7);
+  background: linear-gradient(135deg, #ffffff 0%, #d4d4d8 100%);
   border: none;
   border-radius: 999px;
   cursor: pointer;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6), 0 0 16px rgba(56, 189, 248, 0.45);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
   transition: transform 0.18s ease, box-shadow 0.18s ease;
   animation: cvp-chip-in 0.32s ease;
 }
 
 .cvp-unmute-chip:hover {
   transform: scale(1.05);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7), 0 0 24px rgba(56, 189, 248, 0.65);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
 @keyframes cvp-chip-in {
@@ -125,14 +125,14 @@
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.1em;
-  color: #38bdf8;
+  color: #ffffff;
   display: inline-flex;
   align-items: center;
   gap: 6px;
   padding: 6px 14px;
   border-radius: 999px;
-  background: rgba(56, 189, 248, 0.12);
-  border: 1px solid rgba(56, 189, 248, 0.3);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
 }
 
 .cvp-overlay-reopen-btn {
@@ -148,9 +148,9 @@
 }
 
 .cvp-overlay-reopen-btn:hover {
-  background: rgba(56, 189, 248, 0.22);
-  border-color: rgba(56, 189, 248, 0.5);
-  color: #38bdf8;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
 }
 
 /* ── Cyberpunk Custom Media Deck ── */
@@ -161,7 +161,7 @@
   gap: 7px;
   padding: 8px 12px;
   background: linear-gradient(180deg, rgba(11, 17, 30, 0.95), rgba(4, 7, 14, 0.98));
-  border-top: 1px solid rgba(56, 189, 248, 0.22);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
   z-index: 5;
 }
 
@@ -184,11 +184,11 @@
 }
 
 .cvp-btn:hover:not(:disabled) {
-  background: rgba(56, 189, 248, 0.18);
-  border-color: rgba(56, 189, 248, 0.55);
-  color: #38bdf8;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
   transform: translateY(-1px);
-  box-shadow: 0 0 10px rgba(56, 189, 248, 0.25);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
 .cvp-btn:active:not(:disabled) {
@@ -219,9 +219,9 @@
 }
 
 .cvp-btn-expand.is-active {
-  color: #38bdf8;
-  border-color: rgba(56, 189, 248, 0.5);
-  background: rgba(56, 189, 248, 0.15);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .cvp-time {
@@ -261,16 +261,16 @@
   bottom: 0;
   left: 0;
   border-radius: 999px;
-  background: rgba(56, 189, 248, 0.24);
-  box-shadow: inset 0 0 4px rgba(56, 189, 248, 0.3);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
 .cvp-bar-fill {
   position: absolute;
   inset: 0 auto 0 0;
   border-radius: 999px;
-  background: linear-gradient(90deg, #0284c7, #38bdf8);
-  box-shadow: 0 0 10px rgba(56, 189, 248, 0.55);
+  background: linear-gradient(135deg, #ffffff 0%, #d4d4d8 100%);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
 .cvp-bar-knob {
@@ -281,7 +281,7 @@
   border-radius: 50%;
   background: #ffffff;
   border: 2px solid #0284c7;
-  box-shadow: 0 0 10px rgba(56, 189, 248, 0.8);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
   transform: translate(-50%, -50%);
   transition: transform 0.15s ease;
 }
@@ -392,8 +392,8 @@
   max-height: calc(100dvh - clamp(32px, 7vw, 88px));
   background: #000;
   border-radius: 14px;
-  border: 1px solid rgba(56, 189, 248, 0.4);
-  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.95), 0 0 45px rgba(56, 189, 248, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
   overflow: hidden;
   animation: cvp-scale-in 0.26s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -418,7 +418,7 @@
   gap: 14px;
   padding: 10px 18px;
   background: linear-gradient(90deg, rgba(8, 14, 26, 0.98), rgba(15, 23, 42, 0.98));
-  border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .cvp-overlay-meta {
@@ -432,8 +432,8 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #38bdf8;
-  box-shadow: 0 0 10px #38bdf8;
+  background: #ffffff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
   animation: cvp-pulse 1.8s infinite ease-in-out;
 }
 
@@ -447,7 +447,7 @@
   font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.12em;
-  color: #38bdf8;
+  color: #ffffff;
   text-transform: uppercase;
 }
 
@@ -481,11 +481,11 @@
 }
 
 .cvp-overlay-close-btn:hover {
-  background: rgba(56, 189, 248, 0.2);
-  border-color: rgba(56, 189, 248, 0.55);
-  color: #38bdf8;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
   transform: translateY(-1px);
-  box-shadow: 0 0 12px rgba(56, 189, 248, 0.3);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
 /* Overlay Video Stage (Fixed 16:9 ratio, responsive fit) */

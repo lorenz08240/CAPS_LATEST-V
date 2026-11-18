@@ -2,7 +2,7 @@
 .learn-page {
   min-height: 100vh;
   width: 100%;
-  background-color: #0b0f1a;
+  background-color: #141414;
   background-image:
     linear-gradient(rgba(11, 15, 26, 0.72), rgba(11, 15, 26, 0.88)),
     url("/assets/waves_dark_bg.jpg");
@@ -43,7 +43,7 @@
 .bg-glow-2 {
   width: 500px;
   height: 500px;
-  background: radial-gradient(circle, #00f2fe 0%, transparent 70%);
+  background: radial-gradient(circle, #ffffff 0%, transparent 70%);
   bottom: 25%;
   left: -120px;
 }
@@ -366,7 +366,7 @@
   inset: 0;
   background:
     linear-gradient(90deg, rgba(9, 13, 22, 0.95) 0%, rgba(9, 13, 22, 0.8) 42%, rgba(9, 13, 22, 0.35) 75%, transparent 100%),
-    linear-gradient(180deg, rgba(9, 13, 22, 0.5) 0%, transparent 35%, rgba(9, 13, 22, 0.9) 85%, #090d16 100%);
+    linear-gradient(180deg, rgba(9, 13, 22, 0.5) 0%, transparent 35%, rgba(9, 13, 22, 0.9) 85%, #0d0d0d 100%);
   z-index: 1;
 }
 
@@ -490,7 +490,7 @@
 
 .nav-btn:hover {
   background: #00ff87;
-  color: #090d16;
+  color: #0d0d0d;
   border-color: #00ff87;
 }
 
@@ -590,10 +590,10 @@
 }
 
 .subtab-btn.active {
-  background: rgba(0, 242, 254, 0.12);
-  border-color: #00f2fe;
-  color: #00f2fe;
-  box-shadow: 0 0 16px rgba(0, 242, 254, 0.3);
+  background: rgba(255, 255, 255, 0.14);
+  border-color: #ffffff;
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
   font-weight: 700;
 }
 
@@ -748,7 +748,7 @@
 }
 
 .mockup-select:focus {
-  border-color: #00f2fe;
+  border-color: #ffffff;
 }
 
 .status-cell-wrap {
@@ -772,7 +772,7 @@
 
 .btn-cell-builder {
   background: #00ff87;
-  color: #090d16;
+  color: #0d0d0d;
   border: none;
   font-size: 0.72rem;
   font-weight: 800;
@@ -825,9 +825,9 @@
 }
 
 .intel-head {
-  background: rgba(56, 189, 248, 0.15);
-  color: #38bdf8;
-  border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .amd-head {
@@ -1040,8 +1040,8 @@
 }
 
 .quiz-feedback-box {
-  background: rgba(0, 242, 254, 0.08);
-  border-left: 3px solid #00f2fe;
+  background: rgba(255, 255, 255, 0.14);
+  border-left: 3px solid #ffffff;
   padding: 0.6rem 0.8rem;
   border-radius: 0 6px 6px 0;
   font-size: 0.76rem;
@@ -1066,7 +1066,7 @@
 
 .quiz-action-btn {
   background: #00ff87;
-  color: #090d16;
+  color: #0d0d0d;
   border: none;
   font-size: 0.82rem;
   font-weight: 800;
@@ -1278,7 +1278,7 @@
 
 .btn-connect-build {
   background: #00ff87;
-  color: #090d16;
+  color: #0d0d0d;
   border: none;
   font-size: 0.88rem;
   font-weight: 800;
@@ -1459,12 +1459,12 @@
   margin-top: 0.4rem;
   font-size: 0.74rem;
   font-weight: 700;
-  color: #38bdf8;
+  color: #ffffff;
   text-decoration: none;
   transition: all 0.2s ease;
 }
 
 .step-quick-youtube-link:hover {
-  color: #00e5ff;
+  color: #ffffff;
   text-decoration: underline;
 }

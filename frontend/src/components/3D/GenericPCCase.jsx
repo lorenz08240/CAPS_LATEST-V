@@ -6,7 +6,7 @@ import ProceduralSickleFan from './ProceduralSickleFan';
 export default function GenericPCCase({ 
   position = [0, 0, 0], 
   scale = 1, 
-  rgbColor = '#00e5ff',
+  rgbColor = '#ffffff',
   caseColor = 'black', // 'black' | 'white'
   glassMode = 'closed', // 'closed', 'open', 'removed'
   explodedProgress = 0, // 0 to 1
@@ -40,7 +40,7 @@ export default function GenericPCCase({
   const structuralFrameColor = isWhite ? '#94a3b8' : '#0b0f19';
 
   // Selection / Hover Emissive highlights
-  const highlightEmissive = activeSelected ? '#00e5ff' : effectiveHover ? '#38bdf8' : '#000000';
+  const highlightEmissive = activeSelected ? '#ffffff' : effectiveHover ? '#f5e6c7' : '#000000';
   const highlightIntensity = activeSelected ? 0.35 : effectiveHover ? 0.18 : 0;
 
   // Calculate exploded offsets based on explodedProgress (0 = assembled, 1 = exploded)
@@ -79,7 +79,7 @@ export default function GenericPCCase({
           <mesh>
             <ringGeometry args={[5.2, 5.4, 48]} />
             <meshBasicMaterial 
-              color={activeSelected ? '#00e5ff' : '#facc15'} 
+              color={activeSelected ? '#ffffff' : '#facc15'} 
               transparent 
               opacity={0.85} 
               side={THREE.DoubleSide} 
@@ -113,7 +113,7 @@ export default function GenericPCCase({
         </mesh>
         <mesh position={[1.0, 0.12, 3.8]}>
           <boxGeometry args={[0.4, 0.04, 0.15]} />
-          <meshStandardMaterial color="#00e5ff" emissive="#00e5ff" emissiveIntensity={1.2} />
+          <meshStandardMaterial color="#ffffff" emissive="#ffffff" emissiveIntensity={1.2} />
         </mesh>
       </group>
 
@@ -401,7 +401,7 @@ export default function GenericPCCase({
         <Html center position={[0, expYTop + 0.6, 0]} distanceFactor={15}>
           <div style={{
             background: 'rgba(15, 23, 42, 0.95)',
-            border: `1px solid ${isSelected ? '#00e5ff' : rgbColor}`,
+            border: `1px solid ${isSelected ? '#ffffff' : rgbColor}`,
             padding: '6px 12px',
             borderRadius: '6px',
             color: '#fff',

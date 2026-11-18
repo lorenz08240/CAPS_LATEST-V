@@ -2,8 +2,8 @@
 
 .certification-page-wrap {
   min-height: 100vh;
-  background: #06080e;
-  color: #e2e8f0;
+  background: #1a120b;
+  color: #e5e5cb;
   padding: 80px 24px 60px;
   font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   box-sizing: border-box;
@@ -47,12 +47,12 @@
   align-items: center;
   gap: 6px;
   padding: 4px 10px;
-  background: rgba(0, 229, 160, 0.1);
-  border: 1px solid rgba(0, 229, 160, 0.3);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 999px;
   font-size: 0.7rem;
   font-weight: 700;
-  color: #00e5a0;
+  color: #ffffff;
   letter-spacing: 0.08em;
 }
 
@@ -60,8 +60,8 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #00e5a0;
-  box-shadow: 0 0 6px #00e5a0;
+  background: #ffffff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
 .cert-bar-right {
@@ -120,8 +120,8 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: linear-gradient(135deg, #00e5a0 0%, #0ea5e9 100%);
-  color: #06080e;
+  background: linear-gradient(135deg, #d5cea3 0%, #e5e5cb 100%);
+  color: #1a120b;
   border: none;
   border-radius: 8px;
   padding: 8px 16px;
@@ -129,13 +129,13 @@
   font-weight: 800;
   letter-spacing: 0.05em;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(0, 229, 160, 0.35);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
   transition: all 0.2s ease;
 }
 
 .cert-btn-studio:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(0, 229, 160, 0.55);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
 /* Name editor bar */
@@ -176,8 +176,8 @@
 }
 
 .name-save-btn {
-  background: #00e5a0;
-  color: #06080e;
+  background: #d5cea3;
+  color: #1a120b;
   font-weight: 800;
   border: none;
   border-radius: 8px;
@@ -191,10 +191,10 @@
   max-width: 1060px;
   margin: 0 auto 16px;
   padding: 12px 18px;
-  background: rgba(0, 229, 160, 0.15);
-  border: 1px solid rgba(0, 229, 160, 0.4);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 8px;
-  color: #00e5a0;
+  color: #ffffff;
   font-size: 0.85rem;
   font-weight: 700;
 }
@@ -386,7 +386,7 @@
 
 .meta-mono {
   font-family: monospace;
-  color: #00e5a0;
+  color: #ffffff;
   letter-spacing: 0.05em;
 }
 
@@ -602,7 +602,7 @@
 }
 
 .cert-locked-progress-head strong {
-  color: #38bdf8;
+  color: #ffffff;
   font-weight: 700;
 }
 
@@ -615,10 +615,10 @@
 
 .cert-locked-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #0ea5e9, #00e5a0);
+  background: linear-gradient(135deg, #ffffff 0%, #d4d4d8 100%);
   border-radius: 999px;
   transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 0 10px rgba(0, 229, 160, 0.5);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
 .cert-locked-actions {
@@ -635,7 +635,7 @@
   color: #ffffff;
   font-size: 0.9rem;
   font-weight: 700;
-  border: 1px solid rgba(56, 189, 248, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.25s ease;
@@ -646,6 +646,6 @@
   background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
   transform: translateY(-2px);
   box-shadow: 0 12px 28px rgba(2, 132, 199, 0.45);
-  border-color: rgba(56, 189, 248, 0.8);
+  border-color: rgba(255, 255, 255, 0.18);
 }
 

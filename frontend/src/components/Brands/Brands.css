@@ -7,23 +7,23 @@
 
 .brands-page {
   min-height: 100vh;
-  background-color: #06080e;
+  background-color: #1a120b;
   background-image: 
-    radial-gradient(circle at 50% 10%, rgba(244, 63, 94, 0.07) 0%, transparent 60%),
-    radial-gradient(circle at 80% 80%, rgba(56, 189, 248, 0.05) 0%, transparent 50%);
-  color: #f1f5f9;
+    radial-gradient(circle at 50% 10%, rgba(213, 206, 163, 0.08) 0%, transparent 60%),
+    radial-gradient(circle at 80% 80%, rgba(60, 42, 33, 0.25) 0%, transparent 50%);
+  color: #e5e5cb;
   display: flex;
   flex-direction: column;
 }
 
 .brands-page.integrated-section {
   min-height: auto;
-  background-color: #06080e;
+  background-color: #1a120b;
   background-image: 
-    radial-gradient(circle at 50% 15%, rgba(244, 63, 94, 0.06) 0%, transparent 60%),
-    radial-gradient(circle at 20% 85%, rgba(56, 189, 248, 0.05) 0%, transparent 50%);
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    radial-gradient(circle at 50% 15%, rgba(213, 206, 163, 0.06) 0%, transparent 60%),
+    radial-gradient(circle at 20% 85%, rgba(60, 42, 33, 0.2) 0%, transparent 50%);
+  border-top: 1px solid rgba(213, 206, 163, 0.15);
+  border-bottom: 1px solid rgba(213, 206, 163, 0.15);
   position: relative;
   z-index: 2;
   padding-top: 90px;
@@ -126,7 +126,7 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: var(--brand-accent, #38bdf8);
+  background: var(--brand-accent, #ffffff);
   opacity: 0.35;
   transition: opacity 0.3s ease, height 0.3s ease;
 }
@@ -134,9 +134,7 @@
 .brand-card-item:hover {
   transform: translateY(-6px);
   border-color: var(--brand-accent, #f43f5e);
-  box-shadow: 
-    0 24px 50px rgba(0, 0, 0, 0.75),
-    0 0 28px var(--brand-glow, rgba(56, 189, 248, 0.2));
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
 .brand-card-item:hover::before,
@@ -163,7 +161,7 @@
   position: absolute;
   inset: -10px;
   border-radius: 14px;
-  background: radial-gradient(circle at center, var(--brand-glow, rgba(56, 189, 248, 0.15)) 0%, transparent 70%);
+  background: radial-gradient(circle at center, var(--brand-glow, rgba(255, 255, 255, 0.12)) 0%, transparent 70%);
   opacity: 0.4;
   pointer-events: none;
   transition: opacity 0.3s ease;
@@ -233,7 +231,7 @@
   font-family: ui-monospace, SFMono-Regular, monospace;
   font-size: 0.72rem;
   font-weight: 700;
-  color: var(--brand-accent, #38bdf8);
+  color: var(--brand-accent, #ffffff);
   margin: 0;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -271,7 +269,7 @@
 
 .brand-card-item:hover .brand-inspect-btn {
   background: var(--brand-accent, #f43f5e);
-  color: #06080e;
+  color: #1a120b;
   border-color: var(--brand-accent, #f43f5e);
   box-shadow: 0 4px 16px var(--brand-glow, rgba(244, 63, 94, 0.3));
 }
@@ -280,7 +278,7 @@
 .brand-inspect-modal {
   position: fixed;
   inset: 0;
-  background: rgba(6, 8, 14, 0.85);
+  background: rgba(26, 18, 11, 0.88);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   z-index: 1000;
@@ -346,9 +344,9 @@
   font-family: ui-monospace, SFMono-Regular, monospace;
   font-size: 0.62rem;
   font-weight: 800;
-  color: #10b981;
-  background: rgba(16, 185, 129, 0.12);
-  border: 1px solid rgba(16, 185, 129, 0.35);
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   padding: 2px 8px;
   border-radius: 4px;
 }
@@ -448,7 +446,7 @@
   align-items: center;
   gap: 10px;
   background: var(--modal-accent, #f43f5e);
-  color: #06080e;
+  color: #1a120b;
   border: none;
   font-family: ui-monospace, SFMono-Regular, monospace;
   font-size: 0.78rem;

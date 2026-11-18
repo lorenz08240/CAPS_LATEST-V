@@ -330,12 +330,12 @@ function DropIndicator({ activeCategory, category, position, isPlaced }) {
     <group position={position}>
       <mesh ref={meshRef}>
         <boxGeometry args={isCase ? [4.6, 9.2, 9.2] : [1.8, 1.8, 1.8]} />
-        <meshBasicMaterial color="#00e5ff" wireframe transparent opacity={isCase ? 0.35 : 0.4} />
+        <meshBasicMaterial color="#ffffff" wireframe transparent opacity={isCase ? 0.35 : 0.4} />
       </mesh>
       {isCase && (
         <mesh position={[0, -4.88, 0]} rotation={[-Math.PI / 2, 0, 0]}>
           <ringGeometry args={[5.0, 5.3, 48]} />
-          <meshBasicMaterial color="#00e5ff" transparent opacity={0.65} side={THREE.DoubleSide} />
+          <meshBasicMaterial color="#ffffff" transparent opacity={0.65} side={THREE.DoubleSide} />
         </mesh>
       )}
       <Html center position={[0, isCase ? 0 : 1.3, 0]} distanceFactor={14}>
@@ -369,7 +369,7 @@ function PCBuilder3DWorkspace() {
   const [autoRotate, setAutoRotate] = useState(false);
   const [glassMode, setGlassMode] = useState('closed'); // 'closed', 'open', 'removed'
   const [isExploded, setIsExploded] = useState(false);
-  const [rgbColor, setRgbColor] = useState('#00e5ff');
+  const [rgbColor, setRgbColor] = useState('#ffffff');
   const [caseColor, setCaseColor] = useState('black'); // 'black' | 'white'
   const [rigStance, setRigStance] = useState('tower'); // 'tower' | 'workbench' (flat POV)
   const [soundEnabled, setSoundEnabled] = useState(soundManager.enabled);
@@ -830,7 +830,7 @@ function PCBuilder3DWorkspace() {
 
   // RGB Palette presets
   const RGB_PRESETS = [
-    { label: 'Cyan', color: '#00e5ff' },
+    { label: 'White', color: '#ffffff' },
     { label: 'Razer Green', color: '#00e676' },
     { label: 'Neon Purple', color: '#a855f7' },
     { label: 'Solar Amber', color: '#facc15' },
@@ -894,7 +894,7 @@ function PCBuilder3DWorkspace() {
           <div className="metric-divider"></div>
           <div className="metric-badge">
             <span className="metric-label">EST. POWER</span>
-            <span className="metric-val" style={{ color: scores.estWattage > 650 ? '#facc15' : '#00e5ff' }}>
+            <span className="metric-val" style={{ color: scores.estWattage > 650 ? '#facc15' : '#ffffff' }}>
               {scores.estWattage} W
             </span>
           </div>
@@ -902,7 +902,7 @@ function PCBuilder3DWorkspace() {
           <div className="metric-badge">
             <span className="metric-label">MODE</span>
             {isLearnMode ? (
-              <span className="metric-val" style={{ color: '#00e5ff', fontSize: '0.82rem' }}>
+              <span className="metric-val" style={{ color: '#ffffff', fontSize: '0.82rem' }}>
                 Standard CSS Lab
               </span>
             ) : (
@@ -1507,7 +1507,7 @@ function PCBuilder3DWorkspace() {
 
               <mesh position={[0, -4.89, 0]}>
                 <boxGeometry args={[48.3, 0.04, 38.3]} />
-                <meshBasicMaterial color={isDark ? "#38bdf8" : "#0284c7"} transparent opacity={0.25} />
+                <meshBasicMaterial color={isDark ? "#ffffff" : "#0f172a"} transparent opacity={0.25} />
               </mesh>
 
               <mesh 
@@ -1525,7 +1525,7 @@ function PCBuilder3DWorkspace() {
 
               <mesh position={[0, -4.87, 0]}>
                 <boxGeometry args={[28.2, 0.02, 22.2]} />
-                <meshBasicMaterial color="#38bdf8" transparent opacity={0.4} />
+                <meshBasicMaterial color="#ffffff" transparent opacity={0.4} />
               </mesh>
 
               {[
@@ -1541,7 +1541,7 @@ function PCBuilder3DWorkspace() {
                   </mesh>
                   <mesh position={[0, 0.03, 0]}>
                     <boxGeometry args={[2.0, 0.02, 2.0]} />
-                    <meshBasicMaterial color="#38bdf8" transparent opacity={0.35} />
+                    <meshBasicMaterial color="#ffffff" transparent opacity={0.35} />
                   </mesh>
                 </group>
               ))}
@@ -1554,7 +1554,7 @@ function PCBuilder3DWorkspace() {
                 cellColor="#2e3e58" 
                 sectionSize={5} 
                 sectionThickness={1.8} 
-                sectionColor="#38bdf8" 
+                sectionColor="#ffffff" 
                 fadeDistance={36} 
                 fadeStrength={1.2} 
               />
@@ -1759,7 +1759,7 @@ function PCBuilder3DWorkspace() {
                             <rect x="2" y="2" width="28" height="38" rx="14" stroke="currentColor" strokeWidth="2.2" />
                             <path d="M16 2.5 V18" stroke="currentColor" strokeWidth="2" />
                             <path d="M2.5 18 H29.5" stroke="currentColor" strokeWidth="2" />
-                            <path d="M2.5 16 C2.5 8.5 8.5 2.5 16 2.5 V18 H2.5 Z" fill="#00f2fe" opacity="0.9" />
+                            <path d="M2.5 16 C2.5 8.5 8.5 2.5 16 2.5 V18 H2.5 Z" fill="#ffffff" opacity="0.9" />
                           </svg>
                         </div>
                         <span className="control-instruction-text">Left-Click & drag</span>
@@ -1771,9 +1771,9 @@ function PCBuilder3DWorkspace() {
                         <div className="control-device-icon-wrap">
                           <svg width="44" height="32" viewBox="0 0 48 34" fill="none" className="control-trackpad-svg">
                             <rect x="2" y="2" width="44" height="30" rx="6" stroke="currentColor" strokeWidth="2" />
-                            <circle cx="24" cy="17" r="4.5" fill="#00f2fe" />
-                            <path d="M24 17 L34 11" stroke="#00f2fe" strokeWidth="2" strokeLinecap="round" />
-                            <path d="M31 10 L35 11 L34 15" stroke="#00f2fe" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                            <circle cx="24" cy="17" r="4.5" fill="#ffffff" />
+                            <path d="M24 17 L34 11" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" />
+                            <path d="M31 10 L35 11 L34 15" stroke="#ffffff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                           </svg>
                         </div>
                         <span className="control-instruction-text">Press & drag</span>
@@ -1798,7 +1798,7 @@ function PCBuilder3DWorkspace() {
                             <rect x="2" y="2" width="28" height="38" rx="14" stroke="currentColor" strokeWidth="2.2" />
                             <path d="M16 2.5 V18" stroke="currentColor" strokeWidth="2" />
                             <path d="M2.5 18 H29.5" stroke="currentColor" strokeWidth="2" />
-                            <path d="M2.5 16 C2.5 8.5 8.5 2.5 16 2.5 V18 H2.5 Z" fill="#38bdf8" opacity="0.9" />
+                            <path d="M2.5 16 C2.5 8.5 8.5 2.5 16 2.5 V18 H2.5 Z" fill="#ffffff" opacity="0.9" />
                           </svg>
                         </div>
                         <span className="control-instruction-text">Shift + Click & drag</span>
@@ -1825,7 +1825,7 @@ function PCBuilder3DWorkspace() {
                           <svg width="44" height="32" viewBox="0 0 48 34" fill="none" className="control-trackpad-svg">
                             <rect x="2" y="2" width="44" height="30" rx="6" stroke="currentColor" strokeWidth="2" />
                             <circle cx="19" cy="17" r="3.8" fill="#f43f5e" />
-                            <circle cx="29" cy="17" r="3.8" fill="#00f2fe" />
+                            <circle cx="29" cy="17" r="3.8" fill="#ffffff" />
                             <path d="M24 17 L34 11" stroke="#ffffff" strokeWidth="1.8" strokeLinecap="round" />
                             <path d="M31 10 L35 11 L34 15" stroke="#ffffff" strokeWidth="1.5" strokeLinecap="round" />
                           </svg>
@@ -1850,7 +1850,7 @@ function PCBuilder3DWorkspace() {
                         <div className="control-device-icon-wrap">
                           <svg width="28" height="38" viewBox="0 0 32 42" fill="none" className="control-mouse-svg">
                             <rect x="2" y="2" width="28" height="38" rx="14" stroke="currentColor" strokeWidth="2.2" />
-                            <rect x="13.5" y="7" width="5" height="11" rx="2.5" fill="#00f2fe" stroke="#00f2fe" strokeWidth="1" />
+                            <rect x="13.5" y="7" width="5" height="11" rx="2.5" fill="#ffffff" stroke="#ffffff" strokeWidth="1" />
                             <circle cx="16" cy="12" r="1.5" fill="#06080e" />
                           </svg>
                         </div>
@@ -1863,10 +1863,10 @@ function PCBuilder3DWorkspace() {
                         <div className="control-device-icon-wrap">
                           <svg width="44" height="32" viewBox="0 0 48 34" fill="none" className="control-trackpad-svg">
                             <rect x="2" y="2" width="44" height="30" rx="6" stroke="currentColor" strokeWidth="2" />
-                            <circle cx="19" cy="21" r="3.6" fill="#00f2fe" />
-                            <circle cx="29" cy="21" r="3.6" fill="#00f2fe" />
-                            <path d="M19 15 V8 M29 15 V8" stroke="#00f2fe" strokeWidth="1.8" strokeLinecap="round" />
-                            <path d="M16.5 10.5 L19 7 L21.5 10.5 M26.5 10.5 L29 7 L31.5 10.5" stroke="#00f2fe" strokeWidth="1.5" strokeLinecap="round" />
+                            <circle cx="19" cy="21" r="3.6" fill="#ffffff" />
+                            <circle cx="29" cy="21" r="3.6" fill="#ffffff" />
+                            <path d="M19 15 V8 M29 15 V8" stroke="#ffffff" strokeWidth="1.8" strokeLinecap="round" />
+                            <path d="M16.5 10.5 L19 7 L21.5 10.5 M26.5 10.5 L29 7 L31.5 10.5" stroke="#ffffff" strokeWidth="1.5" strokeLinecap="round" />
                           </svg>
                         </div>
                         <span className="control-instruction-text">Two-finger push forward</span>

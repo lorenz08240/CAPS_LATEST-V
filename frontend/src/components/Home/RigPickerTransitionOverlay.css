@@ -7,8 +7,8 @@
   position: fixed;
   inset: 0;
   z-index: 99999;
-  background: #06080e;
-  color: #ffffff;
+  background: #1a120b;
+  color: #e5e5cb;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -60,7 +60,7 @@
   background: radial-gradient(
     ellipse at center,
     rgba(244, 63, 94, 0.18) 0%,
-    rgba(56, 189, 248, 0.07) 50%,
+    rgba(255, 255, 255, 0.12) 50%,
     transparent 75%
   );
   filter: blur(75px);
@@ -76,7 +76,7 @@
   background: linear-gradient(90deg, 
     transparent 0%, 
     rgba(244, 63, 94, 0.15) 20%, 
-    rgba(56, 189, 248, 0.45) 50%, 
+    rgba(255, 255, 255, 0.12) 50%, 
     rgba(244, 63, 94, 0.15) 80%, 
     transparent 100%
   );
@@ -134,7 +134,7 @@
   font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.12em;
-  color: #38bdf8;
+  color: #ffffff;
 }
 
 .rig-trans-status-chip {
@@ -153,8 +153,8 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #38bdf8;
-  box-shadow: 0 0 12px #38bdf8, 0 0 24px rgba(56, 189, 248, 0.8);
+  background: #ffffff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
   position: relative;
   animation: rigPulse 1.4s ease-in-out infinite alternate;
 }
@@ -264,7 +264,7 @@
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  text-shadow: 0 0 60px rgba(244, 63, 94, 0.35), 0 0 100px rgba(56, 189, 248, 0.2);
+  text-shadow: 0 0 60px rgba(244, 63, 94, 0.35), 0 0 100px rgba(255, 255, 255, 0.12);
 }
 
 /* Underline glow */
@@ -272,8 +272,8 @@
   width: 140px;
   height: 3px;
   border-radius: 3px;
-  background: linear-gradient(90deg, #f43f5e 0%, #38bdf8 100%);
-  box-shadow: 0 0 20px #f43f5e, 0 0 35px #38bdf8;
+  background: linear-gradient(135deg, #ffffff 0%, #d4d4d8 100%);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
   margin-bottom: 1.6rem;
 }
 
@@ -291,7 +291,7 @@
 }
 
 .rig-cyan-hi {
-  color: #38bdf8;
+  color: #ffffff;
   font-weight: 700;
 }
 
@@ -325,8 +325,8 @@
 }
 
 .rig-dot.active-cyan {
-  background: #38bdf8;
-  box-shadow: 0 0 8px #38bdf8;
+  background: #ffffff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
 .rig-loader-label {
@@ -362,7 +362,7 @@
 }
 
 .tag-cyan {
-  color: #38bdf8;
+  color: #ffffff;
 }
 
 /* Responsive tweaks */

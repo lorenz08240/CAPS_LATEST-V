@@ -15,7 +15,7 @@ export default function StageUnlockBanner({
   title = "STAGE UNLOCKED",
   subtitle = "Module authorized for live inspection",
   badge = "LEARN TRACK UNLOCK",
-  accentColor = "#00e5a0",
+  accentColor = "#ffffff",
   requireConfirm = false,
   ctaLabel = "",
   learnerProfile = null,
