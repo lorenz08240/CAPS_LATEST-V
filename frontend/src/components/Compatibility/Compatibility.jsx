@@ -1485,60 +1485,71 @@ function CompatibilityView({ isIntegrated = false }) {
   );
 
   /* ── Dedicated Container for Active Issues & Smart Suggestions ── */
-  const renderDiagnosticItem = (iss, idx, rigKey, rigBuild) => {
-    const suggestion = getSmartSuggestion(iss, rigBuild);
-    const compList = iss.components || [];
+  const renderDiagnosticRigCard = (issues, rigKey, rigBuild) => {
+    if (!issues || issues.length === 0) return null;
 
     return (
-      <div key={idx} className="diagnostic-item-card">
-        <div>
-          <div className="diagnostic-item-header">
-            <span className="diagnostic-item-cats">{iss.category}</span>
-            <span className={`diagnostic-item-rig-badge ${rigKey === "rig1" ? "rig1-badge" : "rig2-badge"}`}>
-              {rigKey === "rig1" ? "Rig 01 (Workbench)" : "Rig 02 (Comparison)"}
-            </span>
-          </div>
+      <div className="diagnostic-item-card diagnostic-unified-card">
+        {issues.map((iss, idx) => {
+          const suggestion = getSmartSuggestion(iss, rigBuild);
+          const compList = iss.components || [];
+          const isNotLast = idx < issues.length - 1;
 
-          <div className="diagnostic-conflict-box">
-            <span className="diagnostic-icon-alert" aria-hidden="true">⚠️</span>
-            <p className="diagnostic-problem-text">{iss.message || iss.issue}</p>
-          </div>
+          return (
+            <div key={idx} className="diagnostic-issue-entry">
+              <div>
+                <div className="diagnostic-item-header">
+                  <span className="diagnostic-item-cats">{iss.category}</span>
+                  <span className={`diagnostic-item-rig-badge ${rigKey === "rig1" ? "rig1-badge" : "rig2-badge"}`}>
+                    {rigKey === "rig1" ? "Rig 01 (Workbench)" : "Rig 02 (Comparison)"}
+                  </span>
+                </div>
 
-          <div className="diagnostic-suggestion-box">
-            <div className="diagnostic-suggestion-header">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="9" y1="18" x2="15" y2="18"></line>
-                <line x1="10" y1="22" x2="14" y2="22"></line>
-                <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"></path>
-              </svg>
-              <span>RECOMMENDED RESOLUTION ({suggestion.title})</span>
+                <div className="diagnostic-conflict-box">
+                  <span className="diagnostic-icon-alert" aria-hidden="true">⚠️</span>
+                  <p className="diagnostic-problem-text">{iss.message || iss.issue}</p>
+                </div>
+
+                <div className="diagnostic-suggestion-box">
+                  <div className="diagnostic-suggestion-header">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="9" y1="18" x2="15" y2="18"></line>
+                      <line x1="10" y1="22" x2="14" y2="22"></line>
+                      <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"></path>
+                    </svg>
+                    <span>RECOMMENDED RESOLUTION ({suggestion.title})</span>
+                  </div>
+                  <p className="diagnostic-suggestion-desc">{suggestion.solution}</p>
+                </div>
+              </div>
+
+              <div className="diagnostic-actions-row">
+                {compList.map((catKey) => {
+                  const matchedCat = COMPONENT_CATEGORIES.find((c) => c.key === catKey.toLowerCase());
+                  const catLabel = matchedCat?.label || catKey.toUpperCase();
+                  return (
+                    <Link
+                      key={catKey}
+                      to={`/build?category=${catKey}#build-station`}
+                      state={{ stepCategory: catKey, scrollTo: "build-station" }}
+                      className="btn-diagnostic-action primary"
+                      onClick={() => {
+                        try { soundManager.click(); } catch { }
+                        setActiveBuildTarget(rigKey);
+                      }}
+                      title={`Jump to ${catLabel} in Component Picker for ${rigKey === "rig1" ? "Rig 01" : "Rig 02"}`}
+                    >
+                      <span>Fix {catLabel}</span>
+                      <span className="btn-fix-arrow">&rarr;</span>
+                    </Link>
+                  );
+                })}
+              </div>
+
+              {isNotLast && <div className="diagnostic-entry-divider" />}
             </div>
-            <p className="diagnostic-suggestion-desc">{suggestion.solution}</p>
-          </div>
-        </div>
-
-        <div className="diagnostic-actions-row">
-          {compList.map((catKey) => {
-            const matchedCat = COMPONENT_CATEGORIES.find((c) => c.key === catKey.toLowerCase());
-            const catLabel = matchedCat?.label || catKey.toUpperCase();
-            return (
-              <Link
-                key={catKey}
-                to={`/build?category=${catKey}#build-station`}
-                state={{ stepCategory: catKey, scrollTo: "build-station" }}
-                className="btn-diagnostic-action primary"
-                onClick={() => {
-                  try { soundManager.click(); } catch { }
-                  setActiveBuildTarget(rigKey);
-                }}
-                title={`Jump to ${catLabel} in Component Picker for ${rigKey === "rig1" ? "Rig 01" : "Rig 02"}`}
-              >
-                <span>Fix {catLabel}</span>
-                <span className="btn-fix-arrow">&rarr;</span>
-              </Link>
-            );
-          })}
-        </div>
+          );
+        })}
       </div>
     );
   };
@@ -1577,7 +1588,7 @@ function CompatibilityView({ isIntegrated = false }) {
 
             <div className="diagnostic-col-body">
               {rig1Issues.length > 0 ? (
-                rig1Issues.map((iss, idx) => renderDiagnosticItem(iss, idx, "rig1", activeRig1))
+                renderDiagnosticRigCard(rig1Issues, "rig1", activeRig1)
               ) : (
                 <div className="diagnostic-empty-state green-state">
                   <span className="empty-check-icon">✓</span>
@@ -1612,7 +1623,7 @@ function CompatibilityView({ isIntegrated = false }) {
                   </div>
                 </div>
               ) : rig2Issues.length > 0 ? (
-                rig2Issues.map((iss, idx) => renderDiagnosticItem(iss, idx, "rig2", rig2))
+                renderDiagnosticRigCard(rig2Issues, "rig2", rig2)
               ) : (
                 <div className="diagnostic-empty-state cyan-state">
                   <span className="empty-check-icon">✓</span>

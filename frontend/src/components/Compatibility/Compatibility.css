@@ -2320,18 +2320,33 @@
 
 .diagnostic-item-card {
   background: rgba(11, 15, 25, 0.85);
-  border: 1px solid rgba(239, 68, 68, 0.25);
+  border: 1px solid rgba(239, 68, 68, 0.28);
   border-radius: 10px;
   padding: 1.25rem;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   transition: all 0.25s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
 }
 
 .diagnostic-item-card:hover {
   border-color: rgba(239, 68, 68, 0.5);
   box-shadow: 0 0 16px rgba(239, 68, 68, 0.15);
+}
+
+.diagnostic-unified-card {
+  gap: 0;
+}
+
+.diagnostic-issue-entry {
+  display: flex;
+  flex-direction: column;
+}
+
+.diagnostic-entry-divider {
+  height: 1px;
+  background: linear-gradient(90deg, rgba(239, 68, 68, 0.35) 0%, rgba(255, 255, 255, 0.1) 50%, rgba(239, 68, 68, 0.35) 100%);
+  margin: 1.25rem 0;
 }
 
 .diagnostic-item-header {
@@ -2429,7 +2444,7 @@
   align-items: center;
   gap: 0.6rem;
   flex-wrap: wrap;
-  margin-top: auto;
+  margin-top: 0.85rem;
 }
 
 .btn-diagnostic-action {
