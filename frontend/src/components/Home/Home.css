@@ -939,6 +939,21 @@ body.theme-light .giant-bg-logo-img,
   filter: drop-shadow(0 4px 25px rgba(0, 0, 0, 0.95));
 }
 
+.cyber-editorial-col.cyber-col-left {
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.cyber-editorial-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  will-change: transform, opacity;
+}
+
 .cyber-editorial-col.cyber-col-right {
   margin-left: auto;
   text-align: right;

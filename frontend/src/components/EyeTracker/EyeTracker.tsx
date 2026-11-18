@@ -254,7 +254,7 @@ export function EyeTracker({
       await wait(KEY_MS + Math.random() * 8);
       if (mine !== turn.current) return;
       const char = text[k - 1];
-      if (char && char.trim() && (k % 2 === 0 || char === " ")) {
+      if (!muted && char && char.trim() && (k % 2 === 0 || char === " ")) {
         try {
           soundManager.typewriter();
         } catch {}

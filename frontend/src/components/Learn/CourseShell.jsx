@@ -597,7 +597,6 @@ export default function CourseShell() {
       requestAnimationFrame(() => {
         updateSpotlightRect(stepIdx);
       });
-      setBobSpeech(TOUR_STEPS[stepIdx].speech);
     },
     [updateSpotlightRect, dismissTour]
   );
@@ -654,7 +653,6 @@ export default function CourseShell() {
       setTimeout(() => {
         updateSpotlightRect(stepIdx);
       }, 100);
-      setBobSpeech(TOUR_STEPS[stepIdx]?.speech || "");
     },
     [updateSpotlightRect]
   );
@@ -1481,20 +1479,22 @@ export default function CourseShell() {
         }}
       />
 
-      {/* ══ B.O.B. COMPANION IN LEFT RAIL ══ */}
-      <BobCompanion
-        context="learn"
-        activeTopic={currentTopic.title}
-        externalSpeech={showBriefingOverlay ? null : bobSpeech}
-        muted={showBriefingOverlay}
-        dockRight={20}
-        size={bobIsCenter ? 88 : leftRailOpen ? 64 : 46}
-        isCenter={bobIsCenter}
-        onLaunchLab={() => {
-          try { soundManager.install(); } catch {}
-          navigate(`/3d-builder?stage=${currentTopic.specimenKey}&learn=true`);
-        }}
-      />
+      {/* ══ B.O.B. COMPANION IN LEFT RAIL (Hidden during tour highlight guidance) ══ */}
+      {!tourActive && (
+        <BobCompanion
+          context="learn"
+          activeTopic={currentTopic.title}
+          externalSpeech={showBriefingOverlay || tourActive ? null : bobSpeech}
+          muted={showBriefingOverlay || tourActive}
+          dockRight={20}
+          size={bobIsCenter ? 88 : leftRailOpen ? 64 : 46}
+          isCenter={bobIsCenter}
+          onLaunchLab={() => {
+            try { soundManager.install(); } catch {}
+            navigate(`/3d-builder?stage=${currentTopic.specimenKey}&learn=true`);
+          }}
+        />
+      )}
     </div>
   );
 }

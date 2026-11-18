@@ -40,29 +40,21 @@ const HERO_DYNAMIC_CONTEXTS = {
     tag: "FEATURE 01 // CASE FIT CHECK",
     title: "WILL IT FIT?",
     desc: "Check if your graphics card, cooler, and fans fit inside your PC case before you buy. Never worry about parts being too big.",
-    btnLabel: "CHECK CASE SIZES",
-    targetSection: "service-compatibility",
   },
   motherboard: {
     tag: "FEATURE 02 // SOCKET MATCHING",
     title: "MATCH CPU & BOARD",
     desc: "Make sure your processor matches your motherboard socket perfectly. Prevent bent pins and wrong purchases automatically.",
-    btnLabel: "CHECK CPU COMPATIBILITY",
-    targetSection: "service-compatibility",
   },
   cpu: {
     tag: "FEATURE 03 // PC BUILDING LESSONS",
     title: "LEARN STEP BY STEP",
     desc: "Practice putting a PC together online. Learn how to place your CPU, apply thermal paste, and connect cables safely without breaking real parts.",
-    btnLabel: "START LEARNING NOW",
-    targetSection: "service-academy",
   },
   ram: {
     tag: "FEATURE 04 // COMPARE 2 BUILDS",
     title: "COMPARE 2 PCS",
     desc: "Compare two computer builds side by side. See differences in price, gaming speed (FPS), and memory so you get the best value for your budget.",
-    btnLabel: "COMPARE 2 BUILDS",
-    targetSection: "service-compatibility",
   },
   storage: {
     tag: "FEATURE 05 // POPULAR BRANDS",
@@ -82,8 +74,6 @@ const HERO_DYNAMIC_CONTEXTS = {
     tag: "FEATURE 07 // POWER CALCULATOR",
     title: "POWER & WATTAGE",
     desc: "Calculate how much electricity your parts need. We make sure your power supply has enough watts so your computer runs safely and never shuts down.",
-    btnLabel: "CHECK POWER NEEDED",
-    targetSection: "service-compatibility",
   },
 };
 
@@ -98,10 +88,15 @@ function Home() {
   const [showLearnerWelcomeBanner, setShowLearnerWelcomeBanner] = useState(false);
   const [welcomeLearnerProfile, setWelcomeLearnerProfile] = useState(null);
   const [activeModel, setActiveModel] = useState('case');
+  const [displayedModel, setDisplayedModel] = useState('case');
+  const latestActiveModelRef = useRef(activeModel);
+  latestActiveModelRef.current = activeModel;
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isScrolledDown, setIsScrolledDown] = useState(false);
   const [startBuildRequested, setStartBuildRequested] = useState(false);
   const leftColRef = useRef(null);
+  const leftContentRef = useRef(null);
+  const rightMetaRef = useRef(null);
   const hasClickedBuildRef = useRef(hasSessionUnlockedBuild);
 
   const isStudentSignedIn = Boolean(
@@ -113,21 +108,81 @@ function Home() {
     hasSessionUnlockedBuild = true;
   }, []);
 
-  const rawContext = HERO_DYNAMIC_CONTEXTS[activeModel] || HERO_DYNAMIC_CONTEXTS.case;
-  const activeContext = (activeModel === "cpu" && isStudentSignedIn)
-    ? { ...rawContext, btnLabel: "RESUME LEARNING NOW" }
-    : rawContext;
+  const activeContext = HERO_DYNAMIC_CONTEXTS[displayedModel] || HERO_DYNAMIC_CONTEXTS.case;
 
-  // Seamlessly transition left editorial context in sync with 3D model rotation
+  // Phase 1: Smooth GSAP exit animation whenever activeModel changes (no abrupt text snapping)
   useEffect(() => {
-    if (leftColRef.current) {
-      gsap.fromTo(
-        leftColRef.current,
-        { opacity: 0.35, y: 10 },
-        { opacity: 1, y: 0, duration: 0.55, ease: "power2.out" }
-      );
-    }
-  }, [activeModel]);
+    if (activeModel === displayedModel) return;
+
+    const ctx = gsap.context(() => {
+      const exitTargets = [leftContentRef.current, rightMetaRef.current].filter(Boolean);
+
+      gsap.to(exitTargets, {
+        opacity: 0,
+        y: -10,
+        duration: 0.22,
+        ease: "power2.in",
+        onComplete: () => {
+          // Switch displayed state only once the outgoing content has fully vanished
+          setDisplayedModel(latestActiveModelRef.current);
+        },
+      });
+    });
+
+    return () => ctx.revert();
+  }, [activeModel, displayedModel]);
+
+  // Phase 2: Buttery-smooth staggered GSAP entrance animation whenever displayed content is updated
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      if (leftContentRef.current) {
+        const badge = leftContentRef.current.querySelector(".cyber-tag-badge");
+        const title = leftContentRef.current.querySelector(".cyber-col-title");
+        const desc = leftContentRef.current.querySelector(".cyber-col-desc");
+        const btnGroup = leftContentRef.current.querySelector(".cyber-btn-group");
+        const items = [badge, title, desc, btnGroup].filter(Boolean);
+
+        // Reset container wrapper
+        gsap.set(leftContentRef.current, { opacity: 1, y: 0 });
+
+        // Staggered cascade entrance: badge -> title -> desc -> CTA button
+        gsap.fromTo(
+          items,
+          {
+            opacity: 0,
+            y: 16,
+          },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.44,
+            stagger: 0.05,
+            ease: "power3.out",
+            clearProps: "transform,opacity",
+          }
+        );
+      }
+
+      if (rightMetaRef.current) {
+        gsap.fromTo(
+          rightMetaRef.current,
+          {
+            opacity: 0,
+            y: -8,
+          },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.40,
+            ease: "power2.out",
+            clearProps: "transform,opacity",
+          }
+        );
+      }
+    });
+
+    return () => ctx.revert();
+  }, [displayedModel]);
 
   const handleHeroDynamicScroll = (targetSection) => {
     try { soundManager.click(); } catch {}
@@ -378,31 +433,35 @@ function Home() {
 
             <div className="cyber-editorial-grid">
               <div className="cyber-editorial-col cyber-col-left" ref={leftColRef}>
-                <div className="cyber-tag-badge">
-                  <span className="tag-bracket">[</span>
-                  <span className="tag-dot" />
-                  <span className="tag-text">{activeContext.tag}</span>
-                  <span className="tag-bracket">]</span>
-                </div>
-                <h2 className="cyber-col-title">{activeContext.title}</h2>
-                <p className="cyber-col-desc">{activeContext.desc}</p>
-                <div className="cyber-btn-group">
-                  <button
-                    type="button"
-                    className="cyber-btn-primary"
-                    onClick={() => handleHeroDynamicScroll(activeContext.targetSection)}
-                    title={`Explore ${activeContext.title}`}
-                  >
-                    <span>{activeContext.btnLabel}</span>
-                    <span className="btn-notch">&darr;</span>
-                  </button>
+                <div className="cyber-editorial-content" ref={leftContentRef}>
+                  <div className="cyber-tag-badge">
+                    <span className="tag-bracket">[</span>
+                    <span className="tag-dot" />
+                    <span className="tag-text">{activeContext.tag}</span>
+                    <span className="tag-bracket">]</span>
+                  </div>
+                  <h2 className="cyber-col-title">{activeContext.title}</h2>
+                  <p className="cyber-col-desc">{activeContext.desc}</p>
+                  {activeContext.btnLabel && (
+                    <div className="cyber-btn-group">
+                      <button
+                        type="button"
+                        className="cyber-btn-primary"
+                        onClick={() => handleHeroDynamicScroll(activeContext.targetSection)}
+                        title={`Explore ${activeContext.title}`}
+                      >
+                        <span>{activeContext.btnLabel}</span>
+                        <span className="btn-notch">&darr;</span>
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
 
               <div className="cyber-editorial-col cyber-col-right">
-                <div className="cyber-meta-header">
-                  <span className="meta-kicker">{STAGE_META[activeModel]?.name || 'EASY 3D PC BUILDER'}</span>
-                  <span className="meta-counter">{STAGE_META[activeModel]?.num || '01'} / 07</span>
+                <div className="cyber-meta-header" ref={rightMetaRef}>
+                  <span className="meta-kicker">{STAGE_META[displayedModel]?.name || 'EASY 3D PC BUILDER'}</span>
+                  <span className="meta-counter">{STAGE_META[displayedModel]?.num || '01'} / 07</span>
                 </div>
                 <h2 className="cyber-col-title">BUILDLAB SUITE</h2>
                 <p className="cyber-col-desc">

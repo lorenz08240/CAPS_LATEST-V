@@ -1,7 +1,7 @@
 # Graph Report - CAPS_LATEST-V  (2026-11-18)
 
 ## Corpus Check
-- 96 files · ~145,392 words
+- 96 files · ~145,541 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 51 file(s) not represented in the graph (top: .css 36, (none) 5, .glb 3)
 
@@ -11,7 +11,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `7abd88ad`
+- Built from commit: `0d78a334`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -42,7 +42,7 @@
 - [2026-10-23] Compatibility Checker SFX & Cute Sound Effects Update
 - backend/package.json
 - [2026-10-23] Learn Page: NotebookLLM Master Source Script for Module 1
-- AppContent
+- CourseShell.jsx
 - [2026-10-23] Learn Page: Video Player Overhaul + 9 Dead Videos Replaced (OC)
 - pageTransitions.jsx
 - [2026-10-23] Learn: Course-Outline Sidebar REWORK REVERTED to the previous design (OC — user request)
@@ -180,7 +180,7 @@ Nodes (19): author, dependencies, axios@^1.16.1, cors@^2.8.6, dotenv@^17.4.2, ex
 Cohesion: 0.67
 Nodes (3): [2026-10-23] Learn Page: NotebookLLM Master Source Script for Module 1, 📚 Generated Educational Master Script (`Module_1_NotebookLLM_Source.md`), 🎙️ Pure Native Text Format Optimization for NotebookLLM
 
-### Community 28 - "AppContent"
+### Community 28 - "CourseShell.jsx"
 Cohesion: 0.12
 Nodes (29): 🖥️ Fullscreen Gating (`FullscreenGate.jsx`), FullscreenGate(), FullscreenGateContext, CourseBriefingOverlay(), LEARNING_PATH, OUTCOMES, ARTICLE_HOTSPOTS, CourseShell() (+21 more)
 
@@ -202,11 +202,11 @@ _Questions this graph is uniquely positioned to answer:_
   _High betweenness centrality (0.302) - this node is a cross-community bridge._
 - **Should `server.js` be split into smaller, more focused modules?**
   _Cohesion score 0.1111111111111111 - nodes in this community are weakly interconnected._
-- **Why does `react` connect `App.jsx` to `PCBuilder3D.jsx`, `EyeTracker.tsx`, `Compatibility.jsx`, `frontend/package.json`, `App.jsx`, `dependencies`, `CourseVideoPlayer.jsx`, `AppContent`, `pageTransitions.jsx`?**
+- **Why does `react` connect `App.jsx` to `PCBuilder3D.jsx`, `EyeTracker.tsx`, `Compatibility.jsx`, `frontend/package.json`, `App.jsx`, `dependencies`, `CourseVideoPlayer.jsx`, `CourseShell.jsx`, `pageTransitions.jsx`?**
   _High betweenness centrality (0.232) - this node is a cross-community bridge._
 - **Should `App.jsx` be split into smaller, more focused modules?**
   _Cohesion score 0.08994032395566923 - nodes in this community are weakly interconnected._
-- **Why does `FullscreenGate()` connect `AppContent` to `App.jsx`, `PCBuilder3D.jsx`, `BuildLab Changelog`, `Compatibility.jsx`?**
+- **Why does `FullscreenGate()` connect `CourseShell.jsx` to `App.jsx`, `PCBuilder3D.jsx`, `BuildLab Changelog`, `Compatibility.jsx`?**
   _High betweenness centrality (0.174) - this node is a cross-community bridge._
 - **Should `PCBuilder3D.jsx` be split into smaller, more focused modules?**
   _Cohesion score 0.05917602996254682 - nodes in this community are weakly interconnected._
