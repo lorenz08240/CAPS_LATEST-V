@@ -17,7 +17,7 @@ export const LearnModeProvider = ({ children }) => {
     try {
       const saved = localStorage.getItem("buildlab_user_profile");
       if (saved) return JSON.parse(saved);
-    } catch {}
+    } catch { }
     return {
       fullName: "",
       email: "",
@@ -38,7 +38,7 @@ export const LearnModeProvider = ({ children }) => {
           return parsed;
         }
       }
-    } catch {}
+    } catch { }
     return ["build"];
   });
 
@@ -47,7 +47,7 @@ export const LearnModeProvider = ({ children }) => {
     try {
       const saved = localStorage.getItem("buildlab_learn_seen_banners");
       if (saved) return JSON.parse(saved);
-    } catch {}
+    } catch { }
     return {
       compatibility: false,
       learn: false,
@@ -67,7 +67,7 @@ export const LearnModeProvider = ({ children }) => {
       } else {
         localStorage.removeItem("buildlab_app_mode");
       }
-    } catch {}
+    } catch { }
   }, []);
 
   // Sync profile to localStorage
@@ -80,7 +80,7 @@ export const LearnModeProvider = ({ children }) => {
           const emailKey = updated.email.toLowerCase().trim();
           localStorage.setItem(`buildlab_student_profile_${emailKey}`, JSON.stringify(updated));
         }
-      } catch {}
+      } catch { }
       return updated;
     });
   }, []);
@@ -96,7 +96,7 @@ export const LearnModeProvider = ({ children }) => {
           const emailKey = userProfile.email.toLowerCase().trim();
           localStorage.setItem(`buildlab_student_stages_${emailKey}`, JSON.stringify(updated));
         }
-      } catch {}
+      } catch { }
       return updated;
     });
   }, [userProfile?.email]);
@@ -107,7 +107,7 @@ export const LearnModeProvider = ({ children }) => {
       const updated = { ...prev, [stageKey]: true };
       try {
         localStorage.setItem("buildlab_learn_seen_banners", JSON.stringify(updated));
-      } catch {}
+      } catch { }
       return updated;
     });
   }, []);
@@ -150,7 +150,7 @@ export const LearnModeProvider = ({ children }) => {
             if (path.startsWith("/learn") && sessionStorage.getItem("buildlab_guest_preview") === "true") {
               return true;
             }
-          } catch {}
+          } catch { }
           return false;
         }
         // If authenticated student enters course routes, ensure learn mode is active
@@ -158,7 +158,7 @@ export const LearnModeProvider = ({ children }) => {
           setModeState("learn");
           try {
             localStorage.setItem("buildlab_app_mode", "learn");
-          } catch {}
+          } catch { }
         }
         return true;
       }
@@ -188,7 +188,7 @@ export const LearnModeProvider = ({ children }) => {
         try {
           const search = typeof window !== "undefined" ? window.location.search : "";
           if (search.includes("learn=true") || search.includes("mode=learn")) return true;
-        } catch {}
+        } catch { }
         return isStageUnlocked("studio") || isStageUnlocked("3d") || isStageUnlocked("3d-builder");
       }
 
@@ -217,7 +217,7 @@ export const LearnModeProvider = ({ children }) => {
         "buildlab_learn_seen_banners",
         JSON.stringify({ compatibility: false, learn: false, certificate: false })
       );
-    } catch {}
+    } catch { }
   }, []);
 
   // Restore an existing student account and their last build/progress
@@ -260,7 +260,7 @@ export const LearnModeProvider = ({ children }) => {
             setUnlockedStages(parsedStages);
             localStorage.setItem("buildlab_learn_unlocked_stages", JSON.stringify(parsedStages));
           }
-        } catch {}
+        } catch { }
       } else {
         setUnlockedStages(["build", "compatibility", "learn", "studio", "certificate"]);
         localStorage.setItem("buildlab_learn_unlocked_stages", JSON.stringify(["build", "compatibility", "learn", "studio", "certificate"]));
@@ -273,7 +273,7 @@ export const LearnModeProvider = ({ children }) => {
           sessionStorage.setItem("buildlab_current_build", rawBuild);
           localStorage.setItem("buildlab_current_build", rawBuild);
           window.dispatchEvent(new CustomEvent("buildlab_restore_student_build", { detail: JSON.parse(rawBuild) }));
-        } catch {}
+        } catch { }
       }
 
       // 4. Restore Configuration Slots
@@ -282,7 +282,7 @@ export const LearnModeProvider = ({ children }) => {
         try {
           sessionStorage.setItem("buildlab_saved_builds", rawSavedBuilds);
           localStorage.setItem("buildlab_saved_builds", rawSavedBuilds);
-        } catch {}
+        } catch { }
       }
 
       sessionStorage.setItem("buildlab_pending_learner_welcome", archivedProfile.fullName);
@@ -301,12 +301,12 @@ export const LearnModeProvider = ({ children }) => {
       try {
         const active = JSON.parse(localStorage.getItem("buildlab_user_profile") || "null");
         if (active?.setupCompleted && (active.fullName || active.email)) return;
-      } catch {}
+      } catch { }
 
       let lastEmail = "";
       try {
         lastEmail = (localStorage.getItem("buildlab_last_learner_email") || "").trim().toLowerCase();
-      } catch {}
+      } catch { }
       if (!lastEmail || cancelled) return;
 
       // Local archive first: it also holds strand, interests, and saved build.
@@ -409,8 +409,8 @@ export const LearnModeProvider = ({ children }) => {
       sessionStorage.removeItem("buildlab_start_build_intent");
       try {
         sessionStorage.clear();
-      } catch {}
-    } catch {}
+      } catch { }
+    } catch { }
 
     // 4. Reset local React state
     setUserProfileState({
