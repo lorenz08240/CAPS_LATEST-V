@@ -102,9 +102,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Compatibility/Compatibility.jsx": {
-    "mtime": 1795017065.66026,
-    "seen": 1795017150.9470572,
-    "ast_hash": "f2dd4f387610666d40b201711d694c47",
+    "mtime": 1795017827.7723463,
+    "seen": 1795017863.643348,
+    "ast_hash": "c85f944d1c4f876e0e8b8c8181855dd8",
     "semantic_hash": ""
   },
   "frontend/src/components/FeatureCarousel/FeatureCarousel.jsx": {
