@@ -79,6 +79,11 @@ body.theme-light .global-brand-title,
   text-transform: uppercase;
 }
 
+/* When the brand is hidden (Compatibility page), center the nav links */
+.global-cyber-nav.nav-brand-hidden {
+  justify-content: center;
+}
+
 .global-nav-links {
   display: flex;
   align-items: center;

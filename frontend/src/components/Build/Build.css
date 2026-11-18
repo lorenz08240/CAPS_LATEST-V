@@ -543,6 +543,33 @@
   border-color: rgba(34, 197, 94, 0.35);
 }
 
+/* Parts flagged by a Compatibility "Fix" jump — show them as conflicting red */
+.step-item.has-issue,
+.step-item.has-issue.completed,
+.step-item.has-issue.active {
+  background: rgba(239, 68, 68, 0.16) !important;
+  border-color: rgba(239, 68, 68, 0.65) !important;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.22), inset 0 0 8px rgba(239, 68, 68, 0.12) !important;
+}
+
+.step-item.has-issue .step-icon,
+.step-item.has-issue.completed .step-icon,
+.step-item.has-issue.active .step-icon {
+  border-color: #ef4444 !important;
+  color: #f87171 !important;
+  background: rgba(239, 68, 68, 0.18) !important;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.3) !important;
+}
+
+.step-item.has-issue .step-picked-title {
+  color: #fecaca !important;
+}
+
+.step-issue-mark {
+  color: #ef4444;
+  font-weight: 900;
+}
+
 .step-icon {
   width: 26px;
   height: 26px;

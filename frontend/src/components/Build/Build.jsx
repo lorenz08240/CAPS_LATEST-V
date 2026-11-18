@@ -383,6 +383,11 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
     loadDemoBuild,
   } = useBuild();
   const location = useLocation();
+  // Categories flagged by a "Fix" jump from Compatibility — highlight these
+  // parts in red in the hardware-stage sidebar so the conflict is obvious.
+  const issueCategories = (location.state?.issueCategories || [])
+    .map((c) => String(c).toLowerCase());
+  const issueMessage = location.state?.issueMessage;
   const [currentStep, setCurrentStep] = useState(() => {
     const searchCat = new URLSearchParams(location.search).get("category") || new URLSearchParams(location.search).get("step");
     const targetCat = location.state?.stepCategory || searchCat;
@@ -992,7 +997,8 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
                 return (
                   <div
                     key={step.key}
-                    className={`step-item ${index === currentStep ? "active" : ""} ${picked ? "completed" : ""}`}
+                    className={`step-item ${index === currentStep ? "active" : ""} ${picked ? "completed" : ""} ${issueCategories.includes(step.key.toLowerCase()) ? "has-issue" : ""}`}
+                    title={issueCategories.includes(step.key.toLowerCase()) && issueMessage ? `⚠ ${issueMessage}` : undefined}
                     onClick={() => {
                       setCurrentStep(index);
                       const comp = currentBuild[step.key];
@@ -1008,7 +1014,12 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
                       )}
                     </div>
                     <div className="step-content">
-                      <div className="step-title">{step.label}</div>
+                      <div className="step-title">
+                        {step.label}
+                        {issueCategories.includes(step.key.toLowerCase()) && (
+                          <span className="step-issue-mark" aria-hidden="true"> ⚠</span>
+                        )}
+                      </div>
                       <div className={`step-desc ${picked ? "step-picked-title" : ""}`}>
                         {picked ? picked.name : step.description}
                       </div>

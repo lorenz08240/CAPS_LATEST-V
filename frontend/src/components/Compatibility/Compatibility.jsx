@@ -381,6 +381,15 @@ function CompatibilityView({ isIntegrated = false }) {
   // State for Free Workbench (non-account)
   const [rig2Source, setRig2Source] = useState("blank");
 
+  // Auto-show Rig 02 as soon as parts are assembled for it — even when the
+  // build came from the Component Picker without touching the source selector.
+  useEffect(() => {
+    const hasRig2Parts = rig2Build && Object.values(rig2Build).some(Boolean);
+    if (hasRig2Parts) {
+      setRig2Source((prev) => (prev === "blank" ? "custom-manual" : prev));
+    }
+  }, [rig2Build]);
+
   const triggerBobHint = useCallback((text) => {
     if (!text) return;
     try { soundManager.click(); } catch { }
@@ -973,19 +982,7 @@ function CompatibilityView({ isIntegrated = false }) {
     <div className="compare-rig-card card-primary-workbench">
       <div className="rig-card-header">
         <div className="rig-badge-group">
-          <span className="rig-badge-live">RIG 01 // WORKBENCH</span>
           <span className="rig-badge-subtitle">Active Custom Build</span>
-        </div>
-        <div className="rig-compat-status-chip">
-          {hasRig1 ? (
-            rig1Issues.length === 0 ? (
-              <span className="chip-badge status-ok">✓ 100% COMPATIBLE</span>
-            ) : (
-              <span className="chip-badge status-warning">⚠ {rig1Issues.length} ISSUE{rig1Issues.length > 1 ? "S" : ""}</span>
-            )
-          ) : (
-            <span className="chip-badge status-empty">EMPTY WORKBENCH</span>
-          )}
         </div>
       </div>
 
@@ -1000,20 +997,6 @@ function CompatibilityView({ isIntegrated = false }) {
                 e.target.src = "/assets/component_picker_image_bg.png";
               }}
             />
-            <div className="rig-preview-overlay-telemetry">
-              <div className="telemetry-pill">
-                <span className="pill-dot red-dot" />
-                <span>{rig1Wattage}W EST.</span>
-              </div>
-              <div className="telemetry-pill">
-                <span className="pill-dot purple-dot" />
-                <span>SCORE {rig1Scores.gaming || 92}</span>
-              </div>
-              <div className="telemetry-pill">
-                <span className="pill-dot green-dot" />
-                <span>{rig1Components.length}/7 PARTS</span>
-              </div>
-            </div>
           </div>
 
           <div className="rig-quick-actions">
@@ -1041,29 +1024,19 @@ function CompatibilityView({ isIntegrated = false }) {
       ) : (
         <div className="empty-rig1-card" style={{ minHeight: "240px" }}>
           <p className="empty-rig1-desc">No configuration loaded in this slot.</p>
-          <div style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap", marginTop: "12px" }}>
+          <div className="empty-rig-actions-row">
             <Link
               to="/build"
-              className="btn-load-demo-ghost"
+              className="btn-load-demo-ghost btn-plus-action rig-empty-cta"
               style={{ textDecoration: "none", display: "inline-flex", alignItems: "center", justifyContent: "center" }}
               onClick={() => {
                 try { soundManager.click(); } catch { }
                 setActiveBuildTarget("rig1");
               }}
             >
-              Go to Component Picker
+              <span className="plus-symbol">+</span>
+              <span>Go to Component Picker</span>
             </Link>
-            <button
-              type="button"
-              className="btn-load-demo-ghost"
-              style={{ background: "rgba(0, 229, 255, 0.15)", borderColor: "#00e5ff", color: "#00e5ff", cursor: "pointer" }}
-              onClick={() => {
-                try { soundManager.click(); } catch { }
-                if (loadDemoBuild) loadDemoBuild();
-              }}
-            >
-              Load Sample Rig (Test Demo)
-            </button>
           </div>
         </div>
       )}
@@ -1076,10 +1049,9 @@ function CompatibilityView({ isIntegrated = false }) {
           COMPONENT_CATEGORIES.map(({ key, label }) => {
             const comp = activeRig1[key];
             const spec = getCompSpecSummary(comp, key);
-            const matchingIssue = rig1Issues.find((iss) =>
+            const hasIssue = rig1Issues.some((iss) =>
               iss.components?.some((c) => c.toLowerCase() === key.toLowerCase())
             );
-            const hasIssue = !!matchingIssue;
 
             return (
               <div
@@ -1091,13 +1063,7 @@ function CompatibilityView({ isIntegrated = false }) {
                 </div>
                 <div className="spec-item-val-group">
                   <span className="spec-name" title={spec.main}>{spec.main}</span>
-                  {hasIssue ? (
-                    <span className="spec-tag issue-tag" title={matchingIssue.message}>
-                      ⚠ INCOMPATIBLE
-                    </span>
-                  ) : (
-                    <span className="spec-tag">{spec.tag}</span>
-                  )}
+                  <span className="spec-tag">{spec.tag}</span>
                 </div>
               </div>
             );
@@ -1117,7 +1083,6 @@ function CompatibilityView({ isIntegrated = false }) {
     <div className="compare-rig-card card-secondary-comparison">
       <div className="rig-card-header">
         <div className="rig-badge-group">
-          <span className="rig-badge-live badge-cyan">RIG 02 // COMPARISON</span>
           <span className="rig-badge-subtitle">
             {rig2Source === "custom-manual" ? "Second Custom Build" : "System Recommendation"}
           </span>
@@ -1151,17 +1116,6 @@ function CompatibilityView({ isIntegrated = false }) {
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="6 9 12 15 18 9" /></svg>
             </div>
           </div>
-          <div className="rig-compat-status-chip">
-            {hasRig2 ? (
-              rig2Issues.length === 0 ? (
-                <span className="chip-badge status-ok">✓ 100% COMPATIBLE</span>
-              ) : (
-                <span className="chip-badge status-warning">⚠ {rig2Issues.length} ISSUE{rig2Issues.length > 1 ? "S" : ""}</span>
-              )
-            ) : (
-              <span className="chip-badge status-empty">EMPTY SLOT</span>
-            )}
-          </div>
         </div>
       </div>
 
@@ -1176,20 +1130,6 @@ function CompatibilityView({ isIntegrated = false }) {
                 e.target.src = "/assets/component_picker_image_bg.png";
               }}
             />
-            <div className="rig-preview-overlay-telemetry">
-              <div className="telemetry-pill">
-                <span className="pill-dot red-dot" />
-                <span>{rig2Wattage}W EST.</span>
-              </div>
-              <div className="telemetry-pill">
-                <span className="pill-dot purple-dot" />
-                <span>SCORE {rig2Scores.gaming}</span>
-              </div>
-              <div className="telemetry-pill">
-                <span className="pill-dot green-dot" />
-                <span>{rig2Components.length}/7 PARTS</span>
-              </div>
-            </div>
           </div>
 
           <div className="rig-quick-actions">
@@ -1206,20 +1146,7 @@ function CompatibilityView({ isIntegrated = false }) {
                 <span>EDIT RIG 02 ASSEMBLY &rarr;</span>
               </Link>
             )}
-            <button
-              type="button"
-              className="btn-rig-action btn-delete-assembly"
-              onClick={handleDeleteRig2Assembly}
-              title="Clear this comparison from Rig 02"
-            >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="3 6 5 6 21 6" />
-                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                <line x1="10" y1="11" x2="10" y2="17" />
-                <line x1="14" y1="11" x2="14" y2="17" />
-              </svg>
-              <span>{rig2Source === "custom-manual" ? "CLEAR RIG 02" : "CLEAR PRESET"}</span>
-            </button>
+
           </div>
         </>
       ) : (
@@ -1230,7 +1157,7 @@ function CompatibilityView({ isIntegrated = false }) {
           <div className="empty-rig-actions-row">
             <button
               type="button"
-              className="btn-load-demo-ghost btn-plus-action"
+              className="btn-load-demo-ghost btn-plus-action rig-empty-cta"
               onClick={handleStartRig2ManualBuild}
               title="Build a second custom rig manually (+) to compare"
             >
@@ -1249,10 +1176,9 @@ function CompatibilityView({ isIntegrated = false }) {
           COMPONENT_CATEGORIES.map(({ key, label }) => {
             const comp = rig2?.[key];
             const spec = getCompSpecSummary(comp, key);
-            const matchingIssue = rig2Issues.find((iss) =>
+            const hasIssue = rig2Issues.some((iss) =>
               iss.components?.some((c) => c.toLowerCase() === key.toLowerCase())
             );
-            const hasIssue = !!matchingIssue;
 
             return (
               <div
@@ -1264,13 +1190,7 @@ function CompatibilityView({ isIntegrated = false }) {
                 </div>
                 <div className="spec-item-val-group">
                   <span className="spec-name" title={spec.main}>{spec.main}</span>
-                  {hasIssue ? (
-                    <span className="spec-tag issue-tag" title={matchingIssue.message}>
-                      ⚠ INCOMPATIBLE
-                    </span>
-                  ) : (
-                    <span className="spec-tag">{spec.tag}</span>
-                  )}
+                  <span className="spec-tag">{spec.tag}</span>
                 </div>
               </div>
             );
@@ -1484,72 +1404,54 @@ function CompatibilityView({ isIntegrated = false }) {
     </section>
   );
 
-  /* ── Dedicated Container for Active Issues & Smart Suggestions ── */
-  const renderDiagnosticRigCard = (issues, rigKey, rigBuild) => {
-    if (!issues || issues.length === 0) return null;
+  /* ── One conflict inside a rig's SINGLE card (no per-issue card wrapper) ── */
+  const renderDiagnosticIssueEntry = (iss, rigKey, rigBuild, entryKey) => {
+    const suggestion = getSmartSuggestion(iss, rigBuild);
+    const compList = iss.components || [];
 
     return (
-      <div className="diagnostic-item-card diagnostic-unified-card">
-        {issues.map((iss, idx) => {
-          const suggestion = getSmartSuggestion(iss, rigBuild);
-          const compList = iss.components || [];
-          const isNotLast = idx < issues.length - 1;
-
-          return (
-            <div key={idx} className="diagnostic-issue-entry">
-              <div>
-                <div className="diagnostic-item-header">
-                  <span className="diagnostic-item-cats">{iss.category}</span>
-                  <span className={`diagnostic-item-rig-badge ${rigKey === "rig1" ? "rig1-badge" : "rig2-badge"}`}>
-                    {rigKey === "rig1" ? "Rig 01 (Workbench)" : "Rig 02 (Comparison)"}
-                  </span>
-                </div>
-
-                <div className="diagnostic-conflict-box">
-                  <span className="diagnostic-icon-alert" aria-hidden="true">⚠️</span>
-                  <p className="diagnostic-problem-text">{iss.message || iss.issue}</p>
-                </div>
-
-                <div className="diagnostic-suggestion-box">
-                  <div className="diagnostic-suggestion-header">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <line x1="9" y1="18" x2="15" y2="18"></line>
-                      <line x1="10" y1="22" x2="14" y2="22"></line>
-                      <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"></path>
-                    </svg>
-                    <span>RECOMMENDED RESOLUTION ({suggestion.title})</span>
-                  </div>
-                  <p className="diagnostic-suggestion-desc">{suggestion.solution}</p>
-                </div>
-              </div>
-
-              <div className="diagnostic-actions-row">
-                {compList.map((catKey) => {
-                  const matchedCat = COMPONENT_CATEGORIES.find((c) => c.key === catKey.toLowerCase());
-                  const catLabel = matchedCat?.label || catKey.toUpperCase();
-                  return (
-                    <Link
-                      key={catKey}
-                      to={`/build?category=${catKey}#build-station`}
-                      state={{ stepCategory: catKey, scrollTo: "build-station" }}
-                      className="btn-diagnostic-action primary"
-                      onClick={() => {
-                        try { soundManager.click(); } catch { }
-                        setActiveBuildTarget(rigKey);
-                      }}
-                      title={`Jump to ${catLabel} in Component Picker for ${rigKey === "rig1" ? "Rig 01" : "Rig 02"}`}
-                    >
-                      <span>Fix {catLabel}</span>
-                      <span className="btn-fix-arrow">&rarr;</span>
-                    </Link>
-                  );
-                })}
-              </div>
-
-              {isNotLast && <div className="diagnostic-entry-divider" />}
+      <div key={entryKey} className="diagnostic-issue-entry">
+        <div className="diagnostic-suggestion-box">
+          {/* Category (left) + Fix actions (right) — both inside the box */}
+          <div className="diagnostic-item-header">
+            <span className="diagnostic-item-cats">{iss.category}</span>
+            <div className="diagnostic-actions-row">
+              {compList.map((catKey) => {
+                const matchedCat = COMPONENT_CATEGORIES.find((c) => c.key === catKey.toLowerCase());
+                const catLabel = matchedCat?.label || catKey.toUpperCase();
+                return (
+                  <Link
+                    key={catKey}
+                    to={`/build?category=${catKey}#build-station`}
+                    state={{
+                      stepCategory: catKey,
+                      scrollTo: "build-main-area",
+                      issueCategories: compList,
+                      issueMessage: iss.message || iss.issue,
+                    }}
+                    className="btn-diagnostic-action primary"
+                    onClick={() => {
+                      try { soundManager.click(); } catch { }
+                      setActiveBuildTarget(rigKey);
+                    }}
+                    title={`Jump to ${catLabel} in Component Picker for ${rigKey === "rig1" ? "Rig 01" : "Rig 02"}`}
+                  >
+                    <span>Fix {catLabel}</span>
+                    <span className="btn-fix-arrow">&rarr;</span>
+                  </Link>
+                );
+              })}
             </div>
-          );
-        })}
+          </div>
+
+          <p className="diagnostic-suggestion-desc">{suggestion.solution}</p>
+
+          {/* Diagnostic problem lives INSIDE the suggestion box container */}
+          <div className="diagnostic-conflict-box">
+            <span className="diagnostic-icon-alert" aria-hidden="true">⚠️</span>
+            <p className="diagnostic-problem-text">{iss.message || iss.issue}</p>
+          </div>
+        </div>
       </div>
     );
   };
@@ -1560,35 +1462,17 @@ function CompatibilityView({ isIntegrated = false }) {
 
     return (
       <section className="diagnostic-issues-card glass-panel" aria-label="Detected Hardware Issues & Recommendations">
-        <div className="diagnostic-header">
-          <div className="diagnostic-badge-row">
-            <span className="diagnostic-live-dot" />
-            <span className="diagnostic-badge-text">
-              DIAGNOSTIC MATRIX // {totalConflicts} CRITICAL CONFLICT{totalConflicts > 1 ? "S" : ""} DETECTED
-            </span>
-          </div>
-          <h3 className="diagnostic-title">HARDWARE COMPATIBILITY ISSUES &amp; RESOLUTION RECOMMENDATIONS</h3>
-          <p className="diagnostic-subtitle">
-            Physical socket collisions, DDR generation mismatches, and power tolerances identified. Resolve these conflicts in the Component Picker before finalizing your build.
-          </p>
-        </div>
-
+        {/* ── Two separate cards: one for Rig 01, one for Rig 02 ── */}
         <div className="diagnostic-split-container">
-          {/* ── LEFT COLUMN: RIG 01 (WORKBENCH) ── */}
+          {/* ── RIG 01 (WORKBENCH) CARD ── */}
           <div className="diagnostic-col diagnostic-col-rig1">
             <div className="diagnostic-col-header">
-              <div className="col-title-group">
-                <span className="col-dot green" />
-                <span className="col-title">RIG 01 // WORKBENCH</span>
-              </div>
-              <span className={`col-status-pill ${rig1Issues.length > 0 ? "has-conflicts" : "all-clear"}`}>
-                {rig1Issues.length > 0 ? `⚠ ${rig1Issues.length} CONFLICT${rig1Issues.length > 1 ? "S" : ""}` : "✓ 100% COMPATIBLE"}
-              </span>
+              <h3 className="diagnostic-title">FOUND ISSUE</h3>
             </div>
 
             <div className="diagnostic-col-body">
               {rig1Issues.length > 0 ? (
-                renderDiagnosticRigCard(rig1Issues, "rig1", activeRig1)
+                rig1Issues.map((iss, idx) => renderDiagnosticIssueEntry(iss, "rig1", activeRig1, idx))
               ) : (
                 <div className="diagnostic-empty-state green-state">
                   <span className="empty-check-icon">✓</span>
@@ -1601,20 +1485,14 @@ function CompatibilityView({ isIntegrated = false }) {
             </div>
           </div>
 
-          {/* ── RIGHT COLUMN: RIG 02 (COMPARISON) ── */}
+          {/* ── RIG 02 (COMPARISON) CARD — stays empty until a rig is assembled ── */}
           <div className="diagnostic-col diagnostic-col-rig2">
             <div className="diagnostic-col-header">
-              <div className="col-title-group">
-                <span className="col-dot cyan" />
-                <span className="col-title">RIG 02 // COMPARISON</span>
-              </div>
-              <span className={`col-status-pill ${!hasRig2 ? "empty-pill" : rig2Issues.length > 0 ? "has-conflicts" : "all-clear"}`}>
-                {!hasRig2 ? "EMPTY SLOT" : rig2Issues.length > 0 ? `⚠ ${rig2Issues.length} CONFLICT${rig2Issues.length > 1 ? "S" : ""}` : "✓ 100% COMPATIBLE"}
-              </span>
+              <h3 className="diagnostic-title">FOUND ISSUE</h3>
             </div>
 
             <div className="diagnostic-col-body">
-              {!hasRig2 ? (
+              {!hasRig2 || rig2Issues.length === 0 ? (
                 <div className="diagnostic-empty-state neutral-state">
                   <span className="empty-check-icon">∅</span>
                   <div className="empty-copy">
@@ -1622,16 +1500,8 @@ function CompatibilityView({ isIntegrated = false }) {
                     <p>Select a preset or assemble a custom rig above to run dual-configuration diagnostics.</p>
                   </div>
                 </div>
-              ) : rig2Issues.length > 0 ? (
-                renderDiagnosticRigCard(rig2Issues, "rig2", rig2)
               ) : (
-                <div className="diagnostic-empty-state cyan-state">
-                  <span className="empty-check-icon">✓</span>
-                  <div className="empty-copy">
-                    <strong>Rig 02 is 100% Compatible</strong>
-                    <p>Hardware verified with no socket pinout collisions, DDR mismatches, or wattage overdraw.</p>
-                  </div>
-                </div>
+                rig2Issues.map((iss, idx) => renderDiagnosticIssueEntry(iss, "rig2", rig2, idx))
               )}
             </div>
           </div>
@@ -1691,7 +1561,13 @@ function CompatibilityView({ isIntegrated = false }) {
             onComplete={handleUnlockBannerComplete}
           />
         )}
-        {!isIntegrated && <GlobalHeader hideBuildPill={true} />}
+        {!isIntegrated && (
+          <GlobalHeader
+            hideBuildPill={true}
+            hideBrand={true}
+            hiddenNavItems={['COMPATIBILITY']}
+          />
+        )}
         {!isIntegrated && (
           <>
             <div className="bg-grid" aria-hidden="true" />
@@ -1730,13 +1606,6 @@ function CompatibilityView({ isIntegrated = false }) {
               <h1 className="compat-hero-title">
                 Real-Time <span className="title-compat-accent">Compatibility</span> Check
               </h1>
-              <p className="compat-hero-desc">
-                Every component is instantly verified against physical clearances, electrical loads, and socket standards.
-              </p>
-              <div className="compat-bob-guide-pill" title="Hardware Interactive Guide">
-                <span className="bob-guide-icon">🤖</span>
-                <span>Right-click or hold (touchscreen) any component or metric to inspect with B.O.B.</span>
-              </div>
             </header>
           )}
 
