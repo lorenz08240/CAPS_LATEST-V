@@ -3,7 +3,7 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Html } from "@react-three/drei";
 import * as THREE from "three";
 import ComponentModels3D from "../3D/ComponentModels3D";
-import GenericPCCase from "../3D/GenericPCCase";
+import NorthChalkWhiteCase from "../3D/NorthChalkWhiteCase";
 import PSUModel from "../3D/PSUModel";
 import { SingleNVMeSSD } from "../3D/NVMeSSDModel";
 import { SingleDDR4RAM } from "../3D/DDR4RAMModel";
@@ -150,13 +150,13 @@ function VirtualRigStage({ installedKeys, activeKey, postPassed, isPaused = fals
 
   return (
     <group ref={rigGroupRef} position={[0, -0.2, 0]}>
-      {/* 1. Case Chassis */}
+      {/* 1. Case Chassis (High-Fidelity Architectural Chassis from Home) */}
       {hasCase && (
-        <group position={[0, -0.4, 0]}>
-          <GenericPCCase
+        <group position={[0, -0.2, 0]} scale={[0.42, 0.42, 0.42]}>
+          <NorthChalkWhiteCase
             rgbColor={postPassed ? "#00e5a0" : "#00A896"}
             caseColor="black"
-            glassMode={hasGpu ? "closed" : "open"}
+            sidePanelMode={hasGpu && postPassed ? "glass" : "open"}
             explodedProgress={0}
             enableHighlight={activeKey === "case"}
           />
@@ -165,7 +165,7 @@ function VirtualRigStage({ installedKeys, activeKey, postPassed, isPaused = fals
 
       {/* 2. Motherboard */}
       {hasMobo && (
-        <group position={[-0.2, 0.4, -0.2]}>
+        <group position={[-0.2, 0.35, -0.2]}>
           <ComponentModels3D
             part={{ category: "motherboard", name: "ATX Reference Motherboard", targetPosition: [0, 0, 0] }}
             rgbColor={postPassed ? "#00e5a0" : "#00A896"}
@@ -232,9 +232,9 @@ function VirtualRigStage({ installedKeys, activeKey, postPassed, isPaused = fals
         </group>
       )}
 
-      {/* 7. PSU in Lower Shroud */}
+      {/* 7. PSU Mounted Properly in Lower Rear Shroud Compartment */}
       {hasPsu && (
-        <group position={[0.2, -1.8, -0.6]} scale={[0.9, 0.9, 0.9]}>
+        <group position={[0.1, -1.48, -0.85]} scale={[0.48, 0.48, 0.48]} rotation={[0, Math.PI, 0]}>
           <PSUModel rgbColor={postPassed ? "#00e5a0" : "#00A896"} isMounted={true} isStandalone={false} />
         </group>
       )}

@@ -3,7 +3,7 @@
   "1": "server.js",
   "2": "App.jsx",
   "4": "crawler.js",
-  "5": "EyeTracker.tsx",
+  "5": "pageTransitions.jsx",
   "6": "Compatibility.jsx",
   "7": "frontend/package.json",
   "8": "db.js",
@@ -23,8 +23,10 @@
   "25": "[2026-10-23] Compatibility Checker SFX & Cute Sound Effects Update",
   "26": "backend/package.json",
   "27": "[2026-10-23] Learn Page: NotebookLLM Master Source Script for Module 1",
-  "28": "CourseShell.jsx",
+  "28": "@tailwindcss/postcss@^4.2.2",
   "29": "[2026-10-23] Learn Page: Video Player Overhaul + 9 Dead Videos Replaced (OC)",
-  "30": "pageTransitions.jsx",
-  "32": "[2026-10-23] Learn: Course-Outline Sidebar REWORK REVERTED to the previous design (OC — user request)"
+  "30": "CourseShell.jsx",
+  "31": "FeatureCarousel.jsx",
+  "32": "[2026-10-23] Learn: Course-Outline Sidebar REWORK REVERTED to the previous design (OC — user request)",
+  "33": "🖥️ Fullscreen Gating (`FullscreenGate.jsx`)"
 }

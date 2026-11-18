@@ -25,7 +25,8 @@ import ProceduralSickleFan from './ProceduralSickleFan';
 export default function NorthChalkWhiteCase({
   position = [0, 0, 0],
   scale = 1,
-  sidePanelMode = 'glass', // 'glass' | 'mesh'
+  sidePanelMode = 'glass', // 'glass' | 'mesh' | 'open'
+  caseColor = 'black', // 'black' | 'white'
   rgbColor = '#00e5ff',
   explodedProgress = 0,
   isSelected = false,
@@ -35,24 +36,30 @@ export default function NorthChalkWhiteCase({
   onHover,
   part
 }) {
+  const isWhite = caseColor === 'white';
+
   // Palette & Materials
-  // Chalk white matte powder coat
-  const chalkWhite = '#f3f4f6';
-  const chalkWhiteBezel = '#e5e7eb';
-  const chassisMetalness = 0.15;
-  const chassisRoughness = 0.55;
+  // Chassis outer shell powder coat
+  const outerCoat = isWhite ? '#f3f4f6' : '#1a1e27';
+  const outerBezel = isWhite ? '#e5e7eb' : '#12151d';
+  const chassisMetalness = isWhite ? 0.15 : 0.45;
+  const chassisRoughness = isWhite ? 0.55 : 0.65;
 
   // Interior dark chassis
-  const interiorCharcoal = '#1a1d24';
-  const interiorSteel = '#222631';
-  const grommetColor = '#0f1115';
+  const interiorCharcoal = isWhite ? '#1a1d24' : '#14161c';
+  const interiorSteel = isWhite ? '#222631' : '#1c202a';
+  const grommetColor = '#0b0d11';
 
-  // Real Oak wood tones with subtle natural variation
-  const oakBase = '#c59d64';
-  const oakTones = [
-    '#c8a168', '#b99258', '#d0a970', '#c29b61', '#b79056',
-    '#cca46d', '#bf975e', '#cfab73', '#ba935a', '#c79f66'
-  ];
+  // Wood tones: Authentic Walnut (Black Case) vs Scandinavian Oak (White Case)
+  const oakTones = isWhite
+    ? [
+        '#c8a168', '#b99258', '#d0a970', '#c29b61', '#b79056',
+        '#cca46d', '#bf975e', '#cfab73', '#ba935a', '#c79f66'
+      ]
+    : [
+        '#422e1e', '#4c3624', '#392719', '#483323', '#3d2b1c',
+        '#453121', '#372618', '#4a3525', '#3f2c1d', '#443022'
+      ];
 
   // Turned brushed brass
   const brassColor = '#d4af37';
@@ -209,7 +216,7 @@ export default function NorthChalkWhiteCase({
         <mesh position={[-halfW + 0.18, 0, 0.1]}>
           <boxGeometry args={[0.36, H, 0.32]} />
           <meshStandardMaterial
-            color={chalkWhiteBezel}
+            color={outerBezel}
             roughness={chassisRoughness}
             metalness={chassisMetalness}
             emissive={highlightEmissive}
@@ -220,7 +227,7 @@ export default function NorthChalkWhiteCase({
         <mesh position={[halfW - 0.18, 0, 0.1]}>
           <boxGeometry args={[0.36, H, 0.32]} />
           <meshStandardMaterial
-            color={chalkWhiteBezel}
+            color={outerBezel}
             roughness={chassisRoughness}
             metalness={chassisMetalness}
             emissive={highlightEmissive}
@@ -231,7 +238,7 @@ export default function NorthChalkWhiteCase({
         <mesh position={[0, halfH - 0.18, 0.1]}>
           <boxGeometry args={[W, 0.36, 0.32]} />
           <meshStandardMaterial
-            color={chalkWhiteBezel}
+            color={outerBezel}
             roughness={chassisRoughness}
             metalness={chassisMetalness}
             emissive={highlightEmissive}
@@ -242,7 +249,7 @@ export default function NorthChalkWhiteCase({
         <mesh position={[0, -halfH + 0.18, 0.1]}>
           <boxGeometry args={[W, 0.36, 0.32]} />
           <meshStandardMaterial
-            color={chalkWhiteBezel}
+            color={outerBezel}
             roughness={chassisRoughness}
             metalness={chassisMetalness}
             emissive={highlightEmissive}
@@ -259,7 +266,7 @@ export default function NorthChalkWhiteCase({
         <mesh position={[0, 0, 0]}>
           <boxGeometry args={[W, 0.16, D]} />
           <meshStandardMaterial
-            color={chalkWhite}
+            color={outerCoat}
             roughness={chassisRoughness}
             metalness={chassisMetalness}
             emissive={highlightEmissive}
@@ -317,67 +324,69 @@ export default function NorthChalkWhiteCase({
       </group>
 
       {/* ========================================================= */}
-      {/* 4. MODULAR LEFT SIDE PANEL (Tempered Glass vs Fine Mesh)   */}
+      {/* 4. MODULAR LEFT SIDE PANEL (Tempered Glass vs Mesh vs Open)*/}
       {/* ========================================================= */}
-      <group name="left_side_panel" position={[expXLeft, 0, 0]}>
-        {sidePanelMode === 'mesh' ? (
-          /* Fine Perforated Steel Breathable Mesh Side Panel */
-          <group name="mesh_side">
-            <mesh position={[0, 0, 0]}>
-              <boxGeometry args={[0.08, H - 0.2, D - 0.2]} />
-              <meshStandardMaterial
-                color={chalkWhite}
-                roughness={0.7}
-                metalness={0.2}
-                emissive={highlightEmissive}
-                emissiveIntensity={highlightIntensity}
-              />
-            </mesh>
-          </group>
-        ) : (
-          /* High-Clarity Tempered Glass Panel */
-          <group name="tempered_glass_side">
-            {/* Architectural Glass Sheet */}
-            <mesh position={[0, 0, 0]}>
-              <boxGeometry args={[0.06, H - 0.2, D - 0.2]} />
-              <meshPhysicalMaterial
-                color="#eef2f6"
-                roughness={0.03}
-                metalness={0.05}
-                transmission={0.94}
-                transparent={true}
-                opacity={0.25}
-                ior={1.52}
-                reflectivity={0.7}
-                clearcoat={1.0}
-                clearcoatRoughness={0.02}
-              />
-            </mesh>
+      {sidePanelMode !== 'open' && (
+        <group name="left_side_panel" position={[expXLeft, 0, 0]}>
+          {sidePanelMode === 'mesh' ? (
+            /* Fine Perforated Steel Breathable Mesh Side Panel */
+            <group name="mesh_side">
+              <mesh position={[0, 0, 0]}>
+                <boxGeometry args={[0.08, H - 0.2, D - 0.2]} />
+                <meshStandardMaterial
+                  color={outerCoat}
+                  roughness={0.7}
+                  metalness={0.2}
+                  emissive={highlightEmissive}
+                  emissiveIntensity={highlightIntensity}
+                />
+              </mesh>
+            </group>
+          ) : (
+            /* High-Clarity Tempered Glass Panel */
+            <group name="tempered_glass_side">
+              {/* Architectural Glass Sheet */}
+              <mesh position={[0, 0, 0]}>
+                <boxGeometry args={[0.06, H - 0.2, D - 0.2]} />
+                <meshPhysicalMaterial
+                  color={isWhite ? "#eef2f6" : "#64748b"}
+                  roughness={0.03}
+                  metalness={0.05}
+                  transmission={0.92}
+                  transparent={true}
+                  opacity={isWhite ? 0.25 : 0.32}
+                  ior={1.52}
+                  reflectivity={0.7}
+                  clearcoat={1.0}
+                  clearcoatRoughness={0.02}
+                />
+              </mesh>
 
-            {/* Dark Silk-Screened Perimeter Frit Border (Real TG Feature) */}
-            {/* Top border */}
-            <mesh position={[-0.032, halfH - 0.25, 0]}>
-              <boxGeometry args={[0.005, 0.3, D - 0.22]} />
-              <meshStandardMaterial color="#1e2229" roughness={0.85} />
-            </mesh>
-            {/* Bottom border */}
-            <mesh position={[-0.032, -halfH + 0.25, 0]}>
-              <boxGeometry args={[0.005, 0.3, D - 0.22]} />
-              <meshStandardMaterial color="#1e2229" roughness={0.85} />
-            </mesh>
-            {/* Front vertical border */}
-            <mesh position={[-0.032, 0, halfD - 0.25]}>
-              <boxGeometry args={[0.005, H - 0.22, 0.3]} />
-              <meshStandardMaterial color="#1e2229" roughness={0.85} />
-            </mesh>
-            {/* Rear vertical border */}
-            <mesh position={[-0.032, 0, -halfD + 0.25]}>
-              <boxGeometry args={[0.005, H - 0.22, 0.3]} />
-              <meshStandardMaterial color="#1e2229" roughness={0.85} />
-            </mesh>
-          </group>
-        )}
-      </group>
+              {/* Dark Silk-Screened Perimeter Frit Border (Real TG Feature) */}
+              {/* Top border */}
+              <mesh position={[-0.032, halfH - 0.25, 0]}>
+                <boxGeometry args={[0.005, 0.3, D - 0.22]} />
+                <meshStandardMaterial color="#1e2229" roughness={0.85} />
+              </mesh>
+              {/* Bottom border */}
+              <mesh position={[-0.032, -halfH + 0.25, 0]}>
+                <boxGeometry args={[0.005, 0.3, D - 0.22]} />
+                <meshStandardMaterial color="#1e2229" roughness={0.85} />
+              </mesh>
+              {/* Front vertical border */}
+              <mesh position={[-0.032, 0, halfD - 0.25]}>
+                <boxGeometry args={[0.005, H - 0.22, 0.3]} />
+                <meshStandardMaterial color="#1e2229" roughness={0.85} />
+              </mesh>
+              {/* Rear vertical border */}
+              <mesh position={[-0.032, 0, -halfD + 0.25]}>
+                <boxGeometry args={[0.005, H - 0.22, 0.3]} />
+                <meshStandardMaterial color="#1e2229" roughness={0.85} />
+              </mesh>
+            </group>
+          )}
+        </group>
+      )}
 
       {/* ========================================================= */}
       {/* 5. SOLID RIGHT STEEL SIDE PANEL                           */}
@@ -386,7 +395,7 @@ export default function NorthChalkWhiteCase({
         <mesh position={[0, 0, 0]}>
           <boxGeometry args={[0.08, H - 0.2, D - 0.2]} />
           <meshStandardMaterial
-            color={chalkWhite}
+            color={outerCoat}
             roughness={chassisRoughness}
             metalness={chassisMetalness}
             emissive={highlightEmissive}

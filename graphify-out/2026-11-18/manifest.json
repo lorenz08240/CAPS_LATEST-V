@@ -132,9 +132,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/CourseShell.jsx": {
-    "mtime": 1794988844.4319084,
-    "seen": 1794989425.4369757,
-    "ast_hash": "a938e87d37053694b5e63e0d40dcf872",
+    "mtime": 1794994403.9898505,
+    "seen": 1794994560.8514597,
+    "ast_hash": "95c8973926aa79bfc51d1164ad64e1aa",
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/CourseVideoPlayer.jsx": {
@@ -858,9 +858,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/LearnHardwareStage.jsx": {
-    "mtime": 1794938536.7480814,
-    "seen": 1794938580.3182309,
-    "ast_hash": "70050bd3969870c6f131b8eb4a6ca3eb",
+    "mtime": 1794994819.2513895,
+    "seen": 1794997987.6174057,
+    "ast_hash": "c15b81671a2a417e6d7071af3633dd81",
     "semantic_hash": ""
   },
   "frontend/src/components/Legal/LegalPage.jsx": {
@@ -912,15 +912,15 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Dashboard/StudentDashboard.jsx": {
-    "mtime": 1794864544.1523688,
-    "seen": 1794864962.0279086,
-    "ast_hash": "58f3a081447d6041f9d8f6466f39040b",
+    "mtime": 1794991527.6883018,
+    "seen": 1794992100.4259858,
+    "ast_hash": "10a8c5ac00819cf9687cbbd5e2dece8f",
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/VirtualAssemblyLab.jsx": {
-    "mtime": 1794853643.399621,
-    "seen": 1794853753.6263623,
-    "ast_hash": "8c1dc692c249211d6bc3660914f66d9d",
+    "mtime": 1794993688.1708488,
+    "seen": 1794994560.8518465,
+    "ast_hash": "b693d44805bcf2d9a27a0317c66a825d",
     "semantic_hash": ""
   },
   "frontend/public/assets/shin_ariane_pol.jpg": {
@@ -996,9 +996,27 @@
     "semantic_hash": ""
   },
   "frontend/src/components/3D/NorthChalkWhiteCase.jsx": {
-    "mtime": 1794980284.7087002,
-    "seen": 1794983940.9909341,
-    "ast_hash": "6d759fe315ab5bf0da0ab09e16dcad85",
+    "mtime": 1794993534.8941994,
+    "seen": 1794994560.8436372,
+    "ast_hash": "fedbc5bc593a30e94847e37dda3de848",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Learn/LessonPresentationView.jsx": {
+    "mtime": 1794997402.3708525,
+    "seen": 1794997987.6174104,
+    "ast_hash": "7a776ca98d409286bdd97ccde9e4db12",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Learn/ModuleQuizModal.jsx": {
+    "mtime": 1794997544.771178,
+    "seen": 1794997987.617413,
+    "ast_hash": "17e3dbaf25406c7c43562cd0387867ab",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Learn/moduleQuizzes.js": {
+    "mtime": 1794990913.8233259,
+    "seen": 1794992100.4370034,
+    "ast_hash": "1222e5a7d88e3755dbee38271aeeb328",
     "semantic_hash": ""
   },
   "backend/package-lock.json": {

@@ -3,7 +3,7 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls, Html, Line } from "@react-three/drei";
 import * as THREE from "three";
 import ComponentModels3D from "../3D/ComponentModels3D";
-import GenericPCCase from "../3D/GenericPCCase";
+import NorthChalkWhiteCase from "../3D/NorthChalkWhiteCase";
 import PSUModel from "../3D/PSUModel";
 import { SingleNVMeSSD } from "../3D/NVMeSSDModel";
 import { SingleDDR4RAM } from "../3D/DDR4RAMModel";
@@ -421,13 +421,15 @@ function StageSpecimen({
       )}
 
       {specimenKey === "case" && (
-        <GenericPCCase
-          rgbColor="#00A896"
-          caseColor="black"
-          glassMode="open"
-          explodedProgress={0.18}
-          enableHighlight={false}
-        />
+        <group scale={[0.42, 0.42, 0.42]} position={[0, -0.2, 0]}>
+          <NorthChalkWhiteCase
+            rgbColor="#00A896"
+            caseColor="black"
+            sidePanelMode={isExploded ? "open" : "glass"}
+            explodedProgress={isExploded ? 0.35 : 0}
+            enableHighlight={false}
+          />
+        </group>
       )}
 
       <SignalFlowBeams specimenKey={specimenKey} visible={showSignalFlow} isPaused={isPaused} />
@@ -473,6 +475,8 @@ export default function LearnHardwareStage({
   isExploded: propExploded,
   onToggleExploded,
   isPaused = false,
+  isMini = false,
+  onClickMini,
 }) {
   const [internalExploded, setInternalExploded] = useState(false);
   const isExploded = propExploded !== undefined ? propExploded : internalExploded;
@@ -525,9 +529,23 @@ export default function LearnHardwareStage({
   };
 
   return (
-    <div className="workbench-stage">
+    <div className={`workbench-stage ${isMini ? "is-mini-stage" : ""}`}>
       {/* Subtle Blueprint Grid + PCB Trace Backdrop */}
       <div className="workbench-iso-grid" aria-hidden="true" />
+
+      {/* Mini Viewport Click Interceptor to expand */}
+      {isMini && (
+        <div
+          className="wb-mini-overlay"
+          onClick={() => {
+            try { soundManager.snap(); } catch {}
+            if (onClickMini) onClickMini();
+          }}
+          role="button"
+          tabIndex={0}
+          title="Click to expand to Interactive 3D Lab"
+        />
+      )}
 
       {/* 3D Interactive Hardware Canvas */}
       <Canvas
@@ -547,10 +565,10 @@ export default function LearnHardwareStage({
         <StageSpecimen
           specimenKey={specimenKey}
           selectedPartName={selectedBuildPart?.name}
-          showSignalFlow={showSignalFlow}
+          showSignalFlow={showSignalFlow && !isMini}
           hotspots={hotspots}
           selectedHotspotId={selectedHotspotId}
-          showHotspots={showHotspots}
+          showHotspots={showHotspots && !isMini}
           onSelectHotspot={(hs) => onSelectHotspotId(hs ? hs.id : null)}
           isExploded={isExploded}
           isPaused={isPaused}
@@ -564,10 +582,19 @@ export default function LearnHardwareStage({
           resetNonce={resetNonce}
           isPaused={isPaused}
         />
+
+        {isMini && (
+          <OrbitControls
+            autoRotate
+            autoRotateSpeed={2.2}
+            enableZoom={false}
+            enablePan={false}
+          />
+        )}
       </Canvas>
 
-      {/* Top-Left Moveable/Toggleable Schematic Bus Window (like learn-arduino-red) */}
-      {showSchematic && (
+      {/* Top-Left Moveable/Toggleable Schematic Bus Window (Hidden in Mini Viewport) */}
+      {!isMini && showSchematic && (
         <div className="workbench-schematic-card">
           <div className="schematic-card-head">
             <span className="schematic-card-title">{lessonTitle}</span>
@@ -617,8 +644,8 @@ export default function LearnHardwareStage({
         </div>
       )}
 
-      {/* Floating Part Inspector Card (appears when a hotspot is clicked) */}
-      {activeHotspot && (
+      {/* Floating Part Inspector Card (appears when a hotspot is clicked, hidden in mini mode) */}
+      {!isMini && activeHotspot && (
         <div className="workbench-inspector-card">
           <div className="inspector-card-head">
             <div>
@@ -672,117 +699,119 @@ export default function LearnHardwareStage({
         </div>
       )}
 
-      {/* Bottom-Center 3D Viewport Toolbar */}
-      <div className="workbench-toolbar" role="toolbar" aria-label="3D Hardware Viewport Controls">
-        <button
-          type="button"
-          className="wb-tool-btn"
-          onClick={() => handleTurn("left")}
-          data-tooltip="Turn Left (↺)"
-          aria-label="Turn left"
-        >
-          ↺
-        </button>
-        <button
-          type="button"
-          className="wb-tool-btn"
-          onClick={() => handleTurn("right")}
-          data-tooltip="Turn Right (↻)"
-          aria-label="Turn right"
-        >
-          ↻
-        </button>
-        <span className="wb-tool-sep" />
-        <button
-          type="button"
-          className="wb-tool-btn"
-          onClick={() => handleZoom(-0.2)}
-          data-tooltip="Zoom Out (−)"
-          aria-label="Zoom out"
-        >
-          −
-        </button>
-        <button
-          type="button"
-          className="wb-tool-btn"
-          onClick={() => handleZoom(0.2)}
-          data-tooltip="Zoom In (+)"
-          aria-label="Zoom in"
-        >
-          +
-        </button>
-        <button
-          type="button"
-          className="wb-tool-btn"
-          onClick={handleResetView}
-          data-tooltip="Reset Camera (⌖)"
-          aria-label="Reset view"
-        >
-          ⌖
-        </button>
-        <span className="wb-tool-sep" />
-        <button
-          type="button"
-          className={`wb-tool-btn ${isExploded ? "is-active" : ""}`}
-          onClick={() => {
-            try { soundManager.click(); } catch {}
-            toggleExploded();
-          }}
-          data-tooltip={isExploded ? "Collapse Rig (💥)" : "Explode 3D Subassemblies (💥)"}
-          aria-label="Toggle Exploded View"
-        >
-          💥
-        </button>
-        <button
-          type="button"
-          className={`wb-tool-btn ${showSignalFlow ? "is-active" : ""}`}
-          onClick={() => {
-            try { soundManager.click(); } catch {}
-            setShowSignalFlow((s) => !s);
-          }}
-          data-tooltip="Toggle Bus Power Flow (⚡)"
-          aria-label="Toggle signal flow"
-        >
-          ⚡
-        </button>
-        <button
-          type="button"
-          className={`wb-tool-btn ${showSchematic ? "is-active" : ""}`}
-          onClick={() => {
-            try { soundManager.click(); } catch {}
-            setShowSchematic((s) => !s);
-          }}
-          data-tooltip="Toggle Schematic Diagram (∿)"
-          aria-label="Toggle bus schematic diagram"
-        >
-          ∿
-        </button>
-        <button
-          type="button"
-          className={`wb-tool-btn ${showHotspots ? "is-active" : ""}`}
-          onClick={() => {
-            try { soundManager.click(); } catch {}
-            setShowHotspots((s) => !s);
-          }}
-          data-tooltip="Toggle 3D Hotspot Labels (◉)"
-          aria-label="Toggle hotspots"
-        >
-          ◉
-        </button>
-        <span className="wb-tool-sep" />
-        <button
-          type="button"
-          className="wb-tool-video-btn"
-          onClick={() => {
-            try { soundManager.click(); } catch {}
-            onOpenVideo && onOpenVideo();
-          }}
-          data-tooltip="Open Lesson Lecture Video (▶)"
-          aria-label="Watch lecture video"
-        >
-          <span>▶ LECTURE FILM</span>
-        </button>
-      </div>
+      {/* Bottom-Center 3D Viewport Toolbar (Hidden in mini mode) */}
+      {!isMini && (
+        <div className="workbench-toolbar" role="toolbar" aria-label="3D Hardware Viewport Controls">
+          <button
+            type="button"
+            className="wb-tool-btn"
+            onClick={() => handleTurn("left")}
+            data-tooltip="Turn Left (↺)"
+            aria-label="Turn left"
+          >
+            ↺
+          </button>
+          <button
+            type="button"
+            className="wb-tool-btn"
+            onClick={() => handleTurn("right")}
+            data-tooltip="Turn Right (↻)"
+            aria-label="Turn right"
+          >
+            ↻
+          </button>
+          <span className="wb-tool-sep" />
+          <button
+            type="button"
+            className="wb-tool-btn"
+            onClick={() => handleZoom(-0.2)}
+            data-tooltip="Zoom Out (−)"
+            aria-label="Zoom out"
+          >
+            −
+          </button>
+          <button
+            type="button"
+            className="wb-tool-btn"
+            onClick={() => handleZoom(0.2)}
+            data-tooltip="Zoom In (+)"
+            aria-label="Zoom in"
+          >
+            +
+          </button>
+          <button
+            type="button"
+            className="wb-tool-btn"
+            onClick={handleResetView}
+            data-tooltip="Reset Camera (⌖)"
+            aria-label="Reset view"
+          >
+            ⌖
+          </button>
+          <span className="wb-tool-sep" />
+          <button
+            type="button"
+            className={`wb-tool-btn ${isExploded ? "is-active" : ""}`}
+            onClick={() => {
+              try { soundManager.click(); } catch {}
+              toggleExploded();
+            }}
+            data-tooltip={isExploded ? "Collapse Rig (💥)" : "Explode 3D Subassemblies (💥)"}
+            aria-label="Toggle Exploded View"
+          >
+            💥
+          </button>
+          <button
+            type="button"
+            className={`wb-tool-btn ${showSignalFlow ? "is-active" : ""}`}
+            onClick={() => {
+              try { soundManager.click(); } catch {}
+              setShowSignalFlow((s) => !s);
+            }}
+            data-tooltip="Toggle Bus Power Flow (⚡)"
+            aria-label="Toggle signal flow"
+          >
+            ⚡
+          </button>
+          <button
+            type="button"
+            className={`wb-tool-btn ${showSchematic ? "is-active" : ""}`}
+            onClick={() => {
+              try { soundManager.click(); } catch {}
+              setShowSchematic((s) => !s);
+            }}
+            data-tooltip="Toggle Schematic Diagram (∿)"
+            aria-label="Toggle bus schematic diagram"
+          >
+            ∿
+          </button>
+          <button
+            type="button"
+            className={`wb-tool-btn ${showHotspots ? "is-active" : ""}`}
+            onClick={() => {
+              try { soundManager.click(); } catch {}
+              setShowHotspots((s) => !s);
+            }}
+            data-tooltip="Toggle 3D Hotspot Labels (◉)"
+            aria-label="Toggle hotspots"
+          >
+            ◉
+          </button>
+          <span className="wb-tool-sep" />
+          <button
+            type="button"
+            className="wb-tool-video-btn"
+            onClick={() => {
+              try { soundManager.click(); } catch {}
+              onOpenVideo && onOpenVideo();
+            }}
+            data-tooltip="Open Lesson Lecture Video (▶)"
+            aria-label="Watch lecture video"
+          >
+            <span>▶ LECTURE FILM</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 }

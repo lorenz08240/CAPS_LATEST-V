@@ -4,6 +4,7 @@ import { useLearnMode } from "../../contexts/LearnModeContext";
 import { useTheme } from "../../contexts/ThemeContext";
 import soundManager from "../../utilities/soundManager";
 import { CSS_CURRICULUM, FLAT_TOPICS, TOTAL_TOPICS_COUNT } from "../Learn/curriculumData";
+import { getStudentQuizRecords, computeStudentAcademicStanding } from "../Learn/moduleQuizzes";
 import AccountSetupModal from "../Home/AccountSetupModal";
 import "./StudentDashboard.css";
 
@@ -63,6 +64,15 @@ export default function StudentDashboard({
   const completedCount = completedTopics.length;
   const progressPct = Math.round((completedCount / TOTAL_TOPICS_COUNT) * 100);
   const isAllComplete = completedCount >= TOTAL_TOPICS_COUNT;
+
+  // Read student 15-question quiz records and compute collegiate GWA / Academic Standing
+  const quizRecords = useMemo(() => {
+    return getStudentQuizRecords(userProfile?.email || localUser?.email);
+  }, [userProfile?.email, localUser?.email]);
+
+  const standing = useMemo(() => {
+    return computeStudentAcademicStanding(userProfile?.email || localUser?.email);
+  }, [userProfile?.email, localUser?.email]);
 
   // Find next uncompleted topic
   const nextTopicIdx = useMemo(() => {
@@ -243,6 +253,142 @@ export default function StudentDashboard({
             >
               {isAllComplete ? "Review Syllabus ↺" : "Resume Course →"}
             </button>
+          </div>
+        </section>
+
+        {/* ── OFFICIAL UNIVERSITY SIS LEARNER PORTAL & GRADEBOOK (FEU / TUP / PUP / RTU STYLE) ── */}
+        <section className="dashboard-sis-gradebook-card">
+          <div className="sis-card-header">
+            <div className="sis-header-left">
+              <span className="sis-seal-icon">🏛️</span>
+              <div>
+                <span className="sis-kicker">OFFICIAL ACADEMIC TRANSCRIPT // STUDENT INFORMATION SYSTEM (SIS)</span>
+                <h3>Modular Assessment &amp; 15-Item Comprehensive Exam Gradebook</h3>
+                <p className="sis-meta-desc">
+                  Student ID: <strong>2024-PTC-CSS-0941</strong> &bull; Academic Year: <strong>A.Y. 2025-2026, 1st Semester</strong> &bull; Standard: <strong>TESDA NC II / DepEd TVL Standard (75% Passing Cutoff)</strong>
+                </p>
+              </div>
+            </div>
+
+            <div className="sis-gwa-pill">
+              <span className="gwa-label">CUMULATIVE GWA</span>
+              <strong className="gwa-val">{standing.gwa !== "N/A" ? standing.gwa : "—"}</strong>
+              <span className="gwa-standing">{standing.academicStanding}</span>
+            </div>
+          </div>
+
+          <div className="sis-table-wrap">
+            <table className="sis-gradebook-table">
+              <thead>
+                <tr>
+                  <th>Course Code</th>
+                  <th>Module Subject &amp; Core Competency</th>
+                  <th>Assessment Items</th>
+                  <th>Score</th>
+                  <th>Rating (%)</th>
+                  <th>Equivalent Grade</th>
+                  <th>Academic Status</th>
+                  <th>Date Recorded</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {CSS_CURRICULUM.map((mod) => {
+                  const record = quizRecords[mod.moduleNum];
+                  const hasRecord = !!record;
+                  const firstTopicIdx = FLAT_TOPICS.findIndex((t) => t.moduleNum === mod.moduleNum);
+                  const targetIdx = firstTopicIdx !== -1 ? firstTopicIdx : 0;
+
+                  return (
+                    <tr key={mod.id} className={hasRecord && record.passed ? "row-passed" : ""}>
+                      <td className="cell-code">
+                        <strong>CSS-10{mod.moduleNum}</strong>
+                      </td>
+                      <td className="cell-subject">
+                        <strong>{mod.title}</strong>
+                        <span>{mod.description}</span>
+                      </td>
+                      <td className="cell-items">15 Items</td>
+                      <td className="cell-score">
+                        {hasRecord ? (
+                          <strong className={record.passed ? "text-emerald" : "text-rose"}>
+                            {record.score} / {record.total}
+                          </strong>
+                        ) : (
+                          <span className="text-muted">—</span>
+                        )}
+                      </td>
+                      <td className="cell-pct">
+                        {hasRecord ? (
+                          <strong className={record.passed ? "text-emerald" : "text-rose"}>
+                            {record.percentage}%
+                          </strong>
+                        ) : (
+                          <span className="text-muted">—</span>
+                        )}
+                      </td>
+                      <td className="cell-grade">
+                        {hasRecord ? (
+                          <span className="grade-badge">
+                            {record.gradeEquivalent} ({record.qualitativeRating.split(" ")[0]})
+                          </span>
+                        ) : (
+                          <span className="text-muted">INC</span>
+                        )}
+                      </td>
+                      <td className="cell-status">
+                        {hasRecord ? (
+                          record.passed ? (
+                            <span className="sis-status-tag passed">✓ PASSED</span>
+                          ) : (
+                            <span className="sis-status-tag failed">✕ RETAKE NEEDED</span>
+                          )
+                        ) : (
+                          <span className="sis-status-tag pending">○ NOT ATTEMPTED</span>
+                        )}
+                      </td>
+                      <td className="cell-date">
+                        {hasRecord ? record.dateFormatted : "—"}
+                      </td>
+                      <td className="cell-actions">
+                        <div className="sis-action-btns">
+                          <button
+                            type="button"
+                            className="btn-sis-exam"
+                            onClick={() => {
+                              try { soundManager.click(); } catch {}
+                              if (isEmbedded && onSelectTopic) {
+                                onSelectTopic(targetIdx, "quiz");
+                                if (onClose) onClose();
+                              } else {
+                                navigate("/learn", { state: { targetTopicIndex: targetIdx, openQuiz: true, moduleNum: mod.moduleNum } });
+                              }
+                            }}
+                          >
+                            {hasRecord ? "↺ Retake Exam" : "📝 Take Exam"}
+                          </button>
+                          <button
+                            type="button"
+                            className="btn-sis-slides"
+                            onClick={() => {
+                              try { soundManager.snap(); } catch {}
+                              if (isEmbedded && onSelectTopic) {
+                                onSelectTopic(targetIdx, "presentation");
+                                if (onClose) onClose();
+                              } else {
+                                navigate("/learn", { state: { targetTopicIndex: targetIdx, centerMode: "presentation" } });
+                              }
+                            }}
+                          >
+                            📄 Study Slides
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
         </section>
 

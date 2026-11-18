@@ -3,6 +3,9 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useBuild } from "../../contexts/BuildContext";
 import { useLearnMode } from "../../contexts/LearnModeContext";
 import LearnHardwareStage from "./LearnHardwareStage";
+import LessonPresentationView from "./LessonPresentationView";
+import VirtualAssemblyLab from "./VirtualAssemblyLab";
+import ModuleQuizModal from "./ModuleQuizModal";
 import CourseBriefingOverlay from "./CourseBriefingOverlay";
 import StudentDashboard from "../Dashboard/StudentDashboard";
 import BobCompanion from "../BobCompanion/BobCompanion";
@@ -200,6 +203,12 @@ export default function CourseShell() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [completed, setCompleted] = useState(() => readProgress(userProfile?.email));
 
+  // Dual-Phase Center View: 'presentation' (Slide/Report Theory & Visuals) vs '3d-lab' (3D Hardware Inspection)
+  const [centerMode, setCenterMode] = useState("presentation");
+  const [showQuizModal, setShowQuizModal] = useState(false);
+  const [quizModuleNum, setQuizModuleNum] = useState(1);
+  const [active3DStepIdx, setActive3DStepIdx] = useState(0);
+
   // Student Dashboard Overlay over 3D Stage
   const [showDashboardOverlay, setShowDashboardOverlay] = useState(() => {
     try {
@@ -221,11 +230,21 @@ export default function CourseShell() {
   const wasVideoPlayingRef = useRef(false);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
 
-  // Check URL query parameters or location state for dashboard view
+  // Check URL query parameters or location state for dashboard view or topic jump
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     if (params.get("view") === "dashboard" || location.state?.openDashboard) {
       setShowDashboardOverlay(true);
+    }
+    const topicParam = params.get("topic");
+    if (topicParam !== null) {
+      const idx = Number(topicParam);
+      if (!isNaN(idx) && idx >= 0 && idx < FLAT_TOPICS.length) {
+        setCurrentIndex(idx);
+      }
+    }
+    if (params.get("mode") === "3d-lab") {
+      setCenterMode("3d-lab");
     }
   }, [location.search, location.state]);
 
@@ -323,6 +342,22 @@ export default function CourseShell() {
 
   // Current active topic
   const currentTopic = FLAT_TOPICS[currentIndex] || FLAT_TOPICS[0];
+
+  useEffect(() => {
+    if (location.state?.openQuiz) {
+      setQuizModuleNum(Number(location.state.moduleNum) || currentTopic.moduleNum);
+      setShowQuizModal(true);
+    }
+    if (location.state?.centerMode) {
+      setCenterMode(location.state.centerMode);
+    }
+  }, [location.state, currentTopic.moduleNum]);
+
+  // When changing topic, reset active 3D step and default to presentation mode
+  useEffect(() => {
+    setActive3DStepIdx(0);
+    setCenterMode("presentation");
+  }, [currentIndex]);
 
   // Right Panel Video & Interactive State
   const [videoExpanded, setVideoExpanded] = useState(true);
@@ -953,34 +988,180 @@ export default function CourseShell() {
 
         {/* ══ 2-FOCUSED ZONE WORKBENCH: CENTER 3D CANVAS + RIGHT CSS PRE-LAB GUIDE ══ */}
         <div className="wb-workbench-body">
-          {/* ══ ZONE 1: CENTER 3D HARDWARE STAGE (BREATHING ROOM, NO BOTTOM STRIP) ══ */}
+          {/* ══ ZONE 1: CENTER 3D HARDWARE / LESSON PRESENTATION STAGE ══ */}
           <section
             id="wb-zone-stage"
             className={`wb-center-stage ${showDashboardOverlay ? "has-dashboard-active" : ""}`}
-            aria-label="Interactive 3D Hardware Board"
+            aria-label="Interactive Hardware & Lesson Stage"
           >
-            <LearnHardwareStage
-              specimenKey={currentTopic.isAssemblyLab ? "overview" : currentTopic.specimenKey}
-              selectedBuildPart={currentBuild?.[currentTopic.specimenKey] || null}
-              lessonTitle={currentTopic.title}
-              hotspots={ARTICLE_HOTSPOTS}
-              selectedHotspotId={selectedHotspotId}
-              onSelectHotspotId={(id) => {
-                setSelectedHotspotId(id);
-                if (id) {
-                  const hs = ARTICLE_HOTSPOTS.find((h) => h.id === id);
-                  if (hs) {
-                    setBobSpeech(`Checking ${hs.label}! Quick tip: ${hs.tip}`);
+            {/* Center Stage Mode Switcher (Lecture Report vs 3D Lab vs 15-Item Exam) */}
+            {!showDashboardOverlay && !showBriefingOverlay && (
+              <div className="wb-stage-mode-switcher">
+                <button
+                  type="button"
+                  className={`wb-stage-tab-btn ${centerMode === "presentation" ? "is-active" : ""}`}
+                  onClick={() => {
+                    try { soundManager.click(); } catch {}
+                    setCenterMode("presentation");
+                  }}
+                >
+                  <span className="tab-icon">📄</span>
+                  <span>1. Lecture &amp; Visual Report</span>
+                </button>
+                <button
+                  type="button"
+                  className={`wb-stage-tab-btn ${centerMode === "3d-lab" ? "is-active" : ""}`}
+                  onClick={() => {
+                    try { soundManager.snap(); } catch {}
+                    setCenterMode("3d-lab");
+                  }}
+                >
+                  <span className="tab-icon">🧊</span>
+                  <span>2. Interactive 3D Lab</span>
+                </button>
+                <button
+                  type="button"
+                  className="wb-stage-tab-btn wb-tab-quiz"
+                  onClick={() => {
+                    try { soundManager.click(); } catch {}
+                    setQuizModuleNum(currentTopic.moduleNum);
+                    setShowQuizModal(true);
+                  }}
+                >
+                  <span className="tab-icon">📝</span>
+                  <span>3. 15-Item Assessment</span>
+                </button>
+              </div>
+            )}
+
+            {/* MODE 1: LECTURE PRESENTATION & VISUAL REPORT (PDF/SLIDE REPORT DISCUSSION) */}
+            {centerMode === "presentation" && !showDashboardOverlay && !showBriefingOverlay && (
+              <LessonPresentationView
+                topic={currentTopic}
+                moduleNum={currentTopic.moduleNum}
+                theme={workbenchTheme}
+                onProceedTo3D={() => {
+                  try { soundManager.snap(); } catch {}
+                  setCenterMode("3d-lab");
+                  setActive3DStepIdx(0);
+                  if (ARTICLE_HOTSPOTS[0]) {
+                    setSelectedHotspotId(ARTICLE_HOTSPOTS[0].id);
+                    setBobSpeech(ARTICLE_HOTSPOTS[0].tip);
                   }
-                }
-              }}
-              onOpenVideo={handleOpenLectureFilm}
-              theme={workbenchTheme}
-              onToggleTheme={toggleTheme}
-              isExploded={isExploded}
-              onToggleExploded={() => setIsExploded((x) => !x)}
-              isPaused={showDashboardOverlay || showBriefingOverlay}
-            />
+                }}
+                onProceedToQuiz={() => {
+                  try { soundManager.click(); } catch {}
+                  setQuizModuleNum(currentTopic.moduleNum);
+                  setShowQuizModal(true);
+                }}
+              />
+            )}
+
+            {/* MODE 2: INTERACTIVE 3D HARDWARE LAB */}
+            {centerMode === "3d-lab" && (
+              <>
+                {currentTopic.isAssemblyLab ? (
+                  <VirtualAssemblyLab
+                    initialCompleted={completed.includes(currentTopic.id)}
+                    isPaused={showDashboardOverlay || showBriefingOverlay}
+                    onAssemblyComplete={() => {
+                      if (!completed.includes(currentTopic.id)) {
+                        markTopicComplete(currentTopic.id);
+                      }
+                    }}
+                  />
+                ) : (
+                  <>
+                    <LearnHardwareStage
+                      specimenKey={currentTopic.specimenKey}
+                      selectedBuildPart={currentBuild?.[currentTopic.specimenKey] || null}
+                      lessonTitle={currentTopic.title}
+                      hotspots={ARTICLE_HOTSPOTS}
+                      selectedHotspotId={selectedHotspotId}
+                      onSelectHotspotId={(id) => {
+                        setSelectedHotspotId(id);
+                        if (id) {
+                          const hs = ARTICLE_HOTSPOTS.find((h) => h.id === id);
+                          if (hs) {
+                            setBobSpeech(`Checking ${hs.label}! Quick tip: ${hs.tip}`);
+                          }
+                        }
+                      }}
+                      onOpenVideo={handleOpenLectureFilm}
+                      theme={workbenchTheme}
+                      onToggleTheme={toggleTheme}
+                      isExploded={isExploded}
+                      onToggleExploded={() => setIsExploded((x) => !x)}
+                      isPaused={showDashboardOverlay || showBriefingOverlay}
+                    />
+
+                    {/* Guided 3D Component Stepper with Auto-Focus Camera & Progression Next Buttons */}
+                    {!showDashboardOverlay && !showBriefingOverlay && (
+                      <div className="wb-3d-guided-stepper">
+                        <div className="stepper-content">
+                          <div className="stepper-meta-row">
+                            <span className="stepper-kicker">
+                              GUIDED 3D INSPECTION • PART {active3DStepIdx + 1} OF {ARTICLE_HOTSPOTS.length}
+                            </span>
+                            <strong className="stepper-part-title">
+                              {ARTICLE_HOTSPOTS[active3DStepIdx]?.label}
+                            </strong>
+                          </div>
+                          <p className="stepper-part-desc">
+                            {ARTICLE_HOTSPOTS[active3DStepIdx]?.tip}
+                          </p>
+                        </div>
+
+                        <div className="stepper-controls">
+                          <button
+                            type="button"
+                            className="btn-stepper-nav"
+                            disabled={active3DStepIdx === 0}
+                            onClick={() => {
+                              const newIdx = Math.max(0, active3DStepIdx - 1);
+                              setActive3DStepIdx(newIdx);
+                              setSelectedHotspotId(ARTICLE_HOTSPOTS[newIdx].id);
+                              setBobSpeech(ARTICLE_HOTSPOTS[newIdx].tip);
+                              try { soundManager.click(); } catch {}
+                            }}
+                          >
+                            ◀ Prev Part
+                          </button>
+
+                          {active3DStepIdx < ARTICLE_HOTSPOTS.length - 1 ? (
+                            <button
+                              type="button"
+                              className="btn-stepper-nav btn-stepper-next"
+                              onClick={() => {
+                                const newIdx = Math.min(ARTICLE_HOTSPOTS.length - 1, active3DStepIdx + 1);
+                                setActive3DStepIdx(newIdx);
+                                setSelectedHotspotId(ARTICLE_HOTSPOTS[newIdx].id);
+                                setBobSpeech(ARTICLE_HOTSPOTS[newIdx].tip);
+                                try { soundManager.snap(); } catch {}
+                              }}
+                            >
+                              Next Part ▶
+                            </button>
+                          ) : (
+                            <button
+                              type="button"
+                              className="btn-stepper-exam"
+                              onClick={() => {
+                                try { soundManager.snap(); } catch {}
+                                setQuizModuleNum(currentTopic.moduleNum);
+                                setShowQuizModal(true);
+                              }}
+                            >
+                              🎓 Take 15-Item Exam ▶
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
+              </>
+            )}
 
             {/* Quick Course Briefing / Overview Overlay — covers center workspace on first arrival or on request */}
             {showBriefingOverlay && !showDashboardOverlay && (
@@ -1005,8 +1186,16 @@ export default function CourseShell() {
               <StudentDashboard
                 isEmbedded={true}
                 onClose={() => setShowDashboardOverlay(false)}
-                onSelectTopic={(targetIdx) => {
+                onSelectTopic={(targetIdx, targetMode) => {
                   goTopic(targetIdx);
+                  if (targetMode === "quiz") {
+                    setQuizModuleNum(FLAT_TOPICS[targetIdx]?.moduleNum || 1);
+                    setShowQuizModal(true);
+                  } else if (targetMode === "3d-lab") {
+                    setCenterMode("3d-lab");
+                  } else {
+                    setCenterMode("presentation");
+                  }
                   setShowDashboardOverlay(false);
                 }}
               />
@@ -1036,196 +1225,192 @@ export default function CourseShell() {
                 <h2 className="wb-topic-main-title">{currentTopic.title}</h2>
               </div>
 
-              {/* Collapsible 16:9 YouTube Lecture Video Card */}
-              <div className={`wb-lecture-video-card ${videoHighlighted ? "is-highlighted" : ""}`}>
+              {/* ── SPATIAL SWAPPING: 3D PREVIEW (IN PRESENTATION MODE) OR VIDEO PLAYER (IN 3D LAB MODE) ── */}
+              {centerMode === "presentation" ? (
+                /* IN PRESENTATION MODE: Right Dock holds the Mini 3D Hardware Preview Viewport */
+                <div className="wb-dock-mini-stage-card">
+                  <div className="wb-mini-stage-header">
+                    <div className="wb-mini-tag-group">
+                      <span className="wb-dock-pill-3d">🧊 3D WORKBENCH PREVIEW</span>
+                      <span className="wb-dock-specimen-name">
+                        {currentTopic.specimenKey?.toUpperCase() || "HARDWARE"}
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      className="btn-expand-3d-stage"
+                      onClick={() => {
+                        try { soundManager.snap(); } catch {}
+                        setCenterMode("3d-lab");
+                      }}
+                      title="Switch 3D workbench to center stage"
+                    >
+                      Expand to Center ↗
+                    </button>
+                  </div>
+
+                  <div className="wb-mini-viewport-container">
+                    <LearnHardwareStage
+                      isMini={true}
+                      onClickMini={() => {
+                        try { soundManager.snap(); } catch {}
+                        setCenterMode("3d-lab");
+                      }}
+                      specimenKey={currentTopic.isAssemblyLab ? "case" : currentTopic.specimenKey}
+                      selectedBuildPart={currentBuild?.[currentTopic.specimenKey] || null}
+                      lessonTitle={currentTopic.title}
+                      hotspots={ARTICLE_HOTSPOTS}
+                      theme={workbenchTheme}
+                      isExploded={isExploded}
+                      isPaused={showDashboardOverlay || showBriefingOverlay}
+                    />
+                  </div>
+                  <div className="wb-mini-stage-caption">
+                    <span>Auto-orbiting preview · Tap to expand into full 360° interactive workbench</span>
+                  </div>
+                </div>
+              ) : (
+                /* IN 3D LAB MODE: Right Dock holds the Docked 16:9 Lecture Video Player */
+                <div className={`wb-lecture-video-card ${videoHighlighted ? "is-highlighted" : ""}`}>
+                  <button
+                    type="button"
+                    className="wb-video-card-head"
+                    onClick={() => setVideoExpanded((v) => !v)}
+                    aria-expanded={videoExpanded}
+                  >
+                    <div className="wb-video-head-left">
+                      <span className="wb-video-play-icon">📺</span>
+                      <strong>Lecture Video: {currentTopic.videoTitle}</strong>
+                      {showDashboardOverlay && !isVideoPlaying && (
+                        <span className="wb-video-paused-pill" title="Playback paused while reviewing dashboard">
+                          ⏸ Paused
+                        </span>
+                      )}
+                    </div>
+                    <span className="wb-video-toggle-chevron">
+                      {videoExpanded ? "▴ Hide Video" : "▾ Watch Video"}
+                    </span>
+                  </button>
+
+                  {videoExpanded && (
+                    <>
+                      <div className="wb-video-frame-wrap">
+                        <iframe
+                          className="wb-video-iframe"
+                          src={`https://www.youtube-nocookie.com/embed/${currentTopic.youtubeId}?enablejsapi=1&rel=0&modestbranding=1`}
+                          title={`${currentTopic.title} Lecture Video`}
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                          allowFullScreen
+                        />
+                      </div>
+                      <div className="wb-video-fallback-bar">
+                        <span>Video playback issue?</span>
+                        <a
+                          href={`https://www.youtube.com/watch?v=${currentTopic.youtubeId}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="wb-video-external-link"
+                        >
+                          ▶ Open on YouTube ↗
+                        </a>
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
+
+              {/* Quick Workbench Action Strip */}
+              <div className="wb-dock-quick-strip">
                 <button
                   type="button"
-                  className="wb-video-card-head"
-                  onClick={() => setVideoExpanded((v) => !v)}
-                  aria-expanded={videoExpanded}
+                  className="wb-dock-quick-btn"
+                  onClick={() => {
+                    try { soundManager.click(); } catch {}
+                    setIsExploded((e) => !e);
+                  }}
+                  title="Toggle Exploded Subassemblies"
                 >
-                  <div className="wb-video-head-left">
-                    <span className="wb-video-play-icon">📺</span>
-                    <strong>Lecture Video: {currentTopic.videoTitle}</strong>
-                    {showDashboardOverlay && !isVideoPlaying && (
-                      <span className="wb-video-paused-pill" title="Playback paused while reviewing dashboard">
-                        ⏸ Paused
-                      </span>
-                    )}
-                  </div>
-                  <span className="wb-video-toggle-chevron">
-                    {videoExpanded ? "▴ Hide Video" : "▾ Watch Video"}
-                  </span>
+                  💥 {isExploded ? "Assemble Rig" : "Explode Rig"}
                 </button>
+                <button
+                  type="button"
+                  className="wb-dock-quick-btn"
+                  onClick={toggleTheme}
+                  title="Toggle Workbench Theme"
+                >
+                  {isLight ? "🌙 Dark Mode" : "☀️ Light Mode"}
+                </button>
+                <button
+                  type="button"
+                  className="wb-dock-quick-btn wb-btn-assessment-link"
+                  onClick={() => {
+                    try { soundManager.snap(); } catch {}
+                    setQuizModuleNum(currentTopic.moduleNum);
+                    setShowQuizModal(true);
+                  }}
+                  title="Launch 15-Item Assessment"
+                >
+                  📝 15-Item Exam
+                </button>
+              </div>
 
-                                {videoExpanded && (
-                  <>
-                    <div className="wb-video-frame-wrap">
-                      <iframe
-                        className="wb-video-iframe"
-                        src={`https://www.youtube-nocookie.com/embed/${currentTopic.youtubeId}?enablejsapi=1&rel=0&modestbranding=1`}
-                        title={`${currentTopic.title} Lecture Video`}
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        allowFullScreen
-                      />
-                    </div>
-                    <div className="wb-video-fallback-bar">
-                      <span>Video playback issue?</span>
-                      <a
-                        href={`https://www.youtube.com/watch?v=${currentTopic.youtubeId}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="wb-video-external-link"
+              {/* Spot The Lab Mistake // 1-Question Quick Check (Non-redundant, required for topic completion) */}
+              <div className="wb-quick-check-card">
+                <div className="wb-quiz-header">
+                  <span className="wb-quiz-icon">📝</span>
+                  <strong>SPOT THE LAB MISTAKE // 1-QUESTION QUICK CHECK</strong>
+                </div>
+                <p className="wb-quiz-question">{currentTopic.quiz.question}</p>
+
+                <div className="wb-quiz-options-list">
+                  {currentTopic.quiz.options.map((opt, optIdx) => {
+                    const isSelected = selectedQuizOption === optIdx;
+                    let optionClass = "wb-quiz-opt-btn";
+                    if (isSelected) {
+                      optionClass += opt.correct ? " is-correct" : " is-incorrect";
+                    }
+                    return (
+                      <button
+                        type="button"
+                        key={optIdx}
+                        className={optionClass}
+                        onClick={() => handleSelectQuizOption(optIdx, opt.correct)}
                       >
-                        ▶ Open on YouTube ↗
-                      </a>
-                    </div>
-                  </>
-                )}
-              </div>
-
-              {/* 2. Core Explanation */}
-              <div className="wb-guide-section">
-                <h3 className="wb-section-heading">Core Concept</h3>
-                <p className="wb-guide-explanation-text">{currentTopic.explanation}</p>
-              </div>
-
-              {/* 3. Quick Field Fact Box */}
-              <div className="wb-field-fact-card">
-                <div className="wb-fact-head">
-                  <span className="wb-fact-icon">⚡</span>
-                  <strong className="wb-fact-title">
-                    FIELD REFERENCE // {currentTopic.fieldFact.title}
-                  </strong>
-                  <span className="wb-fact-badge">{currentTopic.fieldFact.badge}</span>
+                        <span className="wb-opt-letter">{["A", "B", "C", "D"][optIdx]}</span>
+                        <span className="wb-opt-text">{opt.text}</span>
+                        {isSelected && (
+                          <span className="wb-opt-feedback-icon">
+                            {opt.correct ? "✓" : "✕"}
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
-                <div className="wb-fact-items-grid">
-                  {currentTopic.fieldFact.items.map((item, i) => (
-                    <div key={i} className="wb-fact-item-row">
-                      <div className="wb-fact-item-label">
-                        <span
-                          className="wb-fact-tag"
-                          style={{ borderColor: item.color, color: item.color }}
-                        >
-                          {item.tag}
-                        </span>
-                        <strong>{item.label}</strong>
-                      </div>
-                      <span className="wb-fact-item-val">{item.value}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
 
-              {/* 4. Avoid This Lab Mistake (Warning Callout Box) */}
-              <div className="wb-mistake-warning-card">
-                <div className="wb-warning-head">
-                  <span className="wb-warning-icon">⚠️</span>
-                  <strong>AVOID THIS MISTAKE IN LAB</strong>
-                </div>
-                <p className="wb-warning-desc">{currentTopic.mistakeWarning.desc}</p>
-              </div>
-
-              {/* 5. 3D Action & 1-Question Quick Check */}
-              <div className="wb-action-and-check-section">
-                {currentTopic.isAssemblyLab ? (
-                  <div className="wb-launch-assembly-banner">
-                    <div className="wb-launch-banner-head">
-                      <span className="wb-launch-tag">CAPSTONE PRACTICAL LAB</span>
-                      <h4>3D Virtual PC Assembly Studio</h4>
-                      <p>
-                        Enter the hands-on 3D Studio to physically drag, drop, and mount all standardized generic components step-by-step into the chassis.
-                      </p>
+                {quizAnswerStatus === "correct" && (
+                  <div className="wb-quiz-explanation-box success" role="alert">
+                    <div className="wb-quiz-expl-header">
+                      <span className="wb-quiz-expl-icon">✓</span>
+                      <span className="wb-quiz-expl-title">Correct Procedure Verified</span>
                     </div>
-                    <button
-                      type="button"
-                      className="btn-launch-assembly-studio"
-                      onClick={() => {
-                        try { soundManager.install(); } catch {}
-                        unlockStage("studio");
-                        navigate("/3d-builder?learn=true");
-                      }}
-                    >
-                      <span>ENTER 3D STUDIO &amp; BUILD PC →</span>
-                    </button>
-                  </div>
-                ) : (
-                  <div className="wb-inspect-3d-banner">
-                    <div className="wb-inspect-3d-info">
-                      <span className="wb-inspect-icon">🔍</span>
-                      <div>
-                        <strong>Inspect Specimen in 3D</strong>
-                        <span>Focus camera on physical component &amp; socket keying</span>
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      className="wb-inspect-3d-btn"
-                      onClick={handleInspectIn3D}
-                    >
-                      Inspect in 3D ⌖
-                    </button>
+                    <p>{currentTopic.quiz.explanation}</p>
                   </div>
                 )}
 
-                {/* Spot The Lab Mistake Quiz */}
-                <div className="wb-quick-check-card">
-                  <div className="wb-quiz-header">
-                    <span className="wb-quiz-icon">📝</span>
-                    <strong>SPOT THE LAB MISTAKE // 1-QUESTION QUICK CHECK</strong>
-                  </div>
-                  <p className="wb-quiz-question">{currentTopic.quiz.question}</p>
-
-                  <div className="wb-quiz-options-list">
-                    {currentTopic.quiz.options.map((opt, optIdx) => {
-                      const isSelected = selectedQuizOption === optIdx;
-                      let optionClass = "wb-quiz-opt-btn";
-                      if (isSelected) {
-                        optionClass += opt.correct ? " is-correct" : " is-incorrect";
-                      }
-                      return (
-                        <button
-                          type="button"
-                          key={optIdx}
-                          className={optionClass}
-                          onClick={() => handleSelectQuizOption(optIdx, opt.correct)}
-                        >
-                          <span className="wb-opt-letter">{["A", "B", "C", "D"][optIdx]}</span>
-                          <span className="wb-opt-text">{opt.text}</span>
-                          {isSelected && (
-                            <span className="wb-opt-feedback-icon">
-                              {opt.correct ? "✓" : "✕"}
-                            </span>
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
-
-                  {quizAnswerStatus === "correct" && (
-                    <div className="wb-quiz-explanation-box success" role="alert">
-                      <div className="wb-quiz-expl-header">
-                        <span className="wb-quiz-expl-icon">✓</span>
-                        <span className="wb-quiz-expl-title">Correct Procedure Verified</span>
-                      </div>
-                      <p>{currentTopic.quiz.explanation}</p>
+                {quizAnswerStatus === "incorrect" && (
+                  <div className="wb-quiz-explanation-box error" role="alert">
+                    <div className="wb-quiz-expl-header">
+                      <span className="wb-quiz-expl-icon">⚠️</span>
+                      <span className="wb-quiz-expl-title">Hardware Safety Warning</span>
                     </div>
-                  )}
-
-                  {quizAnswerStatus === "incorrect" && (
-                    <div className="wb-quiz-explanation-box error" role="alert">
-                      <div className="wb-quiz-expl-header">
-                        <span className="wb-quiz-expl-icon">⚠️</span>
-                        <span className="wb-quiz-expl-title">Hardware Safety Warning</span>
-                      </div>
-                      <p>
-                        {currentTopic.mistakeWarning?.desc
-                          ? currentTopic.mistakeWarning.desc
-                          : "Review the safety guidelines and select the compliant procedure."}
-                      </p>
-                    </div>
-                  )}
-                </div>
+                    <p>
+                      {currentTopic.mistakeWarning?.desc
+                        ? currentTopic.mistakeWarning.desc
+                        : "Review the safety guidelines and select the compliant procedure."}
+                    </p>
+                  </div>
+                )}
               </div>
 
               {/* 6. Linear Topic Navigation Footer */}
@@ -1495,6 +1680,20 @@ export default function CourseShell() {
           }}
         />
       )}
+
+      {/* ── 15-QUESTION COMPREHENSIVE ACADEMIC ASSESSMENT MODAL ── */}
+      <ModuleQuizModal
+        isOpen={showQuizModal}
+        moduleNum={quizModuleNum}
+        userEmail={userProfile?.email}
+        onClose={() => setShowQuizModal(false)}
+        onOpenDashboard={() => setShowDashboardOverlay(true)}
+        onNextModule={() => {
+          const nextIdx = Math.min(FLAT_TOPICS.length - 1, currentIndex + 1);
+          setCurrentIndex(nextIdx);
+          setCenterMode("presentation");
+        }}
+      />
     </div>
   );
 }
