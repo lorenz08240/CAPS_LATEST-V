@@ -1450,32 +1450,44 @@ function CompatibilityView({ isIntegrated = false }) {
           {/* ── RIG 01 (WORKBENCH) CARD ── */}
           <div className="diagnostic-col diagnostic-col-rig1">
             <div className="diagnostic-col-header">
-              <h3 className="diagnostic-title">FOUND ISSUE</h3>
+              <h3 className={`diagnostic-title ${rig1Issues.length > 0 ? "" : hasRig1 ? "all-clear" : "no-config"}`}>
+                {rig1Issues.length > 0 ? "FOUND ISSUE" : hasRig1 ? "ALL COMPATIBLE" : "NO CONFIGURATION"}
+              </h3>
             </div>
 
             <div className="diagnostic-col-body">
-              {rig1Issues.length > 0 ? (
+              {!hasRig1 ? (
+                <div className="diagnostic-empty-state neutral-state">
+                  <span className="empty-check-icon">∅</span>
+                  <div className="empty-copy">
+                    <strong>No Configuration Loaded in Rig 01</strong>
+                    <p>Assemble a build in the Component Picker to run compatibility diagnostics.</p>
+                  </div>
+                </div>
+              ) : rig1Issues.length > 0 ? (
                 rig1Issues.map((iss, idx) => renderDiagnosticIssueEntry(iss, "rig1", activeRig1, idx))
               ) : (
                 <div className="diagnostic-empty-state green-state">
                   <span className="empty-check-icon">✓</span>
                   <div className="empty-copy">
-                    <strong>Rig 01 is 100% Compatible</strong>
-                    <p>All physical clearances, electrical TDP, and socket standards are verified with zero conflicts.</p>
+                    <strong>All Components Compatible</strong>
+                    <p>No socket, memory, or power conflicts were detected in this configuration.</p>
                   </div>
                 </div>
               )}
             </div>
           </div>
 
-          {/* ── RIG 02 (COMPARISON) CARD — stays empty until a rig is assembled ── */}
+          {/* ── RIG 02 (COMPARISON) CARD ── */}
           <div className="diagnostic-col diagnostic-col-rig2">
             <div className="diagnostic-col-header">
-              <h3 className="diagnostic-title">FOUND ISSUE</h3>
+              <h3 className={`diagnostic-title ${rig2Issues.length > 0 ? "" : hasRig2 ? "all-clear" : "no-config"}`}>
+                {rig2Issues.length > 0 ? "FOUND ISSUE" : hasRig2 ? "ALL COMPATIBLE" : "NO CONFIGURATION"}
+              </h3>
             </div>
 
             <div className="diagnostic-col-body">
-              {!hasRig2 || rig2Issues.length === 0 ? (
+              {!hasRig2 ? (
                 <div className="diagnostic-empty-state neutral-state">
                   <span className="empty-check-icon">∅</span>
                   <div className="empty-copy">
@@ -1483,8 +1495,16 @@ function CompatibilityView({ isIntegrated = false }) {
                     <p>Select a preset or assemble a custom rig above to run dual-configuration diagnostics.</p>
                   </div>
                 </div>
-              ) : (
+              ) : rig2Issues.length > 0 ? (
                 rig2Issues.map((iss, idx) => renderDiagnosticIssueEntry(iss, "rig2", rig2, idx))
+              ) : (
+                <div className="diagnostic-empty-state green-state">
+                  <span className="empty-check-icon">✓</span>
+                  <div className="empty-copy">
+                    <strong>All Components Compatible</strong>
+                    <p>No socket, memory, or power conflicts were detected in this configuration.</p>
+                  </div>
+                </div>
               )}
             </div>
           </div>

@@ -2157,6 +2157,14 @@
   margin: 0 0 0.35rem 0;
 }
 
+.diagnostic-title.all-clear {
+  color: #00e5a0;
+}
+
+.diagnostic-title.no-config {
+  color: #64748b;
+}
+
 .diagnostic-subtitle {
   font-size: 0.85rem;
   color: #94a3b8;
