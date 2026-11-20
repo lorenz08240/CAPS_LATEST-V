@@ -462,6 +462,7 @@ function VirtualRigStage({
             enableHighlight={true}
             isSelected={activeKey === "motherboard"}
             showCpu={hasCpu}
+            showRam={hasRam}
           />
         </group>
       )}
@@ -484,27 +485,13 @@ function VirtualRigStage({
         />
       )}
 
-      {/* 5. Dual-Channel High-Speed DDR4 RAM (Mounted in Slots A2 & B2) */}
-      {hasRam && (
-        <group>
-          {/* DIMM Slot A2 */}
-          <group position={[1.32, 1.76, 0.47]} rotation={[-Math.PI / 2, Math.PI / 2, 0]}>
-            <SingleDDR4RAM
-              scale={0.28}
-              rgbColor={postPassed ? "#ffffff" : "#f43f5e"}
-              isSelected={activeKey === "ram"}
-              enableHighlight={true}
-            />
-          </group>
-          {/* DIMM Slot B2 */}
-          <group position={[1.32, 1.76, 1.12]} rotation={[-Math.PI / 2, Math.PI / 2, 0]}>
-            <SingleDDR4RAM
-              scale={0.28}
-              rgbColor={postPassed ? "#ffffff" : "#f43f5e"}
-              isSelected={activeKey === "ram"}
-              enableHighlight={true}
-            />
-          </group>
+      {/* 5. Dual-Channel High-Speed DDR4 RAM Highlight when active */}
+      {hasRam && activeKey === "ram" && (
+        <group position={[1.29, 1.76, 0.79]} rotation={[0, Math.PI / 2, 0]}>
+          <mesh>
+            <ringGeometry args={[0.45, 0.55, 32]} />
+            <meshBasicMaterial color="#facc15" side={THREE.DoubleSide} transparent opacity={0.7} />
+          </mesh>
         </group>
       )}
 

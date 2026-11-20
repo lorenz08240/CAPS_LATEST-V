@@ -221,6 +221,7 @@ function StageSpecimen({
               rgbColor="#ffffff"
               enableHighlight={false}
               showCpu={true}
+              showRam={ex < 0.12}
             />
           </group>
 
@@ -245,14 +246,25 @@ function StageSpecimen({
             )}
           </group>
 
-          {/* Embedded / Floating RAM sticks in DIMM slots A2 / B2 */}
-          <group position={[-0.12, 1.45 + 0.35 * ex, 1.35 + 1.2 * ex]}>
-            <ComponentModels3D
-              part={{ category: "ram", name: "DDR5 Dual-Channel Kit", targetPosition: [0, 0, 0] }}
-              rgbColor="#ffffff"
-              enableHighlight={false}
-            />
-          </group>
+          {/* Exploded RAM sticks floating out of DIMM slots A2 & B2 */}
+          {ex > 0.1 && (
+            <group>
+              {/* Slot A2 Stick */}
+              <group
+                position={[-0.14 - 1.4 * ex, 1.41 + 0.35 * ex, 1.144]}
+                rotation={[0, -Math.PI / 2, Math.PI / 2]}
+              >
+                <SingleDDR4RAM scale={0.88 * 0.36} rgbColor="#ffffff" enableHighlight={false} />
+              </group>
+              {/* Slot B2 Stick */}
+              <group
+                position={[-0.14 - 1.4 * ex, 1.41 + 0.35 * ex, 1.848]}
+                rotation={[0, -Math.PI / 2, Math.PI / 2]}
+              >
+                <SingleDDR4RAM scale={0.88 * 0.36} rgbColor="#ffffff" enableHighlight={false} />
+              </group>
+            </group>
+          )}
 
           {/* Embedded / Floating NVMe SSD */}
           <group position={[-0.12 - 0.7 * ex, -1.45 + 0.45 * ex, -0.32]}>
@@ -299,9 +311,16 @@ function StageSpecimen({
                 dashed
                 dashScale={10}
               />
-              {/* RAM to DIMM slots line */}
+              {/* RAM to DIMM slots lines */}
               <Line
-                points={[[-0.12, 1.45 + 0.35 * ex, 1.35 + 1.2 * ex], [-0.12, 1.45, 1.35]]}
+                points={[[-0.14 - 1.4 * ex, 1.41 + 0.35 * ex, 1.144], [-0.14, 1.41, 1.144]]}
+                color="#ffffff"
+                lineWidth={1.5}
+                dashed
+                dashScale={10}
+              />
+              <Line
+                points={[[-0.14 - 1.4 * ex, 1.41 + 0.35 * ex, 1.848], [-0.14, 1.41, 1.848]]}
                 color="#ffffff"
                 lineWidth={1.5}
                 dashed
@@ -334,6 +353,7 @@ function StageSpecimen({
             rgbColor="#ffffff"
             enableHighlight={false}
             showCpu={true}
+            showRam={true}
           />
         </group>
       )}

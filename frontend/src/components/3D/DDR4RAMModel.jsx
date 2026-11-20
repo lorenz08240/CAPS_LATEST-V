@@ -162,8 +162,8 @@ export function MotherboardDDR4Kit({
                  (part?.sticks === 4);
 
   const slotOffsets = isQuad 
-    ? [-0.3, -0.1, 0.1, 0.3]   // Option B: 4 sticks in all 4 DIMM slots
-    : [-0.1, 0.1];             // Option A: 2 sticks in dual channel slots 2 and 4
+    ? [-0.528, -0.176, 0.176, 0.528]   // 4 sticks in all 4 DIMM slots
+    : [-0.352, 0.352];                 // 2 sticks in dual-channel slots 2 and 4 (A2 & B2)
 
   return (
     <group>
@@ -171,7 +171,7 @@ export function MotherboardDDR4Kit({
         <group
           key={idx}
           position={[-0.05, 0, zOff]}
-          rotation={[-Math.PI / 2, Math.PI / 2, 0]}
+          rotation={[0, -Math.PI / 2, Math.PI / 2]}
         >
           <SingleDDR4RAM
             scale={stickScale}

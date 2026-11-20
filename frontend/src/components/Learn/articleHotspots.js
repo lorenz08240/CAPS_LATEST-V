@@ -21,9 +21,9 @@ export const ARTICLE_HOTSPOTS = [
   {
     id: "sys-ram",
     label: "Dual-Channel DDR4 RAM (A2 & B2)",
-    pos: [-0.65, 1.45, 1.35],
+    pos: [-0.65, 1.45, 1.496],
     camPos: [-5.0, 1.8, 2.8],
-    target: [0, 1.45, 1.35],
+    target: [0, 1.45, 1.496],
     bus: "128-Bit DDR4 / DDR5 Dual-Channel",
     voltage: "1.2V - 1.35V VDD",
     role: "High-speed working memory that buffers textures and open tasks right beside the processor.",

@@ -17,6 +17,8 @@ export const AdminContent = () => {
   const [isNewMember, setIsNewMember] = useState(false);
   const modalFileInputRef = useRef(null);
 
+  const isModalOpen = editingMember !== null;
+
   const getAdminKey = () => localStorage.getItem("adminKey") || "admin12345";
 
   const setRigSpec = (key, value) => {
@@ -52,6 +54,19 @@ export const AdminContent = () => {
   useEffect(() => {
     fetchMembers();
   }, []);
+
+  // Keep the page behind the editor from scrolling while it is open
+  useEffect(() => {
+    if (!isModalOpen) return;
+    const originalOverflow = document.body.style.overflow;
+    const originalDocOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      document.documentElement.style.overflow = originalDocOverflow;
+    };
+  }, [isModalOpen]);
 
   // Handle direct photo upload
   const handlePhotoUpload = async (file, targetMemberId = null) => {

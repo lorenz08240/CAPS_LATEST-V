@@ -1,6 +1,7 @@
 import React, { useRef, useMemo } from 'react';
 import * as THREE from 'three';
 import { useLoader } from '@react-three/fiber';
+import { SingleDDR4RAM } from './DDR4RAMModel';
 
 /**
  * ROGStrixMotherboard - Photorealistic High-Detail 3D ATX Motherboard
@@ -306,27 +307,47 @@ export default function ROGStrixMotherboard({
       {/* 5. 4x 3D DDR4 DUAL-CHANNEL DIMM SLOTS                      */}
       {/* ========================================================= */}
       <group name="ddr4_slots" position={[1.5, 1.6, 0.16]}>
-        {[-0.6, -0.2, 0.2, 0.6].map((sx, idx) => (
-          <group key={idx} position={[sx, 0, 0]}>
-            {/* Slot Track Housing (Dual-Color Channels) */}
-            <mesh>
-              <boxGeometry args={[0.16, 2.75, 0.22]} />
-              <meshStandardMaterial color={idx % 2 === 0 ? '#111215' : '#282d38'} roughness={0.7} />
-            </mesh>
+        {[-0.6, -0.2, 0.2, 0.6].map((sx, idx) => {
+          // DepEd TVL / TESDA CSS NC II Dual-Channel Standard:
+          // Slots A2 (idx = 1, sx = -0.2) and B2 (idx = 3, sx = 0.6) are the primary channels
+          const isSlotPopulated = showRam && (idx === 1 || idx === 3);
 
-            {/* Key Notch Center Post */}
-            <mesh position={[0, 0.2, 0.11]}>
-              <boxGeometry args={[0.17, 0.1, 0.04]} />
-              <meshStandardMaterial color="#0c0e11" />
-            </mesh>
+          return (
+            <group key={idx} position={[sx, 0, 0]}>
+              {/* Slot Track Housing (Dual-Color Channels: A1/B1 Black #111215, A2/B2 Gray #282d38) */}
+              <mesh>
+                <boxGeometry args={[0.16, 2.75, 0.22]} />
+                <meshStandardMaterial color={idx % 2 === 0 ? '#111215' : '#282d38'} roughness={0.7} />
+              </mesh>
 
-            {/* Q-Latch Upper Retaining Clip */}
-            <mesh position={[0, 1.42, 0.06]}>
-              <boxGeometry args={[0.18, 0.15, 0.14]} />
-              <meshStandardMaterial color="#e2e8f0" metalness={0.5} roughness={0.3} />
-            </mesh>
-          </group>
-        ))}
+              {/* Key Notch Center Post */}
+              <mesh position={[0, 0.2, 0.11]}>
+                <boxGeometry args={[0.17, 0.1, 0.04]} />
+                <meshStandardMaterial color="#0c0e11" />
+              </mesh>
+
+              {/* Q-Latch Upper Retaining Clip (Locked when seated, open when empty) */}
+              <mesh
+                position={[0, isSlotPopulated ? 1.36 : 1.44, isSlotPopulated ? 0.14 : 0.06]}
+                rotation={[isSlotPopulated ? 0 : 0.22, 0, 0]}
+              >
+                <boxGeometry args={[0.18, 0.14, 0.14]} />
+                <meshStandardMaterial color="#e2e8f0" metalness={0.5} roughness={0.3} />
+              </mesh>
+
+              {/* Seated High-Speed DDR4 RAM Module in DIMM Slot A2 / B2 */}
+              {isSlotPopulated && (
+                <group position={[0, 0, 0.24]} rotation={[0, 0, Math.PI / 2]}>
+                  <SingleDDR4RAM
+                    scale={0.36}
+                    rgbColor="#ffffff"
+                    enableHighlight={false}
+                  />
+                </group>
+              )}
+            </group>
+          );
+        })}
 
         {/* 24-Pin ATX Main Power Socket (Right Board Edge) */}
         <group position={[1.05, 0.5, 0.08]}>

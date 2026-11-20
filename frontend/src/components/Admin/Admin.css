@@ -4,7 +4,7 @@
   width: 100%;
   background-color: #06080e;
   position: relative;
-  overflow-x: hidden;
+  overflow-x: clip;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   color: #e2e8f0;
 }
@@ -6478,6 +6478,7 @@
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
   max-height: 90vh;
   overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .admin-modal-card.modal-lg {
