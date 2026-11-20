@@ -1,0 +1,13 @@
+{
+  "entries": [
+    {
+      "path": "tools/WhiteHats-Utilities/anti-slop/skills"
+    },
+    {
+      "path": "tools/WhiteHats-Utilities/reanimate/skills"
+    },
+    {
+      "path": "tools/WhiteHats-Utilities/img2threejs"
+    }
+  ]
+}

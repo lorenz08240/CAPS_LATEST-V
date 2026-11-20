@@ -1,0 +1,122 @@
+[
+  {
+    "id": "DEV-01",
+    "name": "Jay Mark Piano",
+    "designation": "Full-Stack Developer & Project Lead",
+    "codename": "LEAD",
+    "role_category": "core",
+    "avatar_badge": "LEAD",
+    "photo_url": "/uploads/profiles/jay_mark_piano.jpg",
+    "highlight": "System Architecture & Core Logic",
+    "bio": "Leads the overall software engineering and technical direction of BuildLab. Connects the user interface with the 3D PC builder, real-time compatibility checks, and backend database systems.",
+    "key_contributions": [],
+    "tech_stack": [
+      "React 19",
+      "Three.js",
+      "Node.js",
+      "Express",
+      "MySQL"
+    ],
+    "rig_specs": {},
+    "fav_tip": "Never cheap out on your power supply. An efficient Tier-A PSU protects your entire investment from dirty power and transient voltage spikes.",
+    "github": "https://github.com",
+    "linkedin": "https://linkedin.com",
+    "sort_order": 1
+  },
+  {
+    "id": "DEV-02",
+    "name": "Jude Gollena",
+    "designation": "UI/UX & Frontend Developer",
+    "codename": "UI/UX",
+    "role_category": "frontend",
+    "avatar_badge": "UI/UX",
+    "photo_url": "/uploads/profiles/jude_gollena.jpg",
+    "highlight": "User Interface & Visual Design",
+    "bio": "Designs and crafts how BuildLab looks and feels. Engineered the sleek obsidian dark theme, interactive navigation drawers, tactile audio effects, and mobile responsive layouts.",
+    "key_contributions": [],
+    "tech_stack": [
+      "React",
+      "Motion/React",
+      "CSS3 / Variables",
+      "Web Audio API",
+      "Figma"
+    ],
+    "rig_specs": {},
+    "fav_tip": "Assemble your motherboard, CPU, RAM, and SSD on top of the motherboard box before putting them inside the PC case. It gives you plenty of room to work safely.",
+    "github": "https://github.com",
+    "linkedin": "https://linkedin.com",
+    "sort_order": 2
+  },
+  {
+    "id": "DEV-03",
+    "name": "Developer 03",
+    "designation": "3D Graphics & Simulation Specialist",
+    "codename": "3D/GL",
+    "role_category": "core",
+    "avatar_badge": "3D/GL",
+    "photo_url": "/uploads/profiles/hardware_3d_engineer.jpg",
+    "highlight": "Three.js Hardware Models & 3D Studio",
+    "bio": "Creates the 3D computer parts and animations. Built the 360-degree inspection studio where users can rotate, inspect, and connect computer hardware in full 3D view.",
+    "key_contributions": [],
+    "tech_stack": [
+      "Three.js",
+      "WebGL",
+      "GLTF / GLB",
+      "Blender",
+      "Canvas API"
+    ],
+    "rig_specs": {},
+    "fav_tip": "Always remember to remove the clear plastic protective film from the bottom of your CPU cooler before applying thermal paste and installing it!",
+    "github": "https://github.com",
+    "linkedin": "https://linkedin.com",
+    "sort_order": 3
+  },
+  {
+    "id": "DEV-04",
+    "name": "Shin Ariane Pol",
+    "designation": "Project Documentation Lead",
+    "codename": "DOCS",
+    "role_category": "backend",
+    "avatar_badge": "DOCS",
+    "photo_url": "/uploads/profiles/shin_ariane_pol.jpg",
+    "highlight": "Project Documentation & Manuals",
+    "bio": "Writes, organizes, and maintains all project documentation, thesis manuals, research papers, system user guides, and ISO/IEC 25010 academic compliance instruments.",
+    "key_contributions": [],
+    "tech_stack": [
+      "Technical Writing",
+      "System Documentation",
+      "Markdown",
+      "SRS / IEEE",
+      "Git"
+    ],
+    "rig_specs": {},
+    "fav_tip": "Always double-check your part dimensions and cable layout before screwing down the motherboard into your PC case.",
+    "github": "https://github.com",
+    "linkedin": "https://linkedin.com",
+    "sort_order": 4
+  },
+  {
+    "id": "DEV-05",
+    "name": "Lorenz Tejado",
+    "designation": "Backend Developer & Systems Architect",
+    "codename": "BACKEND",
+    "role_category": "backend",
+    "avatar_badge": "BACKEND",
+    "photo_url": "/uploads/profiles/lorenz_tejado.jpg",
+    "highlight": "MySQL Normalization & API Services",
+    "bio": "Engineered BuildLab's normalized MySQL relational database, RESTful Express backend services, crawler integration pipeline, and authentication security.",
+    "key_contributions": [],
+    "tech_stack": [
+      "Hardware Specs Audit",
+      "Benchmarking",
+      "Node.js",
+      "Express",
+      "MySQL"
+    ],
+    "rig_specs": {},
+    "fav_tip": "Dual-channel memory goes into slots 2 and 4 (A2/B2). Check your motherboard's PCB silkscreen to ensure maximum signal trace impedance.",
+    "github": "https://github.com",
+    "linkedin": "https://linkedin.com",
+    "sort_order": 5
+  }
+]

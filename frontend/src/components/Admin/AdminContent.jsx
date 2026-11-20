@@ -19,6 +19,13 @@ export const AdminContent = () => {
 
   const getAdminKey = () => localStorage.getItem("adminKey") || "admin12345";
 
+  const setRigSpec = (key, value) => {
+    setEditingMember((prev) => ({
+      ...prev,
+      rig_specs: { ...(prev?.rig_specs || {}), [key]: value }
+    }));
+  };
+
   const showToast = (msg, type = "success") => {
     setNotification({ message: msg, type });
     setTimeout(() => setNotification(null), 4000);
@@ -122,10 +129,17 @@ export const AdminContent = () => {
         tech_stack = tech_stack.split(",").map((s) => s.trim()).filter(Boolean);
       }
 
+      let rig_specs = editingMember.rig_specs;
+      if (typeof rig_specs === "string") {
+        try { rig_specs = JSON.parse(rig_specs); } catch { rig_specs = {}; }
+      }
+      if (!rig_specs || typeof rig_specs !== "object" || Array.isArray(rig_specs)) rig_specs = {};
+
       const payload = {
         ...editingMember,
         key_contributions,
-        tech_stack
+        tech_stack,
+        rig_specs
       };
 
       const res = await fetch(
@@ -306,7 +320,13 @@ export const AdminContent = () => {
                               tech_stack: Array.isArray(member.tech_stack)
                                 ? member.tech_stack.join(", ")
                                 : (member.tech_stack || ""),
-                              rig_specs: member.rig_specs || {}
+                              rig_specs: (() => {
+                                const raw = member.rig_specs;
+                                if (typeof raw === "string") {
+                                  try { return JSON.parse(raw); } catch { return {}; }
+                                }
+                                return raw || {};
+                              })()
                             });
                           }}
                         >
@@ -436,6 +456,32 @@ export const AdminContent = () => {
                           </div>
                         </div>
 
+                        <div className="form-row-2">
+                          <div className="form-group" style={{ flex: 1 }}>
+                            <label className="form-label">CODENAME</label>
+                            <input
+                              type="text"
+                              placeholder="e.g. LEAD, VERIFY_LAB"
+                              className="form-input uppercase"
+                              value={editingMember.codename || ""}
+                              onChange={(e) => setEditingMember({ ...editingMember, codename: e.target.value.toUpperCase() })}
+                            />
+                          </div>
+
+                          <div className="form-group" style={{ flex: 1 }}>
+                            <label className="form-label">ROLE CATEGORY</label>
+                            <select
+                              className="form-input"
+                              value={editingMember.role_category || "core"}
+                              onChange={(e) => setEditingMember({ ...editingMember, role_category: e.target.value })}
+                            >
+                              <option value="core">Core</option>
+                              <option value="frontend">Frontend</option>
+                              <option value="backend">Backend</option>
+                            </select>
+                          </div>
+                        </div>
+
                         <div className="form-group">
                           <label className="form-label">DESIGNATION / ROLE *</label>
                           <input
@@ -471,6 +517,77 @@ export const AdminContent = () => {
                         </div>
 
                         <div className="form-group">
+                          <label className="form-label">KEY CONTRIBUTIONS (ONE PER LINE)</label>
+                          <textarea
+                            rows={3}
+                            placeholder={"Engineered the component picker\nIntegrated the 3D canvas"}
+                            className="form-textarea"
+                            value={typeof editingMember.key_contributions === "string"
+                              ? editingMember.key_contributions
+                              : (Array.isArray(editingMember.key_contributions) ? editingMember.key_contributions.join("\n") : "")}
+                            onChange={(e) => setEditingMember({ ...editingMember, key_contributions: e.target.value })}
+                          />
+                        </div>
+
+                        <div className="form-group">
+                          <label className="form-label">TECH STACK (COMMA-SEPARATED)</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. React 19, Three.js, Node.js"
+                            className="form-input"
+                            value={typeof editingMember.tech_stack === "string"
+                              ? editingMember.tech_stack
+                              : (Array.isArray(editingMember.tech_stack) ? editingMember.tech_stack.join(", ") : "")}
+                            onChange={(e) => setEditingMember({ ...editingMember, tech_stack: e.target.value })}
+                          />
+                        </div>
+
+                        <div className="form-group">
+                          <label className="form-label">RIG SPECS / HARDWARE VITAE</label>
+                          <div className="form-row-2">
+                            <input
+                              type="text"
+                              placeholder="CPU"
+                              className="form-input"
+                              value={editingMember.rig_specs?.cpu || ""}
+                              onChange={(e) => setRigSpec("cpu", e.target.value)}
+                            />
+                            <input
+                              type="text"
+                              placeholder="GPU"
+                              className="form-input"
+                              value={editingMember.rig_specs?.gpu || ""}
+                              onChange={(e) => setRigSpec("gpu", e.target.value)}
+                            />
+                          </div>
+                          <div className="form-row-2">
+                            <input
+                              type="text"
+                              placeholder="RAM"
+                              className="form-input"
+                              value={editingMember.rig_specs?.ram || ""}
+                              onChange={(e) => setRigSpec("ram", e.target.value)}
+                            />
+                            <input
+                              type="text"
+                              placeholder="Storage"
+                              className="form-input"
+                              value={editingMember.rig_specs?.storage || ""}
+                              onChange={(e) => setRigSpec("storage", e.target.value)}
+                            />
+                          </div>
+                          <div className="form-row-2">
+                            <input
+                              type="text"
+                              placeholder="Chassis"
+                              className="form-input"
+                              value={editingMember.rig_specs?.chassis || ""}
+                              onChange={(e) => setRigSpec("chassis", e.target.value)}
+                            />
+                          </div>
+                        </div>
+
+                        <div className="form-group">
                           <label className="form-label">PC BUILDING TIP (QUOTE)</label>
                           <input
                             type="text"
@@ -478,6 +595,40 @@ export const AdminContent = () => {
                             className="form-input"
                             value={editingMember.fav_tip || ""}
                             onChange={(e) => setEditingMember({ ...editingMember, fav_tip: e.target.value })}
+                          />
+                        </div>
+
+                        <div className="form-row-2">
+                          <div className="form-group" style={{ flex: 1 }}>
+                            <label className="form-label">GITHUB URL</label>
+                            <input
+                              type="text"
+                              placeholder="https://github.com/..."
+                              className="form-input"
+                              value={editingMember.github || ""}
+                              onChange={(e) => setEditingMember({ ...editingMember, github: e.target.value })}
+                            />
+                          </div>
+                          <div className="form-group" style={{ flex: 1 }}>
+                            <label className="form-label">LINKEDIN URL</label>
+                            <input
+                              type="text"
+                              placeholder="https://linkedin.com/in/..."
+                              className="form-input"
+                              value={editingMember.linkedin || ""}
+                              onChange={(e) => setEditingMember({ ...editingMember, linkedin: e.target.value })}
+                            />
+                          </div>
+                        </div>
+
+                        <div className="form-group" style={{ maxWidth: 160 }}>
+                          <label className="form-label">SORT ORDER</label>
+                          <input
+                            type="number"
+                            min="1"
+                            className="form-input"
+                            value={editingMember.sort_order ?? 99}
+                            onChange={(e) => setEditingMember({ ...editingMember, sort_order: Number(e.target.value) })}
                           />
                         </div>
 

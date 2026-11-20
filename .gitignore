@@ -1,5 +1,4 @@
-# Personal Agent Configuration & Automation (Private)
-.agents/
+# Personal Automation & Local Secrets (Private)
 WhiteHats Agents/
 event_dispatcher.py
 notify_telegram.py

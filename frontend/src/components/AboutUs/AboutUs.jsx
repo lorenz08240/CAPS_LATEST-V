@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { Link, useNavigate } from "react-router-dom";
 import { gsap } from "gsap";
@@ -285,38 +285,55 @@ export default function AboutUs() {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
+  const fetchTeam = useCallback(() => {
     fetch("/api/content/team")
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch team content");
         return res.json();
       })
       .then((data) => {
-        if (Array.isArray(data) && data.length > 0) {
-          const mapped = data.map((m) => ({
-            ...m,
-            roleCategory: m.role_category || m.roleCategory || "core",
-            avatarBadge: m.avatar_badge || m.avatarBadge || "DEV",
-            photoUrl: m.photo_url || m.photoUrl || m.image || null,
-            image: m.image || m.photo_url || m.photoUrl || null,
-            keyContributions: Array.isArray(m.key_contributions)
-              ? m.key_contributions
-              : (typeof m.key_contributions === "string" ? (() => { try { return JSON.parse(m.key_contributions); } catch { return [m.key_contributions]; } })() : (Array.isArray(m.keyContributions) ? m.keyContributions : [])),
-            techStack: Array.isArray(m.tech_stack)
-              ? m.tech_stack
-              : (typeof m.tech_stack === "string" ? (() => { try { return JSON.parse(m.tech_stack); } catch { return m.tech_stack.split(",").map(s => s.trim()); } })() : (Array.isArray(m.techStack) ? m.techStack : [])),
-            rigSpecs: typeof m.rig_specs === "object" && m.rig_specs !== null
-              ? m.rig_specs
-              : (typeof m.rig_specs === "string" ? (() => { try { return JSON.parse(m.rig_specs); } catch { return {}; } })() : (typeof m.rigSpecs === "object" && m.rigSpecs !== null ? m.rigSpecs : {})),
-            favTip: m.fav_tip || m.favTip || ""
-          }));
-          setTeamMembers(mapped);
-        }
+        if (!Array.isArray(data) || data.length === 0) return;
+        const mapped = data.map((m) => ({
+          ...m,
+          roleCategory: m.role_category || m.roleCategory || "core",
+          avatarBadge: m.avatar_badge || m.avatarBadge || "DEV",
+          photoUrl: m.photo_url || m.photoUrl || m.image || null,
+          image: m.image || m.photo_url || m.photoUrl || null,
+          keyContributions: Array.isArray(m.key_contributions)
+            ? m.key_contributions
+            : (typeof m.key_contributions === "string" ? (() => { try { return JSON.parse(m.key_contributions); } catch { return [m.key_contributions]; } })() : (Array.isArray(m.keyContributions) ? m.keyContributions : [])),
+          techStack: Array.isArray(m.tech_stack)
+            ? m.tech_stack
+            : (typeof m.tech_stack === "string" ? (() => { try { return JSON.parse(m.tech_stack); } catch { return m.tech_stack.split(",").map(s => s.trim()); } })() : (Array.isArray(m.techStack) ? m.techStack : [])),
+          rigSpecs: typeof m.rig_specs === "object" && m.rig_specs !== null
+            ? m.rig_specs
+            : (typeof m.rig_specs === "string" ? (() => { try { return JSON.parse(m.rig_specs); } catch { return {}; } })() : (typeof m.rigSpecs === "object" && m.rigSpecs !== null ? m.rigSpecs : {})),
+          favTip: m.fav_tip || m.favTip || ""
+        }));
+        // Avoid re-triggering the card reveal animation when nothing changed.
+        const signature = (list) => JSON.stringify(
+          list.map((item) => [item.id, item.photo_url || item.photoUrl || item.image, item.name])
+        );
+        setTeamMembers((prev) => (signature(prev) === signature(mapped) ? prev : mapped));
       })
       .catch((err) => {
         console.warn("Using fallback team data:", err);
       });
   }, []);
+
+  useEffect(() => {
+    fetchTeam();
+    const refreshOnReturn = () => {
+      if (document.visibilityState === "visible") fetchTeam();
+    };
+    window.addEventListener("focus", refreshOnReturn);
+    document.addEventListener("visibilitychange", refreshOnReturn);
+    return () => {
+      window.removeEventListener("focus", refreshOnReturn);
+      document.removeEventListener("visibilitychange", refreshOnReturn);
+    };
+  }, [fetchTeam]);
+
 
   // Keyboard accessibility: Escape key to dismiss active modals (R-32)
   useEffect(() => {

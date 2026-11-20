@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const { exec } = require("child_process");
 const db = require("./config/db");
+const teamStore = require("./contentStore");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 
@@ -244,28 +245,8 @@ async function initContentAndAccountsSchema() {
       )
     `);
 
-    await db.query(`
-      CREATE TABLE IF NOT EXISTS team_members (
-        id VARCHAR(50) PRIMARY KEY,
-        name VARCHAR(100) NOT NULL,
-        designation VARCHAR(150) NOT NULL,
-        codename VARCHAR(50) NOT NULL,
-        role_category VARCHAR(50) DEFAULT 'core',
-        avatar_badge VARCHAR(30) DEFAULT 'DEV',
-        photo_url LONGTEXT DEFAULT NULL,
-        highlight VARCHAR(200) DEFAULT NULL,
-        bio TEXT DEFAULT NULL,
-        key_contributions LONGTEXT DEFAULT NULL,
-        tech_stack LONGTEXT DEFAULT NULL,
-        rig_specs LONGTEXT DEFAULT NULL,
-        fav_tip TEXT DEFAULT NULL,
-        github VARCHAR(255) DEFAULT 'https://github.com',
-        linkedin VARCHAR(255) DEFAULT 'https://linkedin.com',
-        sort_order INT DEFAULT 1,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-      )
-    `);
+    // Team content lives in backend/data/team-members.json (git-tracked).
+    // The legacy team_members MySQL table is intentionally no longer used.
 
     // Ensure google_learner_accounts table exists for Google OAuth Learners
     await db.query(`
@@ -311,124 +292,6 @@ async function initContentAndAccountsSchema() {
       `);
     }
 
-    // Seed default team members if empty
-    const [teamCount] = await db.query("SELECT COUNT(*) as c FROM team_members");
-    if (!teamCount[0]?.c) {
-      const defaultMembers = [
-        [
-          "DEV-01", "Developer 01", "Lead Systems Architect & Full-Stack Engineer", "SYSTEM_CORE", "core", "ARCH",
-          "/uploads/profiles/photo-1794214083340-kb6u7l.jpg",
-          "Core Architecture & State Matrix",
-          "Leads the software architecture of BuildLab, bridging the React state machine with real-time 3D assembly graphs and the Node.js backend. Dedicated to zero-latency component selection and mathematical TDP validation.",
-          JSON.stringify([
-            "Engineered multi-tier component picker and dependency state tree",
-            "Integrated Three.js WebGL canvas with live hardware inventory",
-            "Architected real-time bottleneck and socket matching algorithms"
-          ]),
-          JSON.stringify(["React 19", "Three.js", "Node.js", "Express", "MySQL"]),
-          JSON.stringify({
-            cpu: "AMD Ryzen 9 7900X (12 Cores, 24 Threads)",
-            gpu: "NVIDIA GeForce RTX 4080 Super 16GB",
-            ram: "64GB DDR5-6000 CL30 (2x32GB)",
-            storage: "2TB PCIe Gen4 NVMe M.2 SSD",
-            chassis: "Lian Li O11 Dynamic EVO (Black)"
-          }),
-          "Never cheap out on your power supply. An efficient Tier-A PSU protects your entire investment from dirty power and transient voltage spikes.",
-          "https://github.com", "https://linkedin.com", 1
-        ],
-        [
-          "DEV-02", "Developer 02", "UI/UX Lead & Frontend Design Engineer", "CYBER_HUD", "frontend", "UI/UX",
-          "/uploads/profiles/photo-1794176073655-f3qzal.gif",
-          "Design Systems & Command Deck Interaction",
-          "Designed BuildLab's cohesive dark cyberpunk aesthetic, the mahogany Command Deck drawer, sound-synchronized interactions, and accessible high-contrast telemetry across all screen viewports.",
-          JSON.stringify([
-            "Crafted the unified Wood-Mahogany Command Deck sidebar navigation",
-            "Implemented Web Audio API procedural sound feedback system",
-            "Optimized responsive mobile HUD layouts with zero horizontal clipping"
-          ]),
-          JSON.stringify(["React", "Motion/React", "CSS3 / Variables", "Web Audio API", "Figma"]),
-          JSON.stringify({
-            cpu: "Intel Core i7-14700K (20 Cores, 28 Threads)",
-            gpu: "NVIDIA GeForce RTX 4070 Ti Super 16GB",
-            ram: "32GB DDR5-5600 CL36 (2x16GB)",
-            storage: "1TB Kingston KC3000 + 2TB Crucial P3",
-            chassis: "NZXT H6 Flow Dual-Chamber"
-          }),
-          "Assemble your motherboard, CPU, RAM, and M.2 SSD on top of the motherboard box before placing anything inside the PC case. It gives you 360-degree clear visibility.",
-          "https://github.com", "https://linkedin.com", 2
-        ],
-        [
-          "DEV-03", "Developer 03", "3D Graphics & WebGL Simulation Engineer", "MESH_RENDER", "core", "3D/GL",
-          "/uploads/profiles/photo-1794176080611-d0vfrg.gif",
-          "Three.js Hardware Models & Orbit Rigging",
-          "Crafts the interactive 3D hardware studio, procedural PC components, physically based rendering (PBR) materials, and realistic socket snap-fit clearances using Three.js and WebGL shaders.",
-          JSON.stringify([
-            "Built the 3D Studio inspection viewport with smooth OrbitControls",
-            "Engineered procedural heatsink sickle fans and RAM module geometry",
-            "Calculated camera docking coordinates for all 7 hardware stages"
-          ]),
-          JSON.stringify(["Three.js", "WebGL", "GLTF / GLB", "Blender", "Canvas API"]),
-          JSON.stringify({
-            cpu: "AMD Ryzen 7 7800X3D (8 Cores, 3D V-Cache)",
-            gpu: "AMD Radeon RX 7900 XTX 24GB",
-            ram: "32GB DDR5-6000 CL30 Low-Latency Kit",
-            storage: "2TB Samsung 990 Pro PCIe 4.0 NVMe",
-            chassis: "Fractal Design North (Charcoal with Walnut Front)"
-          }),
-          "Remember to peel off the clear plastic protective film from the bottom of your CPU cooler's copper cold plate before mounting it with thermal paste!",
-          "https://github.com", "https://linkedin.com", 3
-        ],
-        [
-          "DEV-04", "Developer 04", "Backend & Database Systems Architect", "DATA_VAULT", "backend", "API/DB",
-          "/uploads/profiles/photo-1794176086486-hn7tru.jpg",
-          "MySQL Normalization & Crawler Pipeline",
-          "Architected BuildLab's normalized MySQL relational database, RESTful Express services, and the automated crawler hub that manages hardware specifications and benchmark baselines.",
-          JSON.stringify([
-            "Designed normalized database schema for 7+ hardware categories",
-            "Built headless crawler integration and admin verification queue",
-            "Implemented secure JWT session management and admin inventory control"
-          ]),
-          JSON.stringify(["Node.js", "Express.js", "MySQL / MariaDB", "Cheerio", "JWT"]),
-          JSON.stringify({
-            cpu: "AMD Ryzen 9 5950X (16 Cores, 32 Threads)",
-            gpu: "NVIDIA GeForce RTX 3080 10GB",
-            ram: "64GB DDR4-3600 (4x16GB)",
-            storage: "4TB NVMe SSD + 24TB Home NAS Storage",
-            chassis: "Corsair 5000D Airflow"
-          }),
-          "Dual-channel memory goes into slots 2 and 4 (A2/B2). Check your motherboard's PCB silkscreen to ensure maximum signal trace impedance.",
-          "https://github.com", "https://linkedin.com", 4
-        ],
-        [
-          "DEV-05", "Developer 05", "Hardware Research Lead & QA Specialist", "VERIFY_LAB", "backend", "QA/SPEC",
-          "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=400",
-          "Compatibility Matrices & Socket Verification",
-          "Researched and documented hundreds of component socket standards, RAM clearance heights, PCIe lane bifurcation rules, and TDP dissipation curves to guarantee 100% accurate compatibility checks.",
-          JSON.stringify([
-            "Curated and verified 500+ component compatibility matrix rules",
-            "Audited LGA1700/AM5 cooler bracket clearances and PSU modular pinout alerts",
-            "Authored B.O.B. Interactive Troubleshooting Knowledge Base"
-          ]),
-          JSON.stringify(["Hardware Specs Audit", "Benchmarking", "Jest", "Data Verification"]),
-          JSON.stringify({
-            cpu: "Intel Core i5-13600K (14 Cores, 20 Threads)",
-            gpu: "NVIDIA GeForce RTX 4060 Ti 16GB",
-            ram: "32GB DDR4-3600 CL16",
-            storage: "1TB WD Black SN850X NVMe SSD",
-            chassis: "DeepCool CH560 Digital (Tempered Glass)"
-          }),
-          "Never mix modular PSU cables between different power supply units. The pinouts on the power supply side are not standardized and can permanently fry your motherboard.",
-          "https://github.com", "https://linkedin.com", 5
-        ]
-      ];
-
-      for (const m of defaultMembers) {
-        await db.query(
-          "INSERT INTO team_members (id, name, designation, codename, role_category, avatar_badge, photo_url, highlight, bio, key_contributions, tech_stack, rig_specs, fav_tip, github, linkedin, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-          m
-        );
-      }
-    }
   } catch (err) {
     console.error("Content and accounts schema init error:", err.message);
   }
@@ -1365,191 +1228,62 @@ app.delete("/api/admin/learners/:id", adminAuth, async (req, res) => {
   }
 });
 
-// ── Team / Content Management APIs ──
-app.get("/api/content/team", async (req, res) => {
+// ── Team / Content Management APIs (git-tracked JSON store) ──
+app.get("/api/content/team", (req, res) => {
   try {
-    const [rows] = await db.query("SELECT * FROM team_members ORDER BY sort_order ASC, id ASC");
-    const formatted = rows.map((member) => {
-      let key_contributions = [];
-      let tech_stack = [];
-      let rig_specs = {};
-      try {
-        key_contributions = typeof member.key_contributions === "string" ? JSON.parse(member.key_contributions) : (member.key_contributions || []);
-      } catch (e) {
-        key_contributions = member.key_contributions ? [member.key_contributions] : [];
-      }
-      try {
-        tech_stack = typeof member.tech_stack === "string" ? JSON.parse(member.tech_stack) : (member.tech_stack || []);
-      } catch (e) {
-        tech_stack = member.tech_stack ? [member.tech_stack] : [];
-      }
-      try {
-        rig_specs = typeof member.rig_specs === "string" ? JSON.parse(member.rig_specs) : (member.rig_specs || {});
-      } catch (e) {
-        rig_specs = {};
-      }
-
-      return {
-        ...member,
-        key_contributions,
-        tech_stack,
-        rig_specs
-      };
-    });
-    res.json(formatted);
+    res.json(teamStore.readTeam());
   } catch (err) {
     console.error("Fetch team content error:", err);
     res.status(500).json({ error: "Failed to fetch team content" });
   }
 });
 
-app.get("/api/content/team/:id", async (req, res) => {
-  try {
-    const [rows] = await db.query("SELECT * FROM team_members WHERE id = ?", [req.params.id]);
-    if (rows.length === 0) return res.status(404).json({ error: "Team member not found" });
-    const member = rows[0];
-    try { member.key_contributions = JSON.parse(member.key_contributions); } catch (_) {}
-    try { member.tech_stack = JSON.parse(member.tech_stack); } catch (_) {}
-    try { member.rig_specs = JSON.parse(member.rig_specs); } catch (_) {}
-    res.json(member);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+app.get("/api/content/team/:id", (req, res) => {
+  const member = teamStore.getMember(req.params.id);
+  if (!member) return res.status(404).json({ error: "Team member not found" });
+  res.json(member);
 });
 
-app.put("/api/content/team/:id", adminAuth, async (req, res) => {
+app.put("/api/content/team/:id", adminAuth, (req, res) => {
   try {
-    const { id } = req.params;
-    const {
-      name,
-      designation,
-      codename,
-      role_category,
-      avatar_badge,
-      photo_url,
-      highlight,
-      bio,
-      key_contributions,
-      tech_stack,
-      rig_specs,
-      fav_tip,
-      github,
-      linkedin,
-      sort_order
-    } = req.body;
-
-    const [existing] = await db.query("SELECT id FROM team_members WHERE id = ?", [id]);
-    if (existing.length === 0) {
-      return res.status(404).json({ error: `Member '${id}' not found.` });
+    const updated = teamStore.upsertMember(req.params.id, req.body);
+    if (!updated) {
+      return res.status(404).json({ error: `Member '${req.params.id}' not found.` });
     }
-
-    const prepJson = (val) => (val !== null && typeof val === "object" ? JSON.stringify(val) : (val !== undefined ? val : null));
-
-    await db.query(
-      `UPDATE team_members SET
-        name = COALESCE(?, name),
-        designation = COALESCE(?, designation),
-        codename = COALESCE(?, codename),
-        role_category = COALESCE(?, role_category),
-        avatar_badge = COALESCE(?, avatar_badge),
-        photo_url = COALESCE(?, photo_url),
-        highlight = COALESCE(?, highlight),
-        bio = COALESCE(?, bio),
-        key_contributions = COALESCE(?, key_contributions),
-        tech_stack = COALESCE(?, tech_stack),
-        rig_specs = COALESCE(?, rig_specs),
-        fav_tip = COALESCE(?, fav_tip),
-        github = COALESCE(?, github),
-        linkedin = COALESCE(?, linkedin),
-        sort_order = COALESCE(?, sort_order)
-       WHERE id = ?`,
-      [
-        name,
-        designation,
-        codename,
-        role_category,
-        avatar_badge,
-        photo_url,
-        highlight,
-        bio,
-        prepJson(key_contributions),
-        prepJson(tech_stack),
-        prepJson(rig_specs),
-        fav_tip,
-        github,
-        linkedin,
-        sort_order,
-        id
-      ]
-    );
-
-    res.json({ success: true, message: `Operative profile for ${name || id} synced successfully.` });
+    res.json({
+      success: true,
+      member: updated,
+      message: `Operative profile for ${updated.name || updated.id} saved to backend/data/team-members.json.`
+    });
   } catch (err) {
     console.error("Update team content error:", err);
     res.status(500).json({ error: "Failed to update team content" });
   }
 });
 
-app.post("/api/content/team", adminAuth, async (req, res) => {
+app.post("/api/content/team", adminAuth, (req, res) => {
   try {
-    const {
-      id,
-      name,
-      designation,
-      codename,
-      role_category,
-      avatar_badge,
-      photo_url,
-      highlight,
-      bio,
-      key_contributions,
-      tech_stack,
-      rig_specs,
-      fav_tip,
-      github,
-      linkedin,
-      sort_order
-    } = req.body;
-
-    const memberId = id || `DEV-${Date.now().toString().slice(-2)}`;
-    const prepJson = (val) => (typeof val === "object" ? JSON.stringify(val) : (val || null));
-
-    await db.query(
-      `INSERT INTO team_members 
-       (id, name, designation, codename, role_category, avatar_badge, photo_url, highlight, bio, key_contributions, tech_stack, rig_specs, fav_tip, github, linkedin, sort_order)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        memberId,
-        name || "New Operative",
-        designation || "Developer",
-        codename || "OPERATIVE",
-        role_category || "core",
-        avatar_badge || "DEV",
-        photo_url || null,
-        highlight || "",
-        bio || "",
-        prepJson(key_contributions || []),
-        prepJson(tech_stack || []),
-        prepJson(rig_specs || {}),
-        fav_tip || "",
-        github || "https://github.com",
-        linkedin || "https://linkedin.com",
-        sort_order || 99
-      ]
-    );
-
-    res.json({ success: true, id: memberId, message: "New operative created successfully." });
+    const payload = { ...(req.body || {}) };
+    if (!payload.id) payload.id = `DEV-${Date.now().toString().slice(-6)}`;
+    const created = teamStore.createMember(payload);
+    res.status(201).json({
+      success: true,
+      id: created.id,
+      member: created,
+      message: "New operative created successfully."
+    });
   } catch (err) {
     console.error("Create team content error:", err);
-    res.status(500).json({ error: "Failed to create team member" });
+    const status = err.code === "DUPLICATE_ID" ? 409 : 400;
+    res.status(status).json({ error: err.message || "Failed to create team member" });
   }
 });
 
-app.delete("/api/content/team/:id", adminAuth, async (req, res) => {
+app.delete("/api/content/team/:id", adminAuth, (req, res) => {
   try {
-    const { id } = req.params;
-    await db.query("DELETE FROM team_members WHERE id = ?", [id]);
-    res.json({ success: true, message: `Operative ${id} removed.` });
+    const removed = teamStore.deleteMember(req.params.id);
+    if (!removed) return res.status(404).json({ error: `Member '${req.params.id}' not found.` });
+    res.json({ success: true, message: `Operative ${req.params.id} removed.` });
   } catch (err) {
     console.error("Delete team content error:", err);
     res.status(500).json({ error: "Failed to delete team member" });
