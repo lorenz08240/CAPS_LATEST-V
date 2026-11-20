@@ -1,0 +1,308 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "project": "BuildLab Official Product Launch Trailer",
+  "engine": "Google Flow / Veo 3.1",
+  "total_scenes": 7,
+  "default_settings": {
+    "aspect_ratio": "16:9",
+    "resolution": "4K",
+    "fps": 24,
+    "color_space": "Rec.709 Cinematic Contrast"
+  },
+  "scenes": [
+    {
+      "scene_id": "01_hero_launch_reveal",
+      "scene_title": "The Reveal // Brand & Hardware Lab Hook",
+      "reference_image": "01_hero_launch_reveal.png",
+      "flow_settings": {
+        "aspect_ratio": "16:9",
+        "duration_seconds": 4.0,
+        "motion_intensity": 2.0,
+        "camera_tool": "dolly_in"
+      },
+      "cinematography": {
+        "shot_type": "Keynote commercial opening hero shot",
+        "camera_movement": "Slow smooth dolly-in towards display center at constant low velocity",
+        "camera_angle": "Eye level, centered direct perspective",
+        "lens": "35mm anamorphic with subtle horizontal flare"
+      },
+      "subject": {
+        "primary": "High-end matte OLED studio display on minimalist obsidian desk",
+        "screen_content": "BuildLab hero landing page with luminous bold text 'BUILD LAB', 3D PC chassis graphic, and dual mode cards",
+        "screen_state": "Rigid planar glass display surface"
+      },
+      "screen_preservation": {
+        "preserve_ui": true,
+        "preserve_text": true,
+        "prevent_morphing": true,
+        "instruction": "All on-screen typography, 'BUILD LAB' title, buttons, and layout must remain 100% static and razor-sharp with zero text mutation or hallucination"
+      },
+      "context": {
+        "environment": "Dark minimalist industrial design studio",
+        "lighting": "Deep moody dark atmosphere with soft crimson edge rim glow accenting the monitor bezel"
+      },
+      "style_and_ambiance": {
+        "mood": "Prestigious, futuristic, Apple keynote aesthetic",
+        "color_grading": "Deep blacks, crimson red accents, rich contrast"
+      },
+      "audio": {
+        "ambient": "Low atmospheric synthesizer swell",
+        "effects": "Deep cinematic bass boom on reveal",
+        "voiceover": "Welcome to the future of computer hardware servicing and architecture."
+      },
+      "negative_prompt": "text morphing, changing letters, alien glyphs, melting buttons, shifting UI, camera shake, pixel noise, deformed monitor bezel"
+    },
+    {
+      "scene_id": "02_3d_builder_workbench",
+      "scene_title": "3D Studio // Virtual Hardware Assembly",
+      "reference_image": "02_3d_builder_workbench.png",
+      "flow_settings": {
+        "aspect_ratio": "16:9",
+        "duration_seconds": 4.5,
+        "motion_intensity": 2.2,
+        "camera_tool": "horizontal_pan_right"
+      },
+      "cinematography": {
+        "shot_type": "Commercial slider tracking shot",
+        "camera_movement": "Gentle horizontal tracking glide from left to right across monitor workspace",
+        "camera_angle": "Slight 5-degree angled perspective",
+        "lens": "50mm prime with shallow depth of field on background only"
+      },
+      "subject": {
+        "primary": "Studio monitor showcasing the BuildLab 3D Virtual Assembly Studio",
+        "screen_content": "Fully assembled gaming PC inside tempered glass case on workbench grid with motherboard, cooler, RAM, and GPU",
+        "screen_state": "Rigid planar screen displaying 3D hardware"
+      },
+      "screen_preservation": {
+        "preserve_ui": true,
+        "preserve_text": true,
+        "prevent_morphing": true,
+        "instruction": "The 3D PC model, component names, inventory sidebar, and UI pills must remain rock-solid with zero melting or warping"
+      },
+      "context": {
+        "environment": "High-tech hardware testing laboratory",
+        "lighting": "Crisp white studio key lighting with soft volumetric reflection on the monitor rim"
+      },
+      "style_and_ambiance": {
+        "mood": "Precision engineering, tactical, high-tech",
+        "color_grading": "Neutral clean tones, tempered glass reflections, studio rim light"
+      },
+      "audio": {
+        "ambient": "Quiet server room hum, subtle cooling fan breeze",
+        "effects": "Clean tactile mechanical component click",
+        "voiceover": "Full 3D component simulation. Assemble every part before touching real silicon."
+      },
+      "negative_prompt": "UI deformation, morphed parts, changing interface text, flickering canvas, distorted chassis, warped 3D mesh"
+    },
+    {
+      "scene_id": "03_intelligent_compatibility_engine",
+      "scene_title": "Diagnostics Matrix // Real-Time Compatibility",
+      "reference_image": "03_intelligent_compatibility_engine.png",
+      "flow_settings": {
+        "aspect_ratio": "16:9",
+        "duration_seconds": 4.0,
+        "motion_intensity": 2.0,
+        "camera_tool": "dolly_in_tilt_up"
+      },
+      "cinematography": {
+        "shot_type": "Macro technical commercial shot",
+        "camera_movement": "Slow deliberate push-in with gentle upward tilt towards status header",
+        "camera_angle": "Straight-on technical macro framing",
+        "lens": "65mm macro lens with sharp planar focus across the screen"
+      },
+      "subject": {
+        "primary": "Monitor displaying BuildLab Real-Time Compatibility Engine",
+        "screen_content": "Green 'HARDWARE VERIFICATION COMPLETE' banner, wattage calculations, and side-by-side component matrices",
+        "screen_state": "Fixed planar software display"
+      },
+      "screen_preservation": {
+        "preserve_ui": true,
+        "preserve_text": true,
+        "prevent_morphing": true,
+        "instruction": "Keep all wattage text numbers, hardware specs, checkmarks, and table headers exactly legible without distortion"
+      },
+      "context": {
+        "environment": "Cybernetic quality assurance laboratory",
+        "lighting": "Deep dark navy ambient with vivid green validation accent light"
+      },
+      "style_and_ambiance": {
+        "mood": "Rigorous, certified, error-free diagnostic confidence",
+        "color_grading": "Deep slate navy, punchy emerald green verification accents"
+      },
+      "audio": {
+        "ambient": "Digital data stream pulses",
+        "effects": "Subtle diagnostic chime, high-frequency verification beep",
+        "voiceover": "Real-time diagnostic validation. Socket matching, power budgeting, and zero conflicts."
+      },
+      "negative_prompt": "scrambled numbers, text morphing, illegible tables, melting badges, altered logos, blurred data"
+    },
+    {
+      "scene_id": "04_hardware_academy_learn_mode",
+      "scene_title": "Hardware Academy // CSS NC II Curriculum",
+      "reference_image": "04_hardware_academy_learn_mode.png",
+      "flow_settings": {
+        "aspect_ratio": "16:9",
+        "duration_seconds": 4.0,
+        "motion_intensity": 2.0,
+        "camera_tool": "slow_pull_back"
+      },
+      "cinematography": {
+        "shot_type": "Clean editorial reveal shot",
+        "camera_movement": "Smooth slow pull-back to reveal lesson document and 3D preview card",
+        "camera_angle": "Eye level centered perspective",
+        "lens": "40mm prime lens"
+      },
+      "subject": {
+        "primary": "Sleek creator monitor showing BuildLab Learn Mode",
+        "screen_content": "Module 1 ESD & Workspace Prep syllabus text on left, 3D interactive motherboard card on right",
+        "screen_state": "High-contrast reading interface on glass screen"
+      },
+      "screen_preservation": {
+        "preserve_ui": true,
+        "preserve_text": true,
+        "prevent_morphing": true,
+        "instruction": "Preserve all lesson typography, headings, list numbers, and sidebar tabs with zero AI text hallucination"
+      },
+      "context": {
+        "environment": "Modern architectural learning studio",
+        "lighting": "Diffused warm natural studio daylight with soft ambient shadows"
+      },
+      "style_and_ambiance": {
+        "mood": "Academic, authoritative, premium educational standard",
+        "color_grading": "Warm cream, deep coffee black, crisp editorial contrast"
+      },
+      "audio": {
+        "ambient": "Warm organic acoustic pad",
+        "effects": "Subtle digital page turn slide",
+        "voiceover": "Self-paced, accredited curriculum aligned to DepEd TVL and TESDA standards."
+      },
+      "negative_prompt": "blurred document text, gibberish words, distorted cards, morphing paragraphs, noisy layout"
+    },
+    {
+      "scene_id": "05_student_analytics_dashboard",
+      "scene_title": "Student Analytics // 100% Curriculum Mastery",
+      "reference_image": "05_student_analytics_dashboard.png",
+      "flow_settings": {
+        "aspect_ratio": "16:9",
+        "duration_seconds": 4.0,
+        "motion_intensity": 2.0,
+        "camera_tool": "horizontal_pan_left"
+      },
+      "cinematography": {
+        "shot_type": "Smooth tracking shot across student statistics",
+        "camera_movement": "Horizontal slider glide right-to-left across student summary card and module scores",
+        "camera_angle": "Perpendicular straight-on display angle",
+        "lens": "50mm cinema lens"
+      },
+      "subject": {
+        "primary": "Monitor displaying BuildLab Student Dashboard",
+        "screen_content": "Student profile for Jay Mark Piano, '100% COMPLETED', 17/17 topics mastered, GWA, and assessment scores",
+        "screen_state": "Stationary student records interface"
+      },
+      "screen_preservation": {
+        "preserve_ui": true,
+        "preserve_text": true,
+        "prevent_morphing": true,
+        "instruction": "Keep student name, 100% completion pill, 17/17 ratio, and module assessment badges entirely static and legible"
+      },
+      "context": {
+        "environment": "Executive educational workspace",
+        "lighting": "Subtle warm desk lamp reflection on corner of desk, dark background"
+      },
+      "style_and_ambiance": {
+        "mood": "Accomplishment, verified academic mastery, excellence",
+        "color_grading": "Warm ivory cards, dark obsidian backdrop, sharp crisp green badges"
+      },
+      "audio": {
+        "ambient": "Rising uplifting orchestral chime",
+        "effects": "Subtle metric counter confirmation click",
+        "voiceover": "Track every milestone. Dean's Lister standing, GWA calculation, and 100% syllabus mastery."
+      },
+      "negative_prompt": "altered student name, distorted percentage numbers, scrambled grades, melted progress bar, warped tables"
+    },
+    {
+      "scene_id": "06_accredited_ptc_certificate",
+      "scene_title": "Climax Reveal // Accredited PTC-IICT E-Certificate",
+      "reference_image": "06_accredited_ptc_certificate.png",
+      "flow_settings": {
+        "aspect_ratio": "16:9",
+        "duration_seconds": 5.0,
+        "motion_intensity": 2.2,
+        "camera_tool": "dramatic_center_push_in"
+      },
+      "cinematography": {
+        "shot_type": "Hero product commercial centerpiece shot",
+        "camera_movement": "Slow majestic push-in focused directly onto the center gold accreditation seal and student name",
+        "camera_angle": "Direct cinematic eye-level hero angle",
+        "lens": "50mm anamorphic with subtle golden specular glint across glass"
+      },
+      "subject": {
+        "primary": "Framed ultra-high-definition OLED display presenting the Accredited Certificate of Completion",
+        "screen_content": "Official PTC-IICT CSS NC II certificate conferred to Jay Mark Piano, gold holographic badge, and signatures",
+        "screen_state": "Rigid legal credential document on dark glass"
+      },
+      "screen_preservation": {
+        "preserve_ui": true,
+        "preserve_text": true,
+        "prevent_morphing": true,
+        "instruction": "The certificate text, conferred name, gold seal, signatures of Custodian and Dean, and verification hash must remain 100% rigid, unwarped, and sharp"
+      },
+      "context": {
+        "environment": "Dark prestige keynote stage",
+        "lighting": "Dramatic golden rim lighting and soft warm backlight ray glinting across screen bevel"
+      },
+      "style_and_ambiance": {
+        "mood": "Prestigious, triumphant, official accreditation, pinnacle achievement",
+        "color_grading": "Rich gold, deep midnight black, pristine sharp typography"
+      },
+      "audio": {
+        "ambient": "Full cinematic keynote crescendo",
+        "effects": "Crystalline glass resonance chime",
+        "voiceover": "Earn an accredited credential recognized by institutions and industry leaders."
+      },
+      "negative_prompt": "blurry certificate text, distorted signatures, morphed gold seal, misspelling of student name, wavy lines, noisy artifacts"
+    },
+    {
+      "scene_id": "07_system_settings_control",
+      "scene_title": "Outro // Tactile Controls & System Vision",
+      "reference_image": "07_system_settings_control.png",
+      "flow_settings": {
+        "aspect_ratio": "16:9",
+        "duration_seconds": 3.5,
+        "motion_intensity": 1.8,
+        "camera_tool": "slow_dolly_back_fade"
+      },
+      "cinematography": {
+        "shot_type": "Smooth commercial outro shot",
+        "camera_movement": "Gentle dolly-out from System Settings panel expanding out into soft fade",
+        "camera_angle": "Wide centered studio angle",
+        "lens": "35mm prime lens"
+      },
+      "subject": {
+        "primary": "Full studio desk setup with the monitor displaying BuildLab System Settings",
+        "screen_content": "Tactile audio toggles, language preferences, and lab immersion switch",
+        "screen_state": "Clean modern system control interface"
+      },
+      "screen_preservation": {
+        "preserve_ui": true,
+        "preserve_text": true,
+        "prevent_morphing": true,
+        "instruction": "Maintain exact button positions, toggle switches, and tab headers without distortion"
+      },
+      "context": {
+        "environment": "Minimalist modern designer workstation",
+        "lighting": "Soft vignette edge lighting with warm studio glow"
+      },
+      "style_and_ambiance": {
+        "mood": "Polished, conclusive, empowering, professional",
+        "color_grading": "Clean dark mode, subtle slate contrasts"
+      },
+      "audio": {
+        "ambient": "Gentle resolving musical chord",
+        "effects": "Soft mechanical tactile click",
+        "voiceover": "BuildLab. Master Hardware. Build Without Limits."
+      },
+      "negative_prompt": "wobbly sliders, melted icons, distorted toggle switches, shifting tabs, artifacting"
+    }
+  ]
+}

@@ -274,7 +274,7 @@ export const AdminContent = () => {
                             className="avatar-fallback-initials"
                             style={{ display: member.photo_url ? "none" : "flex" }}
                           >
-                            {member.codename ? member.codename.slice(0, 3) : member.id}
+                            {member.name ? member.name.slice(0, 2).toUpperCase() : member.id}
                           </div>
                         </div>
 
@@ -283,7 +283,6 @@ export const AdminContent = () => {
                       <div className="operative-card-body">
                         <h3 className="operative-name">{member.name}</h3>
                         <div className="operative-designation">{member.designation}</div>
-                        <div className="operative-codename">{member.codename}</div>
 
                         <div className="operative-highlight">
                           <span className="highlight-tag">{member.highlight}</span>
@@ -365,7 +364,7 @@ export const AdminContent = () => {
                                   className="avatar-fallback-initials"
                                   style={{ display: editingMember.photo_url ? "none" : "flex" }}
                                 >
-                                  {editingMember.codename ? editingMember.codename.slice(0, 3) : editingMember.id}
+                                  {editingMember.name ? editingMember.name.slice(0, 2).toUpperCase() : editingMember.id}
                                 </div>
                               </div>
                             </div>
@@ -414,7 +413,7 @@ export const AdminContent = () => {
                         </div>
 
                         <div className="form-row-2">
-                          <div className="form-group">
+                          <div className="form-group" style={{ flex: 1.6 }}>
                             <label className="form-label">FULL NAME *</label>
                             <input
                               type="text"
@@ -425,60 +424,35 @@ export const AdminContent = () => {
                             />
                           </div>
 
-                          <div className="form-group">
-                            <label className="form-label">CODENAME *</label>
+                          <div className="form-group" style={{ flex: 1 }}>
+                            <label className="form-label">ROLE BADGE</label>
                             <input
                               type="text"
-                              required
-                              className="form-input"
-                              value={editingMember.codename || ""}
-                              onChange={(e) => setEditingMember({ ...editingMember, codename: e.target.value.toUpperCase() })}
-                            />
-                          </div>
-                        </div>
-
-                        <div className="form-row-3">
-                          <div className="form-group" style={{ flex: 1.5 }}>
-                            <label className="form-label">DESIGNATION *</label>
-                            <input
-                              type="text"
-                              required
-                              className="form-input"
-                              value={editingMember.designation || ""}
-                              onChange={(e) => setEditingMember({ ...editingMember, designation: e.target.value })}
-                            />
-                          </div>
-
-                          <div className="form-group">
-                            <label className="form-label">BADGE</label>
-                            <input
-                              type="text"
-                              placeholder="e.g. ARCH"
+                              placeholder="e.g. LEAD, DOCS"
                               className="form-input uppercase"
                               value={editingMember.avatar_badge || ""}
                               onChange={(e) => setEditingMember({ ...editingMember, avatar_badge: e.target.value.toUpperCase() })}
                             />
                           </div>
+                        </div>
 
-                          <div className="form-group">
-                            <label className="form-label">CATEGORY</label>
-                            <select
-                              className="form-select"
-                              value={editingMember.role_category || "core"}
-                              onChange={(e) => setEditingMember({ ...editingMember, role_category: e.target.value })}
-                            >
-                              <option value="core">Core &amp; 3D</option>
-                              <option value="frontend">Frontend &amp; UX</option>
-                              <option value="backend">Backend &amp; QA</option>
-                            </select>
-                          </div>
+                        <div className="form-group">
+                          <label className="form-label">DESIGNATION / ROLE *</label>
+                          <input
+                            type="text"
+                            required
+                            placeholder="e.g. Lead Full-Stack Developer & Project Lead"
+                            className="form-input"
+                            value={editingMember.designation || ""}
+                            onChange={(e) => setEditingMember({ ...editingMember, designation: e.target.value })}
+                          />
                         </div>
 
                         <div className="form-group">
                           <label className="form-label">SPECIALTY HIGHLIGHT</label>
                           <input
                             type="text"
-                            placeholder="e.g. Core Architecture & State Matrix"
+                            placeholder="e.g. System Architecture & Core Logic"
                             className="form-input"
                             value={editingMember.highlight || ""}
                             onChange={(e) => setEditingMember({ ...editingMember, highlight: e.target.value })}
@@ -489,6 +463,7 @@ export const AdminContent = () => {
                           <label className="form-label">ENGINEERING BIO</label>
                           <textarea
                             rows={3}
+                            placeholder="Engineering background and responsibilities..."
                             className="form-textarea"
                             value={editingMember.bio || ""}
                             onChange={(e) => setEditingMember({ ...editingMember, bio: e.target.value })}
@@ -496,18 +471,7 @@ export const AdminContent = () => {
                         </div>
 
                         <div className="form-group">
-                          <label className="form-label">KEY CAPSTONE CONTRIBUTIONS (1 PER LINE)</label>
-                          <textarea
-                            rows={3}
-                            placeholder="Engineered multi-tier component picker&#10;Integrated Three.js WebGL canvas&#10;Architected real-time bottleneck algorithms"
-                            className="form-textarea font-mono text-xs"
-                            value={editingMember.key_contributions || ""}
-                            onChange={(e) => setEditingMember({ ...editingMember, key_contributions: e.target.value })}
-                          />
-                        </div>
-
-                        <div className="form-group">
-                          <label className="form-label">PC BUILDING TIP</label>
+                          <label className="form-label">PC BUILDING TIP (QUOTE)</label>
                           <input
                             type="text"
                             placeholder="e.g. Never cheap out on your power supply..."

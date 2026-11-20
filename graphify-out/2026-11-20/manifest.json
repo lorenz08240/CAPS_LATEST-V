@@ -114,9 +114,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Footer/Footer.jsx": {
-    "mtime": 1794938536.7307587,
-    "seen": 1794938580.3146827,
-    "ast_hash": "e56adb62537df9165ce5ec086d438676",
+    "mtime": 1795158973.9611087,
+    "seen": 1795159020.2959535,
+    "ast_hash": "52f44105d0262691f23f024a7918ead5",
     "semantic_hash": ""
   },
   "frontend/src/components/FullscreenGate/FullscreenGate.jsx": {
@@ -690,9 +690,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/AdminContent.jsx": {
-    "mtime": 1795155407.7593489,
-    "seen": 1795156045.460166,
-    "ast_hash": "332274fb2cc192419f9cc72de6963cf0",
+    "mtime": 1795158172.392777,
+    "seen": 1795158564.6420016,
+    "ast_hash": "c7d6810f155bae1145cf2d6264eedbda",
     "semantic_hash": ""
   },
   "frontend/src/components/Home/AccountSetupModal.jsx": {
@@ -1083,6 +1083,66 @@
     "mtime": 1795028004.224981,
     "seen": 1795028132.5475357,
     "ast_hash": "aae3235dfd01bff0b46fee97501d5320",
+    "semantic_hash": ""
+  },
+  "product_launch_assets/GOOGLE_FLOW_PROMPTS.md": {
+    "mtime": 1795158355.7984202,
+    "seen": 1795158564.6886973,
+    "ast_hash": "1acd819d29cf0b74dd9941a9134eff03",
+    "semantic_hash": ""
+  },
+  "backend/uploads/profiles/photo-1795158118621-8nbk65.jpg": {
+    "mtime": 1795158118.621601,
+    "seen": 1795158564.694845,
+    "ast_hash": "aaaa50dab3404ec2d24cf4586df5e27c",
+    "semantic_hash": ""
+  },
+  "product_launch_assets/01_hero_launch_reveal.png": {
+    "mtime": 1795158140.6892312,
+    "seen": 1795158564.7231894,
+    "ast_hash": "42f8899c243a0f4fd6369b0b421ffbb3",
+    "semantic_hash": ""
+  },
+  "product_launch_assets/02_3d_builder_workbench.png": {
+    "mtime": 1795158162.7310188,
+    "seen": 1795158564.723195,
+    "ast_hash": "fe1fae30118a1f9c55bab5ef0970d056",
+    "semantic_hash": ""
+  },
+  "product_launch_assets/03_intelligent_compatibility_engine.png": {
+    "mtime": 1795158169.7504303,
+    "seen": 1795158564.7231984,
+    "ast_hash": "20ca910cd9bfb5ed09386d41bd806814",
+    "semantic_hash": ""
+  },
+  "product_launch_assets/04_hardware_academy_learn_mode.png": {
+    "mtime": 1795158178.490287,
+    "seen": 1795158564.7232022,
+    "ast_hash": "d71b4fa3d2517e0dbb3de758589d48ac",
+    "semantic_hash": ""
+  },
+  "product_launch_assets/04b_guided_3d_hardware_inspection.png": {
+    "mtime": 1795158180.102329,
+    "seen": 1795158564.7232056,
+    "ast_hash": "71fc07f671054d724eeeceb10fc80c3b",
+    "semantic_hash": ""
+  },
+  "product_launch_assets/05_student_analytics_dashboard.png": {
+    "mtime": 1795158184.4636726,
+    "seen": 1795158564.7232082,
+    "ast_hash": "87bd71a4ad87cf506654b6973e8e821a",
+    "semantic_hash": ""
+  },
+  "product_launch_assets/06_accredited_ptc_certificate.png": {
+    "mtime": 1795158188.340871,
+    "seen": 1795158564.7232113,
+    "ast_hash": "12351e3c08c5206000088f123a4f271a",
+    "semantic_hash": ""
+  },
+  "product_launch_assets/07_system_settings_control.png": {
+    "mtime": 1795158191.8532188,
+    "seen": 1795158564.723214,
+    "ast_hash": "7b5336b36c70d322b52bd576fec1ea3f",
     "semantic_hash": ""
   },
   "backend/package-lock.json": {

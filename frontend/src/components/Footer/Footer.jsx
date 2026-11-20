@@ -17,7 +17,7 @@ function Footer() {
     const ctx = gsap.context(() => {
       ScrollTrigger.create({
         trigger: footerRef.current,
-        start: "top 90%",
+        start: "top 92%",
         onEnter: () => {
           gsap.to(
             footerRef.current.querySelectorAll(".footer-brand, .footer-column, .footer-bottom"),
@@ -25,7 +25,7 @@ function Footer() {
               opacity: 1,
               y: 0,
               stagger: 0.08,
-              duration: 0.65,
+              duration: 0.55,
               ease: "power2.out",
               overwrite: "auto",
             }
@@ -36,9 +36,9 @@ function Footer() {
             footerRef.current.querySelectorAll(".footer-brand, .footer-column, .footer-bottom"),
             {
               opacity: 0,
-              y: 30,
+              y: 20,
               stagger: 0.04,
-              duration: 0.35,
+              duration: 0.3,
               ease: "power2.in",
               overwrite: "auto",
             }
@@ -50,7 +50,7 @@ function Footer() {
     return () => ctx.revert();
   }, []);
 
-  // Hide footer on 3D builder page
+  // Suppress footer on full-bleed 3D builder workbench
   if (location.pathname === "/3d-builder") {
     return null;
   }
@@ -62,103 +62,99 @@ function Footer() {
   };
 
   return (
-    <footer ref={footerRef} className="footer">
+    <footer ref={footerRef} className="footer" role="contentinfo">
       <div className="footer-container">
-        {/* Brand & Institutional Profile Column */}
+        {/* Brand & Purpose Column */}
         <div className="footer-brand">
-          <div className="footer-brand-header">
-            <h2>BUILDLAB</h2>
-          </div>
+          <h2 className="footer-brand-title">BUILDLAB</h2>
           <p className="footer-tagline">
-            An expert virtual computer engineering workspace featuring real-time socket validation, TDP thermal auditing, 2D/3D hardware assembly simulation, and accredited curriculum courseware.
+            An interactive virtual computer engineering workspace for hardware assembly simulation, real-time socket and TDP validation, and hands-on PC diagnostics.
           </p>
-
-          <div className="footer-credits-card">
-            <div className="credit-line">
-              <span className="credit-label">DEVELOPED BY:</span>
-              <strong className="credit-val">WhiteHats Development Team</strong>
-            </div>
-            <div className="credit-line">
-              <span className="credit-label">INSTITUTION:</span>
-              <strong className="credit-val">Pateros Technological College</strong>
-            </div>
-            <div className="credit-line">
-              <span className="credit-label">ACCREDITATION:</span>
-              <span className="credit-accent">DepEd &bull; TESDA CSS NC II Aligned</span>
-            </div>
+          <div className="footer-badge-strip">
+            <span className="footer-curriculum-badge">DepEd TVL &bull; TESDA CSS NC II Aligned</span>
           </div>
         </div>
 
-        {/* Multi-Column Quick Links & Resources */}
-        <div className="footer-links-grid">
-          {/* Column 1: Core Navigation */}
+        {/* Clean, spacious navigation columns */}
+        <nav className="footer-links-grid" aria-label="Footer Navigation">
+          {/* Column 1: Platform Suite */}
           <div className="footer-column">
-            <div className="footer-col-header">
-              <span className="col-dot" />
-              <h3>Platform Suite</h3>
-            </div>
-            <Link to="/" onClick={handleLinkClick}>Home Overview</Link>
-            <Link to="/compatibility" onClick={handleLinkClick}>Compatibility Matrix</Link>
-            <Link to="/compare" onClick={handleLinkClick}>Compare 2 Rigs</Link>
-            <Link to="/learn" onClick={handleLinkClick}>Hardware Academy</Link>
-            <Link to="/build" onClick={handleLinkClick}>2D Component Picker</Link>
-            <Link to="/3d-builder" onClick={handleLinkClick}>3D Virtual PC Studio</Link>
+            <h3 className="footer-col-title">Platform Suite</h3>
+            <ul className="footer-links-list">
+              <li><Link to="/learn" onClick={handleLinkClick}>Hardware Academy</Link></li>
+              <li><Link to="/3d-builder" onClick={handleLinkClick}>3D Virtual PC Studio</Link></li>
+              <li><Link to="/build" onClick={handleLinkClick}>2D Component Picker</Link></li>
+              <li><Link to="/compatibility" onClick={handleLinkClick}>Compatibility Matrix</Link></li>
+              <li><Link to="/compare" onClick={handleLinkClick}>Compare 2 Rigs</Link></li>
+            </ul>
           </div>
 
-          {/* Column 2: Resources & Consortium */}
+          {/* Column 2: Resources & Tools */}
           <div className="footer-column">
-            <div className="footer-col-header">
-              <span className="col-dot dot-amber" />
-              <h3>Consortium &amp; Tools</h3>
-            </div>
-            <Link to="/about" onClick={handleLinkClick}>About Us &bull; WhiteHats</Link>
-            <Link to="/brands" onClick={handleLinkClick}>Hardware Ecosystem</Link>
-            <Link to="/certification" onClick={handleLinkClick}>Official Certification</Link>
-            <Link to="/help" onClick={handleLinkClick}>Help &amp; Documentation</Link>
-            <Link to="/settings" onClick={handleLinkClick}>System Settings</Link>
-            <a
-              href="https://github.com/buildcores/buildcores-open-db"
-              target="_blank"
-              rel="noreferrer"
-              onClick={handleLinkClick}
-            >
-              Open Hardware DB &rarr;
-            </a>
+            <h3 className="footer-col-title">Resources &amp; Tools</h3>
+            <ul className="footer-links-list">
+              <li><Link to="/dashboard" onClick={handleLinkClick}>Student Dashboard</Link></li>
+              <li><Link to="/certificate" onClick={handleLinkClick}>Official Certification</Link></li>
+              <li><Link to="/brands" onClick={handleLinkClick}>Hardware Ecosystem</Link></li>
+              <li><Link to="/help" onClick={handleLinkClick}>Help &amp; Documentation</Link></li>
+              <li><Link to="/settings" onClick={handleLinkClick}>System Settings</Link></li>
+            </ul>
           </div>
 
-          {/* Column 3: Legal & Data Privacy */}
+          {/* Column 3: Community & Legal */}
           <div className="footer-column">
-            <div className="footer-col-header">
-              <span className="col-dot dot-cyan" />
-              <h3>Legal &amp; Privacy</h3>
-            </div>
-            <Link to="/privacy" onClick={handleLinkClick}>Privacy Policy</Link>
-            <Link to="/terms" onClick={handleLinkClick}>Terms of Service</Link>
-            <Link to="/cookies" onClick={handleLinkClick}>Cookie Policy</Link>
-            <button
-              type="button"
-              className="footer-cookie-btn"
-              onClick={() => {
-                handleLinkClick();
-                window.dispatchEvent(new CustomEvent("buildlab:open-cookie-preferences"));
-              }}
-            >
-              <span>Manage Cookies</span>
-              <span className="cookie-mini-tag">GDPR // DPA</span>
-            </button>
+            <h3 className="footer-col-title">Community &amp; Legal</h3>
+            <ul className="footer-links-list">
+              <li>
+                <a
+                  href="https://www.facebook.com/PDMHSOfficial"
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  onClick={handleLinkClick}
+                  className="footer-external-link"
+                >
+                  President Diosdado Macapagal HS &nearr;
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://www.facebook.com/paterostechnologicalcollege/"
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  onClick={handleLinkClick}
+                  className="footer-external-link"
+                >
+                  Pateros Technological College &nearr;
+                </a>
+              </li>
+              <li><Link to="/privacy" onClick={handleLinkClick}>Privacy Policy</Link></li>
+              <li><Link to="/terms" onClick={handleLinkClick}>Terms of Service</Link></li>
+              <li>
+                <button
+                  type="button"
+                  className="footer-cookie-btn"
+                  onClick={() => {
+                    handleLinkClick();
+                    window.dispatchEvent(new CustomEvent("buildlab:open-cookie-preferences"));
+                  }}
+                >
+                  Cookie Preferences
+                </button>
+              </li>
+            </ul>
           </div>
-        </div>
+        </nav>
       </div>
 
-      {/* Footer Bottom Bar */}
+      {/* Footer Colophon */}
       <div className="footer-bottom">
         <div className="footer-bottom-inner">
           <p className="copyright-text">
-            &copy; {new Date().getFullYear()} BuildLab. Engineered by WhiteHats Consortium. All hardware trademarks and component logos belong to their respective manufacturers.
+            &copy; {new Date().getFullYear()} BuildLab. Engineered by WhiteHats Consortium. All hardware trademarks belong to their respective owners.
           </p>
           <div className="footer-status-pill">
-            <span className="status-live-dot" />
-            <span>OPERATIONAL // ZERO CONFLICT ENGINE</span>
+            <span className="status-live-dot" aria-hidden="true" />
+            <span>BUILDLAB V2.4 &bull; ACTIVE</span>
           </div>
         </div>
       </div>

@@ -114,9 +114,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Footer/Footer.jsx": {
-    "mtime": 1794938536.7307587,
-    "seen": 1794938580.3146827,
-    "ast_hash": "e56adb62537df9165ce5ec086d438676",
+    "mtime": 1795158973.9611087,
+    "seen": 1795159020.2959535,
+    "ast_hash": "52f44105d0262691f23f024a7918ead5",
     "semantic_hash": ""
   },
   "frontend/src/components/FullscreenGate/FullscreenGate.jsx": {
@@ -588,9 +588,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/AboutUs/AboutUs.jsx": {
-    "mtime": 1795014534.5657997,
-    "seen": 1795014557.8516362,
-    "ast_hash": "6a8aee9bba37017f28f4a8041c4a2a36",
+    "mtime": 1795160454.9747078,
+    "seen": 1795160574.4824378,
+    "ast_hash": "00359465d5da5ca6626fb38ceb231201",
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/AdminLogs.jsx": {
@@ -690,9 +690,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/AdminContent.jsx": {
-    "mtime": 1795158172.392777,
-    "seen": 1795158564.6420016,
-    "ast_hash": "c7d6810f155bae1145cf2d6264eedbda",
+    "mtime": 1795160016.9066384,
+    "seen": 1795160574.4836166,
+    "ast_hash": "554a69967572cd3a2a48982d5a2d71bb",
     "semantic_hash": ""
   },
   "frontend/src/components/Home/AccountSetupModal.jsx": {
@@ -906,9 +906,9 @@
     "semantic_hash": ""
   },
   "frontend/public/assets/shin_ariane_pol.jpg": {
-    "mtime": 1794847392.7912502,
-    "seen": 1794847485.748801,
-    "ast_hash": "3dc676d04c76d86c50c3a05634f405ac",
+    "mtime": 1795160413.1156669,
+    "seen": 1795160574.5129356,
+    "ast_hash": "d3ddeefe581c1731d31e8c4c613c2435",
     "semantic_hash": ""
   },
   "frontend/public/assets/preview_compare_page.png": {
@@ -1143,6 +1143,108 @@
     "mtime": 1795158191.8532188,
     "seen": 1795158564.723214,
     "ast_hash": "7b5336b36c70d322b52bd576fec1ea3f",
+    "semantic_hash": ""
+  },
+  "product_launch_assets/google_flow_prompts.json": {
+    "mtime": 1795159765.8626828,
+    "seen": 1795160574.5026648,
+    "ast_hash": "591ff267b1c2b0701110876b854bdecd",
+    "semantic_hash": ""
+  },
+  "backend/uploads/profiles/hardware_3d_engineer.jpg": {
+    "mtime": 1795160413.1145027,
+    "seen": 1795160574.5035925,
+    "ast_hash": "83f0cdc6d6ef4617969101f75fa35b7c",
+    "semantic_hash": ""
+  },
+  "backend/uploads/profiles/jay_mark_piano.jpg": {
+    "mtime": 1795160413.0955606,
+    "seen": 1795160574.503596,
+    "ast_hash": "73b45377bfad00dfdcbe64b54622f37d",
+    "semantic_hash": ""
+  },
+  "backend/uploads/profiles/jude_gollena.jpg": {
+    "mtime": 1795160413.106842,
+    "seen": 1795160574.5035985,
+    "ast_hash": "5f8599a016d12e6430d954a8ffd2ca6a",
+    "semantic_hash": ""
+  },
+  "backend/uploads/profiles/lorenz_tejado.jpg": {
+    "mtime": 1795160413.1109743,
+    "seen": 1795160574.5036006,
+    "ast_hash": "95184342c8fe21efa8db9577b83ed943",
+    "semantic_hash": ""
+  },
+  "backend/uploads/profiles/photo_black_suit.jpg": {
+    "mtime": 1795159941.972278,
+    "seen": 1795160574.5071702,
+    "ast_hash": "83f0cdc6d6ef4617969101f75fa35b7c",
+    "semantic_hash": ""
+  },
+  "backend/uploads/profiles/photo_fringe_tie.jpg": {
+    "mtime": 1795159941.9665544,
+    "seen": 1795160574.5071738,
+    "ast_hash": "95184342c8fe21efa8db9577b83ed943",
+    "semantic_hash": ""
+  },
+  "backend/uploads/profiles/photo_glasses_suit.jpg": {
+    "mtime": 1795159941.9511988,
+    "seen": 1795160574.5071762,
+    "ast_hash": "5f8599a016d12e6430d954a8ffd2ca6a",
+    "semantic_hash": ""
+  },
+  "backend/uploads/profiles/shin_ariane_pol.jpg": {
+    "mtime": 1795160413.1086257,
+    "seen": 1795160574.5071795,
+    "ast_hash": "d3ddeefe581c1731d31e8c4c613c2435",
+    "semantic_hash": ""
+  },
+  "frontend/public/assets/profiles/hardware_3d_engineer.jpg": {
+    "mtime": 1795160413.1139314,
+    "seen": 1795160574.5129004,
+    "ast_hash": "83f0cdc6d6ef4617969101f75fa35b7c",
+    "semantic_hash": ""
+  },
+  "frontend/public/assets/profiles/jay_mark_piano.jpg": {
+    "mtime": 1795160413.0949502,
+    "seen": 1795160574.5129063,
+    "ast_hash": "73b45377bfad00dfdcbe64b54622f37d",
+    "semantic_hash": ""
+  },
+  "frontend/public/assets/profiles/jude_gollena.jpg": {
+    "mtime": 1795160413.105787,
+    "seen": 1795160574.5129104,
+    "ast_hash": "5f8599a016d12e6430d954a8ffd2ca6a",
+    "semantic_hash": ""
+  },
+  "frontend/public/assets/profiles/lorenz_tejado.jpg": {
+    "mtime": 1795160413.1103814,
+    "seen": 1795160574.512914,
+    "ast_hash": "95184342c8fe21efa8db9577b83ed943",
+    "semantic_hash": ""
+  },
+  "frontend/public/assets/profiles/photo_black_suit.jpg": {
+    "mtime": 1795159941.970562,
+    "seen": 1795160574.5129178,
+    "ast_hash": "83f0cdc6d6ef4617969101f75fa35b7c",
+    "semantic_hash": ""
+  },
+  "frontend/public/assets/profiles/photo_fringe_tie.jpg": {
+    "mtime": 1795159941.9660106,
+    "seen": 1795160574.5129213,
+    "ast_hash": "95184342c8fe21efa8db9577b83ed943",
+    "semantic_hash": ""
+  },
+  "frontend/public/assets/profiles/photo_glasses_suit.jpg": {
+    "mtime": 1795159941.950094,
+    "seen": 1795160574.5129259,
+    "ast_hash": "5f8599a016d12e6430d954a8ffd2ca6a",
+    "semantic_hash": ""
+  },
+  "frontend/public/assets/profiles/shin_ariane_pol.jpg": {
+    "mtime": 1795160413.108064,
+    "seen": 1795160574.5129294,
+    "ast_hash": "d3ddeefe581c1731d31e8c4c613c2435",
     "semantic_hash": ""
   },
   "backend/package-lock.json": {

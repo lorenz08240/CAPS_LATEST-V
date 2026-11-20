@@ -12,140 +12,58 @@ gsap.registerPlugin(ScrollTrigger);
 const TEAM_MEMBERS = [
   {
     id: "DEV-01",
-    roleCategory: "core",
-    name: "Developer 01",
-    designation: "Lead Full-Stack Developer",
-    codename: "SYSTEM_CORE",
-    avatarBadge: "ARCH",
-    photoUrl: "/uploads/profiles/photo-1794214083340-kb6u7l.jpg",
+    name: "Jay Mark Piano",
+    designation: "Full-Stack Developer & Project Lead",
+    avatarBadge: "LEAD",
+    photoUrl: "/assets/profiles/jay_mark_piano.jpg",
+    image: "/assets/profiles/jay_mark_piano.jpg",
     highlight: "System Architecture & Core Logic",
-    bio: "Builds the core foundation of BuildLab. Connects the user interface with the 3D PC builder and backend database so all parts checks work fast and accurately.",
-    keyContributions: [
-      "Built the PC part picker and compatibility checking system",
-      "Connected the 3D computer models with real hardware specs",
-      "Created the processor socket matching and power calculation tools"
-    ],
-    techStack: ["React 19", "Three.js", "Node.js", "Express", "MySQL"],
-    rigSpecs: {
-      cpu: "AMD Ryzen 9 7900X (12 Cores, 24 Threads)",
-      gpu: "NVIDIA GeForce RTX 4080 Super 16GB",
-      ram: "64GB DDR5-6000 CL30 (2x32GB)",
-      storage: "2TB PCIe Gen4 NVMe M.2 SSD",
-      chassis: "Lian Li O11 Dynamic EVO (Black)"
-    },
-    favTip: "Never cheap out on your power supply. A good power supply protects your entire PC from sudden power spikes and keeps all parts running safely.",
-    github: "https://github.com",
-    linkedin: "https://linkedin.com"
+    bio: "Leads the overall software engineering and technical direction of BuildLab. Connects the user interface with the 3D PC builder, real-time compatibility checks, and backend database systems.",
+    favTip: "Never cheap out on your power supply. An efficient Tier-A PSU protects your entire PC from sudden power spikes and keeps all parts running safely."
   },
   {
     id: "DEV-02",
-    roleCategory: "frontend",
-    name: "Developer 02",
-    designation: "UI/UX & Frontend Designer",
-    codename: "CYBER_HUD",
+    name: "Jude Gollena",
+    designation: "UI/UX & Frontend Developer",
     avatarBadge: "UI/UX",
-    photoUrl: "/uploads/profiles/photo-1794176073655-f3qzal.gif",
+    photoUrl: "/assets/profiles/jude_gollena.jpg",
+    image: "/assets/profiles/jude_gollena.jpg",
     highlight: "User Interface & Visual Design",
-    bio: "Designs how BuildLab looks and feels. Created the sleek dark theme, interactive navigation menus, sound effects, and clean layouts for both desktop and mobile.",
-    keyContributions: [
-      "Designed the mahogany sidebar navigation and interactive drawer",
-      "Added audio effects for button clicks, switches, and part snaps",
-      "Optimized the responsive layout for desktop and mobile screens"
-    ],
-    techStack: ["React", "Motion/React", "CSS3 / Variables", "Web Audio API", "Figma"],
-    rigSpecs: {
-      cpu: "Intel Core i7-14700K (20 Cores, 28 Threads)",
-      gpu: "NVIDIA GeForce RTX 4070 Ti Super 16GB",
-      ram: "32GB DDR5-5600 CL36 (2x16GB)",
-      storage: "1TB Kingston KC3000 + 2TB Crucial P3",
-      chassis: "NZXT H6 Flow Dual-Chamber"
-    },
-    favTip: "Assemble your motherboard, CPU, RAM, and SSD on top of the motherboard box before putting them inside the PC case. It gives you plenty of room to work safely.",
-    github: "https://github.com",
-    linkedin: "https://linkedin.com"
+    bio: "Designs and crafts how BuildLab looks and feels. Engineered the sleek obsidian dark theme, interactive navigation drawers, tactile audio effects, and mobile responsive layouts.",
+    favTip: "Assemble your motherboard, CPU, RAM, and SSD on top of the motherboard box before putting them inside the PC case. It gives you plenty of room to work safely."
   },
   {
     id: "DEV-03",
-    roleCategory: "core",
     name: "Developer 03",
-    designation: "3D Graphics & Simulation Developer",
-    codename: "MESH_RENDER",
+    designation: "3D Graphics & Simulation Specialist",
     avatarBadge: "3D/GL",
-    photoUrl: "/uploads/profiles/photo-1794176080611-d0vfrg.gif",
-    highlight: "3D PC Models & Animations",
-    bio: "Creates the 3D computer parts and animations. Built the 3D studio where you can rotate, inspect, and connect computer hardware in full 360-degree view.",
-    keyContributions: [
-      "Built the 360-degree 3D PC inspection studio with orbit controls",
-      "Modeled realistic computer fans, coolers, RAM, and PC cases",
-      "Set up interactive camera angles and exploded views for every part"
-    ],
-    techStack: ["Three.js", "WebGL", "GLTF / GLB", "Blender", "Canvas API"],
-    rigSpecs: {
-      cpu: "AMD Ryzen 7 7800X3D (8 Cores, 3D V-Cache)",
-      gpu: "AMD Radeon RX 7900 XTX 24GB",
-      ram: "32GB DDR5-6000 CL30 Low-Latency Kit",
-      storage: "2TB Samsung 990 Pro PCIe 4.0 NVMe",
-      chassis: "Fractal Design North (Charcoal with Walnut Front)"
-    },
-    favTip: "Always remember to remove the clear plastic protective film from the bottom of your CPU cooler before applying thermal paste and installing it!",
-    github: "https://github.com",
-    linkedin: "https://linkedin.com"
+    photoUrl: "/assets/profiles/hardware_3d_engineer.jpg",
+    image: "/assets/profiles/hardware_3d_engineer.jpg",
+    highlight: "Three.js Hardware Models & 3D Studio",
+    bio: "Creates the 3D computer parts and animations. Built the 360-degree inspection studio where users can rotate, inspect, and connect computer hardware in full 3D view.",
+    favTip: "Always remember to remove the clear plastic protective film from the bottom of your CPU cooler before applying thermal paste and installing it!"
   },
   {
     id: "DEV-04",
-    roleCategory: "backend",
     name: "Shin Ariane Pol",
     designation: "Project Documentation Lead",
-    codename: "DOC_ARCHIVE",
     avatarBadge: "DOCS",
-    // Developer Profile Photo
-    photoUrl: "/assets/shin_ariane_pol.jpg",
-    image: "/assets/shin_ariane_pol.jpg",
+    photoUrl: "/assets/profiles/shin_ariane_pol.jpg",
+    image: "/assets/profiles/shin_ariane_pol.jpg",
     highlight: "Project Documentation & Manuals",
-    bio: "Writes and organizes all project documentation. Created the project manual, research papers, system guides, and lesson materials for students and teachers.",
-    keyContributions: [
-      "Wrote the complete Capstone project manual and system requirements",
-      "Created easy-to-follow workflow diagrams and user instruction guides",
-      "Organized computer hardware categories and testing criteria"
-    ],
-    techStack: ["Technical Writing", "System Documentation", "Markdown", "SRS / IEEE", "Git"],
-    rigSpecs: {
-      cpu: "AMD Ryzen 7 5700X (8 Cores, 16 Threads)",
-      gpu: "NVIDIA GeForce RTX 3060 12GB",
-      ram: "32GB DDR4-3200 (2x16GB)",
-      storage: "1TB NVMe M.2 SSD + 2TB External Storage",
-      chassis: "DarkFlash DLM21 Mesh (White)"
-    },
-    favTip: "Always double-check your part dimensions and cable layout before screwing down the motherboard into your PC case.",
-    github: "https://github.com",
-    linkedin: "https://linkedin.com"
+    bio: "Writes, organizes, and maintains all project documentation, thesis manuals, research papers, system user guides, and ISO/IEC 25010 academic compliance instruments.",
+    favTip: "Always double-check your part dimensions and cable layout before screwing down the motherboard into your PC case."
   },
   {
     id: "DEV-05",
-    roleCategory: "backend",
-    name: "Developer 05",
-    designation: "Hardware Research & Quality Testing",
-    codename: "VERIFY_LAB",
-    avatarBadge: "QA/SPEC",
-    photoUrl: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=400",
-    highlight: "Hardware Testing & Compatibility Rules",
-    bio: "Researches and tests real computer hardware. Verified hundreds of part specifications, socket sizes, and power limits to ensure 100% accurate compatibility checks.",
-    keyContributions: [
-      "Verified compatibility rules for over 500 computer components",
-      "Checked processor socket sizes, cooler clearances, and power cables",
-      "Wrote helpful troubleshooting tips for the B.O.B. voice guide"
-    ],
-    techStack: ["Hardware Specs Audit", "Benchmarking", "Jest", "Data Verification"],
-    rigSpecs: {
-      cpu: "Intel Core i5-13600K (14 Cores, 20 Threads)",
-      gpu: "NVIDIA GeForce RTX 4060 Ti 16GB",
-      ram: "32GB DDR4-3600 CL16",
-      storage: "1TB WD Black SN850X NVMe SSD",
-      chassis: "DeepCool CH560 Digital (Tempered Glass)"
-    },
-    favTip: "Never mix modular power supply cables between different brands or models. Even if the plug looks the same, the wiring can permanently damage your parts.",
-    github: "https://github.com",
-    linkedin: "https://linkedin.com"
+    name: "Lorenz Tejado",
+    designation: "Backend Developer & Systems Architect",
+    avatarBadge: "BACKEND",
+    photoUrl: "/assets/profiles/lorenz_tejado.jpg",
+    image: "/assets/profiles/lorenz_tejado.jpg",
+    highlight: "MySQL Normalization & API Services",
+    bio: "Engineered BuildLab's normalized MySQL relational database, RESTful Express backend services, crawler integration pipeline, and authentication security.",
+    favTip: "Dual-channel memory goes into slots 2 and 4 (A2/B2). Check your motherboard's PCB silkscreen to ensure maximum signal trace impedance."
   }
 ];
 
@@ -699,7 +617,7 @@ export default function AboutUs() {
                       <svg viewBox="0 0 24 24" className="fb-placeholder-svg" fill="currentColor">
                         <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z" />
                       </svg>
-                      <span className="fb-fallback-code">{member.codename.slice(0, 3)}</span>
+                      <span className="fb-fallback-code">{(member.name || member.id).slice(0, 2).toUpperCase()}</span>
                     </div>
                     <span className="fb-active-dot" title="Active developer" />
                   </div>
@@ -770,7 +688,7 @@ export default function AboutUs() {
                         <svg viewBox="0 0 24 24" className="fb-placeholder-svg" fill="currentColor">
                           <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z" />
                         </svg>
-                        <span className="dossier-fallback-code">{(selectedMember.codename || selectedMember.id || "DEV").slice(0, 3)}</span>
+                        <span className="dossier-fallback-code">{(selectedMember.name || selectedMember.id || "DEV").slice(0, 2).toUpperCase()}</span>
                       </div>
                       <span className="fb-active-dot modal" title="Active developer" />
                     </div>
@@ -784,23 +702,10 @@ export default function AboutUs() {
                 </div>
 
                 <div className="dossier-right-col">
-                  <div className="dossier-section-block">
-                    <h4 className="dossier-subhead">KEY CONTRIBUTIONS</h4>
-                    <ul className="dossier-contributions-list">
-                      {(selectedMember.keyContributions || []).map((contrib, idx) => (
-                        <li key={idx}>
-                          <span className="bullet-point" aria-hidden="true">&bull;</span>
-                          <span>{contrib}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
                   {selectedMember.favTip ? (
-                    <div className="dossier-section-block">
-                      <h4 className="dossier-subhead">FAVORITE PC BUILDING TIP</h4>
+                    <div className="dossier-section-block dossier-tip-block">
                       <blockquote className="dossier-quote">
-                        "{selectedMember.favTip}"
+                        <em>"{selectedMember.favTip}"</em>
                       </blockquote>
                     </div>
                   ) : null}

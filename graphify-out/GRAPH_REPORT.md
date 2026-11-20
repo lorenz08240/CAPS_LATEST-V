@@ -1,17 +1,17 @@
 # Graph Report - CAPS_LATEST-V  (2026-11-20)
 
 ## Corpus Check
-- 104 files · ~187,644 words
+- 105 files · ~188,253 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 53 file(s) not represented in the graph (top: .css 38, (none) 5, .glb 3)
 
 ## Summary
-- 684 nodes · 1568 edges · 34 communities (28 shown, 6 thin omitted)
+- 694 nodes · 1577 edges · 34 communities (28 shown, 6 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 17 edges (avg confidence: 0.9)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `3f6961a9`
+- Built from commit: `672ce60b`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -22,7 +22,7 @@
 - PCBuilder3D.jsx
 - crawler.js
 - CourseShell.jsx
-- App.jsx
+- FullscreenGate.jsx
 - frontend/package.json
 - db.js
 - [2026-10-23] - Master Checklist & Safari Compatibility Updates
@@ -51,7 +51,7 @@
 
 ## God Nodes (most connected - your core abstractions)
 1. `react` - 75 edges
-2. `soundManager` - 45 edges
+2. `soundManager` - 44 edges
 3. `react-router-dom` - 37 edges
 4. `BuildLab Changelog` - 32 edges
 5. `useLearnMode()` - 29 edges
@@ -66,12 +66,12 @@
   CHANGELOG.md → frontend/src/components/FullscreenGate/FullscreenGate.jsx
 - `⚡ Upgrades to `frontend/src/utilities/soundManager.js`` --references--> `SynthAudio`  [INFERRED]
   CHANGELOG.md → frontend/src/utilities/soundManager.js
-- `[2026-10-23] - Symmetrical Dual-Sidebar Architecture & Course Outline Fix (Learn Page)` --references--> `Footer()`  [INFERRED]
-  CHANGELOG.md → frontend/src/components/Footer/Footer.jsx
 - `🖥️ Fullscreen Gating (`FullscreenGate.jsx`)` --references--> `FullscreenGate()`  [INFERRED]
   CHANGELOG.md → frontend/src/components/FullscreenGate/FullscreenGate.jsx
 - `🧹 Cleaned Button Typography in `frontend/src/components/3D/PCBuilder3D.jsx`` --references--> `Compatibility()`  [INFERRED]
   CHANGELOG.md → frontend/src/components/Compatibility/Compatibility.jsx
+- `🖥️ Fullscreen Gating (`FullscreenGate.jsx`)` --references--> `CourseShell()`  [INFERRED]
+  CHANGELOG.md → frontend/src/components/Learn/CourseShell.jsx
 
 ## Import Cycles
 - None detected.
@@ -92,7 +92,7 @@ Nodes (47): AdminAccounts(), AdminAddComponent(), CATEGORIES, DEFAULT_FORM_DATA,
 
 ### Community 3 - "PCBuilder3D.jsx"
 Cohesion: 0.05
-Nodes (71): ComponentModels3D(), DDR4StickMesh(), HeroFloatingRAM(), MotherboardDDR4Kit(), ProceduralRAMFallback(), RAMModelErrorBoundary, SingleDDR4RAM(), DeepCoolLE240Cooler() (+63 more)
+Nodes (70): ComponentModels3D(), DDR4StickMesh(), HeroFloatingRAM(), MotherboardDDR4Kit(), ProceduralRAMFallback(), RAMModelErrorBoundary, SingleDDR4RAM(), DeepCoolLE240Cooler() (+62 more)
 
 ### Community 4 - "crawler.js"
 Cohesion: 0.32
@@ -100,15 +100,15 @@ Nodes (11): BERMOR_CATEGORY_MAP, detectProductCategory(), EASYPC_COLLECTION_MAP,
 
 ### Community 5 - "CourseShell.jsx"
 Cohesion: 0.06
-Nodes (49): AdminEditRedirect(), AppContent(), StudentDashboard(), CertificationPage(), readProgress(), CourseBriefingOverlay(), LEARNING_PATH, OUTCOMES (+41 more)
+Nodes (47): CertificationPage(), readProgress(), CourseBriefingOverlay(), LEARNING_PATH, OUTCOMES, ARTICLE_HOTSPOTS, CourseShell(), readProgress() (+39 more)
 
-### Community 6 - "App.jsx"
-Cohesion: 0.08
-Nodes (20): App(), ScrollToTop(), Preloader(), CourseVideoPlayer(), fmtTime(), loadYouTubeApi(), VideoOverlayModal(), AuthProvider() (+12 more)
+### Community 6 - "FullscreenGate.jsx"
+Cohesion: 0.31
+Nodes (14): FullscreenGate(), FullscreenGateContext, StageUnlockBanner(), enterFullscreen(), FS_ELEMENT(), hasEngagedFullscreen(), isCoarsePointer(), isDimensionFullscreen() (+6 more)
 
 ### Community 7 - "frontend/package.json"
-Cohesion: 0.13
-Nodes (17): name, private, type, version, autoprefixer, eslint, @eslint/js, eslint-plugin-react-hooks (+9 more)
+Cohesion: 0.14
+Nodes (16): name, private, type, version, autoprefixer, eslint, @eslint/js, eslint-plugin-react-hooks (+8 more)
 
 ### Community 8 - "db.js"
 Cohesion: 0.50
@@ -128,15 +128,15 @@ Nodes (6): checkCompatibility(), getCaseFormFactorCapacity(), getMoboFormFactorR
 
 ### Community 14 - "BuildLab Changelog"
 Cohesion: 0.10
-Nodes (20): [2026-10-23 03:34] - /clean Linter & Safari Prefix Fixes, [2026-10-23] - Admin Dashboard Syntax Error Fix (Vite Parse Error Resolved), [2026-10-23] - Server Deployment (/deploy), [2026-10-23] - Symmetrical Dual-Sidebar Architecture & Course Outline Fix (Learn Page), [2026-10-25] - Audio Deduplication: `Error2.mp3` Purged & Unified to `error.mp3`, [2026-10-25] - Audio Deduplication: `UI_Denied_2.mp3` Purged & Unified to `denied.mp3`, [2026-10-25] - Git Exclusion & Local Developer Privacy, [2026-10-25] - Graphify Architecture Concept & Visualizer Guide (+12 more)
+Nodes (19): [2026-10-23 03:34] - /clean Linter & Safari Prefix Fixes, [2026-10-23] - Admin Dashboard Syntax Error Fix (Vite Parse Error Resolved), [2026-10-23] - Server Deployment (/deploy), [2026-10-25] - Audio Deduplication: `Error2.mp3` Purged & Unified to `error.mp3`, [2026-10-25] - Audio Deduplication: `UI_Denied_2.mp3` Purged & Unified to `denied.mp3`, [2026-10-25] - Git Exclusion & Local Developer Privacy, [2026-10-25] - Graphify Architecture Concept & Visualizer Guide, [2026-10-25] - Graphify & Workspace Logs Analysis (+11 more)
 
 ### Community 15 - "[2026-10-23] - OpenCode Session - Immersive Fullscreen System & UX Cleanups (OC)"
 Cohesion: 0.18
 Nodes (11): [2026-10-23] - OpenCode Session - Immersive Fullscreen System & UX Cleanups (OC), 🧊 3D Builder (`/3d-builder`), 🔧 3D Drawer UI Optimization (PCBuilder3D.css), 🧱 Build Page Round 2 (OC), 🧱 Build Page — Viewport-Fitted Workspace (Build.jsx / Build.css / App.jsx), 🖥️ Fullscreen Gate (New Feature), 🏠 Home & Build Consolidation, 🤖 Integrations (+3 more)
 
 ### Community 16 - "soundManager.js"
-Cohesion: 0.08
-Nodes (47): AboutUs(), TEAM_MEMBERS, WHITEHATS_PROJECTS, brandData, Brands(), Footer(), FullscreenGate(), FullscreenGateContext (+39 more)
+Cohesion: 0.05
+Nodes (59): [2026-10-23] - Symmetrical Dual-Sidebar Architecture & Course Outline Fix (Learn Page), AdminEditRedirect(), App(), AppContent(), ScrollToTop(), AboutUs(), TEAM_MEMBERS, WHITEHATS_PROJECTS (+51 more)
 
 ### Community 17 - "dependencies"
 Cohesion: 0.17
@@ -151,8 +151,8 @@ Cohesion: 0.25
 Nodes (7): CurriculumModule, CurriculumTopic, FieldFact, FieldFactItem, MistakeWarning, QuizOption, TopicQuiz
 
 ### Community 20 - "Video Storyboard & Google Flow Scene Prompts"
-Cohesion: 0.17
-Nodes (11): BuildLab Product Launch Video — Google Flow Director's Playbook, CRITICAL: How to Prevent Google Flow from Warping the Screen Looks, Quick Reference Asset Checklist, SCENE 1: The Reveal (Opening Hook), SCENE 2: The 3D Studio & Virtual Assembly, SCENE 3: Intelligent Compatibility & Wattage Engine, SCENE 4: The Hardware Academy (CSS NC II Curriculum), SCENE 5: Student Analytics & Academic Mastery (+3 more)
+Cohesion: 0.09
+Nodes (21): BuildLab Product Launch Video — Google Flow Director's Playbook, CRITICAL: How to Prevent Google Flow from Warping the Screen Looks, default_settings, aspect_ratio, color_space, fps, resolution, engine (+13 more)
 
 ### Community 21 - "[2026-10-23 03:54] - Build Layout Stability, Dynamic Category Filters & Price Removal"
 Cohesion: 0.40
@@ -188,27 +188,27 @@ Nodes (19): BOB_PHRASES, BobCompanion(), clamp(), Eye, EyeTracker(), LINES, meas
 
 ### Community 39 - "Compatibility.jsx"
 Cohesion: 0.07
-Nodes (44): [2026-10-23] 3D Studio: Clean Button Design (Icons & Emojis Removed), 🧹 Cleaned Button Typography in `frontend/src/components/3D/PCBuilder3D.jsx`, BOB_CASUAL_GUIDE, BOB_GENERAL_BUILD_LINES, BOB_STAGE_TIPS, Build(), BuildPage(), buildSteps (+36 more)
+Nodes (43): [2026-10-23] 3D Studio: Clean Button Design (Icons & Emojis Removed), 🧹 Cleaned Button Typography in `frontend/src/components/3D/PCBuilder3D.jsx`, BOB_CASUAL_GUIDE, BOB_GENERAL_BUILD_LINES, BOB_STAGE_TIPS, Build(), BuildPage(), buildSteps (+35 more)
 
 ## Knowledge Gaps
 - **7 isolated node(s):** `autoprefixer`, `postcss`, `puppeteer-core`, `tailwindcss`, `@tailwindcss/postcss` (+2 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 275 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 283 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **6 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `BuildLab Changelog` connect `BuildLab Changelog` to `[2026-10-23] Learn: Course-Outline Sidebar REWORK REVERTED to the previous design (OC — user request)`, `Compatibility.jsx`, `[2026-10-23] - Master Checklist & Safari Compatibility Updates`, `SynthAudio`, `[2026-10-23] - OpenCode Session - Immersive Fullscreen System & UX Cleanups (OC)`, `[2026-10-23 03:54] - Build Layout Stability, Dynamic Category Filters & Price Removal`, `[2026-10-23 04:52] - Scrolling Elimination, Red Warning Removal & Redundancy Fix`, `[2026-10-23] Compatibility Checker SFX & Cute Sound Effects Update`, `[2026-10-23] Learn Page: NotebookLLM Master Source Script for Module 1`, `adminAuth`, `[2026-10-23] Learn Page: Video Player Overhaul + 9 Dead Videos Replaced (OC)`, `🖥️ Fullscreen Gating (`FullscreenGate.jsx`)`?**
-  _High betweenness centrality (0.285) - this node is a cross-community bridge._
+- **Why does `BuildLab Changelog` connect `BuildLab Changelog` to `[2026-10-23] Learn: Course-Outline Sidebar REWORK REVERTED to the previous design (OC — user request)`, `Compatibility.jsx`, `[2026-10-23] - Master Checklist & Safari Compatibility Updates`, `SynthAudio`, `[2026-10-23] - OpenCode Session - Immersive Fullscreen System & UX Cleanups (OC)`, `soundManager.js`, `[2026-10-23 03:54] - Build Layout Stability, Dynamic Category Filters & Price Removal`, `[2026-10-23 04:52] - Scrolling Elimination, Red Warning Removal & Redundancy Fix`, `[2026-10-23] Compatibility Checker SFX & Cute Sound Effects Update`, `[2026-10-23] Learn Page: NotebookLLM Master Source Script for Module 1`, `adminAuth`, `[2026-10-23] Learn Page: Video Player Overhaul + 9 Dead Videos Replaced (OC)`, `🖥️ Fullscreen Gating (`FullscreenGate.jsx`)`?**
+  _High betweenness centrality (0.277) - this node is a cross-community bridge._
 - **What connects `autoprefixer`, `postcss`, `puppeteer-core` to the rest of the system?**
   _7 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `devDependencies` be split into smaller, more focused modules?**
   _Cohesion score 0.14285714285714285 - nodes in this community are weakly interconnected._
-- **Why does `react` connect `App.jsx` to `EyeTracker.tsx`, `PCBuilder3D.jsx`, `CourseShell.jsx`, `App.jsx`, `frontend/package.json`, `Compatibility.jsx`, `SynthAudio`, `soundManager.js`?**
-  _High betweenness centrality (0.276) - this node is a cross-community bridge._
+- **Why does `react` connect `App.jsx` to `EyeTracker.tsx`, `PCBuilder3D.jsx`, `CourseShell.jsx`, `FullscreenGate.jsx`, `Compatibility.jsx`, `frontend/package.json`, `SynthAudio`, `soundManager.js`?**
+  _High betweenness centrality (0.269) - this node is a cross-community bridge._
 - **Should `server.js` be split into smaller, more focused modules?**
   _Cohesion score 0.08695652173913043 - nodes in this community are weakly interconnected._
-- **Why does `FullscreenGate()` connect `soundManager.js` to `PCBuilder3D.jsx`, `CourseShell.jsx`, `Compatibility.jsx`, `BuildLab Changelog`, `🖥️ Fullscreen Gating (`FullscreenGate.jsx`)`?**
-  _High betweenness centrality (0.173) - this node is a cross-community bridge._
+- **Why does `FullscreenGate()` connect `FullscreenGate.jsx` to `PCBuilder3D.jsx`, `CourseShell.jsx`, `Compatibility.jsx`, `BuildLab Changelog`, `soundManager.js`, `🖥️ Fullscreen Gating (`FullscreenGate.jsx`)`?**
+  _High betweenness centrality (0.170) - this node is a cross-community bridge._
 - **Should `App.jsx` be split into smaller, more focused modules?**
   _Cohesion score 0.08772635814889336 - nodes in this community are weakly interconnected._
