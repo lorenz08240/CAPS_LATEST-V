@@ -28,7 +28,7 @@
   height: 38px;
   border-radius: 8px;
   background: rgba(244, 63, 94, 0.12);
-  border: 1.5px solid #f43f5e;
+  border: 1.5px solid #F04B4B;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -49,7 +49,7 @@
 }
 
 .global-logo-fallback {
-  color: #f43f5e;
+  color: #F04B4B;
   font-size: 1.1rem;
 }
 
@@ -68,12 +68,12 @@
 
 body.theme-light .global-brand-title,
 .theme-light .global-brand-title {
-  color: #0f172a;
+  color: #17151A;
 }
 
 .global-brand-badge {
   font-size: 0.6rem;
-  color: #f43f5e;
+  color: #F04B4B;
   letter-spacing: 0.16em;
   font-weight: 700;
   text-transform: uppercase;
@@ -119,7 +119,7 @@ body.theme-light .global-nav-link:hover,
 body.theme-light .global-nav-link.active,
 .theme-light .global-nav-link:hover,
 .theme-light .global-nav-link.active {
-  color: #0f172a;
+  color: #17151A;
   text-shadow: none;
 }
 
@@ -130,8 +130,8 @@ body.theme-light .global-nav-link.active,
   left: 0;
   right: 0;
   height: 2px;
-  background: #f43f5e;
-  box-shadow: 0 0 10px #f43f5e;
+  background: #F04B4B;
+  box-shadow: 0 0 10px #F04B4B;
   border-radius: 2px;
 }
 
@@ -157,23 +157,23 @@ body.theme-light .global-nav-link.active,
 
 .global-search-btn:hover {
   background: rgba(244, 63, 94, 0.15);
-  border-color: #f43f5e;
+  border-color: #F04B4B;
   color: #ffffff;
   box-shadow: 0 0 12px rgba(244, 63, 94, 0.4);
 }
 
 body.theme-light .global-search-btn,
 .theme-light .global-search-btn {
-  background: rgba(15, 23, 42, 0.04);
-  border-color: rgba(15, 23, 42, 0.12);
+  background: rgba(23, 21, 26, 0.04);
+  border-color: rgba(23, 21, 26, 0.12);
   color: #475569;
 }
 
 body.theme-light .global-search-btn:hover,
 .theme-light .global-search-btn:hover {
   background: rgba(244, 63, 94, 0.1);
-  border-color: #e11d48;
-  color: #e11d48;
+  border-color: #E23B3B;
+  color: #E23B3B;
   box-shadow: 0 2px 8px rgba(244, 63, 94, 0.2);
 }
 
@@ -183,7 +183,7 @@ body.theme-light .global-search-btn:hover,
   gap: 0.5rem;
   padding: 0.55rem 1.1rem;
   border-radius: 999px;
-  background: linear-gradient(135deg, #f43f5e 0%, #be123c 100%);
+  background: linear-gradient(135deg, #F04B4B 0%, #be123c 100%);
   color: #ffffff;
   font-size: 0.75rem;
   font-weight: 800;
@@ -197,7 +197,7 @@ body.theme-light .global-search-btn:hover,
 .global-build-pill:hover {
   transform: translateY(-1px);
   box-shadow: 0 6px 20px rgba(244, 63, 94, 0.6);
-  background: linear-gradient(135deg, #fb7185 0%, #e11d48 100%);
+  background: linear-gradient(135deg, #F26A6A 0%, #E23B3B 100%);
 }
 
 .pill-arrow {

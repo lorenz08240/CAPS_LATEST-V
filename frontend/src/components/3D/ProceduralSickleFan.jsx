@@ -133,7 +133,7 @@ export default function ProceduralSickleFan({
             <group key={`corner-${idx}`} position={[cx, cy, 0]}>
               <mesh>
                 <boxGeometry args={[0.42, 0.42, frameDepth]} />
-                <meshStandardMaterial color="#0f172a" roughness={0.8} />
+                <meshStandardMaterial color="#17151A" roughness={0.8} />
               </mesh>
               <mesh position={[0, 0, frameDepth / 2 + 0.005]}>
                 <boxGeometry args={[0.34, 0.34, 0.02]} />
@@ -159,7 +159,7 @@ export default function ProceduralSickleFan({
             <group key={`vane-${vIdx}`} position={[0, 0, -frameDepth / 2 + 0.02]} rotation={[0, 0, vAngle]}>
               <mesh position={[(radius + hubRadius) / 2, 0, 0]}>
                 <boxGeometry args={[radius - hubRadius + 0.04, 0.04, 0.02]} />
-                <meshStandardMaterial color="#0f172a" roughness={0.85} />
+                <meshStandardMaterial color="#17151A" roughness={0.85} />
               </mesh>
             </group>
           ))}

@@ -20,15 +20,34 @@ import {
   TOTAL_TOPICS_COUNT,
   TOTAL_MODULES_COUNT,
 } from "./curriculumData";
+import { ARTICLE_HOTSPOTS } from "./articleHotspots";
 import "./CourseShell.css";
 
 /* ═══════════════════════════════════════════════════════════════════
    BUILDLAB HARDWARE WORKBENCH // COMPUTER SYSTEMS SERVICING (CSS)
-   Grade 11 Pre-Lab Curriculum: 6 Modules • 19 Sequential Topics
+   Grade 11 Pre-Lab Curriculum: 7 Modules • 17 Sequential Topics
    2-Zone Layout: 3D Hardware Workbench + CSS Pre-Lab Guide & Video
    ═══════════════════════════════════════════════════════════════════ */
 
 const PROGRESS_KEY = "buildlab.learn.progress.v1";
+const VIDEO_KEY = "buildlab.learn.video.v1";
+const QUIZ_KEY = "buildlab.learn.quiz.v1";
+
+// Per-topic gates: a topic is only "done" once BOTH the lecture was watched
+// and the quick check was answered correctly. Both are email-scoped like progress.
+const readTopicFlags = (baseKey, email) => {
+  try {
+    const scopedKey = email ? `${baseKey}.${email}` : null;
+    const rawStr =
+      (scopedKey && localStorage.getItem(scopedKey)) ||
+      localStorage.getItem(baseKey) ||
+      "[]";
+    const raw = JSON.parse(rawStr);
+    return Array.isArray(raw) ? raw.filter((x) => typeof x === "string") : [];
+  } catch {
+    return [];
+  }
+};
 
 const readProgress = (email) => {
   try {
@@ -58,81 +77,24 @@ const SHORT_MODULE_TITLES = {
 const SHORT_TOPIC_TITLES = {
   "1.1-esd-prep": "ESD & Workspace Setup",
   "1.2-safe-handling": "Safe Component Handling",
-  "1.3-tools-standoffs": "Standoffs, Screws & Tools",
-  "2.1-mobo-anatomy": "Motherboard Form Factors",
+  "1.3-screws-tools": "Standoffs, Screws & Tools",
+  "2.1-motherboard-anatomy": "Motherboard Form Factors",
   "2.2-chipset-vrm": "Chipsets & VRM Power",
-  "2.3-headers-io": "Rear I/O & Front Headers",
-  "3.1-cpu-socket": "Socket Pinout & Alignment",
-  "3.2-thermal-paste": "Thermal Compound & Cooler",
-  "4.1-ram-slots": "RAM Dual-Channel Rules",
-  "4.2-m2-nvme": "M.2 NVMe Storage Slots",
-  "5.1-gpu-pcie": "PCIe x16 GPU Installation",
-  "5.2-psu-atx": "Modular PSU & Power Rails",
-  "6.1-airflow-fans": "Chassis Positive Airflow",
-  "6.2-cabling-front-panel": "Front Panel Headers & Wiring",
-  "7.1-bench-staging": "Pre-Assembly Bench Staging",
-  "7.2-assembly-lab": "3D PC Assembly Lab",
-  "7.3-post-diagnostics": "POST & Debug Diagnostics",
+  "2.3-io-and-headers": "Rear I/O & Front Headers",
+  "3.1-cpu-silicon-socket": "Socket Pinout & Alignment",
+  "3.2-thermal-paste-coolers": "Thermal Compound & Cooler",
+  "4.1-ram-dual-channel": "RAM Dual-Channel Rules",
+  "4.2-storage-m2-nvme": "M.2 NVMe Storage Slots",
+  "5.1-gpu-pcie-slots": "PCIe x16 GPU Installation",
+  "5.2-psu-efficiency-cables": "Modular PSU & Power Rails",
+  "6.1-airflow-physics": "Chassis Positive Airflow",
+  "6.2-cable-management": "Front Panel Headers & Wiring",
+  "7.1-bench-testing": "Pre-Assembly Bench Staging",
+  "7.2-hands-on-assembly": "3D PC Assembly Lab",
+  "7.3-post-ez-debug": "POST & Debug Diagnostics",
 };
 
-/* ─────────────────────── 3D BENCHMARK HOTSPOTS ─────────────────────── */
-const ARTICLE_HOTSPOTS = [
-  {
-    id: "sys-cpu",
-    label: "CPU & Cooler Assembly",
-    pos: [-0.65, 1.55, -0.6],
-    camPos: [-4.6, 2.2, 1.4],
-    target: [-0.2, 1.4, -0.6],
-    bus: "Socket AM5 / LGA1700",
-    voltage: "1.2V VCore · 65W-253W",
-    role: "Executes operating system commands, system physics, and program logic.",
-    tip: "Align the golden triangle and seat with Zero Insertion Force. Never force or press pins manually.",
-  },
-  {
-    id: "sys-ram",
-    label: "Dual-Channel RAM (A2 / B2)",
-    pos: [-0.55, 1.4, 0.9],
-    camPos: [-4.4, 1.8, 2.6],
-    target: [-0.15, 1.4, 0.8],
-    bus: "128-Bit DDR5 / DDR4",
-    voltage: "1.1V - 1.35V VDD",
-    role: "High-speed working memory that buffers textures and open tasks right beside the processor.",
-    tip: "With two modules, populate slots 2 and 4 (A2 and B2) to enable dual-channel memory bandwidth.",
-  },
-  {
-    id: "sys-nvme",
-    label: "M.2 NVMe Boot SSD",
-    pos: [-0.45, 0.35, -0.6],
-    camPos: [-3.6, 0.8, 0.9],
-    target: [-0.1, 0.35, -0.6],
-    bus: "PCIe 4.0 / 5.0 x4",
-    voltage: "3.3V Direct Rail",
-    role: "High-speed NVMe storage connected directly to CPU PCIe lanes for rapid operating system loading.",
-    tip: "Insert at a 25-degree angle, secure the standoff screw gently, and peel off the thermal pad protective film.",
-  },
-  {
-    id: "sys-gpu",
-    label: "PCIe x16 Graphics Card",
-    pos: [-1.15, -0.7, -0.1],
-    camPos: [-5.8, -0.2, 3.2],
-    target: [-0.4, -0.7, -0.2],
-    bus: "PCIe x16 + 12V-2x6",
-    voltage: "115W - 450W TGP",
-    role: "Dedicated graphics processor powering real-time 3D display rendering and video output.",
-    tip: "Plug your monitor display cable directly into this graphics card, not the motherboard backplate.",
-  },
-  {
-    id: "sys-vrm",
-    label: "VRM & 24-Pin Power Bus",
-    pos: [-0.35, 2.25, -1.6],
-    camPos: [-4.6, 2.6, -2.8],
-    target: [-0.15, 1.9, -1.0],
-    bus: "12V ATX / EPS Input",
-    voltage: "VRM Steps 12V -> 1.2V",
-    role: "Voltage Regulator Module converting power supply DC voltage into clean, regulated processor power.",
-    tip: "Connect both the 24-pin ATX motherboard cable and the 8-pin EPS processor cable.",
-  },
-];
+/* 3D benchmark hotspots live in ./articleHotspots.js — shared with LearnHardwareStage. */
 
 /* ─────────────────────── 3-STEP ONBOARDING TOUR ─────────────────────── */
 const TOUR_STEPS = [
@@ -155,7 +117,7 @@ const TOUR_STEPS = [
   {
     id: "wb-zone-rail",
     name: "Syllabus Modules & Certificate Progress",
-    desc: "Browse 6 modules with 19 sequential topics, track progress, and earn your certificate.",
+    desc: `Browse ${TOTAL_MODULES_COUNT} modules with ${TOTAL_TOPICS_COUNT} sequential topics, track progress, and earn your certificate.`,
     speech:
       "Use this menu to pick any topic anytime and watch your certificate progress grow.",
     direction: "right",
@@ -249,6 +211,8 @@ export default function CourseShell() {
   // Curriculum Navigation & Progress
   const [currentIndex, setCurrentIndex] = useState(0);
   const [completed, setCompleted] = useState(() => readProgress(userProfile?.email));
+  const [videoWatched, setVideoWatched] = useState(() => readTopicFlags(VIDEO_KEY, userProfile?.email));
+  const [quizPassed, setQuizPassed] = useState(() => readTopicFlags(QUIZ_KEY, userProfile?.email));
 
   // Sync completed topics if learner email loads after initial mount
   useEffect(() => {
@@ -257,11 +221,15 @@ export default function CourseShell() {
       if (userProgress.length > 0) {
         setCompleted(userProgress);
       }
+      const watched = readTopicFlags(VIDEO_KEY, userProfile.email);
+      const checked = readTopicFlags(QUIZ_KEY, userProfile.email);
+      if (watched.length) setVideoWatched(watched);
+      if (checked.length) setQuizPassed(checked);
     }
   }, [userProfile?.email]);
 
   // Dual-Phase Center View: 'presentation' (Slide/Report Theory & Visuals) vs '3d-lab' (3D Hardware Inspection)
-  const [centerMode, setCenterMode] = useState("presentation");
+  const [centerMode, setCenterMode] = useState("3d-lab");
   const [presentationPage, setPresentationPage] = useState(0);
   const [showQuizModal, setShowQuizModal] = useState(false);
   const [quizModuleNum, setQuizModuleNum] = useState(1);
@@ -277,13 +245,8 @@ export default function CourseShell() {
     }
   });
 
-  const [showBriefingOverlay, setShowBriefingOverlay] = useState(() => {
-    try {
-      return !localStorage.getItem("buildlab_learn_briefing_seen");
-    } catch {
-      return false;
-    }
-  });
+  // The 3D workbench is the first screen. The course briefing is opt-in from the header.
+  const [showBriefingOverlay, setShowBriefingOverlay] = useState(false);
 
   const wasVideoPlayingRef = useRef(false);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
@@ -419,19 +382,11 @@ export default function CourseShell() {
     }
   }, [location.state, currentTopic.moduleNum]);
 
-  // When changing topic, reset active 3D step and default to presentation mode (unless mode=3d-lab requested)
+  // When changing topic, reset the 3D stepper. The workbench opens in 3D first;
+  // the reading document is a separate tab. Viewing a topic no longer marks it done.
   useEffect(() => {
     setActive3DStepIdx(0);
-    const params = new URLSearchParams(location.search);
-    if (params.get("mode") === "3d-lab") {
-      setCenterMode("3d-lab");
-    } else {
-      setCenterMode("presentation");
-    }
     setPresentationPage(0);
-    if (currentTopic?.id) {
-      setCompleted((prev) => (prev.includes(currentTopic.id) ? prev : [...prev, currentTopic.id]));
-    }
   }, [currentIndex, currentTopic?.id]);
 
   const currentLessonContent = useMemo(() => {
@@ -441,9 +396,6 @@ export default function CourseShell() {
   // Right Panel Video & Interactive State
   const [videoExpanded, setVideoExpanded] = useState(true);
   const [videoHighlighted, setVideoHighlighted] = useState(false);
-  const [selectedQuizOption, setSelectedQuizOption] = useState(null);
-  const [quizAnswerStatus, setQuizAnswerStatus] = useState(null); // null | 'correct' | 'incorrect'
-
   const currentModule = useMemo(() => {
     return CSS_CURRICULUM.find((m) => m.moduleNum === currentTopic.moduleNum) || CSS_CURRICULUM[0];
   }, [currentTopic.moduleNum]);
@@ -544,17 +496,30 @@ export default function CourseShell() {
     } catch {}
   }, [completed, userProfile?.email]);
 
+  // Persist the two per-topic gates
+  useEffect(() => {
+    try {
+      localStorage.setItem(VIDEO_KEY, JSON.stringify(videoWatched));
+      localStorage.setItem(QUIZ_KEY, JSON.stringify(quizPassed));
+      if (userProfile?.email) {
+        localStorage.setItem(`${VIDEO_KEY}.${userProfile.email}`, JSON.stringify(videoWatched));
+        localStorage.setItem(`${QUIZ_KEY}.${userProfile.email}`, JSON.stringify(quizPassed));
+      }
+    } catch {}
+  }, [videoWatched, quizPassed, userProfile?.email]);
+
+  // A topic is complete only when the lecture was watched AND the check was passed.
+  useEffect(() => {
+    const ready = videoWatched.filter((id) => quizPassed.includes(id));
+    if (!ready.length) return;
+    setCompleted((prev) => {
+      const missing = ready.filter((id) => !prev.includes(id));
+      return missing.length ? [...prev, ...missing] : prev;
+    });
+  }, [videoWatched, quizPassed]);
+
   // Update quiz and hotspot state when changing topic
   useEffect(() => {
-    const isDone = completed.includes(currentTopic.id);
-    if (isDone) {
-      const correctIdx = currentTopic.quiz.options.findIndex((o) => o.correct);
-      setSelectedQuizOption(correctIdx !== -1 ? correctIdx : null);
-      setQuizAnswerStatus("correct");
-    } else {
-      setSelectedQuizOption(null);
-      setQuizAnswerStatus(null);
-    }
     setSelectedHotspotId(currentTopic.hotspotId || null);
     setActivePopover(null);
     setBobSpeech(
@@ -562,9 +527,12 @@ export default function CourseShell() {
     );
   }, [currentIndex, currentTopic, completed]);
 
-  const markComplete = useCallback((topicId) => {
-    try { soundManager.complete(); } catch {}
-    setCompleted((prev) => (prev.includes(topicId) ? prev : [...prev, topicId]));
+  const handleVideoWatched = useCallback((topicId) => {
+    setVideoWatched((prev) => (prev.includes(topicId) ? prev : [...prev, topicId]));
+  }, []);
+
+  const handleQuickCheckPass = useCallback((topicId) => {
+    setQuizPassed((prev) => (prev.includes(topicId) ? prev : [...prev, topicId]));
   }, []);
 
   const handleInspectIn3D = useCallback(() => {
@@ -641,27 +609,6 @@ export default function CourseShell() {
       }
     }
   }, [currentIndex]);
-
-  const handleSelectQuizOption = useCallback(
-    (optIdx, isCorrect) => {
-      setSelectedQuizOption(optIdx);
-      if (isCorrect) {
-        setQuizAnswerStatus("correct");
-        try { soundManager.complete(); } catch {}
-        markComplete(currentTopic.id);
-        setBobSpeech(
-          `Spot on! You nailed Topic ${currentTopic.topicCode}!`
-        );
-      } else {
-        setQuizAnswerStatus("incorrect");
-        try { soundManager.error(); } catch {}
-        setBobSpeech(
-          "Not quite! Check the mistake warning above and try again."
-        );
-      }
-    },
-    [currentTopic, markComplete]
-  );
 
   const handleOpenLectureFilm = useCallback(() => {
     try { soundManager.snap(); } catch {}
@@ -1107,7 +1054,7 @@ export default function CourseShell() {
                   <div className="wb-unlock-banner-text">
                     <strong>Unlock All 7 Modules &amp; Verified E-Certificate</strong>
                     <p>
-                      Guest preview includes Module 1. Link your Google account to access all 17 topics and earn an accredited PTC-IICT certificate.
+                      Guest preview includes Module 1. Link your Google account to access all {TOTAL_TOPICS_COUNT} topics and earn an accredited PTC-IICT certificate.
                     </p>
                   </div>
                 </div>
@@ -1141,6 +1088,19 @@ export default function CourseShell() {
           </div>
 
           <div className="wb-header-right">
+            <button
+              type="button"
+              className="wb-hud-pill"
+              onClick={() => {
+                try { soundManager.click(); } catch {}
+                setShowBriefingOverlay(true);
+              }}
+              data-tooltip="Open the course briefing document"
+              aria-label="Open course briefing"
+            >
+              BRIEFING
+            </button>
+
             <button
               type="button"
               className={`wb-hud-pill wb-tour-btn wb-tour-icon-only ${tourActive ? "is-active" : ""}`}
@@ -1179,6 +1139,36 @@ export default function CourseShell() {
             className={`wb-center-stage ${showDashboardOverlay ? "has-dashboard-active" : ""}`}
             aria-label="Interactive Hardware & Lesson Stage"
           >
+            {/* MODE SWITCHER — 3D workbench is the hero; reading is a collapsible tab */}
+            {!showDashboardOverlay && !showBriefingOverlay && (
+              <div className="wb-stage-mode-switcher" role="tablist" aria-label="Workbench view">
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={centerMode === "3d-lab"}
+                  className={`wb-stage-tab-btn ${centerMode === "3d-lab" ? "is-active" : ""}`}
+                  onClick={() => {
+                    try { soundManager.snap(); } catch {}
+                    setCenterMode("3d-lab");
+                  }}
+                >
+                  ◉ 3D WORKBENCH
+                </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={centerMode === "presentation"}
+                  className={`wb-stage-tab-btn ${centerMode === "presentation" ? "is-active" : ""}`}
+                  onClick={() => {
+                    try { soundManager.click(); } catch {}
+                    setCenterMode("presentation");
+                  }}
+                >
+                  ▤ READING
+                </button>
+              </div>
+            )}
+
             {/* MODE 1: LECTURE PRESENTATION & VISUAL REPORT (PDF/SLIDE REPORT DISCUSSION) */}
             {centerMode === "presentation" && !showDashboardOverlay && !showBriefingOverlay && (
               <LessonPresentationView
@@ -1203,6 +1193,10 @@ export default function CourseShell() {
                   setQuizModuleNum(currentTopic.moduleNum);
                   setShowQuizModal(true);
                 }}
+                watched={videoWatched.includes(currentTopic.id)}
+                quickCheckPassed={quizPassed.includes(currentTopic.id)}
+                onVideoWatched={() => handleVideoWatched(currentTopic.id)}
+                onQuickCheckPass={() => handleQuickCheckPass(currentTopic.id)}
               />
             )}
 
@@ -1217,9 +1211,9 @@ export default function CourseShell() {
                       try { soundManager.click(); } catch {}
                       setCenterMode("presentation");
                     }}
-                    title="Return to Lesson Presentation"
+                    title="Open the reading module"
                   >
-                    ← Back to Lesson Module
+                    Reading →
                   </button>
                 )}
 
@@ -1232,9 +1226,8 @@ export default function CourseShell() {
                       setCenterMode("presentation");
                     }}
                     onAssemblyComplete={() => {
-                      if (!completed.includes(currentTopic.id)) {
-                        markTopicComplete(currentTopic.id);
-                      }
+                      // Completion still requires the watched lecture + passed quick check.
+                      // This flag only records the practical competency for certification.
                       try {
                         localStorage.setItem("buildlab_3d_assembly_completed", "true");
                         if (userProfile?.email) {
@@ -1658,7 +1651,7 @@ export default function CourseShell() {
             </div>
             <h1 className="wb-welcome-title">UNLOCK FULL CSS CURRICULUM &amp; E-CERTIFICATE</h1>
             <p className="wb-welcome-subtitle">
-              You are exploring in Guest Preview. Link your Google account to unlock all 6 modules, 19 interactive topics, and claim your accredited PTC-IICT Certificate of Completion.
+              You are exploring in Guest Preview. Link your Google account to unlock all {TOTAL_MODULES_COUNT} modules, {TOTAL_TOPICS_COUNT} interactive topics, and claim your accredited PTC-IICT Certificate of Completion.
             </p>
 
             <div className="wb-welcome-highlights">
@@ -1670,7 +1663,7 @@ export default function CourseShell() {
               </div>
               <div className="wb-welcome-chip">
                 <div>
-                  <strong>Complete 6 Modules • 19 Topics</strong>
+                  <strong>Complete {TOTAL_MODULES_COUNT} Modules • {TOTAL_TOPICS_COUNT} Topics</strong>
                   <span>Unlock CPU socket pins, RAM dual-channel rules, USB color codes, PSU safety, airflow physics, and POST debugging.</span>
                 </div>
               </div>
@@ -1761,7 +1754,7 @@ export default function CourseShell() {
             const nextIdx = Math.min(FLAT_TOPICS.length - 1, currentIndex + 1);
             goTopic(nextIdx);
           }
-          setCenterMode("presentation");
+          setCenterMode("3d-lab");
         }}
       />
     </div>

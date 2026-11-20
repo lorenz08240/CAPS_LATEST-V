@@ -14,6 +14,7 @@ import soundManager from "../../utilities/soundManager";
 import FullscreenGate from "../FullscreenGate/FullscreenGate";
 import GlobalHeader from "../Navigation/GlobalHeader";
 import StageUnlockBanner from "../Navigation/StageUnlockBanner";
+import RevealHeading from "../Common/RevealHeading";
 import "./Compatibility.css";
 import "../Compare/CompareRigs.css";
 
@@ -1588,9 +1589,16 @@ function CompatibilityView({ isIntegrated = false }) {
                 <span className="telemetry-label">DIAGNOSTIC MATRIX // REAL-TIME VALIDATION</span>
                 <span className="telemetry-bracket">[ LIVE ]</span>
               </div>
-              <h1 className="compat-hero-title">
-                Real-Time <span className="title-compat-accent">Compatibility</span> Check
-              </h1>
+              <RevealHeading
+                as="h1"
+                className="compat-hero-title"
+                underline
+                parts={[
+                  { text: "Real-Time" },
+                  { text: "Compatibility", className: "title-compat-accent" },
+                  { text: "Check" },
+                ]}
+              />
             </header>
           )}
 

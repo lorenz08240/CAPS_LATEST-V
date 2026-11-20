@@ -4,6 +4,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import GlobalHeader from "../Navigation/GlobalHeader";
 import soundManager from "../../utilities/soundManager";
+import RevealHeading from "../Common/RevealHeading";
 import "./Brands.css";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -370,7 +371,11 @@ function Brands({ isIntegrated = false }) {
       <div className="brands-container-wrap">
         {/* Header Section */}
         <header className="brands-header">
-          <h2 className="brands-headline">All Supported Brands &amp; Silicon Partners</h2>
+          <RevealHeading
+            as="h2"
+            className="brands-headline"
+            text="All Supported Brands & Silicon Partners"
+          />
 
           <p className="brands-subheadline">
             BuildLab curates the world's most trusted computer hardware manufacturers. Every brand featured is verified for socket clearances, thermal dissipation limits, and bus communication compatibility.

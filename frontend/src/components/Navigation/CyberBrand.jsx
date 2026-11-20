@@ -73,8 +73,8 @@ export default function CyberBrand() {
       </button>
 
       <div className="cyber-brand-info">
-        {isSidebarOpen ? (
-          /* 100x Cooler Telemetry HUD Readout (Replaces Redundant Logo) */
+        {isSidebarOpen && (
+          /* Telemetry HUD only — the logo mark carries the identity otherwise */
           <div className="cyber-telemetry-hud" title="Live Hardware Lab Telemetry">
             <div className="telemetry-top-line">
               <span className="telemetry-title">COMMAND DECK</span>
@@ -85,12 +85,6 @@ export default function CyberBrand() {
               <span className="telemetry-metric-icon">{currentMetric.icon}</span>
               <span className="telemetry-metric-text">{currentMetric.label}</span>
             </div>
-          </div>
-        ) : (
-          /* Standard Brand Typography when Closed */
-          <div className="cyber-standard-brand">
-            <span className="cyber-brand-title">BUILDLAB</span>
-            <span className="cyber-brand-badge">SYSTEM V2.4</span>
           </div>
         )}
       </div>

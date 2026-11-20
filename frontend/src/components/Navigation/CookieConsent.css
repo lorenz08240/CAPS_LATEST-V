@@ -352,7 +352,7 @@ body.theme-light .cookie-policy-link:hover,
 .cookie-prefs-close-btn:hover {
   background: rgba(244, 63, 94, 0.18);
   border-color: rgba(244, 63, 94, 0.55);
-  color: #f43f5e;
+  color: #F04B4B;
   transform: rotate(90deg);
   box-shadow: 0 0 16px rgba(244, 63, 94, 0.35);
 }
@@ -831,7 +831,7 @@ body.theme-light .cookie-policy-link:hover,
 .btn-cookie-action.reject-all:hover {
   background: rgba(244, 63, 94, 0.12);
   border-color: rgba(244, 63, 94, 0.4);
-  color: #f43f5e;
+  color: #F04B4B;
   transform: translateY(-1px);
 }
 
@@ -922,7 +922,7 @@ body.theme-light .buildlab-cookie-banner,
 [data-theme="light"] .buildlab-cookie-banner {
   background: rgba(255, 255, 255, 0.95);
   border-color: rgba(5, 150, 105, 0.3);
-  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.12), 0 0 25px rgba(5, 150, 105, 0.08);
+  box-shadow: 0 20px 50px rgba(23, 21, 26, 0.12), 0 0 25px rgba(5, 150, 105, 0.08);
 }
 
 body.theme-light .cookie-hex-badge,
@@ -935,7 +935,7 @@ body.theme-light .cookie-hex-badge,
 body.theme-light .cookie-heading,
 .theme-light .cookie-heading,
 [data-theme="light"] .cookie-heading {
-  color: #3c2a21;
+  color: #35323D;
 }
 
 body.theme-light .cookie-description,
@@ -948,7 +948,7 @@ body.theme-light .cookie-btn-secondary,
 .theme-light .cookie-btn-secondary,
 [data-theme="light"] .cookie-btn-secondary {
   background: #f8fafc;
-  border-color: rgba(15, 23, 42, 0.12);
+  border-color: rgba(23, 21, 26, 0.12);
   color: #334155;
 }
 
@@ -956,27 +956,27 @@ body.theme-light .cookie-btn-secondary:hover,
 .theme-light .cookie-btn-secondary:hover,
 [data-theme="light"] .cookie-btn-secondary:hover {
   background: #f1f5f9;
-  color: #0f172a;
+  color: #17151A;
 }
 
 body.theme-light .cookie-prefs-dialog,
 .theme-light .cookie-prefs-dialog,
 [data-theme="light"] .cookie-prefs-dialog {
   background: #ffffff;
-  border-color: rgba(15, 23, 42, 0.12);
-  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.14);
+  border-color: rgba(23, 21, 26, 0.12);
+  box-shadow: 0 24px 60px rgba(23, 21, 26, 0.14);
 }
 
 body.theme-light .cookie-prefs-header,
 .theme-light .cookie-prefs-header,
 [data-theme="light"] .cookie-prefs-header {
-  border-bottom-color: rgba(15, 23, 42, 0.08);
+  border-bottom-color: rgba(23, 21, 26, 0.08);
 }
 
 body.theme-light .cookie-prefs-title,
 .theme-light .cookie-prefs-title,
 [data-theme="light"] .cookie-prefs-title {
-  color: #0f172a;
+  color: #17151A;
 }
 
 body.theme-light .cookie-prefs-sub,
@@ -989,13 +989,13 @@ body.theme-light .cookie-card-toggle,
 .theme-light .cookie-card-toggle,
 [data-theme="light"] .cookie-card-toggle {
   background: #f8fafc;
-  border-color: rgba(15, 23, 42, 0.08);
+  border-color: rgba(23, 21, 26, 0.08);
 }
 
 body.theme-light .cookie-toggle-name,
 .theme-light .cookie-toggle-name,
 [data-theme="light"] .cookie-toggle-name {
-  color: #0f172a;
+  color: #17151A;
 }
 
 body.theme-light .cookie-toggle-desc,

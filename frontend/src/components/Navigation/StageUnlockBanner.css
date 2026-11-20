@@ -245,7 +245,7 @@
   justify-content: center;
   gap: 8px;
   padding: 14px 18px;
-  background: rgba(15, 23, 42, 0.55);
+  background: rgba(23, 21, 26, 0.55);
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 12px;
   margin-bottom: 24px;
@@ -429,13 +429,13 @@ body.theme-light .stage-unlock-card,
 [data-theme="light"] .stage-unlock-card {
   background: rgba(255, 255, 255, 0.96);
   border-color: rgba(5, 150, 105, 0.3);
-  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.14), 0 0 35px rgba(5, 150, 105, 0.1);
+  box-shadow: 0 24px 60px rgba(23, 21, 26, 0.14), 0 0 35px rgba(5, 150, 105, 0.1);
 }
 
 body.theme-light .unlock-title,
 .theme-light .unlock-title,
 [data-theme="light"] .unlock-title {
-  color: #0f172a;
+  color: #17151A;
 }
 
 body.theme-light .unlock-subtitle,
@@ -448,6 +448,6 @@ body.theme-light .unlock-progress-flow,
 .theme-light .unlock-progress-flow,
 [data-theme="light"] .unlock-progress-flow {
   background: #f8fafc;
-  border-color: rgba(15, 23, 42, 0.08);
+  border-color: rgba(23, 21, 26, 0.08);
 }
 

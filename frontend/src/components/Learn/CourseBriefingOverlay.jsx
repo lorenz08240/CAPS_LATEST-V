@@ -97,7 +97,7 @@ export default function CourseBriefingOverlay({ onClose, onStartLearning }) {
   };
 
   return (
-    <div className="wb-pdf-viewer-overlay" role="dialog" aria-modal="true" aria-label="Course Briefing Document">
+    <div className="wb-pdf-viewer-overlay theme-light" role="dialog" aria-modal="true" aria-label="Course Briefing Document">
       {/* ── TOP PDF VIEWER TOOLBAR ── */}
       <header className="wb-pdf-toolbar">
         <div className="wb-pdf-toolbar-left">

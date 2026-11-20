@@ -44,16 +44,29 @@ const fmtTime = (s) => {
 
 const PLAYBACK_RATES = [1, 1.25, 1.5, 2, 0.75];
 
+// A topic is only marked watched once 90% of the lecture has actually played.
+// Seeking stays locked until then so the lesson cannot be skipped.
+const VIDEO_WATCH_THRESHOLD = 0.9;
+
 /* ═══════════════════════════════════════════════════════════════════
    Custom video player — YouTube IFrame API with controls:0 and a
    fully in-house control deck (play, seek, skip, volume, speed).
    ═══════════════════════════════════════════════════════════════════ */
-function CustomVideoPlayer({ videoId, title }) {
+function CustomVideoPlayer({ videoId, title, watched = false, onWatched }) {
   const mountRef = useRef(null);
   const playerRef = useRef(null);
   const barRef = useRef(null);
   const draggingRef = useRef(false);
   const durationRef = useRef(0);
+  const maxWatchedRef = useRef(0);
+  const reportedRef = useRef(false);
+  const onWatchedRef = useRef(onWatched);
+
+  useEffect(() => {
+    onWatchedRef.current = onWatched;
+  }, [onWatched]);
+
+  const seekLocked = !watched && maxWatchedRef.current < VIDEO_WATCH_THRESHOLD;
 
   const [ready, setReady] = useState(false);
   const [error, setError] = useState(false);
@@ -66,6 +79,7 @@ function CustomVideoPlayer({ videoId, title }) {
   const [volume, setVolume] = useState(80);
   const [rate, setRate] = useState(1);
   const [theater, setTheater] = useState(false);
+  const [watchPct, setWatchPct] = useState(0);
 
   useEffect(() => {
     durationRef.current = duration;
@@ -86,6 +100,9 @@ function CustomVideoPlayer({ videoId, title }) {
     setMuted(false);
     setVolume(80);
     setRate(1);
+    maxWatchedRef.current = 0;
+    reportedRef.current = Boolean(watched);
+    setWatchPct(0);
 
     const host = document.createElement("div");
     host.className = "lp-yt-host";
@@ -137,6 +154,10 @@ function CustomVideoPlayer({ videoId, title }) {
                 setPlaying(false);
                 setBuffering(false);
                 setCurrent(e.target.getDuration?.() || durationRef.current || 0);
+                if (!reportedRef.current) {
+                  reportedRef.current = true;
+                  onWatchedRef.current?.();
+                }
               } else {
                 setBuffering(false);
               }
@@ -175,6 +196,18 @@ function CustomVideoPlayer({ videoId, title }) {
           durationRef.current = d;
           setDuration(d);
         }
+        if (d > 0) {
+          const ratio = Math.min(1, t / d);
+          if (ratio > maxWatchedRef.current) maxWatchedRef.current = ratio;
+          setWatchPct(Math.round(maxWatchedRef.current * 100));
+          if (
+            !reportedRef.current &&
+            (maxWatchedRef.current >= VIDEO_WATCH_THRESHOLD || ratio >= 0.995)
+          ) {
+            reportedRef.current = true;
+            onWatchedRef.current?.();
+          }
+        }
       } catch {}
     }, 250);
     return () => clearInterval(tick);
@@ -191,6 +224,7 @@ function CustomVideoPlayer({ videoId, title }) {
   }, [playing, error]);
 
   const seekBy = (delta) => {
+    if (seekLocked) return;
     const p = playerRef.current;
     if (!p?.getCurrentTime) return;
     const t = p.getCurrentTime() || 0;
@@ -208,7 +242,7 @@ function CustomVideoPlayer({ videoId, title }) {
   };
 
   const seekFromPointer = (e) => {
-    if (!barRef.current || !durationRef.current) return;
+    if (seekLocked || !barRef.current || !durationRef.current) return;
     const rect = barRef.current.getBoundingClientRect();
     if (rect.width <= 0) return;
     const frac = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
@@ -216,7 +250,7 @@ function CustomVideoPlayer({ videoId, title }) {
   };
 
   const onBarDown = (e) => {
-    if (!ready || error) return;
+    if (!ready || error || seekLocked) return;
     draggingRef.current = true;
     barRef.current?.setPointerCapture?.(e.pointerId);
     seekFromPointer(e);
@@ -231,6 +265,7 @@ function CustomVideoPlayer({ videoId, title }) {
     } catch {}
   };
   const onBarKey = (e) => {
+    if (seekLocked) return;
     if (e.key === "ArrowRight") {
       e.preventDefault();
       seekBy(5);
@@ -292,6 +327,14 @@ function CustomVideoPlayer({ videoId, title }) {
             <a href={`https://www.youtube.com/watch?v=${videoId}`} target="_blank" rel="noopener noreferrer">
               Open on YouTube ↗
             </a>
+            {!watched && (
+              <button type="button" className="lp-watch-fallback" onClick={() => {
+                reportedRef.current = true;
+                onWatchedRef.current?.();
+              }}>
+                Mark as reviewed (video unavailable)
+              </button>
+            )}
           </div>
         )}
 
@@ -305,6 +348,13 @@ function CustomVideoPlayer({ videoId, title }) {
         {buffering && ready && started && <div className="lp-player-spinner" aria-label="Buffering" />}
 
         <div className="lp-player-watermark" aria-hidden="true">BUILDLAB // CSS NC II</div>
+
+        {!watched && !error && (
+          <div className="lp-watch-lock">
+            <span>🔒 Seek locked · watch {Math.round(VIDEO_WATCH_THRESHOLD * 100)}% ({watchPct}%)</span>
+          </div>
+        )}
+        {watched && <div className="lp-watch-done">✓ Lecture watched</div>}
       </div>
 
       {/* Our own controls — no native YouTube control bar */}
@@ -318,17 +368,17 @@ function CustomVideoPlayer({ videoId, title }) {
         >
           {ended ? "↻" : playing ? "❚❚" : "▶"}
         </button>
-        <button type="button" className="lp-ctrl" onClick={() => seekBy(-10)} disabled={!ready || error} title="Back 10 seconds">
+        <button type="button" className="lp-ctrl" onClick={() => seekBy(-10)} disabled={!ready || error || seekLocked} title="Back 10 seconds">
           ↶10
         </button>
-        <button type="button" className="lp-ctrl" onClick={() => seekBy(10)} disabled={!ready || error} title="Forward 10 seconds">
+        <button type="button" className="lp-ctrl" onClick={() => seekBy(10)} disabled={!ready || error || seekLocked} title="Forward 10 seconds">
           10↷
         </button>
 
         <span className="lp-time">{fmtTime(current)} <span>/</span> {fmtTime(duration)}</span>
 
         <div
-          className="lp-seek"
+          className={`lp-seek ${seekLocked ? "is-locked" : ""}`}
           ref={barRef}
           onPointerDown={onBarDown}
           onPointerMove={onBarMove}
@@ -507,6 +557,75 @@ function ModuleDocument({ topic, doc, isLastTopicOfModule, isModuleCompleted, on
 }
 
 /* ═══════════════════════════════════════════════════════════════════
+   Quick check — one required question per topic
+   ═══════════════════════════════════════════════════════════════════ */
+function QuickCheck({ topic, passed, onPass }) {
+  const quiz = topic?.quiz;
+  const [choice, setChoice] = useState(null);
+  const [status, setStatus] = useState(null);
+
+  useEffect(() => {
+    setChoice(null);
+    setStatus(null);
+  }, [topic?.id]);
+
+  if (!quiz) return null;
+
+  const choose = (idx, correct) => {
+    if (passed || status === "correct") return;
+    setChoice(idx);
+    setStatus(correct ? "correct" : "wrong");
+    try {
+      if (correct) {
+        soundManager.complete();
+        onPass?.();
+      } else {
+        soundManager.error();
+      }
+    } catch {}
+  };
+
+  return (
+    <section className="lp-quickcheck" aria-label="Required quick check">
+      <div className="lp-quickcheck-head">
+        <div>
+          <span className="lp-quickcheck-kicker">REQUIRED CHECK · TOPIC {topic.topicCode}</span>
+          <h3>{quiz.question}</h3>
+        </div>
+        <span className={`lp-quickcheck-status ${passed || status === "correct" ? "is-passed" : ""}`}>
+          {passed || status === "correct" ? "✓ Passed" : "Not passed"}
+        </span>
+      </div>
+      <div className="lp-quickcheck-options">
+        {quiz.options.map((opt, idx) => {
+          const isChosen = choice === idx;
+          const showCorrect = status === "correct" && opt.correct;
+          const showWrong = isChosen && status === "wrong";
+          return (
+            <button
+              type="button"
+              key={idx}
+              className={`lp-quickcheck-option ${showCorrect ? "is-correct" : ""} ${showWrong ? "is-wrong" : ""}`}
+              onClick={() => choose(idx, Boolean(opt.correct))}
+              disabled={passed || status === "correct"}
+            >
+              <span className="lp-quickcheck-bullet">{String.fromCharCode(65 + idx)}</span>
+              <span>{opt.text}</span>
+            </button>
+          );
+        })}
+      </div>
+      {status === "wrong" && (
+        <p className="lp-quickcheck-hint">Not quite — review the lab mistake warning and try again.</p>
+      )}
+      {(status === "correct" || passed) && quiz.explanation && (
+        <p className="lp-quickcheck-explanation">{quiz.explanation}</p>
+      )}
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════
    Main lesson view
    ═══════════════════════════════════════════════════════════════════ */
 export default function LessonPresentationView({
@@ -518,6 +637,10 @@ export default function LessonPresentationView({
   onPageChange,
   onProceedTo3D,
   onProceedToQuiz,
+  watched = false,
+  quickCheckPassed = false,
+  onVideoWatched,
+  onQuickCheckPass,
   theme = "dark",
 }) {
   const [pageState, setPageState] = useState({ id: topic?.id, page: 0 });
@@ -572,7 +695,12 @@ export default function LessonPresentationView({
           <div className="lp-video-page">
             <div className="lp-video-layout">
               <div className="lp-video-main">
-                <CustomVideoPlayer videoId={topic.youtubeId} title={topic.videoTitle} />
+                <CustomVideoPlayer
+                  videoId={topic.youtubeId}
+                  title={topic.videoTitle}
+                  watched={watched}
+                  onWatched={onVideoWatched}
+                />
                 <div className="lp-video-info-strip">
                   <h1 className="lp-video-headline">{topic.videoTitle || topic.title}</h1>
                   <div className="lp-video-meta-row">
@@ -590,6 +718,7 @@ export default function LessonPresentationView({
                     </a>
                   </div>
                 </div>
+                <QuickCheck topic={topic} passed={quickCheckPassed} onPass={onQuickCheckPass} />
               </div>
             </div>
           </div>

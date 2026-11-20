@@ -2,8 +2,8 @@
 .help-support-page {
   position: relative;
   min-height: 100vh;
-  background-color: var(--bg-primary, #1a120b);
-  color: var(--text-primary, #e5e5cb);
+  background-color: var(--bg-primary, #17151A);
+  color: var(--text-primary, #F4F1E9);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   padding: 2.5rem 1.5rem 5rem;
   overflow-x: hidden;
@@ -251,7 +251,7 @@
 
 .symptom-card-btn {
   text-align: left;
-  background: rgba(15, 23, 42, 0.75);
+  background: rgba(23, 21, 26, 0.75);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
   padding: 1.1rem 1.25rem;
@@ -403,7 +403,7 @@
   gap: 8px;
   padding: 10px 18px;
   border-radius: 10px;
-  background: rgba(15, 23, 42, 0.7);
+  background: rgba(23, 21, 26, 0.7);
   border: 1px solid rgba(255, 255, 255, 0.08);
   color: #94a3b8;
   font-size: 0.9rem;
@@ -548,9 +548,9 @@
 }
 
 .nav-card-icon-wrap.amber {
-  background: rgba(213, 206, 163, 0.15);
-  border: 1px solid rgba(213, 206, 163, 0.35);
-  color: #d5cea3;
+  background: rgba(211, 205, 198, 0.15);
+  border: 1px solid rgba(211, 205, 198, 0.35);
+  color: #D3CDC6;
 }
 
 .nav-card-text h3 {
@@ -620,7 +620,7 @@ body.theme-light .help-support-page,
 .theme-light .help-support-page,
 [data-theme="light"] .help-support-page {
   background-color: #f8fafc;
-  color: #0f172a;
+  color: #17151A;
 }
 
 body.theme-light .help-hero-card,
@@ -628,13 +628,13 @@ body.theme-light .help-hero-card,
 [data-theme="light"] .help-hero-card {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.98) 100%);
   border-color: rgba(5, 150, 105, 0.25);
-  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.06);
+  box-shadow: 0 16px 40px rgba(23, 21, 26, 0.06);
 }
 
 body.theme-light .help-hero-title,
 .theme-light .help-hero-title,
 [data-theme="light"] .help-hero-title {
-  color: #0f172a;
+  color: #17151A;
 }
 
 body.theme-light .help-hero-desc,
@@ -647,25 +647,25 @@ body.theme-light .help-quick-chip,
 .theme-light .help-quick-chip,
 [data-theme="light"] .help-quick-chip {
   background: #ffffff;
-  border-color: rgba(15, 23, 42, 0.12);
+  border-color: rgba(23, 21, 26, 0.12);
   color: #334155;
-  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+  box-shadow: 0 2px 6px rgba(23, 21, 26, 0.04);
 }
 
 body.theme-light .help-quick-chip:hover,
 .theme-light .help-quick-chip:hover,
 [data-theme="light"] .help-quick-chip:hover {
   background: #f1f5f9;
-  border-color: #3c2a21;
-  color: #3c2a21;
+  border-color: #35323D;
+  color: #35323D;
 }
 
 body.theme-light .symptom-card-btn,
 .theme-light .symptom-card-btn,
 [data-theme="light"] .symptom-card-btn {
   background: #ffffff;
-  border-color: rgba(15, 23, 42, 0.1);
-  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+  border-color: rgba(23, 21, 26, 0.1);
+  box-shadow: 0 4px 16px rgba(23, 21, 26, 0.04);
 }
 
 body.theme-light .symptom-card-btn:hover,
@@ -687,7 +687,7 @@ body.theme-light .symptom-card-btn.active,
 body.theme-light .symptom-card-title,
 .theme-light .symptom-card-title,
 [data-theme="light"] .symptom-card-title {
-  color: #0f172a;
+  color: #17151A;
 }
 
 body.theme-light .symptom-card-desc,
@@ -701,13 +701,13 @@ body.theme-light .diagnosis-result-bay,
 [data-theme="light"] .diagnosis-result-bay {
   background: #ffffff;
   border-color: rgba(2, 132, 199, 0.3);
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+  box-shadow: 0 10px 30px rgba(23, 21, 26, 0.06);
 }
 
 body.theme-light .diagnosis-title,
 .theme-light .diagnosis-title,
 [data-theme="light"] .diagnosis-title {
-  color: #0f172a;
+  color: #17151A;
 }
 
 body.theme-light .diagnosis-explanation,

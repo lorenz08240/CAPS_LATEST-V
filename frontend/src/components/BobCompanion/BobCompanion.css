@@ -137,20 +137,20 @@
 /* ── LIGHT MODE COMPANION STYLING ── */
 body.theme-light .bob-free-stage,
 .theme-light .bob-free-stage {
-  filter: drop-shadow(0 6px 16px rgba(60, 42, 33, 0.16)) drop-shadow(0 0 12px rgba(60, 42, 33, 0.2));
+  filter: drop-shadow(0 6px 16px rgba(27, 25, 31, 0.16)) drop-shadow(0 0 12px rgba(27, 25, 31, 0.2));
 }
 
 body.theme-light .bob-floating-free .eyt-say,
 .theme-light .bob-floating-free .eyt-say {
   background: rgba(255, 255, 255, 0.96) !important;
-  border-color: #3c2a21 !important;
-  color: #1a120b !important;
+  border-color: #35323D !important;
+  color: #17151A !important;
   text-shadow: none !important;
-  box-shadow: 0 12px 28px rgba(60, 42, 33, 0.12), 0 0 16px rgba(60, 42, 33, 0.15) !important;
+  box-shadow: 0 12px 28px rgba(27, 25, 31, 0.12), 0 0 16px rgba(27, 25, 31, 0.15) !important;
 }
 
 body.theme-light .bob-floating-free .eyt-say::after,
 .theme-light .bob-floating-free .eyt-say::after {
   background: rgba(255, 255, 255, 0.96) !important;
-  border-color: #3c2a21 !important;
+  border-color: #35323D !important;
 }

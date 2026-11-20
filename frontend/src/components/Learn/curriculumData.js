@@ -1,6 +1,6 @@
 /**
  * BuildLab CSS (Computer Systems Servicing) Pre-Lab Curriculum
- * 7 Hierarchical Modules • 21 Sequential Topics
+ * 7 Hierarchical Modules • 17 Sequential Topics
  * Aligned with DepEd Grade 11 CSS / TESDA NC II Standards
  */
 
@@ -101,8 +101,8 @@ export const CSS_CURRICULUM = [
           title: "Essential Hardware Tooling",
           badge: "TOOLING GUIDE",
           items: [
-            { label: "#2 Phillips Screwdriver", value: "Universal tool for 95% of PC screws", tag: "PRIMARY", color: "#0f172a" },
-            { label: "#1 or #0 Phillips", value: "Required for tiny M.2 SSD mounting screws", tag: "PRECISION", color: "#0f172a" },
+            { label: "#2 Phillips Screwdriver", value: "Universal tool for 95% of PC screws", tag: "PRIMARY", color: "#17151A" },
+            { label: "#1 or #0 Phillips", value: "Required for tiny M.2 SSD mounting screws", tag: "PRECISION", color: "#17151A" },
             { label: "Brass Hex Standoffs", value: "Elevate PCB 6-8mm off metal case tray", tag: "MANDATORY", color: "#b45309" },
             { label: "Magnetic Parts Tray", value: "Prevents loose screws dropping inside case", tag: "HELPFUL", color: "#6b21a8" }
           ]

@@ -5,6 +5,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import GlobalHeader from "../Navigation/GlobalHeader";
 import soundManager from "../../utilities/soundManager";
+import RevealHeading from "../Common/RevealHeading";
 import "./AboutUs.css";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -592,9 +593,15 @@ export default function AboutUs() {
             <span className="telemetry-label">PATEROS TECHNOLOGICAL COLLEGE // WHITEHATS COLLECTIVE</span>
           </div>
 
-          <h1 className="about-hero-title meet-devs-main-title">
-            MEET THE <span className="title-accent">DEVELOPERS</span>
-          </h1>
+          <RevealHeading
+            as="h1"
+            className="about-hero-title meet-devs-main-title"
+            underline
+            parts={[
+              { text: "MEET THE" },
+              { text: "DEVELOPERS", className: "title-accent" },
+            ]}
+          />
 
           <p className="meet-devs-lead">
             The five student architects behind BuildLab and modern academic software solutions.
@@ -755,9 +762,14 @@ export default function AboutUs() {
         <section className="whitehats-bento-section">
           <div className="bento-section-header">
             <span className="bento-eyebrow">WHITEHATS ECOSYSTEM</span>
-            <h2 className="bento-main-heading">
-              BUILT FOR <span className="title-accent">ACADEMIC EXCELLENCE</span>
-            </h2>
+            <RevealHeading
+              as="h2"
+              className="bento-main-heading"
+              parts={[
+                { text: "BUILT FOR" },
+                { text: "ACADEMIC EXCELLENCE", className: "title-accent" },
+              ]}
+            />
             <p className="bento-subhead">
               Production-ready web architectures and simulation tools engineered for schools.
             </p>

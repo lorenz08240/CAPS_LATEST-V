@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { motion as Motion, AnimatePresence } from "motion/react";
 import { Link, useLocation } from "react-router-dom";
 import { useBuild } from "../../contexts/BuildContext";
 import { useLearnMode } from "../../contexts/LearnModeContext";
-import { DEMO_GAMING_RIG } from "../../utilities/offlineParts";
 import { checkCompatibility } from "../../utilities/compatibilityEngine";
 import soundManager from "../../utilities/soundManager";
 import FullscreenGate from "../FullscreenGate/FullscreenGate";
@@ -227,13 +227,45 @@ const BOB_GENERAL_BUILD_LINES = [
   "Hey, I see you!",
   "Take your time picking parts, no rush!",
   "Looking good so far!",
-  "Click STARTER RIG if you want a balanced preset ready to go!",
   "That tickles!",
   "Poke me anytime for build advice!",
   "Boop! I'm watching your build.",
   "You found me!",
   "Again? Okay, let's keep building!"
 ];
+
+const REVEAL_EASE = [0.22, 1, 0.36, 1];
+
+const revealGroup = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.075, delayChildren: 0.08 } },
+};
+
+const revealPanel = {
+  hidden: { opacity: 0, y: 16, filter: "blur(7px)" },
+  show: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: { duration: 0.52, ease: REVEAL_EASE },
+  },
+};
+
+const FILTER_LABELS = {
+  case: "CASE TYPE",
+  motherboard: "BOARD TYPE",
+  cpu: "CPU TYPE",
+  ram: "MEMORY TYPE",
+  storage: "DRIVE TYPE",
+  gpu: "GPU SERIES",
+  psu: "PSU TYPE",
+};
+
+const dropdownMotion = {
+  initial: { opacity: 0, y: -6, scale: 0.97 },
+  animate: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.22, ease: REVEAL_EASE } },
+  exit: { opacity: 0, y: -6, scale: 0.98, transition: { duration: 0.15, ease: "easeIn" } },
+};
 
 export const buildSteps = [
   {
@@ -380,7 +412,6 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
     removeComponent,
     getSelectedComponents,
     resetBuild,
-    loadDemoBuild,
   } = useBuild();
   const location = useLocation();
   // Categories flagged by a "Fix" jump from Compatibility — highlight these
@@ -401,6 +432,8 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
     return new URLSearchParams(location.search).get("search") || "";
   });
   const [activeFilter, setActiveFilter] = useState("ALL");
+  const [filterOpen, setFilterOpen] = useState(false);
+  const filterRef = useRef(null);
   const [viewedComponent, setViewedComponent] = useState(null);
   const [bobSpeech, setBobSpeech] = useState(null);
 
@@ -429,6 +462,23 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
       setHasStartedBuild(true);
     }
   }, [startBuildRequested]);
+
+  // Filter dropdown: dismiss on outside click or Escape.
+  useEffect(() => {
+    if (!filterOpen) return;
+    const onPointerDown = (e) => {
+      if (filterRef.current && !filterRef.current.contains(e.target)) setFilterOpen(false);
+    };
+    const onKeyDown = (e) => {
+      if (e.key === "Escape") setFilterOpen(false);
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [filterOpen]);
 
   // Listen for START BUILD click events across the app
   useEffect(() => {
@@ -744,6 +794,7 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
     setViewedComponent(stageComp || categoryComps[0] || null);
     setSearchQuery("");
     setActiveFilter("ALL");
+    setFilterOpen(false);
   }, [currentStep, currentBuild, allComponents]);
 
   useEffect(() => {
@@ -859,6 +910,7 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
     setViewedComponent(firstCase);
     setSearchQuery("");
     setActiveFilter("ALL");
+    setFilterOpen(false);
   };
 
   const currentCategory = buildSteps[currentStep].key;
@@ -918,7 +970,7 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
       }
       return {
         state: "incompatible",
-        label: `⚠ ${shortWarn}`,
+        label: shortWarn,
         reason: result.reason,
       };
     }
@@ -926,7 +978,7 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
     if (relevantPairSelected) {
       return {
         state: "compatible",
-        label: "✓ Compatible",
+        label: "Compatible",
         reason: "Verified compatible with your currently selected parts.",
       };
     }
@@ -953,11 +1005,16 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
   });
 
   return (
-    <div className={`build-page ${isIntegrated ? 'integrated-home' : 'standalone'}`}>
+    <Motion.div
+      className={`build-page ${isIntegrated ? 'integrated-home' : 'standalone'}`}
+      variants={revealGroup}
+      initial="hidden"
+      animate="show"
+    >
       {!isIntegrated && <GlobalHeader />}
-      
+
       <div className="build-main" id="build-main-area">
-        <div className="build-sidebar">
+        <Motion.div className="build-sidebar" variants={revealPanel}>
           <div
             className={`sidebar-card bob-highlight-target ${guideTarget === 'left' ? 'active-guide' : ''}`}
             id="build-left-panel"
@@ -979,12 +1036,7 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
             )}
             <div className="sidebar-header-row">
               <div className="sidebar-header-title-wrap">
-                <div className="cyber-tag-badge mini">
-                  <span className="tag-bracket">[</span>
-                  <span className="tag-dot" />
-                  <span className="tag-text">HARDWARE STAGES</span>
-                  <span className="tag-bracket">]</span>
-                </div>
+                <div className="sidebar-section-title">HARDWARE STAGES</div>
               </div>
               <span className="build-step-progress-badge">
                 <span className="badge-prefix">STAGE</span>
@@ -1073,34 +1125,12 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
               >
                 <span>RESET BUILD</span>
               </button>
-              <button
-                type="button"
-                onClick={() => {
-                  dismissGuideTour?.();
-                  try { soundManager.click(); } catch {}
-                  const starterLines = [
-                    "Loaded up the starter preset! Balanced, tested, and ready to roll.",
-                    "Boom! Starter rig locked in with verified compatibility.",
-                    "Sweet! Loaded our balanced starter build for you.",
-                  ];
-                  setBobSpeech(starterLines[Math.floor(Math.random() * starterLines.length)]);
-                  if (loadDemoBuild) {
-                    loadDemoBuild();
-                    const demoComp = DEMO_GAMING_RIG[buildSteps[currentStep].key];
-                    if (demoComp) setViewedComponent(demoComp);
-                  }
-                }}
-                className="load-starter-btn sidebar-starter-btn"
-                title="Load a balanced, fully-compatible starter PC build"
-              >
-                <span>STARTER RIG</span>
-              </button>
             </div>
           </div>
-        </div>
+        </Motion.div>
 
         <div className="build-content">
-          <div className="search-and-filters">
+          <Motion.div className="search-and-filters" variants={revealPanel}>
             <div className="search-container">
               <span className="search-icon-prefix">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -1122,25 +1152,68 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
                 </span>
               )}
             </div>
-            <div className="tier-filters">
-              {currentCategoryFilters.map((filter) => (
-                <button
-                  key={filter.label}
-                  className={`tier-btn ${activeFilter === filter.label ? "active" : ""}`}
-                  onClick={() => setActiveFilter(activeFilter === filter.label ? "ALL" : filter.label)}
-                >
-                  <span className="tier-btn-bracket">[</span>
-                  <span>{filter.label.toUpperCase()}</span>
-                  <span className="tier-btn-bracket">]</span>
-                </button>
-              ))}
+            <div className="filter-select" ref={filterRef}>
+              <button
+                type="button"
+                className={`filter-trigger ${filterOpen ? "is-open" : ""}`}
+                onClick={() => setFilterOpen((open) => !open)}
+                aria-haspopup="listbox"
+                aria-expanded={filterOpen}
+              >
+                <span className="filter-trigger-label">{FILTER_LABELS[currentCategory] || "FILTER"}</span>
+                <span className="filter-trigger-value">{activeFilter.toUpperCase()}</span>
+                <span className="filter-trigger-caret">
+                  <svg className="filter-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </span>
+              </button>
+
+              <AnimatePresence>
+                {filterOpen && (
+                  <Motion.div className="filter-menu" role="listbox" {...dropdownMotion}>
+                    {currentCategoryFilters.map((filter) => {
+                      const isActive = activeFilter === filter.label;
+                      return (
+                        <button
+                          key={filter.label}
+                          type="button"
+                          role="option"
+                          aria-selected={isActive}
+                          className={`filter-option ${isActive ? "is-active" : ""}`}
+                          onClick={() => {
+                            setActiveFilter(filter.label);
+                            setFilterOpen(false);
+                            soundManager.click();
+                          }}
+                        >
+                          {isActive && (
+                            <Motion.span
+                              layoutId="filter-active-pill"
+                              className="filter-active-pill"
+                              transition={{ type: "spring", stiffness: 460, damping: 36 }}
+                            />
+                          )}
+                          <span className="filter-option-label">{filter.label.toUpperCase()}</span>
+                          {isActive && (
+                            <svg className="filter-option-check" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                              <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </Motion.div>
+                )}
+              </AnimatePresence>
             </div>
-          </div>
+          </Motion.div>
 
           <div className="build-grid-and-panel">
-            <div
+            <Motion.div
               className={`components-grid-wrapper bob-highlight-target ${guideTarget === 'center' ? 'active-guide' : ''}`}
               id="build-center-panel"
+              variants={revealPanel}
             >
               {guideTarget === 'center' && (
                 <>
@@ -1168,6 +1241,7 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
                     <div
                       key={component.id || `${currentCategory}-${idx}`}
                       className={`component-card compact-card ${isViewed ? "viewed active-selected" : ""} ${isSelected ? "selected committed" : ""}`}
+                      style={{ "--card-i": idx }}
                       onClick={() => handleCardClick(component)}
                     >
                       <div className="component-image">
@@ -1190,17 +1264,18 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
                         )}
                       </div>
                       {isSelected && (
-                        <span className="card-installed-tag">✓ SELECTED</span>
+                        <span className="card-installed-tag">SELECTED</span>
                       )}
                     </div>
                   );
                 })}
               </div>
-            </div>
+            </Motion.div>
 
-            <div
+            <Motion.div
               className={`specifications-panel bob-highlight-target ${guideTarget === "right" ? "active-guide" : ""}`}
               id="build-right-panel"
+              variants={revealPanel}
             >
               {guideTarget === "right" && (
                 <>
@@ -1222,12 +1297,9 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
                   <>
                     <div className="spec-header-row">
                       <div className={`spec-header-tag ${selectedComponent?.id === viewedComponent.id ? "is-selected-tag" : ""}`}>
-                        <span className="tag-bracket">[</span>
-                        <span className="tag-dot" />
                         <span className="tag-text">
-                          {selectedComponent?.id === viewedComponent.id ? "✓ COMPONENT SELECTED" : "SPECIFICATIONS"}
+                          {selectedComponent?.id === viewedComponent.id ? "COMPONENT SELECTED" : "SPECIFICATIONS"}
                         </span>
-                        <span className="tag-bracket">]</span>
                       </div>
                       <button
                         type="button"
@@ -1239,7 +1311,6 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
                         title="View Assembly Overview"
                       >
                         <span>OVERVIEW</span>
-                        <span className="toggle-icon">↗</span>
                       </button>
                     </div>
 
@@ -1387,12 +1458,7 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
                 ) : (
                   <div className="spec-overview-card">
                     <div className="spec-overview-header">
-                      <div className="spec-overview-tag">
-                        <span className="tag-bracket">[</span>
-                        <span className="tag-dot" />
-                        <span className="tag-text">RIG TELEMETRY</span>
-                        <span className="tag-bracket">]</span>
-                      </div>
+                      <div className="spec-overview-tag">RIG TELEMETRY</div>
                       <h3 className="spec-overview-title">ASSEMBLY OVERVIEW</h3>
                     </div>
 
@@ -1458,7 +1524,7 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
                               </div>
                               <div className="spec-selected-tag-col">
                                 {comp ? (
-                                  <span className="spec-status-pill selected">✓ MOUNTED</span>
+                                  <span className="spec-status-pill selected">MOUNTED</span>
                                 ) : (
                                   <span className="spec-status-pill empty">CHOOSE</span>
                                 )}
@@ -1487,7 +1553,7 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
                               className="btn-view-stage-specs"
                               onClick={() => setViewedComponent(selectedComponent)}
                             >
-                              View Mounted Specs & Details →
+                              View Mounted Specs & Details
                             </button>
                           ) : (
                             <button
@@ -1495,7 +1561,7 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
                               className="btn-view-stage-specs"
                               onClick={() => setViewedComponent(currentComponents[0] || null)}
                             >
-                              View Component Telemetry & Mount →
+                              View Component Telemetry & Mount
                             </button>
                           )}
                         </div>
@@ -1528,7 +1594,7 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
                       }}
                     >
                       <span className="btn-label">
-                        {selectedComponent?.id === viewedComponent.id ? "✓ COMPONENT SELECTED" : "SELECT COMPONENT"}
+                        {selectedComponent?.id === viewedComponent.id ? "COMPONENT SELECTED" : "SELECT COMPONENT"}
                       </span>
                     </button>
 
@@ -1549,7 +1615,6 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
                             }}
                           >
                             <span>PROCEED TO STAGE 0{currentStep + 2} ({buildSteps[currentStep + 1]?.label})</span>
-                            <span className="btn-arrow">&rarr;</span>
                           </button>
                         ) : (
                           <Link
@@ -1558,26 +1623,12 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
                             onClick={() => soundManager.click()}
                           >
                             <span>ALL 7 STAGES LOCKED • VERIFY COMPATIBILITY</span>
-                            <span className="btn-arrow">&rarr;</span>
                           </Link>
                         )}
                       </div>
                     )}
                   </div>
                 )}
-
-                <div className="spec-compat-banner">
-                  <span className="compat-shield">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
-                  </span>
-                  <span>
-                    {selectedComponents.length === buildSteps.length
-                      ? "All 7 stages locked • Ready to verify"
-                      : selectedComponents.length > 0
-                        ? `${selectedComponents.length}/${buildSteps.length} parts armed • Live pin match active`
-                        : "Ready to assemble. Choose your case to begin."}
-                  </span>
-                </div>
 
                 <div className="overview-cta-row permanent">
                   <Link
@@ -1597,27 +1648,9 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
                       </span>
                     </div>
                   </Link>
-
-                  <Link
-                    to="/3d-builder"
-                    className="sidebar-cta-btn sidebar-cta-3d"
-                    onClick={() => soundManager.click()}
-                  >
-                    <span className="sidebar-cta-icon">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" /><polyline points="3.27 6.96 12 12.01 20.73 6.96" /><line x1="12" y1="22.08" x2="12" y2="12" /></svg>
-                    </span>
-                    <div className="sidebar-cta-text">
-                      <span className="sidebar-cta-label">Launch 3D Studio</span>
-                      <span className="sidebar-cta-sub">
-                        {selectedComponents.length === 0
-                          ? "Interactive 3D Assembly"
-                          : `Inspect ${selectedComponents.length}/${buildSteps.length} parts in 3D`}
-                      </span>
-                    </div>
-                  </Link>
                 </div>
               </div>
-            </div>
+            </Motion.div>
           </div>
         </div>
       </div>
@@ -1650,7 +1683,7 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
           </button>
         </div>
       )}
-    </div>
+    </Motion.div>
   );
 }
 

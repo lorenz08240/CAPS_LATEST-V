@@ -21,7 +21,7 @@
 .wb-pdf-toolbar {
   height: 52px;
   background: rgba(36, 27, 20, 0.96);
-  border-bottom: 1px solid rgba(213, 206, 163, 0.18);
+  border-bottom: 1px solid rgba(211, 205, 198, 0.18);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -38,14 +38,14 @@
 }
 
 .wb-pdf-icon-badge {
-  background: #d97757;
-  color: #faf9f2;
+  background: #E23B3B;
+  color: #FBF9F3;
   font-size: 10px;
   font-weight: 900;
   letter-spacing: 0.08em;
   padding: 3px 6px;
   border-radius: 4px;
-  box-shadow: 0 2px 6px rgba(217, 119, 87, 0.4);
+  box-shadow: 0 2px 6px rgba(226, 59, 59, 0.4);
 }
 
 .wb-pdf-file-info {
@@ -57,7 +57,7 @@
 .wb-pdf-filename {
   font-size: 13px;
   font-weight: 700;
-  color: #f5f5ea;
+  color: #F4F1E9;
   letter-spacing: 0.01em;
 }
 
@@ -67,9 +67,9 @@
   letter-spacing: 0.06em;
   padding: 2px 7px;
   border-radius: 3px;
-  background: rgba(213, 206, 163, 0.12);
-  color: #e5e5cb;
-  border: 1px solid rgba(213, 206, 163, 0.28);
+  background: rgba(211, 205, 198, 0.12);
+  color: #F4F1E9;
+  border: 1px solid rgba(211, 205, 198, 0.28);
 }
 
 .wb-pdf-toolbar-center {
@@ -82,11 +82,11 @@
 .wb-pdf-zoom-pill {
   font-size: 11px;
   font-weight: 700;
-  color: #d5cea3;
-  background: rgba(213, 206, 163, 0.08);
+  color: #D3CDC6;
+  background: rgba(211, 205, 198, 0.08);
   padding: 4px 10px;
   border-radius: 4px;
-  border: 1px solid rgba(213, 206, 163, 0.16);
+  border: 1px solid rgba(211, 205, 198, 0.16);
 }
 
 .wb-pdf-toolbar-right {
@@ -102,9 +102,9 @@
   min-width: 44px;
   min-height: 44px;
   border-radius: 50%;
-  background: #e5e5cb;
-  border: 1px solid rgba(60, 42, 33, 0.3);
-  color: #1a120b;
+  background: #F4F1E9;
+  border: 1px solid rgba(27, 25, 31, 0.3);
+  color: #17151A;
   font-size: 20px;
   font-weight: 800;
   display: flex;
@@ -118,11 +118,11 @@
 }
 
 .btn-pdf-close-icon:hover {
-  background: #faf9f2;
-  color: #1a120b;
+  background: #FBF9F3;
+  color: #17151A;
   transform: scale(1.08);
-  box-shadow: 0 6px 20px rgba(229, 229, 203, 0.45);
-  border-color: rgba(60, 42, 33, 0.45);
+  box-shadow: 0 6px 20px rgba(244, 241, 233, 0.45);
+  border-color: rgba(27, 25, 31, 0.45);
 }
 
 .btn-pdf-close-icon:active {
@@ -130,14 +130,14 @@
 }
 
 .btn-pdf-close-icon:focus-visible {
-  outline: 2px solid #d5cea3;
+  outline: 2px solid #D3CDC6;
   outline-offset: 2px;
 }
 
 .btn-pdf-close {
-  background: rgba(213, 206, 163, 0.12);
-  border: 1px solid rgba(213, 206, 163, 0.25);
-  color: #e5e5cb;
+  background: rgba(211, 205, 198, 0.12);
+  border: 1px solid rgba(211, 205, 198, 0.25);
+  color: #F4F1E9;
   font-size: 12px;
   font-weight: 700;
   padding: 6px 14px;
@@ -154,14 +154,14 @@
   background: rgba(0, 0, 0, 0.45);
   padding: 2px 5px;
   border-radius: 3px;
-  color: #d5cea3;
+  color: #D3CDC6;
   font-family: inherit;
 }
 
 .btn-pdf-close:hover {
-  background: rgba(213, 206, 163, 0.22);
-  color: #faf9f2;
-  border-color: rgba(213, 206, 163, 0.45);
+  background: rgba(211, 205, 198, 0.22);
+  color: #FBF9F3;
+  border-color: rgba(211, 205, 198, 0.45);
   transform: translateY(-1px);
 }
 
@@ -174,9 +174,9 @@
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  background: radial-gradient(circle at 50% 20%, rgba(60, 42, 33, 0.55) 0%, rgba(26, 18, 11, 0.98) 100%);
+  background: radial-gradient(circle at 50% 20%, rgba(27, 25, 31, 0.55) 0%, rgba(26, 18, 11, 0.98) 100%);
   scrollbar-width: thin;
-  scrollbar-color: rgba(213, 206, 163, 0.25) rgba(36, 27, 20, 0.6);
+  scrollbar-color: rgba(211, 205, 198, 0.25) rgba(36, 27, 20, 0.6);
 }
 
 .wb-pdf-viewport::-webkit-scrollbar {
@@ -189,27 +189,27 @@
 }
 
 .wb-pdf-viewport::-webkit-scrollbar-thumb {
-  background: rgba(213, 206, 163, 0.25);
+  background: rgba(211, 205, 198, 0.25);
   border-radius: 4px;
 }
 
 .wb-pdf-viewport::-webkit-scrollbar-thumb:hover {
-  background: rgba(213, 206, 163, 0.4);
+  background: rgba(211, 205, 198, 0.4);
 }
 
 /* ── AUTHENTIC PRINT-READY DOCUMENT SHEET ── */
 .wb-pdf-sheet {
   width: 100%;
   max-width: 820px;
-  background: #241b14;
-  color: #e5e5cb;
-  border: 1px solid rgba(213, 206, 163, 0.22);
+  background: #201E25;
+  color: #F4F1E9;
+  border: 1px solid rgba(211, 205, 198, 0.22);
   border-radius: 12px;
   padding: 2.75rem 3.25rem;
   box-shadow:
     0 25px 60px rgba(0, 0, 0, 0.75),
     0 4px 16px rgba(0, 0, 0, 0.45),
-    inset 0 1px 0 rgba(213, 206, 163, 0.15);
+    inset 0 1px 0 rgba(211, 205, 198, 0.15);
   display: flex;
   flex-direction: column;
   gap: 1.85rem;
@@ -247,11 +247,11 @@
   width: 46px;
   height: 46px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #e5e5cb 0%, #d5cea3 100%);
+  background: linear-gradient(135deg, #F4F1E9 0%, #D3CDC6 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #1a120b;
+  color: #17151A;
   font-size: 16px;
   font-weight: 900;
   letter-spacing: -0.04em;
@@ -268,14 +268,14 @@
 .wb-pdf-brand-name {
   font-size: 15px;
   font-weight: 900;
-  color: #f5f5ea;
+  color: #F4F1E9;
   letter-spacing: 0.1em;
   margin: 0;
 }
 
 .wb-pdf-brand-sub {
   font-size: 11.5px;
-  color: #d5cea3;
+  color: #D3CDC6;
   margin: 0;
   letter-spacing: 0.02em;
 }
@@ -292,9 +292,9 @@
   font-size: 11px;
   font-weight: 900;
   letter-spacing: 0.14em;
-  color: #e5e5cb;
-  background: rgba(213, 206, 163, 0.12);
-  border: 1px solid rgba(213, 206, 163, 0.25);
+  color: #F4F1E9;
+  background: rgba(211, 205, 198, 0.12);
+  border: 1px solid rgba(211, 205, 198, 0.25);
   padding: 4px 9px;
   border-radius: 4px;
 }
@@ -303,13 +303,13 @@
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-size: 10px;
   font-weight: 700;
-  color: #d5cea3;
+  color: #D3CDC6;
   letter-spacing: 0.06em;
 }
 
 .wb-pdf-rule {
   height: 1px;
-  background: linear-gradient(90deg, rgba(213, 206, 163, 0.25) 0%, rgba(213, 206, 163, 0.15) 30%, rgba(213, 206, 163, 0.04) 100%);
+  background: linear-gradient(90deg, rgba(211, 205, 198, 0.25) 0%, rgba(211, 205, 198, 0.15) 30%, rgba(211, 205, 198, 0.04) 100%);
   margin: -0.35rem 0;
 }
 
@@ -324,27 +324,27 @@
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.1em;
-  color: #d5cea3;
+  color: #D3CDC6;
   text-transform: uppercase;
 }
 
 .wb-pdf-title {
   font-size: 24px;
   font-weight: 900;
-  color: #f5f5ea;
+  color: #F4F1E9;
   letter-spacing: -0.015em;
   margin: 0;
   line-height: 1.3;
 }
 
 .wb-pdf-title-accent {
-  color: #d5cea3;
+  color: #D3CDC6;
 }
 
 .wb-pdf-lede {
   font-size: 15px;
   line-height: 1.7;
-  color: #e5e5cb;
+  color: #F4F1E9;
   margin: 0;
   font-weight: 500;
 }
@@ -352,7 +352,7 @@
 .wb-pdf-summary {
   font-size: 13.5px;
   line-height: 1.65;
-  color: #d5cea3;
+  color: #D3CDC6;
   margin: 0;
 }
 
@@ -367,7 +367,7 @@
   font-size: 13px;
   font-weight: 800;
   letter-spacing: 0.02em;
-  color: #d5cea3;
+  color: #D3CDC6;
   margin: 0;
 }
 
@@ -383,8 +383,8 @@
   gap: 5px;
   padding: 1rem 1.05rem;
   border-radius: 8px;
-  background: rgba(60, 42, 33, 0.45);
-  border: 1px solid rgba(213, 206, 163, 0.18);
+  background: rgba(27, 25, 31, 0.45);
+  border: 1px solid rgba(211, 205, 198, 0.18);
 }
 
 .wb-pdf-outcome-num {
@@ -392,20 +392,20 @@
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.1em;
-  color: #d5cea3;
+  color: #D3CDC6;
 }
 
 .wb-pdf-outcome-title {
   font-size: 13px;
   font-weight: 800;
-  color: #f5f5ea;
+  color: #F4F1E9;
   line-height: 1.35;
 }
 
 .wb-pdf-outcome-desc {
   font-size: 12px;
   line-height: 1.5;
-  color: #e5e5cb;
+  color: #F4F1E9;
   margin: 0;
 }
 
@@ -415,7 +415,7 @@
   grid-template-columns: repeat(3, 1fr);
   gap: 0.75rem;
   background: rgba(36, 27, 20, 0.7);
-  border: 1px solid rgba(213, 206, 163, 0.18);
+  border: 1px solid rgba(211, 205, 198, 0.18);
   border-radius: 8px;
   padding: 1rem 1.25rem;
 }
@@ -430,14 +430,14 @@
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.08em;
-  color: #d5cea3;
+  color: #D3CDC6;
   text-transform: uppercase;
 }
 
 .wb-pdf-meta-val {
   font-size: 12.5px;
   font-weight: 700;
-  color: #f5f5ea;
+  color: #F4F1E9;
 }
 
 /* ── CURRICULUM SYLLABUS LIST ── */
@@ -453,7 +453,7 @@
   justify-content: space-between;
   gap: 1rem;
   padding-bottom: 0.5rem;
-  border-bottom: 1px solid rgba(213, 206, 163, 0.16);
+  border-bottom: 1px solid rgba(211, 205, 198, 0.16);
 }
 
 .wb-pdf-path-count {
@@ -461,7 +461,7 @@
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.1em;
-  color: #d5cea3;
+  color: #D3CDC6;
   white-space: nowrap;
 }
 
@@ -469,7 +469,7 @@
   font-size: 17px;
   font-weight: 800;
   letter-spacing: -0.01em;
-  color: #f5f5ea;
+  color: #F4F1E9;
   margin: 0;
 }
 
@@ -486,13 +486,13 @@
   padding: 0.85rem 1.1rem;
   border-radius: 8px;
   background: rgba(42, 30, 23, 0.6);
-  border: 1px solid rgba(213, 206, 163, 0.15);
+  border: 1px solid rgba(211, 205, 198, 0.15);
   transition: all 0.2s ease;
 }
 
 .wb-pdf-syllabus-item:hover {
-  background: rgba(60, 42, 33, 0.75);
-  border-color: rgba(213, 206, 163, 0.35);
+  background: rgba(27, 25, 31, 0.75);
+  border-color: rgba(211, 205, 198, 0.35);
   transform: translateX(3px);
 }
 
@@ -509,16 +509,16 @@
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.08em;
-  color: #e5e5cb;
-  background: rgba(213, 206, 163, 0.14);
+  color: #F4F1E9;
+  background: rgba(211, 205, 198, 0.14);
   padding: 2px 7px;
   border-radius: 4px;
-  border: 1px solid rgba(213, 206, 163, 0.3);
+  border: 1px solid rgba(211, 205, 198, 0.3);
 }
 
 .wb-pdf-duration-tag {
   font-size: 11px;
-  color: #d5cea3;
+  color: #D3CDC6;
   font-weight: 600;
 }
 
@@ -531,14 +531,14 @@
 .wb-pdf-item-title {
   font-size: 14.5px;
   font-weight: 800;
-  color: #f5f5ea;
+  color: #F4F1E9;
   margin: 0;
 }
 
 .wb-pdf-item-desc {
   font-size: 13.5px;
   line-height: 1.55;
-  color: #e5e5cb;
+  color: #F4F1E9;
   margin: 0;
 }
 
@@ -548,7 +548,7 @@
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
   background: rgba(42, 30, 23, 0.65);
-  border: 1px solid rgba(213, 206, 163, 0.2);
+  border: 1px solid rgba(211, 205, 198, 0.2);
   border-radius: 8px;
   padding: 1.15rem 1.35rem;
 }
@@ -575,13 +575,13 @@
 .wb-pdf-competency-info strong {
   font-size: 13px;
   font-weight: 800;
-  color: #f5f5ea;
+  color: #F4F1E9;
 }
 
 .wb-pdf-competency-info p {
   font-size: 12.5px;
   line-height: 1.5;
-  color: #e5e5cb;
+  color: #F4F1E9;
   margin: 0;
 }
 
@@ -591,7 +591,7 @@
   align-items: center;
   justify-content: space-between;
   padding-top: 1.35rem;
-  border-top: 1px solid rgba(213, 206, 163, 0.16);
+  border-top: 1px solid rgba(211, 205, 198, 0.16);
   flex-wrap: wrap;
   gap: 1rem;
 }
@@ -605,12 +605,12 @@
 .wb-pdf-auth-prepared {
   font-size: 11.5px;
   font-weight: 700;
-  color: #d5cea3;
+  color: #D3CDC6;
 }
 
 .wb-pdf-auth-approved {
   font-size: 11px;
-  color: #d5cea3;
+  color: #D3CDC6;
   opacity: 0.8;
 }
 
@@ -621,9 +621,9 @@
 }
 
 .btn-pdf-secondary {
-  background: rgba(213, 206, 163, 0.08);
-  border: 1px solid rgba(213, 206, 163, 0.25);
-  color: #e5e5cb;
+  background: rgba(211, 205, 198, 0.08);
+  border: 1px solid rgba(211, 205, 198, 0.25);
+  color: #F4F1E9;
   font-size: 13px;
   font-weight: 700;
   padding: 8px 16px;
@@ -633,14 +633,14 @@
 }
 
 .btn-pdf-secondary:hover {
-  background: rgba(213, 206, 163, 0.18);
-  color: #faf9f2;
-  border-color: rgba(213, 206, 163, 0.45);
+  background: rgba(211, 205, 198, 0.18);
+  color: #FBF9F3;
+  border-color: rgba(211, 205, 198, 0.45);
 }
 
 .btn-pdf-primary {
-  background: #d5cea3;
-  color: #1a120b;
+  background: #D3CDC6;
+  color: #17151A;
   font-size: 13px;
   font-weight: 800;
   letter-spacing: 0.03em;
@@ -653,7 +653,7 @@
 }
 
 .btn-pdf-primary:hover {
-  background: #e5e5cb;
+  background: #F4F1E9;
   transform: translateY(-1px);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.65);
 }
@@ -667,13 +667,13 @@
 .wb-shell.theme-light .wb-pdf-toolbar,
 .wb-shell.theme-blueprint .wb-pdf-toolbar {
   background: #ffffff;
-  border-bottom: 1px solid rgba(15, 23, 42, 0.1);
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+  border-bottom: 1px solid rgba(23, 21, 26, 0.1);
+  box-shadow: 0 2px 8px rgba(23, 21, 26, 0.06);
 }
 
 .wb-shell.theme-light .wb-pdf-filename,
 .wb-shell.theme-blueprint .wb-pdf-filename {
-  color: #0f172a;
+  color: #17151A;
 }
 
 .wb-shell.theme-light .wb-pdf-page-pill,
@@ -687,14 +687,14 @@
 
 .wb-shell.theme-light .btn-pdf-close-icon,
 .wb-shell.theme-blueprint .btn-pdf-close-icon {
-  background: #3c2a21;
-  border-color: rgba(60, 42, 33, 0.4);
-  color: #faf9f2;
+  background: #35323D;
+  border-color: rgba(27, 25, 31, 0.4);
+  color: #FBF9F3;
 }
 
 .wb-shell.theme-light .btn-pdf-close-icon:hover,
 .wb-shell.theme-blueprint .btn-pdf-close-icon:hover {
-  background: #1a120b;
+  background: #17151A;
   color: #ffffff;
 }
 
@@ -708,13 +708,13 @@
 .wb-shell.theme-light .btn-pdf-close:hover,
 .wb-shell.theme-blueprint .btn-pdf-close:hover {
   background: #e2e8f0;
-  color: #0f172a;
+  color: #17151A;
 }
 
 .wb-shell.theme-light .wb-pdf-viewport,
 .wb-shell.theme-blueprint .wb-pdf-viewport {
   background: radial-gradient(circle at 50% 20%, #e2e8f0 0%, #cbd5e1 100%);
-  scrollbar-color: rgba(15, 23, 42, 0.25) rgba(226, 232, 240, 0.8);
+  scrollbar-color: rgba(23, 21, 26, 0.25) rgba(226, 232, 240, 0.8);
 }
 
 .wb-shell.theme-light .wb-pdf-viewport::-webkit-scrollbar-track,
@@ -724,22 +724,22 @@
 
 .wb-shell.theme-light .wb-pdf-viewport::-webkit-scrollbar-thumb,
 .wb-shell.theme-blueprint .wb-pdf-viewport::-webkit-scrollbar-thumb {
-  background: rgba(15, 23, 42, 0.25);
+  background: rgba(23, 21, 26, 0.25);
 }
 
 .wb-shell.theme-light .wb-pdf-sheet,
 .wb-shell.theme-blueprint .wb-pdf-sheet {
   background: #ffffff;
-  color: #0f172a;
+  color: #17151A;
   border: 1px solid #cbd5e1;
   box-shadow:
-    0 20px 48px rgba(15, 23, 42, 0.12),
-    0 2px 8px rgba(15, 23, 42, 0.04);
+    0 20px 48px rgba(23, 21, 26, 0.12),
+    0 2px 8px rgba(23, 21, 26, 0.04);
 }
 
 .wb-shell.theme-light .wb-pdf-brand-name,
 .wb-shell.theme-blueprint .wb-pdf-brand-name {
-  color: #0f172a;
+  color: #17151A;
 }
 
 .wb-shell.theme-light .wb-pdf-brand-sub,
@@ -763,7 +763,7 @@
 
 .wb-shell.theme-light .wb-pdf-title,
 .wb-shell.theme-blueprint .wb-pdf-title {
-  color: #0f172a;
+  color: #17151A;
 }
 
 .wb-shell.theme-light .wb-pdf-title-accent,
@@ -799,7 +799,7 @@
 
 .wb-shell.theme-light .wb-pdf-outcome-title,
 .wb-shell.theme-blueprint .wb-pdf-outcome-title {
-  color: #0f172a;
+  color: #17151A;
 }
 
 .wb-shell.theme-light .wb-pdf-outcome-desc,
@@ -815,12 +815,12 @@
 
 .wb-shell.theme-light .wb-pdf-meta-val,
 .wb-shell.theme-blueprint .wb-pdf-meta-val {
-  color: #0f172a;
+  color: #17151A;
 }
 
 .wb-shell.theme-light .wb-pdf-section-heading,
 .wb-shell.theme-blueprint .wb-pdf-section-heading {
-  color: #0f172a;
+  color: #17151A;
 }
 
 .wb-shell.theme-light .wb-pdf-curriculum-head,
@@ -848,7 +848,7 @@
 
 .wb-shell.theme-light .wb-pdf-item-title,
 .wb-shell.theme-blueprint .wb-pdf-item-title {
-  color: #0f172a;
+  color: #17151A;
 }
 
 .wb-shell.theme-light .wb-pdf-item-desc,
@@ -864,7 +864,7 @@
 
 .wb-shell.theme-light .wb-pdf-competency-info strong,
 .wb-shell.theme-blueprint .wb-pdf-competency-info strong {
-  color: #0f172a;
+  color: #17151A;
 }
 
 .wb-shell.theme-light .wb-pdf-competency-info p,
@@ -886,7 +886,7 @@
 .wb-shell.theme-light .btn-pdf-secondary:hover,
 .wb-shell.theme-blueprint .btn-pdf-secondary:hover {
   background: #f1f5f9;
-  color: #0f172a;
+  color: #17151A;
 }
 
 .wb-shell.theme-light .btn-pdf-primary,
@@ -934,21 +934,21 @@
 body.theme-light .wb-pdf-viewer-overlay,
 .theme-light .wb-pdf-viewer-overlay,
 [data-theme="light"] .wb-pdf-viewer-overlay {
-  background: rgba(229, 229, 203, 0.96) !important;
+  background: rgba(244, 241, 233, 0.96) !important;
 }
 
 body.theme-light .wb-pdf-toolbar,
 .theme-light .wb-pdf-toolbar,
 [data-theme="light"] .wb-pdf-toolbar {
-  background: #faf9f2 !important;
-  border-bottom: 1px solid rgba(60, 42, 33, 0.16) !important;
-  box-shadow: 0 4px 16px rgba(60, 42, 33, 0.08) !important;
+  background: #FBF9F3 !important;
+  border-bottom: 1px solid rgba(27, 25, 31, 0.16) !important;
+  box-shadow: 0 4px 16px rgba(27, 25, 31, 0.08) !important;
 }
 
 body.theme-light .wb-pdf-filename,
 .theme-light .wb-pdf-filename,
 [data-theme="light"] .wb-pdf-filename {
-  color: #1a120b !important;
+  color: #17151A !important;
 }
 
 body.theme-light .wb-pdf-file-badge,
@@ -961,23 +961,23 @@ body.theme-light .wb-pdf-zoom-pill,
 [data-theme="light"] .wb-pdf-page-pill,
 [data-theme="light"] .wb-pdf-zoom-pill {
   background: #f1f0ea !important;
-  color: #3c2a21 !important;
-  border-color: rgba(60, 42, 33, 0.2) !important;
+  color: #35323D !important;
+  border-color: rgba(27, 25, 31, 0.2) !important;
 }
 
 body.theme-light .wb-pdf-viewport,
 .theme-light .wb-pdf-viewport,
 [data-theme="light"] .wb-pdf-viewport {
-  background: radial-gradient(circle at 50% 20%, rgba(229, 229, 203, 0.8) 0%, rgba(213, 206, 163, 0.95) 100%) !important;
+  background: radial-gradient(circle at 50% 20%, rgba(244, 241, 233, 0.8) 0%, rgba(211, 205, 198, 0.95) 100%) !important;
 }
 
 body.theme-light .wb-pdf-sheet,
 .theme-light .wb-pdf-sheet,
 [data-theme="light"] .wb-pdf-sheet {
   background: #ffffff !important;
-  color: #1a120b !important;
-  border: 1px solid rgba(60, 42, 33, 0.18) !important;
-  box-shadow: 0 25px 60px rgba(60, 42, 33, 0.16), 0 4px 16px rgba(60, 42, 33, 0.08) !important;
+  color: #17151A !important;
+  border: 1px solid rgba(27, 25, 31, 0.18) !important;
+  box-shadow: 0 25px 60px rgba(27, 25, 31, 0.16), 0 4px 16px rgba(27, 25, 31, 0.08) !important;
 }
 
 body.theme-light .wb-pdf-brand-name,
@@ -986,7 +986,7 @@ body.theme-light .wb-pdf-title,
 .theme-light .wb-pdf-title,
 [data-theme="light"] .wb-pdf-brand-name,
 [data-theme="light"] .wb-pdf-title {
-  color: #1a120b !important;
+  color: #17151A !important;
 }
 
 body.theme-light .wb-pdf-brand-sub,
@@ -1001,13 +1001,13 @@ body.theme-light .wb-pdf-summary,
 [data-theme="light"] .wb-pdf-hero-tag,
 [data-theme="light"] .wb-pdf-mini-heading,
 [data-theme="light"] .wb-pdf-summary {
-  color: #3c2a21 !important;
+  color: #35323D !important;
 }
 
 body.theme-light .wb-pdf-lede,
 .theme-light .wb-pdf-lede,
 [data-theme="light"] .wb-pdf-lede {
-  color: #1a120b !important;
+  color: #17151A !important;
 }
 
 body.theme-light .wb-pdf-title-accent,
@@ -1020,14 +1020,14 @@ body.theme-light .wb-pdf-stamp-main,
 .theme-light .wb-pdf-stamp-main,
 [data-theme="light"] .wb-pdf-stamp-main {
   background: #f1f0ea !important;
-  border-color: rgba(60, 42, 33, 0.25) !important;
-  color: #1a120b !important;
+  border-color: rgba(27, 25, 31, 0.25) !important;
+  color: #17151A !important;
 }
 
 body.theme-light .wb-pdf-stamp-sub,
 .theme-light .wb-pdf-stamp-sub,
 [data-theme="light"] .wb-pdf-stamp-sub {
-  color: #543b2f !important;
+  color: #5B5562 !important;
 }
 
 body.theme-light .wb-pdf-outcome,
@@ -1039,8 +1039,8 @@ body.theme-light .wb-pdf-module-row,
 [data-theme="light"] .wb-pdf-outcome,
 [data-theme="light"] .wb-pdf-meta-table,
 [data-theme="light"] .wb-pdf-module-row {
-  background: #faf9f2 !important;
-  border-color: rgba(60, 42, 33, 0.16) !important;
+  background: #FBF9F3 !important;
+  border-color: rgba(27, 25, 31, 0.16) !important;
 }
 
 body.theme-light .wb-pdf-outcome-num,
@@ -1049,7 +1049,7 @@ body.theme-light .wb-pdf-meta-label,
 .theme-light .wb-pdf-meta-label,
 [data-theme="light"] .wb-pdf-outcome-num,
 [data-theme="light"] .wb-pdf-meta-label {
-  color: #543b2f !important;
+  color: #5B5562 !important;
 }
 
 body.theme-light .wb-pdf-outcome-title,
@@ -1064,7 +1064,7 @@ body.theme-light .wb-pdf-module-title,
 [data-theme="light"] .wb-pdf-meta-val,
 [data-theme="light"] .wb-pdf-meta-value,
 [data-theme="light"] .wb-pdf-module-title {
-  color: #1a120b !important;
+  color: #17151A !important;
   font-weight: 700 !important;
 }
 
@@ -1074,13 +1074,94 @@ body.theme-light .wb-pdf-module-desc,
 .theme-light .wb-pdf-module-desc,
 [data-theme="light"] .wb-pdf-outcome-desc,
 [data-theme="light"] .wb-pdf-module-desc {
-  color: #3c2a21 !important;
+  color: #35323D !important;
 }
 
 body.theme-light .wb-pdf-step-pill,
 .theme-light .wb-pdf-step-pill,
 [data-theme="light"] .wb-pdf-step-pill {
   background: #f1f0ea !important;
-  color: #3c2a21 !important;
-  border-color: rgba(60, 42, 33, 0.2) !important;
+  color: #35323D !important;
+  border-color: rgba(27, 25, 31, 0.2) !important;
+}
+
+/* Paper sheet finishing: keep the lower syllabus section legible on white */
+.theme-light .wb-pdf-section-heading {
+  color: #17151A !important;
+}
+
+.theme-light .wb-pdf-path-count {
+  color: #5B5562 !important;
+}
+
+.theme-light .wb-pdf-title-accent {
+  color: #E23B3B !important;
+}
+
+.theme-light .wb-pdf-curriculum-head {
+  border-bottom-color: rgba(27, 25, 31, 0.16) !important;
+}
+
+.theme-light .wb-pdf-rule {
+  border-color: rgba(27, 25, 31, 0.16) !important;
+}
+
+/* Paper sheet: lower syllabus + footer use their own class names */
+.theme-light .wb-pdf-syllabus-item {
+  background: #FBF9F3 !important;
+  border-color: rgba(27, 25, 31, 0.16) !important;
+}
+
+.theme-light .wb-pdf-syllabus-item:hover {
+  background: #F4F1E9 !important;
+  border-color: rgba(226, 59, 59, 0.35) !important;
+}
+
+.theme-light .wb-pdf-step-tag {
+  color: #35323D !important;
+  background: #f1f0ea !important;
+  border-color: rgba(27, 25, 31, 0.2) !important;
+}
+
+.theme-light .wb-pdf-duration-tag {
+  color: #5B5562 !important;
+}
+
+.theme-light .wb-pdf-item-title {
+  color: #17151A !important;
+}
+
+.theme-light .wb-pdf-item-desc {
+  color: #35323D !important;
+}
+
+.theme-light .wb-pdf-competency-box {
+  background: #FBF9F3 !important;
+  border-color: rgba(27, 25, 31, 0.16) !important;
+}
+
+.theme-light .wb-pdf-competency-info strong {
+  color: #17151A !important;
+}
+
+.theme-light .wb-pdf-competency-info p {
+  color: #35323D !important;
+}
+
+.theme-light .wb-pdf-doc-footer {
+  border-top-color: rgba(27, 25, 31, 0.16) !important;
+}
+
+.theme-light .wb-pdf-auth-prepared {
+  color: #35323D !important;
+}
+
+.theme-light .wb-pdf-auth-approved {
+  color: #5B5562 !important;
+}
+
+.theme-light .btn-pdf-secondary {
+  background: #f1f0ea !important;
+  color: #35323D !important;
+  border-color: rgba(27, 25, 31, 0.2) !important;
 }

@@ -4,6 +4,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useLearnMode } from "../../contexts/LearnModeContext";
 import soundManager from "../../utilities/soundManager";
+import AnimatedHeading from "../Common/AnimatedHeading";
 import "./PlatformServices.css";
 
 // Register GSAP plugins
@@ -203,16 +204,11 @@ export default function PlatformServices() {
       <div className="services-container">
         {/* Section Master Header */}
         <div className="services-master-header" ref={headerRef}>
-          <div className="services-badge">
-            <span className="badge-dot" />
-            <span className="badge-text">CORE FEATURES // WHAT YOU CAN DO</span>
-          </div>
-          <h2 className="services-headline">
-            Everything You Need to Build Your PC with Confidence
-          </h2>
-          <p className="services-subheadline">
-            Learn step-by-step assembly, check if your parts fit together, calculate power usage, and compare builds — all in an easy, risk-free 3D simulator.
-          </p>
+          <AnimatedHeading
+            as="h2"
+            className="services-headline"
+            lines={["Everything You Need", "to Build Your PC", "with Confidence"]}
+          />
         </div>
 
         {/* ── SERVICE 1: 2D BUILD STATION (2 COLUMNS: LEFT CARD, RIGHT NARRATIVE) ── */}
@@ -263,8 +259,12 @@ export default function PlatformServices() {
 
           {/* Column 2: Editorial Narrative */}
           <div className="service-text-bay">
-            <div className="service-kicker-tag">FEATURE 01 // 2D BUILD STATION</div>
-            <h3 className="service-title">Assemble Your Rig Step by Step in 2D</h3>
+            <AnimatedHeading
+              as="h3"
+              className="service-title"
+              lines={["Assemble Your Rig", "Step by Step in 2D"]}
+              underline={false}
+            />
             <p className="service-description">
               Pick a part across seven hardware stages, compare options side by side, and get instant compatibility feedback while you build. Every choice is verified before you commit to a full configuration.
             </p>
@@ -275,8 +275,12 @@ export default function PlatformServices() {
         <div id="service-compare" className="service-showcase-row right-card-left-text">
           {/* Column 1: Editorial Narrative & Action */}
           <div className="service-text-bay">
-            <div className="service-kicker-tag kicker-amber">FEATURE 02 // SIDE-BY-SIDE COMPARISON</div>
-            <h3 className="service-title">Compare Two PC Builds Side by Side</h3>
+            <AnimatedHeading
+              as="h3"
+              className="service-title"
+              lines={["Compare Two PC Builds", "Side by Side"]}
+              underline={false}
+            />
             <p className="service-description">
               Not sure which PC fits your budget? Compare two computer builds side by side. Easily see differences in price, gaming speed (FPS), parts, and future upgrade options so you pick the best one for your needs.
             </p>
@@ -435,8 +439,12 @@ export default function PlatformServices() {
 
           {/* Column 2: Editorial Narrative & Action */}
           <div className="service-text-bay">
-            <div className="service-kicker-tag">FEATURE 03 // HEAD-TO-HEAD COMPATIBILITY AUDIT</div>
-            <h3 className="service-title">Dual-Rig Compatibility &amp; Performance Overview</h3>
+            <AnimatedHeading
+              as="h3"
+              className="service-title"
+              lines={["Dual-Rig Compatibility", "& Performance Overview"]}
+              underline={false}
+            />
             <p className="service-description">
               Real-time differential analysis between Rig 01 (Workbench) and Rig 02 (Custom Manual). Compare wattage, gaming scores, and productivity at a glance while BuildLab audits both configurations for conflicts.
             </p>
@@ -448,8 +456,12 @@ export default function PlatformServices() {
         <div id="service-academy" className="service-showcase-row right-card-left-text">
           {/* Column 2: Editorial Narrative & Action */}
           <div className="service-text-bay">
-            <div className="service-kicker-tag kicker-emerald">FEATURE 04 // STEP-BY-STEP LESSONS</div>
-            <h3 className="service-title">Learn How to Build a PC with Interactive Lessons</h3>
+            <AnimatedHeading
+              as="h3"
+              className="service-title"
+              lines={["Learn How to Build a PC", "with Interactive Lessons"]}
+              underline={false}
+            />
             <p className="service-description">
               Designed for students and beginners. Learn how computer hardware works through 5 interactive modules and 13 easy lessons. Practice online at your own pace so you can assemble a real PC with confidence without breaking expensive parts.
             </p>
@@ -551,8 +563,12 @@ export default function PlatformServices() {
           </div>
           {/* Column 1: Editorial Narrative & Action */}
           <div className="service-text-bay">
-            <div className="service-kicker-tag kicker-sky">FEATURE 05 // 3D VIRTUAL SIMULATOR</div>
-            <h3 className="service-title">Inspect &amp; Assemble in Full 360&deg; 3D</h3>
+            <AnimatedHeading
+              as="h3"
+              className="service-title"
+              lines={["Inspect & Assemble", "in Full 360° 3D"]}
+              underline={false}
+            />
             <p className="service-description">
               Explore your computer in full 3D before you build it in real life. Rotate the case 360 degrees, zoom in on parts, and use Exploded View to see how the motherboard, graphics card, cooler, and fans fit together inside.
             </p>

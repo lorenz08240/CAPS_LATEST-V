@@ -5,9 +5,8 @@ import html2canvas from "html2canvas";
 import { useLearnMode } from "../../contexts/LearnModeContext";
 import soundManager from "../../utilities/soundManager";
 import { computeStudentAcademicStanding } from "./moduleQuizzes";
+import { TOTAL_TOPICS_COUNT } from "./curriculumData";
 import "./CertificationPage.css";
-
-const TOTAL_TOPICS_COUNT = 17;
 
 const readProgress = (email) => {
   try {
@@ -66,7 +65,12 @@ export default function CertificationPage() {
     return computeStudentAcademicStanding(email);
   }, [email]);
 
-  const isCertEligible = isAllLessonsDone;
+  const allQuizzesPassed = Boolean(standing?.allPassed);
+
+  // Certificate requires: every topic watched + checked, all 7 module quizzes
+  // passed, and BOTH practical labs (assembly + disassembly) completed.
+  const isCertEligible =
+    isAllLessonsDone && allQuizzesPassed && isAssemblyDone && isDisassemblyDone;
   const isAllComplete = isCertEligible;
 
   // Certificate ID generation
@@ -194,8 +198,20 @@ export default function CertificationPage() {
               
               <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "12px" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", color: isAllLessonsDone ? "#16a34a" : "#f59e0b", fontWeight: "700" }}>
-                  <span>{isAllLessonsDone ? "✓" : "○"} All 17 Curriculum Topics Across Modules 1–7</span>
+                  <span>{isAllLessonsDone ? "✓" : "○"} Lecture watched + quick check passed (all {TOTAL_TOPICS_COUNT} topics)</span>
                   <span>{completed.length} / {TOTAL_TOPICS_COUNT} Topics</span>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", color: allQuizzesPassed ? "#16a34a" : "#f59e0b", fontWeight: "700" }}>
+                  <span>{allQuizzesPassed ? "✓" : "○"} All 7 module assessments passed (75%)</span>
+                  <span>{standing?.passedModulesCount || 0} / 7 Quizzes</span>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", color: isAssemblyDone ? "#16a34a" : "#f59e0b", fontWeight: "700" }}>
+                  <span>{isAssemblyDone ? "✓" : "○"} 3D assembly + POST practical</span>
+                  <span>{isAssemblyDone ? "Verified" : "Pending"}</span>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", color: isDisassemblyDone ? "#16a34a" : "#f59e0b", fontWeight: "700" }}>
+                  <span>{isDisassemblyDone ? "✓" : "○"} 3D reverse-order disassembly practical</span>
+                  <span>{isDisassemblyDone ? "Verified" : "Pending"}</span>
                 </div>
               </div>
             </div>

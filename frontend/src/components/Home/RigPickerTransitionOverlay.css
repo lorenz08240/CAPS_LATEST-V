@@ -7,8 +7,8 @@
   position: fixed;
   inset: 0;
   z-index: 99999;
-  background: #1a120b;
-  color: #e5e5cb;
+  background: #17151A;
+  color: #F4F1E9;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -110,7 +110,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #f43f5e;
+  color: #F04B4B;
   font-size: 1rem;
   font-weight: 900;
   box-shadow: 0 0 20px rgba(244, 63, 94, 0.35);
@@ -141,7 +141,7 @@
   display: flex;
   align-items: center;
   gap: 0.8rem;
-  background: rgba(15, 23, 42, 0.65);
+  background: rgba(23, 21, 26, 0.65);
   border: 1px solid rgba(255, 255, 255, 0.12);
   padding: 0.5rem 1.25rem;
   border-radius: 9999px;
@@ -245,7 +245,7 @@
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.22em;
-  color: #f43f5e;
+  color: #F04B4B;
   text-transform: uppercase;
   margin-bottom: 1.6rem;
   box-shadow: 0 0 20px rgba(244, 63, 94, 0.15);
@@ -301,7 +301,7 @@
   align-items: center;
   gap: 1.2rem;
   padding: 0.55rem 1.4rem;
-  background: rgba(15, 23, 42, 0.5);
+  background: rgba(23, 21, 26, 0.5);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
   backdrop-filter: blur(12px);
@@ -320,8 +320,8 @@
 }
 
 .rig-dot.active-rose {
-  background: #f43f5e;
-  box-shadow: 0 0 8px #f43f5e;
+  background: #F04B4B;
+  box-shadow: 0 0 8px #F04B4B;
 }
 
 .rig-dot.active-cyan {
@@ -358,7 +358,7 @@
 }
 
 .tag-rose {
-  color: #f43f5e;
+  color: #F04B4B;
 }
 
 .tag-cyan {

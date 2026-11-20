@@ -66,7 +66,7 @@
   border-radius: 6px;
   font-size: 10px;
   font-weight: 800;
-  color: #f43f5e;
+  color: #F04B4B;
 }
 
 .step-title {
@@ -87,7 +87,7 @@
 }
 
 .account-modal-close:hover {
-  color: #f43f5e;
+  color: #F04B4B;
 }
 
 .account-step-body {
@@ -394,7 +394,7 @@
   background: rgba(244, 63, 94, 0.15);
   border: 1px solid rgba(244, 63, 94, 0.45);
   border-radius: 10px;
-  color: #fca5a5;
+  color: #F58A8A;
   font-size: 12px;
   margin-bottom: 16px;
 }
@@ -484,25 +484,25 @@
 /* ── LIGHT THEME STYLING ── */
 body.theme-light .account-modal-overlay,
 .theme-light .account-modal-overlay {
-  background: rgba(15, 23, 42, 0.45);
+  background: rgba(23, 21, 26, 0.45);
 }
 
 body.theme-light .account-modal-card,
 .theme-light .account-modal-card {
   background: #ffffff;
-  border: 1px solid rgba(15, 23, 42, 0.12);
-  box-shadow: 0 24px 64px rgba(15, 23, 42, 0.14);
-  color: #0f172a;
+  border: 1px solid rgba(23, 21, 26, 0.12);
+  box-shadow: 0 24px 64px rgba(23, 21, 26, 0.14);
+  color: #17151A;
 }
 
 body.theme-light .account-modal-header,
 .theme-light .account-modal-header {
-  border-bottom-color: rgba(15, 23, 42, 0.08);
+  border-bottom-color: rgba(23, 21, 26, 0.08);
 }
 
 body.theme-light .account-title-text h3,
 .theme-light .account-title-text h3 {
-  color: #0f172a;
+  color: #17151A;
 }
 
 body.theme-light .account-title-text p,
@@ -518,26 +518,26 @@ body.theme-light .account-field-label,
 body.theme-light .account-field-input,
 .theme-light .account-field-input {
   background: #f8fafc;
-  border-color: rgba(15, 23, 42, 0.14);
-  color: #0f172a;
+  border-color: rgba(23, 21, 26, 0.14);
+  color: #17151A;
 }
 
 body.theme-light .account-field-input:focus,
 .theme-light .account-field-input:focus {
-  border-color: #3c2a21;
+  border-color: #35323D;
   background: #ffffff;
 }
 
 body.theme-light .account-status-card,
 .theme-light .account-status-card {
   background: #f8fafc;
-  border-color: rgba(15, 23, 42, 0.1);
-  color: #0f172a;
+  border-color: rgba(23, 21, 26, 0.1);
+  color: #17151A;
 }
 
 body.theme-light .account-user-name,
 .theme-light .account-user-name {
-  color: #0f172a;
+  color: #17151A;
 }
 
 body.theme-light .account-user-email,
@@ -577,7 +577,7 @@ body.theme-light .account-user-email,
 .account-select {
   width: 100%;
   padding: 10px 14px;
-  background: rgba(15, 23, 42, 0.75);
+  background: rgba(23, 21, 26, 0.75);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 10px;
   color: #f8fafc;
@@ -667,20 +667,20 @@ body.theme-light .account-user-email,
 body.theme-light .account-select,
 .theme-light .account-select {
   background: #f8fafc;
-  border-color: rgba(15, 23, 42, 0.15);
-  color: #0f172a;
+  border-color: rgba(23, 21, 26, 0.15);
+  color: #17151A;
 }
 
 body.theme-light .account-select option,
 .theme-light .account-select option {
   background: #ffffff;
-  color: #0f172a;
+  color: #17151A;
 }
 
 body.theme-light .interest-card-pill,
 .theme-light .interest-card-pill {
   background: #f8fafc;
-  border-color: rgba(15, 23, 42, 0.12);
+  border-color: rgba(23, 21, 26, 0.12);
   color: #334155;
 }
 
@@ -688,13 +688,13 @@ body.theme-light .interest-card-pill:hover,
 .theme-light .interest-card-pill:hover {
   background: rgba(5, 150, 105, 0.06);
   border-color: rgba(5, 150, 105, 0.35);
-  color: #0f172a;
+  color: #17151A;
 }
 
 body.theme-light .interest-card-pill.is-selected,
 .theme-light .interest-card-pill.is-selected {
   background: #ecfdf5;
-  border-color: #3c2a21;
+  border-color: #35323D;
   color: #064e3b;
   box-shadow: 0 0 12px rgba(5, 150, 105, 0.15);
 }
@@ -718,7 +718,7 @@ body.theme-light .interest-card-pill.is-selected,
 }
 
 .account-terms-agreement.is-error {
-  border-color: #f43f5e;
+  border-color: #F04B4B;
   background: rgba(244, 63, 94, 0.08);
   box-shadow: 0 0 16px rgba(244, 63, 94, 0.25);
   animation: termsShakeAnim 0.4s ease-in-out;
@@ -752,7 +752,7 @@ body.theme-light .interest-card-pill.is-selected,
   height: 18px;
   margin-top: 2px;
   border-radius: 5px;
-  background: rgba(15, 23, 42, 0.8);
+  background: rgba(23, 21, 26, 0.8);
   border: 1.5px solid rgba(255, 255, 255, 0.35);
   display: flex;
   align-items: center;
@@ -821,13 +821,13 @@ body.theme-light .interest-card-pill.is-selected,
 body.theme-light .account-terms-agreement,
 .theme-light .account-terms-agreement {
   background: #f8fafc;
-  border-color: rgba(15, 23, 42, 0.14);
+  border-color: rgba(23, 21, 26, 0.14);
 }
 
 body.theme-light .terms-checkbox-custom,
 .theme-light .terms-checkbox-custom {
   background: #ffffff;
-  border-color: rgba(15, 23, 42, 0.3);
+  border-color: rgba(23, 21, 26, 0.3);
 }
 
 body.theme-light .terms-agreement-text,

@@ -35,7 +35,7 @@
   justify-content: space-between;
   gap: 0.75rem;
   padding: 0.85rem 1.1rem;
-  background: rgba(15, 23, 42, 0.82);
+  background: rgba(23, 21, 26, 0.82);
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 14px;
   backdrop-filter: blur(12px);
@@ -101,7 +101,7 @@
 .legal-hero-card {
   padding: 2rem;
   border-radius: 16px;
-  background: linear-gradient(145deg, rgba(15, 23, 42, 0.92), rgba(10, 14, 23, 0.96));
+  background: linear-gradient(145deg, rgba(23, 21, 26, 0.92), rgba(10, 14, 23, 0.96));
   border: 1px solid rgba(255, 255, 255, 0.16);
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
 }
@@ -167,7 +167,7 @@
 .legal-section-card {
   padding: 1.65rem 1.85rem;
   border-radius: 14px;
-  background: rgba(15, 23, 42, 0.84);
+  background: rgba(23, 21, 26, 0.84);
   border: 1px solid rgba(148, 163, 184, 0.14);
 }
 
@@ -257,7 +257,7 @@
 .legal-storage-item {
   padding: 0.85rem;
   border-radius: 10px;
-  background: rgba(15, 23, 42, 0.9);
+  background: rgba(23, 21, 26, 0.9);
   border: 1px solid rgba(148, 163, 184, 0.12);
 }
 
@@ -333,20 +333,20 @@
 /* Light theme compatibility */
 .theme-light .legal-page {
   background: #f8fafc;
-  color: #0f172a;
+  color: #17151A;
 }
 
 .theme-light .legal-topbar,
 .theme-light .legal-hero-card,
 .theme-light .legal-section-card {
   background: #ffffff;
-  border-color: rgba(15, 23, 42, 0.12);
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+  border-color: rgba(23, 21, 26, 0.12);
+  box-shadow: 0 8px 24px rgba(23, 21, 26, 0.06);
 }
 
 .theme-light .legal-title,
 .theme-light .storage-group-head h3 {
-  color: #0f172a;
+  color: #17151A;
 }
 
 .theme-light .legal-subtitle,
@@ -364,7 +364,7 @@
 .theme-light .legal-storage-group,
 .theme-light .legal-storage-item {
   background: #f1f5f9;
-  border-color: rgba(15, 23, 42, 0.1);
+  border-color: rgba(23, 21, 26, 0.1);
 }
 
 .theme-light .legal-tab-pill {

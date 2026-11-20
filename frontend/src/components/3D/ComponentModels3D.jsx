@@ -159,11 +159,11 @@ export default function ComponentModels3D({
 
             <mesh position={[0.1, 0.55, 0.22]}>
               <boxGeometry args={[0.18, 0.18, 0.18]} />
-              <meshStandardMaterial color="#0f172a" metalness={0.9} />
+              <meshStandardMaterial color="#17151A" metalness={0.9} />
             </mesh>
             <mesh position={[0.1, 0.55, -0.22]}>
               <boxGeometry args={[0.18, 0.18, 0.18]} />
-              <meshStandardMaterial color="#0f172a" metalness={0.9} />
+              <meshStandardMaterial color="#17151A" metalness={0.9} />
             </mesh>
           </group>
 
@@ -175,16 +175,16 @@ export default function ComponentModels3D({
 
             <mesh position={[0, -0.13, 0]}>
               <boxGeometry args={[1.6, 0.02, 4.4]} />
-              <meshStandardMaterial color="#0f172a" roughness={0.95} wireframe />
+              <meshStandardMaterial color="#17151A" roughness={0.95} wireframe />
             </mesh>
 
             <mesh position={[0, 0, -2.4]}>
               <boxGeometry args={[1.8, 0.26, 0.35]} />
-              <meshStandardMaterial color="#0f172a" metalness={0.9} roughness={0.2} />
+              <meshStandardMaterial color="#17151A" metalness={0.9} roughness={0.2} />
             </mesh>
             <mesh position={[0, 0, 2.4]}>
               <boxGeometry args={[1.8, 0.26, 0.35]} />
-              <meshStandardMaterial color="#0f172a" metalness={0.9} roughness={0.2} />
+              <meshStandardMaterial color="#17151A" metalness={0.9} roughness={0.2} />
             </mesh>
 
             <mesh position={[-0.4, -0.15, -2.1]} rotation={[Math.PI / 2, 0, 0]}>

@@ -2,8 +2,8 @@
 
 .certification-page-wrap {
   min-height: 100vh;
-  background: #1a120b;
-  color: #e5e5cb;
+  background: #17151A;
+  color: #F4F1E9;
   padding: 80px 24px 60px;
   font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   box-sizing: border-box;
@@ -18,7 +18,7 @@
   gap: 16px;
   flex-wrap: wrap;
   padding: 14px 20px;
-  background: rgba(15, 23, 42, 0.7);
+  background: rgba(23, 21, 26, 0.7);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   backdrop-filter: blur(10px);
@@ -93,7 +93,7 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+  background: linear-gradient(135deg, #F04B4B 0%, #E23B3B 100%);
   color: #ffffff;
   border: none;
   border-radius: 8px;
@@ -120,8 +120,8 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: linear-gradient(135deg, #d5cea3 0%, #e5e5cb 100%);
-  color: #1a120b;
+  background: linear-gradient(135deg, #D3CDC6 0%, #F4F1E9 100%);
+  color: #17151A;
   border: none;
   border-radius: 8px;
   padding: 8px 16px;
@@ -176,8 +176,8 @@
 }
 
 .name-save-btn {
-  background: #d5cea3;
-  color: #1a120b;
+  background: #D3CDC6;
+  color: #17151A;
   font-weight: 800;
   border: none;
   border-radius: 8px;
@@ -353,7 +353,7 @@
   grid-template-columns: repeat(4, 1fr);
   gap: 16px;
   padding: 16px 20px;
-  background: rgba(15, 23, 42, 0.6);
+  background: rgba(23, 21, 26, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 8px;
   margin-bottom: 24px;
@@ -528,7 +528,7 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, transparent, #f43f5e, #fb7185, transparent);
+  background: linear-gradient(90deg, transparent, #F04B4B, #F26A6A, transparent);
 }
 
 .cert-locked-badge {
@@ -542,7 +542,7 @@
   font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.1em;
-  color: #fb7185;
+  color: #F26A6A;
   text-transform: uppercase;
   margin-bottom: 20px;
 }
@@ -551,8 +551,8 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #f43f5e;
-  box-shadow: 0 0 8px #f43f5e;
+  background: #F04B4B;
+  box-shadow: 0 0 8px #F04B4B;
   animation: certLockPulse 2s infinite ease-in-out;
 }
 
@@ -584,7 +584,7 @@
 }
 
 .cert-locked-progress-card {
-  background: rgba(15, 23, 42, 0.7);
+  background: rgba(23, 21, 26, 0.7);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
   padding: 16px 20px;
@@ -656,7 +656,7 @@ body.theme-light .certification-page-wrap,
 .theme-light .certification-page-wrap,
 [data-theme="light"] .certification-page-wrap {
   background: #f7f4ee;
-  color: #1a120b;
+  color: #17151A;
 }
 
 body.theme-light .cert-action-bar,
@@ -676,7 +676,7 @@ body.theme-light .cert-nav-back,
 body.theme-light .cert-nav-back:hover,
 .theme-light .cert-nav-back:hover,
 [data-theme="light"] .cert-nav-back:hover {
-  color: #0f172a;
+  color: #17151A;
 }
 
 body.theme-light .cert-status-pill,
@@ -684,7 +684,7 @@ body.theme-light .cert-status-pill,
 [data-theme="light"] .cert-status-pill {
   background: rgba(26, 18, 11, 0.06);
   border: 1px solid rgba(26, 18, 11, 0.14);
-  color: #1a120b;
+  color: #17151A;
 }
 
 body.theme-light .cert-btn-edit,
@@ -719,7 +719,7 @@ body.theme-light .cert-locked-card,
 body.theme-light .cert-locked-title,
 .theme-light .cert-locked-title,
 [data-theme="light"] .cert-locked-title {
-  color: #1a120b;
+  color: #17151A;
 }
 
 body.theme-light .cert-locked-desc,
@@ -744,7 +744,7 @@ body.theme-light .cert-locked-progress-head,
 body.theme-light .cert-locked-progress-head strong,
 .theme-light .cert-locked-progress-head strong,
 [data-theme="light"] .cert-locked-progress-head strong {
-  color: #0f172a;
+  color: #17151A;
 }
 
 body.theme-light .cert-locked-progress-track,
@@ -778,7 +778,7 @@ body.theme-light .name-edit-input,
 [data-theme="light"] .name-edit-input {
   background: #f8fafc;
   border: 1px solid #cbd5e1;
-  color: #0f172a;
+  color: #17151A;
 }
 
 

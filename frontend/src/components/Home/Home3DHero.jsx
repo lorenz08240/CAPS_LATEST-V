@@ -415,7 +415,7 @@ function FluidScene({ onStageChange, rgbColor, scrollProgress = 0, isInteracting
         scale={7.5} 
         blur={2.4} 
         far={4.0} 
-        color={isDark ? '#000000' : '#0f172a'} 
+        color={isDark ? '#000000' : '#17151A'} 
       />
     </group>
   );

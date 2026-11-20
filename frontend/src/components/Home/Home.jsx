@@ -11,7 +11,6 @@ import CyberBrand from "../Navigation/CyberBrand";
 import StageUnlockBanner from "../Navigation/StageUnlockBanner";
 import ModeSelectionCards from "./ModeSelectionCards";
 import RigPickerTransitionOverlay from "./RigPickerTransitionOverlay";
-import { useSidebar } from "../../contexts/SidebarContext";
 import { useLearnMode } from "../../contexts/LearnModeContext";
 import { enterFullscreen } from "../../utilities/fullscreen";
 import soundManager from "../../utilities/soundManager";
@@ -75,8 +74,7 @@ const HERO_DYNAMIC_CONTEXTS = {
 
 function Home() {
   const navigate = useNavigate();
-  const { toggleSidebar } = useSidebar();
-  const { mode, setAppMode, userProfile, unlockedStages, logoutLearner } = useLearnMode();
+  const { mode, setAppMode, userProfile, unlockedStages } = useLearnMode();
   const [showModeCards, setShowModeCards] = useState(false);
   const [showTransitionOverlay, setShowTransitionOverlay] = useState(false);
 
@@ -260,6 +258,23 @@ function Home() {
       }
     };
 
+    const handleCompatibilityNavClick = () => {
+      try { soundManager.click(); } catch { }
+
+      // Hero/top: direct entrance into the Compatibility screen.
+      // Once scrolled: land on the "Compare Two PC Builds Side by Side" area
+      // on this page, not the smaller compatibility card further down.
+      if (isScrolledDown) {
+        const compareSection = document.getElementById("service-compare");
+        if (compareSection) {
+          compareSection.scrollIntoView({ behavior: "smooth", block: "start" });
+          return;
+        }
+      }
+
+      navigate('/compatibility');
+    };
+
     const handleLaunch3DStudio = () => {
       if (mode === "learn" && !unlockedStages.includes("studio") && !unlockedStages.includes("3d")) {
         soundManager.warning();
@@ -283,7 +298,9 @@ function Home() {
 
       const handleScroll = () => {
         const currentScroll = window.scrollY || window.pageYOffset || 0;
-        setIsScrolledDown(currentScroll > 90);
+        // Hysteresis: turn on at 40px, off only below 8px. A single threshold
+        // makes tiny scroll jitter retrigger the nav crossfade.
+        setIsScrolledDown((prev) => (prev ? currentScroll > 8 : currentScroll > 40));
 
         // LEARN nav item only appears once the services/course plate comes into view.
         const servicesPlate = document.getElementById("platform-services");
@@ -337,69 +354,87 @@ function Home() {
             <header className={`cyber-top-nav ${isScrolledDown ? "is-scrolled" : ""}`}>
               <CyberBrand onNavigateHome={handleNavigateHome} />
 
-              <nav className="cyber-nav-links">
-                <button
-                  type="button"
-                  className="cyber-nav-link active"
-                  onClick={handleNavigateHome}
+              <div className="cyber-nav-switch">
+                <nav
+                  className={`cyber-nav-links cyber-nav-state ${isScrolledDown ? "" : "is-visible"}`}
+                  aria-hidden={isScrolledDown}
                 >
-                  HOME
-                </button>
-                {/* BUILD: Removed per user request */}
-                {/* 3D STUDIO: Button Gone per user request */}
-                {isScrolledDown && (
                   <button
                     type="button"
-                    className="cyber-nav-link nav-reveal-item"
-                    onClick={handleOpenCompatibility}
+                    className="cyber-nav-link active"
+                    onClick={handleNavigateHome}
+                    tabIndex={isScrolledDown ? -1 : 0}
+                  >
+                    HOME
+                  </button>
+                  <button
+                    type="button"
+                    className="cyber-nav-link"
+                    onClick={handleScrollToBrands}
+                    tabIndex={isScrolledDown ? -1 : 0}
+                  >
+                    BRANDS
+                  </button>
+                  <button
+                    type="button"
+                    className="cyber-nav-link"
+                    onClick={() => { soundManager.click(); navigate('/about'); }}
+                    tabIndex={isScrolledDown ? -1 : 0}
+                  >
+                    ABOUT US
+                  </button>
+                </nav>
+
+                <nav
+                  className={`cyber-nav-links cyber-nav-state ${isScrolledDown ? "is-visible" : ""}`}
+                  aria-hidden={!isScrolledDown}
+                >
+                  <button
+                    type="button"
+                    className="cyber-nav-link active"
+                    onClick={handleNavigateHome}
+                    tabIndex={isScrolledDown ? 0 : -1}
+                  >
+                    HOME
+                  </button>
+                  {/* BUILD: Removed per user request */}
+                  {/* 3D STUDIO: Button Gone per user request */}
+                  <button
+                    type="button"
+                    className="cyber-nav-link"
+                    onClick={handleCompatibilityNavClick}
+                    tabIndex={isScrolledDown ? 0 : -1}
                   >
                     COMPATIBILITY
                   </button>
-                )}
-                {showLearnNav && (
                   <button
                     type="button"
-                    className="cyber-nav-link nav-reveal-item"
+                    className={`cyber-nav-link nav-learn-fade ${showLearnNav ? "is-visible" : ""}`}
                     onClick={handleLearnNavClick}
+                    aria-hidden={!showLearnNav}
+                    tabIndex={isScrolledDown && showLearnNav ? 0 : -1}
                   >
                     LEARN
                   </button>
-                )}
-                <button
-                  type="button"
-                  className="cyber-nav-link"
-                  onClick={handleScrollToBrands}
-                >
-                  BRANDS
-                </button>
-                <button
-                  type="button"
-                  className="cyber-nav-link"
-                  onClick={() => { soundManager.click(); navigate('/about'); }}
-                >
-                  ABOUT US
-                </button>
-              </nav>
+                  <button
+                    type="button"
+                    className="cyber-nav-link"
+                    onClick={handleScrollToBrands}
+                    tabIndex={isScrolledDown ? 0 : -1}
+                  >
+                    BRANDS
+                  </button>
+                  <button
+                    type="button"
+                    className="cyber-nav-link"
+                    onClick={() => { soundManager.click(); navigate('/about'); }}
+                    tabIndex={isScrolledDown ? 0 : -1}
+                  >
+                    ABOUT US
+                  </button>
+                </nav>
+              </div>
             </header>
-
-            <aside className="cyber-left-rail">
-              <div className="rail-top-icon" onClick={toggleSidebar} title="Toggle Command Deck [ [ ]" style={{ cursor: "pointer" }}>
-                <span className="cyber-square-icon" />
-              </div>
-              <div className="rail-vertical-label">BUILDLAB // HARDWARE LAB</div>
-              <div
-                className="rail-scroll-indicator"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleScrollToBuild("smooth");
-                }}
-                style={{ cursor: "pointer" }}
-              >
-                <span className="scroll-pulse-dot" />
-                <span className="scroll-v-text">SCROLL DOWN</span>
-                <span className="scroll-v-line" />
-              </div>
-            </aside>
 
             <div
               className="cyber-giant-text-backdrop"
@@ -437,22 +472,12 @@ function Home() {
             <div className="cyber-editorial-grid">
               <div className="cyber-editorial-col cyber-col-left" ref={leftColRef}>
                 <div className="cyber-editorial-content" ref={leftContentRef}>
-                  <div className="cyber-tag-badge">
-                    <span className="tag-bracket">[</span>
-                    <span className="tag-dot" />
-                    <span className="tag-text">{activeContext.tag}</span>
-                    <span className="tag-bracket">]</span>
-                  </div>
                   <h2 className="cyber-col-title">{activeContext.title}</h2>
                   <p className="cyber-col-desc">{activeContext.desc}</p>
                 </div>
               </div>
 
               <div className="cyber-editorial-col cyber-col-right">
-                <div className="cyber-meta-header" ref={rightMetaRef}>
-                  <span className="meta-kicker">{STAGE_META[displayedModel]?.name || 'EASY 3D PC BUILDER'}</span>
-                  <span className="meta-counter">{STAGE_META[displayedModel]?.num || '01'} / 07</span>
-                </div>
                 <h2 className="cyber-col-title">BUILDLAB SUITE</h2>
                 <p className="cyber-col-desc">
                   Build your dream PC in 3D before you buy. We test every part to make sure your processor fits your motherboard, your cooler fits your case, and your power supply has plenty of wattage.
@@ -473,23 +498,14 @@ function Home() {
             {/* Centered START / RESUME COURSE Action Button */}
             <div className="cyber-hero-center-action">
               {isStudentSignedIn && (
-                <div className="hero-learner-status-badge">
-                  <span className="learner-dot" />
-                  <span>Welcome back, {userProfile.fullName || "Student"} • Grade 11 CSS Track</span>
-                  <button
-                    type="button"
-                    className="hero-switch-free-btn"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      try { soundManager.click(); } catch {}
-                      logoutLearner();
-                    }}
-                    title="Reset website and switch back to Free Mode"
-                  >
-                    (Back to Free Mode)
-                  </button>
-                </div>
+                <Link
+                  to="/dashboard"
+                  className="hero-learner-welcome"
+                  onClick={() => { try { soundManager.click(); } catch {} }}
+                  title="Open student profile overview"
+                >
+                  Welcome back, {userProfile.fullName || userProfile.email || "Student"}
+                </Link>
               )}
               <button
                 type="button"

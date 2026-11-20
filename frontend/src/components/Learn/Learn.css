@@ -2,7 +2,7 @@
 .learn-page {
   min-height: 100vh;
   width: 100%;
-  background-color: #141414;
+  background-color: #1A1820;
   background-image:
     linear-gradient(rgba(11, 15, 26, 0.72), rgba(11, 15, 26, 0.88)),
     url("/assets/waves_dark_bg.jpg");
@@ -152,7 +152,7 @@
   display: flex;
   align-items: center;
   gap: 0.45rem;
-  background: rgba(15, 23, 42, 0.65);
+  background: rgba(23, 21, 26, 0.65);
   border: 1px solid rgba(255, 255, 255, 0.12);
   color: #cbd5e1;
   font-size: 0.76rem;
@@ -173,7 +173,7 @@
 }
 
 .hero-dock-pill.active {
-  background: rgba(15, 23, 42, 0.95);
+  background: rgba(23, 21, 26, 0.95);
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
 }
 
@@ -788,7 +788,7 @@
 
 .btn-cell-fix {
   background: rgba(239, 68, 68, 0.18);
-  border: 1px solid #ef4444;
+  border: 1px solid #E23B3B;
   color: #fecaca;
   font-size: 0.72rem;
   font-weight: 700;
@@ -964,7 +964,7 @@
 
 .error-badge-pill {
   background: rgba(239, 68, 68, 0.2);
-  color: #fca5a5;
+  color: #F58A8A;
   font-size: 0.65rem;
   font-weight: 800;
   padding: 0.15rem 0.5rem;
@@ -1035,7 +1035,7 @@
 
 .quiz-choice-btn.opt-wrong {
   background: rgba(239, 68, 68, 0.12) !important;
-  border-color: #ef4444 !important;
+  border-color: #E23B3B !important;
   color: #f87171 !important;
 }
 
@@ -1109,7 +1109,7 @@
 
 .mistake-badge-btn:hover {
   background: rgba(239, 68, 68, 0.16);
-  border-color: #ef4444;
+  border-color: #E23B3B;
 }
 
 .m-icon {
@@ -1129,7 +1129,7 @@
   border-radius: 6px;
   padding: 0.6rem 0.85rem;
   font-size: 0.74rem;
-  color: #fca5a5;
+  color: #F58A8A;
   line-height: 1.4;
 }
 
@@ -1355,7 +1355,7 @@
 
 .installation-step-preview-container {
   background: rgba(13, 18, 31, 0.95);
-  border: 1px solid rgba(212, 163, 75, 0.3);
+  border: 1px solid rgba(232, 180, 160, 0.3);
   border-radius: 12px;
   padding: 1rem;
   display: flex;
@@ -1374,14 +1374,14 @@
   font-size: 0.75rem;
   font-weight: 800;
   text-transform: uppercase;
-  color: #f7d28b;
+  color: #E8B4A0;
   letter-spacing: 0.05em;
 }
 
 .step-preview-pause-btn {
-  background: rgba(212, 163, 75, 0.15);
-  border: 1px solid rgba(212, 163, 75, 0.35);
-  color: #f7d28b;
+  background: rgba(232, 180, 160, 0.15);
+  border: 1px solid rgba(232, 180, 160, 0.35);
+  color: #E8B4A0;
   padding: 4px 10px;
   border-radius: 6px;
   font-size: 0.72rem;
@@ -1391,7 +1391,7 @@
 }
 
 .step-preview-pause-btn:hover {
-  background: rgba(212, 163, 75, 0.3);
+  background: rgba(232, 180, 160, 0.3);
   color: #ffffff;
 }
 

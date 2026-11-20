@@ -152,10 +152,6 @@ function Footer() {
           <p className="copyright-text">
             &copy; {new Date().getFullYear()} BuildLab. Engineered by WhiteHats Consortium. All hardware trademarks belong to their respective owners.
           </p>
-          <div className="footer-status-pill">
-            <span className="status-live-dot" aria-hidden="true" />
-            <span>BUILDLAB V2.4 &bull; ACTIVE</span>
-          </div>
         </div>
       </div>
     </footer>
