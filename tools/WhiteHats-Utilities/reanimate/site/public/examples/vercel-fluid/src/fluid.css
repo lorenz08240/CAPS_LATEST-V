@@ -1,0 +1,207 @@
+/* vercel.com/fluid's hero at the sizes and colours it computes to (Geist design tokens), light and
+   dark. The few utility classes the ocean layer uses keep vercel.com's names. */
+
+@font-face {
+  font-family: "GeistSans";
+  src: url(../assets/fonts/GeistSans-Variable.woff2) format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+/* vercel.com's metric-matched stand-in: the hero is the same height before and after the font loads,
+   so the ocean is measured right the first time */
+@font-face {
+  font-family: "GeistSans Fallback";
+  src: local("Arial");
+  ascent-override: 94.56%;
+  descent-override: 27.76%;
+  line-gap-override: 0%;
+  size-adjust: 106.28%;
+}
+
+:root {
+  /* Geist tokens as vercel.com defines them (hsla, so the text edges round the same way) */
+  --background: hsla(0, 0%, 98%, 1);
+  --gray-1000: hsla(0, 0%, 9%, 1);
+  --gray-900: hsla(0, 0%, 30%, 1);
+  --button-bg: hsla(0, 0%, 9%, 1);
+  --button-fg: hsla(0, 0%, 100%, 1);
+  --button2-bg: hsla(0, 0%, 100%, 1);
+  --button2-fg: hsla(0, 0%, 9%, 1);
+  --button2-ring: hsla(0, 0%, 92%, 1);
+  color-scheme: light;
+}
+.dark-theme {
+  --background: hsla(0, 0%, 0%, 1);
+  --gray-1000: hsla(0, 0%, 93%, 1);
+  --gray-900: hsla(0, 0%, 63%, 1);
+  --button-bg: hsla(0, 0%, 93%, 1);
+  --button-fg: hsla(0, 0%, 4%, 1);
+  --button2-bg: hsla(0, 0%, 4%, 1);
+  --button2-fg: hsla(0, 0%, 93%, 1);
+  --button2-ring: hsla(0, 0%, 18%, 1);
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html {
+  background: var(--background);
+}
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--gray-1000);
+  font-family: GeistSans, "GeistSans Fallback", sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  font-feature-settings: "calt" 0, "rlig", "ss11";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ---------- the ocean layer (class names as on vercel.com) ---------- */
+
+.relative { position: relative; }
+.absolute { position: absolute; }
+.isolate { isolation: isolate; }
+.inset-0 { inset: 0; }
+.z-0 { z-index: 0; }
+.z-10 { z-index: 10; }
+.-z-10 { z-index: -10; }
+.h-full { height: 100%; }
+.w-full { width: 100%; }
+.overflow-hidden { overflow: hidden; }
+.pointer-events-none { pointer-events: none; }
+.select-none { user-select: none; -webkit-user-select: none; }
+.opacity-0 { opacity: 0; }
+.opacity-100 { opacity: 1; }
+.transition-opacity {
+  transition-property: opacity;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+.duration-700 { transition-duration: 700ms; }
+canvas.absolute { display: block; }
+
+.ocean-fallback { display: block; height: 100%; }
+.ocean-fallback--dark { display: none; }
+.dark-theme .ocean-fallback--light { display: none; }
+.dark-theme .ocean-fallback--dark { display: block; }
+.ocean-fallback__img {
+  display: block;
+  height: 100%;
+  width: auto;
+  max-width: none;
+  margin: 0 auto;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity 700ms cubic-bezier(0.4, 0, 0.2, 1);
+  mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+}
+.ocean-fallback__img.is-ready { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .ocean-fallback__img { transition: none; }
+}
+
+/* ---------- the hero copy ---------- */
+
+.hero__container {
+  container-type: inline-size;
+  max-width: 1448px;
+  margin: 0 auto;
+  padding: 0 24px;
+  overflow: visible;
+}
+.grid-cols-12 {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  align-items: end;
+  column-gap: 24px;
+  row-gap: 24px;
+  padding: 112px 0 48px;
+}
+.hero__main {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+.hero__side {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 32px;
+}
+@container (min-width: 64rem) {
+  .grid-cols-12 { padding: 168px 0 72px; }
+  .hero__main { grid-column: 1 / 7; }
+  .hero__side { grid-column: 8 / 13; }
+}
+
+.hero__title {
+  margin: 0;
+  max-width: 14ch;
+  font-size: 40px;
+  line-height: 48px;
+  font-weight: 450;
+  letter-spacing: -0.06em;
+  text-wrap: balance;
+  color: var(--gray-1000);
+}
+@container (min-width: 28rem) {
+  .grid-cols-12 { row-gap: 40px; }
+  .hero__title { font-size: 64px; line-height: 64px; }
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+.hero__button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  border-radius: 9999px;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 500;
+  text-decoration: none;
+  transform: translateZ(0); /* vercel.com's translate-z-0: its own layer, which sets how the label is rasterised */
+  background: var(--button-bg);
+  color: var(--button-fg);
+  transition: background 150ms ease-in-out, color 150ms ease-in-out;
+}
+.hero__button span {
+  display: inline-block;
+  padding: 0 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.hero__button--secondary {
+  background: var(--button2-bg);
+  color: var(--button2-fg);
+  box-shadow: 0 0 0 1px var(--button2-ring);
+}
+
+.text-copy-20 {
+  max-width: 46ch;
+  font-size: 18px;
+  line-height: 28px;
+  font-weight: 400;
+  text-wrap: balance;
+  color: var(--gray-900);
+}
+@container (min-width: 28rem) {
+  .text-copy-20 { font-size: 20px; line-height: 36px; }
+}

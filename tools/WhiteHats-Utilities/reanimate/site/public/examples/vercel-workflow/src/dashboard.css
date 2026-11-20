@@ -1,0 +1,352 @@
+/* The run inspector panel of vercel.com/workflow. Sizes, colours and type are the computed values on vercel.com
+   at a 1440 px wide window; the breakpoints are its container queries (md 601 px, lg 961 px of page width). */
+
+@font-face {
+  font-family: "Geist";
+  src: url(../assets/fonts/GeistSans-Variable.woff2) format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: block;
+}
+@font-face {
+  font-family: "Geist Mono";
+  src: url(../assets/fonts/GeistMono-Variable.woff2) format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: block;
+}
+
+:root {
+  --bg-100: #fff;
+  --bg-200: #fafafa;
+  --gray-100: #f2f2f2;
+  --gray-500: #c9c9c9;
+  --gray-700: #8f8f8f;
+  --gray-800: #7d7d7d;
+  --gray-900: #4d4d4d;
+  --gray-1000: #171717;
+  --gray-a200: rgb(0 0 0 / 0.08);
+  --gray-a300: rgb(0 0 0 / 0.1);
+  --gray-a400: rgb(0 0 0 / 0.08);
+  --blue-200: #ebf5ff;
+  --blue-700: #0072f5;
+  --green-100: #effbef;
+  --green-600: #6cda75;
+  --green-900: #297a3a;
+  --warning: #f5a623;
+  --cyan: #50e3c2;
+  --sans: "Geist", "Geist Fallback", Arial, sans-serif;
+  --mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, "Liberation Mono", "DejaVu Sans Mono", "Courier New", monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; border: 0 solid; }
+
+html {
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--gray-1000);
+  background: var(--bg-200);
+  font-feature-settings: "calt" 0, "rlig", "ss11";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  text-size-adjust: 100%;
+}
+body { padding: 120px 0; }
+[data-pushdown] body { padding: 1800px 0 900px; }
+svg { display: block; flex-shrink: 0; overflow: hidden; vertical-align: middle; shape-rendering: crispEdges; }
+svg path { shape-rendering: geometricPrecision; } /* both as vercel.com sets them */
+
+/* the page column: 1400 px + 24 px margins, the container the breakpoints measure */
+.vw-page { max-width: 1448px; margin: 0 auto; padding: 0 24px; container-type: inline-size; }
+/* vercel.com renders the section and the panel lazily (content-visibility: auto, as its <Defer> does). Besides
+   skipping off-screen work, that clips the glow and the fade to the panel's box, and it is why the run starts
+   a frame after the panel scrolls in: the observers see the bars on the frame after the panel is rendered. */
+.vw-frame { padding: 0 1px; content-visibility: auto; contain-intrinsic-height: auto 540px; }
+.vw-defer { content-visibility: auto; contain-intrinsic-height: auto 520px; }
+.vw-wrap { position: relative; padding: 1px; }
+
+.vw-glow {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -2%;
+  height: 52%;
+  z-index: -1;
+  background: radial-gradient(ellipse at center, var(--gray-100) 0%, transparent 70%);
+}
+.vw-fade {
+  position: absolute;
+  bottom: 0;
+  left: -1px;
+  right: -1px;
+  height: 20%;
+  pointer-events: none;
+  background: linear-gradient(rgb(250 250 250 / 0), var(--bg-200));
+}
+
+.vw-panel {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  overflow: hidden;
+  background: var(--bg-200);
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 1px 0 0 var(--bg-200), 0 0 0 1px var(--gray-a400);
+}
+
+/* ---------- sidebar ---------- */
+
+.vw-side {
+  position: relative;
+  display: none;
+  flex-shrink: 0;
+  width: 256px;
+  height: 536px;
+  overflow: hidden;
+  background: var(--bg-200);
+  border-right: 1px solid var(--gray-a400);
+}
+@container (min-width: 961px) { .vw-side { display: block; } }
+
+.vw-side__logo {
+  position: absolute;
+  left: 18px;
+  top: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: calc(infinity * 1px);
+  background: var(--gray-1000);
+}
+.vw-tri {
+  display: block;
+  width: 0;
+  height: 0;
+  margin-top: -2px;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-bottom: 7px solid var(--bg-100);
+}
+.vw-tri--lg { border-left-width: 4.5px; border-right-width: 4.5px; border-bottom-width: 8px; }
+
+.vw-side__team { position: absolute; left: 48.28px; top: 18px; font-size: 14px; line-height: 20px; font-weight: 500; }
+.vw-side__plan {
+  position: absolute;
+  left: 94px;
+  top: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 20px;
+  border-radius: calc(infinity * 1px);
+  background: var(--blue-200);
+  color: var(--blue-700);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+}
+.vw-side__switch { position: absolute; right: 20px; top: 20px; color: var(--gray-1000); }
+
+.vw-find {
+  position: absolute;
+  left: 8px;
+  top: 56px;
+  z-index: 10;
+  width: 240px;
+  height: 40px;
+  border-radius: 6px;
+  background: var(--bg-100);
+  box-shadow: 0 0 0 1px var(--gray-a400);
+}
+.vw-find__icon { position: absolute; left: 12px; top: 12px; color: var(--gray-700); }
+.vw-find__text { position: absolute; left: 41.288px; top: 10px; font-size: 14px; line-height: 20px; color: var(--gray-700); }
+.vw-find__key {
+  position: absolute;
+  right: 9px;
+  top: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--gray-a400);
+  border-radius: 6px;
+  background: var(--bg-100);
+  color: var(--gray-900);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+}
+
+.vw-nav {
+  position: absolute;
+  left: 8px;
+  display: flex;
+  align-items: center;
+  width: 240px;
+  height: 40px;
+  padding: 0 12px;
+  border-radius: 6px;
+}
+.vw-nav--on { background: var(--gray-a200); }
+.vw-nav__icon { display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: 16px; height: 16px; color: var(--gray-900); }
+.vw-nav--on .vw-nav__icon { color: var(--gray-800); }
+.vw-nav__label { margin-left: 13.288px; font-size: 14px; line-height: 20px; }
+.vw-nav__more { margin-left: auto; } /* text-gray-900 on vercel.com, overridden by its inline color: currentColor */
+
+.vw-side__rule { position: absolute; left: 20px; top: 401px; width: 216px; height: 1px; background: var(--gray-a400); }
+.vw-side__fade {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  width: 240px;
+  height: 8px;
+  pointer-events: none;
+  background: linear-gradient(rgb(250 250 250 / 0), var(--bg-200));
+}
+
+/* ---------- top bar ---------- */
+
+.vw-main { display: flex; flex: 1 1 0%; flex-direction: column; min-width: 0; }
+
+.vw-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--gray-a400);
+}
+.vw-top__project { display: flex; align-items: center; height: 32px; }
+.vw-top__logo { display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: 32px; height: 32px; }
+.vw-top__mark { display: flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: calc(infinity * 1px); background: var(--gray-1000); }
+.vw-top__name { margin-left: 4.588px; font-size: 14px; line-height: 20px; font-weight: 500; }
+.vw-top__switch { margin-left: 6px; } /* same */
+.vw-top__title { display: none; font-size: 14px; line-height: 20px; font-weight: 500; }
+@container (min-width: 601px) { .vw-top__title { display: inline; } }
+.vw-top__ask { display: flex; align-items: center; width: 117px; height: 32px; }
+.vw-dots { position: relative; flex-shrink: 0; width: 32px; height: 32px; }
+.vw-dots > span { position: absolute; width: 2.5px; height: 2.5px; border-radius: calc(infinity * 1px); background: currentColor; }
+.vw-top__ask-label { margin-left: 2.28px; font-size: 14px; line-height: 20px; font-weight: 500; }
+
+/* ---------- run ---------- */
+
+.vw-body { flex: 1 1 0%; }
+.vw-run { position: relative; display: flex; flex-direction: column; height: 100%; overflow: hidden; background: var(--bg-100); }
+
+.vw-head {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-shrink: 0;
+  gap: 12px;
+  padding: 16px 20px;
+  background: var(--bg-200);
+}
+.vw-head__line { display: flex; align-items: center; gap: 8px; width: 100%; overflow: hidden; }
+.vw-head__name { flex-shrink: 0; font-size: 16px; line-height: 20px; font-weight: 500; }
+.vw-head__id { display: flex; align-items: center; gap: 4px; min-width: 0; overflow: hidden; }
+/* text-label-16-mono has no rule on vercel.com, so the run id is set in the page's 16 px sans */
+.vw-head__run { display: none; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-weight: 500; color: var(--gray-900); }
+@container (min-width: 601px) { .vw-head__run { display: inline; } }
+.vw-head__copy { color: var(--gray-900); }
+.vw-head__rule { flex-shrink: 0; width: 1px; height: 16px; background: var(--gray-a400); }
+.vw-head__fill { flex: 1 1 0%; min-width: 1px; height: 1px; }
+
+.vw-status { display: flex; align-items: center; flex-shrink: 0; gap: 8px; overflow: hidden; }
+.vw-status__dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: calc(infinity * 1px);
+  opacity: 0;
+  background: var(--warning);
+  transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1), opacity 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.vw-status:not([data-status="idle"]) .vw-status__dot { opacity: 1; }
+.vw-status[data-status="completed"] .vw-status__dot { background: var(--cyan); }
+.vw-status__label { overflow: hidden; font-size: 16px; line-height: 20px; font-weight: 500; }
+.vw-status[data-status="idle"] .vw-status__text { opacity: 0; }
+@media (prefers-reduced-motion: no-preference) {
+  .vw-status:not([data-status="idle"]) .vw-status__text { animation: vw-fade-slide-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+}
+@keyframes vw-fade-slide-in {
+  0% { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.vw-facts { display: flex; align-items: flex-start; gap: 32px; overflow: hidden; white-space: nowrap; }
+.vw-fact { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+.vw-fact__k, .vw-fact__v { font-size: 14px; line-height: 20px; }
+.vw-fact__k { color: var(--gray-900); }
+
+/* ---------- trace ---------- */
+
+.vw-trace { display: flex; flex: 1 1 0%; flex-direction: column; min-height: 0; border-top: 1px solid var(--gray-a400); background: var(--bg-100); }
+.vw-trace__head { display: flex; flex-shrink: 0; height: 40px; border-bottom: 1px solid var(--gray-a400); background: var(--bg-100); }
+.vw-trace__body { display: flex; flex: 1 1 0%; align-items: flex-start; min-height: 0; overflow: hidden; background: var(--bg-100); }
+
+.vw-search, .vw-rows { flex-shrink: 0; width: 180px; overflow: hidden; }
+@container (min-width: 601px) { .vw-search, .vw-rows { width: 220px; } }
+@container (min-width: 961px) { .vw-search, .vw-rows { width: 260px; } }
+.vw-search { display: flex; align-items: center; gap: 6px; height: 100%; padding: 0 8px 0 16px; }
+.vw-search__icon { color: var(--gray-700); }
+.vw-search__text { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: 14px; line-height: 20px; color: var(--gray-700); }
+
+.vw-axis { position: relative; flex: 1 1 0%; min-width: 0; height: 100%; border-left: 1px solid var(--gray-a400); }
+.vw-axis__inner { position: absolute; left: 15px; right: 15px; top: 0; height: 100%; }
+.vw-tick { position: absolute; top: 22px; translate: -50% 0; font-family: var(--mono); font-size: 12px; line-height: 16px; color: var(--gray-900); }
+.vw-tick--start { left: 0; translate: none; }
+.vw-tick--end { right: 0; translate: none; display: none; }
+@container (min-width: 601px) { .vw-tick--end { display: inline; } }
+
+.vw-rows { display: flex; flex-direction: column; height: 100%; background: var(--bg-100); }
+.vw-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  gap: 8px;
+  height: 40px;
+  padding: 0 8px 0 16px;
+  overflow: hidden;
+  border-bottom: 1px solid var(--gray-a400);
+}
+.vw-row__name { display: flex; align-items: center; gap: 8px; min-width: 0; overflow: hidden; }
+.vw-row__icon { color: var(--green-900); }
+.vw-row__icon--run { color: var(--blue-700); }
+.vw-row__label { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-family: var(--mono); font-size: 13px; line-height: 20px; }
+.vw-row__ms { display: none; flex-shrink: 0; font-size: 14px; line-height: 20px; color: var(--gray-900); }
+@container (min-width: 601px) { .vw-row__ms { display: inline; } }
+
+.vw-chart { position: relative; flex: 1 1 0%; min-width: 0; height: 100%; overflow: hidden; border-left: 1px solid var(--gray-a400); background: var(--bg-100); }
+.vw-chart__inner { position: absolute; left: 15px; right: 15px; top: 0; bottom: 0; }
+.vw-grid { position: absolute; top: 0; width: 1px; height: 100%; background: var(--gray-a300); }
+.vw-link { position: absolute; background: var(--gray-500); }
+.vw-link--h { width: 14px; height: 1px; }
+.vw-link--v { width: 1px; height: 16px; }
+
+/* a span: the slot (inline left/top/width), its fill that grows from 0 to 100 % of the slot, the badge inside */
+.vw-bar { position: absolute; height: 24px; }
+.vw-bar__track { position: relative; width: 100%; height: 100%; }
+.vw-bar__fill { width: 0; height: 100%; overflow: hidden; opacity: 0; }
+.vw-badge {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+  padding: 0 5px;
+  border: 1px solid;
+  border-radius: 6px;
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 20px;
+}
+@container (min-width: 961px) { .vw-badge { border-radius: 8px; } }
+.vw-badge--blue { background: var(--blue-200); border-color: var(--blue-700); color: var(--gray-1000); }
+.vw-badge--green { background: var(--green-100); border-color: var(--green-600); color: var(--green-900); }

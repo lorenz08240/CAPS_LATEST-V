@@ -1,0 +1,187 @@
+/* clerk.com "Email and SMS one-time passcodes" visual. Values are clerk.com's resolved Tailwind classes
+   (dom/otp.html + css/otp.css in the recon); rest state here, hover motion in otp.js (as Motion does it). */
+
+/* 206px box hanging from the top of the 164px slot, clipped by its own overflow (the card itself does not clip).
+   Its lower 42px sit under the card text (z-index 20). */
+.clerk-card--otp .otp-box {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  isolation: isolate;
+  height: 12.875rem;
+  overflow: hidden;
+  padding-top: 1.5rem;
+  transform: translateY(0rem) scale(0.98);
+}
+
+.clerk-card--otp .otp-phone {
+  margin-inline: auto;
+  width: 16.5rem;
+  height: 14rem;
+  border-radius: 2.75rem;
+  background-color: var(--color-gray-800);
+  padding: 0.375rem;
+  box-shadow: 0 1px 0 0 rgb(255 255 255 / 0.05) inset, 0px 2px 5px 0 rgb(0 0 0 / 0.40);
+  background-image: linear-gradient(180deg, rgb(255 255 255 / 0.05) 0%, rgb(255 255 255 / 0) 67.19%);
+}
+
+.clerk-card--otp .otp-screen {
+  position: relative;
+  height: 12.5rem;
+  overflow: hidden;
+  border-radius: 2.375rem;
+  background-color: #13131680;
+  padding: 0.75rem 1.25rem 0;
+  /* ring-1 ring-inset ring-black/5 */
+  box-shadow: inset 0 0 0 1px #0000000d;
+}
+
+/* lock badge (transform-gpu: translateZ(0)); background and shadow are driven by otp.js */
+.clerk-card--otp .otp-lock {
+  position: relative;
+  z-index: 10;
+  margin-inline: auto;
+  display: flex;
+  width: 1.5rem;
+  height: 1.5rem;
+  transform: translateZ(0);
+  align-items: center;
+  justify-content: center;
+  border-radius: 2147483647px;
+  background-color: #131316;
+  box-shadow: 0 1px rgb(255 255 255 / 0.05);
+}
+.clerk-card--otp .otp-lock__icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* inline wrapper with perspective, as on clerk.com (no transformed 3D children, so no visible effect) */
+.clerk-card--otp .otp-persp {
+  perspective: 1000px;
+}
+
+/* SMS notification: parked above the screen top (clipped by the screen), blurred and half transparent */
+.clerk-card--otp .otp-notif {
+  position: absolute;
+  inset-inline: 0.5rem;
+  top: 3rem;
+  z-index: 20;
+  display: flex;
+  transform-origin: top;
+  align-items: center;
+  column-gap: 0.75rem;
+  border-radius: 1rem;
+  background-color: var(--color-gray-800);
+  padding: 0.5rem;
+  box-shadow: 0 6px 12px rgb(19 19 22 / 0.6), 0 1px rgb(255 255 255 / 0.03) inset;
+  transform: translateY(-6.5rem) scale(.9);
+  filter: blur(2px);
+  opacity: 0.5;
+}
+.clerk-card--otp .otp-notif__icon {
+  display: flex;
+  width: 2.5rem;
+  height: 2.5rem;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.625rem;
+  background-color: var(--color-gray-700);
+  box-shadow: 0 1px rgb(255 255 255 / 0.05) inset;
+  background-image: radial-gradient(circle at top, rgb(114 233 255 / 0.2), rgb(114 233 255 / 0));
+}
+.clerk-card--otp .otp-notif__svg {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+.clerk-card--otp .otp-notif__text {
+  min-width: 0;
+}
+.clerk-card--otp .otp-notif__title {
+  font-size: 0.625rem;
+  line-height: 1rem;
+  font-weight: 500;
+  color: #5de3ff;
+}
+.clerk-card--otp .otp-notif__body {
+  font-size: 0.6875rem;
+  line-height: 1rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  color: var(--color-gray-200);
+}
+.clerk-card--otp .otp-notif__code {
+  color: #fff;
+}
+
+/* app grid: 4 per row, 2 rows */
+.clerk-card--otp .otp-apps {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  column-gap: 0.5rem;
+  row-gap: 1rem;
+  text-align: center;
+}
+.clerk-card--otp .otp-app {
+  flex: none;
+  /* clerk.com's items are all 40px wide (the tile); Geist sets "NatWest" ~1px wider than Suisse Int'l, which
+     would widen that item and shift the tiles of the second row. Keep 40px and let the label overflow centred. */
+  width: 2.5rem;
+}
+.clerk-card--otp .otp-app__tile {
+  position: relative;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.625rem;
+  background-color: var(--color-gray-800);
+  box-shadow: 0 1px rgb(255 255 255 / 0.05) inset;
+}
+.clerk-card--otp .otp-app__svg {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+.clerk-card--otp .otp-app__label {
+  margin-top: 0.375rem;
+  font-size: 0.625rem;
+  line-height: 1rem;
+  font-weight: 500;
+  color: var(--color-gray-300);
+  display: flex;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+/* the "1" badge on the SMS app (backdrop-blur = 8px) */
+.clerk-card--otp .otp-badge {
+  position: absolute;
+  top: -0.375rem;
+  left: -0.375rem;
+  z-index: 10;
+  display: flex;
+  width: 1.25rem;
+  height: 1.25rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2147483647px;
+  font-size: 0.625rem;
+  line-height: 1;
+  font-weight: 600;
+  color: var(--color-gray-950);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  transform: scale(0.75);
+  background: #FFFFFF40;
+}
+
+/* bottom fade over the phone (bg-linear-to-t from-gray-900, oklab interpolation as in Tailwind v4) */
+.clerk-card--otp .otp-fade {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(to top, var(--color-gray-900) 0%, #0000 100%);
+  background-image: linear-gradient(to top in oklab, var(--color-gray-900) 0%, #0000 100%);
+  transform: translateY(0rem);
+}

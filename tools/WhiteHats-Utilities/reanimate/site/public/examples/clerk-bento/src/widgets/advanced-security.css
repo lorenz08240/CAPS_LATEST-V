@@ -1,0 +1,204 @@
+/* "Advanced security" card visual: a round fingerprint button between two notched side panels, under a
+   top-down radial vignette; on hover a WebGL2 dot field and a glow ring are mounted (advanced-security.js).
+   Every value is clerk.com's resolved Tailwind (module 561502, .reanimate/clerk-bento/dom/advanced-security.html);
+   colours with alpha use the same color-mix()/lab() as clerk.com's @supports branches, gradients the same
+   "in oklab" interpolation. Stacking is clerk.com's: the slot is isolated, the panels and the dot field are
+   z-auto (under the z-10 vignette), the button layers are z-10 (over it). */
+
+.clerk-card--advanced-security {
+  --as-sky-100: #ccf9ff;
+  --as-sky-300: #5de3ff;
+  --as-sky-600: #0089be;
+  --as-gray-750: #373840;
+}
+
+/* absolute inset-0 -bottom-5 z-10: radial vignette over the visual and 20px below it */
+.clerk-card--advanced-security .as-vignette {
+  position: absolute;
+  inset: 0;
+  bottom: -20px;
+  z-index: 10;
+  background-image: radial-gradient(50% 100% at top, #0000, #212126ad 61.5%, #212126);
+}
+
+/* absolute inset-x-0 top-full z-10 mt-5 h-12 bg-gray-900: hides the panels behind the card text */
+.clerk-card--advanced-security .as-blocker {
+  position: absolute;
+  inset-inline: 0;
+  top: 100%;
+  z-index: 10;
+  margin-top: 20px;
+  height: 48px;
+  background-color: var(--color-gray-900);
+}
+
+/* relative flex h-full items-center justify-center */
+.clerk-card--advanced-security .as-stage {
+  position: relative;
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+/* hover only: absolute top-1/2 left-1/2 -mt/-ml-[100px] w-[200px] aspect-square, radial alpha mask */
+.clerk-card--advanced-security .as-dots {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -6.25rem;
+  margin-left: -6.25rem;
+  aspect-ratio: 1;
+  width: 12.5rem;
+  -webkit-mask: radial-gradient(50% 50%, #fff, #0000);
+  mask: radial-gradient(50% 50%, #fff, #0000);
+}
+.clerk-card--advanced-security .as-dots canvas {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  width: 100%;
+}
+
+/* relative h-[4.5rem] w-[4.5rem] */
+.clerk-card--advanced-security .as-button {
+  position: relative;
+  height: 4.5rem;
+  width: 4.5rem;
+}
+
+/* side panels: absolute top-1/2 right-full|left-full -mt-[140px] mr-12|ml-12, x animated (inline transform) */
+.clerk-card--advanced-security .as-panel {
+  position: absolute;
+  top: 50%;
+  margin-top: -8.75rem;
+}
+.clerk-card--advanced-security .as-panel--l { right: 100%; margin-right: 3rem; }
+.clerk-card--advanced-security .as-panel--r { left: 100%; margin-left: 3rem; }
+/* relative aspect-224/280 w-[224px] (-scale-x-100 on the left one) */
+.clerk-card--advanced-security .as-panel__box {
+  position: relative;
+  aspect-ratio: 224 / 280;
+  width: 14rem;
+}
+.clerk-card--advanced-security .as-panel__box--flip { scale: -100% 1; }
+.clerk-card--advanced-security .as-panel__box svg {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  width: 100%;
+  overflow: visible;
+}
+/* notch glow: absolute top-1/2 left-4 -mt-7 flex h-14 w-5 items-center overflow-hidden >
+   -ml-4 h-10 w-5 rounded-[50%] bg-sky-300/20 blur */
+.clerk-card--advanced-security .as-panel__glow {
+  position: absolute;
+  top: 50%;
+  left: 1rem;
+  margin-top: -1.75rem;
+  display: flex;
+  height: 3.5rem;
+  width: 1.25rem;
+  align-items: center;
+  overflow: hidden;
+}
+.clerk-card--advanced-security .as-panel__glow > div {
+  margin-left: -1rem;
+  height: 2.5rem;
+  width: 1.25rem;
+  flex: none;
+  border-radius: 50%;
+  background-color: color-mix(in oklab, var(--as-sky-300) 20%, transparent);
+  filter: blur(8px);
+}
+
+/* the button: well, raised disc, cyan tint, face, fingerprint, sheen, (hover) ring: all z-10 */
+.clerk-card--advanced-security .as-well,
+.clerk-card--advanced-security .as-disc,
+.clerk-card--advanced-security .as-tint,
+.clerk-card--advanced-security .as-face,
+.clerk-card--advanced-security .as-sheen {
+  position: absolute;
+  z-index: 10;
+  border-radius: 2147483647px;
+}
+/* absolute inset-0 z-10 rounded-full bg-gray-950/60 shadow-[0_1px_white/0.03] */
+.clerk-card--advanced-security .as-well {
+  inset: 0;
+  background-color: color-mix(in oklab, var(--color-gray-950) 60%, transparent);
+  box-shadow: 0 0 #0000, 0 0 #0000, 0 0 #0000, 0 0 #0000, 0 1px color-mix(in oklab, #fff 3%, transparent);
+}
+/* absolute inset-1 z-10 rounded-full bg-gray-800 bg-linear-to-tr from-white/0 via-white/0 to-white/10
+   shadow-[0_2px_12px_black/0.5] */
+.clerk-card--advanced-security .as-disc {
+  inset: 4px;
+  background-color: var(--color-gray-800);
+  background-image: linear-gradient(to top right in oklab,
+    color-mix(in oklab, #fff 0%, transparent) 0%,
+    color-mix(in oklab, #fff 0%, transparent) 50%,
+    color-mix(in oklab, #fff 10%, transparent) 100%);
+  box-shadow: 0 0 #0000, 0 0 #0000, 0 0 #0000, 0 0 #0000, 0 2px 12px color-mix(in oklab, #000 50%, transparent);
+}
+/* absolute inset-1 z-10 rounded-full bg-linear-to-tr from-[#64E5FF]/20 via-[#64E5FF]/0 to-[#64E5FF]/0 */
+.clerk-card--advanced-security .as-tint {
+  inset: 4px;
+  background-image: linear-gradient(to top right in oklab,
+    lab(84.5189% -31.4667 -23.9754 / .2) 0%, lab(0% 0 0 / 0) 50%, lab(0% 0 0 / 0) 100%);
+}
+/* from-gray-850 to-gray-750 absolute inset-[calc(4px+1px)] z-10 rounded-full bg-linear-to-b */
+.clerk-card--advanced-security .as-face {
+  inset: 5px;
+  background-image: linear-gradient(to bottom in oklab, var(--color-gray-850) 0%, var(--as-gray-750) 100%);
+}
+/* absolute top-1/2 left-1/2 z-10 -mt/-ml-[22px] h-11 w-11 */
+.clerk-card--advanced-security .as-print {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 10;
+  margin-top: -22px;
+  margin-left: -22px;
+  height: 2.75rem;
+  width: 2.75rem;
+}
+/* absolute inset-1 z-10 rounded-full mix-blend-overlay [clip-path:circle(50%)] >
+   absolute inset-0 bg-linear-to-br from-white/0 from-30% via-sky-100/70 to-white/0 to-70% */
+.clerk-card--advanced-security .as-sheen {
+  inset: 4px;
+  mix-blend-mode: overlay;
+  clip-path: circle(50%);
+}
+.clerk-card--advanced-security .as-sheen__band {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(to bottom right in oklab,
+    color-mix(in oklab, #fff 0%, transparent) 30%,
+    color-mix(in oklab, var(--as-sky-100) 70%, transparent) 50%,
+    color-mix(in oklab, #fff 0%, transparent) 70%);
+}
+
+/* hover only: absolute inset-0 (opacity fade) > absolute inset-0 z-10 (opacity pulse) > two rings */
+.clerk-card--advanced-security .as-ring,
+.clerk-card--advanced-security .as-ring__pulse { position: absolute; inset: 0; }
+.clerk-card--advanced-security .as-ring__pulse { z-index: 10; }
+/* absolute -inset-0.5 rounded-full border border-sky-300/50
+   shadow-[0_0_1px_1px,0_0_2px_2px,0_0_4px_4px,0_0_8px_8px,0_0_16px_16px,0_0_32px_32px] shadow-sky-300/4 */
+.clerk-card--advanced-security .as-ring__outer {
+  --as-glow: color-mix(in oklab, color-mix(in oklab, var(--as-sky-300) 4%, transparent) 100%, transparent);
+  position: absolute;
+  inset: -2px;
+  border-radius: 2147483647px;
+  border: 1px solid color-mix(in oklab, var(--as-sky-300) 50%, transparent);
+  box-shadow: 0 0 #0000, 0 0 #0000, 0 0 #0000, 0 0 #0000,
+    0 0 1px 1px var(--as-glow), 0 0 2px 2px var(--as-glow), 0 0 4px 4px var(--as-glow),
+    0 0 8px 8px var(--as-glow), 0 0 16px 16px var(--as-glow), 0 0 32px 32px var(--as-glow);
+}
+/* absolute inset-1 rounded-full border border-sky-300/15 shadow-[inset_0_0_4px_2px] shadow-sky-600/15 */
+.clerk-card--advanced-security .as-ring__inner {
+  position: absolute;
+  inset: 4px;
+  border-radius: 2147483647px;
+  border: 1px solid color-mix(in oklab, var(--as-sky-300) 15%, transparent);
+  box-shadow: 0 0 #0000, 0 0 #0000, 0 0 #0000, 0 0 #0000,
+    inset 0 0 4px 2px color-mix(in oklab, color-mix(in oklab, var(--as-sky-600) 15%, transparent) 100%, transparent);
+}

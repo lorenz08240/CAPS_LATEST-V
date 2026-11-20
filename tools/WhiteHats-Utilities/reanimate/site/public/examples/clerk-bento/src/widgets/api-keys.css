@@ -1,0 +1,254 @@
+/* API Keys card visual: clerk.com's markup (module 844723) with its Tailwind classes resolved to plain CSS
+   (values as computed on clerk.com at 1440x900; Tailwind v4 gradients interpolate in oklab).
+   Card-relative boxes on clerk.com: stage 808 x 140 at (2.656, 140); lines / meteor boxes 410 x 91 at (186.656, 168);
+   laptop base 116 x 6 scaled 1.3 at (44.256, 272.2); pill 164.2 x 36 at (324.555, 175); rack 223 x 139 at (563.656, 141).
+   Motion: src/widgets/api-keys.js (the Motion-for-React parts) + the :hover transitions at the end of this file
+   (clerk.com's Tailwind group-hover parts, which are plain CSS :hover on the card there too). */
+
+.clerk-card--api-keys .ak-root { position: relative; width: 100%; }
+.clerk-card--api-keys .ak-frame { position: relative; height: 140px; width: 100%; }
+.clerk-card--api-keys .ak-stage {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  height: 140px;
+  width: 808px;
+  translate: calc((50% - 8px) * -1) 0;
+}
+
+/* ---------- circuit lines and the four meteor boxes (same box) ---------- */
+.clerk-card--api-keys .ak-lines,
+.clerk-card--api-keys .ak-meteor {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  height: 91px;
+  width: 410px;
+  translate: -220px -42px;
+}
+.clerk-card--api-keys .ak-lines { z-index: 1; }
+.clerk-card--api-keys .ak-lines > svg { height: 100%; width: 100%; }
+.clerk-card--api-keys .ak-meteor { z-index: 2; pointer-events: none; }
+/* clerk.com's AnimatePresence wrapper (motion.div.absolute.inset-0.will-change-[opacity]) around each canvas */
+.clerk-card--api-keys .ak-meteor > [data-meteor] { position: absolute; inset: 0; will-change: opacity; }
+
+/* ---------- laptop ---------- */
+.clerk-card--api-keys .ak-laptop-pos {
+  position: absolute;
+  bottom: 0;
+  z-index: 100;
+  transform-origin: 0 100%;
+  scale: 1.3;
+  padding-left: 2rem;
+}
+/* y is animated from JS (rest: translateY(-50px) inline) */
+.clerk-card--api-keys .ak-laptop { transform: translateZ(0); will-change: transform; }
+.clerk-card--api-keys .ak-device { position: relative; isolation: isolate; perspective: 1000px; }
+/* lid: transform and background are animated from JS (rest state inline in the HTML) */
+.clerk-card--api-keys .ak-lid {
+  --ak-screen-off-color: var(--color-gray-900);
+  --ak-screen-on-color: var(--color-gray-600);
+  position: absolute;
+  bottom: calc(100% - 0.0625rem);
+  left: 50%;
+  z-index: 20;
+  display: flex;
+  height: 4.25rem;
+  width: 6.5rem;
+  transform-origin: bottom;
+  transform: translateZ(0);
+  align-items: center;
+  justify-content: center;
+  border-top-left-radius: 0.25rem;
+  border-top-right-radius: 0.25rem;
+  border: 1px solid var(--color-gray-600);
+  box-shadow: inset 0 0 0 2px oklab(0 0 0 / 0.75);
+  will-change: transform;
+  transform-style: preserve-3d;
+  perspective: 60px;
+}
+/* dark cover over the screen (group-hover: fades out in 500 ms, back in over 1000 ms) */
+.clerk-card--api-keys .ak-lid::before {
+  content: "";
+  position: absolute;
+  inset: -0.0625rem;
+  z-index: 10;
+  border-radius: inherit;
+  background-image: linear-gradient(to bottom in oklab, oklab(0 0 0 / 0.4) 0.0625rem, oklab(0 0 0 / 0.8) 100%);
+  transition-property: opacity;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 1s;
+}
+/* lid top edge (its thickness, seen while the lid is folded) */
+.clerk-card--api-keys .ak-lid::after {
+  content: "";
+  position: absolute;
+  inset-inline: -1px;
+  top: 0;
+  z-index: -10;
+  height: 0.125rem;
+  transform: rotateX(90deg) translateY(-1px);
+  border-top-left-radius: 2147483647px;
+  border-top-right-radius: 2147483647px;
+  background-color: var(--color-gray-500);
+}
+.clerk-card--api-keys .ak-glare {
+  position: absolute;
+  inset-inline: 0;
+  top: 0.125rem;
+  height: 1.25rem;
+  transform-origin: top;
+  transform: translateZ(0);
+  background-image: linear-gradient(to bottom in oklab, oklab(0.999994 0.0000455678 0.0000200868 / 0.15) 0%, transparent 100%);
+  filter: blur(8px);
+  will-change: transform;
+}
+/* diagonal glass reflection (group-hover: in over 1000 ms, out over 500 ms) */
+.clerk-card--api-keys .ak-sheen {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  overflow: hidden;
+  border-radius: inherit;
+  opacity: 0;
+  transition-property: opacity;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 0.5s;
+  will-change: opacity;
+}
+.clerk-card--api-keys .ak-sheen__shine {
+  position: absolute;
+  width: 125%;
+  height: 125%;
+  translate: -2.5rem -50%;
+  rotate: -45deg;
+  transform: translateZ(0);
+  background-image: linear-gradient(to left in oklab, oklab(0.999994 0.0000455678 0.0000200868 / 0.08) 0%, rgba(0, 0, 0, 0) 100%);
+}
+/* screen content: opacity animated from JS (0 at rest, inline) */
+.clerk-card--api-keys .ak-screen {
+  position: relative;
+  height: 3.25rem;
+  width: 5.375rem;
+  overflow: hidden;
+  border-radius: 0.1875rem;
+  will-change: opacity;
+}
+.clerk-card--api-keys .ak-avatar {
+  z-index: 50;
+  display: flex;
+  transform-origin: center;
+  translate: 0 7px;
+  scale: 0.7;
+  transform: translateZ(0);
+  justify-content: center;
+}
+.clerk-card--api-keys .ak-progress {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0.625rem;
+  margin-inline: auto;
+  height: 0.375rem;
+  width: 1.875rem;
+  overflow: hidden;
+  border-radius: 0.125rem;
+  background-color: #131316;
+  box-shadow: 0 1px 0 rgb(255 255 255 / 0.06), inset 0 2px 5px rgb(0 0 0 / 0.15);
+}
+/* width animated from JS (0rem at rest, inline) */
+.clerk-card--api-keys .ak-bar {
+  position: absolute;
+  top: 50%;
+  left: 0.125rem;
+  height: 0.125rem;
+  translate: 0 -50%;
+  border-radius: 2147483647px;
+  background-color: #5de3ff;
+  box-shadow: 0 0 9px rgb(107 231 255 / 0.3);
+  will-change: width;
+}
+.clerk-card--api-keys .ak-base {
+  position: relative;
+  z-index: 10;
+  height: 0.375rem;
+  width: 7.25rem;
+  border-radius: 0.25rem 0.25rem 0.375rem 0.375rem;
+  background-image: linear-gradient(to bottom in oklab, var(--color-gray-600) 65%, var(--color-gray-700) 100%);
+  box-shadow: inset 0 1px 0 oklab(0.999994 0.0000455678 0.0000200868 / 0.1);
+}
+/* the notch */
+.clerk-card--api-keys .ak-base::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  height: 0.125rem;
+  width: 1.25rem;
+  translate: -50% 0;
+  border-bottom-right-radius: 2147483647px;
+  border-bottom-left-radius: 2147483647px;
+  background-color: var(--color-gray-700);
+  box-shadow: inset 2px 0 1px -2px oklab(0 0 0 / 0.5), inset -2px 0 1px -2px oklab(0 0 0 / 0.5),
+    0 1px 0 oklab(0.999994 0.0000455678 0.0000200868 / 0.1);
+}
+
+/* ---------- "Authenticating..." pill ---------- */
+.clerk-card--api-keys .ak-pill-pos {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 10;
+  translate: -50% -35px;
+}
+.clerk-card--api-keys .ak-pill {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.75rem;
+  border-radius: 0.375rem;
+  background-color: var(--color-gray-800);
+  background-image: linear-gradient(to bottom right in oklab, oklab(0.999994 0.0000455678 0.0000200868 / 0.05) 0%, rgba(0, 0, 0, 0) 65%);
+  padding: 0.625rem 0.75rem;
+  box-shadow: 0 0 0 4px oklab(0.188081 0.0016512 -0.00579907 / 0.5);
+}
+/* rotate animated from JS ("none" at rest, inline) */
+.clerk-card--api-keys .ak-spinner { flex-shrink: 0; transform: translateZ(0); will-change: transform; }
+.clerk-card--api-keys .ak-spinner > svg { width: 1rem; height: 1rem; }
+/* group-hover: white, 500 ms both ways (Tailwind `transition duration-500`) */
+.clerk-card--api-keys .ak-pill__text {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  line-height: 1rem;
+  color: var(--color-gray-500);
+  transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, opacity,
+    box-shadow, transform, translate, scale, rotate, filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 0.5s;
+}
+
+/* ---------- server rack ---------- */
+.clerk-card--api-keys .ak-rack-pos {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  z-index: 3;
+  padding-right: 1.5rem;
+}
+.clerk-card--api-keys .ak-rack {
+  border-radius: 0.375rem;
+  background-color: #13131680;
+  padding: 0.125rem;
+  -webkit-mask-image: linear-gradient(#000 0% 60%, #0009 75%, #0003 90%, #0000 100%);
+  mask-image: linear-gradient(#000 0% 60%, #0009 75%, #0003 90%, #0000 100%);
+}
+
+/* ---------- hover (clerk.com: Tailwind group-hover, inside @media (hover: hover)) ---------- */
+@media (hover: hover) {
+  .clerk-card--api-keys:hover .ak-lid::before { opacity: 0; transition-duration: 0.5s; }
+  .clerk-card--api-keys:hover .ak-sheen { opacity: 1; transition-duration: 1s; }
+  .clerk-card--api-keys:hover .ak-pill__text { color: #fff; }
+}
+/* touch screens: bento.js sets .is-hovered while the card plays */
+.clerk-card--api-keys.is-hovered .ak-lid::before { opacity: 0; transition-duration: 0.5s; }
+.clerk-card--api-keys.is-hovered .ak-sheen { opacity: 1; transition-duration: 1s; }
+.clerk-card--api-keys.is-hovered .ak-pill__text { color: #fff; }

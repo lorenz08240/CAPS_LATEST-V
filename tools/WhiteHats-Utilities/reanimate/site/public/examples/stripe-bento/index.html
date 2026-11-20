@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>stripe.com bento cards, rebuilt with reanimate</title>
+  <meta name="robots" content="noindex">
+  <script type="importmap">
+    { "imports": { "three": "./vendor/three/three.module.js", "three/addons/": "./vendor/three/addons/" } }
+  </script>
+  <link rel="stylesheet" href="./src/bento.css">
+  <link rel="stylesheet" href="./src/widgets/agentic-commerce.css">
+  <link rel="stylesheet" href="./src/widgets/issuing.css">
+  <link rel="stylesheet" href="./src/widgets/crypto.css">
+  <script>
+    // ?card=agentic-commerce|issuing|crypto shows a single card
+    const card = new URLSearchParams(location.search).get("card");
+    if (card) document.documentElement.dataset.card = card;
+  </script>
+  <script type="module" src="./src/bento.js"></script>
+</head>
+<body>
+
+  <section class="modular-solutions-bento">
+    <div class="modular-solutions-bento__layout">
+      <button type="button" class="modular-solutions-bento-card modular-solutions-bento__card-agentic-commerce"
+        data-bento-card-root data-widget="agentic-commerce"
+        aria-labelledby="bento-card-title-agentic-commerce">
+        <div class="modular-solutions-bento-card__dialog-entry">
+          <div class="modular-solutions-bento-card__dialog-entry-wrapper">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M13.75 6.75L10.25 6.75L10.25 5L15.5 5L15.5 10.25L13.75 10.25L13.75 6.75Z"/>
+              <path d="M6.75 10.25L5 10.25L5 15.5L10.25 15.5L10.25 13.75L6.75 13.75L6.75 10.25Z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="modular-solutions-bento-card__text">
+          <h3 class="modular-solutions-bento-card__title" id="bento-card-title-agentic-commerce">Monetize through agentic commerce</h3>
+        </div>
+        <div class="modular-solutions-bento-card__border">
+          <div class="modular-solutions-bento-card__border-color"><div class="modular-solutions-bento-card__border-color-gradient"></div></div>
+        </div>
+        <div class="modular-solutions-bento-card__inner">
+          <div class="modular-solutions-bento-card__content">
+            <div class="modular-solutions-bento-card__content-inner">
+              <div class="modular-solutions-bento-card__graphic">
+                <div class="lazy-animation lazy-bento-graphic" data-slot="graphic"></div>
+              </div>
+              <div class="modular-solutions-bento-card__background">
+                <div class="lazy-animation lazy-bento-graphic" data-slot="background"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button type="button" class="modular-solutions-bento-card modular-solutions-bento__card-issuing"
+        data-bento-card-root data-widget="issuing"
+        aria-labelledby="bento-card-title-issuing">
+        <div class="modular-solutions-bento-card__dialog-entry">
+          <div class="modular-solutions-bento-card__dialog-entry-wrapper">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M13.75 6.75L10.25 6.75L10.25 5L15.5 5L15.5 10.25L13.75 10.25L13.75 6.75Z"/>
+              <path d="M6.75 10.25L5 10.25L5 15.5L10.25 15.5L10.25 13.75L6.75 13.75L6.75 10.25Z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="modular-solutions-bento-card__text">
+          <h3 class="modular-solutions-bento-card__title" id="bento-card-title-issuing">Create a card issuing program</h3>
+        </div>
+        <div class="modular-solutions-bento-card__border">
+          <div class="modular-solutions-bento-card__border-color"><div class="modular-solutions-bento-card__border-color-gradient"></div></div>
+        </div>
+        <div class="modular-solutions-bento-card__inner">
+          <div class="modular-solutions-bento-card__content">
+            <div class="modular-solutions-bento-card__content-inner">
+              <div class="modular-solutions-bento-card__background">
+                <div class="lazy-animation lazy-bento-graphic" data-slot="background"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <button type="button" class="modular-solutions-bento-card modular-solutions-bento__card-crypto"
+        data-bento-card-root data-widget="crypto"
+        aria-labelledby="bento-card-title-crypto">
+        <div class="modular-solutions-bento-card__dialog-entry">
+          <div class="modular-solutions-bento-card__dialog-entry-wrapper">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M13.75 6.75L10.25 6.75L10.25 5L15.5 5L15.5 10.25L13.75 10.25L13.75 6.75Z"/>
+              <path d="M6.75 10.25L5 10.25L5 15.5L10.25 15.5L10.25 13.75L6.75 13.75L6.75 10.25Z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="modular-solutions-bento-card__text">
+          <h3 class="modular-solutions-bento-card__title" id="bento-card-title-crypto">Access borderless money movement with stablecoins and crypto</h3>
+        </div>
+        <div class="modular-solutions-bento-card__border">
+          <div class="modular-solutions-bento-card__border-color"><div class="modular-solutions-bento-card__border-color-gradient"></div></div>
+        </div>
+        <div class="modular-solutions-bento-card__inner">
+          <div class="modular-solutions-bento-card__content">
+            <div class="modular-solutions-bento-card__content-inner">
+              <div class="modular-solutions-bento-card__background">
+                <div class="lazy-animation lazy-bento-graphic" data-slot="background"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </button>
+    </div>
+  </section>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>reanimate · vercel video</title>
+  <meta name="robots" content="noindex">
+  <link rel="preload" href="assets/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/GeistMono-Variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="src/demo.css">
+  <link rel="stylesheet" href="src/vercel/vercel.css">
+  <!-- ?render: the bare 1920x1080 stage for scripts/render.ts --page vercel.html. Otherwise a player:
+       space plays and pauses, ←/→ step a frame (shift: a second), ?t=12.5 starts there. -->
+  <script>if (new URLSearchParams(location.search).has("render")) document.documentElement.dataset.render = "";</script>
+  <script type="module" src="src/vercel/main.js"></script>
+</head>
+<body>
+  <div id="viewport"><div id="stage"></div></div>
+  <div id="player">
+    <button type="button" id="play" aria-label="Play">Play</button>
+    <span id="time">0.00</span>
+    <input id="scrub" type="range" min="0" max="1" step="0.001" value="0" aria-label="Time">
+  </div>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "0": "smoke-worker.mjs",
+  "1": "install.mjs",
+  "2": "check-repo.mjs",
+  "3": "smoke-test.mjs",
+  "4": "cli/package.json",
+  "5": "Landing & Hero Section",
+  "6": "BuildLab Learning Guide: Module 1 - Computer Fundamentals",
+  "7": "contrast-mcp.py",
+  "8": "anti-slop/package.json",
+  "10": "Q: Explain logs",
+  "11": "plugin.js"
+}

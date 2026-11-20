@@ -1,0 +1,170 @@
+/* "Clerk CLI" card visual: a glass terminal edge on the left, circuit lines into a round Clerk-logo button, and a
+   ring of AI-tool logos on the right; on hover the logo lights up cyan, meteors run along the lines and the logos
+   step round the ring (clerk-cli.js). Every value is clerk.com's resolved Tailwind at lg (module 731855,
+   .reanimate/clerk-bento/dom/clerk-cli.html); colours with alpha use the same color-mix()/lab() as clerk.com's
+   @supports branches, gradients the same "in oklab" interpolation. Stacking is clerk.com's: inside the masked layer
+   the meteor tracks and the carousel are z-auto (in that order), the lines z-5, the panel and the button z-10. */
+
+/* pointer-events-none absolute inset-0 bg-[#212126] + bottom-fade mask: clips and fades everything */
+.clerk-card--clerk-cli .cc-layer {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background-color: #212126;
+  -webkit-mask-image: linear-gradient(#000 0% 60%, #0009 75%, #0003 90%, #0000 100%);
+  mask-image: linear-gradient(#000 0% 60%, #0009 75%, #0003 90%, #0000 100%);
+}
+
+/* absolute z-10 lg:top-[0rem]: the glass panel edge (svg 75x145) */
+.clerk-card--clerk-cli .cc-panel {
+  position: absolute;
+  top: 0;
+  z-index: 10;
+}
+
+/* absolute top-[1.5rem] left-[73px] z-5: the static circuit lines (svg 239x105) */
+.clerk-card--clerk-cli .cc-lines {
+  position: absolute;
+  top: 1.5rem;
+  left: 73px;
+  z-index: 5;
+}
+
+/* meteor boxes: absolute left-[53px]|left-[73px] lg:top-[1.5rem] h-[105px] w-[239px] (z-auto, under the lines) */
+.clerk-card--clerk-cli .cc-track {
+  pointer-events: none;
+  position: absolute;
+  top: 1.5rem;
+  height: 105px;
+  width: 239px;
+}
+.clerk-card--clerk-cli .cc-track--m1 { left: 53px; }
+.clerk-card--clerk-cli .cc-track--m2,
+.clerk-card--clerk-cli .cc-track--m3 { left: 73px; }
+/* AnimatePresence's motion.div.absolute.inset-0 around each canvas (the shared Meteor wrapper) */
+.clerk-card--clerk-cli .cc-track > [data-meteor] {
+  position: absolute;
+  inset: 0;
+}
+
+/* absolute top-[2rem] left-1/2 z-10 -translate-x-1/2 > relative h-[90px] w-[90px] rounded-full */
+.clerk-card--clerk-cli .cc-button-pos {
+  position: absolute;
+  top: 2rem;
+  left: 50%;
+  z-index: 10;
+  translate: -50% 0;
+}
+.clerk-card--clerk-cli .cc-button {
+  position: relative;
+  height: 90px;
+  width: 90px;
+  border-radius: 2147483647px;
+}
+/* pointer-events-none absolute inset-0, clip-path: circle(32px at 45px 43px) (the button face) */
+.clerk-card--clerk-cli .cc-clip {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  -webkit-clip-path: circle(32px at 45px 43px);
+  clip-path: circle(32px at 45px 43px);
+}
+/* tint: absolute inset-0, opacity 0 at rest */
+.clerk-card--clerk-cli .cc-tint {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(111.72% 100% at 50% 0%, rgb(118 237 255 / 0.2), rgb(118 237 255 / 0) 53.91%);
+  opacity: 0;
+}
+/* sheen: absolute -inset-4 bg-linear-to-br from-white/0 from-35% via-white/10 to-white/0 to-65% mix-blend-overlay,
+   translate(-4rem, -4rem) at rest */
+.clerk-card--clerk-cli .cc-sheen {
+  position: absolute;
+  inset: -1rem;
+  background-image: linear-gradient(to bottom right in oklab,
+      color-mix(in oklab, #fff 0%, transparent) 35%,
+      color-mix(in oklab, #fff 10%, transparent) 50%,
+      color-mix(in oklab, #fff 0%, transparent) 65%);
+  mix-blend-mode: overlay;
+  transform: translate(-4rem, -4rem);
+}
+/* the cyan logo: svg.absolute.inset-0.z-30 */
+.clerk-card--clerk-cli .cc-icon {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+}
+
+/* absolute lg:top-[1.6rem] lg:right-[-8.8rem] > relative h-[248px] w-[256px] overflow-visible */
+.clerk-card--clerk-cli .cc-carousel-pos {
+  position: absolute;
+  top: 1.6rem;
+  right: -8.8rem;
+}
+.clerk-card--clerk-cli .cc-carousel {
+  position: relative;
+  height: 248px;
+  width: 256px;
+  overflow: visible;
+}
+/* rounded-full bg-[#212126]: a 256x184 opaque stadium behind the ring; it hides the meteor beyond the ring edge */
+.clerk-card--clerk-cli .cc-ring {
+  border-radius: 2147483647px;
+  background-color: #212126;
+}
+/* the logos' motion.div: initial opacity .7 */
+.clerk-card--clerk-cli .cc-logos { opacity: 0.7; }
+/* absolute top-0 left-0, inline transform translate(x, y) per slot */
+.clerk-card--clerk-cli .cc-logo {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+/* relative flex h-10 w-10 items-center justify-center rounded-full bg-gray-800 bg-linear-to-b from-white/5 to-67% shadow */
+.clerk-card--clerk-cli .cc-bubble {
+  position: relative;
+  display: flex;
+  height: 2.5rem;
+  width: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2147483647px;
+  background-color: var(--color-gray-800);
+  background-image: linear-gradient(to bottom in oklab, color-mix(in oklab, #fff 5%, transparent) 0%, #0000 67%);
+  box-shadow: 0 1px 3px 0 #0000001a, 0 1px 2px -1px #0000001a;
+}
+/* pointer-events-none absolute inset-0 rounded-full ring-1 ring-inset, masked to one side:
+   white/5 fading to the right, #64E5FF/8 fading to the left */
+.clerk-card--clerk-cli .cc-bubble__edge {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  border-radius: 2147483647px;
+}
+.clerk-card--clerk-cli .cc-bubble__edge--l {
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, #fff 5%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, #fff, #0000);
+  mask-image: linear-gradient(90deg, #fff, #0000);
+}
+.clerk-card--clerk-cli .cc-bubble__edge--r {
+  box-shadow: inset 0 0 0 1px lab(84.5189% -31.4667 -23.9754 / 0.08);
+  -webkit-mask-image: linear-gradient(270deg, #fff, #0000);
+  mask-image: linear-gradient(270deg, #fff, #0000);
+}
+/* relative z-10 flex h-full w-full items-center justify-center p-[10px] > svg.h-full.w-full.overflow-visible.fill-white */
+.clerk-card--clerk-cli .cc-bubble__icon {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  height: 100%;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+.clerk-card--clerk-cli .cc-bubble__icon svg {
+  height: 100%;
+  width: 100%;
+  overflow: visible;
+  fill: #fff;
+}

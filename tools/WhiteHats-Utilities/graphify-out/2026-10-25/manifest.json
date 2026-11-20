@@ -1,0 +1,167 @@
+{
+  "docs/Module_1_NotebookLLM_Source.md": {
+    "mtime": 1792719415.017616,
+    "seen": 1792863758.841782,
+    "ast_hash": "e36c25e0df1897a994e9f5c6b57be4c4",
+    "semantic_hash": ""
+  },
+  "graphify-out/memory/query_20261024_174214_ddc6521e_explain_logs.md": {
+    "mtime": 1792863734.2828078,
+    "seen": 1792863758.842144,
+    "ast_hash": "1bf6eb2b0e42f6532b64901e68beaa5b",
+    "semantic_hash": ""
+  },
+  "anti-slop/.agents/plugins/marketplace.json": {
+    "mtime": 1792864994.6084483,
+    "seen": 1792868270.6326883,
+    "ast_hash": "2d1162a5d788230a119ed0b93a757ab0",
+    "semantic_hash": "2d1162a5d788230a119ed0b93a757ab0",
+    "ast_empty": true
+  },
+  "anti-slop/.claude-plugin/contrast-mcp-launcher.mjs": {
+    "mtime": 1792864994.609447,
+    "seen": 1792868270.6326969,
+    "ast_hash": "5392ea07e3cd28b556a3f165f753c9d0",
+    "semantic_hash": "5392ea07e3cd28b556a3f165f753c9d0"
+  },
+  "anti-slop/.claude-plugin/marketplace.json": {
+    "mtime": 1792864994.609447,
+    "seen": 1792868270.6329513,
+    "ast_hash": "2c5912e3cd9925cdab8c31abae1e2435",
+    "semantic_hash": "2c5912e3cd9925cdab8c31abae1e2435",
+    "ast_empty": true
+  },
+  "anti-slop/.claude-plugin/plugin.json": {
+    "mtime": 1792864994.6104486,
+    "seen": 1792868270.6329544,
+    "ast_hash": "656274afbb4768d3b94dc8cddf4ef1df",
+    "semantic_hash": "656274afbb4768d3b94dc8cddf4ef1df",
+    "ast_empty": true
+  },
+  "anti-slop/.cline-plugin/plugin.js": {
+    "mtime": 1792864994.6114595,
+    "seen": 1792868270.6329567,
+    "ast_hash": "00632a707258d9925e58db965f3006c2",
+    "semantic_hash": "00632a707258d9925e58db965f3006c2"
+  },
+  "anti-slop/.codex-plugin/plugin.json": {
+    "mtime": 1792864994.6124566,
+    "seen": 1792868270.6331115,
+    "ast_hash": "bf7b16027e0c468545b80b62c683750e",
+    "semantic_hash": "bf7b16027e0c468545b80b62c683750e",
+    "ast_empty": true
+  },
+  "anti-slop/.cursor-plugin/marketplace.json": {
+    "mtime": 1792864994.6134586,
+    "seen": 1792868270.6331139,
+    "ast_hash": "270a494c77fdb002a28022205c269a37",
+    "semantic_hash": "270a494c77fdb002a28022205c269a37",
+    "ast_empty": true
+  },
+  "anti-slop/.cursor-plugin/plugin.json": {
+    "mtime": 1792864994.6144576,
+    "seen": 1792868270.6331162,
+    "ast_hash": "cf24d206c965b9317aa4cebec05afb39",
+    "semantic_hash": "cf24d206c965b9317aa4cebec05afb39",
+    "ast_empty": true
+  },
+  "anti-slop/.kimi-plugin/plugin.json": {
+    "mtime": 1792864994.620553,
+    "seen": 1792868270.6331177,
+    "ast_hash": "e8e02521a6aa15a243a020dad76e1b28",
+    "semantic_hash": "e8e02521a6aa15a243a020dad76e1b28",
+    "ast_empty": true
+  },
+  "anti-slop/.omp-plugin/marketplace.json": {
+    "mtime": 1792864994.6220615,
+    "seen": 1792868270.6331198,
+    "ast_hash": "2c5912e3cd9925cdab8c31abae1e2435",
+    "semantic_hash": "2c5912e3cd9925cdab8c31abae1e2435",
+    "ast_empty": true
+  },
+  "anti-slop/cli/index.mjs": {
+    "mtime": 1792864994.648691,
+    "seen": 1792868270.6331213,
+    "ast_hash": "7376dcc2912c18ed2f4dbd8480182b47",
+    "semantic_hash": "7376dcc2912c18ed2f4dbd8480182b47"
+  },
+  "anti-slop/cli/lib/banner.mjs": {
+    "mtime": 1792864994.6496918,
+    "seen": 1792868270.6332676,
+    "ast_hash": "d6a62b268ae0c9fafa2319ea4118160c",
+    "semantic_hash": "d6a62b268ae0c9fafa2319ea4118160c"
+  },
+  "anti-slop/cli/lib/install.mjs": {
+    "mtime": 1792864994.6506917,
+    "seen": 1792868270.6334097,
+    "ast_hash": "5d8215848c1ce42fcd046095f9c6c825",
+    "semantic_hash": "5d8215848c1ce42fcd046095f9c6c825"
+  },
+  "anti-slop/cli/lib/settings.mjs": {
+    "mtime": 1792864994.6521988,
+    "seen": 1792868270.6335926,
+    "ast_hash": "ec67a4fe589dbb4592257efce23ec17a",
+    "semantic_hash": "ec67a4fe589dbb4592257efce23ec17a"
+  },
+  "anti-slop/cli/package.json": {
+    "mtime": 1792864994.65321,
+    "seen": 1792868270.633748,
+    "ast_hash": "98314ac4692b7124c5400638df93a0db",
+    "semantic_hash": "98314ac4692b7124c5400638df93a0db"
+  },
+  "anti-slop/cli/scripts/smoke-test.mjs": {
+    "mtime": 1792864994.6552117,
+    "seen": 1792868270.633889,
+    "ast_hash": "44405af29e765a1a0c75f8f5bacb8266",
+    "semantic_hash": "44405af29e765a1a0c75f8f5bacb8266"
+  },
+  "anti-slop/cli/scripts/smoke-worker.mjs": {
+    "mtime": 1792864994.656209,
+    "seen": 1792868270.6340344,
+    "ast_hash": "4c1454bd57070948d203c2e79692ee5f",
+    "semantic_hash": "4c1454bd57070948d203c2e79692ee5f"
+  },
+  "anti-slop/cli/scripts/sync-skills.mjs": {
+    "mtime": 1792864994.656209,
+    "seen": 1792868270.6342304,
+    "ast_hash": "002fdc699ff2865a342c8e7876737be5",
+    "semantic_hash": "002fdc699ff2865a342c8e7876737be5"
+  },
+  "anti-slop/package.json": {
+    "mtime": 1792864994.656209,
+    "seen": 1792868270.6344275,
+    "ast_hash": "cb639ff83f90d1993b98c8d01de9f995",
+    "semantic_hash": "cb639ff83f90d1993b98c8d01de9f995"
+  },
+  "anti-slop/plugin.json": {
+    "mtime": 1792864994.6577163,
+    "seen": 1792868270.634569,
+    "ast_hash": "c760e84bfc23c6b414205f384ab8536d",
+    "semantic_hash": "c760e84bfc23c6b414205f384ab8536d",
+    "ast_empty": true
+  },
+  "anti-slop/scripts/check-repo.mjs": {
+    "mtime": 1792864994.6612334,
+    "seen": 1792868270.634573,
+    "ast_hash": "88fe821e8862a1e858f9ce3d17e18d5e",
+    "semantic_hash": "88fe821e8862a1e858f9ce3d17e18d5e"
+  },
+  "anti-slop/scripts/skill-index.mjs": {
+    "mtime": 1792864994.6617618,
+    "seen": 1792868270.634758,
+    "ast_hash": "725f17405c21dfde77bd8763ea14071d",
+    "semantic_hash": "725f17405c21dfde77bd8763ea14071d"
+  },
+  "anti-slop/skills/antislop-human/contrast-check.py": {
+    "mtime": 1792864994.6657712,
+    "seen": 1792868270.6349893,
+    "ast_hash": "05da8206da20194c76032a8eaef6b3a7",
+    "semantic_hash": "05da8206da20194c76032a8eaef6b3a7"
+  },
+  "anti-slop/skills/antislop-human/contrast-mcp.py": {
+    "mtime": 1792864994.666771,
+    "seen": 1792868270.6352444,
+    "ast_hash": "e9dcfbd2ea81fdb0a0567afbee40bd66",
+    "semantic_hash": "e9dcfbd2ea81fdb0a0567afbee40bd66"
+  }
+}

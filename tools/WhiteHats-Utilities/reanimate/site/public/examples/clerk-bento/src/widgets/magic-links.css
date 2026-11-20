@@ -1,0 +1,234 @@
+/* "Magic Links" card visual: a field of mono noise text, a code chip that a cyan scan line reveals, a profile
+   card (avatar silhouette, name, email) that traces in cyan, gets a check, and rotates out to the next user.
+   Sizes, colours, gradients and shadows are clerk.com's resolved Tailwind values (module 642634,
+   .reanimate/clerk-bento/dom/magic-links.html + .hover.html); colours with alpha use the same color-mix() as
+   clerk.com's @supports branch. magic-links.js builds the keyed parts and animates them. */
+
+.clerk-card--magic-links .ml-root {
+  position: relative;
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---- code row: font-mono text-[0.625rem]/[0.875rem] tracking-widest break-all ---- */
+.clerk-card--magic-links .ml-coderow {
+  position: relative;
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: .625rem;
+  line-height: .875rem;
+  letter-spacing: .1em;
+  word-break: break-all;
+}
+
+/* noise above the row: bottom-aligned 1px above the row's bottom, last line clipped (mb -14px + overflow hidden) */
+.clerk-card--magic-links .ml-noise-top {
+  position: absolute;
+  inset-inline: 0;
+  bottom: .0625rem;
+  overflow: hidden;
+  color: #37373c;
+}
+.clerk-card--magic-links .ml-noise-top > div { margin-bottom: -.875rem; }
+/* noise below the row */
+.clerk-card--magic-links .ml-noise-bot {
+  position: absolute;
+  inset-inline: 0;
+  top: 100%;
+  color: #37373c;
+}
+/* hovered branch: z-10, text-transparent, a lighter band sweeps through the glyphs (bg-clip-text) */
+.clerk-card--magic-links .ml-noise-top.ml-hov { z-index: 10; color: #0000; }
+.clerk-card--magic-links .ml-noise-bot.ml-hov { z-index: 10; color: #0000; }
+.clerk-card--magic-links .ml-shimmer {
+  background-image: linear-gradient(to right, rgb(55 55 60) calc(50% - 2.5rem), rgb(100 100 103) 50%, rgb(55 55 60) calc(50% + 2.5rem));
+  background-size: calc(200% + 5rem) 100%;
+  background-position: calc(-100% - 5rem) 0%;
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* radial vignette (600x800) centred 60px below the row's centre: the noise fades into the card colour */
+.clerk-card--magic-links .ml-vignette {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 20;
+  margin-top: -21.25rem;
+  margin-left: -18.75rem;
+  height: 50rem;
+  width: 37.5rem;
+  background-image: radial-gradient(10.75rem 9.5rem at center, rgb(33 33 38 / 0), rgb(33 33 38));
+}
+
+/* the gray code chip (the only in-flow element of the row) */
+.clerk-card--magic-links .ml-code {
+  position: relative;
+  z-index: 20;
+  background-color: color-mix(in oklab, var(--color-gray-400) 10%, transparent);
+  padding: .0625rem .25rem;
+  color: var(--color-gray-400);
+  box-shadow: 0 0 #0000, 0 0 #0000, 0 0 #0000, 0 0 #0000, 0 0 1px inset color-mix(in oklab, #fff 15%, transparent);
+  -webkit-backdrop-filter: blur(1px);
+  backdrop-filter: blur(1px);
+}
+
+/* hovered overlay over the chip: same box (an invisible sizer), the cyan code and the scanner */
+.clerk-card--magic-links .ml-overlay {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: 20;
+  translate: -50% 0;
+  padding: .0625rem .25rem;
+}
+.clerk-card--magic-links .ml-sizer { visibility: hidden; }
+.clerk-card--magic-links .ml-cyan {
+  position: absolute;
+  inset: 0;
+  background-color: #28353d;
+  padding: .0625rem .25rem;
+  color: #5de3ff;
+  box-shadow: 0 0 #0000, 0 0 #0000, 0 0 #0000, 0 0 #0000, 0 0 3px inset color-mix(in oklab, #5de3ff 30%, transparent);
+  clip-path: polygon(-10% 0, -10% 0, -10% 110%, -10% 110%);
+}
+.clerk-card--magic-links .ml-scanner {
+  position: absolute;
+  inset: 0;
+  transform: translateX(-110%);
+}
+/* 28px clip box left of the scan line: the glow slides out of it, the particles trail inside it */
+.clerk-card--magic-links .ml-scanclip {
+  position: absolute;
+  inset-block: -.5rem;
+  right: -.5px;
+  overflow: hidden;
+}
+.clerk-card--magic-links .ml-glow {
+  height: 2rem;
+  width: 1.75rem;
+  transform-origin: 100%;
+  background-image: radial-gradient(100% 45.31% at right, rgb(93 227 255 / .6), rgb(93 227 255 / 0));
+  transform: translateX(1.75rem);
+}
+.clerk-card--magic-links .ml-particles { opacity: 0; }
+.clerk-card--magic-links .ml-particle {
+  position: absolute;
+  right: .25rem;
+  height: 1px;
+  width: 1px;
+  border-radius: 2147483647px;
+  background-color: #5de3ff;
+  filter: blur(.5px);
+  transform: translateX(0rem);
+}
+.clerk-card--magic-links .ml-line {
+  position: absolute;
+  inset-block: -.5rem;
+  right: -.5px;
+  width: 1px;
+  filter: blur(.25px);
+  background-image: linear-gradient(to bottom, rgb(93 227 255 / 0), rgb(93 227 255 / .8) 15%, rgb(93 227 255) 50%, rgb(93 227 255 / .8) 85%, rgb(93 227 255 / 0));
+  transform: scaleY(.5);
+  opacity: 0;
+}
+
+/* ---- bottom: horizon arc + profile ---- */
+.clerk-card--magic-links .ml-bottom {
+  position: relative;
+  z-index: 20;
+  margin-top: 2.25rem;
+  display: flex;
+  width: 100%;
+}
+.clerk-card--magic-links .ml-horizon,
+.clerk-card--magic-links .ml-horizon-edge {
+  position: absolute;
+  inset-inline: -10%;
+  top: 2rem;
+  aspect-ratio: 2;
+  border-radius: 50%;
+}
+.clerk-card--magic-links .ml-horizon {
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  background-image: radial-gradient(98.23% 104.12% at 50% -4.12%, rgb(255 255 255 / .05) 6.12%, rgb(255 255 255 / 0) 55.4%);
+}
+.clerk-card--magic-links .ml-horizon-edge {
+  border-top: 1px solid color-mix(in oklab, #fff 5%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, #0000, #fff, #0000);
+  mask-image: linear-gradient(90deg, #0000, #fff, #0000);
+}
+
+/* profile: swings around a pivot 400% of its height below its top */
+.clerk-card--magic-links .ml-profile {
+  display: flex;
+  width: 100%;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  transform-origin: 50% 400%;
+}
+/* motion's popLayout: the exiting profile is taken out of the flow at its last box */
+.clerk-card--magic-links .ml-profile.ml-popped { position: absolute; }
+
+.clerk-card--magic-links .ml-face {
+  position: relative;
+  height: 6rem;
+  width: 5rem;
+  border-radius: .25rem;
+  background-color: var(--color-gray-800);
+  background-image: linear-gradient(to bottom right in oklab, color-mix(in oklab, #fff 5%, transparent) 0%, #0000 64%);
+  box-shadow: 0 1px 1px rgb(255 255 255 / 0.05) inset, 0 2px 13px rgb(0 0 0 / 0.2), 0 1px 2px rgb(0 0 0 / 0.2), 0 0 0 3px rgb(19 19 22 / 0.5);
+}
+.clerk-card--magic-links .ml-face svg {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  width: 100%;
+}
+.clerk-card--magic-links .ml-hi { stroke: color-mix(in oklab, #fff 5%, transparent); }
+.clerk-card--magic-links .ml-base { stroke: #26262c; }
+.clerk-card--magic-links .ml-face-cyan {
+  transform: translateZ(0);
+  filter: drop-shadow(0 0 4px #6be7ff99);
+}
+.clerk-card--magic-links .ml-face-cyan path { stroke: #5de3ff; }
+
+/* name row: text-2xs/[1.125rem] font-semibold, mt-6 */
+.clerk-card--magic-links .ml-namerow {
+  position: relative;
+  margin-top: 1.5rem;
+  display: flex;
+  align-items: center;
+  font-size: .6875rem;
+  line-height: 1.125rem;
+  font-weight: 600;
+  color: #fff;
+}
+.clerk-card--magic-links .ml-check {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  margin-top: -.375rem;
+  margin-right: -.5625rem;
+  border-radius: 2147483647px;
+  background-color: #5de3ff;
+  opacity: 0;
+  transform: scale(.5);
+}
+.clerk-card--magic-links .ml-check svg { height: .75rem; width: .75rem; }
+.clerk-card--magic-links .ml-email {
+  position: relative;
+  margin-top: .125rem;
+  font-family: var(--font-mono);
+  font-size: .6875rem;
+  line-height: 1.125rem;
+  color: color-mix(in oklab, #fff 50%, transparent);
+}

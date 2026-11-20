@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>nextjs.org feature cards, rebuilt with reanimate</title>
+  <meta name="robots" content="noindex">
+  <!--
+    The three illustrated cards at the top of nextjs.org's "Everything you need to build great products on the
+    web" grid. Built-in Optimizations: image frames drawn on a canvas whose dots light up in bands of blue round
+    the pointer. Dynamic HTML Streaming: once the card is well in view, four streaks of blue run along the grid
+    into a wireframe page, each on its own loop (2 s each while hovered), the image placeholder turns into an
+    avatar every 5 s and the content blocks change layout every 8 s. React Server Components: dashes flow down
+    the tree and blue arcs glide round three nodes, faster while hovered, paused off screen. The SVG markup is
+    nextjs.org's; src/ ports its drawing code, its frame loop ("phase") and the part of Motion it uses. Plain
+    HTML + ES modules, no dependencies.
+  -->
+  <link rel="preload" href="./assets/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="./assets/fonts/GeistMono-Variable-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="./src/features.css">
+  <script>
+    // ?card=<slug> shows a single card (optimizations, streaming, rsc); with &embed, closely framed for an iframe
+    const params = new URLSearchParams(location.search);
+    const card = params.get("card");
+    if (card) document.documentElement.dataset.card = card;
+    if (card && params.has("embed")) document.documentElement.dataset.embed = "";
+    // without &embed on a screen narrower than the card (a phone), the card is scaled down to fit
+    if (card && !params.has("embed")) {
+      const root = document.documentElement;
+      const fit = () => {
+        const z = Math.min(1, (innerWidth - 32) / 448);
+        root.style.setProperty("--fit", z);
+        root.toggleAttribute("data-fit", z < 1);
+      };
+      fit();
+      addEventListener("resize", fit);
+    }
+  </script>
+  <script type="module" src="./src/features.js"></script>
+</head>
+<body>
+  <main class="nf-page">
+    <ul class="nf-grid grid grid-cols-12 gap-x-6 gap-y-12 @md:gap-y-24 list-none">
+<li class="nf-card col-span-full flex flex-col gap-8 @lg:col-span-4" data-card="optimizations"><a class="nf-link group flex flex-col gap-6" href="https://nextjs.org/docs/app/getting-started/images"><div aria-hidden="true" class="nf-box aspect-5/4 overflow-hidden rounded-xs border border-solid border-gray-300"><div class="nf-center grid size-full place-items-center p-4"><div class="nf-canvas-wrap aspect-[322/246] w-full max-w-[320px]"><canvas aria-hidden="true" class="block size-full" height="246" width="322"></canvas></div></div></div><div class="nf-text flex flex-col gap-3" data-agent-content="feature"><span class="nf-title flex items-center gap-3 text-pretty text-copy-16 text-gray-900" data-agent-description=""><strong class="font-medium text-gray-1000">Built-in Optimizations</strong><span aria-hidden="true" class="nf-arrow inline-block -translate-x-1 font-medium text-gray-1000 transition-transform group-hover:translate-x-0">→</span></span><span class="nf-desc max-w-94 text-pretty text-copy-16 text-gray-900 transition-colors group-hover:text-gray-1000" data-agent-description="">Automatic Image, Font, and Script Optimizations for improved UX and Core Web Vitals.</span></div></a></li>
+<li class="nf-card col-span-full flex flex-col gap-8 @lg:col-span-4" data-card="streaming"><a class="nf-link group flex flex-col gap-6" href="https://nextjs.org/docs/app/getting-started/fetching-data#streaming"><div aria-hidden="true" class="nf-box aspect-5/4 overflow-hidden rounded-xs border border-solid border-gray-300"><div class="nf-stream relative size-full"><svg class="absolute top-1/2 w-full -translate-y-1/2" fill="none" viewBox="0 0 424 362">
+<path d="M31 10.5V351.5" stroke="var(--color-gray-200)"></path>
+<path d="M63.9092 10.5V351.5" stroke="var(--color-gray-200)"></path>
+<path d="M96.8184 10.5V351.5" stroke="var(--color-gray-200)"></path>
+<path d="M129.728 10.5V351.5" stroke="var(--color-gray-200)"></path>
+<path d="M162.637 10.5V351.5" stroke="var(--color-gray-200)"></path>
+<path d="M195.546 10.5V351.5" stroke="var(--color-gray-200)"></path>
+<path d="M228.454 10.5V351.5" stroke="var(--color-gray-200)"></path>
+<path d="M261.363 10.5V351.5" stroke="var(--color-gray-200)"></path>
+<path d="M294.272 10.5V351.5" stroke="var(--color-gray-200)"></path>
+<path d="M327.182 10.5V351.5" stroke="var(--color-gray-200)"></path>
+<path d="M360.091 10.5V351.5" stroke="var(--color-gray-200)"></path>
+<path d="M393 10.5V351.5" stroke="var(--color-gray-200)"></path>
+<path d="M424 0.5L3.8912e-05 0.499981" stroke="var(--color-gray-200)"></path>
+<path d="M424 33.3181L3.8912e-05 33.3181" stroke="var(--color-gray-200)"></path>
+<path d="M424 66.1365L3.8912e-05 66.1365" stroke="var(--color-gray-200)"></path>
+<path d="M424 98.9546L3.8912e-05 98.9546" stroke="var(--color-gray-200)"></path>
+<path d="M424 131.773L3.8912e-05 131.773" stroke="var(--color-gray-200)"></path>
+<path d="M424 164.591L3.8912e-05 164.591" stroke="var(--color-gray-200)"></path>
+<path d="M424 197.409L3.8912e-05 197.409" stroke="var(--color-gray-200)"></path>
+<path d="M424 230.227L3.8912e-05 230.227" stroke="var(--color-gray-200)"></path>
+<path d="M424 263.045L3.8912e-05 263.045" stroke="var(--color-gray-200)"></path>
+<path d="M424 295.864L3.8912e-05 295.864" stroke="var(--color-gray-200)"></path>
+<path d="M424 328.682L3.8912e-05 328.682" stroke="var(--color-gray-200)"></path>
+<path d="M424 361.5L3.8912e-05 361.5" stroke="var(--color-gray-200)"></path>
+<g clip-path="url(#clip0_streaming)">
+<rect x="64" y="65.5" width="296" height="231" rx="12" fill="var(--color-background-200)"></rect>
+<circle cx="78.0256" cy="79.3" r="2.8" fill="var(--color-gray-500)"></circle>
+<circle cx="86.426" cy="79.3001" r="2.8" fill="var(--color-gray-500)"></circle>
+<circle cx="94.8254" cy="79.3001" r="2.8" fill="var(--color-gray-500)"></circle>
+<path d="M135.916 122.284C135.916 121.18 136.811 120.284 137.916 120.284H163.158C164.263 120.284 165.158 121.18 165.158 122.284V122.653C165.158 123.758 164.263 124.653 163.158 124.653H137.916C136.811 124.653 135.916 123.758 135.916 122.653V122.284Z" fill="var(--color-gray-200)"></path>
+<rect x="135.916" y="108.15" width="29.2423" height="8.29858" rx="4.14929" fill="var(--color-gray-200)"></rect>
+<path d="M177.106 122.284C177.106 121.18 178.002 120.284 179.106 120.284H340.877C341.982 120.284 342.877 121.18 342.877 122.284V122.653C342.877 123.758 341.982 124.653 340.877 124.653H179.106C178.002 124.653 177.106 123.758 177.106 122.653V122.284Z" fill="var(--color-gray-200)"></path>
+<path d="M62.501 90.3481L360 90.3482" stroke="var(--color-gray-200)"></path>
+<g>
+<rect fill="var(--color-gray-200)" height="41.8457" rx="2" width="41.8457" x="75.0781" y="108.15"></rect>
+<path d="M96.0015 122.556L103.019 134.71H88.984Z" fill="var(--color-gray-700)"></path>
+<rect fill="var(--color-gray-200)" height="4.3689" rx="2" width="41.8457" x="75.0781" style="transform:translateY(158.476px);transform-origin:50% 50%;transform-box:fill-box"></rect>
+<rect fill="var(--color-gray-200)" height="4.3689" rx="2" width="27.3217" x="75.0781" style="transform:translateY(164.497px);transform-origin:50% 50%;transform-box:fill-box"></rect>
+<rect fill="var(--color-gray-200)" height="4.3689" rx="2" width="41.8457" x="75.0781" style="transform:translateY(170.517px);transform-origin:50% 50%;transform-box:fill-box"></rect>
+<rect fill="var(--color-gray-200)" height="4.3689" rx="2" width="41.8457" x="75.0781" style="transform:translateY(176.538px);transform-origin:50% 50%;transform-box:fill-box"></rect>
+<rect fill="var(--color-gray-200)" height="4.3689" rx="2" width="29.4039" x="75.0781" style="transform:translateY(182.559px);transform-origin:50% 50%;transform-box:fill-box"></rect>
+<rect fill="var(--color-gray-200)" rx="2" width="99.4837" x="135.916" height="50.7081" style="transform:translateY(130.489px);transform-origin:50% 50%;transform-box:fill-box"></rect>
+<rect fill="var(--color-gray-200)" rx="2" width="99.4837" x="242.399" height="50.7081" style="transform:translateY(130.489px);transform-origin:50% 50%;transform-box:fill-box"></rect>
+<rect fill="var(--color-gray-200)" rx="2" width="99.4837" x="135.916" height="50.7081" style="transform:translateY(188.198px);transform-origin:50% 50%;transform-box:fill-box"></rect>
+<rect fill="var(--color-gray-200)" rx="2" width="99.4837" x="242.399" height="108.416" style="transform:translateY(188.198px);transform-origin:50% 50%;transform-box:fill-box"></rect>
+<rect fill="var(--color-gray-200)" rx="2" width="99.4837" x="135.916" height="50.7081" style="transform:translateY(245.906px);transform-origin:50% 50%;transform-box:fill-box"></rect>
+</g>
+</g>
+<rect x="64" y="65.5" width="296" height="231" rx="12" stroke="var(--color-gray-500)"></rect>
+<path d="M0 33.5H30C30.5523 33.5 31 33.9477 31 34.5V98C31 98.5523 31.4477 99 32 99H63C63.5523 99 64 98.5523 64 98V78C64 70.8203 69.8203 65 77 65H310" stroke="url(#nf-stream-0)" stroke-linecap="round" stroke-width="2" style="mask-image: linear-gradient(to right, white 50%, transparent);"></path>
+<path d="M393 0.5V131C393 131.552 392.552 132 392 132H361C360.448 132 360 132.448 360 133V284C360 291.18 354.18 297 347 297H254.5" stroke="url(#nf-stream-1)" stroke-linecap="round" stroke-width="2" style="mask-image: linear-gradient(to left, white 50%, transparent);"></path>
+<path d="M0 328.5H30C30.5523 328.5 31 328.052 31 327.5V264C31 263.448 31.4499 263 32.0022 263C43.9398 263 51.0602 263 62.9978 263C63.5501 263 64 263.448 64 264V284C64 291.18 69.8203 297 77 297H262" stroke="url(#nf-stream-2)" stroke-linecap="round" stroke-width="2" style="mask-image: linear-gradient(to right, white 60%, transparent);"></path>
+<path d="M424 197.5L394 197.5C393.448 197.5 393 197.948 393 198.5L393 229.5C393 230.052 392.552 230.5 392 230.5L361 230.5C360.448 230.5 360 230.948 360 231.5L360 284C360 291.18 354.18 297 347 297L172.5 297" stroke="url(#nf-stream-3)" stroke-linecap="round" stroke-width="2" style="mask-image: linear-gradient(to left, white 60%, transparent);"></path>
+<defs>
+<linearGradient gradientUnits="userSpaceOnUse" id="nf-stream-0" x1="0" x2="-52" y1="33" y2="-18">
+<stop stop-color="var(--color-blue-700)" stop-opacity="0"></stop>
+<stop stop-color="var(--color-blue-700)"></stop>
+<stop offset="1" stop-color="var(--color-blue-600)" stop-opacity="0"></stop>
+</linearGradient>
+<linearGradient gradientUnits="userSpaceOnUse" id="nf-stream-1" x1="254.5" x2="254.5" y1="0" y2="-57">
+<stop stop-color="var(--color-blue-700)" stop-opacity="0"></stop>
+<stop stop-color="var(--color-blue-700)"></stop>
+<stop offset="1" stop-color="var(--color-blue-600)" stop-opacity="0"></stop>
+</linearGradient>
+<linearGradient gradientUnits="userSpaceOnUse" id="nf-stream-2" x1="-40" x2="-140" y1="360" y2="480">
+<stop stop-color="var(--color-blue-700)" stop-opacity="0"></stop>
+<stop stop-color="var(--color-blue-700)"></stop>
+<stop offset="1" stop-color="var(--color-blue-600)" stop-opacity="0"></stop>
+</linearGradient>
+<linearGradient gradientUnits="userSpaceOnUse" id="nf-stream-3" x1="423" x2="467" y1="197.5" y2="197.5">
+<stop stop-color="var(--color-blue-700)" stop-opacity="0"></stop>
+<stop stop-color="var(--color-blue-700)"></stop>
+<stop offset="1" stop-color="var(--color-blue-600)" stop-opacity="0"></stop>
+</linearGradient>
+<clipPath id="clip0_streaming">
+<rect x="64" y="65.5" width="296" height="231" rx="12" fill="var(--color-background-100)"></rect>
+</clipPath>
+</defs>
+</svg></div></div><div class="nf-text flex flex-col gap-3" data-agent-content="feature"><span class="nf-title flex items-center gap-3 text-pretty text-copy-16 text-gray-900" data-agent-description=""><strong class="font-medium text-gray-1000">Dynamic HTML Streaming</strong><span aria-hidden="true" class="nf-arrow inline-block -translate-x-1 font-medium text-gray-1000 transition-transform group-hover:translate-x-0">→</span></span><span class="nf-desc max-w-94 text-pretty text-copy-16 text-gray-900 transition-colors group-hover:text-gray-1000" data-agent-description="">Instantly stream UI from the server, integrated with the App Router and React Suspense.</span></div></a></li>
+<li class="nf-card col-span-full flex flex-col gap-8 @lg:col-span-4" data-card="rsc"><a class="nf-link group flex flex-col gap-6" href="https://nextjs.org/docs/app/getting-started/server-and-client-components"><div aria-hidden="true" class="nf-box aspect-5/4 overflow-hidden rounded-xs border border-solid border-gray-300"><div class="nf-center grid size-full place-items-center p-4"><svg class="nf-rsc-svg w-full max-w-67" fill="none" viewBox="0 0 269 222" xmlns="http://www.w3.org/2000/svg">
+<path d="M134.054 29.7175L222.847 167.84" stroke="var(--color-gray-700)" stroke-dasharray="4 3"></path>
+<path d="M90.3994 98.6835L38.7445 179.036" stroke="var(--color-gray-700)" stroke-dasharray="4 3"></path>
+<path d="M134.734 29.7175L84.0173 108.611" stroke="var(--color-blue-900)" stroke-dasharray="4 3"></path>
+<path d="M80.5459 110.517L134.054 193.752" stroke="var(--color-blue-900)" stroke-dasharray="4 3"></path>
+<circle cx="134.239" cy="28.8441" fill="var(--color-gray-100)" r="28.3441" stroke="var(--color-gray-500)" transform="rotate(-90 134.239 28.8441)"></circle>
+<circle cx="186.736" cy="106.809" fill="var(--color-gray-100)" r="28.3441" stroke="var(--color-gray-500)"></circle>
+<circle cx="239.257" cy="192.189" fill="var(--color-gray-100)" r="28.3441" stroke="var(--color-gray-500)"></circle>
+<circle cx="81.7415" cy="106.809" fill="var(--color-gray-100)" r="28.3441" stroke="var(--color-gray-500)"></circle>
+<circle cx="28.8441" cy="192.189" fill="var(--color-gray-100)" r="28.3441" stroke="var(--color-gray-500)"></circle>
+<circle cx="133.864" cy="192.189" fill="var(--color-gray-100)" r="28.3441" stroke="var(--color-gray-500)"></circle>
+<circle cx="134.239" cy="28.8441" fill="none" r="27.8441" stroke="url(#nf-rsc-0)" stroke-width="1.75" style="opacity: 0.55;"></circle>
+<circle cx="81.7415" cy="106.809" fill="none" r="27.8441" stroke="url(#nf-rsc-1)" stroke-width="1.75" style="opacity: 0.55;"></circle>
+<circle cx="133.864" cy="192.189" fill="none" r="27.8441" stroke="url(#nf-rsc-2)" stroke-width="1.75" style="opacity: 0.55;"></circle>
+<defs>
+<linearGradient gradientUnits="userSpaceOnUse" id="nf-rsc-0">
+<stop stop-color="var(--color-blue-500)" stop-opacity="0"></stop>
+<stop offset="1" stop-color="var(--color-blue-900)"></stop>
+</linearGradient>
+<linearGradient gradientUnits="userSpaceOnUse" id="nf-rsc-1">
+<stop stop-color="var(--color-blue-500)" stop-opacity="0"></stop>
+<stop offset="1" stop-color="var(--color-blue-900)"></stop>
+</linearGradient>
+<linearGradient gradientUnits="userSpaceOnUse" id="nf-rsc-2">
+<stop stop-color="var(--color-blue-500)" stop-opacity="0"></stop>
+<stop offset="1" stop-color="var(--color-blue-900)"></stop>
+</linearGradient>
+</defs>
+</svg></div></div><div class="nf-text flex flex-col gap-3" data-agent-content="feature"><span class="nf-title flex items-center gap-3 text-pretty text-copy-16 text-gray-900" data-agent-description=""><strong class="font-medium text-gray-1000">React Server Components</strong><span aria-hidden="true" class="nf-arrow inline-block -translate-x-1 font-medium text-gray-1000 transition-transform group-hover:translate-x-0">→</span></span><span class="nf-desc max-w-94 text-pretty text-copy-16 text-gray-900 transition-colors group-hover:text-gray-1000" data-agent-description="">Add components without sending additional client-side JavaScript. Built on the latest React features.</span></div></a></li>
+    </ul>
+  </main>
+</body>
+</html>

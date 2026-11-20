@@ -1,0 +1,233 @@
+/* Session Management card visual: clerk.com's markup (module 956494) with its Tailwind classes resolved to plain CSS.
+   Sizes in the comments are clerk.com's at 1440x900: visual 394.672 x 412, session panel 256 x 252 centred
+   (top 104), side panels 208 x 248, circuit track 600 x 87 (only x 102..498 is inside the card).
+   Motion: src/widgets/session-management.js (Motion-for-React parts) + the :hover transitions below
+   (clerk.com's Tailwind group-hover parts, which are plain CSS :hover on the card there too). */
+
+.clerk-card--session-management .sm-root {
+  position: relative;
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.clerk-card--session-management .sm-wrap { position: relative; }
+
+/* the "session" panel: frosted glass over the track */
+.clerk-card--session-management .sm-card {
+  position: relative;
+  z-index: 10;
+  margin: 3rem auto 0;
+  width: 16rem;
+  border-radius: 0.5rem;
+  background-color: #7476860d;
+  background-image: linear-gradient(to bottom right, #ffffff0d 0%, #0000 65%);
+  padding: 3.5rem 1.5rem 1.5rem;
+  font-size: 0.625rem;
+  line-height: 1.125rem;
+  box-shadow: 0 1px 1px #ffffff0d inset, 0 2px 13px #0003, 0 1px 2px #0003;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+/* ---------- laptop ---------- */
+.clerk-card--session-management .sm-laptop-row {
+  position: relative;
+  isolation: isolate;
+  z-index: 20;
+  margin-inline: auto;
+  display: flex;
+  justify-content: center;
+}
+.clerk-card--session-management .sm-laptop {
+  position: relative;
+  isolation: isolate;
+  perspective: 1000px;
+}
+/* lid: transform and background are animated from JS (rest state inline in the HTML) */
+.clerk-card--session-management .sm-lid {
+  --sm-screen-off-color: var(--color-gray-900);
+  --sm-screen-on-color: var(--color-gray-600);
+  position: absolute;
+  bottom: calc(100% - 0.0625rem);
+  left: 50%;
+  display: flex;
+  height: 4.25rem;
+  width: 6.5rem;
+  transform-origin: bottom;
+  align-items: center;
+  justify-content: center;
+  border-top-left-radius: 0.25rem;
+  border-top-right-radius: 0.25rem;
+  border: 1px solid var(--color-gray-600);
+  box-shadow: inset 0 0 0 2px #000000bf;
+  transform-style: preserve-3d;
+  perspective: 60px;
+}
+/* screen dimmer (group-hover: fades out in 500 ms, back in 1000 ms) */
+.clerk-card--session-management .sm-lid::before {
+  content: "";
+  position: absolute;
+  inset: -0.0625rem;
+  z-index: 10;
+  border-radius: inherit;
+  background-image: linear-gradient(to bottom, #0006 0.0625rem, #000c 100%);
+  transition-property: opacity;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 1s;
+}
+/* lid top edge (its thickness, seen when the lid is folded) */
+.clerk-card--session-management .sm-lid::after {
+  content: "";
+  position: absolute;
+  inset-inline: -1px;
+  top: 0;
+  z-index: -10;
+  height: 0.125rem;
+  transform: rotateX(90deg) translateY(-1px);
+  border-top-left-radius: 2147483647px;
+  border-top-right-radius: 2147483647px;
+  background-color: var(--color-gray-500);
+}
+.clerk-card--session-management .sm-glare {
+  position: absolute;
+  inset-inline: 0;
+  top: 0.125rem;
+  height: 1.25rem;
+  transform-origin: top;
+  background-image: linear-gradient(to bottom, #ffffff26 0%, transparent 100%);
+  filter: blur(8px);
+}
+/* diagonal glass reflection (group-hover: in 1000 ms, out 500 ms) */
+.clerk-card--session-management .sm-sheen {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  overflow: hidden;
+  border-radius: inherit;
+  opacity: 0;
+  transition-property: opacity;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 0.5s;
+}
+.clerk-card--session-management .sm-sheen__shine {
+  position: absolute;
+  width: 125%;
+  height: 125%;
+  translate: -2.5rem -50%;
+  rotate: -45deg;
+  background-image: linear-gradient(to left, #ffffff14 0%, #0000 100%);
+}
+.clerk-card--session-management .sm-icon {
+  border-radius: 2147483647px;
+  background-color: var(--color-gray-950);
+  padding: 0.5rem;
+  box-shadow: 0 1px #ffffff0d;
+}
+.clerk-card--session-management .sm-icon__logo {
+  position: relative;
+  z-index: 20;
+  filter: brightness(150%) drop-shadow(0 0 8px #5de3ff80);
+}
+.clerk-card--session-management .sm-base {
+  position: relative;
+  height: 0.375rem;
+  width: 7.25rem;
+  border-radius: 0.25rem 0.25rem 0.375rem 0.375rem;
+  background-image: linear-gradient(to bottom, var(--color-gray-600) 65%, var(--color-gray-700) 100%);
+  box-shadow: inset 0 1px 0px #ffffff1a;
+}
+/* the notch */
+.clerk-card--session-management .sm-base::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  height: 0.125rem;
+  width: 1.25rem;
+  translate: -50% 0;
+  border-bottom-right-radius: 2147483647px;
+  border-bottom-left-radius: 2147483647px;
+  background-color: var(--color-gray-700);
+  box-shadow: inset 2px 0 1px -2px #00000080, inset -2px 0 1px -2px #00000080, 0 1px 0 #ffffff1a;
+}
+
+/* ---------- rows and button ---------- */
+.clerk-card--session-management .sm-row {
+  display: flex;
+  padding-block: 0.375rem;
+  border-top: 1px solid #ffffff0d;
+}
+.clerk-card--session-management .sm-row--first {
+  margin-top: 1.5rem;
+  border-top: 0;
+}
+.clerk-card--session-management .sm-label {
+  width: 3.5rem;
+  flex: none;
+  color: var(--color-gray-400);
+}
+.clerk-card--session-management .sm-value {
+  font-weight: 500;
+  color: #fff;
+}
+/* group-hover: white text, gray-700 ring, 1000 ms both ways */
+.clerk-card--session-management .sm-button {
+  margin-top: 1.5rem;
+  border-radius: 0.375rem;
+  padding: 0.25rem;
+  text-align: center;
+  font-weight: 500;
+  color: var(--color-gray-600);
+  box-shadow: inset 0 0 0 1px var(--color-gray-850);
+  transition-property: color, box-shadow;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 1s;
+}
+
+/* ---------- side panels, circuit track, vignette ---------- */
+.clerk-card--session-management .sm-panel {
+  position: absolute;
+  top: 7.625rem;
+  width: 13rem;
+}
+.clerk-card--session-management .sm-panel--right { left: 100%; margin-left: 0.375rem; }
+.clerk-card--session-management .sm-panel--left { right: 100%; margin-right: 0.375rem; scale: -1 1; }
+.clerk-card--session-management .sm-track {
+  position: absolute;
+  top: 1.875rem;
+  left: 50%;
+  margin-left: -18.75rem;
+  aspect-ratio: 600 / 87;
+  width: 37.5rem;
+}
+.clerk-card--session-management .sm-track__line {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  stroke: #ffffff0d;
+}
+.clerk-card--session-management .sm-vignette {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(97.14% 100% at top, #21212600 42.04%, #212126 89.82%);
+}
+
+/* ---------- hover (clerk.com: Tailwind group-hover, inside @media (hover: hover)) ---------- */
+@media (hover: hover) {
+  .clerk-card--session-management:hover .sm-lid::before { opacity: 0; transition-duration: 0.5s; }
+  .clerk-card--session-management:hover .sm-sheen { opacity: 1; transition-duration: 1s; }
+  .clerk-card--session-management:hover .sm-button {
+    color: #fff;
+    box-shadow: inset 0 0 0 1px var(--color-gray-700);
+  }
+}
+/* touch screens: bento.js sets .is-hovered while the card plays */
+.clerk-card--session-management.is-hovered .sm-lid::before { opacity: 0; transition-duration: 0.5s; }
+.clerk-card--session-management.is-hovered .sm-sheen { opacity: 1; transition-duration: 1s; }
+.clerk-card--session-management.is-hovered .sm-button {
+  color: #fff;
+  box-shadow: inset 0 0 0 1px var(--color-gray-700);
+}

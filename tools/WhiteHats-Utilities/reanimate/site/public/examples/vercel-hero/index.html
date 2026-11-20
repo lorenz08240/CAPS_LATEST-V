@@ -1,0 +1,78 @@
+<!doctype html>
+<!--
+  vercel.com hero triangle, rebuilt with reanimate.
+  A black triangle lit by 72 LEDs along its edges. Soft lines of light run round it; move the pointer
+  near it and the edges facing the pointer light up, with a white rim on the floor. Drag a file over the
+  page and it turns into a prism: a red, green and blue glow spreads from its edges and "Drop to deploy"
+  appears. Click the triangle to switch the colours on and off; hover an item on the right to light one
+  edge. The canvas is vercel.com's own renderer (WebGL2 in a worker, its shaders unchanged), ported to
+  plain modules: see src/renderer.js and .reanimate/vercel-hero.
+-->
+<html lang="en" class="light-theme">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>vercel.com hero triangle, rebuilt with reanimate</title>
+  <meta name="robots" content="noindex">
+  <link rel="preload" href="./assets/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="./src/hero.css">
+  <script>
+    // ?embed: only the canvas box, scaled to the frame's width (for an iframe)
+    const params = new URLSearchParams(location.search);
+    if (params.has("embed")) document.documentElement.dataset.embed = "";
+    const fit = () => {
+      const w = params.has("embed") ? 1080 : 1440;
+      document.documentElement.style.setProperty("--fit", Math.min(1, innerWidth / w));
+    };
+    fit();
+    addEventListener("resize", fit);
+  </script>
+  <script type="module" src="./src/hero.js"></script>
+</head>
+<body>
+  <div class="vh-frame">
+    <main class="vh-page">
+      <section class="vh-section" data-cdp-scope="hero">
+        <div class="vh-hero" data-hero-drop-active="false" data-hero-drop-staging="false">
+          <div class="vh-shader">
+            <div class="vh-canvas-box">
+              <!-- shown until the canvas has faded in, then faded out -->
+              <div class="vh-fallback" aria-hidden="true">
+                <div class="vh-fallback__square">
+                  <svg class="vh-fallback__svg" viewBox="-0.15238 -0.15238 0.30476 0.30476" style="overflow: visible">
+                    <polygon points="0,-0.15238 -0.13197,0.07619 0.13197,0.07619" fill="#000" />
+                  </svg>
+                </div>
+              </div>
+              <div class="vh-label" aria-hidden="true">
+                <span class="vh-label__drop">Drop to deploy</span>
+                <span class="vh-label__loading">Loading</span>
+              </div>
+              <div class="vh-shader-root" aria-hidden="true">
+                <canvas class="vh-canvas" data-triangle-led-4-hero-canvas="true"></canvas>
+                <div class="vh-pointer-area" aria-hidden="true"></div>
+              </div>
+            </div>
+          </div>
+
+          <header class="vh-header">
+            <h1 class="vh-title">Agentic Infrastructure</h1>
+            <div class="vh-buttons">
+              <a class="vh-button vh-button--primary" href="https://vercel.com/signup"><span>Deploy now</span></a>
+              <a class="vh-button vh-button--secondary" href="https://vercel.com/contact/sales"><span>Talk to sales</span></a>
+            </div>
+          </header>
+
+          <div class="vh-nav-wrap">
+            <nav class="vh-nav" aria-label="Platform capabilities" data-none>
+              <div class="vh-item"><span class="vh-item__text"><span class="vh-item__title">For coding agents</span><span class="vh-item__desc" aria-hidden="true"> to deploy in their native language, with Vercel's API, CLI, MCP, and Skills.</span></span></div>
+              <div class="vh-item"><span class="vh-item__text"><span class="vh-item__title">To ship apps and agents</span><span class="vh-item__desc" aria-hidden="true"> in Sandboxed VMs, with durable backends, powered by 400+ models.</span></span></div>
+              <div class="vh-item"><span class="vh-item__text"><span class="vh-item__title">Automated by agents</span><span class="vh-item__desc" aria-hidden="true"> who autonomously investigate errors, plan fixes, and open PRs.</span></span></div>
+            </nav>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

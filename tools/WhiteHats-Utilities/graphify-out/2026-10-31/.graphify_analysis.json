@@ -1,0 +1,429 @@
+{
+  "communities": {
+    "0": [
+      "anti_slop_cli_scripts_smoke_worker",
+      "anti_slop_cli_scripts_smoke_worker_after",
+      "anti_slop_cli_scripts_smoke_worker_again",
+      "anti_slop_cli_scripts_smoke_worker_agglobal",
+      "anti_slop_cli_scripts_smoke_worker_agpointers",
+      "anti_slop_cli_scripts_smoke_worker_agtargets",
+      "anti_slop_cli_scripts_smoke_worker_agwritten",
+      "anti_slop_cli_scripts_smoke_worker_ampproject",
+      "anti_slop_cli_scripts_smoke_worker_check",
+      "anti_slop_cli_scripts_smoke_worker_clean",
+      "anti_slop_cli_scripts_smoke_worker_clineproject",
+      "anti_slop_cli_scripts_smoke_worker_conflicts",
+      "anti_slop_cli_scripts_smoke_worker_defaulttargets",
+      "anti_slop_cli_scripts_smoke_worker_dst",
+      "anti_slop_cli_scripts_smoke_worker_dupreads",
+      "anti_slop_cli_scripts_smoke_worker_entry",
+      "anti_slop_cli_scripts_smoke_worker_entrypath",
+      "anti_slop_cli_scripts_smoke_worker_failures",
+      "anti_slop_cli_scripts_smoke_worker_fakehome",
+      "anti_slop_cli_scripts_smoke_worker_fenced",
+      "anti_slop_cli_scripts_smoke_worker_fresh",
+      "anti_slop_cli_scripts_smoke_worker_globaltargets",
+      "anti_slop_cli_scripts_smoke_worker_here",
+      "anti_slop_cli_scripts_smoke_worker_hermesglobal",
+      "anti_slop_cli_scripts_smoke_worker_hermesproject",
+      "anti_slop_cli_scripts_smoke_worker_hermeswritten",
+      "anti_slop_cli_scripts_smoke_worker_mixed",
+      "anti_slop_cli_scripts_smoke_worker_ocglobal",
+      "anti_slop_cli_scripts_smoke_worker_ocproject",
+      "anti_slop_cli_scripts_smoke_worker_piproject",
+      "anti_slop_cli_scripts_smoke_worker_pointer",
+      "anti_slop_cli_scripts_smoke_worker_pointers",
+      "anti_slop_cli_scripts_smoke_worker_present",
+      "anti_slop_cli_scripts_smoke_worker_read",
+      "anti_slop_cli_scripts_smoke_worker_savedenv",
+      "anti_slop_cli_scripts_smoke_worker_settingsfile",
+      "anti_slop_cli_scripts_smoke_worker_sharedpointer",
+      "anti_slop_cli_scripts_smoke_worker_sharedtargets",
+      "anti_slop_cli_scripts_smoke_worker_skills",
+      "anti_slop_cli_scripts_smoke_worker_src",
+      "anti_slop_cli_scripts_smoke_worker_stable",
+      "anti_slop_cli_scripts_smoke_worker_targets",
+      "anti_slop_cli_scripts_smoke_worker_upd",
+      "anti_slop_cli_scripts_smoke_worker_write",
+      "anti_slop_cli_scripts_smoke_worker_written",
+      "ref_node_assert"
+    ],
+    "1": [
+      "anti_slop_cli_index",
+      "anti_slop_cli_index_displaydir",
+      "anti_slop_cli_index_extra_skills",
+      "anti_slop_cli_index_main",
+      "anti_slop_cli_index_printplugindoors",
+      "anti_slop_cli_index_stop",
+      "anti_slop_cli_lib_banner",
+      "anti_slop_cli_lib_banner_banner",
+      "anti_slop_cli_lib_banner_logo",
+      "anti_slop_cli_lib_install",
+      "anti_slop_cli_lib_install_agents",
+      "anti_slop_cli_lib_install_claudeplugins",
+      "anti_slop_cli_lib_install_cloneversion",
+      "anti_slop_cli_lib_install_copydir",
+      "anti_slop_cli_lib_install_core",
+      "anti_slop_cli_lib_install_detectagents",
+      "anti_slop_cli_lib_install_detectconflicts",
+      "anti_slop_cli_lib_install_detectduplicatereads",
+      "anti_slop_cli_lib_install_detectplugindoors",
+      "anti_slop_cli_lib_install_dirname",
+      "anti_slop_cli_lib_install_findclone",
+      "anti_slop_cli_lib_install_findcopyunder",
+      "anti_slop_cli_lib_install_findnestedcopy",
+      "anti_slop_cli_lib_install_findomp",
+      "anti_slop_cli_lib_install_installedversion",
+      "anti_slop_cli_lib_install_installskills",
+      "anti_slop_cli_lib_install_listdirs",
+      "anti_slop_cli_lib_install_newest",
+      "anti_slop_cli_lib_install_omphomes",
+      "anti_slop_cli_lib_install_plugin_doors",
+      "anti_slop_cli_lib_install_pointerblock",
+      "anti_slop_cli_lib_install_readjson",
+      "anti_slop_cli_lib_install_resolvebase",
+      "anti_slop_cli_lib_install_resolvetargets",
+      "anti_slop_cli_lib_install_scanmarkers",
+      "anti_slop_cli_lib_install_skill_lines",
+      "anti_slop_cli_lib_install_skill_names",
+      "anti_slop_cli_lib_install_skillpath",
+      "anti_slop_cli_lib_install_skillsourcedir",
+      "anti_slop_cli_lib_install_updateall",
+      "anti_slop_cli_lib_install_updatepointers",
+      "anti_slop_cli_lib_install_version",
+      "anti_slop_cli_lib_install_writeblock",
+      "ref_picocolors"
+    ],
+    "2": [
+      "anti_slop_scripts_check_repo",
+      "anti_slop_scripts_check_repo_anchorsin",
+      "anti_slop_scripts_check_repo_checks",
+      "anti_slop_scripts_check_repo_community",
+      "anti_slop_scripts_check_repo_contrasttwins",
+      "anti_slop_scripts_check_repo_doclinks",
+      "anti_slop_scripts_check_repo_emdashes",
+      "anti_slop_scripts_check_repo_existsexactly",
+      "anti_slop_scripts_check_repo_frontmatter",
+      "anti_slop_scripts_check_repo_gatecoverage",
+      "anti_slop_scripts_check_repo_lines",
+      "anti_slop_scripts_check_repo_manifestpaths",
+      "anti_slop_scripts_check_repo_manifests",
+      "anti_slop_scripts_check_repo_read",
+      "anti_slop_scripts_check_repo_registration",
+      "anti_slop_scripts_check_repo_repourls",
+      "anti_slop_scripts_check_repo_root",
+      "anti_slop_scripts_check_repo_skillindex",
+      "anti_slop_scripts_check_repo_skillreferences",
+      "anti_slop_scripts_check_repo_skills",
+      "anti_slop_scripts_check_repo_tiers",
+      "anti_slop_scripts_check_repo_versions",
+      "anti_slop_scripts_skill_index",
+      "anti_slop_scripts_skill_index_blocksof",
+      "anti_slop_scripts_skill_index_buildindex",
+      "anti_slop_scripts_skill_index_end",
+      "anti_slop_scripts_skill_index_notes",
+      "anti_slop_scripts_skill_index_root",
+      "anti_slop_scripts_skill_index_start",
+      "anti_slop_scripts_skill_index_unfenced",
+      "ref_node_fs"
+    ],
+    "3": [
+      "anti_slop_claude_plugin_contrast_mcp_launcher",
+      "anti_slop_claude_plugin_contrast_mcp_launcher_child",
+      "anti_slop_claude_plugin_contrast_mcp_launcher_here",
+      "anti_slop_claude_plugin_contrast_mcp_launcher_python",
+      "anti_slop_claude_plugin_contrast_mcp_launcher_server",
+      "anti_slop_cli_scripts_smoke_test",
+      "anti_slop_cli_scripts_smoke_test_clideps",
+      "anti_slop_cli_scripts_smoke_test_coreinstalled",
+      "anti_slop_cli_scripts_smoke_test_coreskill",
+      "anti_slop_cli_scripts_smoke_test_dirname",
+      "anti_slop_cli_scripts_smoke_test_reasons",
+      "anti_slop_cli_scripts_smoke_test_result",
+      "anti_slop_cli_scripts_smoke_test_tmp",
+      "anti_slop_cli_scripts_smoke_test_tree",
+      "anti_slop_cli_scripts_smoke_test_worker",
+      "anti_slop_cli_scripts_sync_skills",
+      "anti_slop_cli_scripts_sync_skills_cliskills",
+      "anti_slop_cli_scripts_sync_skills_core_frontmatter",
+      "anti_slop_cli_scripts_sync_skills_corebody",
+      "anti_slop_cli_scripts_sync_skills_dirname",
+      "anti_slop_cli_scripts_sync_skills_normalise",
+      "anti_slop_cli_scripts_sync_skills_reporoot",
+      "anti_slop_cli_scripts_sync_skills_reposkills",
+      "anti_slop_cli_scripts_sync_skills_text",
+      "ref_node_child_process",
+      "ref_node_path",
+      "ref_node_url"
+    ],
+    "4": [
+      "anti_slop_cli_package",
+      "anti_slop_cli_package_author",
+      "anti_slop_cli_package_bin",
+      "anti_slop_cli_package_bin_antislop_ai",
+      "anti_slop_cli_package_dependencies",
+      "anti_slop_cli_package_dependencies_clack_prompts",
+      "anti_slop_cli_package_dependencies_picocolors",
+      "anti_slop_cli_package_description",
+      "anti_slop_cli_package_engines",
+      "anti_slop_cli_package_engines_node",
+      "anti_slop_cli_package_files",
+      "anti_slop_cli_package_homepage",
+      "anti_slop_cli_package_keywords",
+      "anti_slop_cli_package_license",
+      "anti_slop_cli_package_name",
+      "anti_slop_cli_package_repository",
+      "anti_slop_cli_package_repository_type",
+      "anti_slop_cli_package_repository_url",
+      "anti_slop_cli_package_scripts",
+      "anti_slop_cli_package_scripts_prepublishonly",
+      "anti_slop_cli_package_scripts_sync_skills",
+      "anti_slop_cli_package_scripts_test",
+      "anti_slop_cli_package_type",
+      "anti_slop_cli_package_version",
+      "ref_clack_prompts"
+    ],
+    "5": [
+      "anti_slop_skills_antislop_human_contrast_check",
+      "anti_slop_skills_antislop_human_contrast_check_contrast_ratio",
+      "anti_slop_skills_antislop_human_contrast_check_linearize",
+      "anti_slop_skills_antislop_human_contrast_check_luminance",
+      "anti_slop_skills_antislop_human_contrast_check_main",
+      "anti_slop_skills_antislop_human_contrast_check_parse_hex",
+      "anti_slop_skills_antislop_human_contrast_check_parse_pairing",
+      "anti_slop_skills_antislop_human_contrast_check_parse_reference_rows",
+      "anti_slop_skills_antislop_human_contrast_check_rationale_2",
+      "anti_slop_skills_antislop_human_contrast_check_rationale_36",
+      "anti_slop_skills_antislop_human_contrast_check_rationale_77",
+      "anti_slop_skills_antislop_human_contrast_check_reference_doc_path",
+      "anti_slop_skills_antislop_human_contrast_check_selftest",
+      "os",
+      "re",
+      "sys"
+    ],
+    "6": [
+      "docs_module_1_notebookllm_source",
+      "docs_module_1_notebookllm_source_buildlab_learning_guide_module_1_computer_fundamentals",
+      "docs_module_1_notebookllm_source_data_highways_called_buses",
+      "docs_module_1_notebookllm_source_essential_cables_and_connectors",
+      "docs_module_1_notebookllm_source_generational_standards_and_physical_keying",
+      "docs_module_1_notebookllm_source_section_1_overview_and_core_goals",
+      "docs_module_1_notebookllm_source_section_2_lesson_1_components_of_a_computer",
+      "docs_module_1_notebookllm_source_section_3_lesson_2_how_the_parts_talk_buses_and_standards",
+      "docs_module_1_notebookllm_source_section_4_self_check_questions_and_answers",
+      "docs_module_1_notebookllm_source_section_5_podcast_host_discussion_ideas_for_notebookllm",
+      "docs_module_1_notebookllm_source_the_core_four_components",
+      "docs_module_1_notebookllm_source_the_fundamental_loop_input_processing_and_output",
+      "docs_module_1_notebookllm_source_the_golden_rule_of_assembly_force",
+      "docs_module_1_notebookllm_source_the_supporting_cast",
+      "docs_module_1_notebookllm_source_the_workshop_analogy_and_the_golden_myth"
+    ],
+    "7": [
+      "anti_slop_skills_antislop_human_contrast_mcp",
+      "anti_slop_skills_antislop_human_contrast_mcp_channel",
+      "anti_slop_skills_antislop_human_contrast_mcp_check_contrast",
+      "anti_slop_skills_antislop_human_contrast_mcp_contrast_ratio",
+      "anti_slop_skills_antislop_human_contrast_mcp_error",
+      "anti_slop_skills_antislop_human_contrast_mcp_main",
+      "anti_slop_skills_antislop_human_contrast_mcp_rationale_2",
+      "anti_slop_skills_antislop_human_contrast_mcp_rationale_43",
+      "anti_slop_skills_antislop_human_contrast_mcp_relative_luminance",
+      "anti_slop_skills_antislop_human_contrast_mcp_reply",
+      "anti_slop_skills_antislop_human_contrast_mcp_send",
+      "anti_slop_skills_antislop_human_contrast_mcp_text",
+      "json"
+    ],
+    "8": [
+      "anti_slop_package",
+      "anti_slop_package_cline",
+      "anti_slop_package_cline_plugins",
+      "anti_slop_package_description",
+      "anti_slop_package_keywords",
+      "anti_slop_package_license",
+      "anti_slop_package_name",
+      "anti_slop_package_pi",
+      "anti_slop_package_pi_skills",
+      "anti_slop_package_private",
+      "anti_slop_package_type",
+      "anti_slop_package_version"
+    ],
+    "9": [
+      "anti_slop_cli_lib_settings",
+      "anti_slop_cli_lib_settings_configuremode",
+      "anti_slop_cli_lib_settings_modes",
+      "anti_slop_cli_lib_settings_readsettings",
+      "anti_slop_cli_lib_settings_resolvesettingspath",
+      "anti_slop_cli_lib_settings_settingspath",
+      "ref_node_os"
+    ],
+    "10": [
+      "graphify_out_memory_query_20261024_174214_ddc6521e_explain_logs",
+      "graphify_out_memory_query_20261024_174214_ddc6521e_explain_logs_answer",
+      "graphify_out_memory_query_20261024_174214_ddc6521e_explain_logs_outcome",
+      "graphify_out_memory_query_20261024_174214_ddc6521e_explain_logs_q_explain_logs"
+    ],
+    "11": [
+      "anti_slop_cline_plugin_plugin"
+    ]
+  },
+  "cohesion": {
+    "0": 0.043478260869565216,
+    "1": 0.1014799154334038,
+    "2": 0.11827956989247312,
+    "3": 0.08262108262108261,
+    "4": 0.08,
+    "5": 0.225,
+    "6": 0.13333333333333333,
+    "7": 0.28205128205128205,
+    "8": 0.16666666666666666,
+    "9": 0.3333333333333333,
+    "10": 0.5,
+    "11": 1.0
+  },
+  "gods": [
+    {
+      "id": "anti_slop_cli_index_main",
+      "label": "main()",
+      "degree": 16
+    },
+    {
+      "id": "anti_slop_scripts_check_repo_read",
+      "label": "read()",
+      "degree": 14
+    },
+    {
+      "id": "anti_slop_cli_lib_install_updateall",
+      "label": "updateAll()",
+      "degree": 8
+    },
+    {
+      "id": "anti_slop_cli_lib_install_installskills",
+      "label": "installSkills()",
+      "degree": 7
+    },
+    {
+      "id": "anti_slop_cli_lib_install_updatepointers",
+      "label": "updatePointers()",
+      "degree": 7
+    },
+    {
+      "id": "anti_slop_cli_lib_install_findnestedcopy",
+      "label": "findNestedCopy()",
+      "degree": 6
+    },
+    {
+      "id": "anti_slop_cli_lib_install_resolvetargets",
+      "label": "resolveTargets()",
+      "degree": 6
+    },
+    {
+      "id": "anti_slop_skills_antislop_human_contrast_check_selftest",
+      "label": "selftest()",
+      "degree": 6
+    },
+    {
+      "id": "anti_slop_skills_antislop_human_contrast_mcp_main",
+      "label": "main()",
+      "degree": 6
+    },
+    {
+      "id": "docs_module_1_notebookllm_source_buildlab_learning_guide_module_1_computer_fundamentals",
+      "label": "BuildLab Learning Guide: Module 1 - Computer Fundamentals",
+      "degree": 6
+    }
+  ],
+  "surprises": [
+    {
+      "source": "main()",
+      "target": "configureMode()",
+      "source_files": [
+        "anti-slop/cli/index.mjs",
+        "anti-slop/cli/lib/settings.mjs"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "main()",
+      "target": "banner()",
+      "source_files": [
+        "anti-slop/cli/index.mjs",
+        "anti-slop/cli/lib/banner.mjs"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "cross-file semantic connection"
+    },
+    {
+      "source": "main()",
+      "target": "detectAgents()",
+      "source_files": [
+        "anti-slop/cli/index.mjs",
+        "anti-slop/cli/lib/install.mjs"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "cross-file semantic connection"
+    },
+    {
+      "source": "main()",
+      "target": "detectConflicts()",
+      "source_files": [
+        "anti-slop/cli/index.mjs",
+        "anti-slop/cli/lib/install.mjs"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "cross-file semantic connection"
+    },
+    {
+      "source": "main()",
+      "target": "detectDuplicateReads()",
+      "source_files": [
+        "anti-slop/cli/index.mjs",
+        "anti-slop/cli/lib/install.mjs"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "cross-file semantic connection"
+    }
+  ],
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `picocolors` connect `install.mjs` to `cli/package.json`?",
+      "why": "High betweenness centrality (0.065) - this node is a cross-community bridge."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `smoke-worker.mjs` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.043478260869565216 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `@clack/prompts` connect `cli/package.json` to `install.mjs`?",
+      "why": "High betweenness centrality (0.063) - this node is a cross-community bridge."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `install.mjs` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.1014799154334038 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `check-repo.mjs` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.11827956989247312 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `smoke-test.mjs` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.08262108262108261 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `cli/package.json` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.08 - nodes in this community are weakly interconnected."
+    }
+  ]
+}

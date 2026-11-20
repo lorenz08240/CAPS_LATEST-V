@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>clerk.com feature cards, rebuilt with reanimate</title>
+  <meta name="robots" content="noindex">
+  <link rel="preload" href="./assets/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="./src/bento.css">
+  <script>
+    // ?card=<slug> shows a single card (mfa, session-management, otp, fraud, magic-links, social-sign-on,
+    // advanced-security, bot-detection, passwords, api-keys, clerk-cli); with &embed, closely framed for an iframe
+    const params = new URLSearchParams(location.search);
+    const card = params.get("card");
+    if (card) document.documentElement.dataset.card = card;
+    if (card && params.has("embed")) document.documentElement.dataset.embed = "";
+    // without &embed on a screen narrower than the card (a phone), the card is scaled down to fit
+    if (card && !params.has("embed")) {
+      const root = document.documentElement;
+      const fit = () => {
+        const z = Math.min(1, (innerWidth - 32) / parseFloat(getComputedStyle(root).getPropertyValue("--card-w")));
+        root.style.setProperty("--fit", z);
+        root.toggleAttribute("data-fit", z < 1);
+      };
+      fit();
+      addEventListener("resize", fit);
+    }
+  </script>
+  <script type="module" src="./src/bento.js"></script>
+</head>
+<body>
+
+  <main class="clerk-bento">
+    <div class="clerk-bento__container">
+      <div class="clerk-bento__stack">
+
+        <div class="clerk-bento__grid">
+          <div class="clerk-card clerk-card--mfa clerk-card--text-bottom" data-card="mfa">
+            <div class="clerk-card__text">
+              <div class="clerk-card__heading"><h3 class="clerk-card__title">Multifactor Authentication</h3></div>
+              <div class="clerk-card__desc"><div>Each user's self-serve multifactor settings are enforced automatically during sign-in.</div></div>
+            </div>
+            <div class="clerk-card__visual" data-widget="mfa" aria-hidden="true"></div>
+          </div>
+
+          <div class="clerk-card clerk-card--fraud clerk-card--large clerk-card--text-top" data-card="fraud">
+            <div class="clerk-card__text">
+              <div class="clerk-card__heading"><h3 class="clerk-card__title">Fraud and Abuse Prevention</h3></div>
+              <div class="clerk-card__desc"><div>Reduce fraudulent sign-ups and free trial abuse by blocking high-risk disposable email domains and restricting the use of email subaddresses with the “+” separator.</div></div>
+            </div>
+            <div class="clerk-card__visual" data-widget="fraud" aria-hidden="true"></div>
+          </div>
+
+          <div class="clerk-card clerk-card--advanced-security clerk-card--text-bottom" data-card="advanced-security">
+            <div class="clerk-card__text">
+              <div class="clerk-card__heading"><h3 class="clerk-card__title">Advanced security</h3></div>
+              <div class="clerk-card__desc"><div>Clerk is SOC 2 type 2 compliant and CCPA compliant. We conduct regular third-party audits and penetration tests.</div></div>
+            </div>
+            <div class="clerk-card__visual" data-widget="advanced-security" aria-hidden="true"></div>
+          </div>
+
+          <div class="clerk-card clerk-card--session-management clerk-card--large clerk-card--text-top" data-card="session-management">
+            <div class="clerk-card__text">
+              <div class="clerk-card__heading"><h3 class="clerk-card__title">Session Management</h3></div>
+              <div class="clerk-card__desc"><div>Clerk manages the full session lifecycle, including critical security functionality like active device monitoring and session revocation.</div></div>
+            </div>
+            <div class="clerk-card__visual" data-widget="session-management" aria-hidden="true"></div>
+          </div>
+
+          <div class="clerk-card clerk-card--social-sign-on clerk-card--text-bottom" data-card="social-sign-on">
+            <div class="clerk-card__text">
+              <div class="clerk-card__heading"><h3 class="clerk-card__title">Social Sign-On</h3></div>
+              <div class="clerk-card__desc"><div>Add high-conversion Social Sign-on (SSO) to your application in minutes. 20+ options and growing.</div></div>
+            </div>
+            <div class="clerk-card__visual" data-widget="social-sign-on" aria-hidden="true"></div>
+          </div>
+
+          <div class="clerk-card clerk-card--bot-detection clerk-card--text-bottom" data-card="bot-detection">
+            <div class="clerk-card__text">
+              <div class="clerk-card__heading"><h3 class="clerk-card__title">Bot Detection</h3></div>
+              <div class="clerk-card__desc"><div>Dramatically reduce fraudulent sign-ups with built-in, continually updated machine learning.</div></div>
+            </div>
+            <div class="clerk-card__visual" data-widget="bot-detection" aria-hidden="true"></div>
+          </div>
+
+          <div class="clerk-card clerk-card--otp clerk-card--text-bottom" data-card="otp">
+            <div class="clerk-card__text">
+              <div class="clerk-card__heading"><h3 class="clerk-card__title">Email and SMS one-time passcodes</h3></div>
+              <div class="clerk-card__desc"><div>Fast and reliable one-time passcode delivery with built-in brute force prevention.</div></div>
+            </div>
+            <div class="clerk-card__visual" data-widget="otp" aria-hidden="true"></div>
+          </div>
+
+          <div class="clerk-card clerk-card--magic-links clerk-card--large clerk-card--text-top" data-card="magic-links">
+            <div class="clerk-card__text">
+              <div class="clerk-card__heading"><h3 class="clerk-card__title">Magic Links</h3></div>
+              <div class="clerk-card__desc"><div>Improve sign-up conversion rates and filter out spam/fraud with Magic Links.</div></div>
+            </div>
+            <div class="clerk-card__visual" data-widget="magic-links" aria-hidden="true"></div>
+          </div>
+
+          <div class="clerk-card clerk-card--passwords clerk-card--text-bottom" data-card="passwords">
+            <div class="clerk-card__text">
+              <div class="clerk-card__heading"><h3 class="clerk-card__title">Passwords</h3></div>
+              <div class="clerk-card__desc"><div>Simple and secure password authentication, complete with breach detection and recovery options.</div></div>
+            </div>
+            <div class="clerk-card__visual" data-widget="passwords" aria-hidden="true"></div>
+          </div>
+        </div>
+
+        <div class="clerk-bento__row">
+          <div class="clerk-bento__cell clerk-bento__cell--wide">
+            <div class="clerk-card clerk-card--api-keys clerk-card--text-top clerk-card--padded" data-card="api-keys">
+              <div class="clerk-card__text">
+                <div class="clerk-card__heading"><h3 class="clerk-card__title">API Keys</h3></div>
+                <div class="clerk-card__desc"><div>Give every user secure, production-ready API keys without <br> building any of the underlying boilerplate code or UI.</div></div>
+              </div>
+              <div class="clerk-card__visual" data-widget="api-keys" aria-hidden="true"></div>
+            </div>
+          </div>
+          <div class="clerk-bento__cell">
+            <div class="clerk-card clerk-card--clerk-cli clerk-card--text-top clerk-card--padded" data-card="clerk-cli">
+              <div class="clerk-card__text">
+                <div class="clerk-card__heading"><h3 class="clerk-card__title">Clerk CLI</h3></div>
+                <div class="clerk-card__desc"><div>Empower your AI agents to set up Clerk with the CLI. No need to leave your terminal or copy and paste API keys.</div></div>
+              </div>
+              <div class="clerk-card__visual" data-widget="clerk-cli" aria-hidden="true"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- clerk.com lays a white diagonal glow over the whole section with mix-blend-mode: overlay -->
+        <div class="clerk-bento__glow" aria-hidden="true"><img src="./assets/shell/glow-bento.avif" alt="" width="2640" height="2640" decoding="async"></div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

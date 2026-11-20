@@ -1,0 +1,240 @@
+/* "Monetize through agentic commerce" card: chat graphic + particle ring background.
+   Values are stripe.com's resolved design tokens at the desktop breakpoint. */
+
+.modular-solutions-bento__card-agentic-commerce {
+  --agentic-font-weight-normal: 300;
+  --agentic-font-weight-bold: 400;
+  --agentic-radius: 6px;
+  --agentic-stroke: rgba(229, 237, 245, 0.5);
+  --agentic-neutral-25: #f8fafd;
+  --agentic-neutral-600: #50617a;
+  --agentic-border-quiet: #e5edf5;
+}
+
+/* ---------- chat graphic ---------- */
+
+.agentic-commerce-graphic__wrapper {
+  position: absolute;
+  inset: 12vw 0 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  /* inherited text defaults inside the graphic on stripe.com */
+  color: #000;
+  font-family: "Inter Variable", "SF Pro Display", sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: normal;
+}
+@media (min-width: 640px) {
+  .agentic-commerce-graphic__wrapper { top: 6vw; }
+}
+@media (min-width: 940px) {
+  .agentic-commerce-graphic__wrapper { top: min(6vw, 60px); }
+}
+.agentic-commerce-graphic__wrapper--showing { opacity: 1; }
+
+/* DomGraphic: fixed design size, scaled to fit. Low specificity (Stripe keeps these in a base layer),
+   so the graphic's own width below wins. */
+:where(.agentic-commerce-graphic__wrapper) .dom-graphic {
+  --graphic-source-width: 0;
+  --graphic-source-height: 0;
+  --graphic-aspect-ratio: 1/1;
+  --graphic-scale: 1;
+  --graphic-max-width: 100%;
+  position: relative;
+  width: 100%;
+  max-width: var(--graphic-max-width);
+  margin: 0 auto;
+  -webkit-user-select: none;
+  user-select: none;
+  aspect-ratio: var(--graphic-aspect-ratio);
+}
+:where(.agentic-commerce-graphic__wrapper) .dom-graphic__content {
+  --horizontal-scale-left: 0;
+  --horizontal-transform: 0;
+  position: absolute;
+  top: 0;
+  left: var(--horizontal-scale-left);
+  width: var(--graphic-source-width);
+  height: var(--graphic-source-height);
+  transform: scale(var(--graphic-scale)) translateX(var(--horizontal-transform));
+  transform-origin: top left;
+}
+
+.agentic-commerce-graphic {
+  --agentic-box-shadow: 0 20.187px 40.374px -20.187px rgba(0, 0, 0, 0.1);
+  width: 82%;
+}
+.agentic-commerce-graphic__layout {
+  display: flex;
+  flex-direction: column;
+  padding: 0 24px;
+  gap: 16px;
+}
+.agentic-commerce-graphic__chat {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.agentic-commerce-graphic__chat-bubble {
+  background: #fff;
+  border-radius: var(--agentic-radius);
+  outline: 1px solid var(--agentic-stroke);
+  box-shadow: var(--agentic-box-shadow);
+  font-family: "Inter Variable", "SF Pro Display", sans-serif;
+  font-size: 11px;
+  font-weight: var(--agentic-font-weight-normal);
+  line-height: 1.4;
+  padding: 7px 15px;
+}
+.agentic-commerce-graphic__chat-bubble--user {
+  align-self: flex-end;
+  background: var(--agentic-neutral-25);
+  max-width: 230px;
+}
+.agentic-commerce-graphic__chat-bubble--agent { max-width: 250px; }
+
+.agentic-commerce-graphic__products {
+  background: #fff;
+  border-radius: var(--agentic-radius);
+  box-shadow: var(--agentic-box-shadow);
+  outline: 1px solid var(--agentic-stroke);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px;
+}
+.agentic-commerce-graphic__products-grid {
+  display: grid;
+  grid-column-gap: 10px;
+  grid-row-gap: 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(4, auto);
+  position: relative;
+  padding: 1px;
+}
+.agentic-commerce-graphic__product-cards__layout {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: 1fr;
+  grid-column-gap: 8px;
+}
+.agentic-commerce-graphic__product-card {
+  position: relative;
+  border-radius: var(--agentic-radius);
+  background: var(--agentic-border-quiet);
+  overflow: hidden;
+}
+.agentic-commerce-graphic__product-card::after {
+  display: block;
+  position: absolute;
+  inset: 1px;
+  content: "";
+  background: #fff;
+  border-radius: calc(var(--agentic-radius) - 1px);
+}
+.agentic-commerce-graphic__product-card:hover::before { opacity: 1; }
+
+.agentic-commerce-graphic__product-image {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding: 10px;
+  overflow: hidden;
+  pointer-events: none;
+  border-top-left-radius: var(--agentic-radius);
+  border-top-right-radius: var(--agentic-radius);
+  background-color: #ecf0f4;
+}
+.agentic-commerce-graphic__product-image img {
+  display: block;
+  aspect-ratio: 1;
+  width: 92px;
+  max-width: 100%;
+  height: auto;
+}
+.agentic-commerce-graphic__product-brand,
+.agentic-commerce-graphic__product-description,
+.agentic-commerce-graphic__product-price,
+.agentic-commerce-graphic__product-variant {
+  position: relative;
+  pointer-events: none;
+  font-family: "Inter Variable", "SF Pro Display", sans-serif;
+  font-size: 9px;
+  font-weight: var(--agentic-font-weight-normal);
+  line-height: 1;
+  padding: 0 8px;
+}
+.agentic-commerce-graphic__product-price { font-weight: var(--agentic-font-weight-bold); }
+.agentic-commerce-graphic__product-brand {
+  color: var(--agentic-neutral-600);
+  padding-bottom: var(--agentic-radius);
+}
+.agentic-commerce-graphic__product-description {
+  margin-block-start: 10px;
+  margin-block-end: 3px;
+}
+.agentic-commerce-graphic__product-variant { color: var(--agentic-neutral-600); }
+.agentic-commerce-graphic__product-price,
+.agentic-commerce-graphic__product-variant { margin-bottom: 8px; }
+.agentic-commerce-graphic .tabular-nums--tight {
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+}
+
+.agentic-commerce-graphic__cta {
+  background: rgba(40, 99, 177, 0.1);
+  border-radius: var(--agentic-radius);
+}
+.agentic-commerce-graphic__cta:hover { background: rgba(40, 99, 177, 0.125); }
+.agentic-commerce-graphic__cta-button {
+  color: #2863b1;
+  font-family: "Inter Variable", "SF Pro Display", sans-serif;
+  font-size: 11px;
+  font-weight: var(--agentic-font-weight-bold);
+  line-height: 1.4;
+  padding: 10px 0 12px;
+  text-align: center;
+}
+
+/* ---------- particle background ---------- */
+
+.agentic-graphic__background {
+  position: absolute;
+  inset: -20px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+}
+.agentic-graphic__background::before {
+  display: block;
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle,
+    hsla(24, 92%, 70%, 0) 0,
+    rgba(249, 109, 149, 0.075) 45%,
+    rgba(153, 61, 240, 0.05) 55%,
+    rgba(125, 31, 255, 0) 80%
+  );
+}
+/* The ::before glow is positioned, so it paints over the (unpositioned) canvas, as on stripe.com. */
+.agentic-graphic__background-canvas {
+  width: 100%;
+  height: 100%;
+}
+.agentic-graphic__background-static {
+  position: relative;
+  width: 100%;
+}
+.agentic-graphic__background-static img {
+  display: block;
+  width: 100%;
+  height: auto;
+}

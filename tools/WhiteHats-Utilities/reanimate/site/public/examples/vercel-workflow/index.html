@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>vercel.com/workflow run inspector, rebuilt with reanimate</title>
+  <meta name="robots" content="noindex">
+  <!--
+    The "Inspect every run end-to-end" panel of vercel.com/workflow: a mock of the Vercel dashboard showing one run
+    of order-workflow. When the trace scrolls into view the run plays: the status turns to Running, the Duration
+    counts up to 925ms while the six spans grow one after another with their timers, and the status flips to
+    Completed. Each bar keeps its own clock and only advances while at least 35 % of it is on screen, as on
+    vercel.com. Plain HTML + an ES module; src/run.js ports the page's loop and tween code. The structure, the bars'
+    inline styles and the SVG icons are vercel.com's; the fonts are the Geist and Geist Mono builds it serves (OFL).
+    ?pushdown puts the panel below the fold, as the site films it, so the run plays as it scrolls in.
+  -->
+  <link rel="preload" href="./assets/fonts/GeistSans-Variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="./assets/fonts/GeistMono-Variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="./src/dashboard.css">
+  <script>
+    if (new URLSearchParams(location.search).has("pushdown")) document.documentElement.dataset.pushdown = "";
+  </script>
+  <script type="module" src="./src/run.js"></script>
+</head>
+<body>
+
+  <main class="vw-page">
+    <div class="vw-frame">
+      <div class="vw-defer">
+        <div class="vw-wrap">
+          <div class="vw-glow" aria-hidden="true"></div>
+          <div class="vw-panel" role="img" aria-label="Vercel dashboard preview showing workflow observability and run timing">
+
+            <div class="vw-side" aria-hidden="true">
+              <div class="vw-side__logo"><span class="vw-tri"></span></div>
+              <span class="vw-side__team">Acme</span><span class="vw-side__plan">Pro</span>
+              <svg class="vw-side__switch" viewBox="0 0 16 16" width="16" height="16"><path fill="currentColor" fill-rule="evenodd" d="M8.7 2.4a1 1 0 0 0-1.4 0L4.46 5.22l-.53.53L5 6.81l.53-.53L8 3.81l2.47 2.47.53.53 1.06-1.06-.53-.53zM5.54 9.72 5 9.19l-1.06 1.06.53.53 2.82 2.82a1 1 0 0 0 1.42 0l2.82-2.82.53-.53L11 9.19l-.53.53L8 12.19z" clip-rule="evenodd"></path></svg>
+              <div class="vw-find">
+                <svg class="vw-find__icon" viewBox="0 0 16 16" width="16" height="16"><path fill="currentColor" fill-rule="evenodd" d="M1.5 6.5a5 5 0 1 1 10 0 5 5 0 0 1-10 0m5-6.5a6.5 6.5 0 1 0 4.04 11.6l3.43 3.43.53.53 1.06-1.06-.53-.53-3.43-3.43A6.5 6.5 0 0 0 6.5 0" clip-rule="evenodd"></path></svg>
+                <span class="vw-find__text">Find…</span><span class="vw-find__key">F</span>
+              </div>
+              <div class="vw-nav" style="top:76px"><span class="vw-nav__icon"><svg viewBox="0 0 16 16" width="16" height="16"><path fill="currentColor" fill-rule="evenodd" d="m5.25.1.42.28 4.5 3 .33.22V5h-.95L6 7.17v6.42l-1.14-.7-4.5-2.75L0 9.92V3.6l.33-.22 4.5-3zm0 5.77 3.1-1.9-3.1-2.07-3.1 2.07zM1.5 5.34l3 1.83v3.74l-3-1.83zM13.23 12q-.05 1.22-.32 2.43a3.3 3.3 0 0 0 1.8-2.43zm-1.43 2.74a3 3 0 0 1-.6 0q-.38-1.36-.43-2.74h1.46q-.06 1.38-.43 2.74M13.23 11q-.05-1.22-.32-2.43a3.3 3.3 0 0 1 1.8 2.43zm-1 0q-.06-1.38-.43-2.74a3 3 0 0 0-.6 0q-.38 1.36-.43 2.74zm-2.46 0q.05-1.22.32-2.43A3.3 3.3 0 0 0 8.29 11zm.32 3.43q-.27-1.2-.32-2.43H8.29a3.3 3.3 0 0 0 1.8 2.43M11.5 16a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9" clip-rule="evenodd"></path></svg></span><span class="vw-nav__label">Domains</span></div>
+              <div class="vw-nav" style="top:116px"><span class="vw-nav__icon"><svg viewBox="0 0 16 16" width="16" height="16"><path fill="currentColor" fill-rule="evenodd" d="M13.75 1.9a2.5 2.5 0 0 0-1.92-.9H4.17a2.5 2.5 0 0 0-1.92.9L1.08 3.3A2.5 2.5 0 0 0 .5 4.9V15h15V4.9c0-.58-.2-1.15-.58-1.6zM14 5v-.1a1 1 0 0 0-.23-.64l1.15-.96-1.15.96-1.17-1.4a1 1 0 0 0-.77-.36H4.17a1 1 0 0 0-.77.36l-1.17 1.4a1 1 0 0 0-.23.65V5a1.5 1.5 0 1 0 3 0h1.5a1.5 1.5 0 1 0 3 0H11a1.5 1.5 0 0 0 3 0m0 2.6a3 3 0 0 1-3.75-.62 3 3 0 0 1-4.5 0A3 3 0 0 1 2 7.6v5.9h4V12a2 2 0 1 1 4 0v1.5h4zM8.5 12v1.5h-1V12a.5.5 0 0 1 1 0" clip-rule="evenodd"></path></svg></span><span class="vw-nav__label">Integrations</span></div>
+              <div class="vw-nav" style="top:156px"><span class="vw-nav__icon"><svg viewBox="0 0 16 16" width="16" height="16"><path fill="currentColor" fill-rule="evenodd" d="M3.3.79C4.54.29 6.2 0 8 0s3.46.29 4.7.79a5 5 0 0 1 1.57.94c.41.39.73.9.73 1.52v9.5a2 2 0 0 1-.73 1.52 5 5 0 0 1-1.57.94c-1.24.5-2.9.79-4.7.79s-3.46-.29-4.7-.79a5 5 0 0 1-1.57-.94A2 2 0 0 1 1 12.75v-9.5c0-.62.32-1.13.73-1.52A5 5 0 0 1 3.3.8m-.8 4.54V8c0 .07.03.22.26.43q.33.33 1.1.64c1.02.41 2.49.68 4.14.68s3.12-.27 4.14-.68q.77-.31 1.1-.64c.23-.21.26-.36.26-.43V5.33a6 6 0 0 1-.8.38c-1.24.5-2.9.79-4.7.79s-3.46-.29-4.7-.79a6 6 0 0 1-.8-.38m11-2.08c0 .07-.03.22-.26.43q-.33.33-1.1.64C11.12 4.73 9.65 5 8 5s-3.12-.27-4.14-.68q-.77-.31-1.1-.64c-.23-.21-.26-.36-.26-.43s.03-.22.26-.43q.33-.33 1.1-.64C4.88 1.77 6.35 1.5 8 1.5s3.12.27 4.14.68q.77.31 1.1.64c.23.21.26.36.26.43m0 6.83a6 6 0 0 1-.8.38c-1.24.5-2.9.79-4.7.79s-3.46-.29-4.7-.79a6 6 0 0 1-.8-.38v2.67c0 .07.03.22.26.43q.33.33 1.1.64c1.02.41 2.49.68 4.14.68s3.12-.27 4.14-.68q.77-.31 1.1-.64c.23-.21.26-.36.26-.43z" clip-rule="evenodd"></path></svg></span><span class="vw-nav__label">Storage</span></div>
+              <div class="vw-nav" style="top:196px"><span class="vw-nav__icon"><svg viewBox="0 0 16 16" width="16" height="16"><path fill="currentColor" fill-rule="evenodd" d="m2.5 2.38.6-.33c.58-.28 1.4-.55 2.4-.55.87 0 1.52.42 2.26.98l.16.11q.48.38 1.03.71c.44.25.95.45 1.55.45a9 9 0 0 0 3-.63v5.7q-.2.1-.52.23c-.57.22-1.4.45-2.42.45-.9 0-1.45-.33-2.13-.76l-.03-.01c-.7-.44-1.55-.98-2.9-.98-1.25 0-2.27.33-3 .67zm0 7.75V16H1V1.65l.27-.22.48.57-.48-.57v-.01l.03-.02.3-.22q.3-.2.85-.48C3.18.35 4.23 0 5.5 0c1.4 0 2.4.7 3.16 1.27l.17.13q.47.36.86.6.44.25.81.25c.73 0 1.57-.22 2.27-.46a13 13 0 0 0 1.13-.46h.02L15 .8v8.84l-.32.22-.43-.61.43.61-.01.01-.02.01-.3.18q-.29.17-.82.39c-.71.28-1.73.55-2.97.55-1.36 0-2.2-.54-2.9-.98l-.03-.01c-.69-.43-1.22-.76-2.13-.76a5.6 5.6 0 0 0-3 .88m-.27.2" clip-rule="evenodd"></path></svg></span><span class="vw-nav__label">Flags</span></div>
+              <div class="vw-nav" style="top:236px"><span class="vw-nav__icon"><svg viewBox="0 0 16 16" width="16" height="16"><path fill="currentColor" d="M2 11.64a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5m4 0a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5m4 0a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5m4 0a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5M4 8.18a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5m4 0a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5m4 0a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5M6 4.7a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5m4 0a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5M8 1.25a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5"></path></svg></span><span class="vw-nav__label">Agent</span></div>
+              <div class="vw-nav" style="top:276px"><span class="vw-nav__icon"><svg viewBox="0 0 16 16" width="16" height="16"><path fill="currentColor" fill-rule="evenodd" d="M10.5 4a1.5 1.5 0 1 0 3 0 1.5 1.5 0 0 0-3 0M9.42 5.52a3 3 0 1 1 1.06 1.06l-3.9 3.9Q7 11.15 7 12a3 3 0 1 1-1.48-2.58zM2.5 12a1.5 1.5 0 1 0 3 0 1.5 1.5 0 0 0-3 0" clip-rule="evenodd"></path></svg></span><span class="vw-nav__label">AI Gateway</span><svg class="vw-nav__more" viewBox="0 0 16 16" width="16" height="16"><path fill="currentColor" fill-rule="evenodd" d="m5.5 1.94.53.53 4.82 4.82a1 1 0 0 1 0 1.42l-4.82 4.82-.53.53L4.44 13l.53-.53L9.44 8 4.97 3.53 4.44 3z" clip-rule="evenodd"></path></svg></div>
+              <div class="vw-nav" style="top:316px"><span class="vw-nav__icon"><svg viewBox="0 0 16 16" width="16" height="16"><path fill="currentColor" d="M14.5 2.25a.75.75 0 0 0-.75-.75H10.5V0h3.25C14.99 0 16 1 16 2.25V5.5h-1.5zM0 2.25C0 1.01 1 0 2.25 0H5.5v1.5H2.25a.75.75 0 0 0-.75.75V5.5H0zm2.94 8L5.19 8 2.94 5.75 4 4.69l2.6 2.6a1 1 0 0 1 0 1.42L4 11.3zm4.93-.62h4.63v1.5H7.87zm2.63 4.87h3.25c.41 0 .75-.34.75-.75V10.5H16v3.25c0 1.24-1 2.25-2.25 2.25H10.5zM2.25 16C1.01 16 0 15 0 13.75V10.5h1.5v3.25c0 .41.34.75.75.75H5.5V16z"></path></svg></span><span class="vw-nav__label">Sandboxes</span></div>
+              <div class="vw-nav vw-nav--on" style="top:356px"><span class="vw-nav__icon"><svg viewBox="0 0 16 16" width="16" height="16"><path fill="currentColor" d="m5.75 7 .67.34-1.57 3.13c.54.3.9.87.9 1.53v2c0 .97-.78 1.75-1.75 1.75H2c-.97 0-1.75-.78-1.75-1.75v-2c0-.97.78-1.75 1.75-1.75h1.29l1.79-3.58zM14 10.25c.97 0 1.75.78 1.75 1.75v2c0 .97-.78 1.75-1.75 1.75h-2c-.88 0-1.6-.65-1.73-1.5H7v-1.5h3.25V12c0-.97.78-1.75 1.75-1.75zm-12 1.5a.25.25 0 0 0-.25.25v2c0 .14.11.25.25.25h2c.14 0 .25-.11.25-.25v-2a.25.25 0 0 0-.25-.25zm10 0a.25.25 0 0 0-.25.25v2q.02.23.25.25h2q.23-.02.25-.25v-2a.25.25 0 0 0-.25-.25zM9 .25c.97 0 1.75.78 1.75 1.75v2q-.02.69-.44 1.16l1.9 3.48-1.32.72-1.97-3.61H7c-.97 0-1.75-.78-1.75-1.75V2c0-.97.78-1.75 1.75-1.75zm-2 1.5a.25.25 0 0 0-.25.25v2c0 .14.11.25.25.25h2c.14 0 .25-.11.25-.25V2A.25.25 0 0 0 9 1.75z"></path></svg></span><span class="vw-nav__label">Workflows</span></div>
+              <div class="vw-side__rule"></div>
+              <div class="vw-nav" style="top:408px"><span class="vw-nav__icon"><svg viewBox="0 0 16 16" width="16" height="16"><path fill="currentColor" fill-rule="evenodd" d="M14.46 8.75a6.5 6.5 0 1 1-7.21-7.2v6.2a1 1 0 0 0 1 1zm0-1.5H8.75v-5.7a6.5 6.5 0 0 1 5.7 5.7M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0" clip-rule="evenodd"></path></svg></span><span class="vw-nav__label">Usage</span></div>
+              <div class="vw-nav" style="top:448px"><span class="vw-nav__icon"><svg viewBox="0 0 16 16" width="16" height="16"><path fill="currentColor" fill-rule="evenodd" d="m2.9 10.4.08.23a5.27 5.27 0 0 1 .4 3.42 8 8 0 0 0 2.33-1.3l.51-.43.67.1q.54.08 1.11.08c3.78 0 6.5-2.64 6.5-5.5S11.78 1.5 8 1.5 1.5 4.14 1.5 7c0 1.18.44 2.3 1.23 3.22zm-.09 5.37A9 9 0 0 1 1 16s.43-.69.73-1.56c.15-.46.27-.96.27-1.44 0-.62-.2-1.27-.4-1.81A6.4 6.4 0 0 1 0 7c0-3.87 3.58-7 8-7s8 3.13 8 7-3.58 7-8 7q-.68 0-1.33-.1a8.7 8.7 0 0 1-3.86 1.87" clip-rule="evenodd"></path></svg></span><span class="vw-nav__label">Support</span></div>
+              <div class="vw-nav" style="top:488px"><span class="vw-nav__icon"><svg viewBox="0 0 16 16" width="16" height="16"><path fill="currentColor" d="M9.77 1.46q.07.28.35.4.38.12.72.3.27.12.53-.04l1.23-.84 2.12 2.12-.84 1.23a.5.5 0 0 0-.03.53q.17.35.3.72.1.28.39.35L16 6.5v3l-1.46.27a.5.5 0 0 0-.4.35q-.12.38-.3.72a.5.5 0 0 0 .04.53l.84 1.23-2.12 2.12-1.23-.84a.5.5 0 0 0-.53-.03q-.34.17-.72.3a.5.5 0 0 0-.35.39L9.5 16h-3l-.27-1.46a.5.5 0 0 0-.29-.37l-.06-.02a7 7 0 0 1-.72-.3.5.5 0 0 0-.53.03l-1.23.84-2.12-2.12.84-1.23q.14-.21.06-.46l-.03-.07a7 7 0 0 1-.3-.72.5.5 0 0 0-.32-.33l-.07-.02L0 9.5v-3l1.46-.27q.25-.05.37-.29l.02-.06q.14-.38.3-.72a.5.5 0 0 0 0-.47l-.03-.06-.84-1.23L3.4 1.28l1.23.84q.26.16.53.03L5.5 2l.37-.14a.5.5 0 0 0 .33-.32l.02-.07L6.5 0h3zm-2.07.28a2 2 0 0 1-1.33 1.53l-.28.1-.4.18c-.6.25-1.31.22-1.9-.2l-.2-.13-.37.36.14.2c.4.6.44 1.32.2 1.92l-.18.39-.1.28c-.23.65-.8 1.19-1.54 1.33l-.24.04v.51l.24.05c.7.13 1.24.62 1.49 1.21l.04.12.1.28.18.4c.25.6.22 1.31-.2 1.9l-.13.2.36.37.2-.14.12-.08a2 2 0 0 1 1.8-.11l.39.17.28.1c.65.23 1.19.8 1.33 1.54l.04.24h.52l.04-.24.03-.13c.18-.69.7-1.2 1.3-1.4l.28-.1.4-.18c.6-.25 1.31-.21 1.9.2l.2.13.37-.37-.14-.2c-.4-.59-.44-1.3-.2-1.9l.18-.4.1-.28c.23-.65.8-1.19 1.54-1.33l.24-.05v-.5l-.24-.05a2 2 0 0 1-1.53-1.33l-.1-.28-.18-.4c-.25-.6-.21-1.31.2-1.9l.13-.2-.37-.37-.2.14c-.59.4-1.3.44-1.9.2l-.4-.18-.28-.1A2 2 0 0 1 8.3 1.73l-.04-.24h-.52zM8 5a3 3 0 1 1 0 6 3 3 0 0 1 0-6m0 1.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3"></path></svg></span><span class="vw-nav__label">Settings</span><svg class="vw-nav__more" viewBox="0 0 16 16" width="16" height="16"><path fill="currentColor" fill-rule="evenodd" d="m5.5 1.94.53.53 4.82 4.82a1 1 0 0 1 0 1.42l-4.82 4.82-.53.53L4.44 13l.53-.53L9.44 8 4.97 3.53 4.44 3z" clip-rule="evenodd"></path></svg></div>
+              <div class="vw-side__fade"></div>
+            </div>
+
+            <div class="vw-main">
+              <div class="vw-top">
+                <div class="vw-top__project" aria-hidden="true">
+                  <span class="vw-top__logo"><span class="vw-top__mark"><span class="vw-tri vw-tri--lg"></span></span></span><span class="vw-top__name">acme-store</span>
+                  <svg class="vw-top__switch" viewBox="0 0 16 16" width="16" height="16"><path fill="currentColor" fill-rule="evenodd" d="M8.7 2.4a1 1 0 0 0-1.4 0L4.46 5.22l-.53.53L5 6.81l.53-.53L8 3.81l2.47 2.47.53.53 1.06-1.06-.53-.53zM5.54 9.72 5 9.19l-1.06 1.06.53.53 2.82 2.82a1 1 0 0 0 1.42 0l2.82-2.82.53-.53L11 9.19l-.53.53L8 12.19z" clip-rule="evenodd"></path></svg>
+                </div>
+                <span class="vw-top__title">Workflows</span>
+                <div class="vw-top__ask" aria-hidden="true">
+                  <span class="vw-dots"><span style="left:14.75px;top:9.25px"></span><span style="left:12.75px;top:12.714px"></span><span style="left:16.75px;top:12.714px"></span><span style="left:10.75px;top:16.179px"></span><span style="left:14.75px;top:16.179px"></span><span style="left:18.75px;top:16.179px"></span><span style="left:8.75px;top:19.643px"></span><span style="left:12.75px;top:19.643px"></span><span style="left:16.75px;top:19.643px"></span><span style="left:20.75px;top:19.643px"></span></span><span class="vw-top__ask-label">Ask Vercel</span>
+                </div>
+              </div>
+
+              <div class="vw-body" aria-hidden="true">
+                <div class="vw-run">
+                  <div class="vw-head">
+                    <div class="vw-head__line">
+                      <span class="vw-head__name">order-workflow</span>
+                      <div class="vw-head__id">
+                        <span class="vw-head__run">wrun_01KC7XRJ</span>
+                        <svg class="vw-head__copy" viewBox="0 0 16 16" width="14" height="14"><path fill="currentColor" fill-rule="evenodd" d="M8.25 2c.14 0 .25.11.25.25V3H10v-.75C10 1.28 9.22.5 8.25.5h-5.5C1.78.5 1 1.28 1 2.25v7.5c0 .97.78 1.75 1.75 1.75H4.5V10H2.75a.25.25 0 0 1-.25-.25v-7.5c0-.14.11-.25.25-.25zm5 4c.14 0 .25.11.25.25v7.5q-.02.23-.25.25h-5.5a.25.25 0 0 1-.25-.25v-7.5c0-.14.11-.25.25-.25zm0 9.5c.97 0 1.75-.78 1.75-1.75v-7.5c0-.97-.78-1.75-1.75-1.75h-5.5C6.78 4.5 6 5.28 6 6.25v7.5c0 .97.78 1.75 1.75 1.75z" clip-rule="evenodd"></path></svg>
+                      </div>
+                      <div class="vw-head__rule"></div>
+                      <div class="vw-status" data-status="idle">
+                        <span class="vw-status__dot"></span><span class="vw-status__label"><span class="vw-status__text">Running</span></span>
+                      </div>
+                      <div class="vw-head__fill"></div>
+                    </div>
+                    <div class="vw-facts">
+                      <div class="vw-fact"><span class="vw-fact__k">Created</span><span class="vw-fact__v">2m ago</span></div>
+                      <div class="vw-fact"><span class="vw-fact__k">Completed</span><span class="vw-fact__v">1m ago</span></div>
+                      <div class="vw-fact"><span class="vw-fact__k">Duration</span><span class="vw-fact__v" data-duration>0<!-- -->ms</span></div>
+                    </div>
+                  </div>
+
+                  <div class="vw-trace">
+                    <div class="vw-trace__head">
+                      <div class="vw-search">
+                        <svg class="vw-search__icon" viewBox="0 0 16 16" width="14" height="14"><path fill="currentColor" fill-rule="evenodd" d="M1.5 6.5a5 5 0 1 1 10 0 5 5 0 0 1-10 0m5-6.5a6.5 6.5 0 1 0 4.04 11.6l3.43 3.43.53.53 1.06-1.06-.53-.53-3.43-3.43A6.5 6.5 0 0 0 6.5 0" clip-rule="evenodd"></path></svg><span class="vw-search__text">Search spans…</span>
+                      </div>
+                      <div class="vw-axis">
+                        <div class="vw-axis__inner">
+                          <span class="vw-tick vw-tick--start">0ms</span><span class="vw-tick" style="left:25%">230ms</span><span class="vw-tick" style="left:50%">460ms</span><span class="vw-tick" style="left:75%">690ms</span><span class="vw-tick vw-tick--end">925ms</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="vw-trace__body">
+                      <div class="vw-rows">
+                        <div class="vw-row"><div class="vw-row__name"><svg class="vw-row__icon vw-row__icon--run" viewBox="0 0 16 16" width="16" height="16"><path fill="currentColor" d="m5.75 7 .67.34-1.57 3.13c.54.3.9.87.9 1.53v2c0 .97-.78 1.75-1.75 1.75H2c-.97 0-1.75-.78-1.75-1.75v-2c0-.97.78-1.75 1.75-1.75h1.29l1.79-3.58zM14 10.25c.97 0 1.75.78 1.75 1.75v2c0 .97-.78 1.75-1.75 1.75h-2c-.88 0-1.6-.65-1.73-1.5H7v-1.5h3.25V12c0-.97.78-1.75 1.75-1.75zm-12 1.5a.25.25 0 0 0-.25.25v2c0 .14.11.25.25.25h2c.14 0 .25-.11.25-.25v-2a.25.25 0 0 0-.25-.25zm10 0a.25.25 0 0 0-.25.25v2q.02.23.25.25h2q.23-.02.25-.25v-2a.25.25 0 0 0-.25-.25zM9 .25c.97 0 1.75.78 1.75 1.75v2q-.02.69-.44 1.16l1.9 3.48-1.32.72-1.97-3.61H7c-.97 0-1.75-.78-1.75-1.75V2c0-.97.78-1.75 1.75-1.75zm-2 1.5a.25.25 0 0 0-.25.25v2c0 .14.11.25.25.25h2c.14 0 .25-.11.25-.25V2A.25.25 0 0 0 9 1.75z"></path></svg><span class="vw-row__label">workflow</span></div><span class="vw-row__ms">925ms</span></div>
+                        <div class="vw-row"><div class="vw-row__name"><svg class="vw-row__icon" viewBox="0 0 16 16" width="16" height="16"><path fill="currentColor" fill-rule="evenodd" d="m4.22 12.53.53.53L5.81 12l-.53-.53L1.81 8l3.47-3.47.53-.53-1.06-1.06-.53.53L.4 7.29a1 1 0 0 0 0 1.42zm7.56 0-.53.53L10.19 12l.53-.53L14.19 8l-3.47-3.47-.53-.53 1.06-1.06.53.53 3.82 3.82a1 1 0 0 1 0 1.42z" clip-rule="evenodd"></path></svg><span class="vw-row__label">fetchOrder</span></div><span class="vw-row__ms">230ms</span></div>
+                        <div class="vw-row"><div class="vw-row__name"><svg class="vw-row__icon" viewBox="0 0 16 16" width="16" height="16"><path fill="currentColor" fill-rule="evenodd" d="m4.22 12.53.53.53L5.81 12l-.53-.53L1.81 8l3.47-3.47.53-.53-1.06-1.06-.53.53L.4 7.29a1 1 0 0 0 0 1.42zm7.56 0-.53.53L10.19 12l.53-.53L14.19 8l-3.47-3.47-.53-.53 1.06-1.06.53.53 3.82 3.82a1 1 0 0 1 0 1.42z" clip-rule="evenodd"></path></svg><span class="vw-row__label">validate</span></div><span class="vw-row__ms">155ms</span></div>
+                        <div class="vw-row"><div class="vw-row__name"><svg class="vw-row__icon" viewBox="0 0 16 16" width="16" height="16"><path fill="currentColor" fill-rule="evenodd" d="m4.22 12.53.53.53L5.81 12l-.53-.53L1.81 8l3.47-3.47.53-.53-1.06-1.06-.53.53L.4 7.29a1 1 0 0 0 0 1.42zm7.56 0-.53.53L10.19 12l.53-.53L14.19 8l-3.47-3.47-.53-.53 1.06-1.06.53.53 3.82 3.82a1 1 0 0 1 0 1.42z" clip-rule="evenodd"></path></svg><span class="vw-row__label">enrichWithPricing</span></div><span class="vw-row__ms">230ms</span></div>
+                        <div class="vw-row"><div class="vw-row__name"><svg class="vw-row__icon" viewBox="0 0 16 16" width="16" height="16"><path fill="currentColor" fill-rule="evenodd" d="m4.22 12.53.53.53L5.81 12l-.53-.53L1.81 8l3.47-3.47.53-.53-1.06-1.06-.53.53L.4 7.29a1 1 0 0 0 0 1.42zm7.56 0-.53.53L10.19 12l.53-.53L14.19 8l-3.47-3.47-.53-.53 1.06-1.06.53.53 3.82 3.82a1 1 0 0 1 0 1.42z" clip-rule="evenodd"></path></svg><span class="vw-row__label">saveOrder</span></div><span class="vw-row__ms">155ms</span></div>
+                        <div class="vw-row"><div class="vw-row__name"><svg class="vw-row__icon" viewBox="0 0 16 16" width="16" height="16"><path fill="currentColor" fill-rule="evenodd" d="m4.22 12.53.53.53L5.81 12l-.53-.53L1.81 8l3.47-3.47.53-.53-1.06-1.06-.53.53L.4 7.29a1 1 0 0 0 0 1.42zm7.56 0-.53.53L10.19 12l.53-.53L14.19 8l-3.47-3.47-.53-.53 1.06-1.06.53.53 3.82 3.82a1 1 0 0 1 0 1.42z" clip-rule="evenodd"></path></svg><span class="vw-row__label">sendEmail</span></div><span class="vw-row__ms">155ms</span></div>
+                      </div>
+                      <div class="vw-chart">
+                        <!-- positions are fractions of the 925 ms run, as on vercel.com; the bar boxes keep its inline styles -->
+                        <div class="vw-chart__inner">
+                          <div class="vw-grid" style="left:24.864864864864867%"></div>
+                          <div class="vw-grid" style="left:49.72972972972973%"></div>
+                          <div class="vw-grid" style="left:74.5945945945946%"></div>
+                          <div>
+                            <div class="vw-bar" data-start="0" data-duration="925" style="left:0;top:8px;width:100%"><div class="vw-bar__track"><div class="vw-bar__fill"><div class="vw-badge vw-badge--blue"><div class="vw-badge__ms">0ms</div></div></div></div></div>
+                          </div>
+                          <div>
+                            <div class="vw-link vw-link--h" style="left:0%;top:59.5px"></div><div class="vw-link vw-link--v" style="left:0%;top:52px"></div>
+                            <div class="vw-bar" data-start="0" data-duration="230" style="left:calc(0% + 14px);top:48px;width:max(12px, calc(24.864864864864867% - 14px))"><div class="vw-bar__track"><div class="vw-bar__fill"><div class="vw-badge vw-badge--green"><div class="vw-badge__ms">0ms</div></div></div></div></div>
+                          </div>
+                          <div>
+                            <div class="vw-link vw-link--h" style="left:24.864864864864867%;top:99.5px"></div><div class="vw-link vw-link--v" style="left:24.864864864864867%;top:92px"></div>
+                            <div class="vw-bar" data-start="230" data-duration="155" style="left:calc(24.864864864864867% + 14px);top:88px;width:max(12px, calc(16.756756756756758% - 14px))"><div class="vw-bar__track"><div class="vw-bar__fill"><div class="vw-badge vw-badge--green"><div class="vw-badge__ms">0ms</div></div></div></div></div>
+                          </div>
+                          <div>
+                            <div class="vw-link vw-link--h" style="left:41.62162162162162%;top:139.5px"></div><div class="vw-link vw-link--v" style="left:41.62162162162162%;top:132px"></div>
+                            <div class="vw-bar" data-start="385" data-duration="230" style="left:calc(41.62162162162162% + 14px);top:128px;width:max(12px, calc(24.864864864864867% - 14px))"><div class="vw-bar__track"><div class="vw-bar__fill"><div class="vw-badge vw-badge--green"><div class="vw-badge__ms">0ms</div></div></div></div></div>
+                          </div>
+                          <div>
+                            <div class="vw-link vw-link--h" style="left:66.48648648648648%;top:179.5px"></div><div class="vw-link vw-link--v" style="left:66.48648648648648%;top:172px"></div>
+                            <div class="vw-bar" data-start="615" data-duration="155" style="left:calc(66.48648648648648% + 14px);top:168px;width:max(12px, calc(16.756756756756758% - 14px))"><div class="vw-bar__track"><div class="vw-bar__fill"><div class="vw-badge vw-badge--green"><div class="vw-badge__ms">0ms</div></div></div></div></div>
+                          </div>
+                          <div>
+                            <div class="vw-link vw-link--h" style="left:83.24324324324324%;top:219.5px"></div><div class="vw-link vw-link--v" style="left:83.24324324324324%;top:212px"></div>
+                            <div class="vw-bar" data-start="770" data-duration="155" style="left:calc(83.24324324324324% + 14px);top:208px;width:max(12px, calc(16.756756756756758% - 14px))"><div class="vw-bar__track"><div class="vw-bar__fill"><div class="vw-badge vw-badge--green"><div class="vw-badge__ms">0ms</div></div></div></div></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="vw-fade" aria-hidden="true"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

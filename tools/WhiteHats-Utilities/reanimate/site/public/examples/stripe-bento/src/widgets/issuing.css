@@ -1,0 +1,25 @@
+/* "Create a card issuing program" background graphic (stripe.com values). The box overhangs the
+   (already grown) card inner by 20px on every side: 447x728 at the desktop size. */
+
+.issuing-graphic__background {
+  position: absolute;
+  inset: -20px;
+  background: #fff; /* --hds-color-surface-bg-quiet */
+  display: flex;
+  align-items: center;
+}
+
+.issuing-graphic__background-canvas {
+  width: 100%;
+  height: 100%;
+}
+
+/* Static fallback (no WebGL2 / failed capability check): a 2x render of the same box. */
+.issuing-graphic__background-static {
+  width: 100%;
+}
+.issuing-graphic__background-static img {
+  display: block;
+  width: 100%;
+  height: auto;
+}

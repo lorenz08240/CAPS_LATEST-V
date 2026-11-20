@@ -1,0 +1,262 @@
+/* clerk.com "Auth that keeps evolving" feature grid: page background, grid, card frames and text.
+   Values are clerk.com's resolved Tailwind tokens at the xl breakpoint (1440x900 reference viewport).
+   The animated visuals live in src/widgets/<slug>.{html,css,js}, mounted into .clerk-card__visual by bento.js. */
+
+/* clerk.com sets text in Suisse Int'l (commercial, Swiss Typefaces) with Geist for digits ("geistNumbers").
+   This build self-hosts Geist 1.3.1 (SIL OFL): the digits are the very same glyphs clerk.com uses, and
+   Geist also stands in for Suisse Int'l (closest open match in advance widths). Söhne Mono (commercial,
+   Klim), used inside some visuals, maps to Geist Mono (same 600-unit advance). */
+@font-face {
+  font-family: "Geist Numbers";
+  src: url(../assets/fonts/Geist-Variable.woff2) format("woff2");
+  font-display: block;
+  unicode-range: U+0030-0039;
+}
+@font-face {
+  font-family: "Geist";
+  src: url(../assets/fonts/Geist-Variable.woff2) format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: block;
+}
+@font-face {
+  font-family: "Geist Mono";
+  src: url(../assets/fonts/GeistMono-Variable.woff2) format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: block;
+}
+
+:root {
+  --font-sans: "Geist Numbers", "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  /* clerk.com's gray scale (Tailwind theme) */
+  --color-gray-25: #fafafb;
+  --color-gray-50: #f7f7f8;
+  --color-gray-100: #eeeef0;
+  --color-gray-200: #d9d9de;
+  --color-gray-300: #b7b8c2;
+  --color-gray-400: #9394a1;
+  --color-gray-500: #747686;
+  --color-gray-600: #5e5f6e;
+  --color-gray-700: #42434d;
+  --color-gray-800: #2f3037;
+  --color-gray-850: #27272d;
+  --color-gray-900: #212126;
+  --color-gray-950: #131316;
+}
+
+/* Tailwind v4 preflight, as on clerk.com (widget markup copied from clerk.com relies on it) */
+*, ::before, ::after, ::backdrop {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: 0 solid var(--color-gray-200);
+}
+html {
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+  tab-size: 4;
+  font-family: var(--font-sans);
+  font-synthesis-weight: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+  background: var(--color-gray-950);
+  scroll-padding-top: 4rem; /* as clerk.com: scrollIntoView centres a card 32px lower than the viewport centre */
+}
+body { line-height: inherit; background: var(--color-gray-950); }
+h1, h2, h3, h4, h5, h6 { font-size: inherit; font-weight: inherit; }
+a { color: inherit; text-decoration: inherit; }
+b, strong { font-weight: bolder; }
+code, kbd, samp, pre { font-family: var(--font-mono); font-size: 1em; }
+ol, ul, menu { list-style: none; }
+img, svg, video, canvas, audio, iframe, embed, object { display: block; vertical-align: middle; }
+img, video { max-width: 100%; height: auto; }
+button, input, select, textarea { font: inherit; color: inherit; background-color: transparent; border-radius: 0; }
+
+/* ---------- page and grid ---------- */
+
+/* The cards start 112px (+ clerk.com's 26/64px sub-pixel offset) below the top of the page.
+   overflow: clip keeps the 2640px glow layer from adding scrollable overflow (it is no stacking context). */
+.clerk-bento {
+  position: relative;
+  overflow: clip;
+  padding: 112.40625px 0 112px;
+}
+.clerk-bento__container {
+  position: relative;
+  width: 100%;
+  max-width: 79rem;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+.clerk-bento__stack {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+/* 3 columns x 4 rows of 260px, filled column by column (xl:grid-flow-col); large cards span 2 rows */
+.clerk-bento__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(4, 260px);
+  grid-auto-flow: column;
+  gap: 8px;
+}
+/* API Keys (8 of 12 columns) and Clerk CLI (4 of 12) share a 280px row */
+.clerk-bento__row {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-template-rows: 280px;
+  gap: 8px;
+}
+.clerk-bento__cell { grid-column: span 4; }
+.clerk-bento__cell--wide { grid-column: span 8; }
+.clerk-bento__cell > .clerk-card { height: 100%; }
+
+/* clerk.com lays a white diagonal glow over the whole section (cards included) with mix-blend-mode: overlay.
+   The layer is placed relative to the grid's top-left corner exactly as on clerk.com; in ?card= mode it is
+   shifted by the card's grid position so every card sees the same part of the glow it has on clerk.com. */
+.clerk-bento__glow {
+  position: absolute;
+  z-index: 10;
+  left: calc(-120px - var(--card-x, 0px));
+  top: calc(-425px - var(--card-y, 0px));
+  width: 1440px;
+  height: 2011px;
+  overflow: hidden;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+.clerk-bento__glow img {
+  position: absolute;
+  left: -261px;
+  top: -629px;
+  width: 2640px;
+  height: 2640px;
+  max-width: none;
+}
+
+/* ---------- card frame ---------- */
+
+.clerk-card {
+  position: relative;
+  isolation: isolate;
+  -webkit-tap-highlight-color: transparent; /* touch screens toggle a card on tap (bento.js) */
+  display: flex;
+  flex-direction: column;
+  border-radius: 16px;
+  background-color: var(--color-gray-900);
+  box-shadow: inset 0 1px rgb(255 255 255 / 0.025), inset 0 0 0 1px rgb(255 255 255 / 0.025);
+  overflow: hidden;
+}
+.clerk-card--large { grid-row: span 2; }
+/* the OTP card is the only one clerk.com renders without overflow clipping (clip={false}) */
+.clerk-card--otp { overflow: visible; }
+
+/* title + description: at the bottom of the small cards, at the top of the large ones and of the last row */
+.clerk-card__text {
+  position: relative;
+  z-index: 20;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.clerk-card--text-bottom .clerk-card__text { order: 9999; padding: 0 24px 24px; }
+.clerk-card--text-top .clerk-card__text { padding: 24px 24px 0; }
+.clerk-card--padded .clerk-card__text { padding: 24px; }
+.clerk-card__heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.clerk-card__title {
+  font-size: 13px;
+  line-height: 24px;
+  font-weight: 500;
+  color: #fff;
+}
+.clerk-card__desc {
+  margin-top: 8px;
+  max-width: 376px;
+  font-size: 13px;
+  line-height: 20px;
+  font-weight: 400;
+  color: var(--color-gray-400);
+  text-wrap: pretty;
+}
+
+/* ---------- visual slot ----------
+   Same box, stacking and layout as clerk.com's visual container (the card's aria-hidden flex child):
+   full card width, z-index 10 under the text's 20, overflow visible (the card clips), no pointer events.
+   Its height is pinned to clerk.com's so the slot never depends on how the text wraps. */
+.clerk-card__visual {
+  position: relative;
+  z-index: 10;
+  flex: none;
+  height: var(--visual-h);
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.clerk-card { --visual-h: 164px; }
+.clerk-card--fraud { --visual-h: 392px; }
+.clerk-card--session-management { --visual-h: 412px; }
+.clerk-card--magic-links { --visual-h: 432px; }
+.clerk-card--api-keys,
+.clerk-card--clerk-cli { --visual-h: 160px; }
+.clerk-card--magic-links .clerk-card__visual,
+.clerk-card--advanced-security .clerk-card__visual,
+.clerk-card--passwords .clerk-card__visual { isolation: isolate; }
+.clerk-card--api-keys .clerk-card__visual { z-index: 20; display: flex; flex-direction: column; justify-content: flex-end; }
+.clerk-card--clerk-cli .clerk-card__visual { display: flex; flex-direction: column; justify-content: flex-end; }
+
+/* ---------- ?card=<slug>: one card at its normal size, centred, 112.40625px from the top ----------
+   --card-w/h: its size on clerk.com; --card-x/y: its offset in the grid (for the glow);
+   --card-sub: added to the centred left edge (rounded down to an even px) so that the card keeps the sub-pixel
+   x and the even/odd pixel column it has on clerk.com at 1440px: edges and text rasterise the same, and
+   video crops (ffmpeg rounds crop offsets to even px) line up with crops of clerk.com. */
+html[data-card] .clerk-bento__container { max-width: none; padding: 0; }
+html[data-card] .clerk-bento__stack {
+  display: block;
+  width: var(--card-w);
+  height: var(--card-h);
+  margin-left: calc(round(down, (100% - var(--card-w)) / 2, 2px) + var(--card-sub, 0px));
+}
+html[data-card] .clerk-bento__grid,
+html[data-card] .clerk-bento__row,
+html[data-card] .clerk-bento__cell { display: contents; }
+html[data-card] .clerk-card { display: none; }
+html[data-card="mfa"] .clerk-card--mfa,
+html[data-card="session-management"] .clerk-card--session-management,
+html[data-card="otp"] .clerk-card--otp,
+html[data-card="fraud"] .clerk-card--fraud,
+html[data-card="magic-links"] .clerk-card--magic-links,
+html[data-card="social-sign-on"] .clerk-card--social-sign-on,
+html[data-card="advanced-security"] .clerk-card--advanced-security,
+html[data-card="bot-detection"] .clerk-card--bot-detection,
+html[data-card="passwords"] .clerk-card--passwords,
+html[data-card="api-keys"] .clerk-card--api-keys,
+html[data-card="clerk-cli"] .clerk-card--clerk-cli { display: flex; height: 100%; }
+
+/* ?card=<slug> on a screen narrower than the card: scaled to fit, 16px from the sides (index.html sets --fit) */
+html[data-fit] .clerk-bento { padding: 24px 0; }
+html[data-fit] .clerk-bento__stack { zoom: var(--fit); margin: 0 auto; }
+
+/* ?card=<slug>&embed: the card 24px from every edge, no scrolling (the reanimate site shows it in an iframe) */
+html[data-embed] { overflow: hidden; }
+html[data-embed] .clerk-bento { padding: 24px 0; }
+
+html[data-card="mfa"]                { --card-w: 394.65625px;  --card-h: 260px; --card-x: 0px;          --card-y: 0px;    --card-sub: 0px; }
+html[data-card="fraud"]              { --card-w: 394.65625px;  --card-h: 528px; --card-x: 0px;          --card-y: 268px;  --card-sub: 0px; }
+html[data-card="advanced-security"]  { --card-w: 394.65625px;  --card-h: 260px; --card-x: 0px;          --card-y: 804px;  --card-sub: 0px; }
+html[data-card="session-management"] { --card-w: 394.671875px; --card-h: 528px; --card-x: 402.65625px;  --card-y: 0px;    --card-sub: 0.65625px; }
+html[data-card="social-sign-on"]     { --card-w: 394.671875px; --card-h: 260px; --card-x: 402.65625px;  --card-y: 536px;  --card-sub: 0.65625px; }
+html[data-card="bot-detection"]      { --card-w: 394.671875px; --card-h: 260px; --card-x: 402.65625px;  --card-y: 804px;  --card-sub: 0.65625px; }
+html[data-card="otp"]                { --card-w: 394.65625px;  --card-h: 260px; --card-x: 805.328125px; --card-y: 0px;    --card-sub: 1.328125px; }
+html[data-card="magic-links"]        { --card-w: 394.65625px;  --card-h: 528px; --card-x: 805.328125px; --card-y: 268px;  --card-sub: 1.328125px; }
+html[data-card="passwords"]          { --card-w: 394.65625px;  --card-h: 260px; --card-x: 805.328125px; --card-y: 804px;  --card-sub: 1.328125px; }
+html[data-card="api-keys"]           { --card-w: 797.328125px; --card-h: 280px; --card-x: 0px;          --card-y: 1072px; --card-sub: 2px; }
+html[data-card="clerk-cli"]          { --card-w: 394.65625px;  --card-h: 280px; --card-x: 805.328125px; --card-y: 1072px; --card-sub: 1.328125px; }

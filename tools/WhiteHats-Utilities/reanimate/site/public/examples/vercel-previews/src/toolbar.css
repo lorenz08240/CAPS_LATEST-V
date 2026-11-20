@@ -1,0 +1,197 @@
+/* vercel.com/products/previews hero: the Vercel Toolbar between seven tags.
+   Values are vercel.com's resolved Geist tokens and the rules of its CSS module (class names kept, _9BHB5W_*),
+   at the size the page shows them: the toolbar's root is an inline-size container of width 0, so the module's
+   "@container (max-width: 560px)" sizes always apply (32px buttons, 16px icons, 42px tall).
+   The font is Geist 1.800 (SIL OFL), the build vercel.com serves: older Geist builds set these labels up to
+   2.5 px wider. */
+
+@font-face {
+  font-family: "GeistSans";
+  src: url(../assets/fonts/Geist-Variable.woff2) format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: block;
+}
+
+:root {
+  --hero-duration: 350ms;
+  --hero-easing: cubic-bezier(0.455, 0.03, 0.515, 0.955);
+  /* Geist light theme */
+  --ds-background-200: hsla(0, 0%, 98%, 1);
+  --ds-gray-200: hsla(0, 0%, 92%, 1);
+  --ds-gray-400: hsla(0, 0%, 92%, 1);
+  --ds-gray-700: hsla(0, 0%, 56%, 1);
+  --ds-gray-1000: hsla(0, 0%, 9%, 1);
+  --ds-gray-alpha-300: #0000001a;
+  --ds-gray-alpha-400: #00000014;
+  --ds-blue-700: hsla(212, 100%, 48%, 1);
+  --ds-blue-900: hsla(211, 100%, 42%, 1);
+  --ds-purple-700: hsla(272, 51%, 54%, 1);
+  --ds-green-700: hsla(131, 41%, 46%, 1);
+  --ds-pink-700: hsla(336, 80%, 58%, 1);
+  --ds-red-700: hsla(358, 75%, 59%, 1);
+  --ds-red-800: hsla(358, 70%, 52%, 1);
+  --ds-teal-700: hsla(173, 80%, 36%, 1);
+  --ds-teal-900: hsla(174, 91%, 25%, 1);
+  --ds-amber-800: hsla(35, 100%, 52%, 1);
+  --ds-shadow-modal: 0 0 0 1px #00000014, 0px 1px 1px #00000005, 0px 8px 16px -4px #0000000a, 0px 24px 32px -8px #0000000f, 0 0 0 1px hsla(0, 0%, 98%, 1);
+}
+
+/* Geist dark theme, which the toolbar switches to */
+.dark-theme {
+  --ds-gray-200: hsla(0, 0%, 12%, 1);
+  --ds-gray-400: hsla(0, 0%, 18%, 1);
+  --ds-gray-1000: hsla(0, 0%, 93%, 1);
+  --ds-gray-alpha-300: #ffffff21;
+  --ds-gray-alpha-400: #ffffff24;
+  --ds-blue-900: hsla(210, 100%, 66%, 1);
+  --ds-red-800: hsla(358, 69%, 52%, 1);
+  --ds-teal-900: hsla(174, 90%, 41%, 1);
+  --ds-shadow-modal: 0 0 0 1px #ffffff25, 0px 1px 1px #00000005, 0px 8px 16px -4px #0000000a, 0px 24px 32px -8px #0000000f, 0 0 0 1px hsla(0, 0%, 0%, 1);
+}
+
+*, ::before, ::after { box-sizing: border-box; margin: 0; padding: 0; border: 0 solid; }
+img, svg { display: block; vertical-align: middle; }
+
+html {
+  font-family: "GeistSans", Arial, sans-serif;
+  font-feature-settings: "calt" 0, "rlig", "ss11";
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -webkit-text-size-adjust: 100%;
+  color: var(--ds-gray-1000);
+  background: var(--ds-background-200);
+}
+
+/* the page: the visual in the middle of the window, in a box as wide as its column on vercel.com */
+.vp-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+.vp-visual { flex: none; width: min(802px, 100%); display: flex; align-items: center; justify-content: center; }
+/* narrower than the visual (index.html sets --fit): scaled down to fit, 16px from the sides */
+html[data-fit] .vp-visual { width: 520px; zoom: var(--fit); }
+/* &embed: the visual centred in the frame, no scrolling (the reanimate site can show it in an iframe) */
+html[data-embed] { overflow: hidden; }
+
+.vp-hero { display: flex; width: 100%; flex-direction: column; align-items: center; justify-content: center; }
+
+/* ---------- tags ---------- */
+.vp-row { display: flex; flex-direction: row; align-items: stretch; justify-content: center; gap: 32px; }
+.vp-row[data-side="top"] { margin-bottom: 28px; }
+.vp-row[data-side="bottom"] { margin-top: 28px; }
+
+.vp-tag {
+  display: inline-flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 8px;
+  font-size: 16px;
+  line-height: 28px;
+  font-weight: 500;
+  white-space: nowrap;
+  color: #fff;
+  background-color: var(--ds-gray-700);
+  box-shadow: 0px 1px 1px #00000005, 0px 4px 8px #0000000a;
+  opacity: 0;
+  animation: fade-in var(--hero-duration) var(--hero-easing) both;
+  transition: filter 250ms cubic-bezier(0, 0, 0.2, 1), background-color 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+.vp-tag[data-hover="true"][data-color="amber"] { background-color: var(--ds-amber-800); }
+.vp-tag[data-hover="true"][data-color="blue"] { background-color: var(--ds-blue-700); }
+.vp-tag[data-hover="true"][data-color="green"] { background-color: var(--ds-green-700); }
+.vp-tag[data-hover="true"][data-color="pink"] { background-color: var(--ds-pink-700); }
+.vp-tag[data-hover="true"][data-color="purple"] { background-color: var(--ds-purple-700); }
+.vp-tag[data-hover="true"][data-color="red"] { background-color: var(--ds-red-700); }
+.vp-tag[data-hover="true"][data-color="teal"] { background-color: var(--ds-teal-700); }
+.vp-tag[data-fade="true"] { filter: blur(4px); background-color: var(--ds-gray-700) !important; }
+
+@keyframes fade-in { 0% { opacity: 0; } to { opacity: 1; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .vp-tag { animation: none; opacity: 1; }
+}
+
+/* ---------- toolbar (vercel.com's CSS module) ---------- */
+.cursor-grab { cursor: grab; }
+.touch-none { touch-action: none; }
+.geist-grabbing { cursor: grabbing; }
+.geist-grabbing * { -webkit-user-select: none; user-select: none; pointer-events: none; }
+
+._9BHB5W_root {
+  display: flex; flex-direction: row; align-items: center; justify-content: center; flex: 0 1 auto;
+  z-index: 5; width: 100%; position: relative; container-type: inline-size;
+}
+._9BHB5W_root[data-animate="true"] ._9BHB5W_toolbar > :not(hr) {
+  opacity: 0;
+  filter: blur(2px);
+  transform: translateY(-2px);
+  animation-name: _9BHB5W_fade;
+  animation-duration: var(--hero-duration);
+  animation-timing-function: var(--hero-easing);
+  animation-fill-mode: forwards;
+}
+@keyframes _9BHB5W_fade { to { opacity: 1; filter: blur(0); transform: translateY(0); } }
+
+._9BHB5W_toolbar {
+  --action-size: 32px;
+  --icon-size: 16px;
+  display: flex; flex-direction: row; align-items: center; justify-content: space-between; flex: 0 1 auto;
+  background: var(--ds-gray-200);
+  height: 42px;
+  box-shadow: var(--ds-shadow-modal);
+  border: 2px solid var(--ds-gray-400);
+  z-index: 2;
+  border-radius: 9999px;
+  padding: 0 5px;
+  list-style: none;
+  position: relative;
+}
+._9BHB5W_toolbar hr { flex: none; background: var(--ds-gray-alpha-400); border: 0; width: 2px; height: 24px; margin: 0 4px; }
+._9BHB5W_toolbar [data-highlight="true"] { background: var(--ds-gray-alpha-300); border-radius: inherit; transition: background 0.25s ease-out; }
+._9BHB5W_toolbar [data-fade="true"] > div { opacity: 0.25 !important; }
+
+.vp-group, ._9BHB5W_fade { display: flex; flex-direction: row; align-items: stretch; justify-content: flex-start; flex: 0 1 auto; }
+
+._9BHB5W_action {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 0 1 auto;
+  width: var(--action-size); height: var(--action-size); color: var(--ds-gray-1000); border-radius: inherit;
+}
+._9BHB5W_action > div { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 0 1 auto; }
+._9BHB5W_action svg { width: var(--icon-size); height: var(--icon-size); }
+._9BHB5W_action > div, ._9BHB5W_fade, ._9BHB5W_collaborators > div { transition: opacity 0.25s ease-out; }
+
+._9BHB5W_collaborators {
+  display: flex; flex-direction: row; align-items: center; justify-content: flex-start; flex: 0 1 auto;
+  white-space: nowrap; height: var(--action-size); margin: 0 -3px; padding: 0 8px;
+}
+._9BHB5W_collaborators > div { display: flex; flex-direction: row; align-items: stretch; justify-content: flex-start; flex: 0 1 auto; }
+
+/* Geist avatar, with the module's coloured ring */
+._9BHB5W_user {
+  --border-width: 2px;
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  line-height: 0;
+  vertical-align: top;
+  overflow: hidden;
+  border-radius: calc(infinity * 1px);
+  border: var(--border-width) solid var(--color);
+  box-shadow: 0 0 0 var(--border-width) var(--ds-gray-200);
+  transition: background 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+._9BHB5W_user::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: calc(infinity * 1px);
+  border: 1px solid var(--ds-gray-alpha-400);
+}
+._9BHB5W_user img { position: relative; width: 100%; height: 100%; max-width: 100%; color: transparent; }
+._9BHB5W_user:not(:first-of-type) { margin-left: -8px; }
+._9BHB5W_user:first-of-type { z-index: 2; }
+._9BHB5W_user:nth-of-type(2) { z-index: 1; }

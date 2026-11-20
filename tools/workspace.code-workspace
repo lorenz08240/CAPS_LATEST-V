@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"name": "CAPS_LATEST-V",
+			"path": "CAPS_LATEST-V"
+		},
+		{
+			"path": "../WhiteHats Utilities"
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "WhiteHats Utilities"
+	}
+}

@@ -1,0 +1,311 @@
+/* Bento card shell: frame, border glow, expand button, hover growth, lazy fade-in.
+   Values are stripe.com's resolved design tokens at the desktop breakpoint. */
+
+/* stripe.com uses its licensed Söhne; this public build uses Inter (SIL OFL) instead. */
+@font-face {
+  font-family: "Inter Variable";
+  src: url(../vendor/fonts/inter-latin-wght-normal.woff2) format("woff2-variations");
+  font-weight: 100 900;
+  font-display: block;
+}
+
+:root {
+  --color-brand-25: #f5f5ff;
+  --color-brand-400: #7f7dfc;
+  --color-brand-600: #533afd;
+  --color-magenta-350: #f44bcc;
+  --color-neutral-0: #fff;
+  --color-neutral-50: #e5edf5;
+  --color-heading: #061b31;
+  --focus-outline: 3px solid #5452fbbf;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  background: #fff;
+  font-family: "Inter Variable", "SF Pro Display", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: var(--color-heading);
+}
+
+/* Embedded on the reanimate site: room for the 6px hover growth, and ?card=<name> shows one card. */
+body { padding: 18px 0; overflow: hidden; }
+html[data-card] .modular-solutions-bento__layout { justify-content: center; }
+html[data-card="agentic-commerce"] .modular-solutions-bento-card:not([data-widget="agentic-commerce"]),
+html[data-card="issuing"] .modular-solutions-bento-card:not([data-widget="issuing"]),
+html[data-card="crypto"] .modular-solutions-bento-card:not([data-widget="crypto"]) { display: none; }
+
+/* stripe.com's page gutter: 16px on phones, 33px from 640px; the bento content caps at 1232px */
+.modular-solutions-bento {
+  --bento-gutter: 16px;
+  position: relative;
+  max-width: calc(1232px + 2 * var(--bento-gutter));
+  margin: 0 auto;
+  padding-inline: var(--bento-gutter);
+}
+@media (min-width: 640px) {
+  .modular-solutions-bento { --bento-gutter: 33px; }
+}
+.modular-solutions-bento__layout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  width: 100%;
+}
+
+/* ---------- card ---------- */
+
+.modular-solutions-bento-card {
+  --card-ease: cubic-bezier(0.165, 0.84, 0.44, 1);
+  --card-duration: 800ms;
+  --card-shift-x: 0;
+  --card-shift-y: 0;
+  --card-grow-x: 0px;
+  --card-grow-y: 0px;
+  --card-radius: 6px;
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-basis: 100%;
+  max-height: 576px;
+  aspect-ratio: 344/504;
+  transition: z-index 0.1s step-end;
+  cursor: pointer;
+  contain: layout style;
+  border: none;
+  background: none;
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 0;
+  text-align: inherit;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+}
+@media (min-width: 640px) {
+  /* two per row; on stripe.com the crypto card shares its row with Connect, so cap growth at half */
+  .modular-solutions-bento-card { flex-basis: calc(50% - 16px); max-width: calc(50% - 8px); max-height: 100%; }
+}
+@media (min-width: 940px) {
+  .modular-solutions-bento-card {
+    aspect-ratio: 400/676;
+    max-width: 400px;
+    max-height: 676px;
+    flex-basis: calc(33.333% - 12px);
+  }
+  .modular-solutions-bento__card-crypto { flex-basis: calc(33.333% - 8px); }
+}
+
+.modular-solutions-bento-card:focus-visible { outline: none; }
+.modular-solutions-bento-card:focus-visible .modular-solutions-bento-card__dialog-entry-wrapper {
+  outline: var(--focus-outline);
+  border-radius: 4px;
+  outline-offset: 1px;
+}
+.modular-solutions-bento-card img,
+.modular-solutions-bento-card svg { pointer-events: none; }
+
+.modular-solutions-bento-card__inner {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: calc(var(--card-radius) - 1px);
+  background: #fff;
+}
+.modular-solutions-bento-card__content {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  border-radius: calc(var(--card-radius) - 1px);
+  overflow: hidden;
+}
+.modular-solutions-bento-card__content-inner { width: 100%; height: 100%; }
+.modular-solutions-bento-card__graphic,
+.modular-solutions-bento-card__background { position: absolute; inset: 0; }
+.modular-solutions-bento-card__graphic { z-index: 1; }
+
+/* title */
+.modular-solutions-bento-card__text {
+  pointer-events: none;
+  position: absolute;
+  z-index: 3;
+  top: 16px;
+  left: 16px;
+  max-width: min((100% - 80px), 21ch);
+  font-size: 1.625rem;
+}
+.modular-solutions-bento-card__title {
+  margin: 0;
+  font-size: 1.625rem;
+  font-weight: 300;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  color: var(--color-heading);
+  text-wrap: balance;
+}
+@media (min-width: 640px) {
+  .modular-solutions-bento-card__text { max-width: min((100% - 100px), 21ch); }
+  .modular-solutions-bento-card__title { font-size: min(1.625rem, 2.75vw); }
+}
+@media (min-width: 840px) {
+  .modular-solutions-bento-card__text { max-width: min((100% - 120px), 21ch); }
+  .modular-solutions-bento-card__title { font-size: min(1.625rem, 3.3vw); }
+}
+@media (min-width: 940px) {
+  .modular-solutions-bento-card__text { max-width: 21ch; padding-right: 60px; top: 24px; left: 24px; }
+  .modular-solutions-bento-card__title { font-size: min(1.625rem, 2.1vw); }
+}
+
+/* expand button (opens the product dialog on stripe.com) */
+.modular-solutions-bento-card__dialog-entry {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  width: 38px;
+  height: 38px;
+  z-index: 3;
+  pointer-events: none;
+}
+.modular-solutions-bento-card__dialog-entry::before,
+.modular-solutions-bento-card__dialog-entry::after {
+  content: "";
+  position: absolute;
+  display: block;
+  inset: 0;
+  border-radius: 4px;
+}
+.modular-solutions-bento-card__dialog-entry::before { opacity: 0; background: var(--color-brand-600); }
+.modular-solutions-bento-card__dialog-entry::after { background: var(--color-brand-25); }
+.modular-solutions-bento-card__dialog-entry-wrapper {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  will-change: background-color;
+}
+.modular-solutions-bento-card__dialog-entry svg path { fill: var(--color-brand-600); }
+
+/* border + pointer-following glow */
+.modular-solutions-bento-card__border {
+  position: absolute;
+  inset: -1px;
+  z-index: 1;
+  border-radius: var(--card-radius);
+  background: var(--color-neutral-50);
+  overflow: hidden;
+  pointer-events: none;
+}
+.modular-solutions-bento-card__border-color {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  height: 80%;
+  aspect-ratio: 1;
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  display: none;
+}
+.modular-solutions-bento-card__border-color-gradient {
+  position: absolute;
+  inset: 0;
+  opacity: 0.5;
+  background: radial-gradient(circle, var(--color-brand-400), var(--color-magenta-350) 33%, var(--color-neutral-50) 66%);
+  transform: translate3d(var(--card-mouse-x, 0), var(--card-mouse-y, 0), 0) scale(var(--border-scale, 1));
+}
+@media (min-width: 940px) {
+  .modular-solutions-bento-card__border-color { display: block; }
+}
+
+/* motion */
+@media (prefers-reduced-motion: no-preference) {
+  .modular-solutions-bento-card__content-inner,
+  .modular-solutions-bento-card__title,
+  .modular-solutions-bento-card__graphic,
+  .modular-solutions-bento-card__dialog-entry {
+    transition: transform var(--card-duration) var(--card-ease);
+  }
+  .modular-solutions-bento-card__dialog-entry::before,
+  .modular-solutions-bento-card__dialog-entry::after {
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .modular-solutions-bento-card__dialog-entry svg path {
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .modular-solutions-bento-card__border-color { transition: opacity 0.25s linear; }
+  .modular-solutions-bento-card__border-color-gradient {
+    transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform;
+  }
+}
+
+/* Hover growth: inner and border are drawn grown by --card-grow-* and clipped back to
+   the card box; hovering animates the clip open so the card grows 12px without layout shift. */
+@supports selector(:has(*)) {
+  @media (min-width: 940px) {
+    .modular-solutions-bento-card__inner {
+      inset: calc(-1 * var(--card-grow-y)) calc(-1 * var(--card-grow-x));
+      border-radius: 0;
+      clip-path: inset(var(--card-grow-y) var(--card-grow-x) round calc(var(--card-radius) - 1px));
+    }
+    .modular-solutions-bento-card__border {
+      inset: calc(-1 * var(--card-grow-y) - 1px) calc(-1 * var(--card-grow-x) - 1px);
+      clip-path: inset(var(--card-grow-y) var(--card-grow-x) round var(--card-radius));
+    }
+  }
+  @media (min-width: 940px) and (prefers-reduced-motion: no-preference) {
+    .modular-solutions-bento-card__inner,
+    .modular-solutions-bento-card__border {
+      transition: clip-path var(--card-duration) var(--card-ease);
+    }
+  }
+}
+
+@media (pointer: fine) {
+  .modular-solutions-bento-card:hover .modular-solutions-bento-card__dialog-entry svg path { fill: var(--color-neutral-0); }
+  .modular-solutions-bento-card:hover .modular-solutions-bento-card__dialog-entry svg path:first-child { transform: translate(1px, -1px); }
+  .modular-solutions-bento-card:hover .modular-solutions-bento-card__dialog-entry svg path:nth-child(2) { transform: translate(-1px, 1px); }
+  .modular-solutions-bento-card:hover .modular-solutions-bento-card__dialog-entry::before { opacity: 1; }
+  .modular-solutions-bento-card:hover .modular-solutions-bento-card__dialog-entry::after { opacity: 0; }
+}
+@media (min-width: 940px) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .modular-solutions-bento-card:hover .modular-solutions-bento-card__border-color { opacity: 1; }
+  .modular-solutions-bento-card:hover .modular-solutions-bento-card__dialog-entry svg path:first-child { transform: translate(2px, -2px); }
+  .modular-solutions-bento-card:hover .modular-solutions-bento-card__dialog-entry svg path:nth-child(2) { transform: translate(-2px, 2px); }
+}
+@supports selector(:has(*)) {
+  @media (min-width: 940px) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .modular-solutions-bento-card:hover .modular-solutions-bento-card__title {
+      transform: translate(var(--card-shift-x), var(--card-shift-y));
+    }
+    .modular-solutions-bento-card:hover .modular-solutions-bento-card__dialog-entry {
+      transform: translate(calc(var(--card-shift-x) * -1), var(--card-shift-y));
+    }
+    .modular-solutions-bento-card:hover .modular-solutions-bento-card__inner {
+      clip-path: inset(0 round calc(var(--card-radius) - 1px));
+    }
+    .modular-solutions-bento-card:hover .modular-solutions-bento-card__border {
+      clip-path: inset(0 round var(--card-radius));
+    }
+  }
+}
+
+/* lazy mount fade */
+.lazy-animation {
+  opacity: 0;
+  transition: opacity 0.5s cubic-bezier(0.33, 1, 0.68, 1);
+}
+.lazy-animation--loaded { opacity: 1; }
+.lazy-bento-graphic {
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}

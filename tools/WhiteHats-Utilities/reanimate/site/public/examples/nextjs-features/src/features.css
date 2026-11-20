@@ -1,0 +1,115 @@
+/* nextjs.org "Everything you need to build great products on the web": the three illustrated cards of the
+   feature grid, at the reference viewport (1440x900, the @lg breakpoint). Values are nextjs.org's resolved
+   Tailwind tokens (light theme). The markup keeps nextjs.org's class names next to the nf-* ones used here,
+   so selectors written for nextjs.org find the same elements. */
+
+/* Geist and Geist Mono (SIL OFL 1.1, assets/fonts/LICENSE-geist.txt), the very files nextjs.org serves:
+   its Geist build is about 1 % narrower than Geist 1.3.1, which would move every line of text. */
+@font-face {
+  font-family: GeistSans;
+  src: url(../assets/fonts/Geist-Variable.woff2) format("woff2");
+  font-weight: 100 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Geist Mono";
+  src: url(../assets/fonts/GeistMono-Variable-latin.woff2) format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: block;
+  unicode-range: U+0-FF, U+131, U+152-153, U+2BB-2BC, U+2C6, U+2DA, U+2DC, U+304, U+308, U+329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  --font-sans: GeistSans, ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Liberation Mono, DejaVu Sans Mono, Courier New, monospace, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
+  /* nextjs.org light theme */
+  --color-gray-100: hsla(0, 0%, 95%, 1);
+  --color-gray-200: hsla(0, 0%, 92%, 1);
+  --color-gray-300: hsla(0, 0%, 90%, 1);
+  --color-gray-400: hsla(0, 0%, 92%, 1);
+  --color-gray-500: hsla(0, 0%, 79%, 1);
+  --color-gray-700: hsla(0, 0%, 56%, 1);
+  --color-gray-900: hsla(0, 0%, 30%, 1);
+  --color-gray-1000: hsla(0, 0%, 9%, 1);
+  --color-blue-300: hsla(210, 100%, 94%, 1);
+  --color-blue-400: hsla(209, 100%, 90%, 1);
+  --color-blue-500: hsla(209, 100%, 80%, 1);
+  --color-blue-600: hsla(208, 100%, 66%, 1);
+  --color-blue-700: hsla(212, 100%, 48%, 1);
+  --color-blue-900: hsla(211, 100%, 42%, 1);
+  --color-blue-1000: hsla(211, 100%, 15%, 1);
+  --color-background-100: hsla(0, 0%, 100%, 1);
+  --color-background-200: hsla(0, 0%, 98%, 1);
+}
+
+*, ::before, ::after { box-sizing: border-box; margin: 0; padding: 0; border: 0 solid var(--color-gray-200); }
+html {
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+  font-family: var(--font-sans);
+  background: var(--color-background-200);
+  color: var(--color-gray-1000);
+}
+body {
+  min-height: 100vh;
+  font-size: 16px;
+  line-height: 26.4px;
+  font-feature-settings: "calt" 0, "rlig", "ss11";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--color-background-200);
+}
+a { color: inherit; text-decoration: inherit; }
+ul { list-style: none; }
+svg, canvas { display: block; vertical-align: middle; }
+strong { font-weight: inherit; }
+
+/* page: the grid's top row, where nextjs.org puts it horizontally (24px from the sides of a 1440px column) */
+.nf-page { max-width: 1440px; margin: 0 auto; padding: 96px 24px; }
+.nf-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 48px; }
+.nf-card { grid-column: span 4 / span 4; display: flex; flex-direction: column; gap: 32px; }
+.nf-link { display: flex; flex-direction: column; gap: 24px; }
+
+/* the illustration box: aspect 5/4, 1px gray-300 border, 2px radius */
+.nf-box { aspect-ratio: 5 / 4; overflow: hidden; border: 1px solid var(--color-gray-300); border-radius: 2px; }
+.nf-center { display: grid; width: 100%; height: 100%; place-items: center; padding: 16px; }
+.nf-canvas-wrap { aspect-ratio: 322 / 246; width: 100%; max-width: 320px; }
+.nf-canvas-wrap canvas { width: 100%; height: 100%; }
+.nf-stream { position: relative; width: 100%; height: 100%; }
+.nf-stream > svg { position: absolute; top: 50%; width: 100%; translate: 0 -50%; }
+.nf-rsc-svg { width: 100%; max-width: 268px; }
+
+/* title, arrow and description */
+.nf-text { display: flex; flex-direction: column; gap: 12px; }
+.nf-title { display: flex; align-items: center; gap: 12px; text-wrap: pretty; font-size: 16px; line-height: 24px; color: var(--color-gray-900); }
+.nf-title strong { font-weight: 550; color: var(--color-gray-1000); }
+.nf-arrow {
+  display: inline-block; font-weight: 500; color: var(--color-gray-1000); translate: -4px 0;
+  transition-property: transform, translate, scale, rotate;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+.nf-desc {
+  max-width: 376px; text-wrap: pretty; font-size: 16px; line-height: 24px; color: var(--color-gray-900);
+  transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+@media (hover: hover) {
+  .nf-link:hover .nf-arrow { translate: 0 0; }
+  .nf-link:hover .nf-desc { color: var(--color-gray-1000); }
+}
+
+/* ?card=<slug>: one card on its own */
+html[data-card] .nf-card { display: none; }
+html[data-card="optimizations"] .nf-card[data-card="optimizations"],
+html[data-card="streaming"] .nf-card[data-card="streaming"],
+html[data-card="rsc"] .nf-card[data-card="rsc"] { display: flex; grid-column: 1 / -1; }
+html[data-card] .nf-grid { display: block; }
+html[data-card] .nf-page { width: calc(448px + 48px); max-width: none; padding: 48px 24px; }
+/* narrower than the card (a phone): scaled to fit, 16px from the sides (index.html sets --fit) */
+html[data-fit] .nf-page { zoom: var(--fit); }
+/* ?card=<slug>&embed: the card 24px from every edge, no scrolling (the reanimate site shows it in an iframe) */
+html[data-embed] { overflow: hidden; }
+html[data-embed] .nf-page { padding: 24px; }

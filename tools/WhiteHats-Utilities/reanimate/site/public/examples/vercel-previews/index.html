@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>vercel.com/products/previews hero toolbar, rebuilt with reanimate</title>
+  <meta name="robots" content="noindex">
+  <!--
+    The visual beside "A deployment for every idea" on vercel.com/products/previews: a dark Vercel Toolbar pill
+    between seven tilted tags. On load the tags and the toolbar's groups fade in one after another, 150 ms apart.
+    Hover a group and its tag takes its colour while the other tags blur and the other icons dim; leave and all of
+    it settles back. Grab the toolbar and drag it: the tags blur with the distance, and on release it glides home.
+    Plain HTML + CSS + one ES module (src/toolbar.js ports the page's own React component); the markup, the class
+    names of its CSS module and the Geist icons are vercel.com's.
+    With &embed (?embed works too) the page is framed for an iframe: no scrolling, the visual centred.
+  -->
+  <link rel="preload" href="./assets/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="./src/toolbar.css">
+  <script>
+    const params = new URLSearchParams(location.search);
+    if (params.has("embed")) document.documentElement.dataset.embed = "";
+    // narrower than the visual (a phone): scaled down to fit, 16px from the sides
+    const fit = () => {
+      const z = Math.min(1, (innerWidth - 32) / 520);
+      document.documentElement.style.setProperty("--fit", z);
+      document.documentElement.toggleAttribute("data-fit", z < 1);
+    };
+    fit();
+    addEventListener("resize", fit);
+  </script>
+  <script type="module" src="./src/toolbar.js"></script>
+</head>
+<body>
+  <main class="vp-page">
+    <div class="vp-visual">
+      <div class="vp-hero">
+        <div class="vp-row" data-side="top">
+          <span class="vp-tag text-label-16" data-color="blue" data-hover="false" style="transform: rotate(-4deg) translateY(0px); animation-delay: 0ms">Comments</span>
+          <span class="vp-tag text-label-16" data-color="purple" data-hover="false" style="transform: rotate(-1deg) translateY(-14px); animation-delay: 300ms">CMS Drafts</span>
+          <span class="vp-tag text-label-16" data-color="green" data-hover="false" style="transform: rotate(1deg) translateY(-14px); animation-delay: 600ms">Accessibility</span>
+          <span class="vp-tag text-label-16" data-color="pink" data-hover="false" style="transform: rotate(4deg) translateY(0px); animation-delay: 900ms">Share</span>
+        </div>
+
+        <div class="cursor-grab touch-none">
+          <div data-animate="true" class="_9BHB5W_root">
+            <div aria-label="This element represents the full suite of the Vercel Toolbar, including various actions and meta-data." class="_9BHB5W_toolbar dark-theme">
+              <div class="vp-group" aria-label="Comments" data-fade="false" data-highlight="false" style="animation-delay: 0ms">
+                <div class="_9BHB5W_fade">
+                  <li class="_9BHB5W_action" aria-label="Comment">
+                    <div aria-hidden="true"><svg viewBox="0 0 16 16" height="16" width="16" data-slot="geist-icon"><path fill="currentColor" fill-rule="evenodd" d="m2.9 10.4.08.23a5.27 5.27 0 0 1 .4 3.42 8 8 0 0 0 2.33-1.3l.51-.43.67.1q.54.08 1.11.08c3.78 0 6.5-2.64 6.5-5.5S11.78 1.5 8 1.5 1.5 4.14 1.5 7c0 1.18.44 2.3 1.23 3.22zm-.09 5.37A9 9 0 0 1 1 16s.43-.69.73-1.56c.15-.46.27-.96.27-1.44 0-.62-.2-1.27-.4-1.81A6.4 6.4 0 0 1 0 7c0-3.87 3.58-7 8-7s8 3.13 8 7-3.58 7-8 7q-.68 0-1.33-.1a8.7 8.7 0 0 1-3.86 1.87" clip-rule="evenodd"/></svg></div>
+                  </li>
+                  <li class="_9BHB5W_action" aria-label="Inbox">
+                    <div aria-hidden="true"><svg viewBox="0 0 16 16" height="16" width="16" data-slot="geist-icon"><circle cx="13.5" cy="2.5" r="2.5" fill="var(--ds-blue-900)"/><path fill="currentColor" fill-rule="evenodd" d="m15.29 6.08.6 1.2q.1.22.11.46V12a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 0 12V7.74a1 1 0 0 1 .1-.45L3 1.5h6.63a4 4 0 0 0-.1 1.5h-5.6L1.68 7.5h5.07v.75a1.25 1.25 0 1 0 2.5 0V7.5h5.07l-.5-1.01a4 4 0 0 0 1.47-.41M1.5 12V9h3.85a2.75 2.75 0 0 0 5.3 0h3.85v3a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1" clip-rule="evenodd"/></svg></div>
+                  </li>
+                </div>
+              </div>
+              <hr>
+              <li class="_9BHB5W_action" style="animation-delay: 150ms" aria-label="Feature Flags" data-fade="false" data-highlight="false">
+                <div aria-hidden="true"><svg viewBox="0 0 16 16" height="16" width="16" data-slot="geist-icon"><path fill="currentColor" fill-rule="evenodd" d="M8.57 4.5H11a3.5 3.5 0 1 1 0 7H8.57a5 5 0 0 0 0-7M5 4.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7M0 8a5 5 0 0 1 5-5h6a5 5 0 0 1 0 10H5a5 5 0 0 1-5-5" clip-rule="evenodd"/></svg></div>
+              </li>
+              <li class="_9BHB5W_action" style="animation-delay: 300ms" aria-label="CMS Drafts" data-fade="false" data-highlight="false">
+                <div aria-hidden="true"><svg viewBox="0 0 16 16" height="16" width="16" data-slot="geist-icon"><path fill="currentColor" fill-rule="evenodd" d="M6.51 3.16c.97-.29 2-.29 2.98 0l.42-1.44a7 7 0 0 0-3.82 0zm4.34.62q.61.4 1.13.99L13.05 6l1.13-.98-1.07-1.24q-.65-.76-1.45-1.27zm-6.83.99q.51-.6 1.13-.99l-.81-1.26q-.8.52-1.45 1.27L1.82 5.03l1.13.98zm10.1 2.48.64.75-.65.75 1.14.98 1.07-1.24V7.5l-1.07-1.24zm-12.23 0L1.24 8l.65.75-1.14.98-1.07-1.24V7.5L.75 6.27zm11.16 2.74-1.07 1.24q-.51.6-1.13.99l.81 1.26a7 7 0 0 0 1.45-1.27l1.07-1.24zm-9.03 1.24L2.95 10l-1.13.98 1.07 1.24q.65.75 1.45 1.27l.81-1.26q-.61-.4-1.13-.99m5.89 3.05-.42-1.44c-.97.29-2 .29-2.98 0l-.42 1.44a7 7 0 0 0 3.82 0M6.5 8a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0M8 5a3 3 0 1 0 0 6 3 3 0 0 0 0-6" clip-rule="evenodd"/></svg></div>
+              </li>
+              <hr>
+              <div class="_9BHB5W_collaborators" aria-label="Collaborators" data-fade="false" data-highlight="false" style="animation-delay: 450ms">
+                <div>
+                  <span class="_9BHB5W_user" aria-label="Avatar for JohnPhamous" role="img" style="--color: var(--ds-amber-800)"><img alt="Avatar for JohnPhamous" title="Avatar for JohnPhamous" width="37" height="37" decoding="sync" loading="eager" src="./assets/avatars/johnphamous.webp"></span>
+                  <span class="_9BHB5W_user" aria-label="Avatar for zeejab" role="img" style="--color: var(--ds-red-800)"><img alt="Avatar for zeejab" title="Avatar for zeejab" width="37" height="37" decoding="sync" loading="eager" src="./assets/avatars/zeejab.webp"></span>
+                  <span class="_9BHB5W_user" aria-label="Avatar for rauno" role="img" style="--color: var(--ds-teal-900)"><img alt="Avatar for rauno" title="Avatar for rauno" width="37" height="37" decoding="sync" loading="eager" src="./assets/avatars/rauno.webp"></span>
+                </div>
+              </div>
+              <hr>
+              <li class="_9BHB5W_action" style="animation-delay: 600ms" aria-label="Accessibility" data-fade="false" data-highlight="false">
+                <div aria-hidden="true"><svg viewBox="0 0 16 16" height="16" width="16" data-slot="geist-icon"><path fill="currentColor" d="M8 3a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3M4.67 6a2 2 0 0 1 1.98 2.3l-.22 1.43q-.15.73-.43 1.41L4.33 15.2l1.6.69 1.66-3.97c.14-.32.68-.32.82 0l1.67 3.97 1.59-.69L10 11.14q-.3-.68-.43-1.4l-.29-1.31A2 2 0 0 1 11.24 6H14V4.5H2V6z"/></svg></div>
+              </li>
+              <li class="_9BHB5W_action" style="animation-delay: 750ms" aria-label="Layout Shift" data-fade="false" data-highlight="false">
+                <div aria-hidden="true"><svg viewBox="0 0 16 16" height="16" width="16" data-slot="geist-icon"><path fill="currentColor" fill-rule="evenodd" d="M2.25 14.5H3V16h-.75C1.01 16 0 15 0 13.75V12.5h1.5v1.25c0 .41.34.75.75.75m1.75 0h2V16H4zM6 0H4v1.5h2zM1.5 2.25V3.5H0V2.25C0 1.01 1 0 2.25 0H3v1.5h-.75a.75.75 0 0 0-.75.75m0 9.25v-3H0v3zm0-7v3H0v-3zm5 9.25c0 1.24 1 2.25 2.25 2.25h5c1.24 0 2.25-1 2.25-2.25V2.25C16 1.01 15 0 13.75 0h-5C7.51 0 6.5 1 6.5 2.25zm2.25.75a.75.75 0 0 1-.75-.75V2.25c0-.41.34-.75.75-.75h5c.41 0 .75.34.75.75v11.5c0 .41-.34.75-.75.75z" clip-rule="evenodd"/></svg></div>
+              </li>
+              <li class="_9BHB5W_action" style="animation-delay: 900ms" aria-label="Share" data-fade="false" data-highlight="false">
+                <div aria-hidden="true"><svg viewBox="0 0 16 16" height="16" width="16" data-slot="geist-icon"><path fill="currentColor" fill-rule="evenodd" d="M7.3 1.4a1 1 0 0 1 1.4 0l3.08 3.07.53.53-1.06 1.06-.53-.53-1.97-1.97V11h-1.5V3.56L5.28 5.53l-.53.53L3.69 5l.53-.53zm6.2 7.85v4.25h-11v-5H1V14a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8.5h-1.5z" clip-rule="evenodd"/></svg></div>
+              </li>
+            </div>
+          </div>
+        </div>
+
+        <div class="vp-row" data-side="bottom">
+          <span class="vp-tag text-label-16" data-color="teal" data-hover="false" style="transform: rotate(2deg) translateY(7px); animation-delay: 150ms">Feature Flags</span>
+          <span class="vp-tag text-label-16" data-color="amber" data-hover="false" style="transform: rotate(0deg) translateY(14px); animation-delay: 450ms">Collaborators</span>
+          <span class="vp-tag text-label-16" data-color="red" data-hover="false" style="transform: rotate(-2deg) translateY(7px); animation-delay: 750ms">Layout Shift</span>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

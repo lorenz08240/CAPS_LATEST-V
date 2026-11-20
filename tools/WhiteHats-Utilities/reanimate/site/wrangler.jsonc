@@ -1,0 +1,11 @@
+{
+  // Static-assets-only Worker: serves the Next.js static export in ./out.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "reanimate",
+  "compatibility_date": "2026-10-29",
+  "assets": {
+    "directory": "./out",
+    "not_found_handling": "404-page"
+  },
+  "routes": [{ "pattern": "reanimate.niazmorshed.dev", "custom_domain": true }]
+}

@@ -1,0 +1,112 @@
+/* Fraud and Abuse Prevention card visual: clerk.com's markup (module 555385) with its Tailwind classes resolved to
+   plain CSS. Sizes at 1440x900: visual 394.656 x 392; the 304 px "Fraudulent sign-ups detected" pill and the list
+   below it are centred in it (w-min); the timeline track is 39 x 393 (the card clips its bottom).
+   Motion: src/widgets/fraud.js (clerk.com's Motion-for-React parts) + the :hover colour transition below
+   (clerk.com's Tailwind group-hover, plain CSS :hover on the card there too). */
+
+.clerk-card--fraud .fr-root {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+.clerk-card--fraud .fr-wrap { width: min-content; }
+.clerk-card--fraud .fr-icon { width: 1rem; height: 1rem; }
+
+/* ---------- pill ---------- */
+.clerk-card--fraud .fr-pill {
+  display: flex;
+  width: 19rem;
+  align-items: center;
+  gap: 0.875rem;
+  border-radius: 0.375rem;
+  background-color: var(--color-gray-800);
+  background-image: linear-gradient(to bottom right, #ffffff0d 0%, #0000 65%);
+  padding: 0.75rem;
+  box-shadow: 0 0 0 0.25rem #13131680; /* ring-[0.25rem] ring-gray-950/50 */
+}
+/* text-2xs/4 font-mono text-gray-500 transition duration-500 group-hover:text-white */
+.clerk-card--fraud .fr-text {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  line-height: 1rem;
+  color: var(--color-gray-500);
+  transition-property: color;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 0.5s;
+}
+.clerk-card--fraud .fr-time {
+  margin-left: auto;
+  font-size: 0.625rem;
+  line-height: 1.125rem;
+  color: var(--color-gray-600);
+}
+
+/* ---------- timeline ---------- */
+.clerk-card--fraud .fr-list {
+  position: relative;
+  padding-top: 4rem;
+  padding-left: 2.875rem;
+}
+.clerk-card--fraud .fr-track {
+  position: absolute;
+  top: 0;
+  left: 1.1875rem;
+  z-index: -10;
+  aspect-ratio: 39 / 393;
+  width: 2.4375rem;
+}
+.clerk-card--fraud .fr-track__line {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  stroke: #ffffff0d;
+}
+
+/* ---------- blocked rows ---------- */
+.clerk-card--fraud .fr-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  font-size: 0.625rem;
+  line-height: 1.125rem;
+}
+.clerk-card--fraud .fr-row:not(:last-child) { margin-bottom: 1.5rem; } /* space-y-6 */
+.clerk-card--fraud .fr-node {
+  position: relative;
+  margin-top: 0.0625rem;
+  display: flex;
+  width: 1.25rem;
+  height: 1.25rem;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2147483647px;
+  background-color: #5e5f6e33;
+}
+.clerk-card--fraud .fr-dot {
+  width: 0.25rem;
+  height: 0.25rem;
+  border-radius: 2147483647px;
+  background-color: var(--color-gray-600);
+  box-shadow: 0 1px #ffffff1a inset, 0 1px 2px #00000040;
+}
+.clerk-card--fraud .fr-block {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2147483647px;
+  background-color: #ef4444; /* red-500 */
+}
+.clerk-card--fraud .fr-title { font-weight: 500; color: #fff; }
+.clerk-card--fraud .fr-desc { color: var(--color-gray-600); }
+
+/* ---------- hover (clerk.com: Tailwind group-hover, inside @media (hover: hover)) ---------- */
+@media (hover: hover) {
+  .clerk-card--fraud:hover .fr-text { color: #fff; }
+}
+/* touch screens: bento.js sets .is-hovered while the card plays */
+.clerk-card--fraud.is-hovered .fr-text { color: #fff; }

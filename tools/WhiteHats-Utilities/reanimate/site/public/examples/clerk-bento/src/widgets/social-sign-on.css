@@ -1,0 +1,140 @@
+/* Social Sign-On card visual: clerk.com's markup (module 593274) with its Tailwind classes resolved to plain CSS,
+   colours written the way clerk.com's stylesheet computes them (color-mix / lab, gradients "in oklab").
+   Sizes at 1440x900: visual 394.672 x 164; centre column 98 x 192 (bottom 28 px clipped); cloud box 64 x 64 at
+   (165.3, 60); two 248 x 248 logo tracks, the right one mirrored, 76 px either side of the centre.
+   Motion: social-sign-on.js (no CSS transitions on this card). */
+
+/* background layer: circuit lines, light streaks and both logo tracks, faded out towards the bottom */
+.clerk-card--social-sign-on .sso-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(#fff 60%, #0000);
+  mask-image: linear-gradient(#fff 60%, #0000);
+}
+.clerk-card--social-sign-on .sso-column {
+  position: relative;
+  margin-inline: auto;
+  aspect-ratio: 98 / 192;
+  width: 6.125rem;
+}
+.clerk-card--social-sign-on .sso-lines {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  width: 100%;
+}
+
+/* logo tracks */
+.clerk-card--social-sign-on .sso-track {
+  position: absolute;
+  top: 1.5rem;
+}
+.clerk-card--social-sign-on .sso-track--left {
+  right: 50%;
+  margin-right: 4.75rem;
+}
+.clerk-card--social-sign-on .sso-track--right {
+  left: 50%;
+  margin-left: 4.75rem;
+  scale: -1 1;
+}
+.clerk-card--social-sign-on .sso-track__inner {
+  position: relative;
+  height: 15.5rem;
+  width: 15.5rem;
+}
+.clerk-card--social-sign-on .sso-panel {
+  position: absolute;
+  top: 1.125rem;
+  right: 1.125rem;
+  height: 13.5rem;
+  width: 6.8125rem;
+  overflow: visible;
+}
+.clerk-card--social-sign-on .sso-logo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  height: 2.5rem;
+  width: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2147483647px;
+  background-color: var(--color-gray-800);
+  background-image: linear-gradient(to bottom in oklab, color-mix(in oklab, #fff 5%, transparent) 0%, #0000 67%);
+  box-shadow: 0 1px 3px 0 #0000001a, 0 1px 2px -1px #0000001a;
+}
+.clerk-card--social-sign-on .sso-logo__ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 2147483647px;
+}
+.clerk-card--social-sign-on .sso-logo__ring--white {
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, #fff 5%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, #fff, #0000);
+  mask-image: linear-gradient(90deg, #fff, #0000);
+}
+.clerk-card--social-sign-on .sso-logo__ring--cyan {
+  box-shadow: inset 0 0 0 1px lab(84.5189% -31.4667 -23.9754 / 0.08);
+  -webkit-mask-image: linear-gradient(270deg, #fff, #0000);
+  mask-image: linear-gradient(270deg, #fff, #0000);
+}
+.clerk-card--social-sign-on .sso-logo svg {
+  height: 1.25rem;
+  width: 1.25rem;
+  fill: #fff;
+}
+/* the right track is mirrored; its glyphs are mirrored back */
+.clerk-card--social-sign-on .sso-track--right .sso-logo svg { scale: -1 1; }
+
+/* the cloud box, above the background layer (not masked) */
+.clerk-card--social-sign-on .sso-boxwrap {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  margin-left: -3.0625rem;
+  aspect-ratio: 98 / 192;
+  width: 6.125rem;
+  padding-top: 3.75rem;
+}
+.clerk-card--social-sign-on .sso-box {
+  position: relative;
+  margin-inline: auto;
+  display: flex;
+  height: 4rem;
+  width: 4rem;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 0.25rem;
+  background-color: var(--color-gray-800);
+  background-image: linear-gradient(to bottom right in oklab, color-mix(in oklab, #fff 5%, transparent) 0%, #0000 64%);
+  box-shadow: 0 1px 1px rgba(255, 255, 255, 0.05) inset, 0 2px 13px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.2),
+    0 0 0 3px rgba(19, 19, 22, 0.5);
+}
+.clerk-card--social-sign-on .sso-glow {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(111.72% 100% at 50% 0%, rgb(118 237 255 / 0.2), rgb(118 237 255 / 0) 53.91%);
+}
+.clerk-card--social-sign-on .sso-cloud { position: relative; }
+.clerk-card--social-sign-on .sso-cloud svg {
+  width: 2.125rem;
+  overflow: visible;
+}
+.clerk-card--social-sign-on .sso-cloud-active {
+  position: absolute;
+  inset: 0;
+}
+/* diagonal sheen, parked at the top-left outside the box at rest */
+.clerk-card--social-sign-on .sso-shine {
+  position: absolute;
+  inset: -1rem;
+  background-image: linear-gradient(to bottom right in oklab, color-mix(in oklab, #fff 0%, transparent) 35%,
+    color-mix(in oklab, #fff 25%, transparent) 50%, color-mix(in oklab, #fff 0%, transparent) 65%);
+  mix-blend-mode: overlay;
+}
+
+/* the meteor canvas (src/shared/meteor.js) fills .sso-column while the card is hovered */

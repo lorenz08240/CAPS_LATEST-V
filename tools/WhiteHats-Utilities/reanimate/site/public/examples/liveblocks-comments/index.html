@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>liveblocks.io/comments hero slideshow, rebuilt with reanimate</title>
+  <meta name="robots" content="noindex">
+  <!--
+    The animated demo under the hero of liveblocks.io/comments: an app window that cycles through five use cases
+    (text editor, media player, whiteboard, website, video editor) every 6 s. On each change the drawing fades and
+    blurs out, the next one springs in, the comment thread crossfades and, a second later, the panel glides and
+    resizes to its new spot while the colours shift. Plain HTML + ES modules; src/motion.js ports the springs,
+    tweens and colour mixing of motion (framer-motion), src/projection.js its layout animations.
+  -->
+  <link rel="preload" href="./assets/fonts/Inter-Variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="./src/slideshow.css">
+  <script type="module" src="./src/slideshow.js"></script>
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-resolve" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.6" stroke="#A3A3A3" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.4 6.4 7.2 9.6 5.6 8" stroke="#A3A3A3" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-react" viewBox="0 0 16 16"><path d="M8.8 2.46a5.6 5.6 0 1 0 4.74 4.74" stroke="#A3A3A3" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 9.2s.6 1.2 2 1.2 2-1.2 2-1.2" stroke="#A3A3A3" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6.4 6.4h0" stroke="#A3A3A3" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6.4" cy="6.4" r=".2" stroke="#A3A3A3" stroke-width="1.2"/><path d="M9.6 6.4h0" stroke="#A3A3A3" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9.6" cy="6.4" r=".2" stroke="#A3A3A3" stroke-width="1.2"/><path d="M10.4 4h3.2" stroke="#A3A3A3" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 2.4v3.2" stroke="#A3A3A3" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-more" viewBox="0 0 16 16"><circle cx="4" cy="8" r=".6" fill="#A3A3A3" stroke="#A3A3A3" stroke-width="1.2"/><circle cx="8" cy="8" r=".6" fill="#A3A3A3" stroke="#A3A3A3" stroke-width="1.2"/><circle cx="12" cy="8" r=".6" fill="#A3A3A3" stroke="#A3A3A3" stroke-width="1.2"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 16 16"><path d="M11.2 7.2 8 10.4 4.8 7.2" stroke="#A3A3A3" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  </svg>
+
+  <main class="lb-page">
+    <section class="lb-hero" aria-label="Comments in five kinds of app: a text editor, a media player, a whiteboard, a website and a video editor, one after another.">
+      <div class="lb-stage">
+        <div class="lb-halo" aria-hidden="true"><div class="lb-halo__glow"></div></div>
+
+        <div class="liveblocks-slideshow select-none aspect-1208/770" data-case="text-editor" aria-hidden="true">
+          <div class="lb-panel">
+            <div class="lb-panel__bg"></div>
+
+            <div class="lb-thread lb-thread--text-editor" data-show="text-editor">
+              <div class="lb-quote"><div class="lb-divider"></div><span class="lb-quote__text">was created in 2021</span></div>
+              <div class="lb-c">
+                <div class="lb-c__head">
+                  <div class="lb-c__who"><div class="lb-c__avatar"><img src="./assets/people/jonathan-rowny-256.webp" srcset="./assets/people/jonathan-rowny-128.webp 1x, ./assets/people/jonathan-rowny-256.webp 2x" width="120" height="120" alt=""></div><div><span class="lb-c__name">Jonathan</span><span class="lb-c__time">8m ago</span></div></div>
+                  <div class="lb-c__tools"><div class="lb-icon"><svg viewBox="0 0 16 16" fill="none"><use href="#i-resolve"/></svg></div><div class="lb-icon"><svg viewBox="0 0 16 16" fill="none"><use href="#i-react"/></svg></div></div>
+                </div>
+                <div class="lb-c__body"><div class="lb-c__text"><span class="lb-mention">@Alicia</span> Is this correct?</div></div>
+              </div>
+              <div class="lb-c lb-c--next">
+                <div class="lb-c__head">
+                  <div class="lb-c__who"><div class="lb-c__avatar"><img src="./assets/people/alicia-henriquez-256.webp" srcset="./assets/people/alicia-henriquez-128.webp 1x, ./assets/people/alicia-henriquez-256.webp 2x" width="120" height="120" alt=""></div><div><span class="lb-c__name">Alicia</span><span class="lb-c__time">now</span></div></div>
+                  <div class="lb-c__tools"><div class="lb-icon"><svg viewBox="0 0 16 16" fill="none"><use href="#i-react"/></svg></div></div>
+                </div>
+                <div class="lb-c__body"><div class="lb-c__text">Can you double-check this <span class="lb-accent">@Liveblocks AI</span>?</div></div>
+              </div>
+              <div class="lb-c lb-c--next lb-c--last">
+                <div class="lb-c__head">
+                  <div class="lb-c__who"><div class="lb-c__avatar"><img src="./assets/people/liveblocks-ai.svg" width="120" height="120" alt=""></div><div><span class="lb-c__name">Liveblocks AI</span><span class="lb-c__time">2m ago</span></div></div>
+                  <div class="lb-c__tools"><div class="lb-icon"><svg viewBox="0 0 16 16" fill="none"><use href="#i-react"/></svg></div></div>
+                </div>
+                <div class="lb-c__body"><div class="lb-c__text">Yes, that sentence is correct. The date matches the doc metadata.</div></div>
+              </div>
+            </div>
+
+            <div class="lb-thread lb-thread--audio" data-show="audio">
+              <div class="lb-c">
+                <div class="lb-c__head">
+                  <div class="lb-c__who"><div class="lb-c__avatar"><img src="./assets/people/nimesh-nayaju-256.webp" srcset="./assets/people/nimesh-nayaju-128.webp 1x, ./assets/people/nimesh-nayaju-256.webp 2x" width="120" height="120" alt=""></div><div><span class="lb-c__name">Nimesh</span><span class="lb-c__time">36m ago</span></div></div>
+                  <div class="lb-c__tools"><div class="lb-icon"><svg viewBox="0 0 16 16" fill="none"><use href="#i-resolve"/></svg></div><div class="lb-icon"><svg viewBox="0 0 16 16" fill="none"><use href="#i-react"/></svg></div></div>
+                </div>
+                <div class="lb-c__body"><div class="lb-c__text"><span class="lb-accent">00:46</span> Can we remove the reverb here?</div></div>
+              </div>
+              <div class="lb-c lb-c--next lb-c--last">
+                <div class="lb-c__head">
+                  <div class="lb-c__who"><div class="lb-c__avatar"><img src="./assets/people/liveblocks-ai.svg" width="120" height="120" alt=""></div><div><span class="lb-c__name">Liveblocks AI</span><span class="lb-c__time">12m ago</span></div></div>
+                  <div class="lb-c__tools"><div class="lb-icon"><svg viewBox="0 0 16 16" fill="none"><use href="#i-react"/></svg></div></div>
+                </div>
+                <div class="lb-c__body"><div class="lb-c__text"><span class="lb-accent">00:46</span> I can suggest a dry mix preset for that section if you’d like.</div></div>
+              </div>
+            </div>
+
+            <div class="lb-thread lb-thread--whiteboard" data-show="whiteboard">
+              <div class="lb-c">
+                <div class="lb-c__head">
+                  <div class="lb-c__who"><div class="lb-c__avatar"><img src="./assets/people/olivier-foucherot-256.webp" srcset="./assets/people/olivier-foucherot-128.webp 1x, ./assets/people/olivier-foucherot-256.webp 2x" width="120" height="120" alt=""></div><div><span class="lb-c__name">Olivier</span><span class="lb-c__time">16m ago</span></div></div>
+                  <div class="lb-c__tools"><div class="lb-icon"><svg viewBox="0 0 16 16" fill="none"><use href="#i-resolve"/></svg></div><div class="lb-icon"><svg viewBox="0 0 16 16" fill="none"><use href="#i-react"/></svg></div></div>
+                </div>
+                <div class="lb-c__body">
+                  <div class="lb-c__text">We should change this into a circle.</div>
+                  <div class="lb-reactions">
+                    <div class="lb-reaction"><span class="lb-emoji">👍</span><span class="lb-count lb-count--tight">3</span></div>
+                    <div class="lb-reaction"><span class="lb-emoji">✅</span><span class="lb-count">1</span></div>
+                    <div class="lb-reaction"><svg class="lb-1em" viewBox="0 0 16 16" fill="none" style="width:1em"><use href="#i-react"/></svg></div>
+                  </div>
+                </div>
+              </div>
+              <div class="lb-c lb-c--next lb-c--last">
+                <div class="lb-c__head">
+                  <div class="lb-c__who"><div class="lb-c__avatar"><img src="./assets/people/liveblocks-ai.svg" width="120" height="120" alt=""></div><div><span class="lb-c__name">Liveblocks AI</span><span class="lb-c__time">8m ago</span></div></div>
+                  <div class="lb-c__tools"><div class="lb-icon"><svg viewBox="0 0 16 16" fill="none"><use href="#i-react"/></svg></div></div>
+                </div>
+                <div class="lb-c__body"><div class="lb-c__text">Good call. A circle would match the style guide better.</div></div>
+              </div>
+            </div>
+
+            <div class="lb-thread lb-thread--website" data-show="website">
+              <div class="lb-c">
+                <div class="lb-c__head">
+                  <div class="lb-c__who"><div class="lb-c__avatar lb-c__avatar--square"><img src="./assets/people/chris-nicholas-256.webp" srcset="./assets/people/chris-nicholas-128.webp 1x, ./assets/people/chris-nicholas-256.webp 2x" width="120" height="120" alt=""></div><div><span class="lb-c__name">Chris</span><span class="lb-c__time">2m ago (edited)</span></div></div>
+                  <div class="lb-c__tools"><div class="lb-icon"><svg viewBox="0 0 16 16" fill="none"><use href="#i-resolve"/></svg></div><div class="lb-icon"><svg viewBox="0 0 16 16" fill="none"><use href="#i-react"/></svg></div></div>
+                </div>
+                <div class="lb-c__body">
+                  <div class="lb-c__text">Can we make the logo bigger?</div>
+                  <div class="lb-reactions">
+                    <div class="lb-reaction lb-reaction--accent"><span class="lb-emoji">😅</span><span class="lb-count">6</span></div>
+                    <div class="lb-reaction"><svg viewBox="0 0 16 16" fill="none" style="width:1em"><use href="#i-react"/></svg></div>
+                  </div>
+                </div>
+              </div>
+              <div class="lb-c lb-c--next lb-c--last">
+                <div class="lb-c__head">
+                  <div class="lb-c__who"><div class="lb-c__avatar lb-c__avatar--square"><img src="./assets/people/liveblocks-ai.svg" width="120" height="120" alt=""></div><div><span class="lb-c__name">Liveblocks AI</span><span class="lb-c__time">now</span></div></div>
+                  <div class="lb-c__tools"><div class="lb-icon"><svg viewBox="0 0 16 16" fill="none"><use href="#i-resolve"/></svg></div><div class="lb-icon"><svg viewBox="0 0 16 16" fill="none"><use href="#i-react"/></svg></div></div>
+                </div>
+                <div class="lb-c__body"><div class="lb-c__text">The header logo is currently 24px. Bumping it to 32px would keep it within the 8px grid.</div></div>
+              </div>
+            </div>
+
+            <div class="lb-thread lb-thread--video" data-show="video">
+              <div class="lb-threads-head"><div class="lb-divider"></div><div class="lb-threads-head__filter"><span>All threads</span><svg viewBox="0 0 16 16" fill="none"><use href="#i-chevron"/></svg></div></div>
+              <div class="lb-section">
+                <div class="lb-divider"></div>
+                <div class="lb-c">
+                  <div class="lb-c__head lb-c__head--lg">
+                    <div class="lb-c__who"><div class="lb-c__avatar lb-c__avatar--square"><img src="./assets/people/steven-fabre-256.webp" srcset="./assets/people/steven-fabre-128.webp 1x, ./assets/people/steven-fabre-256.webp 2x" width="120" height="120" alt=""></div><div class="lb-c__names--col"><span class="lb-c__name">Steven</span><span class="lb-c__time">16m ago</span></div></div>
+                    <div class="lb-c__tools"><div class="lb-icon"><svg viewBox="0 0 16 16" fill="none"><use href="#i-more"/></svg></div></div>
+                  </div>
+                  <div class="lb-c__body--video"><div class="lb-c__text"><span class="lb-accent">00:10</span> Can we switch these shots?</div></div>
+                </div>
+              </div>
+              <div class="lb-section">
+                <div class="lb-divider"></div>
+                <div class="lb-c">
+                  <div class="lb-c__head lb-c__head--lg">
+                    <div class="lb-c__who"><div class="lb-c__avatar lb-c__avatar--square"><img src="./assets/people/pierre-levaillant-256.webp" srcset="./assets/people/pierre-levaillant-128.webp 1x, ./assets/people/pierre-levaillant-256.webp 2x" width="120" height="120" alt=""></div><div class="lb-c__names--col"><span class="lb-c__name">Pierre</span><span class="lb-c__time">5m ago</span></div></div>
+                    <div class="lb-c__tools"><div class="lb-icon"><svg viewBox="0 0 16 16" fill="none"><use href="#i-more"/></svg></div></div>
+                  </div>
+                  <div class="lb-c__body--video">
+                    <div class="lb-c__text"><span class="lb-accent">00:42</span> This looks a bit off. Look at the attached screenshots.</div>
+                    <div class="lb-attachments"><div class="lb-attachment"></div><div class="lb-attachment"></div></div>
+                  </div>
+                </div>
+                <div class="lb-c lb-c--next lb-c--last">
+                  <div class="lb-c__head lb-c__head--lg">
+                    <div class="lb-c__who"><div class="lb-c__avatar lb-c__avatar--square"><img src="./assets/people/liveblocks-ai.svg" width="120" height="120" alt=""></div><div class="lb-c__names--col"><span class="lb-c__name">Liveblocks AI</span><span class="lb-c__time">now</span></div></div>
+                    <div class="lb-c__tools"><div class="lb-icon"><svg viewBox="0 0 16 16" fill="none"><use href="#i-more"/></svg></div></div>
+                  </div>
+                  <div class="lb-c__body--video"><div class="lb-c__text">The color grading at <span class="lb-accent">00:42</span> differs from the previous shot. Adjusting the exposure should help maintain consistency.</div></div>
+                </div>
+              </div>
+              <div class="lb-section">
+                <div class="lb-c">
+                  <div class="lb-c__head lb-c__head--lg">
+                    <div class="lb-c__who"><div class="lb-c__avatar lb-c__avatar--square"><img src="./assets/people/vincent-driessen-256.webp" srcset="./assets/people/vincent-driessen-128.webp 1x, ./assets/people/vincent-driessen-256.webp 2x" width="120" height="120" alt=""></div><div class="lb-c__names--col"><span class="lb-c__name">Vincent</span><span class="lb-c__time">2m ago</span></div></div>
+                    <div class="lb-c__tools"><div class="lb-icon"><svg viewBox="0 0 16 16" fill="none"><use href="#i-more"/></svg></div></div>
+                  </div>
+                  <div class="lb-c__body--video"><div class="lb-c__text"><span class="lb-accent">01:12</span> I love the color grading! 👌</div></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lb-composer">
+              <div class="lb-composer__divider"></div>
+              <div class="lb-composer__row">
+                <div class="lb-composer__avatar">
+                  <div data-show="audio"><img src="./assets/people/steven-fabre-256.webp" srcset="./assets/people/steven-fabre-128.webp 1x, ./assets/people/steven-fabre-256.webp 2x" width="120" height="120" alt=""></div>
+                  <div data-show="whiteboard"><img src="./assets/people/steven-fabre-256.webp" srcset="./assets/people/steven-fabre-128.webp 1x, ./assets/people/steven-fabre-256.webp 2x" width="120" height="120" alt=""></div>
+                </div>
+                <div class="lb-composer__input">
+                  <span class="lb-composer__placeholder" data-show="text-editor audio whiteboard website">Reply to thread…</span>
+                  <span class="lb-composer__placeholder" data-show="video">Create a new thread…</span>
+                </div>
+              </div>
+              <div class="lb-composer__actions">
+                <div class="lb-composer__left">
+                  <div class="lb-composer__resolve" data-show="audio video">
+                    <svg viewBox="0 0 12 12" fill="none"><rect width="12" height="12" rx="3" fill="var(--hero-accent)"/><path d="M9 4 4.87 8 3 6.18" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <span data-show="audio">Mark as resolved</span>
+                    <span data-show="video">Attach to current time</span>
+                  </div>
+                  <div class="lb-composer__tools" data-show="text-editor whiteboard">
+                    <div class="lb-icon"><svg viewBox="0 0 16 16" fill="none"><path d="M8 10.4a2.4 2.4 0 1 0 0-4.8 2.4 2.4 0 0 0 0 4.8Z" stroke="#A3A3A3" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.4 5.6v2.96c0 .88.68 1.68 1.52 1.68a1.7 1.7 0 0 0 1.68-1.68V8a5.6 5.6 0 1 0-2.24 4.48" stroke="#A3A3A3" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                    <div class="lb-icon"><svg viewBox="0 0 16 16" fill="none"><path d="M8 13.6A5.6 5.6 0 1 0 8 2.4a5.6 5.6 0 0 0 0 11.2Z" stroke="#A3A3A3" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 9.2s.6 1.2 2 1.2 2-1.2 2-1.2" stroke="#A3A3A3" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6.4 6.4h0" stroke="#A3A3A3" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6.4" cy="6.4" r=".2" stroke="#A3A3A3" stroke-width="1.2"/><path d="M9.6 6.4h0" stroke="#A3A3A3" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9.6" cy="6.4" r=".2" stroke="#A3A3A3" stroke-width="1.2"/></svg></div>
+                    <div class="lb-icon lb-icon--px"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M11.2611 9.38924L8.28265 12.2852C7.04265 13.4908 4.98025 13.4908 3.74025 12.2852C2.50585 11.0852 2.50585 9.06924 3.74025 7.86924L8.32505 3.41084C9.15225 2.60604 10.5283 2.60524 11.3563 3.40844C12.1803 4.20844 12.1819 5.55404 11.3587 6.35564L6.76345 10.8132C6.55888 11.0068 6.28792 11.1147 6.00625 11.1147C5.72459 11.1147 5.45363 11.0068 5.24905 10.8132C5.15017 10.7178 5.07146 10.6035 5.01759 10.4771C4.96372 10.3506 4.93579 10.2147 4.93545 10.0772C4.93545 9.80124 5.04745 9.53644 5.24905 9.34124L8.27785 6.39964" stroke="#A3A3A3" stroke-width="1.2"/></svg></div>
+                  </div>
+                </div>
+                <div class="lb-send">
+                  <div class="lb-send__layer"><span class="lb-send__label" data-show="audio">Comment</span></div>
+                  <div class="lb-send__layer"><span class="lb-send__label" data-show="whiteboard">Send</span></div>
+                  <div class="lb-send__layer"><div class="lb-send__icon" data-show="text-editor website video"><svg class="lb-1em" viewBox="0 0 16 16" fill="none"><path d="M4 12.8 13.6 8 4 3.2 5.6 8 4 12.8Z" stroke="#fff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.6 8h8" stroke="#fff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="lb-app">
+            <div class="lb-app__cover"></div>
+            <div class="lb-app__glow" style="opacity:0"><div class="lb-app__line"></div><div class="lb-app__radial"></div></div>
+            <svg class="lb-topbar" viewBox="0 0 1208 770" fill="none">
+              <g fill="var(--hero-background-100)">
+                <rect x="65" y="51.0691" width="106.038" height="21.2075" rx="10.6038"/>
+                <g stroke="var(--hero-background-0)" stroke-width="2"><rect x="1078" y="51"/><rect x="1103" y="51"/><rect x="1128" y="51"/></g>
+              </g>
+            </svg>
+            <!-- the scenes are added here by src/slideshow.js -->
+          </div>
+        </div>
+
+        <div class="lb-tabs">
+          <button class="lb-tab is-active" type="button" data-type="text-editor" aria-label="Text editor" style="--use-case-accent:#e89304" disabled>
+            <div class="lb-tab__progress" style="opacity:0.3;transform:scaleX(0.1)"></div>
+            <div class="lb-tab__icon"><svg width="16" height="16" fill="none"><path d="M11 2.5c.5-.5 1.79-.71 2.5 0s.5 2 0 2.5l-7.27 7.27a4 4 0 0 1-1.73 1.01L2 14l.72-2.5a4 4 0 0 1 1.01-1.73L11 2.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <span class="lb-tab__name">Text editor</span>
+          </button>
+          <button class="lb-tab" type="button" data-type="audio" aria-label="Media player" style="--use-case-accent:#f44e6b">
+            <div class="lb-tab__icon"><svg width="16" height="16" fill="none"><path d="M7 3.5 4 6H2a.5.5 0 0 0-.5.5v3c0 .28.22.5.5.5h2l3 2.5v-9Zm3 2c.62.63 1 1.62 1 2.5a3.7 3.7 0 0 1-1 2.5M12.5 3a7.4 7.4 0 0 1 2 5 7.4 7.4 0 0 1-2 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          </button>
+          <button class="lb-tab" type="button" data-type="whiteboard" aria-label="Whiteboard" style="--use-case-accent:#0090ff">
+            <div class="lb-tab__icon"><svg width="16" height="16" fill="none"><path d="M2.75 14h3c.41 0 .75-.34.75-.75v-3a.75.75 0 0 0-.75-.75h-3a.75.75 0 0 0-.75.75v3c0 .41.34.75.75.75Zm9 0a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Zm-6.7-8.29L7.6 2.1a.5.5 0 0 1 .82 0l2.54 3.62a.5.5 0 0 1-.41.79H5.46a.5.5 0 0 1-.4-.79Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          </button>
+          <button class="lb-tab" type="button" data-type="website" aria-label="Website" style="--use-case-accent:#30a46c">
+            <div class="lb-tab__icon"><svg width="16" height="16" fill="none"><path d="M8 14A6 6 0 1 0 8 2a6 6 0 0 0 0 12Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 2a8.52 8.52 0 0 0-2.5 6c0 2.23.9 4.38 2.5 6a8.52 8.52 0 0 0 2.5-6c0-2.23-.9-4.38-2.5-6ZM2 8h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          </button>
+          <button class="lb-tab" type="button" data-type="video" aria-label="Video editor" style="--use-case-accent:#8F6CEF">
+            <div class="lb-tab__icon"><svg width="16" height="16" fill="none"><path d="M14.5 5.33 10.5 8l4 2.67V5.33Zm-13 .17v5c0 .83.67 1.5 1.5 1.5h6c.83 0 1.5-.67 1.5-1.5v-5C10.5 4.67 9.83 4 9 4H3c-.83 0-1.5.67-1.5 1.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

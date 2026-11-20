@@ -1,0 +1,31 @@
+<!doctype html>
+<!--
+  resend.com hero cube, rebuilt with reanimate.
+  A Rubik's-style cube of 27 rounded cubies turns slowly on two axes while its outer slices make
+  half-turns. On resend.com it is a Spline scene; here it is plain three.js r178 running the scene,
+  the shaders and the post-processing recorded from that page (see src/cube.js).
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>resend.com hero cube, rebuilt with reanimate</title>
+  <meta name="robots" content="noindex">
+  <script type="importmap">
+    { "imports": { "three": "./vendor/three/three.module.js" } }
+  </script>
+  <link rel="stylesheet" href="./src/cube.css">
+  <script type="module" src="./src/cube.js"></script>
+</head>
+<body>
+  <main class="hero">
+    <img class="hero__floor" alt="" src="./assets/bg-floor.webp" width="1920" height="1080" decoding="async">
+    <img class="hero__rays" alt="" src="./assets/bg-light.avif" width="1920" height="1080" decoding="async">
+    <div class="resend-cube" role="img" aria-label="A dark Rubik's cube turning slowly while its outer slices make half-turns">
+      <div class="animate-webgl-scale-in-fade">
+        <canvas></canvas>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

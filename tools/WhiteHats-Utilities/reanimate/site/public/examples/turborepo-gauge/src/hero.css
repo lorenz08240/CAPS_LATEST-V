@@ -1,0 +1,181 @@
+/* turborepo.com hero and stats row. Sizes, colours and type come from the computed styles of the original at
+   1440x900 (its Geist design-system tokens, which it writes in lab()), in its light and dark themes.
+   The fonts are the Geist and Geist Mono files turborepo.com serves (SIL OFL 1.1, assets/fonts/LICENSE-geist.txt);
+   other Geist builds set these words up to 1.6px narrower. */
+
+@font-face {
+  font-family: "GeistSans";
+  src: url("../assets/fonts/Geist-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: block;
+}
+@font-face {
+  font-family: "GeistMono";
+  src: url("../assets/fonts/GeistMono-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: block;
+}
+
+:root {
+  --ds-background-100: lab(100% 0 0);
+  --ds-background-200: lab(98.144% 0 0);
+  --ds-gray-100: lab(95.476% 0 0);
+  --ds-gray-400: lab(92.692% 0 0);
+  --ds-gray-500: lab(80.976% 0 0);
+  --ds-gray-700: lab(59.4% 0 0);
+  --ds-gray-800: lab(52.44% 0 0);
+  --ds-gray-900: lab(32.72% 0 0);
+  --ds-gray-1000: lab(7.78201% 0 0);
+  --ds-gray-alpha-100: lab(0% 0 0 / .05);
+  --ds-gray-alpha-200: lab(0% 0 0 / .081);
+  --ds-gray-alpha-300: lab(0% 0 0 / .1);
+  --ds-gray-alpha-500: lab(0% 0 0 / .21);
+  --ds-shadow-border-small: 0 0 0 1px #00000014, 0px 2px 2px #0000000a, 0 0 0 1px var(--ds-background-200);
+  --sans: "GeistSans", ui-sans-serif, system-ui, sans-serif;
+  --mono: "GeistMono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+*, ::before, ::after { box-sizing: border-box; margin: 0; padding: 0; border: 0 solid; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  min-height: 100vh;
+  background: var(--ds-background-200);
+  color: lab(2.75381% 0 0);
+  font: 400 16px/24px var(--sans);
+  font-feature-settings: "calt" 0, "rlig", "ss05";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+button { font: inherit; color: inherit; background: transparent; cursor: pointer; }
+
+/* the site header is 64px tall; the hero starts below it */
+.tr-page { padding: 64px 0 128px; background: var(--ds-background-200); }
+.tr-container { width: 100%; max-width: 1448px; margin: 0 auto; padding: 0 24px; }
+
+/* ---------- hero ---------- */
+.tr-hero { position: relative; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); align-items: center; padding: 160px 0; }
+.tr-hero__copy { position: relative; z-index: 1; grid-column: span 7 / span 7; display: flex; flex-direction: column; justify-content: center; padding-right: 64px; }
+.tr-hero__visual { position: relative; order: 9999; grid-column: span 5 / span 5; display: flex; align-items: center; justify-content: center; width: 100%; min-height: 320px; margin: 0 auto; }
+
+.tr-title { max-width: 700px; font-size: 64px; line-height: 64px; font-weight: 450; letter-spacing: -0.06em; }
+.tr-lede { margin-top: 24px; font-size: 18px; line-height: 28px; color: var(--ds-gray-900); text-wrap: balance; }
+
+.tr-install { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; width: 100%; margin-top: 16px; }
+.tr-toggle { display: flex; align-items: center; }
+.tr-toggle__button {
+  display: flex; align-items: center; gap: 6px; padding: 8px 12px; border-radius: 4px; white-space: nowrap; touch-action: manipulation;
+  font-size: 13px; line-height: 16px; font-weight: 500; color: var(--ds-gray-900);
+  outline: 2px solid transparent; outline-offset: 2px;
+}
+.tr-toggle__button:hover, .tr-toggle__button[data-active] { color: var(--ds-gray-1000); }
+.tr-toggle__divider { width: 1px; height: 12px; background: var(--ds-gray-400); }
+
+.tr-command {
+  position: relative; display: flex; align-items: center; gap: 4px; max-width: calc(100vw - 48px);
+  padding: 8px 12px 8px 20px; border-radius: 9999px;
+  background: var(--ds-background-100); box-shadow: var(--ds-shadow-border-small);
+  transition: color 150ms cubic-bezier(.4, 0, .2, 1), background-color 150ms cubic-bezier(.4, 0, .2, 1);
+}
+.tr-command__prompt { display: block; padding-right: 4px; color: var(--ds-gray-500); font-family: var(--mono); font-size: 16px; line-height: 20px; }
+.tr-command__text { position: relative; display: block; min-width: 0; overflow: hidden; color: var(--ds-gray-1000); font-family: var(--mono); font-size: 14px; line-height: 20px; }
+.tr-command__sizer { position: absolute; visibility: hidden; pointer-events: none; white-space: nowrap; }
+.tr-command__value { display: block; min-width: 0; padding: 8px 0; white-space: nowrap; overflow-x: hidden; }
+.tr-command__copy {
+  position: relative; display: flex; flex-shrink: 0; align-items: center; justify-content: center; width: 32px; height: 32px;
+  border-radius: 9999px; color: var(--ds-gray-1000); translate: 2px 0; touch-action: manipulation;
+  outline: 2px solid transparent; outline-offset: 2px;
+  transition: color 150ms cubic-bezier(.4, 0, .2, 1), background-color 150ms cubic-bezier(.4, 0, .2, 1);
+}
+.tr-command:hover .tr-command__copy { background: var(--ds-gray-alpha-100); }
+.tr-command .tr-command__copy:hover { background: var(--ds-gray-alpha-200); }
+.tr-command__icon { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+.tr-command__icon svg { display: block; }
+
+/* ---------- the gauge (turborepo.com's SVG, with the utility classes it carries) ---------- */
+.tr-gauge {
+  position: relative; width: 100%; max-width: 500px; aspect-ratio: 24 / 17;
+  --remote-cache-inner-start: #0196FF;
+  --remote-cache-inner-end: #FF1E56;
+  --remote-cache-tick-color: var(--ds-gray-alpha-500);
+}
+.tr-gauge > svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.tr-gauge .opacity-25 { opacity: .25; }
+.tr-gauge .opacity-30 { opacity: .3; }
+.tr-gauge .mix-blend-multiply { mix-blend-mode: multiply; }
+
+/* ---------- stats ---------- */
+.tr-stats { display: grid; grid-template-columns: 1.6fr repeat(3, minmax(0, 1fr)); gap: 40px 48px; padding: 48px 0; }
+.tr-stat { min-width: 0; }
+.tr-stat--end { justify-self: end; }
+.tr-stat__value { font-size: 64px; line-height: 64px; font-weight: 450; letter-spacing: -0.02em; color: var(--ds-gray-1000); }
+.tr-stat__value--gradient {
+  display: inline-block; padding-right: 4px; color: transparent;
+  background-image: linear-gradient(to right in oklab, #FF1E56, #0196FF);
+  -webkit-background-clip: text; background-clip: text;
+}
+.tr-stat__value .tabular-nums { display: inline-block; min-width: 0; font-variant-numeric: tabular-nums; }
+.tr-stat__label { font-size: 16px; line-height: 24px; color: var(--ds-gray-1000); white-space: nowrap; }
+
+/* the dark theme, which turborepo.com follows from the system setting; the gauge's SVG carries its own dark: classes */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ds-background-100: lab(0% 0 0);
+    --ds-background-200: lab(.0177803% 0 0);
+    --ds-gray-100: lab(9.288% 0 0);
+    --ds-gray-400: lab(18.916% 0 0);
+    --ds-gray-500: lab(29.24% 0 0);
+    --ds-gray-900: lab(65.896% 0 0);
+    --ds-gray-1000: lab(93.736% 0 0);
+    --ds-gray-alpha-100: lab(100% 0 0 / .07);
+    --ds-gray-alpha-200: lab(100% 0 0 / .09);
+    --ds-gray-alpha-300: lab(100% 0 0 / .13);
+    --ds-gray-alpha-500: lab(100% 0 0 / .24);
+    --ds-gray-alpha-600: lab(100% 0 0 / .51);
+    --ds-shadow-border-small: 0 0 0 1px #ffffff25, 0px 1px 2px #00000029, 0 0 0 1px var(--ds-background-200);
+  }
+  body { color: lab(98.26% 0 0); }
+  .tr-gauge {
+    --remote-cache-inner-start: #52C7FF;
+    --remote-cache-inner-end: #FF5C9A;
+    --remote-cache-tick-color: var(--ds-gray-alpha-600);
+  }
+  .tr-gauge .dark\:opacity-40 { opacity: .4; }
+  .tr-gauge .dark\:opacity-25 { opacity: .25; }
+  .tr-gauge .dark\:opacity-20 { opacity: .2; }
+  .tr-gauge .dark\:mix-blend-screen { mix-blend-mode: screen; }
+  .tr-gauge .dark\:mix-blend-normal { mix-blend-mode: normal; }
+}
+
+/* turborepo.com's breakpoints, so the page still reads on a phone */
+@media (max-width: 1279.98px) {
+  .tr-title { font-size: 48px; line-height: 56px; letter-spacing: -2.88px; }
+}
+@media (max-width: 1023.98px) {
+  .tr-hero { grid-template-columns: minmax(0, 1fr); gap: 48px; padding: 0; }
+  .tr-hero__copy { grid-column: auto; padding-right: 0; }
+  .tr-hero__visual { grid-column: auto; order: -9999; min-height: 224px; padding-top: 40px; }
+  .tr-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px 32px; padding: 40px 0; }
+  .tr-stat--end { justify-self: auto; }
+  .tr-stat__value { font-size: 40px; line-height: 48px; }
+  .tr-wide-only { display: none; }
+}
+@media (max-width: 639.98px) {
+  .tr-container { padding: 0 16px; }
+  .tr-title { font-size: 40px; line-height: 48px; letter-spacing: -2.4px; }
+  .tr-stats { column-gap: 12px; }
+  .tr-stat__value { font-size: 32px; line-height: 40px; }
+  .tr-stat__label { white-space: normal; }
+}
+
+/* ?embed: the gauge and the counter, centred, at their desktop size */
+html[data-embed] { overflow: hidden; }
+html[data-embed] .tr-page { padding: 28px 0 0; }
+html[data-embed] .tr-hero { display: block; padding: 0; }
+html[data-embed] .tr-hero__copy,
+html[data-embed] .tr-stat--end { display: none; }
+html[data-embed] .tr-hero__visual { min-height: 0; padding: 0; }
+html[data-embed] .tr-stats { display: block; padding: 20px 0 0; text-align: center; }
+html[data-embed] .tr-stat__value { font-size: 56px; line-height: 64px; }
+html[data-embed] .tr-wide-only { display: inline; }

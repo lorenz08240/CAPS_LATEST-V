@@ -1,0 +1,100 @@
+/* clerk.com "Multifactor Authentication" card visual: six 32x40 one-time-code tiles.
+   Classes and values follow clerk.com's markup (module 492483): Tailwind tokens resolved to px/colours.
+   The overlay (.mfa-overlay) only exists while the card is hovered; it is built and animated by mfa.js. */
+
+/* div.isolate.flex.h-full.items-center.justify-center */
+.clerk-card--mfa .mfa-stage {
+  isolation: isolate;
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+/* div.relative (252x40) */
+.clerk-card--mfa .mfa-otp { position: relative; }
+/* div.flex.gap-3 */
+.clerk-card--mfa .mfa-tiles { display: flex; gap: 12px; }
+/* base tile: flex h-10 w-8 items-center justify-center overflow-hidden rounded-md bg-gray-950 */
+.clerk-card--mfa .mfa-tile {
+  display: flex;
+  height: 40px;
+  width: 32px;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 6px;
+  background-color: var(--color-gray-950);
+  box-shadow: 0 10px 19px 4px rgb(0 0 0 / 0.16), 0 -10px 16px -4px rgb(255 255 255 / 0.04),
+    0 0 0 1px rgb(255 255 255 / 0.01), 0 1px 0 0 rgb(255 255 255 / 0.02);
+}
+/* z-10 h-2 w-2 rounded-full bg-white, opacity 0 (never shown on clerk.com either) */
+.clerk-card--mfa .mfa-dot {
+  z-index: 10;
+  height: 8px;
+  width: 8px;
+  border-radius: 2147483647px;
+  background-color: #fff;
+  box-shadow: 0 0 3px 1px rgb(0 0 0 / 0.3);
+  opacity: 0;
+}
+/* svg width=0 height=0 class=absolute: holds the #mfa-clip clipPath */
+.clerk-card--mfa .mfa-defs { position: absolute; }
+
+/* ---------- hover overlay (motion.div.absolute.inset-0) ---------- */
+.clerk-card--mfa .mfa-overlay { position: absolute; inset: 0; }
+/* div.absolute.inset-0.flex.gap-3 (digits) and div[data-mask].absolute.inset-0.z-10.flex.gap-3 */
+.clerk-card--mfa .mfa-row { position: absolute; inset: 0; display: flex; gap: 12px; }
+.clerk-card--mfa .mfa-mask { z-index: 10; }
+.clerk-card--mfa .mfa-cell {
+  display: flex;
+  height: 40px;
+  width: 32px;
+  align-items: center;
+  justify-content: center;
+}
+.clerk-card--mfa .mfa-mask > .mfa-cell { border-radius: 6px; }
+/* digit: relative z-20 font-mono font-medium text-white (16px / 24px inherited) */
+.clerk-card--mfa .mfa-digit {
+  position: relative;
+  z-index: 20;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  color: #fff;
+}
+/* div.absolute.inset-0.[clip-path:url(#mfa-clip)]: the focus fill and caret are clipped to the six tiles */
+.clerk-card--mfa .mfa-clip { position: absolute; inset: 0; clip-path: url(#mfa-clip); }
+/* [data-bg]: absolute top-0 left-0 h-10 w-8 rounded-md bg-[#24333C] opacity-0 */
+.clerk-card--mfa .mfa-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 40px;
+  width: 32px;
+  border-radius: 6px;
+  background-color: #24333c;
+  opacity: 0;
+}
+/* [data-cursor]: absolute left-1.5 h-px w-5 bg-[#5DE3FF]/40 opacity-0, origin = tile centre */
+.clerk-card--mfa .mfa-cursor {
+  position: absolute;
+  left: 6px;
+  bottom: calc(5 / 16 * 1rem);
+  height: 1px;
+  width: 20px;
+  background-color: #5de3ff66;
+  background-color: lab(83.7389% -31.8231 -25.1752 / 0.4);
+  box-shadow: 0 0 4px rgb(107 231 255 / 0.4);
+  transform-origin: 50% -0.875rem;
+  opacity: 0;
+}
+/* [data-border] (opacity-0) and the five [data-border-finale] (inline left + opacity 0) */
+.clerk-card--mfa .mfa-border {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 40px;
+  width: 32px;
+  border-radius: 6px;
+  box-shadow: 0 0 0 1px #5de3ff inset, 0 0 4px 2px rgb(107 231 255 / 0.2);
+}
+.clerk-card--mfa .mfa-border:not(.mfa-border--finale) { opacity: 0; }

@@ -1,0 +1,53 @@
+<!doctype html>
+<!--
+  vercel.com/fluid hero ocean, rebuilt with reanimate.
+  A field of tiny dots, snapped to a 4.4 px grid, rolls like a slow sea across the hero. On
+  vercel.com it is an FFT ocean simulated and drawn with WebGPU in a worker; here it is the same
+  worker, ported: the site's own WGSL, constants and seeded noise, so it draws the same frames.
+  It fades in over 700 ms once the first frame is ready. Without WebGPU, or with reduced motion,
+  a still of the same ocean fades in instead (see src/main.js).
+-->
+<html lang="en" class="light-theme">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>vercel.com/fluid hero ocean, rebuilt with reanimate</title>
+  <meta name="robots" content="noindex">
+  <script>
+    // vercel.com follows the system theme with a class on <html>; the ocean reads it from there
+    (() => {
+      const dark = matchMedia("(prefers-color-scheme: dark)");
+      const apply = () => document.documentElement.classList.replace(dark.matches ? "light-theme" : "dark-theme", dark.matches ? "dark-theme" : "light-theme");
+      apply();
+      dark.addEventListener("change", apply);
+    })();
+  </script>
+  <link rel="preload" href="./assets/fonts/GeistSans-Variable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="./src/fluid.css">
+  <script type="module" src="./src/main.js"></script>
+</head>
+<body>
+  <main>
+    <div class="relative isolate">
+      <!-- src/main.js mounts the ocean canvas (or its still) in here -->
+      <div aria-hidden="true" data-ocean-hero="true" class="pointer-events-none absolute inset-0 -z-10 overflow-hidden select-none"></div>
+      <div class="hero__container">
+        <div class="relative isolate">
+          <div class="grid-cols-12">
+            <div class="hero__main">
+              <h1 class="hero__title">The power of servers, in serverless form</h1>
+              <div class="hero__actions">
+                <a class="hero__button" href="https://vercel.com/docs/fluid-compute"><span>Enable Fluid</span></a>
+                <a class="hero__button hero__button--secondary" href="https://vercel.com/contact/sales"><span>Request demo</span></a>
+              </div>
+            </div>
+            <div class="hero__side">
+              <div class="text-copy-20">Fluid compute combines the efficiency of servers and the flexibility of serverless, enabling real-time, dynamic workloads like APIs, streaming, and AI.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

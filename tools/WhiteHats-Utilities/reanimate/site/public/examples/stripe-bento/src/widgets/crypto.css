@@ -1,0 +1,102 @@
+/* Crypto card globe (stripe.com .globe styles). The canvas bleeds 20px past the card content. */
+.globe {
+  position: absolute;
+  inset: -20px;
+  background: transparent;
+  display: flex;
+  align-items: center;
+}
+.globe__canvas {
+  width: 100%;
+  height: 100%;
+}
+.globe__canvas--draggable {
+  cursor: grab;
+  touch-action: pan-y;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.globe__canvas--dragging {
+  cursor: grabbing;
+}
+.globe__static img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.globe__ui-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Arc label: positioned by --ui-x/--ui-y (canvas px), scaled and faded by the globe each frame;
+   the 150ms transform transition smooths the per-frame position updates. */
+.globe__arc-ui {
+  --ui-x: 0px;
+  --ui-y: 0px;
+  --ui-scale: 1;
+  --ui-opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  gap: 10px;
+  padding: 4px 12px 4px 4px;
+  background: #fff;
+  border: 1px solid #f8fafd;
+  box-shadow:
+    0 13.5px 27px -12.4px rgba(50, 50, 93, 0.12),
+    0 8.1px 16.2px -8.1px rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+  pointer-events: auto;
+  cursor: pointer;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  transform: translate3d(var(--ui-x), var(--ui-y), 0) translate(-50%, -50%) scale(var(--ui-scale));
+  opacity: var(--ui-opacity);
+  transition: transform 0.15s ease-out;
+  z-index: 1;
+}
+.globe__arc-ui-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0;
+  gap: 12px;
+}
+.globe__arc-ui-icon {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  border-radius: 2px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.globe__arc-ui-text {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0;
+  gap: 4px;
+}
+.globe__arc-ui-amount,
+.globe__arc-ui-currency {
+  font-family: "Inter Variable", "SF Pro Display", sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 1.4;
+}
+.globe__arc-ui-amount {
+  color: #061b31;
+}
+.globe__arc-ui-currency {
+  color: #50617a;
+}
