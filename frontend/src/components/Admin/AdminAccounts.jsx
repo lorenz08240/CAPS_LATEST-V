@@ -15,6 +15,7 @@ export const AdminAccounts = () => {
 
   // Edit Root Modal
   const [showEditRootModal, setShowEditRootModal] = useState(false);
+  const [showCredPass, setShowCredPass] = useState(false);
   const [rootPasscode, setRootPasscode] = useState("admin12345");
   const [rootDisplayName, setRootDisplayName] = useState("Root Administrator");
   const [rootAvatar, setRootAvatar] = useState("");
@@ -176,7 +177,7 @@ export const AdminAccounts = () => {
           <div className="admin-content-inner">
             {notification && (
               <div className={`admin-alert-banner ${notification.type === "error" ? "error" : "success"}`}>
-                <span className="alert-icon">{notification.type === "error" ? "âš " : "âœ“"}</span>
+                <span className="alert-icon">{notification.type === "error" ? "!" : "✓"}</span>
                 <span>{notification.message}</span>
               </div>
             )}
@@ -207,8 +208,16 @@ export const AdminAccounts = () => {
                       <h2>{rootAccount?.display_name || "Root Administrator"}</h2>
                     </div>
                     <div className="root-credentials-preview">
-                      <span className="cred-chip">ID: root</span>
-                      <span className="cred-chip">Password: â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢</span>
+                      <span className="cred-chip font-mono">ID: root</span>
+                      <button
+                        type="button"
+                        className="cred-chip-clickable"
+                        onClick={() => setShowCredPass(!showCredPass)}
+                        title={showCredPass ? "Click to mask password" : "Click to view password"}
+                      >
+                        <span>Password: {showCredPass ? (rootAccount?.passcode || "admin12345") : "••••••••••"}</span>
+                        <span className="cred-chip-action">{showCredPass ? "Hide" : "Show"}</span>
+                      </button>
                     </div>
                   </div>
                 </div>

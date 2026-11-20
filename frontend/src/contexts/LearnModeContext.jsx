@@ -217,6 +217,14 @@ export const LearnModeProvider = ({ children }) => {
         "buildlab_learn_seen_banners",
         JSON.stringify({ compatibility: false, learn: false, certificate: false })
       );
+      const emailKey = (
+        JSON.parse(localStorage.getItem("buildlab_user_profile") || "{}").email ||
+        localStorage.getItem("buildlab_last_learner_email") ||
+        ""
+      ).trim().toLowerCase();
+      if (emailKey) {
+        localStorage.setItem(`buildlab_student_stages_${emailKey}`, JSON.stringify(["build"]));
+      }
     } catch { }
   }, []);
 

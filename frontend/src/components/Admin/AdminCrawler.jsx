@@ -241,7 +241,7 @@ export const AdminCrawler = () => {
         prev.map((item) => (item.id === id ? { ...item, approved: !item.approved } : item))
       );
     } catch {
-      setToast({ text: "Could not update approval — server rejected the request.", type: "error" });
+      setToast({ text: "Could not update approval: server rejected the request.", type: "error" });
     }
   };
 
@@ -328,7 +328,7 @@ export const AdminCrawler = () => {
   }, [queueFilterCategory]);
 
   const queueTotalPages = Math.max(1, Math.ceil(filteredQueue.length / QUEUE_PAGE_SIZE));
-  // Derived (not stored) — keeps pagination valid even after rows are cleared/merged away
+  // Derived (not stored): keeps pagination valid even after rows are cleared or merged away
   const activeQueuePage = Math.min(Math.max(1, queuePage), queueTotalPages);
   const paginatedQueue = useMemo(() => {
     const start = (activeQueuePage - 1) * QUEUE_PAGE_SIZE;
@@ -487,7 +487,7 @@ export const AdminCrawler = () => {
         const data = await res.json().catch(() => ({}));
         throw new Error(data.error || "Clear failed");
       }
-      setToast({ text: `Review queue cleared — removed ${scrapedQueue.length} scraped item(s).`, type: "success" });
+      setToast({ text: `Review queue cleared: removed ${scrapedQueue.length} scraped item(s).`, type: "success" });
       appendLog(`[CLEAR] Wiped ${scrapedQueue.length} recently scraped item(s) from the review queue.`, "warn");
       setSelectedIds(new Set());
       await fetchScrapedQueue();
@@ -615,9 +615,12 @@ export const AdminCrawler = () => {
               <div className={`admin-panel glass-card-panel terminal-monitor-panel ${isTerminalCollapsed ? "collapsed" : ""}`}>
                 <div className="terminal-header-bar">
                   <div className="terminal-left-meta">
-                    <span className="term-dot dot-red"></span>
-                    <span className="term-dot dot-yellow"></span>
-                    <span className="term-dot dot-green"></span>
+                    <span className="terminal-header-icon" aria-hidden="true">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="4 17 10 11 4 5"></polyline>
+                        <line x1="12" y1="19" x2="20" y2="19"></line>
+                      </svg>
+                    </span>
                     <span className="terminal-title">Telemetry Terminal Monitor</span>
                     <span className="terminal-line-badge">{logs.length} lines</span>
                   </div>
@@ -841,14 +844,14 @@ export const AdminCrawler = () => {
 
                           <td className="model-cell">
                             <span className="model-tag-pill" title={item.scrapedName}>
-                              {meta.model || "—"}
+                              {meta.model || "N/A"}
                             </span>
                           </td>
 
                           <td className="product-specs-cell">
                             <div className="specs-pill-row">
                               <span className="spec-tag-pill">
-                                {quickSpecs.length > 0 ? quickSpecs.join(" • ") : "—"}
+                                {quickSpecs.length > 0 ? quickSpecs.join(" • ") : "N/A"}
                               </span>
                             </div>
                           </td>

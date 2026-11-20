@@ -649,3 +649,136 @@
   border-color: rgba(255, 255, 255, 0.18);
 }
 
+/* ==========================================================================
+   Light Mode Theme Overrides
+   ========================================================================== */
+body.theme-light .certification-page-wrap,
+.theme-light .certification-page-wrap,
+[data-theme="light"] .certification-page-wrap {
+  background: #f7f4ee;
+  color: #1a120b;
+}
+
+body.theme-light .cert-action-bar,
+.theme-light .cert-action-bar,
+[data-theme="light"] .cert-action-bar {
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+body.theme-light .cert-nav-back,
+.theme-light .cert-nav-back,
+[data-theme="light"] .cert-nav-back {
+  color: #475569;
+}
+
+body.theme-light .cert-nav-back:hover,
+.theme-light .cert-nav-back:hover,
+[data-theme="light"] .cert-nav-back:hover {
+  color: #0f172a;
+}
+
+body.theme-light .cert-status-pill,
+.theme-light .cert-status-pill,
+[data-theme="light"] .cert-status-pill {
+  background: rgba(26, 18, 11, 0.06);
+  border: 1px solid rgba(26, 18, 11, 0.14);
+  color: #1a120b;
+}
+
+body.theme-light .cert-btn-edit,
+body.theme-light .cert-btn-share,
+.theme-light .cert-btn-edit,
+.theme-light .cert-btn-share,
+[data-theme="light"] .cert-btn-edit,
+[data-theme="light"] .cert-btn-share {
+  background: rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  color: #1e293b;
+}
+
+body.theme-light .cert-btn-edit:hover,
+body.theme-light .cert-btn-share:hover,
+.theme-light .cert-btn-edit:hover,
+.theme-light .cert-btn-share:hover,
+[data-theme="light"] .cert-btn-edit:hover,
+[data-theme="light"] .cert-btn-share:hover {
+  background: rgba(0, 0, 0, 0.08);
+  color: #000000;
+}
+
+body.theme-light .cert-locked-card,
+.theme-light .cert-locked-card,
+[data-theme="light"] .cert-locked-card {
+  background: #ffffff;
+  border: 1px solid rgba(244, 63, 94, 0.35);
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.08);
+}
+
+body.theme-light .cert-locked-title,
+.theme-light .cert-locked-title,
+[data-theme="light"] .cert-locked-title {
+  color: #1a120b;
+}
+
+body.theme-light .cert-locked-desc,
+.theme-light .cert-locked-desc,
+[data-theme="light"] .cert-locked-desc {
+  color: #475569;
+}
+
+body.theme-light .cert-locked-progress-card,
+.theme-light .cert-locked-progress-card,
+[data-theme="light"] .cert-locked-progress-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+body.theme-light .cert-locked-progress-head,
+.theme-light .cert-locked-progress-head,
+[data-theme="light"] .cert-locked-progress-head {
+  color: #64748b;
+}
+
+body.theme-light .cert-locked-progress-head strong,
+.theme-light .cert-locked-progress-head strong,
+[data-theme="light"] .cert-locked-progress-head strong {
+  color: #0f172a;
+}
+
+body.theme-light .cert-locked-progress-track,
+.theme-light .cert-locked-progress-track,
+[data-theme="light"] .cert-locked-progress-track {
+  background: #e2e8f0;
+}
+
+body.theme-light .cert-locked-progress-fill,
+.theme-light .cert-locked-progress-fill,
+[data-theme="light"] .cert-locked-progress-fill {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+}
+
+body.theme-light .cert-name-editor,
+.theme-light .cert-name-editor,
+[data-theme="light"] .cert-name-editor {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+body.theme-light .name-edit-label,
+.theme-light .name-edit-label,
+[data-theme="light"] .name-edit-label {
+  color: #64748b;
+}
+
+body.theme-light .name-edit-input,
+.theme-light .name-edit-input,
+[data-theme="light"] .name-edit-input {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  color: #0f172a;
+}
+
+

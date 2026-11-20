@@ -19,6 +19,7 @@ import { useLoader } from '@react-three/fiber';
  */
 export default function ROGStrixMotherboard({
   position = [0, 0, 0],
+  rotation = [0, 0, 0],
   scale = 1,
   rgbColor = '#00e5ff',
   explodedProgress = 0,
@@ -27,7 +28,11 @@ export default function ROGStrixMotherboard({
   enableHighlight = false,
   onSelect,
   onHover,
-  part
+  part,
+  showCpu = false,
+  showRam = false,
+  showStorage = false,
+  showGpu = false,
 }) {
   // Load official high-res top-down motherboard photo texture
   const pcbTexture = useLoader(THREE.TextureLoader, '/assets/3d/strix_b360f_full_top.png');
@@ -95,7 +100,7 @@ export default function ROGStrixMotherboard({
   const expCover = explodedProgress * 1.1;
 
   return (
-    <group position={position} scale={scale}>
+    <group position={position} rotation={rotation} scale={scale}>
       {/* ========================================================= */}
       {/* 1. HIGH-FIDELITY TEXTURED ATX SUBSTRATE                   */}
       {/* ========================================================= */}
@@ -242,27 +247,59 @@ export default function ROGStrixMotherboard({
           <meshStandardMaterial color="#16181e" roughness={0.8} />
         </mesh>
 
-        {/* Stainless Steel Outer Load Frame */}
-        <mesh position={[0, 0, 0.06]}>
-          <boxGeometry args={[1.55, 1.55, 0.04]} />
-          <meshStandardMaterial {...steelArmorMat} />
-        </mesh>
-
-        {/* Nickel-Plated CPU Heat Spreader (IHS) Mirror Finish */}
-        <mesh position={[0, 0, 0.09]}>
-          <boxGeometry args={[1.15, 1.15, 0.03]} />
-          <meshStandardMaterial color="#f8fafc" metalness={0.98} roughness={0.12} />
-        </mesh>
-
-        {/* Chrome Retention Load Arm / Lever */}
-        <mesh position={[0.82, 0, 0.07]}>
-          <cylinderGeometry args={[0.024, 0.024, 1.65, 12]} />
-          <meshStandardMaterial color="#f8fafc" metalness={1.0} roughness={0.06} />
-        </mesh>
-        <mesh position={[0.82, 0.84, 0.07]}>
-          <boxGeometry args={[0.08, 0.08, 0.04]} />
-          <meshStandardMaterial color="#f8fafc" metalness={1.0} />
-        </mesh>
+        {!showCpu ? (
+          /* Empty Open LGA Socket with Gold Contact Pins and Open Lever */
+          <group>
+            {/* Gold Pin Matrix Grid */}
+            <mesh position={[0, 0, 0.05]}>
+              <boxGeometry args={[1.28, 1.28, 0.02]} />
+              <meshStandardMaterial color="#d97706" metalness={0.95} roughness={0.25} />
+            </mesh>
+            {/* Open Load Frame Hinge */}
+            <mesh position={[0, 0.18, 0.12]} rotation={[-0.45, 0, 0]}>
+              <boxGeometry args={[1.55, 1.55, 0.04]} />
+              <meshStandardMaterial {...steelArmorMat} />
+            </mesh>
+            {/* Open Retention Lever */}
+            <mesh position={[0.82, 0.22, 0.14]} rotation={[-0.5, 0, 0]}>
+              <cylinderGeometry args={[0.024, 0.024, 1.65, 12]} />
+              <meshStandardMaterial color="#f8fafc" metalness={1.0} roughness={0.06} />
+            </mesh>
+          </group>
+        ) : (
+          /* Seated & Clamped CPU Processor */
+          <group>
+            {/* CPU Substrate */}
+            <mesh position={[0, 0, 0.055]}>
+              <boxGeometry args={[1.32, 1.32, 0.03]} />
+              <meshStandardMaterial color="#0f766e" roughness={0.4} />
+            </mesh>
+            {/* Golden Triangle Alignment Mark on Corner */}
+            <mesh position={[-0.58, -0.58, 0.072]}>
+              <boxGeometry args={[0.08, 0.08, 0.005]} />
+              <meshBasicMaterial color="#facc15" />
+            </mesh>
+            {/* Stainless Steel Outer Load Frame */}
+            <mesh position={[0, 0, 0.065]}>
+              <boxGeometry args={[1.55, 1.55, 0.04]} />
+              <meshStandardMaterial {...steelArmorMat} />
+            </mesh>
+            {/* Nickel-Plated CPU Heat Spreader (IHS) Mirror Finish */}
+            <mesh position={[0, 0, 0.09]}>
+              <boxGeometry args={[1.15, 1.15, 0.03]} />
+              <meshStandardMaterial color="#f8fafc" metalness={0.98} roughness={0.12} />
+            </mesh>
+            {/* Chrome Retention Load Arm / Lever clamped */}
+            <mesh position={[0.82, 0, 0.07]}>
+              <cylinderGeometry args={[0.024, 0.024, 1.65, 12]} />
+              <meshStandardMaterial color="#f8fafc" metalness={1.0} roughness={0.06} />
+            </mesh>
+            <mesh position={[0.82, 0.84, 0.07]}>
+              <boxGeometry args={[0.08, 0.08, 0.04]} />
+              <meshStandardMaterial color="#f8fafc" metalness={1.0} />
+            </mesh>
+          </group>
+        )}
       </group>
 
       {/* ========================================================= */}

@@ -13,7 +13,6 @@ export const AdminContent = () => {
 
   // Drawer / Modal states
   const [editingMember, setEditingMember] = useState(null);
-  const [activeTab, setActiveTab] = useState("profile"); // 'profile' | 'specs'
   const [uploadingPhotoId, setUploadingPhotoId] = useState(null);
   const [isNewMember, setIsNewMember] = useState(false);
   const modalFileInputRef = useRef(null);
@@ -156,7 +155,6 @@ export const AdminContent = () => {
 
   const handleCreateMember = () => {
     try { soundManager.click(); } catch {}
-    setActiveTab("profile");
     setIsNewMember(true);
     setEditingMember({
       id: `DEV-${Date.now().toString().slice(-6)}`,
@@ -199,7 +197,7 @@ export const AdminContent = () => {
         <AdminSidebar />
 
         <main className="admin-main-content">
-          <AdminHeader breadcrumbCurrent="Team Profiles" />
+          <AdminHeader breadcrumbCurrent="Developer Profiles" />
 
           <div className="admin-content-inner">
             {notification && (
@@ -212,8 +210,8 @@ export const AdminContent = () => {
             {/* Banner Header */}
             <div className="content-mgmt-header-banner">
               <div className="content-title-group">
-                <div className="content-kicker">CONTENT MANAGEMENT // LIVE DOSSIER EDITOR</div>
-                <h1 className="content-title">Team Profiles</h1>
+                <div className="content-kicker">CORE TEAM DIRECTORY // DEVELOPER PROFILES</div>
+                <h1 className="content-title">Developer Profiles</h1>
                 <p className="content-subtitle">
                   Photos, hardware vitae, and details for the {members.length || 5} WhiteHats developers. Saved changes automatically synchronize live with the public <Link to="/about" target="_blank" className="text-emerald underline">About Us</Link> page.
                 </p>
@@ -222,9 +220,6 @@ export const AdminContent = () => {
               <div className="roster-header-actions" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                 <button type="button" className="btn-refresh-accounts" onClick={handleCreateMember} title="Add a new developer to the roster">
                   + Add Developer
-                </button>
-                <button type="button" className="btn-refresh-accounts" onClick={fetchMembers} title="Fetch latest team data from database">
-                  Sync
                 </button>
                 <Link to="/about" target="_blank" className="btn-view-live-about">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -303,7 +298,6 @@ export const AdminContent = () => {
                           type="button"
                           className="btn-edit-operative"
                           onClick={() => {
-                            setActiveTab("profile");
                             setIsNewMember(false);
                             setEditingMember({
                               ...member,
@@ -345,8 +339,8 @@ export const AdminContent = () => {
                 <div className="admin-modal-card modal-lg wood-mahogany" onClick={(e) => e.stopPropagation()}>
                   <div className="modal-header">
                     <div className="modal-title-wrap">
-                      <span className="modal-kicker">{isNewMember ? "NEW OPERATIVE // DRAFT" : `LIVE DOSSIER SYNC // ${editingMember.id}`}</span>
-                      <h2 className="modal-title">{isNewMember ? "Add New Developer" : <>Edit Operative &bull; {editingMember.name || editingMember.id}</>}</h2>
+                      <span className="modal-kicker">{isNewMember ? "NEW DEVELOPER PROFILE" : `DEVELOPER PROFILE // ${editingMember.id}`}</span>
+                      <h2 className="modal-title">{isNewMember ? "Add New Developer" : <>Edit Profile &bull; {editingMember.name || editingMember.id}</>}</h2>
                     </div>
                     <button
                       type="button"
@@ -357,28 +351,8 @@ export const AdminContent = () => {
                     </button>
                   </div>
 
-                  {/* Clean Tab Switcher */}
-                  <div className="modal-tab-nav">
-                    <button
-                      type="button"
-                      className={`modal-tab-btn ${activeTab === "profile" ? "active" : ""}`}
-                      onClick={() => setActiveTab("profile")}
-                    >
-                      Profile &amp; Bio
-                    </button>
-                    <button
-                      type="button"
-                      className={`modal-tab-btn ${activeTab === "specs" ? "active" : ""}`}
-                      onClick={() => setActiveTab("specs")}
-                    >
-                      Rig Specs &amp; Tech Stack
-                    </button>
-                  </div>
-
                   <form onSubmit={handleSaveMember} className="modal-form">
-                    {activeTab === "profile" ? (
-                      <>
-                        {/* Photo Uploader */}
+                    {/* Photo Uploader */}
                         <div className="content-photo-upload-section">
                           <label className="form-label">AVATAR PHOTO</label>
                           <div className="photo-editor-row">
@@ -542,119 +516,6 @@ export const AdminContent = () => {
                             onChange={(e) => setEditingMember({ ...editingMember, fav_tip: e.target.value })}
                           />
                         </div>
-                      </>
-                    ) : (
-                      <>
-                        {/* Rig Specs & Tech Stack */}
-                        <div className="form-group">
-                          <label className="form-label">TECH STACK (COMMA SEPARATED)</label>
-                          <input
-                            type="text"
-                            placeholder="React 19, Three.js, Node.js, Express, MySQL"
-                            className="form-input font-mono text-xs"
-                            value={editingMember.tech_stack || ""}
-                            onChange={(e) => setEditingMember({ ...editingMember, tech_stack: e.target.value })}
-                          />
-                        </div>
-
-                        <div className="form-rig-section">
-                          <label className="form-label">PERSONAL PC RIG HARDWARE SPECS</label>
-                          <div className="form-row-2">
-                            <div className="form-group">
-                              <label className="text-xs text-muted">CPU</label>
-                              <input
-                                type="text"
-                                placeholder="AMD Ryzen 9 7900X"
-                                className="form-input text-xs"
-                                value={editingMember.rig_specs?.cpu || ""}
-                                onChange={(e) => setEditingMember({
-                                  ...editingMember,
-                                  rig_specs: { ...editingMember.rig_specs, cpu: e.target.value }
-                                })}
-                              />
-                            </div>
-                            <div className="form-group">
-                              <label className="text-xs text-muted">GPU</label>
-                              <input
-                                type="text"
-                                placeholder="NVIDIA GeForce RTX 4080 Super"
-                                className="form-input text-xs"
-                                value={editingMember.rig_specs?.gpu || ""}
-                                onChange={(e) => setEditingMember({
-                                  ...editingMember,
-                                  rig_specs: { ...editingMember.rig_specs, gpu: e.target.value }
-                                })}
-                              />
-                            </div>
-                          </div>
-
-                          <div className="form-row-3">
-                            <div className="form-group">
-                              <label className="text-xs text-muted">RAM</label>
-                              <input
-                                type="text"
-                                placeholder="64GB DDR5-6000"
-                                className="form-input text-xs"
-                                value={editingMember.rig_specs?.ram || ""}
-                                onChange={(e) => setEditingMember({
-                                  ...editingMember,
-                                  rig_specs: { ...editingMember.rig_specs, ram: e.target.value }
-                                })}
-                              />
-                            </div>
-                            <div className="form-group">
-                              <label className="text-xs text-muted">STORAGE</label>
-                              <input
-                                type="text"
-                                placeholder="2TB PCIe Gen4 NVMe"
-                                className="form-input text-xs"
-                                value={editingMember.rig_specs?.storage || ""}
-                                onChange={(e) => setEditingMember({
-                                  ...editingMember,
-                                  rig_specs: { ...editingMember.rig_specs, storage: e.target.value }
-                                })}
-                              />
-                            </div>
-                            <div className="form-group">
-                              <label className="text-xs text-muted">CHASSIS</label>
-                              <input
-                                type="text"
-                                placeholder="Lian Li O11 Dynamic EVO"
-                                className="form-input text-xs"
-                                value={editingMember.rig_specs?.chassis || ""}
-                                onChange={(e) => setEditingMember({
-                                  ...editingMember,
-                                  rig_specs: { ...editingMember.rig_specs, chassis: e.target.value }
-                                })}
-                              />
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="form-row-2">
-                          <div className="form-group">
-                            <label className="form-label">GITHUB PROFILE</label>
-                            <input
-                              type="url"
-                              placeholder="https://github.com/..."
-                              className="form-input text-xs"
-                              value={editingMember.github || ""}
-                              onChange={(e) => setEditingMember({ ...editingMember, github: e.target.value })}
-                            />
-                          </div>
-                          <div className="form-group">
-                            <label className="form-label">LINKEDIN PROFILE</label>
-                            <input
-                              type="url"
-                              placeholder="https://linkedin.com/in/..."
-                              className="form-input text-xs"
-                              value={editingMember.linkedin || ""}
-                              onChange={(e) => setEditingMember({ ...editingMember, linkedin: e.target.value })}
-                            />
-                          </div>
-                        </div>
-                      </>
-                    )}
 
                     <div className="modal-actions-bar">
                       <button
@@ -668,7 +529,7 @@ export const AdminContent = () => {
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                           <polyline points="20 6 9 17 4 12"></polyline>
                         </svg>
-                        <span>Save &amp; Sync to /about</span>
+                        <span>Save Developer Profile</span>
                       </button>
                     </div>
                   </form>

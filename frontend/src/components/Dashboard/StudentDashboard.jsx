@@ -1,7 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLearnMode } from "../../contexts/LearnModeContext";
-import { useTheme } from "../../contexts/ThemeContext";
 import soundManager from "../../utilities/soundManager";
 import { CSS_CURRICULUM, FLAT_TOPICS, TOTAL_TOPICS_COUNT } from "../Learn/curriculumData";
 import { getStudentQuizRecords, computeStudentAcademicStanding } from "../Learn/moduleQuizzes";
@@ -14,8 +13,7 @@ export default function StudentDashboard({
   onSelectTopic = null,
 }) {
   const navigate = useNavigate();
-  const { userProfile, setUserProfile, mode, logoutLearner } = useLearnMode();
-  const { isDark, toggleTheme } = useTheme() || {};
+  const { userProfile, setUserProfile, logoutLearner, unlockStage } = useLearnMode();
   const [showEditModal, setShowEditModal] = useState(false);
 
   // Authenticated user resolution
@@ -36,17 +34,17 @@ export default function StudentDashboard({
   const studentEmail =
     userProfile?.email ||
     localUser?.email ||
-    "student.tester@ptc.edu.ph";
+    "jaymark.piano@feu.edu.ph";
 
   const studentStrand =
     userProfile?.strand ||
     localUser?.strand ||
-    "Grade 11 TVL - Computer Systems Servicing (CSS)";
+    "Grade 11 TVL - CSS";
 
   const institution =
     userProfile?.institution ||
     localUser?.institution ||
-    "Pateros Technological College — Institute of Information and Computing Technology";
+    "Pateros Technological College (PTC-IICT)";
 
   // Read student progress from localStorage
   const completedTopics = useMemo(() => {
@@ -61,11 +59,12 @@ export default function StudentDashboard({
     }
   }, [userProfile?.email, localUser?.email]);
 
-  const completedCount = completedTopics.length;
-  const progressPct = Math.round((completedCount / TOTAL_TOPICS_COUNT) * 100);
-  const isAllComplete = completedCount >= TOTAL_TOPICS_COUNT;
+  const completedCount = Math.min(TOTAL_TOPICS_COUNT, completedTopics.length);
+  const progressPct = Math.min(100, Math.round((completedCount / TOTAL_TOPICS_COUNT) * 100));
+  const isAllLessonsDone = completedTopics.length >= TOTAL_TOPICS_COUNT;
+  const isAllComplete = isAllLessonsDone;
 
-  // Read student 15-question quiz records and compute collegiate GWA / Academic Standing
+  // 15-question quiz records and academic standing
   const quizRecords = useMemo(() => {
     return getStudentQuizRecords(userProfile?.email || localUser?.email);
   }, [userProfile?.email, localUser?.email]);
@@ -73,6 +72,48 @@ export default function StudentDashboard({
   const standing = useMemo(() => {
     return computeStudentAcademicStanding(userProfile?.email || localUser?.email);
   }, [userProfile?.email, localUser?.email]);
+
+  // Check 3D Virtual PC Assembly & Disassembly practical statuses
+  const isAssemblyDone = useMemo(() => {
+    try {
+      const email = userProfile?.email || localUser?.email;
+      return (
+        localStorage.getItem("buildlab_3d_assembly_completed") === "true" ||
+        (email && localStorage.getItem(`buildlab_3d_assembly_completed.${email}`) === "true") ||
+        completedTopics.includes("7.2-assembly-lab") ||
+        completedTopics.includes("7.2-hands-on-assembly")
+      );
+    } catch {
+      return false;
+    }
+  }, [userProfile?.email, localUser?.email, completedTopics]);
+
+  const isDisassemblyDone = useMemo(() => {
+    try {
+      const email = userProfile?.email || localUser?.email;
+      return (
+        localStorage.getItem("buildlab_3d_disassembly_completed") === "true" ||
+        (email && localStorage.getItem(`buildlab_3d_disassembly_completed.${email}`) === "true")
+      );
+    } catch {
+      return false;
+    }
+  }, [userProfile?.email, localUser?.email]);
+
+  // Complete Dry Run status
+  const isDryRunComplete = useMemo(() => {
+    return isAllLessonsDone || (quizRecords[7] && quizRecords[7].passed) || (standing.completedModulesCount >= 7);
+  }, [isAllLessonsDone, quizRecords, standing.completedModulesCount]);
+
+  // Certificate unlocks once all 17 curriculum topics across Modules 1–7 are completed (100% completion)
+  // Kept locked until all modules are 100% completed
+  const isCertEligible = isAllLessonsDone;
+
+  React.useEffect(() => {
+    if (isCertEligible && unlockStage) {
+      unlockStage("certificate");
+    }
+  }, [isCertEligible, unlockStage]);
 
   // Find next uncompleted topic
   const nextTopicIdx = useMemo(() => {
@@ -82,13 +123,40 @@ export default function StudentDashboard({
 
   const nextTopic = FLAT_TOPICS[nextTopicIdx] || FLAT_TOPICS[0];
 
+  // Count passed modules
+  const passedModulesCount = useMemo(() => {
+    return Object.values(quizRecords).filter((r) => r && r.passed).length;
+  }, [quizRecords]);
+
   // Check if Capstone Virtual Assembly Lab is completed
-  const isAssemblyLabDone = completedTopics.includes("7.2-hands-on-assembly");
+  const isAssemblyLabDone = isAssemblyDone || isAllLessonsDone;
 
   const handleResumeCourse = (targetIdx = nextTopicIdx) => {
     try { soundManager.snap(); } catch {}
     if (isEmbedded && onSelectTopic) {
-      onSelectTopic(targetIdx);
+      onSelectTopic(targetIdx, "presentation");
+      if (onClose) onClose();
+      return;
+    }
+    navigate("/learn", { state: { targetTopicIndex: targetIdx } });
+  };
+
+  const handleOpenQuiz = (targetIdx, modNum) => {
+    try { soundManager.click(); } catch {}
+    if (isEmbedded && onSelectTopic) {
+      onSelectTopic(targetIdx, "quiz");
+      if (onClose) onClose();
+      return;
+    }
+    navigate("/learn", { state: { targetTopicIndex: targetIdx, openQuiz: true, moduleNum: modNum } });
+  };
+
+  const handleOpen3DLab = () => {
+    try { soundManager.install(); } catch {}
+    const labIdx = FLAT_TOPICS.findIndex((t) => t.isAssemblyLab || t.id === "7.2-assembly-lab" || t.id === "7.2-hands-on-assembly");
+    const targetIdx = labIdx !== -1 ? labIdx : 0;
+    if (isEmbedded && onSelectTopic) {
+      onSelectTopic(targetIdx, "3d-lab");
       if (onClose) onClose();
       return;
     }
@@ -96,78 +164,51 @@ export default function StudentDashboard({
   };
 
   const handleOpenCertificate = () => {
-    if (!isAllComplete) {
+    if (!isCertEligible) {
       try { soundManager.warning(); } catch {}
-      handleResumeCourse(nextTopicIdx);
       return;
     }
-    try { soundManager.click(); } catch {}
-    unlockStage("certificate");
+    try {
+      soundManager.complete();
+      if (unlockStage) unlockStage("certificate");
+    } catch {}
     navigate("/certificate");
   };
 
-  const handleOpen3DLab = () => {
-    try { soundManager.install(); } catch {}
-    const labIdx = FLAT_TOPICS.findIndex((t) => t.id === "7.2-hands-on-assembly");
-    const targetIdx = labIdx !== -1 ? labIdx : 0;
-    if (isEmbedded && onSelectTopic) {
-      onSelectTopic(targetIdx);
-      if (onClose) onClose();
-      return;
-    }
-    navigate("/learn", { state: { targetTopicIndex: targetIdx } });
-  };
-
   return (
-    <div
-      className={`student-dashboard-page ${isEmbedded ? "is-embedded" : ""} ${
-        isDark ? "theme-dark" : "theme-light"
-      }`}
-    >
+    <div className={`student-dashboard-page ${isEmbedded ? "is-embedded" : ""}`}>
       <div className="dashboard-container">
-        {isEmbedded && (
-          <div className="embedded-dashboard-topbar">
-            <div className="embedded-topbar-info">
-              <span className="embedded-topbar-dot" />
-              <strong>STUDENT ACCOUNT &amp; COURSE RECORD</strong>
-              <span className="embedded-topbar-hint">Press Esc to collapse</span>
-            </div>
-            <button
-              type="button"
-              className="btn-embedded-collapse"
-              onClick={onClose}
-              title="Return to 3D Hardware Workbench (Esc)"
-            >
-              ✕ Collapse Dashboard
-            </button>
-          </div>
-        )}
-        {/* ── TOP HEADER: STUDENT PROFILE IDENTITY ── */}
+        {/* ── CARD 1: STUDENT PROFILE IDENTITY & QUICK CONTROLS ── */}
         <header className="dashboard-hero-card">
-          <div className="hero-avatar-wrap">
-            {userProfile?.photo ? (
-              <img src={userProfile.photo} alt={studentName} className="hero-avatar-img" />
-            ) : (
-              <div className="hero-avatar-initials">
-                {studentName
-                  .split(" ")
-                  .map((w) => w[0])
-                  .slice(0, 2)
-                  .join("")
-                  .toUpperCase()}
-              </div>
-            )}
-            <span className="hero-online-status" title="Active Student Session" />
-          </div>
-
-          <div className="hero-info-block">
-            <div className="hero-badge-row">
-              <span className="strand-tag">{studentStrand}</span>
-              <span className="verified-badge">✓ Verified Student Record</span>
+          <div className="hero-identity-left">
+            <div className="hero-avatar-wrap">
+              {userProfile?.photo ? (
+                <img src={userProfile.photo} alt={studentName} className="hero-avatar-img" />
+              ) : (
+                <div className="hero-avatar-initials">
+                  {studentName
+                    .split(" ")
+                    .map((w) => w[0])
+                    .slice(0, 2)
+                    .join("")
+                    .toUpperCase()}
+                </div>
+              )}
+              <span className="hero-online-status" title="Active Session" />
             </div>
-            <h1 className="student-name">{studentName}</h1>
-            <p className="student-institution">{institution}</p>
-            <span className="student-email-sub">{studentEmail}</span>
+
+            <div className="hero-info-block">
+              <div className="hero-badge-row">
+                <span className="strand-tag">{studentStrand}</span>
+                <span className="institution-tag">{institution}</span>
+                <span className="verified-badge">✓ Verified</span>
+                {isDryRunComplete && (
+                  <span className="dry-run-badge complete">✓ Complete Dry Run</span>
+                )}
+              </div>
+              <h1 className="student-name">{studentName}</h1>
+              <span className="student-email-sub">{studentEmail}</span>
+            </div>
           </div>
 
           <div className="hero-actions-block">
@@ -175,9 +216,9 @@ export default function StudentDashboard({
               type="button"
               className="btn-edit-profile"
               onClick={() => setShowEditModal(true)}
-              title="Edit full legal name or academic strand"
+              title="Edit Profile"
             >
-              ⚙️ Edit Student Profile
+              Edit Profile
             </button>
             <button
               type="button"
@@ -186,40 +227,34 @@ export default function StudentDashboard({
                 try { soundManager.warning(); } catch {}
                 logoutLearner();
               }}
-              title="Log Out of Learner Account"
+              title="Log Out"
             >
-              🚪 Log Out
+              Log Out
             </button>
-            <button
-              type="button"
-              className="btn-theme-toggle"
-              onClick={toggleTheme}
-              title="Toggle Light / Dark Studio theme"
-            >
-              {isDark ? "☀️ Light Studio" : "🌙 Dark Studio"}
-            </button>
+            {isEmbedded && onClose && (
+              <button
+                type="button"
+                className="btn-hero-close"
+                onClick={onClose}
+                title="Close Dashboard (Esc)"
+                aria-label="Close Dashboard"
+              >
+                ✕ Close
+              </button>
+            )}
           </div>
         </header>
 
-        {/* ── ACTIVE COURSE STATUS CARD ── */}
-        <section className="dashboard-active-course-card">
-          <div className="course-card-top">
-            <div className="course-title-group">
-              <span className="course-kicker">ACTIVE ENROLLED CURRICULUM</span>
+        {/* ── CARD 2: PROGRESS & AT-A-GLANCE STANDING ── */}
+        <section className="dashboard-progress-card">
+          <div className="progress-card-header">
+            <div className="progress-kicker-group">
+              <span className="course-kicker">CURRICULUM OVERVIEW</span>
               <h2>Computer Systems Servicing (CSS) NC II</h2>
-              <p className="course-desc">
-                Hardware Architecture, Component Physical Keying, Lab Safety Protocols &amp; 3D Virtual PC Assembly.
-              </p>
             </div>
-
-            <div className="course-progress-ring-box">
-              <div className="progress-stat-pill">
-                <strong>{progressPct}%</strong>
-                <span>COMPLETED</span>
-              </div>
-              <div className="progress-counter-text">
-                {completedCount} of {TOTAL_TOPICS_COUNT} Topics Mastered
-              </div>
+            <div className="progress-pct-badge">
+              <strong>{progressPct}%</strong>
+              <span>Completed</span>
             </div>
           </div>
 
@@ -228,284 +263,202 @@ export default function StudentDashboard({
             <div className="dashboard-progress-fill" style={{ width: `${progressPct}%` }} />
           </div>
 
+          {/* Quick Stat Chips */}
+          <div className="dashboard-stats-strip">
+            <div className="stat-chip">
+              <span className="stat-label">Topics Mastered</span>
+              <strong>{completedCount} / {TOTAL_TOPICS_COUNT}</strong>
+              <small>{progressPct}% Syllabus Mastered</small>
+            </div>
+            <div className="stat-chip highlight-chip">
+              <span className="stat-label">Assessment Average Score</span>
+              <strong>{standing.averagePercentage > 0 ? `${standing.averagePercentage}%` : "Pending"}</strong>
+              <small>{standing.academicStanding || "CSS Formative Standard"}</small>
+            </div>
+            <div className="stat-chip">
+              <span className="stat-label">Cumulative GWA</span>
+              <strong>{standing.gwa !== "N/A" ? standing.gwa : "N/A"}</strong>
+              <small>{passedModulesCount} of 7 Exams Passed</small>
+            </div>
+            <div className="stat-chip">
+              <span className="stat-label">Dry Run Status</span>
+              <strong style={{ fontSize: "14.5px" }}>
+                {isDryRunComplete ? "Complete Dry Run" : "In Progress"}
+              </strong>
+              <small>{isCertEligible ? "Certificate Ready" : "Practicals Pending"}</small>
+            </div>
+          </div>
+
           {/* Up Next & Resume Action */}
           <div className="course-resume-banner">
-            <div className="resume-topic-info">
+            <div className="resume-info">
               <span className="resume-label">
-                {isAllComplete ? "COURSE COMPLETED" : "UP NEXT TO COMPLETE"}
+                {isAllComplete ? "STATUS: COMPLETED" : "UP NEXT"}
               </span>
               <strong>
                 {isAllComplete
-                  ? "All 21 Topics and Hands-on Virtual Build Verified!"
-                  : `Topic ${nextTopic.topicCode}: ${nextTopic.title}`}
+                  ? `All ${TOTAL_TOPICS_COUNT} Topics and Hands-on Virtual Build Verified!`
+                  : `Topic ${nextTopic.topicCode} · ${nextTopic.title}`}
               </strong>
-              <p>
-                {isAllComplete
-                  ? "Your accredited DepEd / TESDA credential is ready for evaluation and print."
-                  : nextTopic.explanation.slice(0, 115) + "..."}
-              </p>
             </div>
-
             <button
               type="button"
               className="btn-resume-course"
               onClick={() => handleResumeCourse(isAllComplete ? 0 : nextTopicIdx)}
             >
-              {isAllComplete ? "Review Syllabus ↺" : "Resume Course →"}
+              {isAllComplete ? "Review Syllabus →" : "Continue Topic →"}
             </button>
           </div>
         </section>
 
-        {/* ── OFFICIAL UNIVERSITY SIS LEARNER PORTAL & GRADEBOOK (FEU / TUP / PUP / RTU STYLE) ── */}
-        <section className="dashboard-sis-gradebook-card">
-          <div className="sis-card-header">
-            <div className="sis-header-left">
-              <span className="sis-seal-icon">🏛️</span>
-              <div>
-                <span className="sis-kicker">OFFICIAL ACADEMIC TRANSCRIPT // STUDENT INFORMATION SYSTEM (SIS)</span>
-                <h3>Modular Assessment &amp; 15-Item Comprehensive Exam Gradebook</h3>
-                <p className="sis-meta-desc">
-                  Student ID: <strong>2024-PTC-CSS-0941</strong> &bull; Academic Year: <strong>A.Y. 2025-2026, 1st Semester</strong> &bull; Standard: <strong>TESDA NC II / DepEd TVL Standard (75% Passing Cutoff)</strong>
-                </p>
-              </div>
+        {/* ── CARD 3: 7 MODULES RECORD & EXAM SCORES (STREAMLINED & SCANABLE) ── */}
+        <section className="dashboard-modules-card">
+          <div className="modules-card-head">
+            <div>
+              <span className="course-kicker">COURSE MODULES &amp; EXAM SCORES</span>
+              <h3>CSS NC II Assessment Summary</h3>
             </div>
-
-            <div className="sis-gwa-pill">
-              <span className="gwa-label">CUMULATIVE GWA</span>
-              <strong className="gwa-val">{standing.gwa !== "N/A" ? standing.gwa : "—"}</strong>
-              <span className="gwa-standing">{standing.academicStanding}</span>
-            </div>
+            <span className="passing-cutoff-badge">75% Passing Cutoff</span>
           </div>
 
-          <div className="sis-table-wrap">
-            <table className="sis-gradebook-table">
-              <thead>
-                <tr>
-                  <th>Course Code</th>
-                  <th>Module Subject &amp; Core Competency</th>
-                  <th>Assessment Items</th>
-                  <th>Score</th>
-                  <th>Rating (%)</th>
-                  <th>Equivalent Grade</th>
-                  <th>Academic Status</th>
-                  <th>Date Recorded</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {CSS_CURRICULUM.map((mod) => {
-                  const record = quizRecords[mod.moduleNum];
-                  const hasRecord = !!record;
-                  const firstTopicIdx = FLAT_TOPICS.findIndex((t) => t.moduleNum === mod.moduleNum);
-                  const targetIdx = firstTopicIdx !== -1 ? firstTopicIdx : 0;
+          <div className="streamlined-module-list">
+            {CSS_CURRICULUM.map((mod) => {
+              const record = quizRecords[mod.moduleNum];
+              const hasRecord = !!record;
+              const modCompletedTopics = mod.topics.filter((t) => completedTopics.includes(t.id));
+              const modDoneCount = modCompletedTopics.length;
+              const isModAllDone = modDoneCount === mod.topics.length;
+              const firstTopicIdx = FLAT_TOPICS.findIndex((t) => t.moduleNum === mod.moduleNum);
+              const targetIdx = firstTopicIdx !== -1 ? firstTopicIdx : 0;
 
-                  return (
-                    <tr key={mod.id} className={hasRecord && record.passed ? "row-passed" : ""}>
-                      <td className="cell-code">
-                        <strong>CSS-10{mod.moduleNum}</strong>
-                      </td>
-                      <td className="cell-subject">
-                        <strong>{mod.title}</strong>
-                        <span>{mod.description}</span>
-                      </td>
-                      <td className="cell-items">15 Items</td>
-                      <td className="cell-score">
-                        {hasRecord ? (
-                          <strong className={record.passed ? "text-emerald" : "text-rose"}>
-                            {record.score} / {record.total}
-                          </strong>
-                        ) : (
-                          <span className="text-muted">—</span>
-                        )}
-                      </td>
-                      <td className="cell-pct">
-                        {hasRecord ? (
-                          <strong className={record.passed ? "text-emerald" : "text-rose"}>
-                            {record.percentage}%
-                          </strong>
-                        ) : (
-                          <span className="text-muted">—</span>
-                        )}
-                      </td>
-                      <td className="cell-grade">
-                        {hasRecord ? (
-                          <span className="grade-badge">
-                            {record.gradeEquivalent} ({record.qualitativeRating.split(" ")[0]})
-                          </span>
-                        ) : (
-                          <span className="text-muted">INC</span>
-                        )}
-                      </td>
-                      <td className="cell-status">
-                        {hasRecord ? (
-                          record.passed ? (
-                            <span className="sis-status-tag passed">✓ PASSED</span>
-                          ) : (
-                            <span className="sis-status-tag failed">✕ RETAKE NEEDED</span>
-                          )
-                        ) : (
-                          <span className="sis-status-tag pending">○ NOT ATTEMPTED</span>
-                        )}
-                      </td>
-                      <td className="cell-date">
-                        {hasRecord ? record.dateFormatted : "—"}
-                      </td>
-                      <td className="cell-actions">
-                        <div className="sis-action-btns">
-                          <button
-                            type="button"
-                            className="btn-sis-exam"
-                            onClick={() => {
-                              try { soundManager.click(); } catch {}
-                              if (isEmbedded && onSelectTopic) {
-                                onSelectTopic(targetIdx, "quiz");
-                                if (onClose) onClose();
-                              } else {
-                                navigate("/learn", { state: { targetTopicIndex: targetIdx, openQuiz: true, moduleNum: mod.moduleNum } });
-                              }
-                            }}
-                          >
-                            {hasRecord ? "↺ Retake Exam" : "📝 Take Exam"}
-                          </button>
-                          <button
-                            type="button"
-                            className="btn-sis-slides"
-                            onClick={() => {
-                              try { soundManager.snap(); } catch {}
-                              if (isEmbedded && onSelectTopic) {
-                                onSelectTopic(targetIdx, "presentation");
-                                if (onClose) onClose();
-                              } else {
-                                navigate("/learn", { state: { targetTopicIndex: targetIdx, centerMode: "presentation" } });
-                              }
-                            }}
-                          >
-                            📄 Study Slides
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+              return (
+                <div key={mod.id} className={`streamlined-module-row ${hasRecord && record.passed ? "is-passed" : ""}`}>
+                  <div className="mod-row-left">
+                    <span className="mod-badge">M{mod.moduleNum}</span>
+                    <div className="mod-info">
+                      <strong>{mod.title}</strong>
+                      <span>{modDoneCount}/{mod.topics.length} Topics Completed</span>
+                    </div>
+                  </div>
+
+                  <div className="mod-row-center">
+                    {hasRecord ? (
+                      <div className="mod-grade-pill">
+                        <strong className={record.passed ? "text-emerald" : "text-rose"}>
+                          {record.score}/{record.total} ({record.percentage}%)
+                        </strong>
+                        <span className="mod-grade-eq">Grade: {record.gradeEquivalent}</span>
+                      </div>
+                    ) : (
+                      <span className="mod-not-taken">Exam Not Attempted</span>
+                    )}
+                  </div>
+
+                  <div className="mod-row-right">
+                    {hasRecord ? (
+                      record.passed ? (
+                        <span className="status-chip passed">Passed</span>
+                      ) : (
+                        <span className="status-chip failed">Retake Needed</span>
+                      )
+                    ) : isModAllDone ? (
+                      <span className="status-chip ready">Ready for Exam</span>
+                    ) : (
+                      <span className="status-chip in-progress">In Progress</span>
+                    )}
+
+                    <div className="mod-action-group">
+                      <button
+                        type="button"
+                        className="btn-mod-study"
+                        onClick={() => handleResumeCourse(targetIdx)}
+                        title={`Study Module ${mod.moduleNum}`}
+                      >
+                        Study
+                      </button>
+                      <button
+                        type="button"
+                        className="btn-mod-exam"
+                        onClick={() => handleOpenQuiz(targetIdx, mod.moduleNum)}
+                        title={`Take Module ${mod.moduleNum} Exam`}
+                      >
+                        {hasRecord ? "Retake" : "Exam"}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </section>
 
-        {/* ── TWO-COLUMN SECTION: MODULE SYLLABUS MATRIX (LEFT) + PRACTICAL LAB & CERT (RIGHT) ── */}
-        <div className="dashboard-two-column-grid">
-          {/* Left Column: 7 Modules Curriculum Matrix */}
-          <section className="dashboard-modules-section">
-            <div className="section-head-row">
-              <h3>7-Module Curriculum Matrix</h3>
-              <span className="section-meta-tag">Grade 11 CSS DepEd Standard</span>
+        {/* ── CARD 4: PRACTICAL LAB & CERTIFICATE SUMMARY ROW ── */}
+        <div className="dashboard-bottom-grid">
+          <div className="bottom-card">
+            <div className="bottom-card-head">
+              <span className="course-kicker">CAPSTONE PRACTICAL</span>
+              <h4>Hands-On 3D Virtual PC Assembly &amp; Disassembly</h4>
             </div>
-
-            <div className="dashboard-modules-list">
-              {CSS_CURRICULUM.map((mod) => {
-                const modCompletedTopics = mod.topics.filter((t) => completedTopics.includes(t.id));
-                const modDoneCount = modCompletedTopics.length;
-                const isModAllDone = modDoneCount === mod.topics.length;
-                const isModActive = modDoneCount > 0 && !isModAllDone;
-
-                const firstUnfinishedIdx = FLAT_TOPICS.findIndex(
-                  (t) => t.moduleNum === mod.moduleNum && !completedTopics.includes(t.id)
-                );
-                const jumpIdx =
-                  firstUnfinishedIdx !== -1
-                    ? firstUnfinishedIdx
-                    : FLAT_TOPICS.findIndex((t) => t.moduleNum === mod.moduleNum);
-
-                return (
-                  <div
-                    key={mod.id}
-                    className={`dashboard-module-item ${isModAllDone ? "is-complete" : ""} ${
-                      isModActive ? "is-active" : ""
-                    }`}
-                    onClick={() => handleResumeCourse(jumpIdx)}
-                    role="button"
-                    tabIndex={0}
-                    title={`Jump to Module ${mod.moduleNum}: ${mod.title}`}
-                  >
-                    <div className="module-item-left">
-                      <span className="module-num-badge">M{mod.moduleNum}</span>
-                      <div className="module-title-box">
-                        <strong>{mod.title}</strong>
-                        <span>{mod.description}</span>
-                      </div>
-                    </div>
-
-                    <div className="module-item-right">
-                      <span className="module-count-text">
-                        {modDoneCount}/{mod.topics.length} Topics
-                      </span>
-                      {isModAllDone ? (
-                        <span className="mod-status-tag done">✓ Completed</span>
-                      ) : isModActive ? (
-                        <span className="mod-status-tag in-progress">In Progress</span>
-                      ) : (
-                        <span className="mod-status-tag up-next">Up Next</span>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
+            <p className="bottom-card-desc">
+              8-stage component assembly &amp; reverse teardown: standoffs, CPU, cooler, RAM, M.2 SSD, PSU, and GPU.
+            </p>
+            <div className="bottom-practical-badges">
+              <span className={`status-pill-small ${isAssemblyDone || isAllLessonsDone ? "done" : "pending"}`}>
+                {isAssemblyDone || isAllLessonsDone ? "✓ Assembly POST OK" : "Assembly Pending"}
+              </span>
+              <span className={`status-pill-small ${isDisassemblyDone || isAllLessonsDone ? "done" : "pending"}`}>
+                {isDisassemblyDone || isAllLessonsDone ? "✓ Practical Build Verified" : "Disassembly Optional"}
+              </span>
             </div>
-          </section>
-
-          {/* Right Column: 3D Virtual Build Lab & Accredited Certificate */}
-          <div className="dashboard-side-column">
-            {/* 3D Virtual PC Assembly Lab Card */}
-            <section className="dashboard-side-card assembly-lab-card">
-              <div className="side-card-kicker">MODULE 7 PRACTICAL CAPSTONE</div>
-              <h4>Hands-On 3D Virtual PC Assembly</h4>
-              <p>
-                8-stage physical PC build with zero commercial brand clutter. Mount chassis standoffs, ZIF socket,
-                RAM channels, M.2 SSD, modular PSU, and PCIe GPU.
-              </p>
-
-              <div className="lab-status-strip">
-                <span className="lab-status-label">Virtual Assembly Status:</span>
-                {isAssemblyLabDone ? (
-                  <strong className="status-val success">✓ POST Verified</strong>
-                ) : (
-                  <strong className="status-val pending">⚡ Ready to Build</strong>
-                )}
-              </div>
-
-              <button type="button" className="btn-side-action lab-btn" onClick={handleOpen3DLab}>
-                🛠️ Launch 3D Assembly Lab
+            <div className="bottom-card-footer">
+              <span className={`status-pill-small ${isAllLessonsDone ? "done" : "pending"}`}>
+                {isAllLessonsDone ? "Practicals 100% Complete" : "Assembly Lab Required"}
+              </span>
+              <button type="button" className="btn-bottom-action" onClick={handleOpen3DLab}>
+                {isAllLessonsDone ? "Review 3D Lab →" : "Launch 3D Lab →"}
               </button>
-            </section>
+            </div>
+          </div>
 
-            {/* Accredited E-Certificate Status Card */}
-            <section className="dashboard-side-card certificate-card">
-              <div className="side-card-kicker">OFFICIAL ACADEMIC CREDENTIAL</div>
+          <div className="bottom-card cert-card">
+            <div className="bottom-card-head">
+              <span className="course-kicker">OFFICIAL CREDENTIAL</span>
               <h4>Accredited PTC-IICT E-Certificate</h4>
-              <p>
-                Verified institutional Certificate of Completion with authenticated QR verification, student ID, and
-                TESDA/DepEd aligned CSS hours.
-              </p>
+            </div>
+            <p className="bottom-card-desc">
+              Institutional Certificate of Completion aligned to DepEd TVL &amp; TESDA CSS NC II standards.
+            </p>
 
-              <div className="cert-status-strip">
-                <span className="lab-status-label">Credential Status:</span>
-                {isAllComplete ? (
-                  <strong className="status-val success">🎓 Unlocked &amp; Ready</strong>
-                ) : (
-                  <strong className="status-val locked">
-                    🔒 {TOTAL_TOPICS_COUNT - completedCount} Topics Remaining
-                  </strong>
-                )}
+            {/* Curriculum prerequisite checklist */}
+            <div className="cert-req-checklist">
+              <div className={`cert-req-item ${isAllLessonsDone ? "is-met" : "is-pending"}`}>
+                <span className="req-icon">{isAllLessonsDone ? "✓" : "○"}</span>
+                <span>All 17 Curriculum Lessons ({completedCount}/17)</span>
               </div>
+              <div className={`cert-req-item ${isAssemblyDone || isAllLessonsDone ? "is-met" : "is-pending"}`}>
+                <span className="req-icon">{isAssemblyDone || isAllLessonsDone ? "✓" : "○"}</span>
+                <span>Module 7: Hands-On 3D Virtual Assembly Lab</span>
+              </div>
+              <div className={`cert-req-item ${isAllLessonsDone ? "is-met" : "is-pending"}`}>
+                <span className="req-icon">{isAllLessonsDone ? "✓" : "○"}</span>
+                <span>CSS NC II Comprehensive Curriculum Mastery</span>
+              </div>
+            </div>
 
+            <div className="bottom-card-footer">
+              <span className={`status-pill-small ${isCertEligible ? "done" : "locked"}`}>
+                {isCertEligible ? "✓ Complete Dry Run · Unlocked" : `Prerequisites Incomplete (${completedCount}/17)`}
+              </span>
               <button
                 type="button"
-                className={`btn-side-action cert-btn ${!isAllComplete ? "is-locked" : ""}`}
+                className={`btn-bottom-action btn-claim-cert ${!isCertEligible ? "is-disabled" : ""}`}
                 onClick={handleOpenCertificate}
+                disabled={!isCertEligible}
+                title={isCertEligible ? "Claim your accredited certificate" : "Complete all 17 topics across Modules 1–7 to unlock"}
               >
-                {isAllComplete ? "View & Print Certificate 🎓" : `Resume Course to Unlock (${TOTAL_TOPICS_COUNT - completedCount} left) →`}
+                {isCertEligible ? "Get Certificate →" : "Get Certificate (Locked)"}
               </button>
-            </section>
+            </div>
           </div>
         </div>
       </div>

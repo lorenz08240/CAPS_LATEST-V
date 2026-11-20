@@ -7,6 +7,7 @@ import NepotatoGPU from './NepotatoGPU';
 import { MotherboardDDR4Kit } from './DDR4RAMModel';
 import { MotherboardNVMeSSD } from './NVMeSSDModel';
 import PSUModel from './PSUModel';
+import ROGStrixMotherboard from './ROGStrixMotherboard';
 
 // Procedural high-detail 3D models for all PC components (Clean Generic Models per Panel Specs)
 export default function ComponentModels3D({ 
@@ -102,135 +103,15 @@ export default function ComponentModels3D({
       )}
 
       {category === 'motherboard' && (
-        <group>
-          <mesh position={[0, 0, 0]}>
-            <boxGeometry args={[0.1, 5.6, 5.2]} />
-            <meshStandardMaterial 
-              color="#1e2532"
-              roughness={0.65} 
-              metalness={0.35}
-              emissive={highlightEmissive}
-              emissiveIntensity={highlightIntensity}
-            />
-          </mesh>
-
-          {[-1.8, -0.6, 0.6, 1.8].map((z, idx) => (
-            <mesh key={`trace-${idx}`} position={[-0.052, 0, z]}>
-              <boxGeometry args={[0.005, 5.2, 0.04]} />
-              <meshStandardMaterial color="#d97706" metalness={0.9} roughness={0.2} />
-            </mesh>
-          ))}
-          {[-1.5, 0, 1.5].map((y, idx) => (
-            <mesh key={`htrace-${idx}`} position={[-0.052, y, 0]}>
-              <boxGeometry args={[0.005, 0.04, 4.8]} />
-              <meshStandardMaterial color="#ffffff" emissive="#ffffff" emissiveIntensity={0.6} />
-            </mesh>
-          ))}
-
-          <group position={[-0.14, 2.3, -0.6]}>
-            <mesh>
-              <boxGeometry args={[0.22, 0.6, 2.2]} />
-              <meshStandardMaterial color="#64748b" metalness={0.92} roughness={0.2} />
-            </mesh>
-            {[-0.8, -0.4, 0, 0.4, 0.8].map((z, idx) => (
-              <mesh key={idx} position={[-0.05, 0.1, z]}>
-                <boxGeometry args={[0.15, 0.4, 0.04]} />
-                <meshStandardMaterial color="#1e293b" metalness={0.8} />
-              </mesh>
-            ))}
-          </group>
-
-          <group position={[-0.16, 1.5, -2.1]}>
-            <mesh>
-              <boxGeometry args={[0.25, 2.4, 0.8]} />
-              <meshStandardMaterial color="#475569" metalness={0.88} roughness={0.25} />
-            </mesh>
-            <mesh position={[-0.13, 0, 0]}>
-              <boxGeometry args={[0.02, 1.8, 0.08]} />
-              <meshStandardMaterial color={rgbColor} emissive={rgbColor} emissiveIntensity={3.0} />
-            </mesh>
-          </group>
-
-          <group position={[-0.08, 1.4, -0.6]}>
-            <mesh>
-              <boxGeometry args={[0.06, 1.4, 1.4]} />
-              <meshStandardMaterial color="#475569" metalness={0.85} roughness={0.25} />
-            </mesh>
-            <mesh position={[-0.03, 0, 0]}>
-              <boxGeometry args={[0.03, 1.25, 1.25]} />
-              <meshStandardMaterial color="#e2e8f0" metalness={0.98} roughness={0.12} />
-            </mesh>
-            <mesh position={[-0.04, 0, 0.72]} rotation={[Math.PI / 2, 0, 0]}>
-              <cylinderGeometry args={[0.02, 0.02, 1.4, 8]} />
-              <meshStandardMaterial color="#f1f5f9" metalness={1.0} roughness={0.1} />
-            </mesh>
-          </group>
-
-          {[-0.3, -0.1, 0.1, 0.3].map((zOffset, idx) => (
-            <group key={idx} position={[-0.08, 1.4, 0.8 + zOffset]}>
-              <mesh>
-                <boxGeometry args={[0.06, 2.4, 0.12]} />
-                <meshStandardMaterial color={idx % 2 === 0 ? "#1e293b" : "#475569"} roughness={0.6} />
-              </mesh>
-              <mesh position={[-0.02, 1.22, 0]}>
-                <boxGeometry args={[0.08, 0.1, 0.14]} />
-                <meshStandardMaterial color="#cbd5e1" metalness={0.8} />
-              </mesh>
-              <mesh position={[-0.02, -1.22, 0]}>
-                <boxGeometry args={[0.08, 0.1, 0.14]} />
-                <meshStandardMaterial color="#cbd5e1" metalness={0.8} />
-              </mesh>
-            </group>
-          ))}
-
-          <group position={[-0.07, 0.35, -0.6]}>
-            <mesh position={[0, 0, 0]}>
-              <boxGeometry args={[0.01, 0.42, 1.9]} />
-              <meshStandardMaterial color="#ffffff" emissive="#ffffff" emissiveIntensity={0.8} />
-            </mesh>
-            <mesh position={[-0.02, 0, 0.88]}>
-              <boxGeometry args={[0.06, 0.34, 0.12]} />
-              <meshStandardMaterial color="#090d16" roughness={0.8} />
-            </mesh>
-            <mesh position={[-0.02, 0, -0.88]} rotation={[0, 0, Math.PI / 2]}>
-              <cylinderGeometry args={[0.08, 0.08, 0.06, 16]} />
-              <meshStandardMaterial color="#f1f5f9" metalness={0.95} />
-            </mesh>
-          </group>
-
-          <group position={[-0.08, -0.7, -0.3]}>
-            <mesh>
-              <boxGeometry args={[0.08, 0.22, 3.6]} />
-              <meshStandardMaterial color="#f1f5f9" metalness={0.98} roughness={0.12} />
-            </mesh>
-            <mesh position={[0, 0, 1.85]}>
-              <boxGeometry args={[0.1, 0.28, 0.2]} />
-              <meshStandardMaterial color="#ffffff" emissive="#ffffff" emissiveIntensity={1.0} />
-            </mesh>
-          </group>
-
-          <mesh position={[-0.08, -1.8, -0.3]}>
-            <boxGeometry args={[0.06, 0.18, 3.2]} />
-            <meshStandardMaterial color="#334155" roughness={0.7} />
-          </mesh>
-
-          <group position={[-0.1, -1.6, 1.4]}>
-            <mesh>
-              <boxGeometry args={[0.12, 1.4, 1.4]} />
-              <meshStandardMaterial color="#475569" metalness={0.9} roughness={0.25} />
-            </mesh>
-            <mesh position={[-0.07, 0, 0]}>
-              <boxGeometry args={[0.01, 0.6, 0.6]} />
-              <meshStandardMaterial color={rgbColor} emissive={rgbColor} emissiveIntensity={2.8} />
-            </mesh>
-          </group>
-
-          {[-1.2, -1.5, -1.8, -2.1].map((y, idx) => (
-            <mesh key={idx} position={[-0.1, y, -2.1]} rotation={[0, 0, Math.PI / 2]}>
-              <cylinderGeometry args={[0.1, 0.1, 0.12, 16]} />
-              <meshStandardMaterial color="#f59e0b" metalness={0.95} roughness={0.15} />
-            </mesh>
-          ))}
+        <group rotation={[0, -Math.PI / 2, 0]} scale={0.82}>
+          <ROGStrixMotherboard
+            rgbColor={rgbColor}
+            explodedProgress={explodedProgress}
+            isSelected={isSelected}
+            isHovered={isHovered || localHover}
+            enableHighlight={enableHighlight}
+            showCpu={true}
+          />
         </group>
       )}
 

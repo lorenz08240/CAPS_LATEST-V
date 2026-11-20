@@ -27,10 +27,10 @@ export const CSS_CURRICULUM = [
           title: "Safe Work Surfaces & Grounding",
           badge: "SAFETY CHECKLIST",
           items: [
-            { label: "Bare Wood / Silicone Mat", value: "Recommended — non-conductive and static safe", tag: "SAFE", color: "#b08d57" },
-            { label: "Cardboard Mobo Box", value: "Ideal test-bench surface for pre-assembly", tag: "SAFE", color: "#b08d57" },
-            { label: "Anti-Static Bag Exterior", value: "Never assemble on top — outside is conductive", tag: "HAZARD", color: "#ef4444" },
-            { label: "Carpet / Rugs / Socks", value: "Generates high static friction; avoid entirely", tag: "HAZARD", color: "#ef4444" }
+            { label: "Bare Wood / Silicone Mat", value: "Recommended — non-conductive and static safe", tag: "SAFE", color: "#166534" },
+            { label: "Cardboard Mobo Box", value: "Ideal test-bench surface for pre-assembly", tag: "SAFE", color: "#166534" },
+            { label: "Anti-Static Bag Exterior", value: "Never assemble on top — outside is conductive", tag: "HAZARD", color: "#dc2626" },
+            { label: "Carpet / Rugs / Socks", value: "Generates high static friction; avoid entirely", tag: "HAZARD", color: "#dc2626" }
           ]
         },
         mistakeWarning: {
@@ -64,10 +64,10 @@ export const CSS_CURRICULUM = [
           title: "Grip & Holding Rules",
           badge: "HANDLING PROTOCOL",
           items: [
-            { label: "Outer Edge Fiberglass", value: "Grip firmly by bare outer PCB edges", tag: "SAFE", color: "#b08d57" },
-            { label: "VRM Metal Heatsink", value: "Solid structural metal; safe lifting point", tag: "SAFE", color: "#b08d57" },
-            { label: "Capacitor Cylinders", value: "Never grip — leads will snap from solder pads", tag: "FORBIDDEN", color: "#ef4444" },
-            { label: "Socket Pins Area", value: "Keep plastic protective cover installed until CPU drop", tag: "CRITICAL", color: "#ef4444" }
+            { label: "Outer Edge Fiberglass", value: "Grip firmly by bare outer PCB edges", tag: "SAFE", color: "#166534" },
+            { label: "VRM Metal Heatsink", value: "Solid structural metal; safe lifting point", tag: "SAFE", color: "#166534" },
+            { label: "Capacitor Cylinders", value: "Never grip — leads will snap from solder pads", tag: "FORBIDDEN", color: "#dc2626" },
+            { label: "Socket Pins Area", value: "Keep plastic protective cover installed until CPU drop", tag: "CRITICAL", color: "#dc2626" }
           ]
         },
         mistakeWarning: {
@@ -101,10 +101,10 @@ export const CSS_CURRICULUM = [
           title: "Essential Hardware Tooling",
           badge: "TOOLING GUIDE",
           items: [
-            { label: "#2 Phillips Screwdriver", value: "Universal tool for 95% of PC screws", tag: "PRIMARY", color: "#b08d57" },
-            { label: "#1 or #0 Phillips", value: "Required for tiny M.2 SSD mounting screws", tag: "PRECISION", color: "#ffffff" },
-            { label: "Brass Hex Standoffs", value: "Elevate PCB 6-8mm off metal case tray", tag: "MANDATORY", color: "#f59e0b" },
-            { label: "Magnetic Parts Tray", value: "Prevents loose screws dropping inside case", tag: "HELPFUL", color: "#8b5cf6" }
+            { label: "#2 Phillips Screwdriver", value: "Universal tool for 95% of PC screws", tag: "PRIMARY", color: "#0f172a" },
+            { label: "#1 or #0 Phillips", value: "Required for tiny M.2 SSD mounting screws", tag: "PRECISION", color: "#0f172a" },
+            { label: "Brass Hex Standoffs", value: "Elevate PCB 6-8mm off metal case tray", tag: "MANDATORY", color: "#b45309" },
+            { label: "Magnetic Parts Tray", value: "Prevents loose screws dropping inside case", tag: "HELPFUL", color: "#6b21a8" }
           ]
         },
         mistakeWarning: {

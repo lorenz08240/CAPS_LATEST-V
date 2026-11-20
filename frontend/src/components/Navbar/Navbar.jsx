@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { useTheme } from "../../contexts/ThemeContext";
@@ -13,7 +13,7 @@ function Navbar({ isPinned: propsIsPinned }) {
   const { isAdmin, logoutAdmin } = useAuth();
   const { toggleTheme, isDark } = useTheme();
   const { mode, userProfile, unlockedStages, logoutLearner } = useLearnMode();
-  const { language, setLanguage, t } = useLanguage();
+  const { t } = useLanguage();
   const sidebarCtx = useSidebar();
 
   // Prefer context state, falling back to props if provided
@@ -26,6 +26,8 @@ function Navbar({ isPinned: propsIsPinned }) {
   const [showAccountModal, setShowAccountModal] = useState(false);
   const [accountSubmenuOpen, setAccountSubmenuOpen] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const subpanelRef = useRef(null);
+  const accountCardRef = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -46,6 +48,32 @@ function Navbar({ isPinned: propsIsPinned }) {
       setAccountSubmenuOpen(false);
     }
   }, [isOpenManual]);
+
+  // Dismiss popup when clicking outside or pressing Escape
+  useEffect(() => {
+    if (!accountSubmenuOpen) return;
+    const handleClickOutside = (e) => {
+      if (
+        subpanelRef.current &&
+        !subpanelRef.current.contains(e.target) &&
+        accountCardRef.current &&
+        !accountCardRef.current.contains(e.target)
+      ) {
+        setAccountSubmenuOpen(false);
+      }
+    };
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        setAccountSubmenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [accountSubmenuOpen]);
 
   // Sidebar is strictly disabled on the admin login screen until the operator enters first
   if (isAdminLogin) {
@@ -83,7 +111,11 @@ function Navbar({ isPinned: propsIsPinned }) {
           title="Open Navigation Menu"
           aria-label="Open Navigation Menu"
         >
-          <span className="edge-tab-arrow">›</span>
+          <span className="edge-tab-arrow" aria-hidden="true">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </span>
         </button>
       )}
 
@@ -123,6 +155,7 @@ function Navbar({ isPinned: propsIsPinned }) {
               </div>
             ) : userProfile?.setupCompleted ? (
               <div
+                ref={accountCardRef}
                 className={`sidebar-account-card ${accountSubmenuOpen ? "expanded" : ""}`}
                 onClick={() => {
                   try { soundManager.click(); } catch { }
@@ -131,7 +164,7 @@ function Navbar({ isPinned: propsIsPinned }) {
                 role="button"
                 tabIndex={0}
                 aria-expanded={accountSubmenuOpen}
-                title="Account Settings & Preferences"
+                title="Account & Settings"
               >
                 <div className="sidebar-account-avatar">
                   {userProfile?.photo ? (
@@ -160,7 +193,7 @@ function Navbar({ isPinned: propsIsPinned }) {
                 </div>
 
                 <div className={`sidebar-account-arrow ${accountSubmenuOpen ? "open" : ""}`} aria-hidden="true">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="6 9 12 15 18 9"></polyline>
                   </svg>
                 </div>
@@ -183,7 +216,11 @@ function Navbar({ isPinned: propsIsPinned }) {
                   </svg>
                 </span>
                 <span className="sidebar-signin-label">SIGN IN</span>
-                <span className="sidebar-signin-arrow" aria-hidden="true">→</span>
+                <span className="sidebar-signin-arrow" aria-hidden="true">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M9 18l6-6-6-6" />
+                  </svg>
+                </span>
               </button>
             )}
 
@@ -203,15 +240,16 @@ function Navbar({ isPinned: propsIsPinned }) {
             </div>
           </div>
 
-          {/* ── ACCOUNT SUB-OPTIONS ACCORDION / DRAWER ── */}
+          {/* ── ACCOUNT FLOATING POPOVER (Anti-Slop Single-Line Layout) ── */}
           {accountSubmenuOpen && !isAdminRoute && userProfile?.setupCompleted && (
-            <div className="sidebar-account-subpanel" role="region" aria-label="Account Sub-Options">
-              <div className="subpanel-badge-bar">
-                <span className="subpanel-badge-title">ACCOUNT & PREFERENCES</span>
-              </div>
-
+            <div
+              className="sidebar-account-subpanel"
+              ref={subpanelRef}
+              role="region"
+              aria-label="Account Settings"
+            >
               <div className="subpanel-menu-list">
-                {/* 1. Student Dashboard */}
+                {/* 1. Dashboard */}
                 <Link
                   to="/dashboard"
                   className="subpanel-menu-item"
@@ -226,22 +264,23 @@ function Navbar({ isPinned: propsIsPinned }) {
                       );
                     }
                   }}
-                  title="Open Student Dashboard & Course Status"
+                  title="Dashboard"
                 >
-                  <div className="subpanel-icon-box" style={{ background: "rgba(255, 255, 255, 0.08)", color: "#ffffff" }}>
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-                      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                  <div className="subpanel-icon-box">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="3" width="7" height="9" />
+                      <rect x="14" y="3" width="7" height="5" />
+                      <rect x="14" y="12" width="7" height="9" />
+                      <rect x="3" y="16" width="7" height="5" />
                     </svg>
                   </div>
-                  <div className="subpanel-item-content">
-                    <span className="subpanel-item-label">Student Dashboard</span>
-                    <span className="subpanel-item-desc">Course status &amp; curriculum progress</span>
-                  </div>
-                  <span className="subpanel-nav-arrow">→</span>
+                  <span className="subpanel-item-label">Dashboard</span>
+                  <svg className="subpanel-nav-chevron" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M9 18l6-6-6-6" />
+                  </svg>
                 </Link>
 
-                {/* 2. Dedicated Settings Page Link */}
+                {/* 2. Settings */}
                 <Link
                   to="/settings"
                   className="subpanel-menu-item"
@@ -250,87 +289,21 @@ function Navbar({ isPinned: propsIsPinned }) {
                     closeSidebar();
                     setAccountSubmenuOpen(false);
                   }}
-                  title="Open Dedicated Settings Page"
+                  title="Settings"
                 >
                   <div className="subpanel-icon-box settings">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <circle cx="12" cy="12" r="3" />
                       <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
                     </svg>
                   </div>
-                  <div className="subpanel-item-content">
-                    <span className="subpanel-item-label">{t("settings", "Settings")}</span>
-                    <span className="subpanel-item-desc">Audio, themes & preferences</span>
-                  </div>
-                  <span className="subpanel-nav-arrow">→</span>
+                  <span className="subpanel-item-label">{t("settings", "Settings")}</span>
+                  <svg className="subpanel-nav-chevron" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M9 18l6-6-6-6" />
+                  </svg>
                 </Link>
 
-                {/* 2. Manage Account */}
-                <button
-                  type="button"
-                  className="subpanel-menu-item"
-                  onClick={() => {
-                    try { soundManager.click(); } catch { }
-                    setShowAccountModal(true);
-                    setAccountSubmenuOpen(false);
-                  }}
-                  title="Manage Learner Profile"
-                >
-                  <div className="subpanel-icon-box account">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                      <circle cx="12" cy="7" r="4" />
-                    </svg>
-                  </div>
-                  <div className="subpanel-item-content">
-                    <span className="subpanel-item-label">{userProfile?.setupCompleted ? t("manageAccount", "Manage Account") : "Connect Account"}</span>
-                    <span className="subpanel-item-desc">
-                      {userProfile?.setupCompleted ? "Profile & Google account" : "Connect Google Account"}
-                    </span>
-                  </div>
-                  <span className="subpanel-nav-badge">{userProfile?.setupCompleted ? "EDIT" : "CONNECT"}</span>
-                </button>
-
-                {/* 3. Quick Language Selection */}
-                <div className="subpanel-menu-item language-switch-item">
-                  <div className="subpanel-icon-box language">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <circle cx="12" cy="12" r="10" />
-                      <line x1="2" y1="12" x2="22" y2="12" />
-                      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-                    </svg>
-                  </div>
-                  <div className="subpanel-item-content">
-                    <span className="subpanel-item-label">{t("language", "Language")}</span>
-                    <span className="subpanel-item-desc">US English / Filipino</span>
-                  </div>
-                  <div className="subpanel-lang-pills">
-                    <button
-                      type="button"
-                      className={`lang-badge-btn ${language === "en" ? "active" : ""}`}
-                      onClick={() => {
-                        setLanguage("en");
-                        try { soundManager.click(); } catch { }
-                      }}
-                      title="Switch to English"
-                    >
-                      EN
-                    </button>
-                    <button
-                      type="button"
-                      className={`lang-badge-btn ${language === "tl" ? "active" : ""}`}
-                      onClick={() => {
-                        setLanguage("tl");
-                        try { soundManager.click(); } catch { }
-                      }}
-                      title="Switch to Filipino (Tagalog)"
-                    >
-                      FIL
-                    </button>
-                  </div>
-                </div>
-
-                {/* 4. Log Out / Back to Free Mode Option */}
+                {/* 3. Log Out */}
                 {(userProfile?.setupCompleted || mode === "learn") && (
                   <button
                     type="button"
@@ -339,20 +312,16 @@ function Navbar({ isPinned: propsIsPinned }) {
                       try { soundManager.warning(); } catch { }
                       setShowLogoutConfirm(true);
                     }}
-                    title="Reset website and switch back to Free Mode"
+                    title="Log Out"
                   >
                     <div className="subpanel-icon-box logout">
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
                         <polyline points="16 17 21 12 16 7" />
                         <line x1="21" y1="12" x2="9" y2="12" />
                       </svg>
                     </div>
-                    <div className="subpanel-item-content">
-                      <span className="subpanel-item-label logout">{t("logout", "Back to Free Mode")}</span>
-                      <span className="subpanel-item-desc">Reset session &amp; restart from top</span>
-                    </div>
-                    <span className="subpanel-nav-arrow logout">✕</span>
+                    <span className="subpanel-item-label logout">{t("logout", "Log Out")}</span>
                   </button>
                 )}
               </div>
@@ -545,9 +514,13 @@ function Navbar({ isPinned: propsIsPinned }) {
                   onClick={() => {
                     if (!isDark) toggleTheme();
                   }}
-                  title="Switch to Cyber Dark Mode"
+                  title="Switch to Dark Mode"
                 >
-                  <span className="theme-btn-icon">🌙</span>
+                  <span className="theme-btn-icon">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                    </svg>
+                  </span>
                   <span className="theme-btn-label">Dark</span>
                 </button>
                 <button
@@ -558,9 +531,21 @@ function Navbar({ isPinned: propsIsPinned }) {
                   onClick={() => {
                     if (isDark) toggleTheme();
                   }}
-                  title="Switch to Clean Light Mode"
+                  title="Switch to Light Mode"
                 >
-                  <span className="theme-btn-icon">☀️</span>
+                  <span className="theme-btn-icon">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="5" />
+                      <line x1="12" y1="1" x2="12" y2="3" />
+                      <line x1="12" y1="21" x2="12" y2="23" />
+                      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                      <line x1="1" y1="12" x2="3" y2="12" />
+                      <line x1="21" y1="12" x2="23" y2="12" />
+                      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                    </svg>
+                  </span>
                   <span className="theme-btn-label">Light</span>
                 </button>
               </div>
@@ -577,7 +562,24 @@ function Navbar({ isPinned: propsIsPinned }) {
                 }}
                 title={soundActive ? "Mute Sound Effects" : "Enable Sound Effects"}
               >
-                <span>{soundActive ? "🔊 Live" : "🔇 Muted"}</span>
+                {soundActive ? (
+                  <>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                      <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
+                    </svg>
+                    <span>Live</span>
+                  </>
+                ) : (
+                  <>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                      <line x1="23" y1="9" x2="17" y2="15" />
+                      <line x1="17" y1="9" x2="23" y2="15" />
+                    </svg>
+                    <span>Muted</span>
+                  </>
+                )}
               </button>
             </div>
           </div>

@@ -8,12 +8,15 @@ export default function ModeSelectionCards({
   isOpen,
   onClose,
   onSelectLearn,
-  onSelectFree,
   isLinking = false,
   authError = "",
 }) {
+  const [agreeToTerms, setAgreeToTerms] = React.useState(false);
+  const [termsError, setTermsError] = React.useState("");
+
   React.useEffect(() => {
     if (!isOpen) return;
+    setTermsError("");
     const originalOverflow = document.body.style.overflow;
     const originalDocOverflow = document.documentElement.style.overflow;
     document.body.style.overflow = "hidden";
@@ -38,12 +41,12 @@ export default function ModeSelectionCards({
         <PixelCanvas
           colors={["#ffffff", "#f5e6c7", "#b08d57", "#3a2e1e"]}
           gap={8}
+          className="mode-selection-pixels"
         />
 
         <div className="mode-selection-header">
           <div className="mode-selection-tag">
             <span className="tag-bracket">[</span>
-            <span className="tag-pulse-dot" />
             <span>STUDENT CERTIFICATION COURSE</span>
             <span className="tag-bracket">]</span>
           </div>
@@ -68,31 +71,81 @@ export default function ModeSelectionCards({
 
           <h2 className="mode-selection-title">Start Your Hardware Course</h2>
           <p className="mode-selection-sub">
-            Master computer architecture through guided 3D assembly, interactive diagnostic quizzes, and an accredited PTC-IICT certificate.
+            Build PC parts in 3D, take quick quizzes, and earn a PTC-IICT certificate.
           </p>
 
           <ul className="mode-card-perks clean-list">
             <li>
               <span className="perk-check">✓</span>
-              <span><strong>Hands-On Assembly:</strong> Guided CPU, socket, cable, and cooling simulation</span>
+              <span>Hands-on 3D assembly</span>
             </li>
             <li>
               <span className="perk-check">✓</span>
-              <span><strong>Interactive Quizzes:</strong> Instant answers and troubleshooting feedback</span>
+              <span>Instant quiz feedback</span>
             </li>
             <li>
               <span className="perk-check">✓</span>
-              <span><strong>Official Certificate:</strong> Verified completion credential saved with Google</span>
+              <span>Verified PTC-IICT certificate</span>
             </li>
           </ul>
 
           <div className="mode-action-stack">
+            {/* Terms of Service Agreement Checkbox */}
+            <div className={`mode-terms-agreement ${termsError ? "is-error" : ""}`}>
+              <label className="mode-terms-label" htmlFor="mode-terms-checkbox">
+                <input
+                  type="checkbox"
+                  id="mode-terms-checkbox"
+                  className="terms-checkbox-input"
+                  checked={agreeToTerms}
+                  onChange={(e) => {
+                    setAgreeToTerms(e.target.checked);
+                    if (e.target.checked) setTermsError("");
+                  }}
+                />
+                <span className="terms-checkbox-custom" aria-hidden="true">
+                  {agreeToTerms && "✓"}
+                </span>
+                <span className="mode-terms-text">
+                  I agree to the{" "}
+                  <a
+                    href="/terms"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="terms-link"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    Terms of Service
+                  </a>{" "}
+                  and{" "}
+                  <a
+                    href="/privacy"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="terms-link"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    Privacy Policy
+                  </a>
+                  .
+                </span>
+              </label>
+            </div>
+
+            {termsError && <p className="mode-auth-error">{termsError}</p>}
             {authError && <p className="mode-auth-error">{authError}</p>}
+
             <button
               type="button"
               className="mode-btn mode-btn-learn"
               disabled={isLinking}
               onClick={() => {
+                if (!agreeToTerms) {
+                  try { soundManager.warning(); } catch {}
+                  setTermsError("Accept the terms to continue.");
+                  return;
+                }
+                setTermsError("");
                 try { soundManager.click(); } catch {}
                 onSelectLearn();
               }}
@@ -106,23 +159,10 @@ export default function ModeSelectionCards({
               <span>{isLinking ? "CONNECTING GOOGLE ACCOUNT…" : "CONTINUE WITH GOOGLE"}</span>
               <span className="btn-arrow">&rarr;</span>
             </button>
-
-            {onSelectFree && (
-              <button
-                type="button"
-                className="mode-btn-secondary"
-                onClick={() => {
-                  try { soundManager.click(); } catch {}
-                  onSelectFree();
-                }}
-              >
-                <span>Preview Lessons as Guest &rarr;</span>
-              </button>
-            )}
           </div>
 
           <p className="mode-trust-note">
-            🔒 We only access your basic Google profile (name and email) to issue your certificate. No private drive data requested.
+            Google sign-in shares only your name and email — no drive access.
           </p>
           <div className="mode-legal-links">
             <Link to="/privacy" onClick={onClose}>Privacy Policy</Link>

@@ -314,7 +314,7 @@ export default function AdminDeleteComponent() {
                         <td style={{ textAlign: "center" }}>
                           <HardwareIcon category={part.category} size={18} />
                         </td>
-                        <td className="brand-cell">{part.brand || "—"}</td>
+                        <td className="brand-cell">{part.brand || "N/A"}</td>
                         <td className="name-cell">
                           <div className="component-title">{part.name}</div>
                           <div className="component-subtext">ID: {part.id}</div>
@@ -396,7 +396,7 @@ export default function AdminDeleteComponent() {
                   .filter((p) => selectedIds.includes(p.id))
                   .map((p) => (
                     <div key={p.id} className="confirm-preview-row">
-                      <span>{p.brand} — {p.name}</span>
+                      <span>{p.brand} : {p.name}</span>
                       <span className="badge-small">{p.category}</span>
                     </div>
                   ))}

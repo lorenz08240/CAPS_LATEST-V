@@ -9,7 +9,7 @@ import "./Admin.css";
 const PAGE_SIZE = 15;
 
 const formatDate = (dateStr) => {
-  if (!dateStr) return "—";
+  if (!dateStr) return "N/A";
   try {
     const d = new Date(dateStr);
     if (isNaN(d.getTime())) return dateStr;

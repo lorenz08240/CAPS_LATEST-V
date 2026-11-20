@@ -1,9 +1,10 @@
 import React, { useRef, useState, useEffect, useMemo } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { OrbitControls, Html, Line } from "@react-three/drei";
+import { OrbitControls, Html, Line, Environment } from "@react-three/drei";
 import * as THREE from "three";
 import ComponentModels3D from "../3D/ComponentModels3D";
-import NorthChalkWhiteCase from "../3D/NorthChalkWhiteCase";
+import GenericPCCase from "../3D/GenericPCCase";
+import ROGStrixMotherboard from "../3D/ROGStrixMotherboard";
 import PSUModel from "../3D/PSUModel";
 import { SingleNVMeSSD } from "../3D/NVMeSSDModel";
 import { SingleDDR4RAM } from "../3D/DDR4RAMModel";
@@ -36,58 +37,58 @@ const DEFAULT_CAMERAS = {
 const ARTICLE_HOTSPOTS = [
   {
     id: "sys-cpu",
-    label: "CPU & Cooler Assembly",
-    pos: [-0.65, 1.55, -0.6],
-    camPos: [-4.6, 2.2, 1.4],
-    target: [-0.2, 1.4, -0.6],
-    bus: "Socket AM5 / LGA1700",
+    label: "LGA CPU Socket & Processor",
+    pos: [-0.65, 1.45, -0.32],
+    camPos: [-5.2, 2.2, 1.4],
+    target: [0, 1.45, -0.32],
+    bus: "Socket AM5 / LGA1700 / LGA1151",
     voltage: "1.2V VCore · 65W-253W",
-    role: "Executes OS instructions, physics, and game logic over billions of cycles per second.",
-    tip: "Drop into socket with Zero Insertion Force—never press down manually on pins.",
+    role: "Executes operating system commands, system physics, and program logic.",
+    tip: "Align the golden triangle and seat with Zero Insertion Force. Never force or press pins manually.",
   },
   {
     id: "sys-ram",
-    label: "Dual-Channel RAM (A2 / B2)",
-    pos: [-0.55, 1.4, 0.9],
-    camPos: [-4.4, 1.8, 2.6],
-    target: [-0.15, 1.4, 0.8],
-    bus: "128-Bit DDR5 / DDR4",
-    voltage: "1.1V - 1.35V VDD",
-    role: "Active high-speed workbench buffering textures and open applications right beside the CPU.",
-    tip: "With 2 modules, skip slot 1 and populate slots 2 & 4 so dual-channel activates.",
+    label: "Dual-Channel DDR4 RAM (A2 & B2)",
+    pos: [-0.65, 1.45, 1.35],
+    camPos: [-5.0, 1.8, 2.8],
+    target: [0, 1.45, 1.35],
+    bus: "128-Bit DDR4 / DDR5 Dual-Channel",
+    voltage: "1.2V - 1.35V VDD",
+    role: "High-speed working memory that buffers textures and open tasks right beside the processor.",
+    tip: "With two modules, populate slots 2 and 4 (A2 and B2) to enable dual-channel memory bandwidth.",
   },
   {
     id: "sys-nvme",
-    label: "M.2 NVMe Boot SSD",
-    pos: [-0.45, 0.35, -0.6],
-    camPos: [-3.6, 0.8, 0.9],
-    target: [-0.1, 0.35, -0.6],
-    bus: "PCIe 4.0 / 5.0 x4",
+    label: "M.2 NVMe Thermal Armor SSD",
+    pos: [-0.55, -1.45, -0.32],
+    camPos: [-4.6, -0.8, 1.2],
+    target: [0, -1.45, -0.32],
+    bus: "PCIe 4.0 / 5.0 x4 M-Key",
     voltage: "3.3V Direct Rail",
-    role: "Permanent solid-state storage wired straight to CPU PCIe lanes at 7,000+ MB/s.",
-    tip: "Insert at a 25-degree angle, press tail onto the standoff, and peel thermal pad film.",
+    role: "High-speed NVMe storage connected directly to CPU PCIe lanes for rapid operating system loading.",
+    tip: "Insert at a 25-degree angle, secure the standoff screw gently, and peel off the thermal pad protective film.",
   },
   {
     id: "sys-gpu",
-    label: "PCIe x16 Graphics Card",
-    pos: [-1.15, -0.7, -0.1],
-    camPos: [-5.8, -0.2, 3.2],
-    target: [-0.4, -0.7, -0.2],
-    bus: "PCIe x16 + 12V-2x6",
-    voltage: "115W - 450W TGP",
-    role: "Massively parallel visual engine rendering every 3D polygon, ray, and frame.",
-    tip: "Connect your monitor DisplayPort or HDMI directly to the back of THIS card.",
+    label: "Primary PCIe x16 SafeSlot (GPU)",
+    pos: [-0.75, -0.6, -0.32],
+    camPos: [-5.8, -0.4, 2.6],
+    target: [0, -0.6, -0.32],
+    bus: "PCIe 3.0 / 4.0 x16 Stainless Shield",
+    voltage: "75W Slot Rail + 8-Pin Power",
+    role: "Stainless-steel armored PCIe SafeSlot securing dedicated graphics card against heavy cooler sag.",
+    tip: "Plug your monitor display cable directly into this graphics card, not the motherboard backplate.",
   },
   {
     id: "sys-vrm",
-    label: "VRM & 24-Pin Power Bus",
-    pos: [-0.35, 2.25, -1.6],
-    camPos: [-4.6, 2.6, -2.8],
-    target: [-0.15, 1.9, -1.0],
-    bus: "12V ATX / EPS Input",
-    voltage: "VRM Steps 12V -> 1.2V",
-    role: "Conditions wall-converted DC rails from the PSU into ripple-free CPU boost power.",
-    tip: "Remember both the 24-pin side cable AND the top-left 8-pin EPS CPU cable.",
+    label: "Gunmetal VRM & 24-Pin ATX Header",
+    pos: [-0.65, 2.7, -0.32],
+    camPos: [-5.4, 3.2, -1.8],
+    target: [0, 2.7, -0.32],
+    bus: "12V EPS + 24-Pin ATX Standard",
+    voltage: "Digi+ VRM Steps 12V -> 1.2V",
+    role: "Voltage Regulator Module with brushed gunmetal heatsinks converting power supply DC voltage into clean processor power.",
+    tip: "Connect both the 24-pin ATX motherboard cable and the 8-pin EPS processor cable.",
   },
 ];
 
@@ -269,15 +270,17 @@ function StageSpecimen({
     <group scale={[stageScale, stageScale, stageScale]}>
       {isComposite && (
         <group>
-          {/* Motherboard Base */}
-          <ComponentModels3D
-            part={{ category: "motherboard", name: selectedPartName || "ATX Reference Board", targetPosition: [0, 0, 0] }}
-            rgbColor="#ffffff"
-            enableHighlight={false}
-          />
+          {/* Motherboard Base (Photorealistic ASUS ROG Strix B360-F Gaming) */}
+          <group rotation={[0, -Math.PI / 2, 0]} scale={0.88}>
+            <ROGStrixMotherboard
+              rgbColor="#ffffff"
+              enableHighlight={false}
+              showCpu={true}
+            />
+          </group>
 
           {/* Embedded / Floating CPU on socket */}
-          <group position={[-0.14 - 1.2 * ex, 1.4 + 0.25 * ex, -0.6]}>
+          <group position={[-0.14 - 1.2 * ex, 1.45 + 0.25 * ex, -0.32]}>
             <mesh>
               <boxGeometry args={[0.06, 0.95, 0.95]} />
               <meshStandardMaterial color="#e2e8f0" metalness={0.92} roughness={0.18} />
@@ -298,7 +301,7 @@ function StageSpecimen({
           </group>
 
           {/* Embedded / Floating RAM sticks in DIMM slots A2 / B2 */}
-          <group position={[-0.12, 1.4 + 0.35 * ex, 0.8 + 1.2 * ex]}>
+          <group position={[-0.12, 1.45 + 0.35 * ex, 1.35 + 1.2 * ex]}>
             <ComponentModels3D
               part={{ category: "ram", name: "DDR5 Dual-Channel Kit", targetPosition: [0, 0, 0] }}
               rgbColor="#ffffff"
@@ -307,7 +310,7 @@ function StageSpecimen({
           </group>
 
           {/* Embedded / Floating NVMe SSD */}
-          <group position={[-0.12 - 0.7 * ex, 0.35 + 0.45 * ex, -0.6]}>
+          <group position={[-0.12 - 0.7 * ex, -1.45 + 0.45 * ex, -0.32]}>
             <ComponentModels3D
               part={{ category: "storage", name: "PCIe 4.0 M.2 NVMe", targetPosition: [0, 0, 0] }}
               rgbColor="#ffffff"
@@ -316,7 +319,7 @@ function StageSpecimen({
           </group>
 
           {/* Embedded / Floating GPU positioned outward along PCIe x16 slot */}
-          <group position={[-0.85 - 2.1 * ex, -0.7 - 0.5 * ex, -0.3]} scale={[0.72, 0.72, 0.72]}>
+          <group position={[-0.85 - 2.1 * ex, -0.6 - 0.5 * ex, -0.32]} scale={[0.72, 0.72, 0.72]}>
             <NepotatoGPU rgbColor="#ffffff" />
           </group>
 
@@ -332,7 +335,7 @@ function StageSpecimen({
             <group position={[0, 0, -2.4 * ex]} scale={[0.88, 0.88, 0.88]}>
               <GenericPCCase
                 rgbColor="#ffffff"
-                caseColor="black"
+                caseColor="white"
                 glassMode="open"
                 explodedProgress={0.4}
                 enableHighlight={false}
@@ -345,7 +348,7 @@ function StageSpecimen({
             <group>
               {/* CPU to socket line */}
               <Line
-                points={[[-0.14 - 1.2 * ex, 1.4 + 0.25 * ex, -0.6], [-0.14, 1.4, -0.6]]}
+                points={[[-0.14 - 1.2 * ex, 1.45 + 0.25 * ex, -0.32], [-0.14, 1.45, -0.32]]}
                 color="#ffffff"
                 lineWidth={1.5}
                 dashed
@@ -353,7 +356,7 @@ function StageSpecimen({
               />
               {/* RAM to DIMM slots line */}
               <Line
-                points={[[-0.12, 1.4 + 0.35 * ex, 0.8 + 1.2 * ex], [-0.12, 1.4, 0.8]]}
+                points={[[-0.12, 1.45 + 0.35 * ex, 1.35 + 1.2 * ex], [-0.12, 1.45, 1.35]]}
                 color="#ffffff"
                 lineWidth={1.5}
                 dashed
@@ -361,7 +364,7 @@ function StageSpecimen({
               />
               {/* GPU to PCIe x16 slot line */}
               <Line
-                points={[[-0.85 - 2.1 * ex, -0.7 - 0.5 * ex, -0.3], [-0.85, -0.7, -0.3]]}
+                points={[[-0.85 - 2.1 * ex, -0.6 - 0.5 * ex, -0.32], [-0.85, -0.6, -0.32]]}
                 color="#ffffff"
                 lineWidth={1.5}
                 dashed
@@ -369,7 +372,7 @@ function StageSpecimen({
               />
               {/* SSD to M.2 slot line */}
               <Line
-                points={[[-0.12 - 0.7 * ex, 0.35 + 0.45 * ex, -0.6], [-0.12, 0.35, -0.6]]}
+                points={[[-0.12 - 0.7 * ex, -1.45 + 0.45 * ex, -0.32], [-0.12, -1.45, -0.32]]}
                 color="#ffffff"
                 lineWidth={1.5}
                 dashed
@@ -381,19 +384,43 @@ function StageSpecimen({
       )}
 
       {specimenKey === "motherboard" && (
-        <ComponentModels3D
-          part={{ category: "motherboard", name: selectedPartName || "Motherboard", targetPosition: [0, 0, 0] }}
-          rgbColor="#ffffff"
-          enableHighlight={false}
-        />
+        <group rotation={[0, -Math.PI / 2, 0]} scale={0.88}>
+          <ROGStrixMotherboard
+            rgbColor="#ffffff"
+            enableHighlight={false}
+            showCpu={true}
+          />
+        </group>
       )}
 
       {specimenKey === "cpu" && (
-        <ComponentModels3D
-          part={{ category: "cpu", name: selectedPartName || "Processor (CPU)", targetPosition: [0, 0, 0] }}
-          rgbColor="#ffffff"
-          enableHighlight={false}
-        />
+        <group scale={[1.4, 1.4, 1.4]}>
+          {/* Green Ceramic Substrate */}
+          <mesh position={[0, 0, 0]}>
+            <boxGeometry args={[1.75, 1.75, 0.08]} />
+            <meshStandardMaterial color="#0f766e" roughness={0.4} />
+          </mesh>
+          {/* Gold Edge Connector Contacts on back */}
+          <mesh position={[0, 0, -0.045]}>
+            <boxGeometry args={[1.65, 1.65, 0.01]} />
+            <meshStandardMaterial color="#d97706" metalness={0.95} roughness={0.2} />
+          </mesh>
+          {/* Golden Triangle Pin 1 Index Marker */}
+          <mesh position={[-0.72, -0.72, 0.042]}>
+            <boxGeometry args={[0.12, 0.12, 0.01]} />
+            <meshBasicMaterial color="#facc15" />
+          </mesh>
+          {/* Nickel-Plated Copper Integrated Heat Spreader (IHS) */}
+          <mesh position={[0, 0, 0.08]}>
+            <boxGeometry args={[1.35, 1.35, 0.08]} />
+            <meshStandardMaterial color="#f8fafc" metalness={0.98} roughness={0.12} />
+          </mesh>
+          {/* Thermal Compound Center Dot (Pea Method) */}
+          <mesh position={[0, 0, 0.13]}>
+            <cylinderGeometry args={[0.18, 0.18, 0.03, 24]} />
+            <meshStandardMaterial color="#64748b" roughness={0.85} metalness={0.1} />
+          </mesh>
+        </group>
       )}
 
       {specimenKey === "ram" && (
@@ -409,11 +436,9 @@ function StageSpecimen({
       )}
 
       {specimenKey === "gpu" && (
-        <ComponentModels3D
-          part={{ category: "gpu", name: selectedPartName || "Graphics Card", targetPosition: [0, 0, 0] }}
-          rgbColor="#ffffff"
-          enableHighlight={false}
-        />
+        <group scale={[0.85, 0.85, 0.85]}>
+          <NepotatoGPU rgbColor="#ffffff" isStandalone={true} />
+        </group>
       )}
 
       {specimenKey === "psu" && (
@@ -421,11 +446,11 @@ function StageSpecimen({
       )}
 
       {specimenKey === "case" && (
-        <group scale={[0.42, 0.42, 0.42]} position={[0, -0.2, 0]}>
-          <NorthChalkWhiteCase
+        <group position={[0, -0.2, 0]}>
+          <GenericPCCase
             rgbColor="#ffffff"
-            caseColor="black"
-            sidePanelMode={isExploded ? "open" : "glass"}
+            caseColor="white"
+            glassMode={isExploded ? "open" : "closed"}
             explodedProgress={isExploded ? 0.35 : 0}
             enableHighlight={false}
           />
@@ -471,7 +496,6 @@ export default function LearnHardwareStage({
   selectedHotspotId,
   onSelectHotspotId,
   onOpenVideo,
-  onRunDiagnosticForHotspot,
   isExploded: propExploded,
   onToggleExploded,
   isPaused = false,
@@ -533,24 +557,10 @@ export default function LearnHardwareStage({
       {/* Subtle Blueprint Grid + PCB Trace Backdrop */}
       <div className="workbench-iso-grid" aria-hidden="true" />
 
-      {/* Mini Viewport Click Interceptor to expand */}
-      {isMini && (
-        <div
-          className="wb-mini-overlay"
-          onClick={() => {
-            try { soundManager.snap(); } catch {}
-            if (onClickMini) onClickMini();
-          }}
-          role="button"
-          tabIndex={0}
-          title="Click to expand to Interactive 3D Lab"
-        />
-      )}
-
       {/* 3D Interactive Hardware Canvas */}
       <Canvas
         frameloop={isPaused ? "demand" : "always"}
-        camera={{ position: [-7.4, 1.8, 5.4], fov: 40, near: 0.1, far: 100 }}
+        camera={isMini ? { position: [-5.6, 1.4, 4.2], fov: 36, near: 0.1, far: 100 } : { position: [-7.4, 1.8, 5.4], fov: 40, near: 0.1, far: 100 }}
         dpr={[1, 2]}
         className="workbench-canvas"
         onPointerMissed={() => onSelectHotspotId(null)}
@@ -561,6 +571,7 @@ export default function LearnHardwareStage({
         <directionalLight position={[8, 12, 8]} intensity={1.4} color="#ffffff" />
         <directionalLight position={[8, 8, -8]} intensity={1.1} color="#d6f5f0" />
         <pointLight position={[-3, 4, 4]} intensity={0.85} color="#ffffff" />
+        <Environment preset="studio" />
 
         <StageSpecimen
           specimenKey={specimenKey}
@@ -574,24 +585,37 @@ export default function LearnHardwareStage({
           isPaused={isPaused}
         />
 
-        <CameraRig
-          specimenKey={specimenKey}
-          activeHotspot={activeHotspot}
-          rotationAngle={rotationAngle}
-          zoomFactor={zoomFactor}
-          resetNonce={resetNonce}
-          isPaused={isPaused}
-        />
+        {!isMini && (
+          <CameraRig
+            specimenKey={specimenKey}
+            activeHotspot={activeHotspot}
+            rotationAngle={rotationAngle}
+            zoomFactor={zoomFactor}
+            resetNonce={resetNonce}
+            isPaused={isPaused}
+          />
+        )}
 
         {isMini && (
           <OrbitControls
-            autoRotate
-            autoRotateSpeed={2.2}
-            enableZoom={false}
+            makeDefault
+            enableRotate={true}
+            enableZoom={true}
             enablePan={false}
+            minDistance={2.5}
+            maxDistance={11}
+            autoRotate={true}
+            autoRotateSpeed={1.2}
           />
         )}
       </Canvas>
+
+      {/* Mini Viewport Mouse Interaction Hint */}
+      {isMini && (
+        <div className="wb-mini-mouse-hint" aria-hidden="true">
+          <span>Drag to rotate • Scroll to zoom</span>
+        </div>
+      )}
 
       {/* Top-Left Moveable/Toggleable Schematic Bus Window (Hidden in Mini Viewport) */}
       {!isMini && showSchematic && (
@@ -646,17 +670,17 @@ export default function LearnHardwareStage({
 
       {/* Floating Part Inspector Card (appears when a hotspot is clicked, hidden in mini mode) */}
       {!isMini && activeHotspot && (
-        <div className="workbench-inspector-card">
+        <div className="workbench-inspector-card" role="region" aria-label="Component Inspector">
           <div className="inspector-card-head">
             <div>
-              <span className="inspector-kicker">SUB-ASSEMBLY INSPECTOR</span>
+              <span className="inspector-kicker">Component Inspector</span>
               <h4>{activeHotspot.label}</h4>
             </div>
             <button
               type="button"
               className="schematic-close-btn"
               onClick={() => onSelectHotspotId(null)}
-              aria-label="Close part inspector"
+              aria-label="Close component inspector"
             >
               ×
             </button>
@@ -665,35 +689,36 @@ export default function LearnHardwareStage({
 
           <div className="inspector-spec-pills">
             <div className="inspector-pill">
-              <span>BUS / INTERFACE</span>
+              <span>Bus Interface</span>
               <strong>{activeHotspot.bus}</strong>
             </div>
             <div className="inspector-pill">
-              <span>ELECTRICAL / SPEC</span>
+              <span>Power &amp; Spec</span>
               <strong>{activeHotspot.voltage}</strong>
             </div>
           </div>
 
           <div className="inspector-tip-box">
-            <strong>LAB RULE:</strong> {activeHotspot.tip}
+            <strong>Lab Tip:</strong> {activeHotspot.tip}
           </div>
 
           <div className="inspector-actions">
             <button
               type="button"
-              className="inspector-btn-secondary"
+              className="inspector-btn-focus"
               onClick={() => {
-                handleZoom(0.25);
+                try {
+                  soundManager.click();
+                } catch {}
+                if (zoomFactor > 1.25) {
+                  setZoomFactor(1);
+                } else {
+                  handleZoom(0.35);
+                }
               }}
+              title={zoomFactor > 1.25 ? "Reset camera to standard distance" : "Zoom camera closer to this component"}
             >
-              ⌖ ZOOM IN CLOSER
-            </button>
-            <button
-              type="button"
-              className="inspector-btn-primary"
-              onClick={() => onRunDiagnosticForHotspot && onRunDiagnosticForHotspot(activeHotspot)}
-            >
-              ▶ RUN DIAGNOSTIC
+              {zoomFactor > 1.25 ? "Reset Focus View" : "Focus in 3D"}
             </button>
           </div>
         </div>

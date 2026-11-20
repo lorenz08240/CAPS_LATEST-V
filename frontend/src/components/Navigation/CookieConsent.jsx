@@ -32,10 +32,11 @@ export default function CookieConsent() {
     }));
   };
 
-  // Synchronous check to avoid flashes on deep links
+  // Synchronous check to avoid flashes on deep links (or in admin deck)
   const hasExistingConsent = () => {
     try {
       if (typeof window === "undefined" || !window.localStorage) return false;
+      if (window.location.pathname.startsWith("/admin")) return true;
       const c1 = localStorage.getItem("buildlab_cookie_consent");
       const c2 = localStorage.getItem("buildlab_cookie_consent_v1");
       if (c1) return true;
@@ -64,7 +65,11 @@ export default function CookieConsent() {
           setShowNotice(true);
         }
       }, 1000);
-      return () => clearTimeout(timer);
+      if (typeof window !== "undefined" && window.location.pathname.startsWith("/admin")) {
+    return null;
+  }
+
+  return () => clearTimeout(timer);
     } catch {}
   }, []);
 
@@ -126,8 +131,16 @@ export default function CookieConsent() {
       setShowPreferencesModal(true);
     };
     window.addEventListener("buildlab:open-cookie-preferences", handleOpenCookies);
-    return () => window.removeEventListener("buildlab:open-cookie-preferences", handleOpenCookies);
+    if (typeof window !== "undefined" && window.location.pathname.startsWith("/admin")) {
+    return null;
+  }
+
+  return () => window.removeEventListener("buildlab:open-cookie-preferences", handleOpenCookies);
   }, []);
+
+  if (typeof window !== "undefined" && window.location.pathname.startsWith("/admin")) {
+    return null;
+  }
 
   return (
     <>
@@ -148,9 +161,9 @@ export default function CookieConsent() {
               </div>
               <p className="cookie-description">
                 BuildLab uses cookies and browser storage to preserve your PC component builds, session preferences, and student certification progress. Read our{" "}
-                <Link to="/cookies" style={{ color: "#ffffff", textDecoration: "underline" }}>Cookie Policy</Link>{" "}
+                <Link to="/cookies" className="cookie-policy-link">Cookie Policy</Link>{" "}
                 and{" "}
-                <Link to="/privacy" style={{ color: "#ffffff", textDecoration: "underline" }}>Privacy Policy</Link>.
+                <Link to="/privacy" className="cookie-policy-link">Privacy Policy</Link>.
               </p>
             </div>
 

@@ -12,6 +12,8 @@ import BobCompanion from "../BobCompanion/BobCompanion";
 import StageUnlockBanner from "../Navigation/StageUnlockBanner";
 import AccountSetupModal from "../Home/AccountSetupModal";
 import soundManager from "../../utilities/soundManager";
+import { getStudentQuizRecords } from "./moduleQuizzes";
+import { getLessonModuleContent } from "./lessonModuleContent";
 import {
   CSS_CURRICULUM,
   FLAT_TOPICS,
@@ -42,6 +44,37 @@ const readProgress = (email) => {
   }
 };
 
+/* ──────────────── SHORTENED & SIMPLIFIED SYLLABUS DIRECTORY TITLES ──────────────── */
+const SHORT_MODULE_TITLES = {
+  1: "Lab Safety & Workspace",
+  2: "Motherboard Architecture",
+  3: "CPU & Thermal Cooling",
+  4: "RAM & M.2 NVMe Storage",
+  5: "GPU & Modular Power",
+  6: "Chassis, Airflow & Cabling",
+  7: "Assembly & POST Test",
+};
+
+const SHORT_TOPIC_TITLES = {
+  "1.1-esd-prep": "ESD & Workspace Setup",
+  "1.2-safe-handling": "Safe Component Handling",
+  "1.3-tools-standoffs": "Standoffs, Screws & Tools",
+  "2.1-mobo-anatomy": "Motherboard Form Factors",
+  "2.2-chipset-vrm": "Chipsets & VRM Power",
+  "2.3-headers-io": "Rear I/O & Front Headers",
+  "3.1-cpu-socket": "Socket Pinout & Alignment",
+  "3.2-thermal-paste": "Thermal Compound & Cooler",
+  "4.1-ram-slots": "RAM Dual-Channel Rules",
+  "4.2-m2-nvme": "M.2 NVMe Storage Slots",
+  "5.1-gpu-pcie": "PCIe x16 GPU Installation",
+  "5.2-psu-atx": "Modular PSU & Power Rails",
+  "6.1-airflow-fans": "Chassis Positive Airflow",
+  "6.2-cabling-front-panel": "Front Panel Headers & Wiring",
+  "7.1-bench-staging": "Pre-Assembly Bench Staging",
+  "7.2-assembly-lab": "3D PC Assembly Lab",
+  "7.3-post-diagnostics": "POST & Debug Diagnostics",
+};
+
 /* ─────────────────────── 3D BENCHMARK HOTSPOTS ─────────────────────── */
 const ARTICLE_HOTSPOTS = [
   {
@@ -52,8 +85,8 @@ const ARTICLE_HOTSPOTS = [
     target: [-0.2, 1.4, -0.6],
     bus: "Socket AM5 / LGA1700",
     voltage: "1.2V VCore · 65W-253W",
-    role: "Executes OS instructions, physics, and arithmetic operations.",
-    tip: "Align the golden triangle and drop into socket with Zero Insertion Force.",
+    role: "Executes operating system commands, system physics, and program logic.",
+    tip: "Align the golden triangle and seat with Zero Insertion Force. Never force or press pins manually.",
   },
   {
     id: "sys-ram",
@@ -63,8 +96,8 @@ const ARTICLE_HOTSPOTS = [
     target: [-0.15, 1.4, 0.8],
     bus: "128-Bit DDR5 / DDR4",
     voltage: "1.1V - 1.35V VDD",
-    role: "Active high-speed memory buffering textures and applications.",
-    tip: "With 2 sticks, populate slots 2 and 4 (A2 & B2) to activate dual-channel.",
+    role: "High-speed working memory that buffers textures and open tasks right beside the processor.",
+    tip: "With two modules, populate slots 2 and 4 (A2 and B2) to enable dual-channel memory bandwidth.",
   },
   {
     id: "sys-nvme",
@@ -74,8 +107,8 @@ const ARTICLE_HOTSPOTS = [
     target: [-0.1, 0.35, -0.6],
     bus: "PCIe 4.0 / 5.0 x4",
     voltage: "3.3V Direct Rail",
-    role: "Non-volatile flash storage wired straight to CPU PCIe lanes.",
-    tip: "Insert at 30° angle and always peel the heatsink thermal pad film.",
+    role: "High-speed NVMe storage connected directly to CPU PCIe lanes for rapid operating system loading.",
+    tip: "Insert at a 25-degree angle, secure the standoff screw gently, and peel off the thermal pad protective film.",
   },
   {
     id: "sys-gpu",
@@ -85,8 +118,8 @@ const ARTICLE_HOTSPOTS = [
     target: [-0.4, -0.7, -0.2],
     bus: "PCIe x16 + 12V-2x6",
     voltage: "115W - 450W TGP",
-    role: "Massively parallel visual engine rendering 3D frames and compute.",
-    tip: "Plug monitor HDMI/DisplayPort directly into this graphics card.",
+    role: "Dedicated graphics processor powering real-time 3D display rendering and video output.",
+    tip: "Plug your monitor display cable directly into this graphics card, not the motherboard backplate.",
   },
   {
     id: "sys-vrm",
@@ -96,8 +129,8 @@ const ARTICLE_HOTSPOTS = [
     target: [-0.15, 1.9, -1.0],
     bus: "12V ATX / EPS Input",
     voltage: "VRM Steps 12V -> 1.2V",
-    role: "Converts PSU DC rails into regulated, clean CPU boost power.",
-    tip: "Remember both the 24-pin ATX side cable and the top 8-pin CPU EPS cable.",
+    role: "Voltage Regulator Module converting power supply DC voltage into clean, regulated processor power.",
+    tip: "Connect both the 24-pin ATX motherboard cable and the 8-pin EPS processor cable.",
   },
 ];
 
@@ -153,8 +186,10 @@ export default function CourseShell() {
   // Workbench visual theme: 'dark' (clean pro slate) or 'light' (soft glare-free titanium)
   const [workbenchTheme, setWorkbenchTheme] = useState(() => {
     try {
-      const saved = localStorage.getItem("buildlab_learn_theme");
-      if (saved === "light" || saved === "blueprint") return "light";
+      const savedLearn = localStorage.getItem("buildlab_learn_theme");
+      const savedGlobal = localStorage.getItem("buildlab_theme");
+      const initial = savedLearn || savedGlobal;
+      if (initial === "light" || initial === "blueprint") return "light";
       return "dark";
     } catch {
       return "dark";
@@ -165,12 +200,24 @@ export default function CourseShell() {
 
   const toggleTheme = useCallback(() => {
     try { soundManager.click(); } catch {}
-    setWorkbenchTheme((prev) => (prev === "light" ? "dark" : "light"));
+    setWorkbenchTheme((prev) => {
+      const nextTheme = prev === "light" ? "dark" : "light";
+      try {
+        localStorage.setItem("buildlab_learn_theme", nextTheme);
+        localStorage.setItem("buildlab_theme", nextTheme);
+        document.documentElement.setAttribute("data-theme", nextTheme);
+        document.body.className = `theme-${nextTheme}`;
+      } catch {}
+      return nextTheme;
+    });
   }, []);
 
   useEffect(() => {
     try {
       localStorage.setItem("buildlab_learn_theme", workbenchTheme);
+      localStorage.setItem("buildlab_theme", workbenchTheme);
+      document.documentElement.setAttribute("data-theme", workbenchTheme);
+      document.body.className = `theme-${workbenchTheme}`;
     } catch {}
   }, [workbenchTheme]);
 
@@ -203,8 +250,19 @@ export default function CourseShell() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [completed, setCompleted] = useState(() => readProgress(userProfile?.email));
 
+  // Sync completed topics if learner email loads after initial mount
+  useEffect(() => {
+    if (userProfile?.email) {
+      const userProgress = readProgress(userProfile.email);
+      if (userProgress.length > 0) {
+        setCompleted(userProgress);
+      }
+    }
+  }, [userProfile?.email]);
+
   // Dual-Phase Center View: 'presentation' (Slide/Report Theory & Visuals) vs '3d-lab' (3D Hardware Inspection)
   const [centerMode, setCenterMode] = useState("presentation");
+  const [presentationPage, setPresentationPage] = useState(0);
   const [showQuizModal, setShowQuizModal] = useState(false);
   const [quizModuleNum, setQuizModuleNum] = useState(1);
   const [active3DStepIdx, setActive3DStepIdx] = useState(0);
@@ -235,6 +293,14 @@ export default function CourseShell() {
     const params = new URLSearchParams(location.search);
     if (params.get("view") === "dashboard" || location.state?.openDashboard) {
       setShowDashboardOverlay(true);
+    }
+    const quizParam = params.get("quiz");
+    if (quizParam !== null) {
+      const qNum = Number(quizParam);
+      if (!isNaN(qNum) && qNum >= 1 && qNum <= 7) {
+        setQuizModuleNum(qNum);
+        setShowQuizModal(true);
+      }
     }
     const topicParam = params.get("topic");
     if (topicParam !== null) {
@@ -353,17 +419,54 @@ export default function CourseShell() {
     }
   }, [location.state, currentTopic.moduleNum]);
 
-  // When changing topic, reset active 3D step and default to presentation mode
+  // When changing topic, reset active 3D step and default to presentation mode (unless mode=3d-lab requested)
   useEffect(() => {
     setActive3DStepIdx(0);
-    setCenterMode("presentation");
-  }, [currentIndex]);
+    const params = new URLSearchParams(location.search);
+    if (params.get("mode") === "3d-lab") {
+      setCenterMode("3d-lab");
+    } else {
+      setCenterMode("presentation");
+    }
+    setPresentationPage(0);
+    if (currentTopic?.id) {
+      setCompleted((prev) => (prev.includes(currentTopic.id) ? prev : [...prev, currentTopic.id]));
+    }
+  }, [currentIndex, currentTopic?.id]);
+
+  const currentLessonContent = useMemo(() => {
+    return getLessonModuleContent(currentTopic);
+  }, [currentTopic]);
 
   // Right Panel Video & Interactive State
   const [videoExpanded, setVideoExpanded] = useState(true);
   const [videoHighlighted, setVideoHighlighted] = useState(false);
   const [selectedQuizOption, setSelectedQuizOption] = useState(null);
   const [quizAnswerStatus, setQuizAnswerStatus] = useState(null); // null | 'correct' | 'incorrect'
+
+  const currentModule = useMemo(() => {
+    return CSS_CURRICULUM.find((m) => m.moduleNum === currentTopic.moduleNum) || CSS_CURRICULUM[0];
+  }, [currentTopic.moduleNum]);
+
+  const moduleTopics = useMemo(() => {
+    return currentModule?.topics || [];
+  }, [currentModule]);
+
+  const isLastTopicOfModule = useMemo(() => {
+    if (!moduleTopics.length) return false;
+    return moduleTopics[moduleTopics.length - 1].id === currentTopic.id;
+  }, [moduleTopics, currentTopic.id]);
+
+  const isModuleTopicsCompleted = useMemo(() => {
+    if (!moduleTopics.length) return false;
+    return moduleTopics.every((t) => completed.includes(t.id));
+  }, [moduleTopics, completed]);
+
+  const quizRecords = useMemo(() => {
+    return getStudentQuizRecords(userProfile?.email);
+  }, [userProfile?.email, showQuizModal]);
+  const isCurrentModuleQuizPassed = Boolean(quizRecords[currentTopic.moduleNum]?.passed);
+
   const rightDockRef = useRef(null);
   const guideCardRef = useRef(null);
 
@@ -421,9 +524,11 @@ export default function CourseShell() {
 
   // Unlock Certificate once all syllabus topics are completed
   useEffect(() => {
-    if (completed.length >= FLAT_TOPICS.length) {
-      unlockStage("certificate");
-    }
+    try {
+      if (completed.length >= FLAT_TOPICS.length) {
+        unlockStage("certificate");
+      }
+    } catch {}
   }, [completed.length, unlockStage]);
 
   // Persist progress globally and per Google Learner Account
@@ -453,7 +558,7 @@ export default function CourseShell() {
     setSelectedHotspotId(currentTopic.hotspotId || null);
     setActivePopover(null);
     setBobSpeech(
-      `Topic ${currentTopic.topicCode}: ${currentTopic.title}. Watch the clip, catch common mistakes, and try the quick quiz!`
+      `Topic ${currentTopic.topicCode}: ${currentTopic.title}. Study the syllabus guide, watch the demonstration, and inspect in 3D!`
     );
   }, [currentIndex, currentTopic, completed]);
 
@@ -484,8 +589,10 @@ export default function CourseShell() {
 
   useEffect(() => {
     if (progressPct === 100) {
-      unlockStage("certificate");
       unlockStage("studio");
+      try {
+        unlockStage("certificate");
+      } catch {}
     }
   }, [progressPct, unlockStage]);
 
@@ -520,8 +627,8 @@ export default function CourseShell() {
       }
     } else {
       try { soundManager.complete(); } catch {}
-      unlockStage("certificate");
-      navigate("/certificate");
+      // When at the very end of all syllabus topics, open the Student Profile Overview
+      setShowDashboardOverlay(true);
     }
   }, [currentIndex, isAuthenticated, unlockStage, navigate]);
 
@@ -763,7 +870,12 @@ export default function CourseShell() {
             data-tooltip="Return Home"
             aria-label="Return Home"
           >
-            <span className="wb-rail-icon">⌂</span>
+            <span className="wb-rail-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                <polyline points="9 22 9 12 15 12 15 22" />
+              </svg>
+            </span>
             {leftRailOpen && <span className="wb-rail-label">HOME</span>}
           </button>
 
@@ -777,9 +889,33 @@ export default function CourseShell() {
             data-tooltip={`Browse all ${TOTAL_TOPICS_COUNT} Topics across ${TOTAL_MODULES_COUNT} Modules`}
             aria-label="Browse Curriculum Lessons"
           >
+            <span className="wb-rail-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+              </svg>
+            </span>
             {leftRailOpen && <span className="wb-rail-label">LESSONS</span>}
           </button>
 
+          <button
+            type="button"
+            className="wb-rail-item"
+            onClick={() => {
+              try { soundManager.click(); } catch {}
+              navigate("/settings");
+            }}
+            data-tooltip="System Settings & Preferences"
+            aria-label="System Settings & Preferences"
+          >
+            <span className="wb-rail-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="3" />
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+              </svg>
+            </span>
+            {leftRailOpen && <span className="wb-rail-label">SETTINGS</span>}
+          </button>
         </nav>
 
         <div className="wb-rail-footer">
@@ -812,14 +948,34 @@ export default function CourseShell() {
           >
             {leftRailOpen ? (
               <>
-                <span className={`wb-learner-dot ${!isAuthenticated ? "is-guest-dot" : ""}`} />
+                <div className="wb-learner-avatar-box">
+                  {userProfile?.photo ? (
+                    <img src={userProfile.photo} alt={learnerDisplayName} className="wb-learner-avatar-img" />
+                  ) : (
+                    <div className="wb-learner-avatar-initials">
+                      {learnerDisplayName.split(" ").map((w) => w[0]).filter(Boolean).slice(0, 2).join("").toUpperCase() || "ST"}
+                    </div>
+                  )}
+                  <span className={`wb-learner-dot ${!isAuthenticated ? "is-guest-dot" : ""}`} />
+                </div>
                 <div className="wb-learner-meta">
                   <strong>{learnerDisplayName}</strong>
                   <span>{learnerSubtext}</span>
                 </div>
                 <span className="wb-learner-unlock-arrow">{showDashboardOverlay ? "✕" : "→"}</span>
               </>
-            ) : null}
+            ) : (
+              <div className="wb-learner-avatar-collapsed" title={learnerDisplayName}>
+                {userProfile?.photo ? (
+                  <img src={userProfile.photo} alt={learnerDisplayName} className="wb-learner-collapsed-img" />
+                ) : (
+                  <div className="wb-learner-collapsed-initials">
+                    {learnerDisplayName.split(" ").map((w) => w[0]).filter(Boolean).slice(0, 2).join("").toUpperCase() || "ST"}
+                  </div>
+                )}
+                <span className={`wb-learner-collapsed-dot ${!isAuthenticated ? "is-guest-dot" : ""}`} />
+              </div>
+            )}
           </div>
         </div>
       </aside>
@@ -828,20 +984,34 @@ export default function CourseShell() {
       {activePopover === "lessons" && (
         <div className="wb-popover-card wb-syllabus-accordion-popover" role="dialog" aria-label="Curriculum Modules">
           <div className="wb-popover-head">
-            <div>
-              <h3>CSS SYLLABUS</h3>
-              <p className="wb-popover-subtitle">
-                {doneCount} of {TOTAL_TOPICS_COUNT} Topics Completed ({progressPct}%)
-              </p>
+            <div className="wb-popover-head-text">
+              <span className="wb-syllabus-kicker">CURRICULUM DIRECTORY</span>
+              <h3 className="wb-syllabus-heading">Course Syllabus</h3>
             </div>
             <button
               type="button"
               className="wb-popover-close wb-syllabus-popover-close"
               onClick={() => setActivePopover(null)}
               aria-label="Close Syllabus"
+              title="Close Syllabus (Esc)"
             >
-              ×
+              ✕
             </button>
+          </div>
+
+          <div className="wb-syllabus-progress-card">
+            <div className="wb-syllabus-progress-meta">
+              <span className="wb-syllabus-progress-label">
+                <strong>{doneCount}</strong> of {TOTAL_TOPICS_COUNT} Topics Completed
+              </span>
+              <span className="wb-syllabus-progress-pill">{progressPct}%</span>
+            </div>
+            <div className="wb-syllabus-progress-track">
+              <div
+                className="wb-syllabus-progress-fill"
+                style={{ width: `${progressPct}%` }}
+              />
+            </div>
           </div>
 
           <div className="wb-syllabus-accordion-body">
@@ -850,18 +1020,19 @@ export default function CourseShell() {
               const modCompletedCount = mod.topics.filter((t) => completed.includes(t.id)).length;
               const isModComplete = modCompletedCount === mod.topics.length;
               const isModLocked = !isAuthenticated && mod.moduleNum > 1;
+              const moduleDisplayTitle = SHORT_MODULE_TITLES[mod.moduleNum] || mod.title;
 
               return (
                 <div key={mod.id} className="wb-module-accordion-section">
                   <button
                     type="button"
-                    className="wb-module-accordion-header wb-syllabus-module-btn"
+                    className={`wb-module-accordion-header wb-syllabus-module-btn ${isModExpanded ? "is-expanded" : ""} ${isModComplete ? "is-complete" : ""}`}
                     onClick={() => toggleModuleExpanded(mod.id)}
                     aria-expanded={isModExpanded}
                   >
                     <div className="wb-module-header-title">
-                      <span className="wb-module-tag">M{mod.moduleNum}</span>
-                      <strong>{mod.title}</strong>
+                      <span className="wb-module-tag">M{mod.moduleNum < 10 ? `0${mod.moduleNum}` : mod.moduleNum}</span>
+                      <strong className="wb-module-heading-text">{moduleDisplayTitle}</strong>
                       {isModLocked && (
                         <span className="wb-module-lock-tag">STUDENT TRACK</span>
                       )}
@@ -870,7 +1041,9 @@ export default function CourseShell() {
                       <span className={`wb-module-done-pill ${isModComplete ? "is-all-done" : ""}`}>
                         {modCompletedCount}/{mod.topics.length}
                       </span>
-                      <span className="wb-module-chevron">{isModExpanded ? "▾" : "▸"}</span>
+                      <span className={`wb-module-chevron ${isModExpanded ? "is-expanded" : ""}`}>
+                        ▾
+                      </span>
                     </div>
                   </button>
 
@@ -881,12 +1054,13 @@ export default function CourseShell() {
                         const globalIdx = FLAT_TOPICS.findIndex((f) => f.id === t.id);
                         const isActive = globalIdx === currentIndex;
                         const isLocked = isTopicLockedForGuest(globalIdx);
+                        const topicDisplayTitle = SHORT_TOPIC_TITLES[t.id] || t.title;
 
                         return (
                           <button
                             type="button"
                             key={t.id}
-                            className={`wb-topic-row-btn wb-syllabus-topic-item ${isActive ? "is-active" : ""} ${isLocked ? "is-locked" : ""}`}
+                            className={`wb-topic-row-btn wb-syllabus-topic-item ${isActive ? "is-active" : ""} ${isLocked ? "is-locked" : ""} ${isDone ? "is-done" : ""}`}
                             onClick={() => {
                               if (isLocked) {
                                 try { soundManager.warning(); } catch {}
@@ -897,12 +1071,26 @@ export default function CourseShell() {
                               }
                             }}
                           >
-                            <span className={`wb-topic-status-dot ${isDone ? "is-done" : ""} ${isLocked ? "is-locked-dot" : ""}`}>
-                              {isDone ? "✓" : isLocked ? "" : t.topicCode}
+                            <span className={`wb-topic-status-dot ${isDone ? "is-done" : ""} ${isActive ? "is-active-dot" : ""} ${isLocked ? "is-locked-dot" : ""}`}>
+                              {isDone ? (
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                  <polyline points="20 6 9 17 4 12" />
+                                </svg>
+                              ) : isLocked ? (
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                                </svg>
+                              ) : (
+                                t.topicCode
+                              )}
                             </span>
-                            <span className="wb-topic-name">{t.title}</span>
+                            <span className="wb-topic-name">{topicDisplayTitle}</span>
                             {isLocked && (
                               <span className="wb-topic-lock-label">LOCKED</span>
+                            )}
+                            {isActive && (
+                              <span className="wb-topic-current-pill">CURRENT</span>
                             )}
                           </button>
                         );
@@ -917,9 +1105,9 @@ export default function CourseShell() {
               <div className="wb-syllabus-unlock-banner">
                 <div className="wb-unlock-banner-content">
                   <div className="wb-unlock-banner-text">
-                    <strong>Unlock All 6 Modules &amp; Verified E-Certificate</strong>
+                    <strong>Unlock All 7 Modules &amp; Verified E-Certificate</strong>
                     <p>
-                      Guest preview includes Module 1. Link your Google account to access all 19 topics and earn an accredited PTC-IICT certificate.
+                      Guest preview includes Module 1. Link your Google account to access all 17 topics and earn an accredited PTC-IICT certificate.
                     </p>
                   </div>
                 </div>
@@ -984,56 +1172,22 @@ export default function CourseShell() {
         </header>
 
         {/* ══ 2-FOCUSED ZONE WORKBENCH: CENTER 3D CANVAS + RIGHT CSS PRE-LAB GUIDE ══ */}
-        <div className={`wb-workbench-body ${showBriefingOverlay ? "is-briefing-mode" : ""}`}>
+        <div className={`wb-workbench-body ${showBriefingOverlay ? "is-briefing-mode" : ""} ${centerMode === "3d-lab" ? "is-3d-lab-fullscreen" : ""}`}>
           {/* ══ ZONE 1: CENTER 3D HARDWARE / LESSON PRESENTATION STAGE ══ */}
           <section
             id="wb-zone-stage"
             className={`wb-center-stage ${showDashboardOverlay ? "has-dashboard-active" : ""}`}
             aria-label="Interactive Hardware & Lesson Stage"
           >
-            {/* Center Stage Mode Switcher (Lecture Report vs 3D Lab vs 15-Item Exam) */}
-            {!showDashboardOverlay && !showBriefingOverlay && (
-              <div className="wb-stage-mode-switcher">
-                <button
-                  type="button"
-                  className={`wb-stage-tab-btn ${centerMode === "presentation" ? "is-active" : ""}`}
-                  onClick={() => {
-                    try { soundManager.click(); } catch {}
-                    setCenterMode("presentation");
-                  }}
-                >
-                  <span className="tab-icon">📄</span>
-                  <span>1. Lesson Module</span>
-                </button>
-                <button
-                  type="button"
-                  className={`wb-stage-tab-btn ${centerMode === "3d-lab" ? "is-active" : ""}`}
-                  onClick={() => {
-                    try { soundManager.snap(); } catch {}
-                    setCenterMode("3d-lab");
-                  }}
-                >
-                  <span>2. Interactive 3D Lab</span>
-                </button>
-                <button
-                  type="button"
-                  className="wb-stage-tab-btn wb-tab-quiz"
-                  onClick={() => {
-                    try { soundManager.click(); } catch {}
-                    setQuizModuleNum(currentTopic.moduleNum);
-                    setShowQuizModal(true);
-                  }}
-                >
-                  <span>3. 15-Item Assessment</span>
-                </button>
-              </div>
-            )}
-
             {/* MODE 1: LECTURE PRESENTATION & VISUAL REPORT (PDF/SLIDE REPORT DISCUSSION) */}
             {centerMode === "presentation" && !showDashboardOverlay && !showBriefingOverlay && (
               <LessonPresentationView
                 topic={currentTopic}
                 moduleNum={currentTopic.moduleNum}
+                isLastTopicOfModule={isLastTopicOfModule}
+                isModuleCompleted={isModuleTopicsCompleted}
+                activePage={presentationPage}
+                onPageChange={setPresentationPage}
                 theme={workbenchTheme}
                 onProceedTo3D={() => {
                   try { soundManager.snap(); } catch {}
@@ -1055,15 +1209,49 @@ export default function CourseShell() {
             {/* MODE 2: INTERACTIVE 3D HARDWARE LAB */}
             {centerMode === "3d-lab" && (
               <>
+                {!currentTopic.isAssemblyLab && (
+                  <button
+                    type="button"
+                    className="wb-3d-return-pill"
+                    onClick={() => {
+                      try { soundManager.click(); } catch {}
+                      setCenterMode("presentation");
+                    }}
+                    title="Return to Lesson Presentation"
+                  >
+                    ← Back to Lesson Module
+                  </button>
+                )}
+
                 {currentTopic.isAssemblyLab ? (
                   <VirtualAssemblyLab
                     initialCompleted={completed.includes(currentTopic.id)}
                     isPaused={showDashboardOverlay || showBriefingOverlay}
+                    onBackToLesson={() => {
+                      try { soundManager.click(); } catch {}
+                      setCenterMode("presentation");
+                    }}
                     onAssemblyComplete={() => {
                       if (!completed.includes(currentTopic.id)) {
                         markTopicComplete(currentTopic.id);
                       }
+                      try {
+                        localStorage.setItem("buildlab_3d_assembly_completed", "true");
+                        if (userProfile?.email) {
+                          localStorage.setItem(`buildlab_3d_assembly_completed.${userProfile.email}`, "true");
+                        }
+                      } catch {}
                     }}
+                    onDisassemblyComplete={() => {
+                      try {
+                        localStorage.setItem("buildlab_3d_disassembly_completed", "true");
+                        if (userProfile?.email) {
+                          localStorage.setItem(`buildlab_3d_disassembly_completed.${userProfile.email}`, "true");
+                        }
+                      } catch {}
+                    }}
+                    onOpenProfile={() => setShowDashboardOverlay(true)}
+                    onBobSpeechChange={setBobSpeech}
                   />
                 ) : (
                   <>
@@ -1092,11 +1280,11 @@ export default function CourseShell() {
 
                     {/* Guided 3D Component Stepper with Auto-Focus Camera & Progression Next Buttons */}
                     {!showDashboardOverlay && !showBriefingOverlay && (
-                      <div className="wb-3d-guided-stepper">
+                      <div className="wb-3d-guided-stepper" role="region" aria-label="3D Component Stepper">
                         <div className="stepper-content">
                           <div className="stepper-meta-row">
                             <span className="stepper-kicker">
-                              GUIDED 3D INSPECTION • PART {active3DStepIdx + 1} OF {ARTICLE_HOTSPOTS.length}
+                              3D Component Guide · Step {active3DStepIdx + 1} of {ARTICLE_HOTSPOTS.length}
                             </span>
                             <strong className="stepper-part-title">
                               {ARTICLE_HOTSPOTS[active3DStepIdx]?.label}
@@ -1111,16 +1299,21 @@ export default function CourseShell() {
                           <button
                             type="button"
                             className="btn-stepper-nav"
-                            disabled={active3DStepIdx === 0}
                             onClick={() => {
-                              const newIdx = Math.max(0, active3DStepIdx - 1);
-                              setActive3DStepIdx(newIdx);
-                              setSelectedHotspotId(ARTICLE_HOTSPOTS[newIdx].id);
-                              setBobSpeech(ARTICLE_HOTSPOTS[newIdx].tip);
-                              try { soundManager.click(); } catch {}
+                              if (active3DStepIdx === 0) {
+                                try { soundManager.click(); } catch {}
+                                setCenterMode("presentation");
+                              } else {
+                                const newIdx = Math.max(0, active3DStepIdx - 1);
+                                setActive3DStepIdx(newIdx);
+                                setSelectedHotspotId(ARTICLE_HOTSPOTS[newIdx].id);
+                                setBobSpeech(ARTICLE_HOTSPOTS[newIdx].tip);
+                                try { soundManager.click(); } catch {}
+                              }
                             }}
+                            title={active3DStepIdx === 0 ? "Return to Lesson Presentation" : "Inspect previous component"}
                           >
-                            ◀ Prev Part
+                            {active3DStepIdx === 0 ? "← Overview" : "Previous Component"}
                           </button>
 
                           {active3DStepIdx < ARTICLE_HOTSPOTS.length - 1 ? (
@@ -1135,9 +1328,9 @@ export default function CourseShell() {
                                 try { soundManager.snap(); } catch {}
                               }}
                             >
-                              Next Part ▶
+                              Next Component →
                             </button>
-                          ) : (
+                          ) : isLastTopicOfModule && isModuleTopicsCompleted ? (
                             <button
                               type="button"
                               className="btn-stepper-exam"
@@ -1147,7 +1340,16 @@ export default function CourseShell() {
                                 setShowQuizModal(true);
                               }}
                             >
-                              Take 15-Item Exam ▶
+                              Take Module {currentTopic.moduleNum} Assessment →
+                            </button>
+                          ) : (
+                            <button
+                              type="button"
+                              className="btn-stepper-nav btn-stepper-next"
+                              onClick={handleNextTopic}
+                              title="Proceed to next topic"
+                            >
+                              Next Topic →
                             </button>
                           )}
                         </div>
@@ -1197,34 +1399,21 @@ export default function CourseShell() {
             )}
           </section>
 
-          {/* ══ ZONE 2: RIGHT PRACTICAL CSS PRE-LAB GUIDE CARD (HIDDEN DURING COURSE BRIEFING) ══ */}
-          {!showBriefingOverlay && (
+          {/* ══ ZONE 2: RIGHT PRACTICAL CSS PRE-LAB GUIDE CARD (HIDDEN DURING BRIEFING & IN 3D LAB FULLSCREEN) ══ */}
+          {!showBriefingOverlay && centerMode === "presentation" && (
             <aside
               id="wb-zone-dock"
               className="wb-right-dock"
               ref={rightDockRef}
               aria-label="CSS Pre-Lab Guide & Practical Reference"
             >
-            <div className="wb-css-guide-card" ref={guideCardRef}>
-              {/* 1. Header & YouTube Lecture Player */}
-              <div className="wb-guide-header">
-                <div className="wb-guide-meta-row">
-                  <div className="wb-guide-meta-right">
-                    {completed.includes(currentTopic.id) && (
-                      <span className="wb-topic-done-badge">✓ COMPLETED</span>
-                    )}
-                  </div>
-                </div>
-                <h2 className="wb-topic-main-title">{currentTopic.title}</h2>
-              </div>
-
-              {/* ── SPATIAL SWAPPING: 3D PREVIEW (IN PRESENTATION MODE) OR VIDEO PLAYER (IN 3D LAB MODE) ── */}
-              {centerMode === "presentation" ? (
-                /* IN PRESENTATION MODE: Right Dock holds the Mini 3D Hardware Preview Viewport */
+              <div className="wb-css-guide-card" ref={guideCardRef}>
+                {/* 1. SPATIAL MINI 3D PREVIEW CARD */}
                 <div className="wb-dock-mini-stage-card">
                   <div className="wb-mini-stage-header">
                     <div className="wb-mini-tag-group">
-                      <span className="wb-dock-pill-3d">3D WORKBENCH PREVIEW</span>
+                      <span className="wb-dock-pill-3d">Up Next:</span>
+                      <span className="wb-dock-pill-sub">Interactive 3D Lab</span>
                     </div>
                     <button
                       type="button"
@@ -1256,189 +1445,72 @@ export default function CourseShell() {
                     />
                   </div>
                 </div>
-              ) : (
-                /* IN 3D LAB MODE: Right Dock holds the Docked 16:9 Lecture Video Player */
-                <div className={`wb-lecture-video-card ${videoHighlighted ? "is-highlighted" : ""}`}>
-                  <button
-                    type="button"
-                    className="wb-video-card-head"
-                    onClick={() => setVideoExpanded((v) => !v)}
-                    aria-expanded={videoExpanded}
-                  >
-                    <div className="wb-video-head-left">
-                      <strong>Lecture Video: {currentTopic.videoTitle}</strong>
-                      {showDashboardOverlay && !isVideoPlaying && (
-                        <span className="wb-video-paused-pill" title="Playback paused while reviewing dashboard">
-                          ⏸ Paused
-                        </span>
-                      )}
+
+                {/* 2. DYNAMIC CONTENT: REFERENCES (PAGE 1) OR BULLETED SUMMARY (PAGE 2) */}
+                {presentationPage === 0 ? (
+                  /* ── PAGE 1: CURRICULUM REFERENCES & INDUSTRY STANDARDS ── */
+                  <div className="wb-references-card" role="region" aria-label="Curriculum References & Standards">
+                    <div className="wb-ref-header">
+                      <div className="wb-ref-title-wrap">
+                        <span className="wb-ref-kicker">Curriculum References</span>
+                        <strong className="wb-ref-title">DepEd TVL &amp; Industry Standards</strong>
+                      </div>
+                      <span className="wb-ref-badge">CSS NC II</span>
                     </div>
-                    <span className="wb-video-toggle-chevron">
-                      {videoExpanded ? "▴ Hide Video" : "▾ Watch Video"}
-                    </span>
-                  </button>
-
-                  {videoExpanded && (
-                    <>
-                      <div className="wb-video-frame-wrap">
-                        <iframe
-                          className="wb-video-iframe"
-                          src={`https://www.youtube-nocookie.com/embed/${currentTopic.youtubeId}?enablejsapi=1&rel=0&modestbranding=1`}
-                          title={`${currentTopic.title} Lecture Video`}
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                          allowFullScreen
-                        />
-                      </div>
-                      <div className="wb-video-fallback-bar">
-                        <span>Video playback issue?</span>
-                        <a
-                          href={`https://www.youtube.com/watch?v=${currentTopic.youtubeId}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="wb-video-external-link"
-                        >
-                          ▶ Open on YouTube ↗
-                        </a>
-                      </div>
-                    </>
-                  )}
-                </div>
-              )}
-
-              {/* Quick Workbench Action Strip */}
-              <div className="wb-dock-quick-strip">
-                <button
-                  type="button"
-                  className="wb-dock-quick-btn"
-                  onClick={() => {
-                    try { soundManager.click(); } catch {}
-                    setIsExploded((e) => !e);
-                  }}
-                  title="Toggle Exploded Subassemblies"
-                >
-                  💥 {isExploded ? "Assemble Rig" : "Explode Rig"}
-                </button>
-                <button
-                  type="button"
-                  className="wb-dock-quick-btn"
-                  onClick={toggleTheme}
-                  title="Toggle Workbench Theme"
-                >
-                  {isLight ? "🌙 Dark Mode" : "☀️ Light Mode"}
-                </button>
-                <button
-                  type="button"
-                  className="wb-dock-quick-btn wb-btn-assessment-link"
-                  onClick={() => {
-                    try { soundManager.snap(); } catch {}
-                    setQuizModuleNum(currentTopic.moduleNum);
-                    setShowQuizModal(true);
-                  }}
-                  title="Launch 15-Item Assessment"
-                >
-                  📝 15-Item Exam
-                </button>
-              </div>
-
-              {/* Spot The Lab Mistake // 1-Question Quick Check (Non-redundant, required for topic completion) */}
-              <div className="wb-quick-check-card">
-                <div className="wb-quiz-header">
-                  <strong>SPOT THE LAB MISTAKE // 1-QUESTION QUICK CHECK</strong>
-                </div>
-                <p className="wb-quiz-question">{currentTopic.quiz.question}</p>
-
-                <div className="wb-quiz-options-list">
-                  {currentTopic.quiz.options.map((opt, optIdx) => {
-                    const isSelected = selectedQuizOption === optIdx;
-                    let optionClass = "wb-quiz-opt-btn";
-                    if (isSelected) {
-                      optionClass += opt.correct ? " is-correct" : " is-incorrect";
-                    }
-                    return (
+                    <p className="wb-ref-intro">
+                      Official technical documentation, occupational health guidelines, and curriculum standards cited for this topic:
+                    </p>
+                    <ul className="wb-ref-list">
+                      {currentLessonContent?.moduleDoc?.references?.map((ref, idx) => (
+                        <li key={idx} className="wb-ref-item">
+                          <a
+                            href={ref.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="wb-ref-link"
+                          >
+                            {ref.label}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                    {isLastTopicOfModule && isModuleTopicsCompleted && (
                       <button
                         type="button"
-                        key={optIdx}
-                        className={optionClass}
-                        onClick={() => handleSelectQuizOption(optIdx, opt.correct)}
+                        className="wb-ref-exam-btn"
+                        onClick={() => {
+                          try { soundManager.snap(); } catch {}
+                          setQuizModuleNum(currentTopic.moduleNum);
+                          setShowQuizModal(true);
+                        }}
+                        title={`Take Module ${currentTopic.moduleNum} Assessment`}
                       >
-                        <span className="wb-opt-letter">{["A", "B", "C", "D"][optIdx]}</span>
-                        <span className="wb-opt-text">{opt.text}</span>
-                        {isSelected && (
-                          <span className="wb-opt-feedback-icon">
-                            {opt.correct ? "✓" : "✕"}
-                          </span>
-                        )}
+                        <span>Take Module {currentTopic.moduleNum} Assessment</span>
+                        <span>→</span>
                       </button>
-                    );
-                  })}
-                </div>
-
-                {quizAnswerStatus === "correct" && (
-                  <div className="wb-quiz-explanation-box success" role="alert">
-                    <div className="wb-quiz-expl-header">
-                      <span className="wb-quiz-expl-icon">✓</span>
-                      <span className="wb-quiz-expl-title">Correct Procedure Verified</span>
-                    </div>
-                    <p>{currentTopic.quiz.explanation}</p>
+                    )}
                   </div>
-                )}
-
-                {quizAnswerStatus === "incorrect" && (
-                  <div className="wb-quiz-explanation-box error" role="alert">
-                    <div className="wb-quiz-expl-header">
-                      <span className="wb-quiz-expl-title">Hardware Safety Warning</span>
+                ) : (
+                  /* ── PAGE 2: BULLETED SUMMARY PANEL ── */
+                  <div className="wb-summary-dock-card" role="region" aria-label="Core Takeaways">
+                    <div className="wb-summary-dock-header">
+                      <h3 className="wb-summary-dock-title">Core Takeaways</h3>
                     </div>
-                    <p>
-                      {currentTopic.mistakeWarning?.desc
-                        ? currentTopic.mistakeWarning.desc
-                        : "Review the safety guidelines and select the compliant procedure."}
-                    </p>
+                    <ul className="wb-summary-dock-list">
+                      {currentLessonContent?.videoSummary?.map((point, idx) => (
+                        <li key={idx} className="wb-summary-dock-item">
+                          <span className="wb-summary-dock-num">{idx + 1}</span>
+                          <span className="wb-summary-dock-text">{point}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <div className="wb-summary-dock-foot">
+                      Topic {currentTopic.topicCode} &middot; {currentTopic.title}
+                    </div>
                   </div>
                 )}
               </div>
-
-              {/* 6. Linear Topic Navigation Footer */}
-              {(() => {
-                const isTopicCompleted = completed.includes(currentTopic.id);
-                const isPreviewEnd = !isAuthenticated && currentIndex === 2;
-
-                return (
-                  <div className="wb-dock-nav-footer">
-                    <button
-                      type="button"
-                      className="wb-nav-step-btn wb-btn-prev"
-                      onClick={handlePrevTopic}
-                      disabled={currentIndex === 0}
-                    >
-                      ← Previous
-                    </button>
-                    <span className="wb-nav-step-counter">
-                      Topic {currentIndex + 1} of {FLAT_TOPICS.length}
-                    </span>
-                    <button
-                      type="button"
-                      className={`wb-nav-step-btn wb-btn-next ${!isTopicCompleted ? "is-locked" : ""} ${isPreviewEnd ? "is-preview-unlock" : ""}`}
-                      onClick={handleNextTopic}
-                      disabled={!isTopicCompleted}
-                      data-tooltip={
-                        !isTopicCompleted
-                          ? "Answer the Quick Check quiz above to unlock"
-                          : isPreviewEnd
-                          ? "Link Google account to unlock Module 2–6 and Certificate"
-                          : "Proceed to next topic"
-                      }
-                    >
-                      {currentIndex + 1 === FLAT_TOPICS.length
-                        ? "Claim Certificate"
-                        : isPreviewEnd
-                        ? "Unlock Full Academy"
-                        : "Next Topic →"}
-                    </button>
-                  </div>
-                );
-              })()}
-            </div>
-          </aside>
+            </aside>
           )}
         </div>
       </div>
@@ -1646,13 +1718,13 @@ export default function CourseShell() {
         }}
       />
 
-      {/* ══ B.O.B. COMPANION IN LEFT RAIL (Hidden during tour highlight guidance) ══ */}
-      {!tourActive && (
+      {/* ══ B.O.B. COMPANION IN LEFT RAIL (Hidden during tour highlight guidance or profile dashboard) ══ */}
+      {!tourActive && !showDashboardOverlay && (
         <BobCompanion
           context="learn"
           activeTopic={currentTopic.title}
-          externalSpeech={showBriefingOverlay || tourActive ? null : bobSpeech}
-          muted={showBriefingOverlay || tourActive}
+          externalSpeech={showBriefingOverlay || tourActive || showDashboardOverlay || showQuizModal || (centerMode === "3d-lab" && currentTopic.isAssemblyLab) ? null : bobSpeech}
+          muted={showBriefingOverlay || tourActive || showDashboardOverlay || showQuizModal || (centerMode === "3d-lab" && currentTopic.isAssemblyLab)}
           dockRight={20}
           size={bobIsCenter ? 88 : leftRailOpen ? 64 : 46}
           isCenter={bobIsCenter}
@@ -1668,11 +1740,27 @@ export default function CourseShell() {
         isOpen={showQuizModal}
         moduleNum={quizModuleNum}
         userEmail={userProfile?.email}
+        theme={workbenchTheme}
         onClose={() => setShowQuizModal(false)}
         onOpenDashboard={() => setShowDashboardOverlay(true)}
+        onCompleteCourse={() => {
+          setShowQuizModal(false);
+          setShowDashboardOverlay(true);
+        }}
         onNextModule={() => {
-          const nextIdx = Math.min(FLAT_TOPICS.length - 1, currentIndex + 1);
-          setCurrentIndex(nextIdx);
+          if (quizModuleNum >= 7) {
+            setShowQuizModal(false);
+            setShowDashboardOverlay(true);
+            return;
+          }
+          const targetModuleNum = quizModuleNum + 1;
+          const targetIdx = FLAT_TOPICS.findIndex((t) => t.moduleNum === targetModuleNum);
+          if (targetIdx !== -1) {
+            goTopic(targetIdx);
+          } else {
+            const nextIdx = Math.min(FLAT_TOPICS.length - 1, currentIndex + 1);
+            goTopic(nextIdx);
+          }
           setCenterMode("presentation");
         }}
       />

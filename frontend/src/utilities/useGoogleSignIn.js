@@ -70,6 +70,8 @@ export default function useGoogleSignIn({ onSuccess } = {}) {
                 strand: "Grade 11 TVL - Computer Systems Servicing (CSS)",
                 interests: ["Desktop PC Assembly & Lab Safety", "Component Keying & Sockets"],
                 experienceLevel: "Beginner (First time touching bare PC hardware)",
+                acceptedTerms: true,
+                acceptedTermsAt: new Date().toISOString(),
                 setupCompleted: true,
                 joinedDate: new Date().toLocaleDateString("en-US", {
                   month: "long",
@@ -126,7 +128,12 @@ export default function useGoogleSignIn({ onSuccess } = {}) {
                     interests: profile.interests,
                     unlockedStages: ["build", "compatibility", "learn", "studio", "certificate"],
                   }),
-                }).catch(() => { });
+                })
+                  .then((r) => r.json())
+                  .then((data) => {
+                    if (data?.pinMailed) sessionStorage.setItem("buildlab_pin_notice", "1");
+                  })
+                  .catch(() => { });
               } catch { }
             }
 

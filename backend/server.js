@@ -3,6 +3,8 @@ const express = require("express");
 const cors = require("cors");
 const { exec } = require("child_process");
 const db = require("./config/db");
+const crypto = require("crypto");
+const nodemailer = require("nodemailer");
 
 process.on("unhandledRejection", (reason, promise) => {
   console.error("Unhandled Rejection:", reason);
@@ -27,7 +29,7 @@ app.use(express.urlencoded({ limit: "25mb", extended: true }));
 // ── Admin Authentication Middleware ──
 const adminAuth = (req, res, next) => {
   const adminKey = req.headers["x-admin-key"] || req.query.admin_key;
-  const expectedKey = process.env.ADMIN_API_KEY || "admin123";
+  const expectedKey = process.env.ADMIN_API_KEY || "admin12345";
 
   // Accepts standard API key or single root password (admin12345)
   if (!adminKey || (adminKey !== expectedKey && adminKey !== "admin12345")) {
@@ -65,6 +67,55 @@ async function initSoftDeleteSchema() {
   }
 }
 initSoftDeleteSchema();
+
+const mailer = process.env.SMTP_HOST
+  ? nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: Number(process.env.SMTP_PORT || 587),
+      secure: Number(process.env.SMTP_PORT || 587) === 465,
+      auth: process.env.SMTP_USER
+        ? { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
+        : undefined,
+    })
+  : null;
+
+const generatePin = () => String(crypto.randomInt(0, 1000000)).padStart(6, "0");
+
+const hashPin = (pin) => {
+  const salt = crypto.randomBytes(16).toString("hex");
+  const hash = crypto.scryptSync(pin, salt, 32).toString("hex");
+  return `${salt}:${hash}`;
+};
+
+const verifyPin = (pin, stored) => {
+  try {
+    const [salt, expected] = String(stored).split(":");
+    const actual = crypto.scryptSync(pin, salt, 32);
+    const expectedBuf = Buffer.from(expected, "hex");
+    return actual.length === expectedBuf.length && crypto.timingSafeEqual(actual, expectedBuf);
+  } catch {
+    return false;
+  }
+};
+
+async function mailPin(email, name, pin) {
+  if (!mailer) {
+    console.log(`[BuildLab PIN] Development fallback for ${email}: ${pin}`);
+    return false;
+  }
+  try {
+    await mailer.sendMail({
+      from: process.env.MAIL_FROM || process.env.SMTP_USER || '"BuildLab Security" <noreply@buildlab.ph>',
+      to: email,
+      subject: "Your BuildLab reset code",
+      text: `Hi ${name},\n\nHere is your reset code for BuildLab: ${pin}\n\nKeep this code. You can use it any time in Settings to reset your learning progress.\n\nIf you did not request this, ignore this message.\n\nBuildLab`,
+    });
+    return true;
+  } catch (err) {
+    console.error("PIN email error:", err.message);
+    return false;
+  }
+}
 
 // Seed essential compatible parts so manual assembly always supports AM4, AM5, LGA1700, DDR4, DDR5 & 850W PSU
 async function seedEssentialCompatibleParts() {
@@ -185,7 +236,7 @@ async function initContentAndAccountsSchema() {
         email VARCHAR(120) NOT NULL,
         role VARCHAR(50) DEFAULT 'Administrator',
         avatar_url LONGTEXT DEFAULT NULL,
-        passcode VARCHAR(100) DEFAULT 'admin123',
+        passcode VARCHAR(100) DEFAULT 'admin12345',
         status VARCHAR(30) DEFAULT 'ACTIVE',
         last_login TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -227,10 +278,16 @@ async function initContentAndAccountsSchema() {
         institution VARCHAR(150) DEFAULT 'Pateros Technological College',
         mode VARCHAR(50) DEFAULT 'learn',
         unlocked_stages LONGTEXT,
+        pin_hash VARCHAR(255) NULL,
         last_active TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
+
+    const [learnerCols] = await db.query("DESCRIBE google_learner_accounts");
+    if (!learnerCols.map((c) => c.Field).includes("pin_hash")) {
+      await db.query("ALTER TABLE google_learner_accounts ADD COLUMN pin_hash VARCHAR(255) NULL");
+    }
 
     // Ensure single shared root admin exists with credentials: ID: root / Password: admin12345
     const [rootCheck] = await db.query("SELECT id FROM admin_accounts WHERE username = 'root'");
@@ -1109,7 +1166,7 @@ app.post("/api/admin/accounts", adminAuth, async (req, res) => {
         email ? email.trim() : `${username.trim()}@buildlab.internal`,
         role || "Administrator",
         avatar_url || null,
-        passcode || "admin123",
+        passcode || "admin12345",
         status || "ACTIVE"
       ]
     );
@@ -1242,21 +1299,58 @@ app.post("/api/learn/sync-profile", async (req, res) => {
     const name = (fullName || email.split("@")[0] || "Learner").trim();
     const stagesJson = typeof unlockedStages === "object" ? JSON.stringify(unlockedStages) : (unlockedStages || '["build"]');
 
+    const [existing] = await db.query(
+      "SELECT id, pin_hash FROM google_learner_accounts WHERE email = ? ORDER BY id DESC LIMIT 1",
+      [email.trim()]
+    );
+
+    let pinHashValue = null;
+    let pinMailed = false;
+    if (!existing.length || !existing[0].pin_hash) {
+      const pin = generatePin();
+      pinHashValue = hashPin(pin);
+      pinMailed = await mailPin(email.trim(), name, pin);
+    }
+
     await db.query(
-      `INSERT INTO google_learner_accounts (google_id, email, full_name, avatar_url, institution, mode, unlocked_stages, last_active)
-       VALUES (?, ?, ?, ?, ?, 'learn', ?, CURRENT_TIMESTAMP)
+      `INSERT INTO google_learner_accounts (google_id, email, full_name, avatar_url, institution, mode, unlocked_stages, pin_hash, last_active)
+       VALUES (?, ?, ?, ?, ?, 'learn', ?, ?, CURRENT_TIMESTAMP)
        ON DUPLICATE KEY UPDATE 
          full_name = VALUES(full_name),
          avatar_url = COALESCE(VALUES(avatar_url), avatar_url),
          unlocked_stages = COALESCE(VALUES(unlocked_stages), unlocked_stages),
+         pin_hash = COALESCE(VALUES(pin_hash), pin_hash),
          last_active = CURRENT_TIMESTAMP`,
-      [gid, email.trim(), name, photo || null, institution || "Pateros Technological College", stagesJson]
+      [gid, email.trim(), name, photo || null, institution || "Pateros Technological College", stagesJson, pinHashValue]
     );
 
-    res.json({ success: true, message: "Google learner profile synchronized." });
+    res.json({ success: true, message: "Google learner profile synchronized.", pinMailed });
   } catch (err) {
     console.error("Sync profile error:", err);
     res.status(500).json({ error: "Failed to sync learner profile" });
+  }
+});
+
+app.post("/api/learn/reset-stages", async (req, res) => {
+  try {
+    const { email, pin } = req.body;
+    if (!email || !/^\d{6}$/.test(String(pin || ""))) {
+      return res.status(400).json({ error: "Enter the 6-digit security PIN." });
+    }
+
+    const [rows] = await db.query(
+      "SELECT id, pin_hash FROM google_learner_accounts WHERE email = ? ORDER BY id DESC LIMIT 1",
+      [email.trim()]
+    );
+    if (!rows.length || !rows[0].pin_hash || !verifyPin(String(pin), rows[0].pin_hash)) {
+      return res.status(401).json({ error: "Incorrect security PIN." });
+    }
+
+    await db.query("UPDATE google_learner_accounts SET unlocked_stages = ? WHERE id = ?", [JSON.stringify(["build"]), rows[0].id]);
+    res.json({ success: true, message: "Stage progression reset." });
+  } catch (err) {
+    console.error("Reset stages error:", err);
+    res.status(500).json({ error: "Failed to reset stage progression" });
   }
 });
 

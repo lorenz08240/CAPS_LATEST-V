@@ -990,12 +990,12 @@ body.theme-light .stage-unlock-banner,
 body.theme-light .footer,
 .theme-light .footer,
 [data-theme="light"] .footer {
-  background-color: #dcd6ba !important;
+  background-color: #f7f4e9 !important;
   background-image: 
-    radial-gradient(circle at 50% 0%, rgba(229, 229, 203, 0.4) 0%, transparent 60%),
-    linear-gradient(180deg, #e5e5cb 0%, #dcd6ba 100%) !important;
-  border-top: 1px solid rgba(60, 42, 33, 0.16) !important;
-  color: #3c2a21 !important;
+    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.8) 0%, transparent 60%),
+    linear-gradient(180deg, #fbf9ef 0%, #f1ecdb 100%) !important;
+  border-top: 1px solid #d8cfae !important;
+  color: #2b211a !important;
 }
 
 body.theme-light .footer-brand h2,
@@ -1014,7 +1014,7 @@ body.theme-light .footer-column h3,
 body.theme-light .footer-column a,
 .theme-light .footer-column a,
 [data-theme="light"] .footer-column a {
-  color: #3c2a21 !important;
+  color: #4a3b32 !important;
 }
 
 body.theme-light .footer-column a:hover,
@@ -1027,9 +1027,9 @@ body.theme-light .footer-column a:hover,
 body.theme-light .footer-credits-card,
 .theme-light .footer-credits-card,
 [data-theme="light"] .footer-credits-card {
-  background: #faf9f2 !important;
-  border-color: rgba(60, 42, 33, 0.14) !important;
-  box-shadow: 0 4px 12px rgba(60, 42, 33, 0.05) !important;
+  background: rgba(60, 42, 33, 0.045) !important;
+  border-color: #d8cfae !important;
+  box-shadow: 0 2px 6px rgba(60, 42, 33, 0.04) !important;
 }
 
 body.theme-light .credit-val,

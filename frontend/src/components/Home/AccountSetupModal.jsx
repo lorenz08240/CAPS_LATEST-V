@@ -43,7 +43,7 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
     };
   }, [isOpen]);
 
-  const [step, setStep] = useState("connect"); // 'connect' | 'tester_email' | 'name_input' | 'about_you'
+  const [step, setStep] = useState("connect"); // 'connect' | 'name_input' | 'about_you'
   const [fullName, setFullName] = useState(userProfile.fullName || "");
   const [email, setEmail] = useState(userProfile.email || "");
   const [avatar, setAvatar] = useState(
@@ -64,8 +64,8 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
 
   const [isLinking, setIsLinking] = useState(false);
   const [error, setError] = useState("");
-  const [testerEmailInput, setTesterEmailInput] = useState("");
-  const [showConfigGuide, setShowConfigGuide] = useState(false);
+  const [agreeToTerms, setAgreeToTerms] = useState(false);
+  const [termsShake, setTermsShake] = useState(false);
 
   // Reset the entry point each time the modal opens so a completed profile is
   // never dragged back through the name and interests questions.
@@ -115,6 +115,14 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
 
   // Google Sign-In linking
   const handleGoogleSignIn = async () => {
+    if (!agreeToTerms) {
+      try { soundManager.warning(); } catch {}
+      setError("Please agree to the Terms of Service and Privacy Policy to continue.");
+      setTermsShake(true);
+      setTimeout(() => setTermsShake(false), 800);
+      return;
+    }
+
     try { soundManager.click(); } catch {}
     setError("");
     setIsLinking(true);
@@ -174,8 +182,7 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
                 setStep("name_input");
               } catch (fetchErr) {
                 console.error("Failed to fetch Google profile:", fetchErr);
-                setError("Connected to Google, but couldn't retrieve profile. Please enter details below.");
-                setStep("tester_email");
+                setError("Connected to Google, but couldn't retrieve profile. Please try again.");
               }
             }
             setIsLinking(false);
@@ -186,7 +193,7 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
             if (err?.type === "popup_closed") {
               setError("Google sign-in popup was closed.");
             } else {
-              setError("Google sign-in encountered an issue. You can also test with your email below.");
+              setError("Google sign-in encountered an issue. Please try again.");
             }
           },
         });
@@ -195,51 +202,12 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
       } catch (err) {
         console.error("Google initTokenClient error:", err);
         setIsLinking(false);
-        setStep("tester_email");
+        setError("Unable to initialize Google Sign-In. Please check your connection and try again.");
       }
     } else {
       setIsLinking(false);
-      setStep("tester_email");
+      setError("Google Sign-In is currently unavailable. Please try again later.");
     }
-  };
-
-  const handleTesterEmailSubmit = (e) => {
-    e.preventDefault();
-    const cleanEmail = testerEmailInput.trim();
-    if (!cleanEmail || !cleanEmail.includes("@")) {
-      try { soundManager.warning(); } catch {}
-      setError("Please enter a valid Google email address (e.g. yourname@gmail.com).");
-      return;
-    }
-
-    // Auto-restore returning student's account, build, and progress!
-    if (restoreStudentAccount) {
-      const restored = restoreStudentAccount(cleanEmail);
-      if (restored) {
-        try { soundManager.granted(); } catch {}
-        engageFullscreen();
-        if (onConfirmed) {
-          onConfirmed("learn", restored);
-        } else {
-          onClose();
-        }
-        return;
-      }
-    }
-
-    try { soundManager.granted(); } catch {}
-    setEmail(cleanEmail);
-    const namePrefix = cleanEmail.split("@")[0].replace(/[._-]/g, " ");
-    const formattedName = namePrefix
-      .split(" ")
-      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-      .join(" ");
-    if (!fullName) {
-      setFullName(formattedName);
-    }
-    setAvatar(`https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(cleanEmail)}&backgroundColor=00e5a0`);
-    setError("");
-    setStep("name_input");
   };
 
   const handleNameSubmit = (e) => {
@@ -273,8 +241,10 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
       strand,
       interests,
       experienceLevel,
+      acceptedTerms: true,
+      acceptedTermsAt: userProfile?.acceptedTermsAt || new Date().toISOString(),
       setupCompleted: true,
-      joinedDate: new Date().toLocaleDateString("en-US", {
+      joinedDate: userProfile?.joinedDate || new Date().toLocaleDateString("en-US", {
         month: "long",
         day: "numeric",
         year: "numeric",
@@ -329,7 +299,12 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
           interests: finalProfile.interests,
           unlockedStages: ["build", "compatibility", "learn", "studio", "certificate"],
         }),
-      }).catch(() => {});
+      })
+        .then((r) => r.json())
+        .then((data) => {
+          if (data?.pinMailed) sessionStorage.setItem("buildlab_pin_notice", "1");
+        })
+        .catch(() => {});
     } catch {}
 
     if (onConfirmed) {
@@ -347,14 +322,12 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
             <span className="step-badge">
               {step === "profile_ready" && "[ SAVED ]"}
               {step === "connect" && "[ 01 / 03 ]"}
-              {step === "tester_email" && "[ 01 / 03 ]"}
               {step === "name_input" && "[ 02 / 03 ]"}
               {step === "about_you" && "[ 03 / 03 ]"}
             </span>
             <span className="step-title">
               {step === "profile_ready" && "ACCOUNT READY"}
               {step === "connect" && "LEARN MODE // GOOGLE AUTH"}
-              {step === "tester_email" && "LEARN MODE // TESTER EMAIL"}
               {step === "name_input" && "STUDENT CERTIFICATION NAME"}
               {step === "about_you" && "TELL US ABOUT YOU // INTERESTS"}
             </span>
@@ -420,6 +393,50 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
 
             {error && <div className="account-error-alert">{error}</div>}
 
+            {/* Terms of Service & Privacy Policy Agreement Checkbox */}
+            <div className={`account-terms-agreement ${termsShake ? "is-error" : ""}`}>
+              <label className="terms-checkbox-label" htmlFor="connect-terms-checkbox">
+                <input
+                  type="checkbox"
+                  id="connect-terms-checkbox"
+                  className="terms-checkbox-input"
+                  checked={agreeToTerms}
+                  onChange={(e) => {
+                    setAgreeToTerms(e.target.checked);
+                    if (e.target.checked && error.includes("Terms")) {
+                      setError("");
+                    }
+                  }}
+                />
+                <span className="terms-checkbox-custom" aria-hidden="true">
+                  {agreeToTerms && "✓"}
+                </span>
+                <span className="terms-agreement-text">
+                  I agree to BuildLab's{" "}
+                  <a
+                    href="/terms"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="terms-link"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    Terms of Service
+                  </a>{" "}
+                  and{" "}
+                  <a
+                    href="/privacy"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="terms-link"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    Privacy Policy
+                  </a>
+                  , and consent to academic record storage for course certification.
+                </span>
+              </label>
+            </div>
+
             <div className="google-only-auth-container">
               <button
                 type="button"
@@ -453,19 +470,6 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
               </button>
             </div>
 
-            <div className="tester-quick-toggle">
-              <button
-                type="button"
-                className="btn-tester-link"
-                onClick={() => {
-                  try { soundManager.click(); } catch {}
-                  setStep("tester_email");
-                }}
-              >
-                🧪 Enter tester email manually &rarr;
-              </button>
-            </div>
-
             <p className="account-trust-note">
               🔒 We only access your basic Google profile (name and email) to issue your certificate. No private drive data requested.
             </p>
@@ -477,85 +481,6 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
               <Link to="/cookies" onClick={onClose}>Cookie Policy</Link>
             </div>
           </div>
-        )}
-
-        {/* STEP 1B: TESTER EMAIL FALLBACK */}
-        {step === "tester_email" && (
-          <form className="account-step-body" onSubmit={handleTesterEmailSubmit}>
-            <div className="account-hero-icon">
-              <span className="cyber-cert-icon">📧</span>
-            </div>
-            <h2 className="account-title">Enter Your Google Tester Account</h2>
-            <p className="account-subtitle">
-              Enter your Google email address to test student synchronization, cloud progress, and certification linking.
-            </p>
-
-            {error && <div className="account-error-alert">{error}</div>}
-
-            <div className="account-form-group">
-              <label htmlFor="tester-email-input">Tester Google Account Email *</label>
-              <input
-                id="tester-email-input"
-                type="email"
-                className="account-input"
-                value={testerEmailInput}
-                onChange={(e) => setTesterEmailInput(e.target.value)}
-                placeholder="e.g. yourname.tester@gmail.com"
-                autoFocus
-                required
-              />
-              <span className="input-hint">
-                Your builds and official certificate will be tied to this Google account.
-              </span>
-            </div>
-
-            <div className="google-clientid-helper">
-              <button
-                type="button"
-                className="btn-toggle-clientid-guide"
-                onClick={() => setShowConfigGuide(!showConfigGuide)}
-              >
-                <span>⚙️ {showConfigGuide ? "Hide" : "Want official Google popup? Check setup guide"}</span>
-                <span className="guide-arrow">{showConfigGuide ? "▲" : "▼"}</span>
-              </button>
-
-              {showConfigGuide && (
-                <div className="clientid-guide-box">
-                  <p className="guide-step">
-                    <strong>1.</strong> Go to <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noreferrer">Google Cloud Console</a> &rarr; Credentials.
-                  </p>
-                  <p className="guide-step">
-                    <strong>2.</strong> Create <strong>OAuth Client ID</strong> &rarr; Application Type: <strong>Web application</strong>.
-                  </p>
-                  <p className="guide-step">
-                    <strong>3.</strong> Add Authorized JavaScript Origin:
-                    <code className="guide-code">{currentOrigin}</code>
-                  </p>
-                  <p className="guide-step">
-                    <strong>4.</strong> Add to <code>frontend/.env</code>:
-                    <code className="guide-code">VITE_GOOGLE_CLIENT_ID=your-id.apps.googleusercontent.com</code>
-                  </p>
-                </div>
-              )}
-            </div>
-
-            <div className="account-form-actions">
-              <button
-                type="button"
-                className="btn-back-step"
-                onClick={() => {
-                  setError("");
-                  setStep("connect");
-                }}
-              >
-                &larr; Back
-              </button>
-              <button type="submit" className="btn-confirm-track">
-                <span>VERIFY GOOGLE ACCOUNT</span>
-                <span className="btn-arrow">&rarr;</span>
-              </button>
-            </div>
-          </form>
         )}
 
         {/* STEP 2: LEGAL NAME FOR CERTIFICATE */}
@@ -684,6 +609,11 @@ export default function AccountSetupModal({ isOpen, onClose, onConfirmed }) {
                   </option>
                 ))}
               </select>
+            </div>
+
+            <div className="account-terms-verified-badge">
+              <span className="terms-badge-icon">🛡️</span>
+              <span>Terms of Service &amp; Academic Integrity Consent Confirmed</span>
             </div>
 
             <div className="account-form-actions">

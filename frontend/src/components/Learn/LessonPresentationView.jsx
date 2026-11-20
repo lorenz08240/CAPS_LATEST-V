@@ -107,6 +107,7 @@ function CustomVideoPlayer({ videoId, title }) {
             rel: 0,
             playsinline: 1,
             iv_load_policy: 3,
+            cc_load_policy: 0,
             origin: window.location.origin,
           },
           events: {
@@ -114,6 +115,10 @@ function CustomVideoPlayer({ videoId, title }) {
               if (dead) return;
               e.target.setVolume(80);
               e.target.setPlaybackRate(1);
+              try {
+                e.target.unloadModule?.("captions");
+                e.target.setOption?.("captions", "track", {});
+              } catch {}
               setDuration(e.target.getDuration() || 0);
               setReady(true);
             },
@@ -283,7 +288,7 @@ function CustomVideoPlayer({ videoId, title }) {
 
         {error && (
           <div className="lp-player-error">
-            <span>⚠️ This video could not be loaded.</span>
+            <span>This video could not be loaded.</span>
             <a href={`https://www.youtube.com/watch?v=${videoId}`} target="_blank" rel="noopener noreferrer">
               Open on YouTube ↗
             </a>
@@ -343,7 +348,18 @@ function CustomVideoPlayer({ videoId, title }) {
         </div>
 
         <button type="button" className="lp-ctrl lp-ctrl-volume" onClick={toggleMute} disabled={!ready || error} title={muted ? "Unmute" : "Mute"}>
-          {muted || volume === 0 ? "🔇" : "🔊"}
+          {muted || volume === 0 ? (
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+              <line x1="23" y1="9" x2="17" y2="15"/>
+              <line x1="17" y1="9" x2="23" y2="15"/>
+            </svg>
+          ) : (
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+            </svg>
+          )}
         </button>
         <input
           className="lp-volume-range"
@@ -367,12 +383,6 @@ function CustomVideoPlayer({ videoId, title }) {
           ▣
         </button>
       </div>
-
-      <div className="lp-player-caption">
-        <span className="lp-caption-icon">📺</span>
-        <strong>{title}</strong>
-        <span className="lp-caption-tag">CUSTOM CONTROLS</span>
-      </div>
     </div>
   );
 }
@@ -380,7 +390,7 @@ function CustomVideoPlayer({ videoId, title }) {
 /* ═══════════════════════════════════════════════════════════════════
    Page 1 — continuous PDF-syllabus-style module document
    ═══════════════════════════════════════════════════════════════════ */
-function ModuleDocument({ topic, doc }) {
+function ModuleDocument({ topic, doc, isLastTopicOfModule, isModuleCompleted, onProceedToQuiz }) {
   const fieldFact = topic.fieldFact;
 
   return (
@@ -403,11 +413,6 @@ function ModuleDocument({ topic, doc }) {
           <div>
             <span className="lp-doc-kicker">LESSON MODULE · {topic.moduleTitle}</span>
             <h1>{topic.title}</h1>
-            <div className="lp-doc-meta">
-              <span>📘 DepEd TVL / TESDA NC II Aligned</span>
-              <span>⏱ Self-Paced</span>
-              <span>🧪 With 3D Lab Practical</span>
-            </div>
           </div>
         </header>
 
@@ -443,7 +448,7 @@ function ModuleDocument({ topic, doc }) {
             )}
             {section.note && (
               <div className={`lp-doc-note note-${section.note.tone || "standard"}`}>
-                <span className="lp-note-icon">{section.note.tone === "warning" ? "⚠" : section.note.tone === "tip" ? "💡" : "ℹ"}</span>
+                <span className="lp-note-icon">{section.note.tone === "warning" ? "!" : section.note.tone === "tip" ? "i" : "i"}</span>
                 <div><strong>{section.note.title}</strong><p>{section.note.text}</p></div>
               </div>
             )}
@@ -453,7 +458,7 @@ function ModuleDocument({ topic, doc }) {
         {fieldFact && (
           <section className="lp-doc-block">
             <h2 className="lp-block-heading"><span>{String(doc.sections.length + 2).padStart(2, "0")}</span> {fieldFact.title}</h2>
-            <p className="lp-block-hint">{fieldFact.badge} — study each item carefully before the lab.</p>
+            <p className="lp-block-hint">{fieldFact.badge}: study each item carefully before the lab.</p>
             <div className="lp-doc-table-wrap">
               <table className="lp-doc-table">
                 <thead>
@@ -492,20 +497,9 @@ function ModuleDocument({ topic, doc }) {
           </ul>
         </section>
 
-        <section className="lp-doc-references">
-          <h3>References &amp; Standards</h3>
-          <ul>
-            {doc.references.map((r, i) => (
-              <li key={i}>
-                <a href={r.url} target="_blank" rel="noopener noreferrer">{r.label} ↗</a>
-              </li>
-            ))}
-          </ul>
-        </section>
-
         <footer className="lp-doc-footer">
-          <span>End of Module — Topic {topic.topicCode} · {topic.title}</span>
-          <span>BuildLab Learning System · Page 1 of 2</span>
+          <span>Topic {topic.topicCode} · {topic.title}</span>
+          <span>Page 1 of 2</span>
         </footer>
       </article>
     </div>
@@ -518,6 +512,10 @@ function ModuleDocument({ topic, doc }) {
 export default function LessonPresentationView({
   topic,
   moduleNum = 1,
+  isLastTopicOfModule = false,
+  isModuleCompleted = false,
+  activePage: propActivePage,
+  onPageChange,
   onProceedTo3D,
   onProceedToQuiz,
   theme = "dark",
@@ -525,13 +523,13 @@ export default function LessonPresentationView({
   const [pageState, setPageState] = useState({ id: topic?.id, page: 0 });
   const totalPages = 2;
   const content = getLessonModuleContent(topic);
-  const activePage = pageState.id === topic?.id ? pageState.page : 0;
-  const setActivePage = (updater) =>
-    setPageState((prev) => {
-      const base = prev.id === topic?.id ? prev.page : 0;
-      const next = typeof updater === "function" ? updater(base) : updater;
-      return { id: topic?.id, page: next };
-    });
+  const activePage = typeof propActivePage === "number" ? propActivePage : (pageState.id === topic?.id ? pageState.page : 0);
+  const setActivePage = (updater) => {
+    const base = activePage;
+    const next = typeof updater === "function" ? updater(base) : updater;
+    setPageState({ id: topic?.id, page: next });
+    if (onPageChange) onPageChange(next);
+  };
 
   const goTo = (page) => {
     if (page < 0 || page >= totalPages) return;
@@ -558,109 +556,40 @@ export default function LessonPresentationView({
 
   return (
     <div className={`lesson-presentation-view theme-${theme}`}>
-      {/* TOP BAR */}
-      <div className="lp-top-bar">
-        <div className="lp-badge-group">
-          <span className="lp-module-badge">MODULE {moduleNum} // LESSON MODULE</span>
-          <span className="lp-slide-indicator">Page {activePage + 1} of {totalPages}</span>
-        </div>
-        <div className="lp-slide-tabs" role="tablist">
-          <button
-            type="button"
-            role="tab"
-            aria-selected={activePage === 0}
-            className={`lp-tab-btn ${activePage === 0 ? "is-active" : ""}`}
-            onClick={() => goTo(0)}
-          >
-            <span className="lp-tab-icon">📄</span> 1. Syllabus Module
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={activePage === 1}
-            className={`lp-tab-btn ${activePage === 1 ? "is-active" : ""}`}
-            onClick={() => goTo(1)}
-          >
-            <span className="lp-tab-icon">🎬</span> 2. Video &amp; Summary
-          </button>
-        </div>
-      </div>
-
-      {/* CONTENT */}
+      {/* CONTENT VIEWPORT (Expanded upward) */}
       <div className="lp-slide-viewport">
-        {activePage === 0 && <ModuleDocument topic={topic} doc={content.moduleDoc} />}
+        {activePage === 0 && (
+          <ModuleDocument
+            topic={topic}
+            doc={content.moduleDoc}
+            isLastTopicOfModule={isLastTopicOfModule}
+            isModuleCompleted={isModuleCompleted}
+            onProceedToQuiz={onProceedToQuiz}
+          />
+        )}
 
         {activePage === 1 && (
           <div className="lp-video-page">
-            <header className="lp-page-header">
-              <span className="lp-page-eyebrow">PAGE 2 OF 2 · TOPIC {topic.topicCode}</span>
-              <h2>Video Demonstration &amp; Lesson Summary</h2>
-              <p>Watch the demonstration aligned to this topic, then check the bulleted notes beside it.</p>
-            </header>
-
             <div className="lp-video-layout">
               <div className="lp-video-main">
                 <CustomVideoPlayer videoId={topic.youtubeId} title={topic.videoTitle} />
-                <a
-                  className="lp-video-external"
-                  href={`https://www.youtube.com/watch?v=${topic.youtubeId}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Having trouble playing? Open on YouTube ↗
-                </a>
-              </div>
-
-              <aside className="lp-summary-panel">
-                <div className="lp-summary-head">
-                  <span className="lp-summary-icon">📌</span>
-                  <div>
-                    <h3>Bulleted Summary</h3>
-                    <p>What to remember from this lesson</p>
+                <div className="lp-video-info-strip">
+                  <h1 className="lp-video-headline">{topic.videoTitle || topic.title}</h1>
+                  <div className="lp-video-meta-row">
+                    <span className="lp-video-badge-strand">DepEd TVL CSS NC II</span>
+                    <span className="lp-video-meta-bullet">•</span>
+                    <span className="lp-video-meta-sub">Topic {topic.topicCode}: {topic.title}</span>
+                    <span className="lp-video-meta-bullet">•</span>
+                    <a
+                      className="lp-video-external-btn"
+                      href={`https://www.youtube.com/watch?v=${topic.youtubeId}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      ▶ Open on YouTube ↗
+                    </a>
                   </div>
                 </div>
-                <ul className="lp-summary-list">
-                  {content.videoSummary.map((point, i) => (
-                    <li key={i}><span className="lp-summary-num">{i + 1}</span><span>{point}</span></li>
-                  ))}
-                </ul>
-                <div className="lp-summary-foot">
-                  Aligned to Topic {topic.topicCode} — {topic.title}
-                </div>
-              </aside>
-            </div>
-
-            <div className="lp-next-stage-bar">
-              <div className="lp-next-stage-copy">
-                <span className="lp-next-badge">NEXT: HANDS-ON PHASE</span>
-                <h4>Ready to inspect the hardware in 3D?</h4>
-                <p>Orbit, zoom, and click hotspots on the interactive workbench, then take the assessment.</p>
-              </div>
-              <div className="lp-next-stage-buttons">
-                <button
-                  type="button"
-                  className="lp-btn-primary lp-btn-3d"
-                  onClick={() => {
-                    try {
-                      soundManager.snap();
-                    } catch {}
-                    if (onProceedTo3D) onProceedTo3D();
-                  }}
-                >
-                  🧊 Launch 3D Inspection Lab →
-                </button>
-                <button
-                  type="button"
-                  className="lp-btn-quiz"
-                  onClick={() => {
-                    try {
-                      soundManager.click();
-                    } catch {}
-                    if (onProceedToQuiz) onProceedToQuiz();
-                  }}
-                >
-                  📝 Take 15-Item Assessment
-                </button>
               </div>
             </div>
           </div>

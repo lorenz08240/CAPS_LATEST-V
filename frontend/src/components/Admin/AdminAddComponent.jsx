@@ -307,7 +307,7 @@ export default function AdminAddComponent() {
                     <div className="preview-fallback-box">
                       <HardwareIcon category={formData.category} size={48} />
                       <span className="preview-fallback-label">
-                        {imgPreviewError ? "Image failed to load — checking placeholder" : "No image preview loaded"}
+                        {imgPreviewError ? "Image failed to load: checking placeholder" : "No image preview loaded"}
                       </span>
                     </div>
                   )}

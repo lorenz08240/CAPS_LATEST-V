@@ -1,21 +1,22 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
 import soundManager from "../../utilities/soundManager";
-import { getModuleQuiz, saveStudentQuizScore } from "./moduleQuizzes";
+import { getModuleQuiz, saveStudentQuizScore, getStudentQuizRecords } from "./moduleQuizzes";
 import "./ModuleQuizModal.css";
 
 /**
  * ModuleQuizModal — 15-Question Comprehensive Academic Assessment
  * Aligned with DepEd Grade 11 CSS, TESDA NC II, and PTC-IICT Academic Standards
  *
- * Strict Proctoring / Lockdown Mechanism:
- * • Close button disabled & hidden during active exam
- * • Esc key intercepted & disabled
- * • Navigation / beforeunload guarded to prevent abandoning exam
- * • Student CANNOT leave or go back anywhere until exam is completed & submitted
+ * Craftsmanship & Anti-Slop Principles:
+ * • Seamless 2-stage submission: initial click activates soft prompt warning,
+ *   subsequent 2-second hold executes submission.
+ * • Pure reset upon early release: zero nagging popups or spam prompts.
+ * • Theme-adaptive obsidian charcoal & warm gold palette matching BuildLab.
+ * • Zero generic emoji clutter; crisp SVG icons and accessible contrast.
  */
 
-/** Slide-to-confirm gate shown before the no-exit assessment begins. */
-function SlideToStartGate({ moduleNum, moduleTitle, questionCount, onStart, onCancel }) {
+/** Slide-to-confirm gate shown before the active assessment begins. */
+function SlideToStartGate({ moduleNum, moduleTitle, questionCount, theme, onStart, onCancel }) {
   const trackRef = useRef(null);
   const progressRef = useRef(0);
   const [progress, setProgress] = useState(0);
@@ -55,14 +56,13 @@ function SlideToStartGate({ moduleNum, moduleTitle, questionCount, onStart, onCa
     setDragging(false);
     if (progressRef.current >= 0.9) {
       setSlideProgress(1);
-      try { soundManager.snap(); } catch { }
+      try { soundManager.snap(); } catch {}
       onStart();
     } else {
       setSlideProgress(0);
     }
   };
 
-  // Esc can still dismiss the gate — lockdown is not active yet.
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "Escape" && onCancel) onCancel();
@@ -72,21 +72,21 @@ function SlideToStartGate({ moduleNum, moduleTitle, questionCount, onStart, onCa
   }, [onCancel]);
 
   return (
-    <div className="mqm-start-overlay" role="dialog" aria-modal="true">
+    <div className={`mqm-start-overlay theme-${theme || "dark"}`} role="dialog" aria-modal="true">
       <div className="mqm-start-card animate-pop-in">
         <span className="mqm-start-kicker">
-          MODULE {moduleNum} // FORMATIVE ASSESSMENT
+          MODULE {moduleNum} · FORMATIVE ASSESSMENT
         </span>
         <h2 className="mqm-start-title">Start Formative Assessment</h2>
         <p className="mqm-start-desc">
-          You are about to begin the secure {questionCount}-item assessment for{" "}
+          You are about to begin the {questionCount}-item assessment for{" "}
           <strong>{moduleTitle}</strong>.
         </p>
 
         <ul className="mqm-start-rules">
-          <li>Once you start, you cannot exit or go back until you submit.</li>
-          <li>Answers are locked after submission and recorded to your academic transcript.</li>
-          <li>Make sure you are ready before continuing.</li>
+          <li>Complete all questions before submitting your assessment.</li>
+          <li>Your submission is transcribed directly to your student record.</li>
+          <li>Review questions and technical rationales upon completion.</li>
         </ul>
 
         <div
@@ -96,6 +96,11 @@ function SlideToStartGate({ moduleNum, moduleTitle, questionCount, onStart, onCa
           onPointerMove={handlePointerMove}
           onPointerUp={finishDrag}
           onPointerCancel={finishDrag}
+          role="slider"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={Math.round(progress * 100)}
+          aria-label="Slide to confirm assessment start"
         >
           <div className="mqm-slide-fill" style={{ width: `${progress * 100}%` }} />
           <span className="mqm-slide-label">
@@ -105,13 +110,27 @@ function SlideToStartGate({ moduleNum, moduleTitle, questionCount, onStart, onCa
             className="mqm-slide-knob"
             style={{ left: `calc(4px + ${progress} * (100% - 60px))` }}
           >
-            →
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
           </div>
         </div>
 
-        <button type="button" className="mqm-start-cancel" onClick={onCancel}>
-          Cancel
-        </button>
+        <div className="mqm-start-actions-row">
+          <button
+            type="button"
+            className="mqm-start-btn-direct"
+            onClick={() => {
+              try { soundManager.snap(); } catch {}
+              onStart();
+            }}
+          >
+            Start Assessment Now →
+          </button>
+          <button type="button" className="mqm-start-cancel" onClick={onCancel}>
+            Cancel
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -121,40 +140,108 @@ export default function ModuleQuizModal({
   isOpen = false,
   moduleNum = 2,
   userEmail = null,
+  theme = "dark",
   onClose,
   onOpenDashboard,
-  onNextModule
+  onNextModule,
+  onCompleteCourse
 }) {
   const quizData = useMemo(() => getModuleQuiz(moduleNum), [moduleNum]);
   const questions = quizData.questions || [];
+  const isLastModule = moduleNum >= 7;
+
+  const getSavedRecord = () => {
+    try {
+      const email =
+        userEmail ||
+        (() => {
+          try {
+            const raw = localStorage.getItem("buildlab_user_profile");
+            return raw ? JSON.parse(raw)?.email : null;
+          } catch {
+            return null;
+          }
+        })();
+      const records = getStudentQuizRecords(email);
+      const guestRecords = getStudentQuizRecords(null);
+      return (records && records[moduleNum]) || (guestRecords && guestRecords[moduleNum]) || null;
+    } catch {
+      return null;
+    }
+  };
+
+  const initialRecord = useMemo(() => getSavedRecord(), [moduleNum, userEmail]);
 
   const [currentQIndex, setCurrentQIndex] = useState(0);
-  const [selectedAnswers, setSelectedAnswers] = useState({});
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [examResult, setExamResult] = useState(null);
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
-  // Gate: the exam / lockdown only begins after the student slides to confirm.
-  const [examStarted, setExamStarted] = useState(false);
+  const [selectedAnswers, setSelectedAnswers] = useState(() => initialRecord?.answers || {});
+  const [examResult, setExamResult] = useState(() => initialRecord);
+  const [isSubmitted, setIsSubmitted] = useState(() => !!initialRecord);
+  const [examStarted, setExamStarted] = useState(() => !!initialRecord);
 
+  // 2-Stage Confirmation & 2-Second Hold-to-Submit
+  const [submitStage, setSubmitStage] = useState("initial"); // "initial" | "review"
+  const [holdProgress, setHoldProgress] = useState(0); // 0 to 1
+  const holdStartTimeRef = useRef(null);
+  const holdRafRef = useRef(null);
+  const isHoldingRef = useRef(false);
+
+  // Reset states on modal open/close or question index navigation
   useEffect(() => {
     if (!isOpen) {
       setExamStarted(false);
+      setIsSubmitted(false);
+      setExamResult(null);
+      setSelectedAnswers({});
+      setCurrentQIndex(0);
+      setSubmitStage("initial");
+      setHoldProgress(0);
+    } else {
+      try {
+        const email =
+          userEmail ||
+          (() => {
+            try {
+              const raw = localStorage.getItem("buildlab_user_profile");
+              return raw ? JSON.parse(raw)?.email : null;
+            } catch {
+              return null;
+            }
+          })();
+        const records = getStudentQuizRecords(email);
+        const guestRecords = getStudentQuizRecords(null);
+        const existing = (records && records[moduleNum]) || (guestRecords && guestRecords[moduleNum]);
+        if (existing) {
+          setExamResult(existing);
+          if (existing.answers) setSelectedAnswers(existing.answers);
+          setIsSubmitted(true);
+          setExamStarted(true);
+        }
+      } catch {}
     }
-  }, [isOpen]);
+  }, [isOpen, moduleNum, userEmail]);
 
-  // HARD CODED MONITORING / LOCKDOWN MECHANISM
+  useEffect(() => {
+    setSubmitStage("initial");
+    setHoldProgress(0);
+  }, [currentQIndex]);
+
+  useEffect(() => {
+    return () => {
+      if (holdRafRef.current) cancelAnimationFrame(holdRafRef.current);
+    };
+  }, []);
+
+  // Proctoring / Navigation protection during active exam
   useEffect(() => {
     if (!isOpen || !examStarted || isSubmitted) return;
 
-    // 1. Prevent accidental window / tab close or reload
     const handleBeforeUnload = (e) => {
       e.preventDefault();
-      e.returnValue = "15-Item Assessment in progress. Your progress will be lost if you leave.";
+      e.returnValue = "Assessment in progress. Progress will be lost if you leave.";
       return e.returnValue;
     };
     window.addEventListener("beforeunload", handleBeforeUnload);
 
-    // 2. Intercept and block Esc key dismissal
     const handleKeyDown = (e) => {
       if (e.key === "Escape") {
         e.preventDefault();
@@ -164,7 +251,6 @@ export default function ModuleQuizModal({
     };
     window.addEventListener("keydown", handleKeyDown, true);
 
-    // 3. Intercept browser back button / history popstate
     const handlePopState = (e) => {
       e.preventDefault();
       window.history.pushState(null, "", window.location.href);
@@ -182,13 +268,13 @@ export default function ModuleQuizModal({
 
   if (!isOpen) return null;
 
-  // ── SLIDE-TO-CONFIRM GATE (before the no-exit exam begins) ──
   if (!examStarted) {
     return (
       <SlideToStartGate
         moduleNum={moduleNum}
         moduleTitle={quizData.moduleTitle}
         questionCount={questions.length}
+        theme={theme}
         onStart={() => setExamStarted(true)}
         onCancel={onClose}
       />
@@ -226,7 +312,6 @@ export default function ModuleQuizModal({
   const handleSubmitExam = () => {
     try { soundManager.snap(); } catch {}
 
-    // Calculate score
     let score = 0;
     questions.forEach((q, idx) => {
       if (selectedAnswers[idx] === q.correctIndex) {
@@ -250,6 +335,73 @@ export default function ModuleQuizModal({
 
     setExamResult(result);
     setIsSubmitted(true);
+    setSubmitStage("initial");
+    setHoldProgress(0);
+  };
+
+  // Hold-to-Submit handlers
+  const cancelHold = () => {
+    if (!isHoldingRef.current && holdProgress === 0) return;
+    isHoldingRef.current = false;
+    if (holdRafRef.current) {
+      cancelAnimationFrame(holdRafRef.current);
+      holdRafRef.current = null;
+    }
+    setHoldProgress(0);
+    // Silent reset: zero nagging prompts on release per /antislop-human principles
+  };
+
+  const startHold = (e) => {
+    if (e && e.button !== undefined && e.button !== 0) return;
+    if (isHoldingRef.current) return;
+    isHoldingRef.current = true;
+    holdStartTimeRef.current = performance.now();
+    const duration = 2000; // 2 seconds hold requirement
+
+    const tick = (now) => {
+      if (!isHoldingRef.current) return;
+      const elapsed = now - holdStartTimeRef.current;
+      const pct = Math.min(1, elapsed / duration);
+      setHoldProgress(pct);
+
+      if (pct >= 1) {
+        isHoldingRef.current = false;
+        setHoldProgress(1);
+        if (holdRafRef.current) {
+          cancelAnimationFrame(holdRafRef.current);
+          holdRafRef.current = null;
+        }
+        handleSubmitExam();
+      } else {
+        holdRafRef.current = requestAnimationFrame(tick);
+      }
+    };
+
+    holdRafRef.current = requestAnimationFrame(tick);
+  };
+
+  const handleInitialClick = () => {
+    try { soundManager.click(); } catch {}
+    setSubmitStage("review");
+  };
+
+  const handleKeyDownHold = (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      if (submitStage === "initial") {
+        e.preventDefault();
+        handleInitialClick();
+      } else if (submitStage === "review" && !e.repeat && !isHoldingRef.current) {
+        e.preventDefault();
+        startHold(e);
+      }
+    }
+  };
+
+  const handleKeyUpHold = (e) => {
+    if ((e.key === "Enter" || e.key === " ") && submitStage === "review") {
+      e.preventDefault();
+      cancelHold();
+    }
   };
 
   const handleRetake = () => {
@@ -258,36 +410,55 @@ export default function ModuleQuizModal({
     setIsSubmitted(false);
     setExamResult(null);
     setCurrentQIndex(0);
+    setSubmitStage("initial");
+    setHoldProgress(0);
   };
 
   return (
-    <div className="module-quiz-overlay" role="dialog" aria-modal="true">
+    <div className={`module-quiz-overlay theme-${theme || "dark"}`} role="dialog" aria-modal="true">
       <div className="module-quiz-card animate-pop-in">
         {/* ── TOP HEADER ── */}
         <header className="quiz-header">
           <div className="quiz-header-info">
             <span className="quiz-kicker">
-              MODULE {moduleNum} // 15-ITEM ACADEMIC ASSESSMENT
+              MODULE {moduleNum} · ACADEMIC ASSESSMENT
             </span>
             <h2 className="quiz-module-title">{quizData.moduleTitle}</h2>
           </div>
 
-          {/* If NOT submitted: show secure lockdown pill. Once submitted: show close X */}
-          {!isSubmitted ? (
-            <div className="quiz-lockdown-badge" title="Lockdown active: finish and submit the exam to exit">
-              <span className="lockdown-pulse-dot" />
-              <span>SECURE EXAM LOCKDOWN</span>
-            </div>
-          ) : (
+          {isSubmitted ? (
             <button
               type="button"
-              className="quiz-close-x"
-              onClick={onClose}
-              aria-label="Close Quiz"
-              title="Close and return to lessons"
+              className={`quiz-header-next-btn ${isLastModule ? "is-complete-btn" : ""}`}
+              onClick={() => {
+                try { soundManager.snap(); } catch {}
+                if (isLastModule) {
+                  if (onCompleteCourse) onCompleteCourse();
+                  else if (onOpenDashboard) onOpenDashboard();
+                } else {
+                  if (onNextModule) onNextModule();
+                }
+                onClose();
+              }}
+              title={isLastModule ? "Complete course and view student profile overview" : "Proceed to next module"}
             >
-              ×
+              <span>{isLastModule ? "Complete" : "Go to Next Module"}</span>
+              {isLastModule ? (
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              ) : (
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg>
+              )}
             </button>
+          ) : (
+            <div className="quiz-lockdown-badge" title="Active Assessment: Complete all items to submit">
+              <span className="lockdown-pulse-dot" />
+              <span>Proctored Session · 15 Items</span>
+            </div>
           )}
         </header>
 
@@ -341,7 +512,7 @@ export default function ModuleQuizModal({
               <div className="q-options-list">
                 {currentQ.options.map((optionText, optIdx) => {
                   const isSelected = selectedAnswers[currentQIndex] === optIdx;
-                  const letter = String.fromCharCode(65 + optIdx); // A, B, C, D
+                  const letter = String.fromCharCode(65 + optIdx);
                   return (
                     <button
                       key={optIdx}
@@ -366,7 +537,10 @@ export default function ModuleQuizModal({
                 disabled={currentQIndex === 0}
                 onClick={handlePrev}
               >
-                ← Previous
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="15 18 9 12 15 6" />
+                </svg>
+                <span>Previous</span>
               </button>
 
               <div className="quiz-footer-actions">
@@ -376,53 +550,81 @@ export default function ModuleQuizModal({
                     className="q-btn-nav q-btn-next"
                     onClick={handleNext}
                   >
-                    Next Question →
+                    <span>Next Question</span>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="9 18 15 12 9 6" />
+                    </svg>
                   </button>
                 ) : (
-                  <>
-                    <button
-                      type="button"
-                      className="q-btn-submit"
-                      onClick={() => {
-                        try { soundManager.snap(); } catch {}
-                        setShowConfirmModal(true);
-                      }}
-                    >
-                      ✓ Submit 15-Item Exam
-                    </button>
-
-                    {showConfirmModal && (
-                      <div className="mqm-inline-confirm animate-fade-in">
-                        <div className="mqm-inline-confirm-copy">
-                          <strong>Review your exam before submitting</strong>
-                          <span>
-                            {answeredCount === totalQuestions
-                              ? `✓ All ${totalQuestions} questions answered`
-                              : `⚠ ${totalQuestions - answeredCount} unanswered — go back if needed`}
-                          </span>
-                        </div>
-                        <div className="mqm-inline-confirm-actions">
-                          <button
-                            type="button"
-                            className="btn-confirm-cancel"
-                            onClick={() => setShowConfirmModal(false)}
-                          >
-                            Cancel
-                          </button>
-                          <button
-                            type="button"
-                            className="btn-confirm-finalize"
-                            onClick={() => {
-                              setShowConfirmModal(false);
-                              handleSubmitExam();
-                            }}
-                          >
-                            ✓ Confirm Submission
-                          </button>
-                        </div>
+                  <div className="quiz-submit-cluster">
+                    {submitStage === "review" && (
+                      <div className="mqm-soft-prompt animate-slide-in" role="status" aria-live="polite">
+                        <span className="mqm-soft-icon" aria-hidden="true">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                            <circle cx="12" cy="12" r="10" />
+                            <line x1="12" y1="8" x2="12" y2="12" />
+                            <line x1="12" y1="16" x2="12.01" y2="16" />
+                          </svg>
+                        </span>
+                        <span className="mqm-soft-text">
+                          {answeredCount < totalQuestions
+                            ? `${totalQuestions - answeredCount} unanswered: review answers or hold to submit`
+                            : "Review your answers before submitting"}
+                        </span>
+                        <button
+                          type="button"
+                          className="mqm-soft-dismiss"
+                          onClick={() => {
+                            try { soundManager.click(); } catch {}
+                            setSubmitStage("initial");
+                            setHoldProgress(0);
+                          }}
+                          title="Dismiss review prompt"
+                        >
+                          Dismiss
+                        </button>
                       </div>
                     )}
-                  </>
+
+                    {submitStage === "initial" ? (
+                      <button
+                        type="button"
+                        className="q-btn-submit q-btn-submit-initial"
+                        onClick={handleInitialClick}
+                        title="Click to review and unlock submission"
+                      >
+                        <span>Submit Assessment</span>
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        className={`q-btn-submit q-btn-submit-hold ${holdProgress > 0 ? "is-holding" : ""}`}
+                        onPointerDown={startHold}
+                        onPointerUp={cancelHold}
+                        onPointerLeave={cancelHold}
+                        onPointerCancel={cancelHold}
+                        onKeyDown={handleKeyDownHold}
+                        onKeyUp={handleKeyUpHold}
+                        title="Hold button for 2 seconds to finalize submission"
+                        aria-label="Hold for 2 seconds to submit assessment"
+                      >
+                        <span
+                          className="q-hold-progress-fill"
+                          style={{ width: `${Math.round(holdProgress * 100)}%` }}
+                        />
+                        <span className="q-hold-btn-content">
+                          <span className="q-hold-icon" aria-hidden="true">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                              <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                          </span>
+                          <span className="q-hold-label">
+                            {holdProgress > 0 ? "Holding to Submit…" : "Hold 2s to Submit"}
+                          </span>
+                        </span>
+                      </button>
+                    )}
+                  </div>
                 )}
               </div>
             </footer>
@@ -440,7 +642,7 @@ export default function ModuleQuizModal({
                 <div className="score-percentage-row">
                   <span className="pct-tag">{examResult?.percentage}% SCORE</span>
                   <span className={`status-badge ${examResult?.passed ? "passed" : "failed"}`}>
-                    {examResult?.passed ? "✓ PASSED (DepEd/TESDA Standard)" : "✕ RETAKE REQUIRED (< 75%)"}
+                    {examResult?.passed ? "Passed · DepEd/TESDA Standard" : "Retake Recommended (< 75%)"}
                   </span>
                 </div>
                 <h3>{examResult?.qualitativeRating}</h3>
@@ -462,7 +664,11 @@ export default function ModuleQuizModal({
                   onClose();
                 }}
               >
-                View in Student Learner Portal &amp; Gradebook →
+                <span>Student Gradebook &amp; Portal</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg>
               </button>
 
               <button
@@ -470,27 +676,49 @@ export default function ModuleQuizModal({
                 className="q-action-btn btn-retake"
                 onClick={handleRetake}
               >
-                ↺ Retake Assessment
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 2v6h6" />
+                  <path d="M21 12A9 9 0 0 0 6 5.3L3 8" />
+                  <path d="M21 22v-6h-6" />
+                  <path d="M3 12a9 9 0 0 0 15 6.7l3-2.7" />
+                </svg>
+                <span>Retake Assessment</span>
               </button>
 
-              {examResult?.passed && onNextModule && (
+              {(onNextModule || onCompleteCourse || isLastModule) && (
                 <button
                   type="button"
-                  className="q-action-btn btn-next-mod"
+                  className={`q-action-btn btn-next-mod ${isLastModule ? "is-complete-btn" : ""}`}
                   onClick={() => {
-                    try { soundManager.click(); } catch {}
-                    onNextModule();
+                    try { soundManager.snap(); } catch {}
+                    if (isLastModule) {
+                      if (onCompleteCourse) onCompleteCourse();
+                      else if (onOpenDashboard) onOpenDashboard();
+                    } else {
+                      if (onNextModule) onNextModule();
+                    }
                     onClose();
                   }}
+                  title={isLastModule ? "Complete course and view student profile overview" : "Proceed to next module"}
                 >
-                  Proceed to Next Module →
+                  <span>{isLastModule ? "Complete" : "Go to Next Module"}</span>
+                  {isLastModule ? (
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  ) : (
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                      <polyline points="12 5 19 12 12 19" />
+                    </svg>
+                  )}
                 </button>
               )}
             </div>
 
             {/* DETAILED ANSWER KEY REVIEW */}
             <div className="quiz-review-section">
-              <h4>Comprehensive Answer Key &amp; Technical Explanations</h4>
+              <h4>Technical Review &amp; Rationale Key</h4>
               <div className="review-questions-list">
                 {questions.map((q, idx) => {
                   const studentAns = selectedAnswers[idx];
@@ -503,7 +731,7 @@ export default function ModuleQuizModal({
                       <div className="review-card-head">
                         <span className="review-q-num">Item #{idx + 1}</span>
                         <span className={`review-badge ${isCorrect ? "correct" : "wrong"}`}>
-                          {isCorrect ? "✓ Correct" : "✕ Incorrect"}
+                          {isCorrect ? "Correct" : "Incorrect"}
                         </span>
                       </div>
                       <p className="review-q-text">{q.question}</p>
@@ -527,7 +755,6 @@ export default function ModuleQuizModal({
             </div>
           </div>
         )}
-
       </div>
     </div>
   );

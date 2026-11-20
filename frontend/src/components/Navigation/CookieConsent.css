@@ -24,10 +24,11 @@
   transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
-/* When on /learn or when workbench shell is present, center in the 3D viewport so it NEVER obstructs the right-hand lesson reader dock */
+/* When on /learn or when workbench shell is present, position at top below header so it NEVER obstructs the 3D stepper or lesson footer */
 body:has(.wb-shell) .buildlab-cookie-banner,
 .wb-shell ~ .buildlab-cookie-banner {
-  bottom: 24px !important;
+  top: 76px !important;
+  bottom: auto !important;
   left: 45% !important;
   right: auto !important;
   transform: translateX(-50%) !important;
@@ -35,6 +36,11 @@ body:has(.wb-shell) .buildlab-cookie-banner,
   max-width: 540px !important;
   margin: 0 !important;
   z-index: 9995 !important;
+}
+
+body:has(.wb-3d-guided-stepper) .buildlab-cookie-banner {
+  display: none !important;
+  pointer-events: none !important;
 }
 
 body:has(.wb-shell) .buildlab-cookie-banner .cookie-banner-content,
@@ -143,6 +149,30 @@ body:has([role="dialog"]:not(.buildlab-cookie-banner)) .buildlab-cookie-banner {
   color: #cbd5e1;
   line-height: 1.45;
   margin: 0;
+}
+
+.cookie-policy-link {
+  color: #38bdf8;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.2s ease;
+}
+
+.cookie-policy-link:hover {
+  color: #7dd3fc;
+}
+
+body.theme-light .cookie-policy-link,
+.theme-light .cookie-policy-link,
+[data-theme="light"] .cookie-policy-link {
+  color: #b45309 !important;
+}
+
+body.theme-light .cookie-policy-link:hover,
+.theme-light .cookie-policy-link:hover,
+[data-theme="light"] .cookie-policy-link:hover {
+  color: #78350f !important;
 }
 
 .cookie-actions-col {

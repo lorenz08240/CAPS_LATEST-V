@@ -544,12 +544,6 @@ function Home() {
           onSelectLearn={() => {
             signIn();
           }}
-          onSelectFree={() => {
-            setShowModeCards(false);
-            setAppMode("explore");
-            setTransitionMode("explore");
-            setShowTransitionOverlay(true);
-          }}
         />
         {/* ── Rig Component Picker Transition Overlay ── */}
         <RigPickerTransitionOverlay

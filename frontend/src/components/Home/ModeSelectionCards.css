@@ -44,6 +44,18 @@
   right: 0;
   height: 2px;
   background: linear-gradient(135deg, #d5cea3 0%, #e5e5cb 100%);
+  z-index: 2;
+}
+
+/* Pixel trail stays behind the modal content, at a subtle strength */
+.mode-selection-container .mode-selection-pixels {
+  opacity: 0.35;
+}
+
+.mode-selection-header,
+.mode-selection-body {
+  position: relative;
+  z-index: 2;
 }
 
 .mode-selection-header {
@@ -496,23 +508,6 @@ body.theme-light .mode-btn-free,
   margin: 0 auto;
 }
 
-.mode-btn-secondary {
-  background: transparent;
-  border: none;
-  color: #94a3b8;
-  font-size: 0.86rem;
-  font-weight: 500;
-  cursor: pointer;
-  padding: 6px 12px;
-  transition: all 0.2s ease;
-  font-family: inherit;
-}
-
-.mode-btn-secondary:hover {
-  color: #ffffff;
-  text-decoration: underline;
-}
-
 /* Light theme support */
 body.theme-light .mode-course-icon-wrap,
 .theme-light .mode-course-icon-wrap {
@@ -523,16 +518,6 @@ body.theme-light .mode-course-icon-wrap,
 body.theme-light .mode-card-perks.clean-list li,
 .theme-light .mode-card-perks.clean-list li {
   color: #334155;
-}
-
-body.theme-light .mode-btn-secondary,
-.theme-light .mode-btn-secondary {
-  color: #64748b;
-}
-
-body.theme-light .mode-btn-secondary:hover,
-.theme-light .mode-btn-secondary:hover {
-  color: #0284c7;
 }
 
 /* ── Google sign-in trust note + legal links ── */
@@ -578,4 +563,63 @@ body.theme-light .mode-btn-secondary:hover,
   color: #b08d57;
   text-decoration: underline;
 }
+
+/* ── Mode Selection Terms Agreement ── */
+.mode-terms-agreement {
+  margin: 10px 0 12px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.mode-terms-agreement:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.mode-terms-agreement.is-error {
+  border-color: #f43f5e;
+  background: rgba(244, 63, 94, 0.08);
+  animation: termsShakeAnim 0.4s ease-in-out;
+}
+
+.mode-terms-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.mode-terms-text {
+  font-size: 0.74rem;
+  line-height: 1.45;
+  color: #cbd5e1;
+}
+
+.mode-terms-text .terms-link {
+  color: #38bdf8;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.mode-terms-text .terms-link:hover {
+  color: #7dd3fc;
+}
+
+body.theme-light .mode-terms-agreement,
+.theme-light .mode-terms-agreement {
+  background: #f8fafc;
+  border-color: rgba(15, 23, 42, 0.12);
+}
+
+body.theme-light .mode-terms-text,
+.theme-light .mode-terms-text {
+  color: #334155;
+}
+
 

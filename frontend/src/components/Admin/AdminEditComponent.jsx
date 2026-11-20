@@ -507,7 +507,7 @@ export default function AdminEditComponent() {
                         <HardwareIcon category={part.category} size={18} />
                       </div>
                       <div className="part-card-details">
-                        <span className="part-card-brand">{part.brand || "—"}</span>
+                        <span className="part-card-brand">{part.brand || "N/A"}</span>
                         <span className="part-card-name">{part.name}</span>
                         <span className="part-card-cat-badge">{part.category}</span>
                       </div>

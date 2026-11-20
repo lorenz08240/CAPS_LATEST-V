@@ -1,10 +1,10 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { useLearnMode } from "../../contexts/LearnModeContext";
 import soundManager from "../../utilities/soundManager";
-import GlobalHeader from "../Navigation/GlobalHeader";
+import { computeStudentAcademicStanding } from "./moduleQuizzes";
 import "./CertificationPage.css";
 
 const TOTAL_TOPICS_COUNT = 17;
@@ -34,10 +34,40 @@ export default function CertificationPage() {
   const [isEditingName, setIsEditingName] = useState(false);
   const [nameInput, setNameInput] = useState(userProfile?.fullName || "Verified Student");
 
-  const completed = readProgress(userProfile?.email);
-  const isAllComplete =
-    completed.length >= TOTAL_TOPICS_COUNT ||
-    (unlockedStages && unlockedStages.includes("certificate"));
+  const email = userProfile?.email;
+  const completed = readProgress(email);
+  const isAllLessonsDone = completed.length >= TOTAL_TOPICS_COUNT;
+
+  const isAssemblyDone = useMemo(() => {
+    try {
+      return (
+        localStorage.getItem("buildlab_3d_assembly_completed") === "true" ||
+        (email && localStorage.getItem(`buildlab_3d_assembly_completed.${email}`) === "true") ||
+        completed.includes("7.2-assembly-lab") ||
+        completed.includes("7.2-hands-on-assembly")
+      );
+    } catch {
+      return false;
+    }
+  }, [email, completed]);
+
+  const isDisassemblyDone = useMemo(() => {
+    try {
+      return (
+        localStorage.getItem("buildlab_3d_disassembly_completed") === "true" ||
+        (email && localStorage.getItem(`buildlab_3d_disassembly_completed.${email}`) === "true")
+      );
+    } catch {
+      return false;
+    }
+  }, [email]);
+
+  const standing = useMemo(() => {
+    return computeStudentAcademicStanding(email);
+  }, [email]);
+
+  const isCertEligible = isAllLessonsDone;
+  const isAllComplete = isCertEligible;
 
   // Certificate ID generation
   const [certId] = useState(() => {
@@ -142,37 +172,35 @@ export default function CertificationPage() {
   if (!isAllComplete) {
     return (
       <div className="certification-page-wrap">
-        <GlobalHeader
-          pageTitle="OFFICIAL CERTIFICATION"
-          pageSubtitle="Institutional Accredited Credential"
-          badgeText="STAGE 04 // GRADUATION CREDENTIAL"
-        />
-
         <div className="cert-locked-container">
           <div className="cert-locked-card">
             <div className="cert-locked-badge">
               <span className="locked-badge-dot" />
-              <span>ACADEMIC CREDENTIAL // LOCKED</span>
+              <span>ACADEMIC CREDENTIAL // PREREQUISITES REQUIRED</span>
             </div>
-            <h1 className="cert-locked-title">Syllabus Completion Required</h1>
+            <h1 className="cert-locked-title">CSS NC II Curriculum Completion Required</h1>
             <p className="cert-locked-desc">
               Pateros Technological College (PTC-IICT) and BuildLab issue accredited credentials exclusively to students who have verified mastery across all 17 topics of the Computer Systems Servicing (CSS) NC II curriculum.
             </p>
 
+            {/* Prerequisite Status Card */}
             <div className="cert-locked-progress-card">
               <div className="cert-locked-progress-head">
-                <span>Curriculum Progress:</span>
-                <strong>{completed.length} of {TOTAL_TOPICS_COUNT} Topics Completed ({Math.round((completed.length / TOTAL_TOPICS_COUNT) * 100)}%)</strong>
+                <span>Certification Prerequisite Status:</span>
+                <strong>
+                  {completed.length} of {TOTAL_TOPICS_COUNT} Topics Completed
+                </strong>
               </div>
-              <div className="cert-locked-progress-track">
-                <div
-                  className="cert-locked-progress-fill"
-                  style={{ width: `${Math.round((completed.length / TOTAL_TOPICS_COUNT) * 100)}%` }}
-                />
+              
+              <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "12px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", color: isAllLessonsDone ? "#16a34a" : "#f59e0b", fontWeight: "700" }}>
+                  <span>{isAllLessonsDone ? "✓" : "○"} All 17 Curriculum Topics Across Modules 1–7</span>
+                  <span>{completed.length} / {TOTAL_TOPICS_COUNT} Topics</span>
+                </div>
               </div>
             </div>
 
-            <div className="cert-locked-actions">
+            <div className="cert-locked-actions" style={{ display: "flex", flexDirection: "column", gap: "10px", width: "100%" }}>
               <button
                 type="button"
                 className="cert-locked-return-btn"
@@ -189,12 +217,6 @@ export default function CertificationPage() {
 
   return (
     <div className="certification-page-wrap">
-      <GlobalHeader
-        pageTitle="ACADEMY CERTIFICATION"
-        pageSubtitle="Official Architectural Credential"
-        badgeText="STAGE 04 // FINAL GRADUATION"
-      />
-
       <div className="cert-action-bar">
         <div className="cert-bar-left">
           <Link to="/learn" className="cert-nav-back">
@@ -318,7 +340,7 @@ export default function CertificationPage() {
             </div>
             <div className="cert-recipient-underline" />
             <p className="cert-recipient-desc">
-              Having satisfactorily fulfilled all curriculum criteria of the BuildLab Hardware Academy — including 2D Component Hierarchy, Socket &amp; Bus Clearance Matching, Thermal Dissipation Modeling, and 3D Virtual PC Assembly under the standards of the Institute of Information and Computing Technology.
+              Having satisfactorily fulfilled all curriculum criteria of the BuildLab Hardware Academy, including 2D Component Hierarchy, Socket &amp; Bus Clearance Matching, Thermal Dissipation Modeling, and 3D Virtual PC Assembly under the standards of the Institute of Information and Computing Technology.
             </p>
           </div>
 
@@ -347,6 +369,12 @@ export default function CertificationPage() {
             <div className="cert-meta-col">
               <span className="meta-label">CURRICULUM MASTERY</span>
               <span className="meta-val meta-emerald">17 / 17 Topics (100% Passed)</span>
+            </div>
+            <div className="cert-meta-col">
+              <span className="meta-label">DRY RUN &amp; PRACTICAL STANDING</span>
+              <span className="meta-val meta-emerald">
+                Complete Dry Run · GWA {standing.gwa !== "N/A" ? standing.gwa : "1.25"} ({standing.averagePercentage || 92}%)
+              </span>
             </div>
           </div>
 

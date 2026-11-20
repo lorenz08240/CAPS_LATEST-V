@@ -926,3 +926,161 @@
     grid-template-columns: 1fr;
   }
 }
+
+
+/* ==========================================================================
+   Course Briefing PDF Sheet — Light Mode (Cream Architectural Document)
+   ========================================================================== */
+body.theme-light .wb-pdf-viewer-overlay,
+.theme-light .wb-pdf-viewer-overlay,
+[data-theme="light"] .wb-pdf-viewer-overlay {
+  background: rgba(229, 229, 203, 0.96) !important;
+}
+
+body.theme-light .wb-pdf-toolbar,
+.theme-light .wb-pdf-toolbar,
+[data-theme="light"] .wb-pdf-toolbar {
+  background: #faf9f2 !important;
+  border-bottom: 1px solid rgba(60, 42, 33, 0.16) !important;
+  box-shadow: 0 4px 16px rgba(60, 42, 33, 0.08) !important;
+}
+
+body.theme-light .wb-pdf-filename,
+.theme-light .wb-pdf-filename,
+[data-theme="light"] .wb-pdf-filename {
+  color: #1a120b !important;
+}
+
+body.theme-light .wb-pdf-file-badge,
+body.theme-light .wb-pdf-page-pill,
+body.theme-light .wb-pdf-zoom-pill,
+.theme-light .wb-pdf-file-badge,
+.theme-light .wb-pdf-page-pill,
+.theme-light .wb-pdf-zoom-pill,
+[data-theme="light"] .wb-pdf-file-badge,
+[data-theme="light"] .wb-pdf-page-pill,
+[data-theme="light"] .wb-pdf-zoom-pill {
+  background: #f1f0ea !important;
+  color: #3c2a21 !important;
+  border-color: rgba(60, 42, 33, 0.2) !important;
+}
+
+body.theme-light .wb-pdf-viewport,
+.theme-light .wb-pdf-viewport,
+[data-theme="light"] .wb-pdf-viewport {
+  background: radial-gradient(circle at 50% 20%, rgba(229, 229, 203, 0.8) 0%, rgba(213, 206, 163, 0.95) 100%) !important;
+}
+
+body.theme-light .wb-pdf-sheet,
+.theme-light .wb-pdf-sheet,
+[data-theme="light"] .wb-pdf-sheet {
+  background: #ffffff !important;
+  color: #1a120b !important;
+  border: 1px solid rgba(60, 42, 33, 0.18) !important;
+  box-shadow: 0 25px 60px rgba(60, 42, 33, 0.16), 0 4px 16px rgba(60, 42, 33, 0.08) !important;
+}
+
+body.theme-light .wb-pdf-brand-name,
+body.theme-light .wb-pdf-title,
+.theme-light .wb-pdf-brand-name,
+.theme-light .wb-pdf-title,
+[data-theme="light"] .wb-pdf-brand-name,
+[data-theme="light"] .wb-pdf-title {
+  color: #1a120b !important;
+}
+
+body.theme-light .wb-pdf-brand-sub,
+body.theme-light .wb-pdf-hero-tag,
+body.theme-light .wb-pdf-mini-heading,
+body.theme-light .wb-pdf-summary,
+.theme-light .wb-pdf-brand-sub,
+.theme-light .wb-pdf-hero-tag,
+.theme-light .wb-pdf-mini-heading,
+.theme-light .wb-pdf-summary,
+[data-theme="light"] .wb-pdf-brand-sub,
+[data-theme="light"] .wb-pdf-hero-tag,
+[data-theme="light"] .wb-pdf-mini-heading,
+[data-theme="light"] .wb-pdf-summary {
+  color: #3c2a21 !important;
+}
+
+body.theme-light .wb-pdf-lede,
+.theme-light .wb-pdf-lede,
+[data-theme="light"] .wb-pdf-lede {
+  color: #1a120b !important;
+}
+
+body.theme-light .wb-pdf-title-accent,
+.theme-light .wb-pdf-title-accent,
+[data-theme="light"] .wb-pdf-title-accent {
+  color: #b45309 !important;
+}
+
+body.theme-light .wb-pdf-stamp-main,
+.theme-light .wb-pdf-stamp-main,
+[data-theme="light"] .wb-pdf-stamp-main {
+  background: #f1f0ea !important;
+  border-color: rgba(60, 42, 33, 0.25) !important;
+  color: #1a120b !important;
+}
+
+body.theme-light .wb-pdf-stamp-sub,
+.theme-light .wb-pdf-stamp-sub,
+[data-theme="light"] .wb-pdf-stamp-sub {
+  color: #543b2f !important;
+}
+
+body.theme-light .wb-pdf-outcome,
+body.theme-light .wb-pdf-meta-table,
+body.theme-light .wb-pdf-module-row,
+.theme-light .wb-pdf-outcome,
+.theme-light .wb-pdf-meta-table,
+.theme-light .wb-pdf-module-row,
+[data-theme="light"] .wb-pdf-outcome,
+[data-theme="light"] .wb-pdf-meta-table,
+[data-theme="light"] .wb-pdf-module-row {
+  background: #faf9f2 !important;
+  border-color: rgba(60, 42, 33, 0.16) !important;
+}
+
+body.theme-light .wb-pdf-outcome-num,
+body.theme-light .wb-pdf-meta-label,
+.theme-light .wb-pdf-outcome-num,
+.theme-light .wb-pdf-meta-label,
+[data-theme="light"] .wb-pdf-outcome-num,
+[data-theme="light"] .wb-pdf-meta-label {
+  color: #543b2f !important;
+}
+
+body.theme-light .wb-pdf-outcome-title,
+body.theme-light .wb-pdf-meta-val,
+body.theme-light .wb-pdf-meta-value,
+body.theme-light .wb-pdf-module-title,
+.theme-light .wb-pdf-outcome-title,
+.theme-light .wb-pdf-meta-val,
+.theme-light .wb-pdf-meta-value,
+.theme-light .wb-pdf-module-title,
+[data-theme="light"] .wb-pdf-outcome-title,
+[data-theme="light"] .wb-pdf-meta-val,
+[data-theme="light"] .wb-pdf-meta-value,
+[data-theme="light"] .wb-pdf-module-title {
+  color: #1a120b !important;
+  font-weight: 700 !important;
+}
+
+body.theme-light .wb-pdf-outcome-desc,
+body.theme-light .wb-pdf-module-desc,
+.theme-light .wb-pdf-outcome-desc,
+.theme-light .wb-pdf-module-desc,
+[data-theme="light"] .wb-pdf-outcome-desc,
+[data-theme="light"] .wb-pdf-module-desc {
+  color: #3c2a21 !important;
+}
+
+body.theme-light .wb-pdf-step-pill,
+.theme-light .wb-pdf-step-pill,
+[data-theme="light"] .wb-pdf-step-pill {
+  background: #f1f0ea !important;
+  color: #3c2a21 !important;
+  border-color: rgba(60, 42, 33, 0.2) !important;
+}

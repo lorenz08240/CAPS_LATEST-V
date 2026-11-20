@@ -1074,20 +1074,61 @@ body.theme-light .rig-specs-list,
 body.theme-light .specs-list-title,
 .theme-light .specs-list-title,
 [data-theme="light"] .specs-list-title {
-  color: #64748b !important;
+  color: #475569 !important;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.1) !important;
+}
+
+body.theme-light .spec-category,
+.theme-light .spec-category,
+[data-theme="light"] .spec-category {
+  color: #475569 !important;
+}
+
+body.theme-light .spec-name,
+.theme-light .spec-name,
+[data-theme="light"] .spec-name {
+  color: #0f172a !important;
+}
+
+body.theme-light .spec-tag,
+.theme-light .spec-tag,
+[data-theme="light"] .spec-tag {
+  background: rgba(15, 23, 42, 0.06) !important;
+  border-color: rgba(15, 23, 42, 0.12) !important;
+  color: #1e293b !important;
+}
+
+body.theme-light .spec-item-row:hover,
+.theme-light .spec-item-row:hover,
+[data-theme="light"] .spec-item-row:hover {
+  background: rgba(15, 23, 42, 0.04) !important;
+}
+
+body.theme-light .spec-item-row.item-empty .spec-name,
+.theme-light .spec-item-row.item-empty .spec-name,
+[data-theme="light"] .spec-item-row.item-empty .spec-name {
+  color: #94a3b8 !important;
+}
+
+body.theme-light .empty-rig1-desc,
+.theme-light .empty-rig1-desc,
+[data-theme="light"] .empty-rig1-desc {
+  color: #475569 !important;
 }
 
 body.theme-light .btn-load-demo-ghost,
 .theme-light .btn-load-demo-ghost,
 [data-theme="light"] .btn-load-demo-ghost {
-  border-color: rgba(15, 23, 42, 0.14);
-  color: #475569;
+  border-color: rgba(15, 23, 42, 0.22) !important;
+  color: #1e293b !important;
+  background: #ffffff !important;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06) !important;
 }
 
 body.theme-light .btn-load-demo-ghost:hover,
 .theme-light .btn-load-demo-ghost:hover,
 [data-theme="light"] .btn-load-demo-ghost:hover {
-  background: #f1f5f9;
-  border-color: #0f172a;
-  color: #0f172a;
+  background: #f1f5f9 !important;
+  border-color: #0f172a !important;
+  color: #0f172a !important;
 }

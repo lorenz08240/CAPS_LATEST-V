@@ -1,16 +1,10 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 
-// The sidebar already links to Inventory, Accounts and Team Profiles,
-// so the header only carries the two pages the sidebar does not list.
 export const AdminHeader = ({ breadcrumbCurrent = "Hardware Inventory" }) => {
   const { logoutAdmin } = useAuth();
-  const location = useLocation();
-  const currentPath = location.pathname;
-
-  const isCrawler = currentPath.includes("/admin/crawler");
-  const isLogs = currentPath.includes("/admin/logs");
+  const adminId = sessionStorage.getItem("buildlab_admin_id") || "root";
 
   return (
     <header className="admin-header">
@@ -21,26 +15,17 @@ export const AdminHeader = ({ breadcrumbCurrent = "Hardware Inventory" }) => {
       </div>
 
       <div className="admin-header-actions">
-        <nav className="admin-route-nav" aria-label="Admin pages">
-          <Link
-            to="/admin/crawler"
-            className={`admin-nav-tab ${isCrawler ? "active" : ""}`}
-          >
-            <span className="nav-tab-label">Crawler Hub</span>
-          </Link>
-
-          <Link
-            to="/admin/logs"
-            className={`admin-nav-tab ${isLogs ? "active" : ""}`}
-          >
-            <span className="nav-tab-label">System Logs</span>
-          </Link>
-        </nav>
+        <div className="admin-header-operator-pill">
+          <span className="operator-status-dot" aria-hidden="true" />
+          <span className="operator-label">Operator:</span>
+          <span className="operator-id">{adminId}</span>
+        </div>
 
         <button
           type="button"
           className="btn-glass-logout"
           onClick={logoutAdmin}
+          title="Sign out of Admin session"
         >
           Log out
         </button>

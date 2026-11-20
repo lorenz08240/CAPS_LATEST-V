@@ -39,9 +39,8 @@ export function AuthProvider({ children }) {
     }
 
     // Shared Single Admin Credentials: ID: root • Password: admin12345
-    // Also supports legacy fallback
     const isValidId = id === "root" || id === "admin";
-    const isValidPass = pass === "admin12345" || pass === "admin123";
+    const isValidPass = pass === "admin12345";
 
     if (isValidId && isValidPass) {
       setIsAdmin(true);

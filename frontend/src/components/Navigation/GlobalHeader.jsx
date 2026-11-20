@@ -146,9 +146,6 @@ export default function GlobalHeader({ onSearchClick, hideBuildPill = false, hid
                 signIn();
               }
             }}
-            onSelectFree={() => {
-              setShowModeCards(false);
-            }}
           />
         </>,
         document.body

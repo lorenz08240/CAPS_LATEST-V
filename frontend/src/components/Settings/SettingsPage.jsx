@@ -4,9 +4,81 @@ import { useLearnMode } from "../../contexts/LearnModeContext";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useLanguage } from "../../contexts/LanguageContext";
 import soundManager from "../../utilities/soundManager";
-import { enterFullscreen, isFullscreenActive } from "../../utilities/fullscreen";
+import { enterFullscreen, exitFullscreen, isFullscreenActive } from "../../utilities/fullscreen";
 import AccountSetupModal from "../Home/AccountSetupModal";
 import "./SettingsPage.css";
+
+const TABS = [
+  {
+    id: "general",
+    label: "General",
+    icon: (
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <circle cx="12" cy="12" r="3" />
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+      </svg>
+    ),
+  },
+  {
+    id: "account",
+    label: "Account",
+    icon: (
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+        <circle cx="12" cy="7" r="4" />
+      </svg>
+    ),
+  },
+  {
+    id: "appearance",
+    label: "Appearance",
+    icon: (
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+      </svg>
+    ),
+  },
+  {
+    id: "audio",
+    label: "Audio",
+    icon: (
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
+      </svg>
+    ),
+  },
+  {
+    id: "stages",
+    label: "Stages",
+    icon: (
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <polygon points="12 2 2 7 12 12 22 7 12 2" />
+        <polyline points="2 17 12 22 22 17" />
+        <polyline points="2 12 12 17 22 12" />
+      </svg>
+    ),
+  },
+  {
+    id: "all",
+    label: "All Settings",
+    icon: (
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <rect x="3" y="3" width="7" height="7" />
+        <rect x="14" y="3" width="7" height="7" />
+        <rect x="14" y="14" width="7" height="7" />
+        <rect x="3" y="14" width="7" height="7" />
+      </svg>
+    ),
+  },
+];
+
+const DASHBOARD_STAGES = [
+  { key: "build", label: "2D PC Builder", short: "Build" },
+  { key: "compatibility", label: "Compatibility Matrix", short: "Matrix" },
+  { key: "learn", label: "Hardware Academy", short: "Academy" },
+  { key: "certificate", label: "Official Certification", short: "Cert" },
+];
 
 export default function SettingsPage() {
   const navigate = useNavigate();
@@ -29,7 +101,80 @@ export default function SettingsPage() {
   const [toastType, setToastType] = useState("success");
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
-  const [activeTab, setActiveTab] = useState("all"); // 'all' | 'account' | 'appearance' | 'audio' | 'language' | 'stages'
+  const [dashboardOpen, setDashboardOpen] = useState(false);
+  const [resetPin, setResetPin] = useState("");
+  const [pinError, setPinError] = useState("");
+  const [pinBusy, setPinBusy] = useState(false);
+
+  const unlockedCount = DASHBOARD_STAGES.filter((stage) => unlockedStages.includes(stage.key)).length;
+  const progressPercent = Math.round((unlockedCount / DASHBOARD_STAGES.length) * 100);
+
+  // Phone-inspired default tab: 'general'
+  const [activeTab, setActiveTab] = useState(() => {
+    try {
+      const param = new URLSearchParams(window.location.search).get("tab");
+      if (param && ["general", "account", "appearance", "audio", "stages", "all"].includes(param.toLowerCase())) {
+        return param.toLowerCase();
+      }
+    } catch {}
+    return "general";
+  });
+
+  // Track Fullscreen state
+  const [isFullscreen, setIsFullscreen] = useState(() => {
+    try {
+      return isFullscreenActive();
+    } catch {
+      return false;
+    }
+  });
+
+  useEffect(() => {
+    const handleFsChange = () => {
+      try {
+        setIsFullscreen(isFullscreenActive());
+      } catch {}
+    };
+    document.addEventListener("fullscreenchange", handleFsChange);
+    document.addEventListener("webkitfullscreenchange", handleFsChange);
+    document.addEventListener("mozfullscreenchange", handleFsChange);
+    document.addEventListener("MSFullscreenChange", handleFsChange);
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFsChange);
+      document.removeEventListener("webkitfullscreenchange", handleFsChange);
+      document.removeEventListener("mozfullscreenchange", handleFsChange);
+      document.removeEventListener("MSFullscreenChange", handleFsChange);
+    };
+  }, []);
+
+  const handleToggleFullscreen = async () => {
+    try {
+      soundManager.click();
+      if (isFullscreenActive()) {
+        exitFullscreen();
+        setIsFullscreen(false);
+        showToast("Exited fullscreen mode.", "info");
+      } else {
+        const ok = await enterFullscreen();
+        setIsFullscreen(ok || isFullscreenActive());
+        if (ok || isFullscreenActive()) {
+          showToast("Entered fullscreen mode.", "success");
+        }
+      }
+    } catch {
+      showToast("Fullscreen immersion mode toggled.", "info");
+    }
+  };
+
+  const handleClearCache = () => {
+    try {
+      soundManager.click();
+      sessionStorage.clear();
+      showToast("Interface session cache cleared successfully.", "success");
+    } catch {
+      showToast("Session cache cleared.", "info");
+    }
+  };
 
   const showToast = (msg, type = "success") => {
     setToastMessage(msg);
@@ -41,6 +186,15 @@ export default function SettingsPage() {
     } catch {}
     setTimeout(() => setToastMessage(null), 3800);
   };
+
+  useEffect(() => {
+    try {
+      if (sessionStorage.getItem("buildlab_pin_notice") === "1") {
+        sessionStorage.removeItem("buildlab_pin_notice");
+        showToast("Security PIN sent to your email.", "info");
+      }
+    } catch {}
+  }, []);
 
   // Google Cloud Re-Sync
   const handleSyncCloud = async () => {
@@ -105,11 +259,39 @@ export default function SettingsPage() {
   };
 
   // Reset Stages Handler
-  const handleConfirmResetStages = () => {
-    try { soundManager.warning(); } catch {}
-    resetLearnProgress();
-    setShowResetConfirm(false);
-    showToast("Learning stage progression reset to Stage 1.", "warning");
+  const handleConfirmResetStages = async () => {
+    if (!/^\d{6}$/.test(resetPin)) {
+      setPinError("Enter the 6-digit PIN emailed to you.");
+      return;
+    }
+    try {
+      setPinBusy(true);
+      setPinError("");
+      const res = await fetch("/api/learn/reset-stages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          googleId: userProfile?.googleId || "google-oauth2|verified",
+          email: userProfile?.email,
+          pin: resetPin,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setPinError(data.error || "Incorrect PIN.");
+        try { soundManager.warning(); } catch {}
+        return;
+      }
+      try { soundManager.warning(); } catch {}
+      resetLearnProgress();
+      setShowResetConfirm(false);
+      setResetPin("");
+      showToast("Learning stage progression reset to Stage 1.", "warning");
+    } catch {
+      setPinError("Could not verify PIN. Try again.");
+    } finally {
+      setPinBusy(false);
+    }
   };
 
   return (
@@ -135,14 +317,11 @@ export default function SettingsPage() {
             </button>
 
             <div className="settings-meta-tags">
-              <span className={`meta-pill ${mode === "learn" ? "learn" : "explore"}`}>
-                {mode === "learn" ? "LEARN MODE" : "OPEN LAB"}
-              </span>
               <span className="meta-pill lang">
                 {language === "tl" ? "FILIPINO (TL)" : "ENGLISH (EN)"}
               </span>
               <span className="meta-pill theme">
-                {isDark ? "DARK" : "LIGHT"}
+                {isDark ? "DARK MODE" : "LIGHT MODE"}
               </span>
             </div>
           </div>
@@ -156,56 +335,27 @@ export default function SettingsPage() {
             </div>
             <div>
               <h1 className="settings-main-title">{t("systemSettings", "System Settings & Preferences")}</h1>
-              <p className="settings-subtitle">
-                Customize your BuildLab environment, learner credentials, regional language, and audio-visual settings.
-              </p>
             </div>
           </div>
 
-          {/* Quick Filter Navigation Pills */}
-          <div className="settings-nav-tabs">
-            <button
-              type="button"
-              className={`tab-btn ${activeTab === "all" ? "active" : ""}`}
-              onClick={() => setActiveTab("all")}
-            >
-              All Settings
-            </button>
-            <button
-              type="button"
-              className={`tab-btn ${activeTab === "account" ? "active" : ""}`}
-              onClick={() => setActiveTab("account")}
-            >
-              Account
-            </button>
-            <button
-              type="button"
-              className={`tab-btn ${activeTab === "language" ? "active" : ""}`}
-              onClick={() => setActiveTab("language")}
-            >
-              Language
-            </button>
-            <button
-              type="button"
-              className={`tab-btn ${activeTab === "appearance" ? "active" : ""}`}
-              onClick={() => setActiveTab("appearance")}
-            >
-              Appearance
-            </button>
-            <button
-              type="button"
-              className={`tab-btn ${activeTab === "audio" ? "active" : ""}`}
-              onClick={() => setActiveTab("audio")}
-            >
-              Audio
-            </button>
-            <button
-              type="button"
-              className={`tab-btn ${activeTab === "stages" ? "active" : ""}`}
-              onClick={() => setActiveTab("stages")}
-            >
-              Stages
-            </button>
+          {/* Quick Filter Navigation Pills (Phone-style Segmented Control) */}
+          <div className="settings-nav-tabs" role="tablist" aria-label="Settings categories">
+            {TABS.map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                role="tab"
+                aria-selected={activeTab === tab.id}
+                className={`tab-btn ${activeTab === tab.id ? "active" : ""}`}
+                onClick={() => {
+                  try { soundManager.click(); } catch {}
+                  setActiveTab(tab.id);
+                }}
+              >
+                <span className="tab-btn-icon" aria-hidden="true">{tab.icon}</span>
+                <span className="tab-btn-text">{tab.label}</span>
+              </button>
+            ))}
           </div>
         </header>
 
@@ -224,7 +374,137 @@ export default function SettingsPage() {
           </div>
         )}
 
-        {/* ── SECTION 1: ACCOUNT & LEARNER PROFILE ── */}
+        {/* ── SECTION 1: GENERAL SYSTEM PREFERENCES (Phone-style Primary Category) ── */}
+        {(activeTab === "all" || activeTab === "general" || activeTab === "language") && (
+          <section className="settings-card" id="general">
+            <div className="card-header-row">
+              <div className="card-header-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="3" />
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                </svg>
+              </div>
+              <div className="card-header-text">
+                <h2 className="card-title">General Preferences & System</h2>
+              </div>
+            </div>
+
+            {/* Sub-item: Language & Localization */}
+            <div className="general-subgroup">
+              <div className="general-subgroup-header">
+                <span className="general-subgroup-title">{t("language", "Language & Regional Localization")}</span>
+                <span className="general-subgroup-desc">Select primary display language for lesson modules, interface labels, and evaluations</span>
+              </div>
+              <div className="language-selector-grid">
+                <div
+                  className={`language-option-card ${language === "en" ? "active" : ""}`}
+                  onClick={() => {
+                    setLanguage("en");
+                    showToast("Language changed to English (US).", "success");
+                  }}
+                >
+                  <div className="lang-flag-badge">EN</div>
+                  <div className="lang-meta">
+                    <span className="lang-name">English (US)</span>
+                  </div>
+                  <div className="lang-check">
+                    {language === "en" ? "✓ Active" : "Select"}
+                  </div>
+                </div>
+
+                <div
+                  className={`language-option-card locked ${language === "tl" ? "active" : ""}`}
+                  role="button"
+                  tabIndex={0}
+                  aria-disabled="true"
+                  title="Coming Soon — Filipino (Tagalog) is not available yet"
+                  onClick={() => showToast("Filipino (Tagalog) is coming soon.", "warning")}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      showToast("Filipino (Tagalog) is coming soon.", "warning");
+                    }
+                  }}
+                >
+                  <div className="lang-flag-badge">FIL</div>
+                  <div className="lang-meta">
+                    <span className="lang-name">Filipino (Tagalog)</span>
+                  </div>
+                  <div className="lang-check lang-check-locked">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                    </svg>
+                    <span>Coming Soon</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Sub-item: Fullscreen Immersion Mode */}
+            <div className="settings-setting-row" style={{ marginTop: "1.25rem" }}>
+              <div className="setting-info">
+                <span className="setting-label">Fullscreen Lab Immersion</span>
+                <span className="setting-sublabel">Expand workspace to edge-to-edge fullscreen for distraction-free lab work</span>
+              </div>
+              <button
+                type="button"
+                className={`toggle-switch-btn ${isFullscreen ? "on" : "off"}`}
+                onClick={handleToggleFullscreen}
+              >
+                <span className="toggle-slider" />
+                <span className="toggle-label">{isFullscreen ? "ENABLED" : "WINDOWED"}</span>
+              </button>
+            </div>
+
+            {/* Sub-item: Platform Standards & Institutional Alignment */}
+            <div className="settings-specs-box">
+              <div className="specs-header-row">
+                <span className="specs-section-label">System Platform & Aligned Standards</span>
+              </div>
+              <div className="specs-items-grid">
+                <div className="spec-item">
+                  <span className="spec-label">Environment</span>
+                  <span className="spec-value">BuildLab Studio v2.4</span>
+                </div>
+                <div className="spec-item">
+                  <span className="spec-label">Curriculum</span>
+                  <span className="spec-value">DepEd Grade 11 CSS / TESDA NC II</span>
+                </div>
+                <div className="spec-item">
+                  <span className="spec-label">Quality Standard</span>
+                  <span className="spec-value">ISO/IEC 25010 Evaluated</span>
+                </div>
+                <div className="spec-item">
+                  <span className="spec-label">Host Institution</span>
+                  <span className="spec-value">PTC-IICT Academic Center</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Sub-item: Clear Local Interface Cache */}
+            <div className="reset-progress-action-row" style={{ marginTop: "1rem" }}>
+              <div className="reset-info-text">
+                <span className="reset-title">Interface State & Session Cache</span>
+                <span className="reset-desc">Reset temporary local session state and cached view models without altering your account credentials.</span>
+              </div>
+              <button
+                type="button"
+                className="settings-action-btn secondary btn-clear-cache"
+                onClick={handleClearCache}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M3 6h18" />
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                  <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                </svg>
+                <span>Clear Local Cache</span>
+              </button>
+            </div>
+          </section>
+        )}
+
+        {/* ── SECTION 2: ACCOUNT & LEARNER PROFILE ── */}
         {(activeTab === "all" || activeTab === "account") && (
           <section className="settings-card" id="account">
             <div className="card-header-row">
@@ -236,7 +516,6 @@ export default function SettingsPage() {
               </div>
               <div className="card-header-text">
                 <h2 className="card-title">{t("accountPreferences", "Learner Account & Identity")}</h2>
-                <p className="card-desc">Your verified learner identity, credentials, and cloud database synchronization.</p>
               </div>
             </div>
 
@@ -315,58 +594,41 @@ export default function SettingsPage() {
                 )}
               </div>
             </div>
-          </section>
-        )}
 
-        {/* ── SECTION 2: LANGUAGE & LOCALIZATION ── */}
-        {(activeTab === "all" || activeTab === "language") && (
-          <section className="settings-card" id="language">
-            <div className="card-header-row">
-              <div className="card-header-icon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="12" cy="12" r="10" />
-                  <line x1="2" y1="12" x2="22" y2="12" />
-                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+            <div className={`account-dashboard ${dashboardOpen ? "open" : ""}`}>
+              <button
+                type="button"
+                className="account-dashboard-toggle"
+                onClick={() => {
+                  try { soundManager.click(); } catch {}
+                  setDashboardOpen((prev) => !prev);
+                }}
+                aria-expanded={dashboardOpen}
+              >
+                <span className="dashboard-toggle-label">Dashboard</span>
+                <span className="dashboard-toggle-score">{unlockedCount}/{DASHBOARD_STAGES.length}</span>
+                <svg className="dashboard-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <polyline points="6 9 12 15 18 9" />
                 </svg>
-              </div>
-              <div className="card-header-text">
-                <h2 className="card-title">{t("language", "Language & Regional Localization")}</h2>
-                <p className="card-desc">Select your preferred dialect for navigation labels, tutorial dialogues, and instructions.</p>
-              </div>
-            </div>
+              </button>
 
-            <div className="language-selector-grid">
-              <div
-                className={`language-option-card ${language === "en" ? "active" : ""}`}
-                onClick={() => {
-                  setLanguage("en");
-                  showToast("Language changed to English (US).", "success");
-                }}
-              >
-                <div className="lang-flag">🇺🇸</div>
-                <div className="lang-meta">
-                  <span className="lang-name">English (US)</span>
-                  <span className="lang-sub">Default Global Dialect</span>
-                </div>
-                <div className="lang-check">
-                  {language === "en" ? "✓ Active" : "Select"}
-                </div>
-              </div>
-
-              <div
-                className={`language-option-card ${language === "tl" ? "active" : ""}`}
-                onClick={() => {
-                  setLanguage("tl");
-                  showToast("Pinalitan ang wika sa Filipino (Tagalog).", "success");
-                }}
-              >
-                <div className="lang-flag">🇵🇭</div>
-                <div className="lang-meta">
-                  <span className="lang-name">Filipino (Tagalog)</span>
-                  <span className="lang-sub">Pateros Technological College Edition</span>
-                </div>
-                <div className="lang-check">
-                  {language === "tl" ? "✓ Active" : "Select"}
+              <div className="account-dashboard-body">
+                <div className="dashboard-body-inner">
+                  <div className="dashboard-ring" style={{ "--progress": `${progressPercent}%` }}>
+                    <span className="dashboard-ring-core">{progressPercent}%</span>
+                  </div>
+                  <div className="dashboard-stage-row">
+                    {DASHBOARD_STAGES.map((stage, index) => (
+                      <div
+                        className={`dashboard-stage ${unlockedStages.includes(stage.key) ? "done" : ""}`}
+                        key={stage.key}
+                        title={stage.label}
+                      >
+                        <span className="dashboard-stage-circle">{index + 1}</span>
+                        <span className="dashboard-stage-label">{stage.short}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
@@ -384,7 +646,6 @@ export default function SettingsPage() {
               </div>
               <div className="card-header-text">
                 <h2 className="card-title">{t("theme", "Theme & Visual Appearance")}</h2>
-                <p className="card-desc">Select your high-contrast aesthetic and visual rendering mode.</p>
               </div>
             </div>
 
@@ -404,8 +665,12 @@ export default function SettingsPage() {
                   </div>
                 </div>
                 <div className="theme-card-info">
-                  <span className="theme-title">🌙 Cyber Obsidian (Dark)</span>
-                  <span className="theme-subtitle">Neon accent lines with reduced eye-strain</span>
+                  <div className="theme-title-row">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                    </svg>
+                    <span className="theme-title">Cyber Obsidian (Dark)</span>
+                  </div>
                 </div>
                 {isDark && <span className="theme-active-tag">Active</span>}
               </div>
@@ -425,8 +690,20 @@ export default function SettingsPage() {
                   </div>
                 </div>
                 <div className="theme-card-info">
-                  <span className="theme-title">☀️ Clean Lab (Light)</span>
-                  <span className="theme-subtitle">High daylight contrast for classroom projectors</span>
+                  <div className="theme-title-row">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="5" />
+                      <line x1="12" y1="1" x2="12" y2="3" />
+                      <line x1="12" y1="21" x2="12" y2="23" />
+                      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                      <line x1="1" y1="12" x2="3" y2="12" />
+                      <line x1="21" y1="12" x2="23" y2="12" />
+                      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                    </svg>
+                    <span className="theme-title">Clean Lab (Light)</span>
+                  </div>
                 </div>
                 {!isDark && <span className="theme-active-tag">Active</span>}
               </div>
@@ -436,7 +713,7 @@ export default function SettingsPage() {
 
         {/* ── SECTION 4: AUDIO & SOUND EFFECTS ── */}
         {(activeTab === "all" || activeTab === "audio") && (
-          <section className="settings-card" id="audio">
+          <section className="settings-card audio-settings-card" id="audio">
             <div className="card-header-row">
               <div className="card-header-icon">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -446,14 +723,6 @@ export default function SettingsPage() {
               </div>
               <div className="card-header-text">
                 <h2 className="card-title">{t("audio", "Audio & Sound Effects")}</h2>
-                <p className="card-desc">Mechanical feedback, clicks, and assembly chimes generated by BuildLab's sound engine.</p>
-              </div>
-            </div>
-
-            <div className="settings-setting-row">
-              <div className="setting-info">
-                <span className="setting-label">Master Sound Effects</span>
-                <span className="setting-sublabel">Enable tactile clicks and diagnostic chimes during part installation</span>
               </div>
               <button
                 type="button"
@@ -473,35 +742,55 @@ export default function SettingsPage() {
                   className="sound-test-btn"
                   onClick={() => testSound("click")}
                 >
-                  🔊 Click
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+                  </svg>
+                  <span>Click</span>
                 </button>
                 <button
                   type="button"
                   className="sound-test-btn"
                   onClick={() => testSound("snap")}
                 >
-                  ⚡ Magnetic Snap
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                  </svg>
+                  <span>Magnetic Snap</span>
                 </button>
                 <button
                   type="button"
                   className="sound-test-btn"
                   onClick={() => testSound("install")}
                 >
-                  🛠️ Slot Lock
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                  </svg>
+                  <span>Slot Lock</span>
                 </button>
                 <button
                   type="button"
                   className="sound-test-btn"
                   onClick={() => testSound("granted")}
                 >
-                  ✨ Success
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                    <polyline points="22 4 12 14.01 9 11.01" />
+                  </svg>
+                  <span>Success Chime</span>
                 </button>
                 <button
                   type="button"
                   className="sound-test-btn"
                   onClick={() => testSound("warning")}
                 >
-                  ⚠️ Warning
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                    <line x1="12" y1="9" x2="12" y2="13" />
+                    <line x1="12" y1="17" x2="12.01" y2="17" />
+                  </svg>
+                  <span>Warning Tone</span>
                 </button>
               </div>
             </div>
@@ -520,7 +809,6 @@ export default function SettingsPage() {
               </div>
               <div className="card-header-text">
                 <h2 className="card-title">Learning Progression & Stage Access</h2>
-                <p className="card-desc">Check your unlocked curriculum modules or reset progression for a fresh test run.</p>
               </div>
             </div>
 
@@ -566,13 +854,16 @@ export default function SettingsPage() {
 
             <div className="reset-progress-action-row">
               <div className="reset-info-text">
-                <span className="reset-title">Reset Stage Progression</span>
-                <span className="reset-desc">Lock advanced stages back to Stage 1 to re-test the learning path. Your Google profile stays connected.</span>
+                <span className="reset-title danger">Reset Stage Progression</span>
               </div>
               <button
                 type="button"
                 className="settings-action-btn warning"
-                onClick={() => setShowResetConfirm(true)}
+                onClick={() => {
+                  setResetPin("");
+                  setPinError("");
+                  setShowResetConfirm(true);
+                }}
               >
                 Reset Stages
               </button>
@@ -635,11 +926,29 @@ export default function SettingsPage() {
             <p className="dialog-body">
               This will reset stages 2 through 4 (Compatibility, Academy, and Certification) back to locked status. You will need to build your PC again to unlock them.
             </p>
+            <div className="pin-confirm-field">
+              <label className="pin-confirm-label" htmlFor="reset-pin">Security PIN</label>
+              <input
+                id="reset-pin"
+                className="pin-confirm-input"
+                type="text"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                maxLength={6}
+                placeholder="000000"
+                value={resetPin}
+                onChange={(e) => setResetPin(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                disabled={pinBusy}
+              />
+              <span className="pin-confirm-hint">Emailed on first sign-in.</span>
+              {pinError && <span className="pin-confirm-error">{pinError}</span>}
+            </div>
             <div className="dialog-actions">
               <button
                 type="button"
                 className="dialog-btn cancel"
                 onClick={() => setShowResetConfirm(false)}
+                disabled={pinBusy}
               >
                 {t("cancel", "Cancel")}
               </button>
@@ -647,8 +956,9 @@ export default function SettingsPage() {
                 type="button"
                 className="dialog-btn confirm-warning"
                 onClick={handleConfirmResetStages}
+                disabled={pinBusy || resetPin.length !== 6}
               >
-                Yes, Reset Stages
+                {pinBusy ? "Verifying..." : "Yes, Reset Stages"}
               </button>
             </div>
           </div>

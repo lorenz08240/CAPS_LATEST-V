@@ -178,6 +178,7 @@ function AppContent() {
                 </MotionPage>
               }
             />
+            <Route path="/learn/certificate" element={<Navigate to="/certificate" replace />} />
 
             <Route
               path="/dashboard"

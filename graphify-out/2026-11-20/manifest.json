@@ -1,0 +1,1100 @@
+{
+  ".vscode/settings.json": {
+    "mtime": 1794040098.7926526,
+    "seen": 1794042133.0699086,
+    "ast_hash": "f919620e82d411af98772bd225a3a0f5",
+    "semantic_hash": ""
+  },
+  "backend/config/db.js": {
+    "mtime": 1794199439.2433949,
+    "seen": 1794199479.0796015,
+    "ast_hash": "c2c0d884321b5e7093b8fc660dbea22a",
+    "semantic_hash": ""
+  },
+  "backend/crawler.js": {
+    "mtime": 1794159497.787611,
+    "seen": 1794159505.8599768,
+    "ast_hash": "e0c22876e8fb84567e318a367ac341b3",
+    "semantic_hash": ""
+  },
+  "backend/package.json": {
+    "mtime": 1795147673.490763,
+    "seen": 1795149626.8262918,
+    "ast_hash": "11b6b0842b7b5ddd1642fb92f862a30e",
+    "semantic_hash": ""
+  },
+  "backend/server.js": {
+    "mtime": 1795154892.8437252,
+    "seen": 1795156045.454421,
+    "ast_hash": "4d08056cad008ec6e74c8d4647d60a0e",
+    "semantic_hash": ""
+  },
+  "backend/tests/compatibility.test.js": {
+    "mtime": 1793457812.8743107,
+    "seen": 1793463115.902817,
+    "ast_hash": "8ab9c81b4aceac0dc45d242eda767d75",
+    "semantic_hash": ""
+  },
+  "frontend/eslint.config.js": {
+    "mtime": 1793931069.525512,
+    "seen": 1793931109.0825396,
+    "ast_hash": "4702261172c0c69bc92a085eb24ec069",
+    "semantic_hash": ""
+  },
+  "frontend/package.json": {
+    "mtime": 1794818385.4120362,
+    "seen": 1794818981.8580604,
+    "ast_hash": "ad515fc0387daa372c1f44f452c91b79",
+    "semantic_hash": ""
+  },
+  "frontend/postcss.config.js": {
+    "mtime": 1791800606.1828997,
+    "seen": 1793457744.9683516,
+    "ast_hash": "8e5f2021f5b1721b527c842f43f78c73",
+    "semantic_hash": "8e5f2021f5b1721b527c842f43f78c73"
+  },
+  "frontend/src/App.jsx": {
+    "mtime": 1795033588.3691225,
+    "seen": 1795034162.1522799,
+    "ast_hash": "ad1e8c2e73f26f002b4171602593f960",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/3D/ComponentModels3D.jsx": {
+    "mtime": 1795151848.2013168,
+    "seen": 1795153304.2350116,
+    "ast_hash": "38a3e6c4f19df021da9167c579dd009e",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/3D/GenericPCCase.jsx": {
+    "mtime": 1795004603.2208219,
+    "seen": 1795004738.29467,
+    "ast_hash": "a3c3ef41bbedf9c63fd12989a8556e30",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/3D/PCBuilder3D.jsx": {
+    "mtime": 1795004603.2248242,
+    "seen": 1795004738.2946804,
+    "ast_hash": "5da6eca1287a5808758b5bc9ad4206dc",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/3D/ProceduralSickleFan.jsx": {
+    "mtime": 1795004603.2228234,
+    "seen": 1795004738.2946851,
+    "ast_hash": "216e95a835c9ec02e701a226331fa455",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Admin/Admin.jsx": {
+    "mtime": 1794175287.7400005,
+    "seen": 1794175564.87357,
+    "ast_hash": "e22124e04dbce3bfa02ca3378c8080f1",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Brands/Brands.jsx": {
+    "mtime": 1795004603.2253337,
+    "seen": 1795004738.2975862,
+    "ast_hash": "332a35ec5891f0df08212d84675c44c8",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Build/Build.jsx": {
+    "mtime": 1795017038.9496322,
+    "seen": 1795017150.9466412,
+    "ast_hash": "081322ab6240e290e316d4cc3f6d30d9",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Compatibility/Compatibility.jsx": {
+    "mtime": 1795042265.042222,
+    "seen": 1795043698.5366223,
+    "ast_hash": "7aae9ce935125cffe8f760e3cdfb06f3",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/FeatureCarousel/FeatureCarousel.jsx": {
+    "mtime": 1793931234.193663,
+    "seen": 1793931275.1701875,
+    "ast_hash": "8d963d1128f7f9b19083c7bee6a0837a",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Footer/Footer.jsx": {
+    "mtime": 1794938536.7307587,
+    "seen": 1794938580.3146827,
+    "ast_hash": "e56adb62537df9165ce5ec086d438676",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/FullscreenGate/FullscreenGate.jsx": {
+    "mtime": 1795007501.4142363,
+    "seen": 1795007565.076226,
+    "ast_hash": "535c24e3b68e7e4263a1bf92223eb60a",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Home/Home.jsx": {
+    "mtime": 1795150491.3169847,
+    "seen": 1795150798.0311077,
+    "ast_hash": "ef923a5896bb76d7606947f651368491",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Learn/CourseShell.jsx": {
+    "mtime": 1795153558.815,
+    "seen": 1795154036.56811,
+    "ast_hash": "3ab2cf4999e1cead068a0ebf4984b1cb",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Learn/CourseVideoPlayer.jsx": {
+    "mtime": 1795028004.2330163,
+    "seen": 1795028132.5370612,
+    "ast_hash": "8083ba20fe7c551d92364d7a75fb4d38",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Learn/Learn.jsx": {
+    "mtime": 1795028004.2350278,
+    "seen": 1795028132.5370648,
+    "ast_hash": "562317552b469ce9efc3c07787a372b5",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Navbar/Navbar.jsx": {
+    "mtime": 1795145468.8920262,
+    "seen": 1795146607.5853322,
+    "ast_hash": "bc2533756f991fbd8ef8078c37c0778a",
+    "semantic_hash": ""
+  },
+  "frontend/src/contexts/AuthContext.jsx": {
+    "mtime": 1795154897.5219598,
+    "seen": 1795156045.4778438,
+    "ast_hash": "58e2e2b8e42da4c71cdd94c922173714",
+    "semantic_hash": ""
+  },
+  "frontend/src/contexts/BuildContext.jsx": {
+    "mtime": 1794847392.8598564,
+    "seen": 1794847485.7415767,
+    "ast_hash": "a416cf12ab6fa6195fd967b6000060af",
+    "semantic_hash": ""
+  },
+  "frontend/src/contexts/ThemeContext.jsx": {
+    "mtime": 1794676312.2635384,
+    "seen": 1794676672.5151355,
+    "ast_hash": "76f0b83171bb20c70d08ed946923209c",
+    "semantic_hash": ""
+  },
+  "frontend/src/main.jsx": {
+    "mtime": 1791800606.25468,
+    "seen": 1793457744.9735565,
+    "ast_hash": "7956c6278d3d324593459596184af003",
+    "semantic_hash": "7956c6278d3d324593459596184af003"
+  },
+  "frontend/src/utilities/api.js": {
+    "mtime": 1793931234.1605976,
+    "seen": 1793931275.1727662,
+    "ast_hash": "f546494a1e0d9434f51e781f07a1255f",
+    "semantic_hash": ""
+  },
+  "frontend/src/utilities/compatibilityEngine.js": {
+    "mtime": 1794563146.5031161,
+    "seen": 1794564089.1059067,
+    "ast_hash": "5bec78c388e9f43b9654f6dc13af39b6",
+    "semantic_hash": ""
+  },
+  "frontend/src/utilities/fullscreen.js": {
+    "mtime": 1794183348.904241,
+    "seen": 1794183525.714,
+    "ast_hash": "0e152ef377ebf81774fce92bd27c7a0f",
+    "semantic_hash": ""
+  },
+  "frontend/src/utilities/offlineParts.js": {
+    "mtime": 1794563143.5196843,
+    "seen": 1794564089.1062865,
+    "ast_hash": "12c1be92be4706b9441d359a0a9e6ca7",
+    "semantic_hash": ""
+  },
+  "frontend/src/utilities/pageTransitions.jsx": {
+    "mtime": 1793930979.3582413,
+    "seen": 1793931109.0880892,
+    "ast_hash": "9227a57cbab8b921b8b7865806033ef5",
+    "semantic_hash": ""
+  },
+  "frontend/src/utilities/rules.js": {
+    "mtime": 1793931234.1626062,
+    "seen": 1793931275.17418,
+    "ast_hash": "93b636a1ef0069fa775f236d6537bae6",
+    "semantic_hash": ""
+  },
+  "frontend/src/utilities/scoringEngine.js": {
+    "mtime": 1793931234.1626062,
+    "seen": 1793931275.1741836,
+    "ast_hash": "f13a75562442cc0a275a0ad14cc7c768",
+    "semantic_hash": ""
+  },
+  "frontend/src/utilities/soundManager.js": {
+    "mtime": 1794202044.5880208,
+    "seen": 1794202115.1059058,
+    "ast_hash": "4adb3672f1713fc136ebc5eaddae0ede",
+    "semantic_hash": ""
+  },
+  "frontend/tailwind.config.js": {
+    "mtime": 1791800606.256185,
+    "seen": 1793457744.9758184,
+    "ast_hash": "0a4eec1bc2d10c604a1e23e739035357",
+    "semantic_hash": "0a4eec1bc2d10c604a1e23e739035357"
+  },
+  "frontend/vite.config.js": {
+    "mtime": 1794822765.277321,
+    "seen": 1794822790.5380046,
+    "ast_hash": "c3c83f23d6f50575d0f9ba056d53f071",
+    "semantic_hash": ""
+  },
+  "CHANGELOG.md": {
+    "mtime": 1794938559.8753185,
+    "seen": 1794938580.3305483,
+    "ast_hash": "3ed2194a3fe9ffef6c69a03004ef3cd6",
+    "semantic_hash": ""
+  },
+  "frontend/index.html": {
+    "mtime": 1794183278.535394,
+    "seen": 1794183525.7198923,
+    "ast_hash": "d43934b76486c02cbb528ff65e3e9fa2",
+    "semantic_hash": ""
+  },
+  "frontend/public/assets/compatibility_bg.jpg": {
+    "mtime": 1792129465.8755708,
+    "seen": 1793463115.9074094,
+    "ast_hash": "4662c5cc745b31f8711f374795860d98",
+    "semantic_hash": ""
+  },
+  "frontend/public/assets/component_picker_image_bg.png": {
+    "mtime": 1791800606.1864061,
+    "seen": 1793463115.9074109,
+    "ast_hash": "04bacb0268fbeb216d47db7fa2b413f9",
+    "semantic_hash": ""
+  },
+  "frontend/public/assets/cpu_learn.jpg": {
+    "mtime": 1792139260.6648023,
+    "seen": 1793463115.9074128,
+    "ast_hash": "3338771cd518c16775787f17167fb9cc",
+    "semantic_hash": ""
+  },
+  "frontend/public/assets/favicon.svg": {
+    "mtime": 1791800606.1864061,
+    "seen": 1793463115.9074144,
+    "ast_hash": "7e840862161341271697daa99a40d76b",
+    "semantic_hash": ""
+  },
+  "frontend/public/assets/icons.svg": {
+    "mtime": 1791800606.1869245,
+    "seen": 1793463115.907416,
+    "ast_hash": "21c7473c592c67dc87223d49892c8f0a",
+    "semantic_hash": ""
+  },
+  "frontend/public/assets/pc_build.png": {
+    "mtime": 1791800606.2018957,
+    "seen": 1793463115.9074175,
+    "ast_hash": "18f6e9908f858704e31d0831a2238609",
+    "semantic_hash": ""
+  },
+  "frontend/public/assets/pcbackground.png": {
+    "mtime": 1791800606.2038963,
+    "seen": 1793463115.9074192,
+    "ast_hash": "51ad84e7896b9dea87524fdf4b0e076b",
+    "semantic_hash": ""
+  },
+  "frontend/public/assets/waves_bg.png": {
+    "mtime": 1792081115.24177,
+    "seen": 1793463115.9074204,
+    "ast_hash": "d28b06942330e3a5169d4500cbc46bd2",
+    "semantic_hash": ""
+  },
+  "frontend/public/assets/waves_dark_bg.jpg": {
+    "mtime": 1792081115.2442951,
+    "seen": 1793463115.907422,
+    "ast_hash": "d28b06942330e3a5169d4500cbc46bd2",
+    "semantic_hash": ""
+  },
+  "frontend/public/assets/waves_dark_vertical.jpg": {
+    "mtime": 1792081115.2489152,
+    "seen": 1793463115.9074237,
+    "ast_hash": "4662c5cc745b31f8711f374795860d98",
+    "semantic_hash": ""
+  },
+  "frontend/public/footer_desk_bg.png": {
+    "mtime": 1792141492.3514342,
+    "seen": 1793463115.9074252,
+    "ast_hash": "9b16e34ac8e6769b792d205cbae6c7c4",
+    "semantic_hash": ""
+  },
+  "frontend/public/textures/case1-B450-TomHawk.png": {
+    "mtime": 1791800606.2150486,
+    "seen": 1793463115.9074266,
+    "ast_hash": "fbb197c75aed6e91150a220979d3b6c2",
+    "semantic_hash": ""
+  },
+  "frontend/public/textures/case1.png": {
+    "mtime": 1791800606.2188969,
+    "seen": 1793463115.907428,
+    "ast_hash": "6fc94a4286eca0ee7e0b48ebc9e4cb05",
+    "semantic_hash": ""
+  },
+  "frontend/public/textures/case4-Asus-Prime.png": {
+    "mtime": 1791800606.2238963,
+    "seen": 1793463115.90743,
+    "ast_hash": "49908d613d8256aebbaa4aad677eabd5",
+    "semantic_hash": ""
+  },
+  "frontend/public/textures/case4.png": {
+    "mtime": 1791800606.2264004,
+    "seen": 1793463115.9074311,
+    "ast_hash": "97812dc53c306a3009190b708b00b644",
+    "semantic_hash": ""
+  },
+  "frontend/public/textures/core-i7_01.jpg": {
+    "mtime": 1791800606.2289352,
+    "seen": 1793463115.9074333,
+    "ast_hash": "ce460942e1c6541849dcdf567694c124",
+    "semantic_hash": ""
+  },
+  "frontend/public/textures/core-i7_02.jpg": {
+    "mtime": 1791800606.235929,
+    "seen": 1793463115.9074345,
+    "ast_hash": "ac4ac91fd64fb9dc775c8606ad63faf9",
+    "semantic_hash": ""
+  },
+  "frontend/public/textures/core-i7_03.jpg": {
+    "mtime": 1791800606.237041,
+    "seen": 1793463115.9074361,
+    "ast_hash": "e105c5d5f1e8a064d867a7377161ec95",
+    "semantic_hash": ""
+  },
+  "frontend/public/textures/motherboard2.jpg": {
+    "mtime": 1791800606.2412567,
+    "seen": 1793463115.9074376,
+    "ast_hash": "c87b1bed6219071439e36a9ef7bd02bf",
+    "semantic_hash": ""
+  },
+  "frontend/src/assets/Wood.jpg": {
+    "mtime": 1792705495.8228252,
+    "seen": 1793463115.907439,
+    "ast_hash": "30eee60ccc8e760ff4a6c0ae8963cf2a",
+    "semantic_hash": ""
+  },
+  "frontend/src/assets/compatibility_bg.jpg": {
+    "mtime": 1792129465.876679,
+    "seen": 1793463115.9074404,
+    "ast_hash": "4662c5cc745b31f8711f374795860d98",
+    "semantic_hash": ""
+  },
+  "frontend/src/assets/hero.png": {
+    "mtime": 1791800606.2442603,
+    "seen": 1793463115.9074419,
+    "ast_hash": "5cf2b0762834cdddc0dd3ec1397b5011",
+    "semantic_hash": ""
+  },
+  "frontend/src/assets/login_bg.png": {
+    "mtime": 1791808858.4427397,
+    "seen": 1793463115.907443,
+    "ast_hash": "49c2568e8f07a1ce8b6f0bc61f7aeb7a",
+    "semantic_hash": ""
+  },
+  "frontend/src/assets/react.svg": {
+    "mtime": 1791800606.2442603,
+    "seen": 1793463115.9074445,
+    "ast_hash": "f0402b67b6ce880f65666bb49e841696",
+    "semantic_hash": ""
+  },
+  "frontend/src/assets/vite.svg": {
+    "mtime": 1791800606.2442603,
+    "seen": 1793463115.9074457,
+    "ast_hash": "6d5180a782d64c8cf51ba01c2a2184d8",
+    "semantic_hash": ""
+  },
+  "frontend/public/assets/models/gpu_model_manifest.json": {
+    "mtime": 1793472011.828298,
+    "seen": 1793472738.445792,
+    "ast_hash": "72ea1c28bd4f877922cfdbbe6627b252",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/3D/NepotatoGPU.jsx": {
+    "mtime": 1795004603.2208219,
+    "seen": 1795004738.2946749,
+    "ast_hash": "212af76bf82705e1ef549ecbfd26d4e0",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Home/Home3DHero.jsx": {
+    "mtime": 1795025160.5889382,
+    "seen": 1795025227.547339,
+    "ast_hash": "4e1769ec51e56fee168f34e6812a6a7b",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/3D/DDR4RAMModel.jsx": {
+    "mtime": 1795004603.219815,
+    "seen": 1795004738.2946677,
+    "ast_hash": "7dd3210008dd1cfbe0c816c2014f084e",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Admin/AdminAuthGuard.jsx": {
+    "mtime": 1793613485.6083486,
+    "seen": 1793613560.8385992,
+    "ast_hash": "d273575b711cc3ac8647f3461c655434",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Admin/AdminCrawler.jsx": {
+    "mtime": 1795155459.4543145,
+    "seen": 1795156045.4601698,
+    "ast_hash": "101d0cbb3aba9d507ed8bd64eebcd1af",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Admin/AdminHeader.jsx": {
+    "mtime": 1795155344.2249234,
+    "seen": 1795156045.4601786,
+    "ast_hash": "975b9e4c14de74a6d0e9df1febd2a2da",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Admin/AdminInventory.jsx": {
+    "mtime": 1795155516.414472,
+    "seen": 1795156045.460182,
+    "ast_hash": "ca5ac5ea598a33d8bd5bd7b235cc3e28",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Admin/AdminLogin.jsx": {
+    "mtime": 1794202196.547535,
+    "seen": 1794202260.504107,
+    "ast_hash": "0d34cb2b4788bbca4486424c215982ad",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Admin/EditComponentDrawer.jsx": {
+    "mtime": 1794159497.7936106,
+    "seen": 1794159505.8633707,
+    "ast_hash": "eaa2511bb1d3c35a9b84f983319dcfa8",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Admin/HardwareIcon.jsx": {
+    "mtime": 1793931234.188134,
+    "seen": 1793931275.1691027,
+    "ast_hash": "9b89fd8fdc21469cb49f6bfffd6bfca0",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Admin/HoverImagePreview.jsx": {
+    "mtime": 1793931234.188134,
+    "seen": 1793931275.1691053,
+    "ast_hash": "cb3cb32fbf913f0e0805d005e7408e0d",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Home/Preloader.jsx": {
+    "mtime": 1794183662.6210089,
+    "seen": 1794183788.532731,
+    "ast_hash": "ed9fc3919b74dde3254e81a6276fd099",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Admin/AdminSidebar.jsx": {
+    "mtime": 1795155336.493769,
+    "seen": 1795156045.4604392,
+    "ast_hash": "27b9af25c9bf329426ecc68195fd1a51",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/3D/NVMeSSDModel.jsx": {
+    "mtime": 1795004603.2218232,
+    "seen": 1795004738.2946727,
+    "ast_hash": "f733e43ca07d381ba7d9ec603b235720",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Admin/AdminAddComponent.jsx": {
+    "mtime": 1795155413.3910537,
+    "seen": 1795156045.4598815,
+    "ast_hash": "69f02e09a0bcfc3c0bbadf8c8a431e7a",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Admin/AdminDeleteComponent.jsx": {
+    "mtime": 1795155482.3347795,
+    "seen": 1795156045.4601731,
+    "ast_hash": "445b2aca1447731f69d7fd3842d7908e",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Admin/AdminEditComponent.jsx": {
+    "mtime": 1795155493.039736,
+    "seen": 1795156045.460176,
+    "ast_hash": "f3335f3703e2759da5932543ac339244",
+    "semantic_hash": ""
+  },
+  "frontend/src/utilities/modelPreloader.js": {
+    "mtime": 1794172182.6008527,
+    "seen": 1794173179.6589324,
+    "ast_hash": "2448172e68bfcc6b0a0f237142b6d26e",
+    "semantic_hash": ""
+  },
+  "frontend/src/utilities/scrapedMeta.js": {
+    "mtime": 1793931234.163604,
+    "seen": 1793931275.1741867,
+    "ast_hash": "e23f8614a1a43fd8e6d8125f11ac7a96",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/EyeTracker/EyeTracker.tsx": {
+    "mtime": 1795004552.4949245,
+    "seen": 1795004738.2979789,
+    "ast_hash": "a47d9e47915596378a8734b4469982af",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/EyeTracker/index.ts": {
+    "mtime": 1793825073.8459482,
+    "seen": 1793825645.7742987,
+    "ast_hash": "f5ef6a9344ecf84e67ed239b2d86a4f0",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Navigation/GlobalHeader.jsx": {
+    "mtime": 1795150495.5483065,
+    "seen": 1795150798.0361454,
+    "ast_hash": "e287ab85191ee1b82d9d6daafca9768b",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Navigation/CyberBrand.jsx": {
+    "mtime": 1795025155.0970197,
+    "seen": 1795025227.5541523,
+    "ast_hash": "7fdb79b47481d67dce5f250fcc6eb33f",
+    "semantic_hash": ""
+  },
+  "frontend/src/contexts/SidebarContext.jsx": {
+    "mtime": 1794202057.7569346,
+    "seen": 1794202115.1043258,
+    "ast_hash": "9a37583c26d788e57375fa1557aff777",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/HelpSupport/HelpSupport.jsx": {
+    "mtime": 1795004552.5011024,
+    "seen": 1795004738.2987726,
+    "ast_hash": "2ed1df657d013dfc180f4723d9ccc21a",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/BobCompanion/BobCompanion.jsx": {
+    "mtime": 1795004552.4929235,
+    "seen": 1795004738.2975833,
+    "ast_hash": "7ffc8356513fad767a461f84c8d9327b",
+    "semantic_hash": ""
+  },
+  "frontend/public/assets/buildlab_logo_tight.png": {
+    "mtime": 1794819280.0632038,
+    "seen": 1794819581.1808593,
+    "ast_hash": "8d2d26525629e84b7b62dccdd792a86d",
+    "semantic_hash": ""
+  },
+  "frontend/public/assets/buildlab_logo_transparent.png": {
+    "mtime": 1794819279.9897282,
+    "seen": 1794819581.180864,
+    "ast_hash": "4c2761b95ff379109fbdaf71796c8627",
+    "semantic_hash": ""
+  },
+  "frontend/public/assets/system_logo.png": {
+    "mtime": 1794819279.9873579,
+    "seen": 1794819581.1841831,
+    "ast_hash": "4c2761b95ff379109fbdaf71796c8627",
+    "semantic_hash": ""
+  },
+  "frontend/src/assets/system_logo.png": {
+    "mtime": 1794819279.9853375,
+    "seen": 1794819581.1901271,
+    "ast_hash": "4c2761b95ff379109fbdaf71796c8627",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/AboutUs/AboutUs.jsx": {
+    "mtime": 1795014534.5657997,
+    "seen": 1795014557.8516362,
+    "ast_hash": "6a8aee9bba37017f28f4a8041c4a2a36",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Admin/AdminLogs.jsx": {
+    "mtime": 1795155526.8212488,
+    "seen": 1795156045.4604356,
+    "ast_hash": "01c8490650c02b25faae482ece939581",
+    "semantic_hash": ""
+  },
+  "frontend/public/sfx/audio/alarm.wav": {
+    "mtime": 1793922584.0,
+    "seen": 1794162189.056693,
+    "ast_hash": "ccd02793151e47b568321431dc546452",
+    "semantic_hash": ""
+  },
+  "frontend/public/sfx/audio/denied.wav": {
+    "mtime": 1793922584.0,
+    "seen": 1794162189.0566957,
+    "ast_hash": "ce5133c3715bc8a877d8cc7d4c06668b",
+    "semantic_hash": ""
+  },
+  "frontend/public/sfx/audio/error.wav": {
+    "mtime": 1793922584.0,
+    "seen": 1794162189.0566978,
+    "ast_hash": "ade77e667654fb1e62cdcfe46f7e804e",
+    "semantic_hash": ""
+  },
+  "frontend/public/sfx/audio/expand.wav": {
+    "mtime": 1793922584.0,
+    "seen": 1794162189.0567,
+    "ast_hash": "d015dcaa577c5441be8e00bc65c37d9b",
+    "semantic_hash": ""
+  },
+  "frontend/public/sfx/audio/folder.wav": {
+    "mtime": 1793922584.0,
+    "seen": 1794162189.0567017,
+    "ast_hash": "90a88fd29ad51550cc184e4c493b80e8",
+    "semantic_hash": ""
+  },
+  "frontend/public/sfx/audio/granted.wav": {
+    "mtime": 1793922584.0,
+    "seen": 1794162189.0567033,
+    "ast_hash": "5f9cfdac7fa3410459fa8c8677d06ec8",
+    "semantic_hash": ""
+  },
+  "frontend/public/sfx/audio/info.wav": {
+    "mtime": 1793922584.0,
+    "seen": 1794162189.0567055,
+    "ast_hash": "75a5be0abf13c99171329c8ba164e691",
+    "semantic_hash": ""
+  },
+  "frontend/public/sfx/audio/keyboard.wav": {
+    "mtime": 1793922584.0,
+    "seen": 1794162189.0567071,
+    "ast_hash": "5e1c4813045cf6e7787621d86ecf5c93",
+    "semantic_hash": ""
+  },
+  "frontend/public/sfx/audio/panels.wav": {
+    "mtime": 1793922584.0,
+    "seen": 1794162189.0567093,
+    "ast_hash": "f3efa8e47cecf015bcc7e57ce31778ae",
+    "semantic_hash": ""
+  },
+  "frontend/public/sfx/audio/scan.wav": {
+    "mtime": 1793922584.0,
+    "seen": 1794162189.056711,
+    "ast_hash": "aef9b9ff266777a8bc20e734dfca940b",
+    "semantic_hash": ""
+  },
+  "frontend/public/sfx/audio/stdin.wav": {
+    "mtime": 1793922584.0,
+    "seen": 1794162189.0567129,
+    "ast_hash": "f7bda883e9bdeb9a79faaa729314466c",
+    "semantic_hash": ""
+  },
+  "frontend/public/sfx/audio/stdout.wav": {
+    "mtime": 1793922584.0,
+    "seen": 1794162189.0567145,
+    "ast_hash": "92c1268e35b2eb379ce6f45e57da7f61",
+    "semantic_hash": ""
+  },
+  "frontend/public/sfx/audio/theme.wav": {
+    "mtime": 1793922584.0,
+    "seen": 1794162189.0567164,
+    "ast_hash": "151a3e8bf59a8284fc69c570748d82ea",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/3D/PSUModel.jsx": {
+    "mtime": 1795004603.2228234,
+    "seen": 1795004738.2946832,
+    "ast_hash": "9abfcc432aaaf2a629b5eb03e1463656",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Admin/AdminAccounts.jsx": {
+    "mtime": 1795155695.161027,
+    "seen": 1795156045.4598777,
+    "ast_hash": "a2990a78cdd2fbed22b44aa026471a6d",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Admin/AdminContent.jsx": {
+    "mtime": 1795155407.7593489,
+    "seen": 1795156045.460166,
+    "ast_hash": "332274fb2cc192419f9cc72de6963cf0",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Home/AccountSetupModal.jsx": {
+    "mtime": 1795147918.4840631,
+    "seen": 1795149626.8333495,
+    "ast_hash": "e7b3662813674326edac1af42c23edad",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Learn/CertificationPage.jsx": {
+    "mtime": 1795153528.0862148,
+    "seen": 1795154036.5677805,
+    "ast_hash": "432abed432d431deb287b928253736b2",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Navigation/CookieConsent.jsx": {
+    "mtime": 1795155303.3037615,
+    "seen": 1795156045.4764316,
+    "ast_hash": "142287e2a9cf63eabe1c39012592e1b1",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Navigation/LearnModeGuard.jsx": {
+    "mtime": 1794923632.3105369,
+    "seen": 1794923673.5912266,
+    "ast_hash": "c7712ff821ce0c9961ac7cee8dab155c",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Navigation/StageUnlockBanner.jsx": {
+    "mtime": 1795004552.4975784,
+    "seen": 1795004738.3013499,
+    "ast_hash": "53164364a2eed1028d1d1b1f297c8c6b",
+    "semantic_hash": ""
+  },
+  "frontend/src/contexts/LearnModeContext.jsx": {
+    "mtime": 1795147981.6221018,
+    "seen": 1795149626.8374646,
+    "ast_hash": "edfab1d3ad39c7290da02a538ef2484c",
+    "semantic_hash": ""
+  },
+  "backend/uploads/profiles/photo-1794176073655-f3qzal.gif": {
+    "mtime": 1794176073.6566453,
+    "seen": 1794176494.1616318,
+    "ast_hash": "05e5244a42bea6b5a3ef3d2472f4b030",
+    "semantic_hash": ""
+  },
+  "backend/uploads/profiles/photo-1794176080611-d0vfrg.gif": {
+    "mtime": 1794176080.6114943,
+    "seen": 1794176494.161635,
+    "ast_hash": "05e5244a42bea6b5a3ef3d2472f4b030",
+    "semantic_hash": ""
+  },
+  "backend/uploads/profiles/photo-1794176086486-hn7tru.jpg": {
+    "mtime": 1794176086.4874146,
+    "seen": 1794176494.1616364,
+    "ast_hash": "0fb67551fd8e2c455fe60c43b2680717",
+    "semantic_hash": ""
+  },
+  "frontend/public/sfx/audio/Error1.mp3": {
+    "mtime": 1792716852.6433003,
+    "seen": 1794176837.1173866,
+    "ast_hash": "b243907e548607daa5346111269c7082",
+    "semantic_hash": ""
+  },
+  "frontend/public/sfx/audio/Error3.mp3": {
+    "mtime": 1792717234.4851596,
+    "seen": 1794176837.1173928,
+    "ast_hash": "04739b1bbb541f19ea3c015f1b7e4d05",
+    "semantic_hash": ""
+  },
+  "frontend/public/sfx/audio/UI_Interact.mp3": {
+    "mtime": 1792717361.7475314,
+    "seen": 1794176837.1173975,
+    "ast_hash": "48d1af1a0daa0a3bc22e92cc0d3c0b2c",
+    "semantic_hash": ""
+  },
+  "frontend/public/sfx/audio/denied.mp3": {
+    "mtime": 1792717623.2285683,
+    "seen": 1794176837.1179566,
+    "ast_hash": "92ce2b1a761c4a314f60410efa7943b8",
+    "semantic_hash": ""
+  },
+  "frontend/public/sfx/audio/error.mp3": {
+    "mtime": 1792717623.2285683,
+    "seen": 1794176837.1188378,
+    "ast_hash": "ad25bf8234af9536ac81fa66f8db8953",
+    "semantic_hash": ""
+  },
+  "frontend/public/sfx/audio/hint.wav": {
+    "mtime": 1791789343.4141548,
+    "seen": 1794176837.1204855,
+    "ast_hash": "65098014ac9e4ee6a0f41d18121d3dcf",
+    "semantic_hash": ""
+  },
+  "frontend/public/sfx/audio/snap.wav": {
+    "mtime": 1791789343.3980691,
+    "seen": 1794176837.1259158,
+    "ast_hash": "797670c47ff534ccd17a2ea4e7cf15cb",
+    "semantic_hash": ""
+  },
+  "frontend/public/sfx/audio/warning.wav": {
+    "mtime": 1791789343.572685,
+    "seen": 1794176837.127829,
+    "ast_hash": "bf209b766d154b2f20e9c5dd5fc49f03",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Common/PixelCanvas.jsx": {
+    "mtime": 1795004552.4969263,
+    "seen": 1795004738.297592,
+    "ast_hash": "c8b6405c47eae178152e408378dac0b0",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Home/ModeSelectionCards.jsx": {
+    "mtime": 1795150803.674933,
+    "seen": 1795153304.256948,
+    "ast_hash": "6ddaa1978fbb21f3c85e6fbdbe4ee69b",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Home/RigPickerTransitionOverlay.jsx": {
+    "mtime": 1794814854.2901936,
+    "seen": 1794814871.0233934,
+    "ast_hash": "62e370e9d86cba0d9d9d539e0bb4bf2e",
+    "semantic_hash": ""
+  },
+  "frontend/public/sfx/audio/sidebar_close.wav": {
+    "mtime": 1794201928.5582798,
+    "seen": 1794202115.1141994,
+    "ast_hash": "273f4380d6ac28359b9ad99b38a994b9",
+    "semantic_hash": ""
+  },
+  "frontend/public/sfx/audio/sidebar_open.wav": {
+    "mtime": 1794201940.737686,
+    "seen": 1794202115.1142018,
+    "ast_hash": "81502069d20c3f17a29f6f4837eee944",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Compare/CompareRigs.jsx": {
+    "mtime": 1794208330.0050888,
+    "seen": 1794368515.5673425,
+    "ast_hash": "3eb6b7076923bf4a7c212ec08394b2c8",
+    "semantic_hash": ""
+  },
+  "backend/uploads/profiles/photo-1794214083340-kb6u7l.jpg": {
+    "mtime": 1794214083.3416743,
+    "seen": 1794368515.5887816,
+    "ast_hash": "d4d27dbc02701ffab4072c94002e676b",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Learn/LearnHardwareStage.jsx": {
+    "mtime": 1795152097.97696,
+    "seen": 1795153304.2642803,
+    "ast_hash": "ee2108993c93a0e0b8f6a69b12bcf5d1",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Legal/LegalPage.jsx": {
+    "mtime": 1794938536.749081,
+    "seen": 1794938580.319365,
+    "ast_hash": "91bc660a5d9dc9e110ce08dbe2836b35",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Learn/curriculumData.js": {
+    "mtime": 1795105138.2676616,
+    "seen": 1795105428.2591503,
+    "ast_hash": "05dbcafd0d7c7481a45e07850799cf75",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Learn/curriculumTypes.d.ts": {
+    "mtime": 1794682373.915516,
+    "seen": 1794683879.5984848,
+    "ast_hash": "544acdf44f3090c8aa14d59e58df8bc3",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Settings/SettingsPage.jsx": {
+    "mtime": 1795147928.2831087,
+    "seen": 1795149626.8370104,
+    "ast_hash": "2e0c02e2392f55c7c7acf5819bd420db",
+    "semantic_hash": ""
+  },
+  "frontend/src/contexts/LanguageContext.jsx": {
+    "mtime": 1794687196.2478232,
+    "seen": 1794687462.35886,
+    "ast_hash": "2f38bf04a8a291519bcf99dba89aa9b9",
+    "semantic_hash": ""
+  },
+  "frontend/src/assets/system_logo_straight.png": {
+    "mtime": 1794814322.7745657,
+    "seen": 1794814871.0370097,
+    "ast_hash": "b5fb3025a0b979e67b23ef53d7b9ddcb",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Home/PlatformServices.jsx": {
+    "mtime": 1795025155.093198,
+    "seen": 1795025227.5473459,
+    "ast_hash": "03acbccaa7826bc7b4e8a2fb3c5beec1",
+    "semantic_hash": ""
+  },
+  "frontend/src/assets/buildlab_logo_tight.png": {
+    "mtime": 1794819280.1230443,
+    "seen": 1794819581.1888938,
+    "ast_hash": "8d2d26525629e84b7b62dccdd792a86d",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Dashboard/StudentDashboard.jsx": {
+    "mtime": 1795153961.6358807,
+    "seen": 1795154036.5644033,
+    "ast_hash": "a0a2457940eacf3db1f7311540634dea",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Learn/VirtualAssemblyLab.jsx": {
+    "mtime": 1795154166.5430312,
+    "seen": 1795154327.3078763,
+    "ast_hash": "25dca9efc4fe8b60c6db2065ba9fddd7",
+    "semantic_hash": ""
+  },
+  "frontend/public/assets/shin_ariane_pol.jpg": {
+    "mtime": 1794847392.7912502,
+    "seen": 1794847485.748801,
+    "ast_hash": "3dc676d04c76d86c50c3a05634f405ac",
+    "semantic_hash": ""
+  },
+  "frontend/public/assets/preview_compare_page.png": {
+    "mtime": 1794923632.2786772,
+    "seen": 1794923673.6003177,
+    "ast_hash": "1cf9665c5e6760b49cd2683bb274993c",
+    "semantic_hash": ""
+  },
+  "frontend/public/assets/preview_learn_page.png": {
+    "mtime": 1794863925.302614,
+    "seen": 1794864538.3993413,
+    "ast_hash": "4a93042cd1ba1666862ebd945b5d83c0",
+    "semantic_hash": ""
+  },
+  "frontend/public/assets/preview_studio_page.png": {
+    "mtime": 1794690531.2442594,
+    "seen": 1794864538.399343,
+    "ast_hash": "2a013b4d236117200a18773c97e4a481",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Learn/CourseBriefingOverlay.jsx": {
+    "mtime": 1795028004.2279778,
+    "seen": 1795028132.5370526,
+    "ast_hash": "867d133cc008190103e73d39332662ae",
+    "semantic_hash": ""
+  },
+  "backend/uploads/profiles/photo-1794931704599-b2bbc1.jpg": {
+    "mtime": 1794938536.9734926,
+    "seen": 1794938580.3323212,
+    "ast_hash": "474109fed2113f03bed32502d3f08003",
+    "semantic_hash": ""
+  },
+  "backend/uploads/profiles/photo-1794931759308-ifoxg7.webp": {
+    "mtime": 1794938536.9750736,
+    "seen": 1794938580.3323278,
+    "ast_hash": "18f86f948abb0364ab48f40ff123207e",
+    "semantic_hash": ""
+  },
+  "backend/uploads/profiles/photo-1794932155207-7mr8qq.jpg": {
+    "mtime": 1794938535.4227607,
+    "seen": 1794938580.3323324,
+    "ast_hash": "aaaa50dab3404ec2d24cf4586df5e27c",
+    "semantic_hash": ""
+  },
+  "backend/uploads/profiles/photo-1794932442609-7x6snx.jpg": {
+    "mtime": 1794938535.449193,
+    "seen": 1794938580.3323364,
+    "ast_hash": "c07f038bb04924f96f44bb9656fe2a55",
+    "semantic_hash": ""
+  },
+  "backend/uploads/profiles/photo-1794932639998-kwb5sk.jpg": {
+    "mtime": 1794938535.4559398,
+    "seen": 1794938580.3323414,
+    "ast_hash": "18ab43375f4d495835a16c647f1e9cf1",
+    "semantic_hash": ""
+  },
+  "backend/uploads/profiles/photo-1794932743363-a0vy3q.jpg": {
+    "mtime": 1794938535.488388,
+    "seen": 1794938580.3323538,
+    "ast_hash": "01777b3db105e4ef66d8f62623750137",
+    "semantic_hash": ""
+  },
+  "backend/uploads/profiles/photo-1794932764614-u44pb4.jpg": {
+    "mtime": 1794938535.4962335,
+    "seen": 1794938580.332365,
+    "ast_hash": "d5ad9330e8a0ced83759a02c988f3415",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/3D/NorthChalkWhiteCase.jsx": {
+    "mtime": 1795004603.2218232,
+    "seen": 1795004738.2946777,
+    "ast_hash": "c68587323be2fe300d1f7b11e916493d",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Learn/LessonPresentationView.jsx": {
+    "mtime": 1795111926.78788,
+    "seen": 1795112483.4024885,
+    "ast_hash": "b1080717cf97bcff90105aa91b10fbb2",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Learn/ModuleQuizModal.jsx": {
+    "mtime": 1795117773.232354,
+    "seen": 1795117929.2386994,
+    "ast_hash": "a80978d36f88c640cda8e2a57d2cfbd8",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Learn/moduleQuizzes.js": {
+    "mtime": 1795000279.8992395,
+    "seen": 1795000346.8291962,
+    "ast_hash": "cf149507cec764d7f99e9f51c197d527",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/3D/DeepCoolLE240Cooler.jsx": {
+    "mtime": 1795024647.875992,
+    "seen": 1795025227.537355,
+    "ast_hash": "a4fdd96e2246c56f87287aea73a7b230",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/3D/ROGStrixMotherboard.jsx": {
+    "mtime": 1795151693.3612244,
+    "seen": 1795153304.238756,
+    "ast_hash": "8fa779f6de5489614a72a7c81f03f7f0",
+    "semantic_hash": ""
+  },
+  "frontend/src/utilities/useGoogleSignIn.js": {
+    "mtime": 1795147911.3632655,
+    "seen": 1795149626.839573,
+    "ast_hash": "795d106e3caca354cca86057265e859e",
+    "semantic_hash": ""
+  },
+  "frontend/public/assets/3d/le240_fans.jpg": {
+    "mtime": 1795024371.3404036,
+    "seen": 1795025227.5639887,
+    "ast_hash": "4330389e941a8bca848149d3edcc5df6",
+    "semantic_hash": ""
+  },
+  "frontend/public/assets/3d/le240_hero.jpg": {
+    "mtime": 1795024369.1849585,
+    "seen": 1795025227.564,
+    "ast_hash": "3da82a77b96d9eea063d769068c09996",
+    "semantic_hash": ""
+  },
+  "frontend/public/assets/3d/le240_pump.jpg": {
+    "mtime": 1795024370.1694233,
+    "seen": 1795025227.5640028,
+    "ast_hash": "ae93fb53f58808d570f3c2094efe5d74",
+    "semantic_hash": ""
+  },
+  "frontend/public/assets/3d/le240_pump_face.jpg": {
+    "mtime": 1795024612.1358325,
+    "seen": 1795025227.5640056,
+    "ast_hash": "31b69bb0d9600b25126f3023a163e7d7",
+    "semantic_hash": ""
+  },
+  "frontend/public/assets/3d/le240_rad.jpg": {
+    "mtime": 1795024370.3819246,
+    "seen": 1795025227.5640087,
+    "ast_hash": "ada84d46c36a152c67f1e09ea77e4013",
+    "semantic_hash": ""
+  },
+  "frontend/public/assets/3d/strix_b360f_full_top.png": {
+    "mtime": 1795023796.4248934,
+    "seen": 1795025227.5640113,
+    "ast_hash": "4242b492c250a9338d205c8b5c51be7b",
+    "semantic_hash": ""
+  },
+  "frontend/public/assets/3d/strix_b360f_pcb.png": {
+    "mtime": 1795023772.5191617,
+    "seen": 1795025227.5640137,
+    "ast_hash": "a7cc5e327727f645f58645ee0f29fabc",
+    "semantic_hash": ""
+  },
+  "frontend/public/assets/3d/test_gallery.png": {
+    "mtime": 1795023789.3146,
+    "seen": 1795025227.564016,
+    "ast_hash": "d3fb769129fa8310c4628389bb00475e",
+    "semantic_hash": ""
+  },
+  "frontend/public/assets/preview_build_page.png": {
+    "mtime": 1795025155.081211,
+    "seen": 1795025227.5666602,
+    "ast_hash": "a5eb88d885641a2d4035778b2f97d93b",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Learn/lessonModuleContent.js": {
+    "mtime": 1795034039.2922795,
+    "seen": 1795034162.1617837,
+    "ast_hash": "620754c6c171b676f907089825eaf8ca",
+    "semantic_hash": ""
+  },
+  "backend/uploads/profiles/photo-1795023027468-u49rt5.jpg": {
+    "mtime": 1795028004.224981,
+    "seen": 1795028132.5475357,
+    "ast_hash": "aae3235dfd01bff0b46fee97501d5320",
+    "semantic_hash": ""
+  },
+  "backend/package-lock.json": {
+    "mtime": 1795147673.5231445,
+    "seen": 1795149626.8520095,
+    "ast_hash": "14903187cbbce239885650235d4ca1c6",
+    "semantic_hash": ""
+  },
+  "frontend/package-lock.json": {
+    "mtime": 1794818386.6978264,
+    "seen": 1795011909.1145158,
+    "ast_hash": "0c6fc47eaf8415fe284f5df235694a53",
+    "semantic_hash": ""
+  }
+}

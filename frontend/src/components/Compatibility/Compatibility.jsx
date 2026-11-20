@@ -389,7 +389,7 @@ function CompatibilityView({ isIntegrated = false }) {
     setShowUnlockBanner(false);
     markBannerSeen("compatibility");
     setTimeout(() => {
-      triggerBobHint("Stage 02 Unlocked! All 7 parts assembled. I've audited your clearances — check the metrics below!");
+      triggerBobHint("Stage 02 Unlocked! All 7 parts assembled. I've audited your clearances: check the metrics below!");
     }, 500);
   }, [markBannerSeen, triggerBobHint]);
 
@@ -1521,7 +1521,7 @@ function CompatibilityView({ isIntegrated = false }) {
           <div className="compat-modal-overlay" onClick={() => setIssueModal(null)}>
             <div className="compat-modal" onClick={(e) => e.stopPropagation()}>
               <div className="compat-modal-header">
-                <h2>Build {issueModal.slot + 1} — Compatibility Report</h2>
+                <h2>Build {issueModal.slot + 1}: Compatibility Report</h2>
                 <button className="compat-modal-close" onClick={() => setIssueModal(null)}>
                   ✕
                 </button>
@@ -1568,7 +1568,6 @@ function CompatibilityView({ isIntegrated = false }) {
           <GlobalHeader
             hideBuildPill={true}
             hideBrand={true}
-            hiddenNavItems={['COMPATIBILITY']}
           />
         )}
         {!isIntegrated && (
@@ -1649,7 +1648,7 @@ function CompatibilityView({ isIntegrated = false }) {
 
         <div
           className="compat-bob-overlay"
-          title="B.O.B. — Compatibility Inspector (Right-click or hold to poke!)"
+          title="B.O.B. Compatibility Inspector (Right-click or hold to poke!)"
           {...bindBobInteract("B.O.B. online! Right-click or hold any hardware item to inspect compatibility.")}
         >
           <EyeTracker

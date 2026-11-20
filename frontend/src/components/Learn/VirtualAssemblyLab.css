@@ -18,11 +18,34 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 18px;
+  padding: 10px 16px;
   background: rgba(15, 23, 42, 0.65);
   border-bottom: 1px solid var(--wb-border, rgba(255, 255, 255, 0.08));
   gap: 12px;
   flex-wrap: wrap;
+}
+
+.btn-lab-back-module {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: #d5cea3;
+  color: #1a120b;
+  border: 1px solid rgba(26, 18, 11, 0.2);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  flex-shrink: 0;
+}
+
+.btn-lab-back-module:hover {
+  background: #e5debe;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
 }
 
 .assembly-top-title {
@@ -55,6 +78,52 @@
   color: var(--wb-muted, #94a3b8);
   padding-left: 8px;
   border-left: 1px solid var(--wb-border, rgba(255, 255, 255, 0.1));
+}
+
+/* ── Mode Switcher Tabs (Assembly vs Disassembly) ── */
+.assembly-mode-switcher {
+  display: flex;
+  align-items: center;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  padding: 3px;
+  gap: 4px;
+}
+
+.assembly-mode-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 6px;
+  background: transparent;
+  color: #94a3b8;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.assembly-mode-tab:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.assembly-mode-tab.is-active {
+  background: #ffffff;
+  color: #0b111e;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+.assembly-mode-tab.is-active.is-teardown {
+  background: #f59e0b;
+  color: #0b111e;
+}
+
+.mode-tab-icon {
+  font-size: 13px;
 }
 
 .assembly-top-actions {
@@ -172,60 +241,162 @@
   animation: pulseDot 1.4s infinite ease-in-out;
 }
 
+/* 3D unmount target hotspot */
+.wb-assembly-target-pill.is-teardown {
+  pointer-events: auto;
+  cursor: pointer;
+  background: rgba(217, 119, 6, 0.94);
+  border: 1.5px solid #fbbf24;
+  color: #ffffff;
+  box-shadow: 0 4px 20px rgba(217, 119, 6, 0.65);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.wb-assembly-target-pill.is-teardown:hover {
+  transform: scale(1.08);
+  background: #b45309;
+  border-color: #ffffff;
+}
+
+.target-pulse-dot.amber {
+  background: #fbbf24;
+  box-shadow: 0 0 14px #fbbf24;
+}
+
 @keyframes pulseDot {
   0% { transform: scale(0.9); opacity: 0.8; }
   50% { transform: scale(1.3); opacity: 1; }
   100% { transform: scale(0.9); opacity: 0.8; }
 }
 
-/* B.O.B. Interactive Dialogue Bar */
-.wb-assembly-bob-callout {
+/* ── B.O.B. Interactive Dialogue Bubble (Anchored bottom-left near B.O.B.) ── */
+.wb-bob-dialogue-bubble {
   position: absolute;
-  bottom: 14px;
-  left: 14px;
-  right: 14px;
+  bottom: 20px;
+  left: 20px;
+  max-width: 440px;
   display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 12px 16px;
-  background: rgba(6, 11, 22, 0.96); /* Deep dark high contrast */
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 16px 14px 16px;
+  background: rgba(10, 16, 28, 0.96);
   border: 1.5px solid #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(12px);
+  border-radius: 14px 14px 14px 4px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.75), 0 2px 8px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(16px);
   pointer-events: auto;
+  z-index: 20;
+  animation: bobBubblePop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.bob-avatar-circle {
-  font-size: 20px;
-  flex-shrink: 0;
-  width: 34px;
-  height: 34px;
+@keyframes bobBubblePop {
+  0% { transform: translateY(8px) scale(0.97); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.wb-bob-bubble-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  padding-bottom: 8px;
+}
+
+.wb-mini-bob-avatar {
+  width: 28px;
+  height: 28px;
+  background: #1c1b16;
+  border: 1.5px solid #ffffff;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1.5px solid #ffffff;
-  border-radius: 50%;
+  gap: 4px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
 }
 
-.bob-callout-text strong {
-  display: block;
+.mini-bob-eye {
+  width: 4.5px;
+  height: 7px;
+  background: #ffffff;
+  border-radius: 1px;
+  animation: bobBlink 3.8s infinite ease-in-out;
+}
+
+@keyframes bobBlink {
+  0%, 94%, 100% { transform: scaleY(1); }
+  97% { transform: scaleY(0.1); }
+}
+
+.wb-bob-bubble-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+  gap: 8px;
+}
+
+.wb-bob-guide-title {
   font-size: 11.5px;
   font-weight: 800;
   letter-spacing: 0.08em;
   color: #ffffff;
-  margin-bottom: 3px;
   text-transform: uppercase;
 }
 
-.bob-callout-text p {
+.wb-bob-live-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  padding: 2px 7px;
+  border-radius: 999px;
+}
+
+.bob-live-pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #38bdf8;
+  animation: pulseDot 1.4s infinite ease-in-out;
+}
+
+.wb-bob-bubble-body p {
   margin: 0;
   font-size: 13.5px;
-  font-weight: 700; /* Bold readable context */
-  color: #ffffff; /* Ultra crisp contrast */
+  font-weight: 700;
+  color: #ffffff;
   line-height: 1.5;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
+}
+
+.wb-bob-tail {
+  position: absolute;
+  bottom: -9px;
+  left: 14px;
+  width: 0;
+  height: 0;
+  border-left: 9px solid transparent;
+  border-right: 9px solid transparent;
+  border-top: 9px solid #ffffff;
+}
+
+.wb-bob-tail::after {
+  content: "";
+  position: absolute;
+  bottom: 2px;
+  left: -7px;
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 7px solid rgba(10, 16, 28, 0.98);
 }
 
 /* ── Staging Tray (Right Panel) ── */
@@ -377,6 +548,45 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
+.btn-unmount-part {
+  width: 100%;
+  padding: 8px 12px;
+  background: #d97706;
+  color: #ffffff;
+  font-size: 11.5px;
+  font-weight: 800;
+  border: 1px solid #fbbf24;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.4);
+}
+
+.btn-unmount-part:hover {
+  background: #b45309;
+  border-color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 18px rgba(217, 119, 6, 0.6);
+}
+
+.tray-stage-card.is-unmounted {
+  opacity: 0.5;
+  border-color: rgba(255, 255, 255, 0.05);
+  background: rgba(15, 23, 42, 0.35);
+}
+
+.tray-stage-card.is-teardown-target {
+  border-color: #f59e0b;
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.25);
+  background: rgba(245, 158, 11, 0.08);
+}
+
+.tray-badge.unmounted {
+  background: rgba(148, 163, 184, 0.15);
+  color: #94a3b8;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
 /* All Installed POST Card */
 .tray-post-card {
   padding: 14px;
@@ -502,6 +712,13 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
+.celebration-actions-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
 .btn-celebration-confirm {
   width: 100%;
   padding: 10px 16px;
@@ -516,6 +733,101 @@
 }
 
 .btn-celebration-confirm:hover {
-  background: #ffffff;
+  background: #f8fafc;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  transform: translateY(-1px);
+}
+
+.btn-celebration-disassemble {
+  width: 100%;
+  padding: 10px 16px;
+  background: #d5cea3;
+  color: #1a120b;
+  font-size: 12.5px;
+  font-weight: 800;
+  border: 1px solid #e5debe;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-celebration-disassemble:hover {
+  background: #faf9f2;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  transform: translateY(-1px);
+}
+
+.btn-celebration-secondary {
+  width: 100%;
+  padding: 9px 16px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #e2e8f0;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-celebration-secondary:hover {
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+}
+
+.assembly-reset-btn.is-ready-teardown {
+  background: #d5cea3;
+  color: #1a120b;
+  border-color: #faf9f2;
+  font-weight: 850;
+  box-shadow: 0 0 14px rgba(213, 206, 163, 0.4);
+}
+
+/* ── Tray Header Row & Reset Button ── */
+.tray-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.tray-reset-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--wb-muted, #94a3b8);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tray-reset-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* ── B.O.B. Inline Speech Action ── */
+.btn-bob-bubble-action {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 8px;
+  padding: 5px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 999px;
+  background: #38bdf8;
+  color: #0f172a;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(56, 189, 248, 0.3);
+}
+
+.btn-bob-bubble-action:hover {
+  background: #7dd3fc;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(56, 189, 248, 0.45);
 }

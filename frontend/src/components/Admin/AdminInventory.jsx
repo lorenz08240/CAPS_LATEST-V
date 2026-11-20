@@ -70,7 +70,7 @@ const getComponentAgeInfo = (createdAt) => {
 };
 
 const formatDate = (dateStr) => {
-  if (!dateStr) return "—";
+  if (!dateStr) return "N/A";
   try {
     const d = new Date(dateStr);
     if (isNaN(d.getTime())) return dateStr;
@@ -410,11 +410,11 @@ export const AdminInventory = () => {
     const cat = (part.category || "").toLowerCase();
     switch (cat) {
       case "cpu":
-        return `${part.socket_type || "Socket —"} / ${part.wattage ? `${part.wattage}W` : "TDP —"}`;
+        return `${part.socket_type || "Socket N/A"} / ${part.wattage ? `${part.wattage}W` : "TDP N/A"}`;
       case "motherboard":
-        return `${part.socket_type || "Socket —"} / ${part.ddr_type || "DDR —"}`;
+        return `${part.socket_type || "Socket N/A"} / ${part.ddr_type || "DDR N/A"}`;
       case "ram":
-        return `${part.ddr_type || "DDR"} ${part.capacity || "—"} ${part.speed ? `(${part.speed})` : ""}`;
+        return `${part.ddr_type || "DDR"} ${part.capacity || "N/A"} ${part.speed ? `(${part.speed})` : ""}`;
       case "storage":
         return `${part.capacity || "Storage"} ${part.type ? `(${part.type})` : ""}`;
       case "gpu":
@@ -424,7 +424,7 @@ export const AdminInventory = () => {
       case "case":
         return part.form_factor || "ATX Mid Tower";
       default:
-        return "—";
+        return "N/A";
     }
   };
 
