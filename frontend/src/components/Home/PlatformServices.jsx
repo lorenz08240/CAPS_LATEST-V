@@ -21,7 +21,6 @@ export default function PlatformServices() {
   const sectionRef = useRef(null);
   const cyanGlowRef = useRef(null);
   const roseGlowRef = useRef(null);
-  const headerRef = useRef(null);
 
   // Dynamic 3D interactive tilt on pointer move (making sections feel alive)
   const handleCardMouseMove = (e) => {
@@ -90,33 +89,7 @@ export default function PlatformServices() {
         });
       }
 
-      // 2. Master Header Reveal
-      if (headerRef.current) {
-        ScrollTrigger.create({
-          trigger: headerRef.current,
-          start: "top 88%",
-          onEnter: () => {
-            gsap.to(headerRef.current, {
-              opacity: 1,
-              y: 0,
-              scale: 1,
-              duration: 0.7,
-              ease: "power2.out",
-              overwrite: "auto",
-            });
-          },
-          onLeaveBack: () => {
-            gsap.to(headerRef.current, {
-              opacity: 0,
-              y: 30,
-              scale: 0.98,
-              duration: 0.35,
-              ease: "power2.in",
-              overwrite: "auto",
-            });
-          },
-        });
-      }
+
 
       // 3. Staggered Asymmetric Feature Rows (Cards Glide In & Out)
       // Narrative text stays stably anchored; only the cards glide in and out smoothly
@@ -203,7 +176,7 @@ export default function PlatformServices() {
 
       <div className="services-container">
         {/* Section Master Header */}
-        <div className="services-master-header" ref={headerRef}>
+        <div className="services-master-header">
           <AnimatedHeading
             as="h2"
             className="services-headline"

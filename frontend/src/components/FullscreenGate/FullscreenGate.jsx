@@ -6,6 +6,7 @@ import {
   hasEngagedFullscreen,
   markFullscreenEngaged,
   needsRotation,
+  isMobilePhone,
   onViewportChange,
 } from "../../utilities/fullscreen";
 import soundManager from "../../utilities/soundManager";
@@ -16,15 +17,26 @@ export const FullscreenGateContext = createContext(false);
 /**
  * FullscreenGate — Centered modal dialog for BuildLab's immersive workstation mode.
  *
- * Visual Reference: Dark-glassmorphic slate card with cyan-to-emerald accents,
- * side-by-side hero layout featuring the BuildLab Flask/Chip logo, vertical divider,
- * clean typography, vibrant gradient CTA button, and keyboard shortcut note.
+ * Fullscreen & orientation lock is strictly enforced ONLY on mobile phones.
+ * Desktops and standard laptops bypass this modal completely.
  */
 export default function FullscreenGate({ children, requireFullscreen = true, disabled = false }) {
-  // DEV OVERRIDE: Temporarily suspended so developers can capture full-page screenshots
-  // and audits without modal obstruction or forced fullscreen. Set to false to restore.
-  const SUSPENDED = true;
-  if (SUSPENDED) {
+  const [isMobile, setIsMobile] = useState(() => isMobilePhone());
+
+  useEffect(() => {
+    const handleDeviceChange = () => {
+      setIsMobile(isMobilePhone());
+    };
+    window.addEventListener("resize", handleDeviceChange);
+    window.addEventListener("orientationchange", handleDeviceChange);
+    return () => {
+      window.removeEventListener("resize", handleDeviceChange);
+      window.removeEventListener("orientationchange", handleDeviceChange);
+    };
+  }, []);
+
+  // Desktop and non-phone devices (or disabled routes) bypass the gate completely
+  if (!isMobile || disabled) {
     return (
       <FullscreenGateContext.Provider value={true}>
         {children}

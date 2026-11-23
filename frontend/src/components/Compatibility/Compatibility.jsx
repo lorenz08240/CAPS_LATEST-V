@@ -315,7 +315,7 @@ const getSmartSuggestion = (issue, build) => {
 
 function CompatibilityView({ isIntegrated = false }) {
   const navigate = useNavigate();
-  const { mode, userProfile, seenBanners, markBannerSeen, unlockStage } = useLearnMode();
+  const { mode, userProfile, seenBanners, markBannerSeen } = useLearnMode();
   const hasAccount = Boolean(
     userProfile && (userProfile.fullName || userProfile.email) && userProfile.setupCompleted
   );
@@ -600,10 +600,6 @@ function CompatibilityView({ isIntegrated = false }) {
     iss.components.some((c) => c.toLowerCase() === "psu" || c.toLowerCase() === "gpu")
   );
 
-  // Verification pass condition: ONLY true when user completes a 7-stage rig with 0 compatibility issues
-  const isRigComplete = selectedComponents.length >= 7;
-  const hasZeroIssues = compatibilityIssues.length === 0;
-  const isVerificationPassed = isRigComplete && hasZeroIssues;
 
   // Auditory feedback when entering Compatibility Checker
   useEffect(() => {
@@ -930,7 +926,7 @@ function CompatibilityView({ isIntegrated = false }) {
 
       // 2. Primary Rig & Compare Cards (Reveal & remain visible throughout scroll; reverse only on scroll-back-up)
       ScrollTrigger.batch(
-        ".rig-workbench-card, .compare-rig-card, .compat-compare-launcher-card, .compare-dedicated-overview-card, .compat-learn-unlock-card",
+        ".rig-workbench-card, .compare-rig-card, .compat-compare-launcher-card, .compare-dedicated-overview-card",
         {
           interval: 0.06,
           batchMax: 2,
@@ -1541,11 +1537,8 @@ function CompatibilityView({ isIntegrated = false }) {
               </div>
               <div className="compat-modal-footer">
                 <Link to="/build" className="btn-primary" onClick={() => setIssueModal(null)}>
-                  Go to Build Picker
+                  Go to Build Picker →
                 </Link>
-                <button className="btn-outline" onClick={() => setIssueModal(null)}>
-                  Close
-                </button>
               </div>
             </div>
           </div>,
@@ -1600,35 +1593,6 @@ function CompatibilityView({ isIntegrated = false }) {
                 ]}
               />
             </header>
-          )}
-
-          {/* Milestone Unlock: In Learn Mode (with account), when all 7 parts are assembled with 0 issues, unlock Hardware Academy */}
-          {isLearnMode && isVerificationPassed && (
-            <div className="compat-learn-unlock-card glass-panel" {...bindBobInteract("Hardware Verification Complete: All 7 stages audited with zero conflicts! Unlock your coursework.")}>
-              <div className="learn-unlock-info">
-                <div className="learn-unlock-badge">
-                  <span className="telemetry-live-dot" />
-                  <span className="learn-unlock-badge-label">STAGE 02 COMPLETE // DIAGNOSTICS AUDITED</span>
-                  <span className="telemetry-bracket">[ 7/7 VERIFIED ]</span>
-                </div>
-                <h3 className="learn-unlock-title">Hardware Verification Complete</h3>
-                <p className="learn-unlock-desc">
-                  Your 7-stage PC build passed comprehensive physical clearance, electrical TDP, and socket pinout inspection with zero conflicts. You are now authorized to unlock the BuildLab Hardware Academy and begin your certified coursework.
-                </p>
-              </div>
-              <button
-                type="button"
-                className="learn-unlock-btn"
-                onClick={() => {
-                  try { soundManager.granted(); } catch { }
-                  unlockStage("learn");
-                  navigate("/learn");
-                }}
-              >
-                <span>UNLOCK &amp; PROCEED TO LEARN LAB</span>
-                <span className="btn-arrow">&rarr;</span>
-              </button>
-            </div>
           )}
 
           {compatibilityIssues.length > 0 && hasRig1 && (

@@ -1,68 +1,114 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
+import { motion, useReducedMotion } from "motion/react";
 import "./AnimatedHeading.css";
 
+const HIDDEN_CLIP = "inset(0% 0% 100% 0%)";
+const SHOWN_CLIP = "inset(-25% -10% -25% -10%)";
+const EASE = [0.76, 0, 0.24, 1];
+
 /**
- * Line-by-line heading reveal.
+ * AnimatedHeading (Kivi UI implementation)
  *
- * Purpose (R-19): mark a major headline as it enters view, one line at a time,
- * so the type reads as a deliberate sequence instead of a block fading in.
- * One pass, no loop, no spring.
+ * Provides a crisp, kinetic word-by-word reveal:
+ * - Words slide up with a 3deg rotational untilt (origin: bottom-left).
+ * - Clipped with clip-path (no muddy opacity fade in standard mode).
+ * - Left-to-right accent underline wipe timed after all words land.
+ * - Bidirectional scroll trigger: re-reveals when scrolling up or down (once = false).
+ * - Supports prefers-reduced-motion fallback.
  */
 export default function AnimatedHeading({
   as: Tag = "h2",
   lines = [],
-  className = "",
-  underlineClassName = "",
+  delay = 0.15,
+  stagger = 0.07,
   underline = true,
+  underlineClassName = "",
+  className = "",
+  once = false,
   ...rest
 }) {
-  const ref = useRef(null);
-  const [revealed, setRevealed] = useState(
-    () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches
-  );
+  const reduceMotion = useReducedMotion();
 
-  useEffect(() => {
-    const node = ref.current;
-    if (!node || revealed) return undefined;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setRevealed(true);
-          observer.disconnect();
-        }
+  const container = {
+    hidden: {},
+    show: {
+      transition: {
+        delayChildren: delay,
+        staggerChildren: stagger,
       },
-      { threshold: 0.15, rootMargin: "0px 0px -8% 0px" }
-    );
+    },
+  };
 
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, [revealed]);
+  const word = reduceMotion
+    ? {
+        hidden: { opacity: 0, transition: { duration: 0.2 } },
+        show: { opacity: 1, transition: { duration: 0.4 } },
+      }
+    : {
+        hidden: {
+          clipPath: HIDDEN_CLIP,
+          y: "70%",
+          rotate: 3,
+          transition: { duration: 0.25, ease: "easeIn" },
+        },
+        show: {
+          clipPath: SHOWN_CLIP,
+          y: "0%",
+          rotate: 0,
+          transition: { duration: 0.9, ease: EASE },
+        },
+      };
+
+  const totalWords = lines.join(" ").split(/\s+/).filter(Boolean).length;
+  const underlineDelay = delay + totalWords * stagger + 0.5;
+
+  const MotionTag = motion[Tag] || motion.h2;
 
   return (
-    <Tag
-      ref={ref}
-      className={`animated-heading ${revealed ? "is-revealed" : ""} ${className}`.trim()}
+    <MotionTag
+      variants={container}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once, amount: 0.2, margin: "0px 0px -20px 0px" }}
+      className={`animated-heading ${className}`.trim()}
       {...rest}
     >
       <span className="animated-heading__body">
-        {lines.map((line, index) => (
-          <span
-            className="animated-heading__line"
-            key={index}
-            style={{ "--line-index": index }}
-          >
-            <span className="animated-heading__line-inner">{line}</span>
+        {lines.map((line, lineIndex) => (
+          <span key={lineIndex} className="animated-heading__line">
+            {line.split(" ").map((w, wordIndex) => (
+              <motion.span
+                key={`${lineIndex}-${wordIndex}`}
+                variants={word}
+                className="animated-heading__word"
+              >
+                {w}
+              </motion.span>
+            ))}
           </span>
         ))}
       </span>
+
       {underline && (
-        <span
-          className={`animated-heading__underline ${underlineClassName}`.trim()}
-          style={{ "--line-count": lines.length }}
+        <motion.span
           aria-hidden="true"
+          className={`animated-heading__underline ${underlineClassName}`.trim()}
+          variants={{
+            hidden: {
+              clipPath: "inset(0% 100% 0% 0%)",
+              transition: { duration: 0.2 },
+            },
+            show: {
+              clipPath: "inset(0% 0% 0% 0%)",
+              transition: {
+                duration: reduceMotion ? 0 : 0.8,
+                ease: EASE,
+                delay: reduceMotion ? 0 : underlineDelay,
+              },
+            },
+          }}
         />
       )}
-    </Tag>
+    </MotionTag>
   );
 }

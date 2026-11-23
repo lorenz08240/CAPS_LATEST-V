@@ -242,7 +242,7 @@ export const AdminContent = () => {
                 <div className="content-kicker">CORE TEAM DIRECTORY // DEVELOPER PROFILES</div>
                 <h1 className="content-title">Developer Profiles</h1>
                 <p className="content-subtitle">
-                  Photos, hardware vitae, and details for the {members.length || 5} WhiteHats developers. Saved changes automatically synchronize live with the public <Link to="/about" target="_blank" className="text-emerald underline">About Us</Link> page.
+                  Photos, hardware vitae, and details for the {members.length || 5} WhiteHats developers. Saved changes automatically synchronize live with the public About Us page.
                 </p>
               </div>
 

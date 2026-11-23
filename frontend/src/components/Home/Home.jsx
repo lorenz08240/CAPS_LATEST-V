@@ -351,54 +351,26 @@ function Home() {
             <div className="cyber-ambient-pink-spot" />
             <div className="cyber-ambient-grid" />
 
+            {/* Persistent layout anchor ensures zero layout jerk when top navbar is fixed */}
+            <div className="cyber-top-nav-placeholder" aria-hidden="true" />
+
             <header className={`cyber-top-nav ${isScrolledDown ? "is-scrolled" : ""}`}>
               <CyberBrand onNavigateHome={handleNavigateHome} />
 
-              <div className="cyber-nav-switch">
-                <nav
-                  className={`cyber-nav-links cyber-nav-state ${isScrolledDown ? "" : "is-visible"}`}
-                  aria-hidden={isScrolledDown}
+              <nav className="cyber-nav-links" aria-label="BuildLab Primary Navigation">
+                <button
+                  type="button"
+                  className="cyber-nav-link active"
+                  onClick={handleNavigateHome}
                 >
-                  <button
-                    type="button"
-                    className="cyber-nav-link active"
-                    onClick={handleNavigateHome}
-                    tabIndex={isScrolledDown ? -1 : 0}
-                  >
-                    HOME
-                  </button>
-                  <button
-                    type="button"
-                    className="cyber-nav-link"
-                    onClick={handleScrollToBrands}
-                    tabIndex={isScrolledDown ? -1 : 0}
-                  >
-                    BRANDS
-                  </button>
-                  <button
-                    type="button"
-                    className="cyber-nav-link"
-                    onClick={() => { soundManager.click(); navigate('/about'); }}
-                    tabIndex={isScrolledDown ? -1 : 0}
-                  >
-                    ABOUT US
-                  </button>
-                </nav>
+                  HOME
+                </button>
 
-                <nav
-                  className={`cyber-nav-links cyber-nav-state ${isScrolledDown ? "is-visible" : ""}`}
+                {/* Morph Item 1: COMPATIBILITY smoothly unfolds on scroll */}
+                <div
+                  className={`cyber-nav-morph-item ${isScrolledDown ? "is-expanded" : ""}`}
                   aria-hidden={!isScrolledDown}
                 >
-                  <button
-                    type="button"
-                    className="cyber-nav-link active"
-                    onClick={handleNavigateHome}
-                    tabIndex={isScrolledDown ? 0 : -1}
-                  >
-                    HOME
-                  </button>
-                  {/* BUILD: Removed per user request */}
-                  {/* 3D STUDIO: Button Gone per user request */}
                   <button
                     type="button"
                     className="cyber-nav-link"
@@ -407,33 +379,39 @@ function Home() {
                   >
                     COMPATIBILITY
                   </button>
+                </div>
+
+                {/* Morph Item 2: LEARN smoothly unfolds when in view of academy */}
+                <div
+                  className={`cyber-nav-morph-item ${isScrolledDown && showLearnNav ? "is-expanded" : ""}`}
+                  aria-hidden={!isScrolledDown || !showLearnNav}
+                >
                   <button
                     type="button"
-                    className={`cyber-nav-link nav-learn-fade ${showLearnNav ? "is-visible" : ""}`}
+                    className="cyber-nav-link"
                     onClick={handleLearnNavClick}
-                    aria-hidden={!showLearnNav}
                     tabIndex={isScrolledDown && showLearnNav ? 0 : -1}
                   >
                     LEARN
                   </button>
-                  <button
-                    type="button"
-                    className="cyber-nav-link"
-                    onClick={handleScrollToBrands}
-                    tabIndex={isScrolledDown ? 0 : -1}
-                  >
-                    BRANDS
-                  </button>
-                  <button
-                    type="button"
-                    className="cyber-nav-link"
-                    onClick={() => { soundManager.click(); navigate('/about'); }}
-                    tabIndex={isScrolledDown ? 0 : -1}
-                  >
-                    ABOUT US
-                  </button>
-                </nav>
-              </div>
+                </div>
+
+                <button
+                  type="button"
+                  className="cyber-nav-link"
+                  onClick={handleScrollToBrands}
+                >
+                  BRANDS
+                </button>
+
+                <button
+                  type="button"
+                  className="cyber-nav-link"
+                  onClick={() => { soundManager.click(); navigate('/about'); }}
+                >
+                  ABOUT US
+                </button>
+              </nav>
             </header>
 
             <div

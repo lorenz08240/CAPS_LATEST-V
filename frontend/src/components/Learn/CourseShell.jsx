@@ -12,6 +12,11 @@ import BobCompanion from "../BobCompanion/BobCompanion";
 import StageUnlockBanner from "../Navigation/StageUnlockBanner";
 import AccountSetupModal from "../Home/AccountSetupModal";
 import soundManager from "../../utilities/soundManager";
+import {
+  toggleFullscreen,
+  isFullscreenActive,
+  onViewportChange,
+} from "../../utilities/fullscreen";
 import { getStudentQuizRecords } from "./moduleQuizzes";
 import { getLessonModuleContent } from "./lessonModuleContent";
 import {
@@ -213,6 +218,14 @@ export default function CourseShell() {
   const [completed, setCompleted] = useState(() => readProgress(userProfile?.email));
   const [videoWatched, setVideoWatched] = useState(() => readTopicFlags(VIDEO_KEY, userProfile?.email));
   const [quizPassed, setQuizPassed] = useState(() => readTopicFlags(QUIZ_KEY, userProfile?.email));
+  const [isFs, setIsFs] = useState(() => isFullscreenActive());
+
+  useEffect(() => {
+    const sync = () => setIsFs(isFullscreenActive());
+    const unsub = onViewportChange(sync);
+    sync();
+    return unsub;
+  }, []);
 
   // Sync completed topics if learner email loads after initial mount
   useEffect(() => {
@@ -522,9 +535,6 @@ export default function CourseShell() {
   useEffect(() => {
     setSelectedHotspotId(currentTopic.hotspotId || null);
     setActivePopover(null);
-    setBobSpeech(
-      `Topic ${currentTopic.topicCode}: ${currentTopic.title}. Study the syllabus guide, watch the demonstration, and inspect in 3D!`
-    );
   }, [currentIndex, currentTopic, completed]);
 
   const handleVideoWatched = useCallback((topicId) => {
@@ -863,6 +873,35 @@ export default function CourseShell() {
             </span>
             {leftRailOpen && <span className="wb-rail-label">SETTINGS</span>}
           </button>
+
+          <button
+            type="button"
+            className="wb-rail-item wb-rail-fs-item"
+            onClick={async () => {
+              try { soundManager.click(); } catch {}
+              await toggleFullscreen();
+            }}
+            data-tooltip={isFs ? "Exit Fullscreen (F11)" : "Enter Fullscreen (F11)"}
+            aria-label="Toggle Fullscreen"
+          >
+            <span className="wb-rail-icon">
+              {isFs ? (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M8 3v3a2 2 0 0 1-2 2H3" />
+                  <path d="M21 8h-3a2 2 0 0 1-2-2V3" />
+                  <path d="M3 16h3a2 2 0 0 1 2 2v3" />
+                  <path d="M16 21v-3a2 2 0 0 1 2-2h3" />
+                </svg>
+              ) : (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M8 3H5a2 2 0 0 0-2 2v3" />
+                  <path d="M21 8V5a2 2 0 0 0-2-2h-3" />
+                  <path d="M3 16v3a2 2 0 0 0 2 2h3" />
+                  <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
+                </svg>
+              )}
+            </span>
+          </button>
         </nav>
 
         <div className="wb-rail-footer">
@@ -1088,19 +1127,6 @@ export default function CourseShell() {
           </div>
 
           <div className="wb-header-right">
-            <button
-              type="button"
-              className="wb-hud-pill"
-              onClick={() => {
-                try { soundManager.click(); } catch {}
-                setShowBriefingOverlay(true);
-              }}
-              data-tooltip="Open the course briefing document"
-              aria-label="Open course briefing"
-            >
-              BRIEFING
-            </button>
-
             <button
               type="button"
               className={`wb-hud-pill wb-tour-btn wb-tour-icon-only ${tourActive ? "is-active" : ""}`}
@@ -1716,7 +1742,7 @@ export default function CourseShell() {
         <BobCompanion
           context="learn"
           activeTopic={currentTopic.title}
-          externalSpeech={showBriefingOverlay || tourActive || showDashboardOverlay || showQuizModal || (centerMode === "3d-lab" && currentTopic.isAssemblyLab) ? null : bobSpeech}
+          externalSpeech={null}
           muted={showBriefingOverlay || tourActive || showDashboardOverlay || showQuizModal || (centerMode === "3d-lab" && currentTopic.isAssemblyLab)}
           dockRight={20}
           size={bobIsCenter ? 88 : leftRailOpen ? 64 : 46}

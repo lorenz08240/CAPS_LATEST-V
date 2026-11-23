@@ -944,15 +944,6 @@ function PCBuilder3DWorkspace() {
 
           {isLearnMode ? (
             <>
-              {placedParts.length === 7 && (
-                <button 
-                  className="header-action-btn post-btn-glow"
-                  onClick={handleRunPOSTTest}
-                  title="Simulate Power-On Self-Test (POST)"
-                >
-                  ⚡ Run POST / Boot Test
-                </button>
-              )}
               <button 
                 className="header-action-btn clear-btn" 
                 onClick={() => {
@@ -1386,6 +1377,7 @@ function PCBuilder3DWorkspace() {
           </div>
 
           <Canvas 
+            dpr={[1, Math.min(typeof window !== 'undefined' ? window.devicePixelRatio : 1, 1.5)]}
             camera={{ position: CAMERA_PRESETS.isometric.position, fov: 42 }}
             gl={{ 
               powerPreference: "high-performance",
@@ -1564,6 +1556,7 @@ function PCBuilder3DWorkspace() {
                 scale={28} 
                 blur={2.0} 
                 far={12} 
+                resolution={256}
                 color="#060911" 
               />
 

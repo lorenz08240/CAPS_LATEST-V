@@ -936,13 +936,14 @@
 }
 
 @keyframes cardReveal {
-  from { opacity: 0; filter: blur(6px); }
-  to { opacity: 1; filter: blur(0px); }
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .components-grid.compact .component-card.compact-card {
-  animation: cardReveal 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
-  animation-delay: calc(var(--card-i, 0) * 40ms);
+  animation: cardReveal 0.36s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--card-i, 0) * 35ms);
+  will-change: transform, opacity;
 }
 
 /* ── COMPONENT CARDS: Precision Dark Presentation Bays ── */

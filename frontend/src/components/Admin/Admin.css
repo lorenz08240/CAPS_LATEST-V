@@ -8050,6 +8050,17 @@ body.theme-light .btn-del-operative:hover,
   gap: 8px;
 }
 
+.admin-sidebar-footer-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.admin-sidebar-footer-row .admin-sidebar-return-link {
+  flex: 1;
+}
+
 .admin-sidebar-return-link {
   display: flex;
   align-items: center;

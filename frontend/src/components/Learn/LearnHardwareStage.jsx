@@ -527,7 +527,7 @@ export default function LearnHardwareStage({
       <Canvas
         frameloop={isPaused ? "demand" : "always"}
         camera={isMini ? { position: [-5.6, 1.4, 4.2], fov: 36, near: 0.1, far: 100 } : { position: [-7.4, 1.8, 5.4], fov: 40, near: 0.1, far: 100 }}
-        dpr={[1, 2]}
+        dpr={[1, 1.5]}
         className="workbench-canvas"
         onPointerMissed={() => onSelectHotspotId(null)}
       >

@@ -450,77 +450,99 @@
   z-index: 1;
 }
 
-.cyber-top-nav {
-  position: relative;
-  z-index: 25;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.cyber-top-nav-placeholder {
   width: 100%;
-  padding-bottom: 0.5rem;
-  /* Only animatable surface properties — never `all`. Position and pointer
-     changes must snap or the whole header smears while scrolling. */
-  transition: background-color var(--nav-fade-dur) var(--nav-fade-ease),
-    padding var(--nav-fade-dur) var(--nav-fade-ease),
-    box-shadow var(--nav-fade-dur) var(--nav-fade-ease),
-    border-color var(--nav-fade-dur) var(--nav-fade-ease);
+  height: 52px;
+  flex-shrink: 0;
+  pointer-events: none;
+  visibility: hidden;
 }
 
-.cyber-top-nav.is-scrolled {
+.cyber-top-nav {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 100;
-  padding: 0.85rem 3rem;
-  background: rgba(6, 8, 14, 0.94);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 1.4rem 3.5rem 0.5rem 4.5rem;
+  background: transparent;
+  border-bottom: 1px solid transparent;
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+  box-shadow: none;
+  transition:
+    background-color 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+    padding 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+    backdrop-filter 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+    -webkit-backdrop-filter 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: background-color, padding, box-shadow, border-color;
+}
+
+.cyber-top-nav.is-scrolled {
+  padding: 0.85rem 3.5rem 0.85rem 4.5rem;
+  background: rgba(15, 13, 18, 0.88);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.65);
-  /* No keyframe here on purpose: an animation restarts from its first frame
-     every time the class toggles, which makes the brand visibly jump. The
-     transitions above carry the whole fade in both directions. */
 }
 
 .cyber-nav-links > .cyber-nav-link {
   margin-left: 2.2rem;
+  transition: color 0.2s ease, text-shadow 0.2s ease;
 }
 
 .cyber-nav-links > .cyber-nav-link:first-child {
   margin-left: 0;
 }
 
-/* The two nav states share one grid cell and only crossfade. Links keep their
-   natural width at all times, so nothing stretches, clips or bounces. */
-.cyber-nav-switch {
-  display: grid;
-}
-
-.cyber-nav-switch > .cyber-nav-state {
-  grid-area: 1 / 1;
-  justify-self: end;
+/* ── Seamless Link Morph Animation ──
+   New items (COMPATIBILITY, LEARN) unfold with spring-like easeOutExpo
+   expanding width and opacity, smoothly sliding sibling links without layout snapping. */
+.cyber-nav-morph-item {
+  display: inline-flex;
+  align-items: center;
+  max-width: 0;
   opacity: 0;
+  margin-left: 0;
+  transform: scale(0.92) translateY(-4px);
+  overflow: hidden;
   pointer-events: none;
-  transition: opacity var(--nav-fade-dur) var(--nav-fade-ease);
-  will-change: opacity;
+  white-space: nowrap;
+  transition:
+    max-width 0.36s cubic-bezier(0.16, 1, 0.3, 1),
+    margin-left 0.36s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.26s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.36s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: max-width, opacity, transform;
 }
 
-.cyber-nav-switch > .cyber-nav-state.is-visible {
+.cyber-nav-morph-item.is-expanded {
+  max-width: 180px;
   opacity: 1;
+  margin-left: 2.2rem;
+  transform: scale(1) translateY(0);
   pointer-events: auto;
 }
 
-/* LEARN lives in the scrolled state and fades in place — no layout shift. */
-.cyber-nav-link.nav-learn-fade {
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity var(--nav-fade-dur) var(--nav-fade-ease);
+.cyber-nav-morph-item .cyber-nav-link {
+  margin-left: 0 !important;
+  white-space: nowrap;
 }
 
-.cyber-nav-link.nav-learn-fade.is-visible {
-  opacity: 1;
-  pointer-events: auto;
+@media (prefers-reduced-motion: reduce) {
+  .cyber-top-nav,
+  .cyber-nav-morph-item {
+    transition-duration: 0.01ms !important;
+    transform: none !important;
+  }
 }
 
 .cyber-brand {
@@ -849,6 +871,7 @@
   filter: drop-shadow(0 0 28px rgba(244, 63, 94, 0.65)) drop-shadow(0 0 55px rgba(244, 63, 94, 0.35));
   pointer-events: none;
   user-select: none;
+  will-change: transform, opacity;
   animation: logoFlaskPulse 4s ease-in-out infinite alternate;
 }
 
@@ -860,11 +883,11 @@ body.theme-light .giant-bg-logo-img,
 
 @keyframes logoFlaskPulse {
   0% {
-    filter: drop-shadow(0 0 22px rgba(244, 63, 94, 0.55)) drop-shadow(0 0 45px rgba(244, 63, 94, 0.25));
-    transform: scale(0.99);
+    opacity: 0.85;
+    transform: scale(0.985);
   }
   100% {
-    filter: drop-shadow(0 0 36px rgba(244, 63, 94, 0.85)) drop-shadow(0 0 70px rgba(244, 63, 94, 0.45));
+    opacity: 1;
     transform: scale(1.02);
   }
 }
@@ -1863,7 +1886,7 @@ body.theme-light .giant-bg-logo-img,
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate3d(-50%, -50%, 0);
   width: 80%;
   height: 80%;
   background: #4ade80;
@@ -1871,20 +1894,19 @@ body.theme-light .giant-bg-logo-img,
   filter: blur(120px);
   z-index: -1;
   pointer-events: none;
+  will-change: transform, opacity;
   animation: pulseGlow 4s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
 }
 
 @keyframes pulseGlow {
   from {
     opacity: 0.12;
-    filter: blur(100px);
-    transform: translate(-50%, -50%) scale(0.95);
+    transform: translate3d(-50%, -50%, 0) scale(0.95);
   }
 
   to {
     opacity: 0.2;
-    filter: blur(140px);
-    transform: translate(-50%, -50%) scale(1.05);
+    transform: translate3d(-50%, -50%, 0) scale(1.05);
   }
 }
 

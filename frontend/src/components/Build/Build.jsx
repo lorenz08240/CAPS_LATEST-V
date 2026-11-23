@@ -242,12 +242,11 @@ const revealGroup = {
 };
 
 const revealPanel = {
-  hidden: { opacity: 0, y: 16, filter: "blur(7px)" },
+  hidden: { opacity: 0, y: 16 },
   show: {
     opacity: 1,
     y: 0,
-    filter: "blur(0px)",
-    transition: { duration: 0.52, ease: REVEAL_EASE },
+    transition: { duration: 0.42, ease: REVEAL_EASE },
   },
 };
 
@@ -1598,33 +1597,23 @@ function BuildPage({ isIntegrated = false, startBuildRequested = false, onBuildI
                       </span>
                     </button>
 
-                    {selectedComponent?.id === viewedComponent.id && (
+                    {selectedComponent?.id === viewedComponent.id && currentStep < buildSteps.length - 1 && (
                       <div className="spec-mounted-actions">
-                        {currentStep < buildSteps.length - 1 ? (
-                          <button
-                            type="button"
-                            className="btn-next-stage-spec"
-                            onClick={() => {
-                              soundManager.click();
-                              const nextStepIndex = currentStep + 1;
-                              const nextKey = buildSteps[nextStepIndex].key;
-                              setCurrentStep(nextStepIndex);
-                              const nextMounted = currentBuild[nextKey];
-                              const nextCatalog = allComponents[nextKey] || [];
-                              setViewedComponent(nextMounted || nextCatalog[0] || null);
-                            }}
-                          >
-                            <span>PROCEED TO STAGE 0{currentStep + 2} ({buildSteps[currentStep + 1]?.label})</span>
-                          </button>
-                        ) : (
-                          <Link
-                            to="/compatibility"
-                            className="btn-next-stage-spec finish"
-                            onClick={() => soundManager.click()}
-                          >
-                            <span>ALL 7 STAGES LOCKED • VERIFY COMPATIBILITY</span>
-                          </Link>
-                        )}
+                        <button
+                          type="button"
+                          className="btn-next-stage-spec"
+                          onClick={() => {
+                            soundManager.click();
+                            const nextStepIndex = currentStep + 1;
+                            const nextKey = buildSteps[nextStepIndex].key;
+                            setCurrentStep(nextStepIndex);
+                            const nextMounted = currentBuild[nextKey];
+                            const nextCatalog = allComponents[nextKey] || [];
+                            setViewedComponent(nextMounted || nextCatalog[0] || null);
+                          }}
+                        >
+                          <span>PROCEED TO STAGE 0{currentStep + 2} ({buildSteps[currentStep + 1]?.label})</span>
+                        </button>
                       </div>
                     )}
                   </div>

@@ -244,15 +244,64 @@ if (-not $foundUrl) {
             break
         }
     }
+    if ($foundUrl) {
+        $status.Tunnel = "ONLINE (Permanent Domain)"
+    }
+}
+
+# Fallback to Cloudflare Tunnel if Ngrok is unavailable or bandwidth quota is reached (ERR_NGROK_725)
+if (-not $foundUrl) {
+    Write-Host "  [!] Ngrok permanent domain unavailable or monthly quota reached. Falling back to Cloudflare Tunnel..." -ForegroundColor Yellow
+    $cfLog = Join-Path $logsDir "cloudflared.log"
+    $cfProcs = Get-Process -Name "cloudflared" -ErrorAction SilentlyContinue
+    
+    if ($cfProcs -and (Test-Path $cfLog)) {
+        $existingLog = Get-Content $cfLog -Raw -ErrorAction SilentlyContinue
+        if ($existingLog -match "(https://[a-zA-Z0-9-]+\.trycloudflare\.com)") {
+            $candidateUrl = $matches[1]
+            $code = curl.exe -s -o NUL -w "%{http_code}" --max-time 4 $candidateUrl
+            if ($code -eq "200") {
+                $foundUrl = $candidateUrl
+                Write-Host "  [OK] Existing Cloudflare Tunnel is active and healthy: $foundUrl" -ForegroundColor Green
+            }
+        }
+    }
+
+    if (-not $foundUrl) {
+        if ($cfProcs) {
+            $cfProcs | Stop-Process -Force -ErrorAction SilentlyContinue
+            Start-Sleep -Milliseconds 600
+        }
+        if (Test-Path $cfLog) { Remove-Item $cfLog -Force -ErrorAction SilentlyContinue }
+
+        Write-Host "  [...] Starting Cloudflare Tunnel (unlimited bandwidth)..." -ForegroundColor Yellow
+        Start-Detached "cmd.exe /c cloudflared tunnel --url http://localhost:5173 > `"$cfLog`" 2>&1" $rootDir | Out-Null
+
+        $waited = 0
+        while ($waited -lt 15) {
+            Start-Sleep -Seconds 1
+            $waited++
+            if (Test-Path $cfLog) {
+                $logContent = Get-Content $cfLog -Raw -ErrorAction SilentlyContinue
+                if ($logContent -match "(https://[a-zA-Z0-9-]+\.trycloudflare\.com)") {
+                    $foundUrl = $matches[1]
+                    break
+                }
+            }
+        }
+    }
+
+    if ($foundUrl) {
+        $status.Tunnel = "ONLINE (Cloudflare Fallback)"
+    }
 }
 
 if ($foundUrl) {
     Write-Host "  [OK] Live Public Tunnel established: $foundUrl" -ForegroundColor Green
-    $status.Tunnel = "ONLINE (Permanent Domain)"
     $status.TunnelUrl = $foundUrl
     $status.QrCodeUrl = "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=$foundUrl"
 } else {
-    Write-Host "  [FAIL] Failed to establish tunnel on https://$permanentDomain" -ForegroundColor Red
+    Write-Host "  [FAIL] Failed to establish tunnel (both Ngrok and Cloudflare failed)" -ForegroundColor Red
     $status.Tunnel = "FAILED"
 }
 

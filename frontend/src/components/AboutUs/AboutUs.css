@@ -37,13 +37,14 @@
   position: absolute;
   top: 15%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate3d(-50%, -50%, 0);
   width: 70vw;
   height: 50vh;
   background: radial-gradient(circle, rgba(232, 180, 160, 0.08) 0%, rgba(244, 63, 94, 0.04) 50%, transparent 80%);
   filter: blur(80px);
   pointer-events: none;
   z-index: 0;
+  will-change: transform;
 }
 
 .about-grid-overlay {

@@ -320,6 +320,7 @@ export function EyeTracker({
     let prev = 0;
     let blink = 0;
     let nextBlink = performance.now() + 2200;
+    let blinkTimer = 0;
 
     const draw = (now: number) => {
       /* a blink is 160ms down and up, as a squash on each eye */
@@ -438,12 +439,39 @@ export function EyeTracker({
         t.vy += ((t.ty - t.y) * k - t.vy * d) * dt;
         t.x += t.vx * dt;
         t.y += t.vy * dt;
+
+        if (Math.abs(t.vx) < 0.0003 && Math.abs(t.vy) < 0.0003 && Math.abs(t.tx - t.x) < 0.0003 && Math.abs(t.ty - t.y) < 0.0003) {
+          t.x = t.tx;
+          t.y = t.ty;
+          t.vx = 0;
+          t.vy = 0;
+        }
       }
       draw(now);
+
+      const isBlinking = (now - blink) < 180;
+      const isSettled =
+        Math.abs(t.vx) === 0 &&
+        Math.abs(t.vy) === 0 &&
+        t.x === t.tx &&
+        t.y === t.ty;
+
+      // Park loop when settled and not blinking to drop idle CPU to 0%
+      if (isSettled && !isBlinking && !lookTargetRef.current) {
+        raf = 0;
+        const timeToBlink = Math.max(100, nextBlink - now);
+        window.clearTimeout(blinkTimer);
+        blinkTimer = window.setTimeout(resume, timeToBlink);
+        return;
+      }
+
       raf = requestAnimationFrame(tick);
     };
+    const resume = () => {
+      window.clearTimeout(blinkTimer);
+      if (!raf && seen && !document.hidden) raf = requestAnimationFrame(tick);
+    };
     raf = requestAnimationFrame(tick);
-    const resume = () => { if (!raf && seen && !document.hidden) raf = requestAnimationFrame(tick); };
     const io = new IntersectionObserver(([e]) => { seen = e.isIntersecting; resume(); });
     io.observe(el);
     document.addEventListener("visibilitychange", resume);
@@ -485,8 +513,9 @@ export function EyeTracker({
       const far = Math.min(0.92, Math.tanh(d / reach) * (clamp(knobs.current.follow, 0, 100) / 100) * 1.5);
       t.tx = (dx / d) * far;
       t.ty = (dy / d) * far;
+      resume();
     };
-    const rest = () => { t.tx = 0; t.ty = 0; };
+    const rest = () => { t.tx = 0; t.ty = 0; resume(); };
 
     /* ── idle: straight ahead, and now and then a glance ──────
        Every 5 seconds it looks off in a random direction,
@@ -498,6 +527,7 @@ export function EyeTracker({
         const far = 0.45 + Math.random() * 0.25;
         t.tx = Math.cos(a) * far;
         t.ty = Math.sin(a) * far;
+        resume();
         glance = window.setTimeout(() => {
           rest();
           glance = window.setTimeout(look, 5000 - 900);
@@ -506,6 +536,7 @@ export function EyeTracker({
       glance = window.setTimeout(look, 5000);
       return () => {
         cancelAnimationFrame(raf);
+        window.clearTimeout(blinkTimer);
         unwatch();
         window.clearTimeout(glance);
       };
@@ -515,6 +546,7 @@ export function EyeTracker({
     document.documentElement.addEventListener("pointerleave", rest);
     return () => {
       cancelAnimationFrame(raf);
+      window.clearTimeout(blinkTimer);
       unwatch();
       window.removeEventListener("pointermove", aim);
       document.documentElement.removeEventListener("pointerleave", rest);

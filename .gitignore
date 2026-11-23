@@ -27,3 +27,8 @@ build/
 .bin/
 
 graphify-out/.rebuild.lock
+graphify-out/cache/
+graphify-out/2026-*/
+
+# Reanimate
+.reanimate/

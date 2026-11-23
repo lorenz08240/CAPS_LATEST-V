@@ -7,6 +7,7 @@ import { useLearnMode } from "../../contexts/LearnModeContext";
 import { useLanguage } from "../../contexts/LanguageContext";
 import soundManager from "../../utilities/soundManager";
 import AccountSetupModal from "../Home/AccountSetupModal";
+import DiscreetFullscreenToggle from "../Navigation/DiscreetFullscreenToggle";
 import "./Navbar.css";
 
 function Navbar({ isPinned: propsIsPinned }) {
@@ -100,23 +101,26 @@ function Navbar({ isPinned: propsIsPinned }) {
 
   return (
     <>
-      {/* Click-to-toggle Edge Tab on left border when closed */}
+      {/* Click-to-toggle Edge Tab on left border when closed & discreet corner fullscreen toggle */}
       {!isVisible && (
-        <button
-          type="button"
-          className="sidebar-edge-tab"
-          onClick={() => {
-            openSidebar();
-          }}
-          title="Open Navigation Menu"
-          aria-label="Open Navigation Menu"
-        >
-          <span className="edge-tab-arrow" aria-hidden="true">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="9 18 15 12 9 6" />
-            </svg>
-          </span>
-        </button>
+        <>
+          <button
+            type="button"
+            className="sidebar-edge-tab"
+            onClick={() => {
+              openSidebar();
+            }}
+            title="Open Navigation Menu"
+            aria-label="Open Navigation Menu"
+          >
+            <span className="edge-tab-arrow" aria-hidden="true">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+            </span>
+          </button>
+          {!isAdminRoute && !currentPath.startsWith("/learn") && <DiscreetFullscreenToggle variant="corner" />}
+        </>
       )}
 
       {/* Backdrop overlay for drawer dismissal */}
@@ -551,36 +555,39 @@ function Navbar({ isPinned: propsIsPinned }) {
               </div>
             </div>
 
-            <div className="sidebar-footer-row">
-              <span className="footer-control-label">Audio</span>
-              <button
-                type="button"
-                className={`sidebar-pill-toggle ${soundActive ? "active" : ""}`}
-                onClick={() => {
-                  const next = soundManager.toggleSound();
-                  setSoundActive(next);
-                }}
-                title={soundActive ? "Mute Sound Effects" : "Enable Sound Effects"}
-              >
-                {soundActive ? (
-                  <>
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-                      <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
-                    </svg>
-                    <span>Live</span>
-                  </>
-                ) : (
-                  <>
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-                      <line x1="23" y1="9" x2="17" y2="15" />
-                      <line x1="17" y1="9" x2="23" y2="15" />
-                    </svg>
-                    <span>Muted</span>
-                  </>
-                )}
-              </button>
+            <div className="sidebar-footer-row sidebar-footer-utility-row">
+              <div className="sidebar-footer-audio-col">
+                <span className="footer-control-label">Audio</span>
+                <button
+                  type="button"
+                  className={`sidebar-pill-toggle ${soundActive ? "active" : ""}`}
+                  onClick={() => {
+                    const next = soundManager.toggleSound();
+                    setSoundActive(next);
+                  }}
+                  title={soundActive ? "Mute Sound Effects" : "Enable Sound Effects"}
+                >
+                  {soundActive ? (
+                    <>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
+                      </svg>
+                      <span>Live</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                        <line x1="23" y1="9" x2="17" y2="15" />
+                        <line x1="17" y1="9" x2="23" y2="15" />
+                      </svg>
+                      <span>Muted</span>
+                    </>
+                  )}
+                </button>
+              </div>
+              <DiscreetFullscreenToggle variant="sidebar" />
             </div>
           </div>
         </div>

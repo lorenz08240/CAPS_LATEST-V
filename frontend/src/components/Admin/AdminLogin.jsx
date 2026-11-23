@@ -4,6 +4,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import PixelCanvas from "../Common/PixelCanvas";
 import soundManager from "../../utilities/soundManager";
 import systemLogo from "../../assets/system_logo.png";
+import DiscreetFullscreenToggle from "../Navigation/DiscreetFullscreenToggle";
 import "./Admin.css";
 
 export const AdminLogin = () => {
@@ -194,6 +195,7 @@ export const AdminLogin = () => {
           </form>
         </div>
       </div>
+      <DiscreetFullscreenToggle variant="corner" />
     </div>
   );
 };

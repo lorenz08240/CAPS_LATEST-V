@@ -848,6 +848,7 @@ export default function VirtualAssemblyLab({
         >
           <Canvas
             frameloop={isPaused ? "demand" : "always"}
+            dpr={[1, Math.min(typeof window !== 'undefined' ? window.devicePixelRatio : 1, 1.5)]}
             camera={{ position: [-13, 5.5, 13], fov: 38 }}
           >
             <color attach="background" args={["#0e1420"]} />
@@ -922,6 +923,7 @@ export default function VirtualAssemblyLab({
               scale={28}
               blur={2.0}
               far={12}
+              resolution={256}
               color="#060911"
             />
 

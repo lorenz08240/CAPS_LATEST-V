@@ -31,6 +31,8 @@
   filter: blur(120px);
   opacity: 0.12;
   z-index: 0;
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 .services-glow-cyan {
@@ -1551,13 +1553,15 @@ body.theme-light .cam-pill,
   align-items: center;
   justify-content: center;
   opacity: 0;
-  transition: opacity 0.25s ease;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
 }
 
 .interactive-preview-window:hover .preview-glass-overlay {
   opacity: 1;
+  visibility: visible;
 }
 
 .overlay-badge-pill {

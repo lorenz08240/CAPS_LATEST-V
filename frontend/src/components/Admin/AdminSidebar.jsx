@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import DiscreetFullscreenToggle from "../Navigation/DiscreetFullscreenToggle";
 import "./Admin.css";
 
 const CATEGORIES = [
@@ -243,26 +244,16 @@ export const AdminSidebar = ({
 
       {/* Sidebar Footer with Clean Actions */}
       <div className="admin-sidebar-footer">
-        <Link to="/" className="admin-sidebar-return-link">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <line x1="19" y1="12" x2="5" y2="12"></line>
-            <polyline points="12 19 5 12 12 5"></polyline>
-          </svg>
-          <span>Student Builder</span>
-        </Link>
-        <button
-          type="button"
-          onClick={logoutAdmin}
-          className="admin-sidebar-logout-btn"
-          title="Sign out of Admin session"
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-            <polyline points="16 17 21 12 16 7"></polyline>
-            <line x1="21" y1="12" x2="9" y2="12"></line>
-          </svg>
-          <span>Log out</span>
-        </button>
+        <div className="admin-sidebar-footer-row">
+          <Link to="/" className="admin-sidebar-return-link" title="Return to Student PC Builder">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            <span>Student Builder</span>
+          </Link>
+          <DiscreetFullscreenToggle variant="sidebar" />
+        </div>
       </div>
     </aside>
   );

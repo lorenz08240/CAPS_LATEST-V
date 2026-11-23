@@ -415,6 +415,7 @@ function FluidScene({ onStageChange, rgbColor, scrollProgress = 0, isInteracting
         scale={7.5} 
         blur={2.4} 
         far={4.0} 
+        resolution={256}
         color={isDark ? '#000000' : '#17151A'} 
       />
     </group>
@@ -435,9 +436,21 @@ export default function Home3DHero({
   scrollProgress = 0 
 }) {
   const isInteractingRef = useRef(false);
+  const containerRef = useRef(null);
+  const [isInView, setIsInView] = useState(true);
   const { isDark } = useTheme();
   const caseColor = isDark ? 'black' : 'white';
   const envPreset = isDark ? 'night' : 'city';
+
+  // Suspend WebGL loop when scrolled out of view to free 100% GPU for page scrolling
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      setIsInView(entry.isIntersecting);
+    }, { rootMargin: '120px' });
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   // Global window release failsafe so releasing mouse outside canvas reliably resumes timer
   useEffect(() => {
@@ -456,12 +469,15 @@ export default function Home3DHero({
 
   return (
     <div 
+      ref={containerRef}
       className="home-3d-hero-container"
       onPointerDown={() => { isInteractingRef.current = true; }}
       onPointerUp={() => { isInteractingRef.current = false; }}
     >
       <div className="home-3d-canvas-wrap">
         <Canvas
+          frameloop={isInView ? "always" : "demand"}
+          dpr={[1, Math.min(typeof window !== 'undefined' ? window.devicePixelRatio : 1, 1.5)]}
           camera={{ position: [0, 0.6, 7.2], fov: 42 }}
           gl={{
             antialias: true,

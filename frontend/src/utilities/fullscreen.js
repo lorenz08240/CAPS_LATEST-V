@@ -101,12 +101,29 @@ export function exitFullscreen() {
     document.webkitExitFullscreen ||
     document.mozCancelFullScreen ||
     document.msExitFullscreen;
-  if (fn && FS_ELEMENT()) {
+  if (fn) {
     try {
-      fn.call(document);
+      if (FS_ELEMENT() || document.fullscreenElement) {
+        fn.call(document);
+      }
     } catch {
       /* failsafe */
     }
+  }
+}
+
+/**
+ * Toggle fullscreen mode. If currently active, exits fullscreen.
+ * Otherwise, requests fullscreen on the document element.
+ * Must be called in response to a user gesture (click/tap).
+ */
+export async function toggleFullscreen(el = typeof document !== "undefined" ? document.documentElement : null) {
+  if (isFullscreenActive()) {
+    exitFullscreen();
+    return false;
+  } else {
+    const ok = await enterFullscreen(el);
+    return ok;
   }
 }
 
@@ -142,12 +159,50 @@ export function isCoarsePointer() {
 }
 
 /**
+ * Detects whether the current client device is a mobile phone.
+ * Combines User Agent regex (iPhone, iPod, Android Mobile, BlackBerry, IEMobile, etc.)
+ * with touch capability + phone screen dimension bounds.
+ * Desktops and standard laptops (even touch-enabled ones) evaluate to false.
+ */
+export function isMobilePhone() {
+  if (typeof window === "undefined") return false;
+
+  const ua = (navigator.userAgent || navigator.vendor || window.opera || "").toLowerCase();
+
+  // 1. Explicit phone User Agent matching (tablets like iPad/Android tablet are excluded)
+  const isPhoneUA =
+    /iphone|ipod/i.test(ua) ||
+    (/android/i.test(ua) && /mobile/i.test(ua)) ||
+    /blackberry|bb10|iemobile|opera mini|mobile/i.test(ua);
+
+  if (isPhoneUA) return true;
+
+  // 2. Coarse touch pointer + smartphone viewport dimension verification:
+  // Smartphones in portrait: width ~360-430px, height ~700-932px (min dimension <= 500px).
+  // Smartphones in landscape: width ~700-932px, height ~360-430px (min dimension <= 500px).
+  // Desktop screens (even small windows) lack coarse pointer unless touch screen, and touch laptops have minDim >= 768px.
+  const isTouch =
+    (typeof navigator !== "undefined" && (navigator.maxTouchPoints > 0 || "ontouchstart" in window)) ||
+    (window.matchMedia && window.matchMedia("(pointer: coarse)").matches);
+
+  if (isTouch) {
+    const minDim = Math.min(window.innerWidth, window.innerHeight);
+    const maxDim = Math.max(window.innerWidth, window.innerHeight);
+    if (minDim <= 520 && maxDim <= 960) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+/**
  * Should we show the "Rotate your device" screen?
  * Phones/tablets held in portrait with a small viewport.
  * Desktop windows (even narrow ones) are never affected.
  */
 export function needsRotation() {
-  return isPortrait() && isCoarsePointer() && window.innerWidth < 900;
+  return isMobilePhone() && isPortrait();
 }
 
 /** Subscribe to fullscreen/resize/orientation changes. Returns an unsubscribe fn. */
