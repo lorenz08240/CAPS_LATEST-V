@@ -7,7 +7,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useBuild } from "../../contexts/BuildContext";
 import { useLearnMode } from "../../contexts/LearnModeContext";
-import { getCompatibilitySummary } from "../../utilities/rules";
+import { getCompatibilitySummary, findAlternatives } from "../../utilities/rules";
 import { calculateScores } from "../../utilities/scoringEngine";
 import { OFFLINE_COMPONENTS } from "../../utilities/offlineParts";
 import soundManager from "../../utilities/soundManager";
@@ -280,10 +280,30 @@ const getSmartSuggestion = (issue, build) => {
   if (msg.includes("socket") || (comps.includes("cpu") && comps.includes("motherboard"))) {
     const cpuSocket = build?.cpu?.socket_type || "AM4";
     const moboSocket = build?.motherboard?.socket_type || "AM5";
+
+    const getCpuSeriesExample = (sock) => {
+      const s = String(sock).toUpperCase();
+      if (s.includes("AM4")) return "e.g. AMD Ryzen 3000/5000 series";
+      if (s.includes("AM5")) return "e.g. AMD Ryzen 7000/8000/9000 series";
+      if (s.includes("1700")) return "e.g. Intel Core 12th/13th/14th Gen";
+      return "";
+    };
+
+    const getMoboSeriesExample = (sock) => {
+      const s = String(sock).toUpperCase();
+      if (s.includes("AM4")) return "e.g. B450 / B550 / X570";
+      if (s.includes("AM5")) return "e.g. B650 / X670 / B850";
+      if (s.includes("1700")) return "e.g. B760 / Z790";
+      return "";
+    };
+
+    const moboCpuEx = getCpuSeriesExample(moboSocket);
+    const cpuMoboEx = getMoboSeriesExample(cpuSocket);
+
     return {
       title: "Socket Architecture Incompatibility",
       advice: `Processor (${build?.cpu?.name || "CPU"}) has an ${cpuSocket} socket, which cannot physically mount onto a ${moboSocket} motherboard (${build?.motherboard?.name || "Motherboard"}).`,
-      solution: `Switch to an ${moboSocket}-compatible processor (e.g. AMD Ryzen 7000/8000 series), or change your motherboard to an ${cpuSocket} model.`,
+      solution: `Switch to an ${moboSocket}-compatible processor ${moboCpuEx ? `(${moboCpuEx})` : ""}, or change your motherboard to an ${cpuSocket} model ${cpuMoboEx ? `(${cpuMoboEx})` : ""}.`,
     };
   }
 
@@ -340,6 +360,8 @@ function CompatibilityView({ isIntegrated = false }) {
     currentBuild,
     rig1Build,
     rig2Build,
+    setRig1Build,
+    setRig2Build,
     activeBuildTarget,
     setActiveBuildTarget,
     clearRig2Build,
@@ -352,6 +374,43 @@ function CompatibilityView({ isIntegrated = false }) {
     allComponents,
     loadDemoBuild,
   } = useBuild();
+
+  const [quickFixNotification, setQuickFixNotification] = useState(null);
+  const [openFixDropdowns, setOpenFixDropdowns] = useState({});
+
+  const handleApplyQuickFix = (rigKey, category, part) => {
+    try {
+      soundManager.granted();
+    } catch {}
+
+    const catKey = category.toLowerCase();
+    const catMeta = COMPONENT_CATEGORIES.find((c) => c.key === catKey);
+    const catLabel = catMeta?.label || category.toUpperCase();
+
+    if (rigKey === "rig2") {
+      setRig2Build((prev) => ({
+        ...prev,
+        [catKey]: part,
+      }));
+    } else {
+      setRig1Build((prev) => ({
+        ...prev,
+        [catKey]: part,
+      }));
+    }
+
+    setQuickFixNotification({
+      rigKey,
+      rigName: rigKey === "rig1" ? "Rig 01" : "Rig 02",
+      catLabel,
+      partName: part.name || "Compatible Component",
+      category: catKey,
+    });
+
+    setTimeout(() => {
+      setQuickFixNotification((curr) => (curr?.partName === part.name ? null : curr));
+    }, 8000);
+  };
 
   const activeRig1 = rig1Build || currentBuild;
 
@@ -1397,11 +1456,30 @@ function CompatibilityView({ isIntegrated = false }) {
   const renderDiagnosticIssueEntry = (iss, rigKey, rigBuild, entryKey) => {
     const suggestion = getSmartSuggestion(iss, rigBuild);
     const compList = iss.components || [];
+    const issueKey = `${rigKey}-${entryKey}`;
+    const isDropdownOpen = Boolean(openFixDropdowns[issueKey]);
+
+    // Find smart quick-fix alternatives for each conflicting component
+    const quickFixOptions = compList
+      .map((catKey) => {
+        const alts = findAlternatives(catKey, rigBuild, allComponents);
+        if (!alts || alts.length === 0) return null;
+        const best = alts[0];
+        const matchedCat = COMPONENT_CATEGORIES.find((c) => c.key === catKey.toLowerCase());
+        const catLabel = matchedCat?.label || catKey.toUpperCase();
+
+        return {
+          catKey,
+          catLabel,
+          part: best,
+        };
+      })
+      .filter(Boolean);
 
     return (
       <div key={entryKey} className="diagnostic-issue-entry">
         <div className="diagnostic-suggestion-box">
-          {/* Category (left) + Fix actions (right) — both inside the box */}
+          {/* Category (left) + Fix actions (right) — exactly as original */}
           <div className="diagnostic-item-header">
             <span className="diagnostic-item-cats">{iss.category}</span>
             <div className="diagnostic-actions-row">
@@ -1440,6 +1518,51 @@ function CompatibilityView({ isIntegrated = false }) {
             <span className="diagnostic-icon-alert" aria-hidden="true">⚠️</span>
             <p className="diagnostic-problem-text">{iss.message || iss.issue}</p>
           </div>
+
+          {/* ── Collapsible Auto-Fix Dropdown (Clean & Minimal) ── */}
+          {quickFixOptions.length > 0 && (
+            <div className="auto-fix-dropdown-container">
+              <button
+                type="button"
+                className="btn-auto-fix-dropdown-toggle"
+                onClick={() =>
+                  setOpenFixDropdowns((prev) => ({
+                    ...prev,
+                    [issueKey]: !prev[issueKey],
+                  }))
+                }
+                aria-expanded={isDropdownOpen}
+              >
+                <span className="dropdown-arrow" aria-hidden="true">
+                  {isDropdownOpen ? "▼" : "▶"}
+                </span>
+                <span>
+                  Show {quickFixOptions.length} Auto-Fix {quickFixOptions.length === 1 ? "Option" : "Options"}
+                </span>
+              </button>
+
+              {isDropdownOpen && (
+                <div className="auto-fix-dropdown-list">
+                  {quickFixOptions.map((opt) => (
+                    <div key={opt.catKey} className="auto-fix-item">
+                      <span className="auto-fix-item-name">
+                        <strong>{opt.catLabel}:</strong> {opt.part.name}
+                      </span>
+                      <button
+                        type="button"
+                        className="btn-diagnostic-action primary auto-fix-btn"
+                        onClick={() => handleApplyQuickFix(rigKey, opt.catKey, opt.part)}
+                        title={`Equip ${opt.part.name} directly into ${rigKey === "rig1" ? "Rig 01" : "Rig 02"}`}
+                      >
+                        <span>Equip</span>
+                        <span className="btn-fix-arrow">&rarr;</span>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     );
@@ -1617,6 +1740,32 @@ function CompatibilityView({ isIntegrated = false }) {
 
           {/* Direct Dual Cards Layout ("rekta na dapat doon sa may card") */}
           <div className="compare-mode-container" style={{ marginTop: "1.2rem" }}>
+            {quickFixNotification && (
+              <div className="quick-fix-applied-toast" role="status" aria-live="polite">
+                <span>✓ Equipped <strong>{quickFixNotification.partName}</strong></span>
+                <Link
+                  to="/build#build-station"
+                  className="toast-link"
+                  onClick={() => {
+                    try { soundManager.click(); } catch {}
+                    setActiveBuildTarget(quickFixNotification.rigKey);
+                  }}
+                  title={`View in ${quickFixNotification.rigName} Assembly Rig`}
+                >
+                  View in Assembly Rig &rarr;
+                </Link>
+                <button
+                  type="button"
+                  className="toast-close"
+                  onClick={() => setQuickFixNotification(null)}
+                  title="Dismiss notification"
+                  aria-label="Dismiss notification"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
+
             <div className="compare-dual-grid">
               {renderFreeRig1Card()}
               {renderFreeRig2Card()}

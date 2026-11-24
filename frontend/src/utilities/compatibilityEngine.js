@@ -292,15 +292,73 @@ export const getCompatibilitySummary = (build = {}, _allComponents = {}) => {
 };
 
 // Find alternative components that are compatible
-export const findAlternatives = (category, currentBuild, allComponents = {}) => {
+export const findAlternatives = (category, currentBuild = {}, allComponents = {}) => {
   const list = allComponents[category] || [];
+  const currentPart = currentBuild[category];
+  const currentId = currentPart?.id || currentPart?.name;
+
+  // Test against build without the target component being replaced
+  const buildWithoutTarget = { ...currentBuild, [category]: null };
+
   return list
     .filter((part) => {
-      const result = checkCompatibility(
+      // Exclude exact same component currently equipped
+      if (currentId && (part.id === currentId || part.name === currentPart?.name)) {
+        return false;
+      }
+
+      // Check direct pairwise compatibility with existing parts
+      const checkResult = checkCompatibility(
         { ...part, category },
-        currentBuild
+        buildWithoutTarget
       );
-      return result.isCompatible;
+      if (!checkResult.isCompatible) return false;
+
+      // Verify that this candidate does not cause a new conflict for this category
+      const testBuild = { ...buildWithoutTarget, [category]: part };
+      const summary = getCompatibilitySummary(testBuild, allComponents);
+      const categoryConflict = summary.some((iss) =>
+        (iss.components || []).some((c) => c.toLowerCase() === category.toLowerCase())
+      );
+
+      return !categoryConflict;
+    })
+    .sort((a, b) => {
+      // PSU sorting: prioritize adequate wattage without excessive overkill
+      if (category === "psu") {
+        const req = getNumber(currentBuild.gpu?.power_required || currentBuild.gpu?.recommendedPsu || 700);
+        const wA = getNumber(a.wattage || a.power_output);
+        const wB = getNumber(b.wattage || b.power_output);
+        // Ideal buffer is target requirement + 100W
+        const diffA = Math.abs(wA - (req + 100));
+        const diffB = Math.abs(wB - (req + 100));
+        return diffA - diffB;
+      }
+
+      // CPU / Motherboard: prioritize matching socket
+      if (category === "cpu" && currentBuild.motherboard?.socket_type) {
+        const moboSock = normalizeSocket(currentBuild.motherboard.socket_type);
+        const sockA = normalizeSocket(a.socket_type || a.socket);
+        const sockB = normalizeSocket(b.socket_type || b.socket);
+        if (sockA === moboSock && sockB !== moboSock) return -1;
+        if (sockB === moboSock && sockA !== moboSock) return 1;
+      }
+
+      if (category === "motherboard" && currentBuild.cpu?.socket_type) {
+        const cpuSock = normalizeSocket(currentBuild.cpu.socket_type);
+        const sockA = normalizeSocket(a.socket_type || a.socket);
+        const sockB = normalizeSocket(b.socket_type || b.socket);
+        if (sockA === cpuSock && sockB !== cpuSock) return -1;
+        if (sockB === cpuSock && sockA !== cpuSock) return 1;
+      }
+
+      return 0;
     })
     .slice(0, 3);
+};
+
+// Return the single best compatible alternative
+export const getBestAlternative = (category, currentBuild = {}, allComponents = {}) => {
+  const alts = findAlternatives(category, currentBuild, allComponents);
+  return alts.length > 0 ? alts[0] : null;
 };
