@@ -7,23 +7,23 @@
 
 .brands-page {
   min-height: 100vh;
-  background-color: #17151A;
+  background-color: #0C0C0F;
   background-image: 
-    radial-gradient(circle at 50% 10%, rgba(211, 205, 198, 0.08) 0%, transparent 60%),
+    radial-gradient(circle at 50% 10%, rgba(201, 199, 192, 0.08) 0%, transparent 60%),
     radial-gradient(circle at 80% 80%, rgba(27, 25, 31, 0.25) 0%, transparent 50%);
-  color: #F4F1E9;
+  color: #F5F4F0;
   display: flex;
   flex-direction: column;
 }
 
 .brands-page.integrated-section {
   min-height: auto;
-  background-color: #17151A;
+  background-color: #0C0C0F;
   background-image: 
-    radial-gradient(circle at 50% 15%, rgba(211, 205, 198, 0.06) 0%, transparent 60%),
+    radial-gradient(circle at 50% 15%, rgba(201, 199, 192, 0.06) 0%, transparent 60%),
     radial-gradient(circle at 20% 85%, rgba(27, 25, 31, 0.2) 0%, transparent 50%);
-  border-top: 1px solid rgba(211, 205, 198, 0.15);
-  border-bottom: 1px solid rgba(211, 205, 198, 0.15);
+  border-top: 1px solid rgba(201, 199, 192, 0.15);
+  border-bottom: 1px solid rgba(201, 199, 192, 0.15);
   position: relative;
   z-index: 2;
   padding-top: 90px;
@@ -269,7 +269,7 @@
 
 .brand-card-item:hover .brand-inspect-btn {
   background: var(--brand-accent, #F04B4B);
-  color: #17151A;
+  color: #0C0C0F;
   border-color: var(--brand-accent, #F04B4B);
   box-shadow: 0 4px 16px var(--brand-glow, rgba(244, 63, 94, 0.3));
 }
@@ -278,7 +278,7 @@
 .brand-inspect-modal {
   position: fixed;
   inset: 0;
-  background: rgba(26, 18, 11, 0.88);
+  background: rgba(12, 12, 15, 0.88);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   z-index: 1000;
@@ -446,7 +446,7 @@
   align-items: center;
   gap: 10px;
   background: var(--modal-accent, #F04B4B);
-  color: #17151A;
+  color: #0C0C0F;
   border: none;
   font-family: ui-monospace, SFMono-Regular, monospace;
   font-size: 0.78rem;
@@ -532,7 +532,7 @@ body.theme-light .brands-page,
   background-image: 
     radial-gradient(circle at 50% 10%, rgba(244, 63, 94, 0.04) 0%, transparent 60%),
     radial-gradient(circle at 80% 80%, rgba(2, 132, 199, 0.04) 0%, transparent 50%);
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 body.theme-light .brands-page.integrated-section,
@@ -546,7 +546,7 @@ body.theme-light .brands-page.integrated-section,
 body.theme-light .brands-headline,
 .theme-light .brands-headline,
 [data-theme="light"] .brands-headline {
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 body.theme-light .brands-subheadline,
@@ -586,7 +586,7 @@ body.theme-light .brand-pedestal-slot,
 body.theme-light .brand-name,
 .theme-light .brand-name,
 [data-theme="light"] .brand-name {
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 body.theme-light .brand-tagline,
@@ -614,7 +614,7 @@ body.theme-light .brand-inspect-content,
 body.theme-light .inspect-title-bay h2,
 .theme-light .inspect-title-bay h2,
 [data-theme="light"] .inspect-title-bay h2 {
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 body.theme-light .inspect-body,
@@ -633,7 +633,7 @@ body.theme-light .inspect-telemetry-card,
 body.theme-light .tel-val,
 .theme-light .tel-val,
 [data-theme="light"] .tel-val {
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 /* ── RESPONSIVE BREAKPOINTS ── */

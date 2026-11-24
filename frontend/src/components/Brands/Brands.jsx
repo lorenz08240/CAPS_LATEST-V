@@ -17,7 +17,7 @@ const brandData = [
     categoryKey: "case",
     secondaryKey: null,
     categoryLabel: "CHASSIS & COOLING",
-    accentColor: "#b08d57", // Obsidian Gold
+    accentColor: "#C9C7C0", // Obsidian Gold
     accentGlow: "rgba(176, 141, 87, 0.25)",
     verifiedBadge: "AIRFLOW VALIDATED",
     tagline: "Philippine-engineered high-airflow PC cases & battle-tested mechanical gear.",

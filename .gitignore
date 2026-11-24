@@ -23,7 +23,6 @@ node_modules/
 dist/
 /build/
 frontend/build/
-build/
 .bin/
 
 graphify-out/.rebuild.lock

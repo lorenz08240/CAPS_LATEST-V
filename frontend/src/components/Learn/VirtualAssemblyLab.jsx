@@ -445,7 +445,7 @@ function VirtualRigStage({
       {/* 1. Case Chassis (Arctic White Mid-Tower Case with Tempered Glass) */}
       {hasCase && (
         <GenericPCCase
-          rgbColor={postPassed ? "#ffffff" : "#b08d57"}
+          rgbColor={postPassed ? "#00e5a0" : "#C9C7C0"}
           caseColor="white"
           glassMode={allInstalled ? "closed" : "open"}
           explodedProgress={0}

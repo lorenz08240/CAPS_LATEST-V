@@ -10,7 +10,7 @@ export function ProceduralRAMFallback({ rgbColor = '#f43f5e' }) {
     <group>
       <mesh position={[0, 0, 0]}>
         <boxGeometry args={[3.6, 0.08, 0.9]} />
-        <meshStandardMaterial color="#17151A" roughness={0.8} />
+        <meshStandardMaterial color="#0C0C0F" roughness={0.8} />
       </mesh>
       <mesh position={[0, 0.05, 0]}>
         <boxGeometry args={[3.5, 0.04, 0.85]} />

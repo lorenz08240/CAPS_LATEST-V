@@ -6,7 +6,7 @@
   position: fixed;
   inset: 0;
   z-index: 1000000;
-  background: #17151A;
+  background: #0C0C0F;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -151,9 +151,9 @@
 }
 
 .minimal-enter-btn:hover {
-  background: linear-gradient(135deg, #D3CDC6 0%, #F4F1E9 100%);
-  border-color: #D3CDC6;
-  color: #17151A;
+  background: linear-gradient(135deg, #C9C7C0 0%, #F5F4F0 100%);
+  border-color: #C9C7C0;
+  color: #0C0C0F;
   transform: translateY(-2px) scale(1.03);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }

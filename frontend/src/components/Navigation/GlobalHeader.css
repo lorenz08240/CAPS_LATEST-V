@@ -68,7 +68,7 @@
 
 body.theme-light .global-brand-title,
 .theme-light .global-brand-title {
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 .global-brand-badge {
@@ -119,7 +119,7 @@ body.theme-light .global-nav-link:hover,
 body.theme-light .global-nav-link.active,
 .theme-light .global-nav-link:hover,
 .theme-light .global-nav-link.active {
-  color: #17151A;
+  color: #0C0C0F;
   text-shadow: none;
 }
 

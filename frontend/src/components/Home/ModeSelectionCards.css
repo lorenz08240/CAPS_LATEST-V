@@ -1,13 +1,13 @@
 /* ═════════════════════════════════════════════════════════════════
    ModeSelectionCards.css — Split Staggered Reveal Cards with Pixel Shimmer
-   Tailored to BuildLab Dark Cyber Palette (#131116, #ffffff, #F04B4B, #ffffff)
+   Charcoal & Muted Silver Palette (#0C0C0F, #202023, #3F3F45, #C9C7C0, #F5F4F0)
    ═════════════════════════════════════════════════════════════════ */
 
 .mode-selection-overlay {
   position: fixed;
   inset: 0;
   z-index: 10000;
-  background: rgba(26, 18, 11, 0.9);
+  background: rgba(12, 12, 15, 0.92);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
   display: flex;
@@ -20,10 +20,10 @@
 .mode-selection-container {
   width: 100%;
   max-width: 960px;
-  background: linear-gradient(180deg, #27252E 0%, #17151A 100%);
-  border: 1px solid rgba(211, 205, 198, 0.25);
+  background: linear-gradient(180deg, #202023 0%, #0C0C0F 100%);
+  border: 1px solid #3F3F45;
   border-radius: 20px;
-  box-shadow: 0 16px 48px rgba(8, 6, 12, 0.85);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.85);
   padding: 2rem 2.25rem 2.25rem;
   box-sizing: border-box;
   animation: modeScaleUp 0.32s cubic-bezier(0.16, 1, 0.3, 1);
@@ -43,7 +43,7 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(135deg, #D3CDC6 0%, #F4F1E9 100%);
+  background: linear-gradient(135deg, #3F3F45 0%, #C9C7C0 50%, #3F3F45 100%);
   z-index: 2;
 }
 
@@ -144,9 +144,9 @@
 
 .mode-card {
   position: relative;
-  background: rgba(42, 30, 23, 0.85);
+  background: #202023;
   border-radius: 16px;
-  border: 1px solid rgba(211, 205, 198, 0.22);
+  border: 1px solid #3F3F45;
   padding: 1.75rem;
   box-sizing: border-box;
   cursor: pointer;
@@ -398,7 +398,7 @@ body.theme-light .mode-selection-container,
 
 body.theme-light .mode-selection-title,
 .theme-light .mode-selection-title {
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 body.theme-light .mode-selection-subtitle,
@@ -416,7 +416,7 @@ body.theme-light .mode-close-btn,
 body.theme-light .mode-close-btn:hover,
 .theme-light .mode-close-btn:hover {
   background: rgba(23, 21, 26, 0.08);
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 body.theme-light .mode-card,
@@ -428,7 +428,7 @@ body.theme-light .mode-card,
 
 body.theme-light .mode-card-title,
 .theme-light .mode-card-title {
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 body.theme-light .mode-card-desc,
@@ -560,7 +560,7 @@ body.theme-light .mode-card-perks.clean-list li,
 }
 
 .mode-legal-links a:hover {
-  color: #b08d57;
+  color: #F5F4F0;
   text-decoration: underline;
 }
 

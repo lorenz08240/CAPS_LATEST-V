@@ -25,7 +25,7 @@ export function ProceduralPSUFallback({ rgbColor = '#ffffff', isSelected = false
       {/* Rear Honeycomb Vent */}
       <mesh position={[0, 0, 1.32]}>
         <boxGeometry args={[2.5, 1.35, 0.02]} />
-        <meshStandardMaterial color="#17151A" roughness={0.8} wireframe />
+        <meshStandardMaterial color="#0C0C0F" roughness={0.8} wireframe />
       </mesh>
       {/* AC Socket */}
       <mesh position={[0.7, -0.2, 1.33]}>
@@ -40,7 +40,7 @@ export function ProceduralPSUFallback({ rgbColor = '#ffffff', isSelected = false
       {/* Fan Intake Grill (Top) */}
       <mesh position={[0, 0.77, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <ringGeometry args={[0.3, 1.15, 32]} />
-        <meshStandardMaterial color="#17151A" roughness={0.6} />
+        <meshStandardMaterial color="#0C0C0F" roughness={0.6} />
       </mesh>
       {/* Side Badge */}
       <mesh position={[1.37, 0, 0]} rotation={[0, Math.PI / 2, 0]}>
@@ -274,7 +274,7 @@ function PSUModelMesh({
         {/* Center Metallic Hub Plaque */}
         <mesh position={[0, 0, 0.012]}>
           <circleGeometry args={[0.30, 36]} />
-          <meshStandardMaterial color="#17151A" metalness={0.85} roughness={0.25} />
+          <meshStandardMaterial color="#0C0C0F" metalness={0.85} roughness={0.25} />
         </mesh>
         <mesh position={[0, 0, 0.018]}>
           <ringGeometry args={[0.22, 0.28, 36]} />
@@ -293,7 +293,7 @@ function PSUModelMesh({
           <mesh position={[0, 0, 0]}>
             <boxGeometry args={[2.1, 0.95, 0.015]} />
             <meshStandardMaterial 
-              color="#17151A" 
+              color="#0C0C0F" 
               metalness={0.92} 
               roughness={0.25} 
             />

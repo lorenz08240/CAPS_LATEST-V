@@ -2,8 +2,8 @@
 .help-support-page {
   position: relative;
   min-height: 100vh;
-  background-color: var(--bg-primary, #17151A);
-  color: var(--text-primary, #F4F1E9);
+  background-color: var(--bg-primary, #0C0C0F);
+  color: var(--text-primary, #F5F4F0);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   padding: 2.5rem 1.5rem 5rem;
   overflow-x: hidden;
@@ -548,9 +548,9 @@
 }
 
 .nav-card-icon-wrap.amber {
-  background: rgba(211, 205, 198, 0.15);
-  border: 1px solid rgba(211, 205, 198, 0.35);
-  color: #D3CDC6;
+  background: rgba(201, 199, 192, 0.15);
+  border: 1px solid rgba(201, 199, 192, 0.35);
+  color: #C9C7C0;
 }
 
 .nav-card-text h3 {
@@ -620,7 +620,7 @@ body.theme-light .help-support-page,
 .theme-light .help-support-page,
 [data-theme="light"] .help-support-page {
   background-color: #f8fafc;
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 body.theme-light .help-hero-card,
@@ -634,7 +634,7 @@ body.theme-light .help-hero-card,
 body.theme-light .help-hero-title,
 .theme-light .help-hero-title,
 [data-theme="light"] .help-hero-title {
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 body.theme-light .help-hero-desc,
@@ -656,8 +656,8 @@ body.theme-light .help-quick-chip:hover,
 .theme-light .help-quick-chip:hover,
 [data-theme="light"] .help-quick-chip:hover {
   background: #f1f5f9;
-  border-color: #35323D;
-  color: #35323D;
+  border-color: #3F3F45;
+  color: #C9C7C0;
 }
 
 body.theme-light .symptom-card-btn,
@@ -687,7 +687,7 @@ body.theme-light .symptom-card-btn.active,
 body.theme-light .symptom-card-title,
 .theme-light .symptom-card-title,
 [data-theme="light"] .symptom-card-title {
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 body.theme-light .symptom-card-desc,
@@ -707,7 +707,7 @@ body.theme-light .diagnosis-result-bay,
 body.theme-light .diagnosis-title,
 .theme-light .diagnosis-title,
 [data-theme="light"] .diagnosis-title {
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 body.theme-light .diagnosis-explanation,

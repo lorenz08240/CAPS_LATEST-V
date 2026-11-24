@@ -157,7 +157,7 @@ function SignalFlowBeams({ specimenKey, visible, isPaused = false }) {
 
   if (!visible) return null;
   const refs = [dotRef1, dotRef2, dotRef3];
-  const colors = ["#ffffff", "#b08d57", "#f59e0b"];
+  const colors = ["#ffffff", "#C9C7C0", "#00e5a0"];
 
   return (
     <group>
@@ -240,7 +240,7 @@ function StageSpecimen({
                 </mesh>
                 <mesh position={[-0.18, 0, 0]}>
                   <cylinderGeometry args={[0.45, 0.45, 0.06, 16]} />
-                  <meshStandardMaterial color="#17151A" />
+                  <meshStandardMaterial color="#0C0C0F" />
                 </mesh>
               </group>
             )}
@@ -610,7 +610,7 @@ export default function LearnHardwareStage({
               <text x="131" y="27" textAnchor="middle" fontSize="8.5" fontWeight="800" fill="currentColor">CPU / VRM</text>
               <text x="131" y="39" textAnchor="middle" fontSize="7" fill="#ffffff">CORE BUS</text>
 
-              <line x1="164" y1="30" x2="188" y2="30" stroke="#b08d57" strokeWidth="2" />
+              <line x1="164" y1="30" x2="188" y2="30" stroke="#3F3F45" strokeWidth="2" />
               <rect x="188" y="14" width="62" height="32" rx="5" fill="none" stroke="currentColor" strokeWidth="1.5" />
               <text x="219" y="29" textAnchor="middle" fontSize="8.5" fontWeight="700" fill="currentColor">DDR5 RAM</text>
               <text x="219" y="40" textAnchor="middle" fontSize="7" fill="#028090">128-BIT</text>

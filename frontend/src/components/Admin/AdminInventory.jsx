@@ -896,7 +896,7 @@ export const AdminInventory = () => {
                   >
                     <span
                       style={{
-                        color: "#B08D57",
+                        color: "#C9C7C0",
                         fontWeight: "600",
                         textTransform: "uppercase"
                       }}

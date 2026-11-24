@@ -99,7 +99,7 @@ const LINES = [
   "Again? Okay.",
   "You found B.O.B.!",
 ];
-const TINTS = ["#f43f5e", "#ffffff", "#b08d57", "#f5e6c7", "#fb7185"];
+const TINTS = ["#f43f5e", "#ffffff", "#C9C7C0", "#F5F4F0", "#fb7185"];
 const KEY_MS = 22;
 const HOLD_MS = 3800;
 

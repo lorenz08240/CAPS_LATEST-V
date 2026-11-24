@@ -31,11 +31,11 @@ export default function GenericPCCase({
   const chassisRoughness = isWhite ? 0.72 : 0.55;
 
   const interiorColor = isWhite ? '#e2e8f0' : '#2d3748';
-  const meshColor = isWhite ? '#cbd5e1' : '#17151A';
+  const meshColor = isWhite ? '#cbd5e1' : '#0C0C0F';
   const accentColor = isWhite ? '#94a3b8' : '#475569';
   const psuShroudColor = isWhite ? '#e2e8f0' : '#1f2937';
   const backPanelColor = isWhite ? '#cbd5e1' : '#242c3d';
-  const glassBorderColor = isWhite ? '#94a3b8' : '#17151A';
+  const glassBorderColor = isWhite ? '#94a3b8' : '#0C0C0F';
   const rubberGrommetColor = isWhite ? '#64748b' : '#111827';
   const structuralFrameColor = isWhite ? '#94a3b8' : '#0b0f19';
 
@@ -174,11 +174,11 @@ export default function GenericPCCase({
         </mesh>
         <mesh position={[1.4, 1.4, 0.11]}>
           <boxGeometry args={[1.2, 2.0, 0.02]} />
-          <meshStandardMaterial color={isWhite ? '#cbd5e1' : '#17151A'} roughness={0.9} />
+          <meshStandardMaterial color={isWhite ? '#cbd5e1' : '#0C0C0F'} roughness={0.9} />
         </mesh>
         <mesh position={[0, -3.5, 0.11]}>
           <boxGeometry args={[2.8, 1.6, 0.02]} />
-          <meshStandardMaterial color={isWhite ? '#cbd5e1' : '#17151A'} roughness={0.9} />
+          <meshStandardMaterial color={isWhite ? '#cbd5e1' : '#0C0C0F'} roughness={0.9} />
         </mesh>
       </group>
 
@@ -210,7 +210,7 @@ export default function GenericPCCase({
         </mesh>
         <mesh position={[-0.01, 1.4, -0.2]}>
           <boxGeometry args={[0.1, 2.0, 2.0]} />
-          <meshStandardMaterial color={isWhite ? '#cbd5e1' : '#17151A'} roughness={0.95} />
+          <meshStandardMaterial color={isWhite ? '#cbd5e1' : '#0C0C0F'} roughness={0.95} />
         </mesh>
       </group>
 

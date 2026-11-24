@@ -4,8 +4,8 @@
 .compare-rigs-page {
   position: relative;
   min-height: 100vh;
-  background-color: #17151A;
-  color: #F4F1E9;
+  background-color: #0C0C0F;
+  color: #F5F4F0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   overflow-x: hidden;
   box-sizing: border-box;
@@ -18,7 +18,7 @@
   transform: translate(-50%, -50%);
   width: 75vw;
   height: 55vh;
-  background: radial-gradient(circle, rgba(211, 205, 198, 0.08) 0%, rgba(27, 25, 31, 0.25) 50%, transparent 80%);
+  background: radial-gradient(circle, rgba(201, 199, 192, 0.08) 0%, rgba(27, 25, 31, 0.25) 50%, transparent 80%);
   filter: blur(80px);
   pointer-events: none;
   z-index: 0;
@@ -438,7 +438,7 @@
 
 .btn-edit-workbench:hover {
   background: #ffffff;
-  color: #17151A;
+  color: #0C0C0F;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
@@ -461,7 +461,7 @@
 
 .btn-load-to-workbench:hover {
   background: #ffffff;
-  color: #17151A;
+  color: #0C0C0F;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
@@ -949,7 +949,7 @@ body.theme-light .compare-rigs-page,
 .theme-light .compare-rigs-page,
 [data-theme="light"] .compare-rigs-page {
   background-color: #f8fafc;
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 body.theme-light .compare-nav-back-btn,
@@ -957,7 +957,7 @@ body.theme-light .compare-nav-back-btn,
 [data-theme="light"] .compare-nav-back-btn {
   background: #ffffff;
   border-color: rgba(23, 21, 26, 0.12);
-  color: #17151A;
+  color: #0C0C0F;
   box-shadow: 0 2px 8px rgba(23, 21, 26, 0.04);
 }
 
@@ -986,7 +986,7 @@ body.theme-light .source-tab-btn:hover,
 .theme-light .source-tab-btn:hover,
 [data-theme="light"] .source-tab-btn:hover {
   background: #f1f5f9;
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 body.theme-light .source-tab-btn.active,
@@ -1009,7 +1009,7 @@ body.theme-light .rig-viewport-3d-stage,
 body.theme-light .rig-title-block h3,
 .theme-light .rig-title-block h3,
 [data-theme="light"] .rig-title-block h3 {
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 body.theme-light .spec-row-compare,
@@ -1021,7 +1021,7 @@ body.theme-light .spec-row-compare,
 body.theme-light .spec-part-title,
 .theme-light .spec-part-title,
 [data-theme="light"] .spec-part-title {
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 body.theme-light .spec-part-category,
@@ -1060,7 +1060,7 @@ body.theme-light .empty-rig2-prompt,
 body.theme-light .empty-rig2-prompt p,
 .theme-light .empty-rig2-prompt p,
 [data-theme="light"] .empty-rig2-prompt p {
-  color: #17151A !important;
+  color: #0C0C0F !important;
 }
 
 body.theme-light .rig-specs-list,
@@ -1087,7 +1087,7 @@ body.theme-light .spec-category,
 body.theme-light .spec-name,
 .theme-light .spec-name,
 [data-theme="light"] .spec-name {
-  color: #17151A !important;
+  color: #0C0C0F !important;
 }
 
 body.theme-light .spec-tag,
@@ -1129,6 +1129,6 @@ body.theme-light .btn-load-demo-ghost:hover,
 .theme-light .btn-load-demo-ghost:hover,
 [data-theme="light"] .btn-load-demo-ghost:hover {
   background: #f1f5f9 !important;
-  border-color: #17151A !important;
-  color: #17151A !important;
+  border-color: #0C0C0F !important;
+  color: #0C0C0F !important;
 }

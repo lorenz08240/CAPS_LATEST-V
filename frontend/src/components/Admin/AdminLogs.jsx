@@ -422,7 +422,7 @@ export const AdminLogs = () => {
                 <button
                   type="button"
                   className="btn-add-component-neon"
-                  style={{ background: "#F5E6C8", borderColor: "#F5E6C8", color: "#090909" }}
+                  style={{ background: "#202023", borderColor: "#3F3F45", color: "#F5F4F0" }}
                   onClick={handleExportCSV}
                   title="Export audit trail to CSV file"
                 >
@@ -433,7 +433,7 @@ export const AdminLogs = () => {
                 <button
                   type="button"
                   className="btn-add-component-neon"
-                  style={{ background: "rgba(176, 141, 87, 0.15)", borderColor: "rgba(176, 141, 87, 0.4)", color: "#F5E6C8" }}
+                  style={{ background: "#202023", borderColor: "#3F3F45", color: "#C9C7C0" }}
                   onClick={() => loadAllData(true)}
                   disabled={refreshing}
                   title="Refresh logs and system status telemetry"
@@ -486,13 +486,13 @@ export const AdminLogs = () => {
                               borderColor: log.action_type?.includes("DELETE")
                                 ? "rgba(226, 59, 59, 0.4)"
                                 : log.action_type?.includes("UPDATE")
-                                ? "rgba(176, 141, 87, 0.4)"
-                                : "rgba(245, 230, 200, 0.3)",
+                                ? "rgba(63, 63, 69, 0.6)"
+                                : "rgba(201, 199, 192, 0.3)",
                               color: log.action_type?.includes("DELETE")
                                 ? "#F04B4B"
                                 : log.action_type?.includes("UPDATE")
-                                ? "#B08D57"
-                                : "#F5E6C8"
+                                ? "#38bdf8"
+                                : "#F5F4F0"
                             }}
                           >
                             {log.action_type}

@@ -1,10 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Big+Shoulders+Display:wght@800;900&family=Antonio:wght@700&family=Syne:wght@700;800;900&display=swap');
 
 .home-page {
-  background: #17151A;
+  background: #0C0C0F;
   min-height: 100vh;
   width: 100%;
-  color: #F4F1E9;
+  color: #F5F4F0;
   position: relative;
   overflow-x: hidden;
   box-sizing: border-box;
@@ -29,8 +29,8 @@
 }
 
 .home-hero {
-  background-color: #201E25;
-  color: #F4F1E9;
+  background-color: #202023;
+  color: #F5F4F0;
   text-align: center;
   padding: 1rem 2rem 3rem 2rem;
   position: relative;
@@ -53,9 +53,9 @@
   right: 0;
   bottom: 0;
   background: linear-gradient(to bottom,
-      rgba(26, 18, 11, 0.75) 0%,
+      rgba(12, 12, 15, 0.75) 0%,
       rgba(36, 27, 20, 0.85) 60%,
-      #17151A 100%);
+      #0C0C0F 100%);
   z-index: 1;
 }
 
@@ -67,8 +67,8 @@
 .btn-primary,
 .btn-secondary,
 .btn-outline {
-  background-color: #D3CDC6;
-  color: #17151A;
+  background-color: #C9C7C0;
+  color: #0C0C0F;
   padding: 0.75rem 1.5rem;
   border-radius: 0.5rem;
   font-weight: bold;
@@ -81,7 +81,7 @@
 .btn-primary:hover,
 .btn-secondary:hover,
 .btn-outline:hover {
-  background-color: #F4F1E9;
+  background-color: #F5F4F0;
   transform: translateY(-1px);
 }
 
@@ -245,19 +245,19 @@
 .home-brands-section {
   position: relative;
   width: 100%;
-  background: #17151A;
+  background: #0C0C0F;
   z-index: 2;
 }
 
 /* ── Why Build Section ── */
 .why-build {
-  background-color: #201E25;
+  background-color: #202023;
   background-image: url("/assets/waves_dark_bg.jpg");
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
   background-repeat: no-repeat;
-  color: #F4F1E9;
+  color: #F5F4F0;
   padding: 40px 20px 80px;
   text-align: center;
   position: relative;
@@ -417,7 +417,7 @@
   height: 100vh;
   height: 100dvh;
   min-height: 720px;
-  background-color: #17151A;
+  background-color: #0C0C0F;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -930,8 +930,8 @@ body.theme-light .giant-bg-logo-img,
   width: 72px;
   height: 72px;
   border-radius: 50%;
-  border: 1px solid rgba(211, 205, 198, 0.25);
-  border-top-color: #D3CDC6;
+  border: 1px solid rgba(201, 199, 192, 0.25);
+  border-top-color: #C9C7C0;
   animation: heroFallbackSpin 1.4s linear infinite;
 }
 
@@ -946,15 +946,15 @@ body.theme-light .giant-bg-logo-img,
   font-family: var(--font-mono, monospace);
   font-size: 11px;
   letter-spacing: 0.16em;
-  color: #D3CDC6;
+  color: #C9C7C0;
 }
 
 .fallback-pulse-dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #D3CDC6;
-  box-shadow: 0 0 8px rgba(211, 205, 198, 0.6);
+  background: #C9C7C0;
+  box-shadow: 0 0 8px rgba(201, 199, 192, 0.6);
   animation: pulseDot 1.2s ease-in-out infinite alternate;
 }
 
@@ -1195,13 +1195,13 @@ body.theme-light .giant-bg-logo-img,
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #D3CDC6;
+  background: #C9C7C0;
   box-shadow: none;
   animation: pulseBadgeDot 1.6s infinite ease-in-out;
 }
 
 .cyber-mode-badge-btn.mode-badge-explore .badge-pulse-dot {
-  background: #F4F1E9;
+  background: #F5F4F0;
   box-shadow: none;
 }
 
@@ -1328,13 +1328,13 @@ body.theme-light .giant-bg-logo-img,
 }
 
 .mode-dock-pill.active.learn .dock-pill-tag {
-  background: #D3CDC6;
-  color: #17151A;
+  background: #C9C7C0;
+  color: #0C0C0F;
 }
 
 .mode-dock-pill.active.explore .dock-pill-tag {
-  background: #F4F1E9;
-  color: #17151A;
+  background: #F5F4F0;
+  color: #0C0C0F;
 }
 
 @media (max-width: 768px) {
@@ -2275,13 +2275,13 @@ body.theme-light .giant-bg-logo-img,
    ═════════════════════════════════════════════════════════════════════ */
 .theme-light .home-page,
 [data-theme="light"] .home-page {
-  --home-ink: #17151A;
-  --home-muted: #35323D;
+  --home-ink: #0C0C0F;
+  --home-muted: #3F3F45;
   --home-faint: #4A4654;
   --home-line: rgba(27, 25, 31, 0.12);
   --home-accent: #E23B3B;
-  --home-emerald: #35323D;
-  background: #FBF9F3 !important;
+  --home-emerald: #3F3F45;
+  background: #F5F4F0 !important;
   color: var(--home-ink) !important;
 }
 
@@ -2503,7 +2503,7 @@ body.theme-light .giant-bg-logo-img,
 
 .theme-light .home-page .hero-legal-links a:hover,
 [data-theme="light"] .home-page .hero-legal-links a:hover {
-  color: #35323D;
+  color: #C9C7C0;
 }
 
 /* Left rail */

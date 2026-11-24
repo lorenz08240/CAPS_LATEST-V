@@ -1460,11 +1460,11 @@ function PCBuilder3DWorkspace() {
                 </mesh>
                 <mesh position={[0, 0, 0.05]}>
                   <boxGeometry args={[0.2, 18, 0.1]} />
-                  <meshBasicMaterial color="#17151A" />
+                  <meshBasicMaterial color="#0C0C0F" />
                 </mesh>
                 <mesh position={[0, 0, 0.05]}>
                   <boxGeometry args={[14, 0.2, 0.1]} />
-                  <meshBasicMaterial color="#17151A" />
+                  <meshBasicMaterial color="#0C0C0F" />
                 </mesh>
                 <mesh position={[0, 0, 0.02]}>
                   <planeGeometry args={[13.6, 17.6]} />
@@ -1499,7 +1499,7 @@ function PCBuilder3DWorkspace() {
 
               <mesh position={[0, -4.89, 0]}>
                 <boxGeometry args={[48.3, 0.04, 38.3]} />
-                <meshBasicMaterial color={isDark ? "#ffffff" : "#17151A"} transparent opacity={0.25} />
+                <meshBasicMaterial color={isDark ? "#ffffff" : "#0C0C0F"} transparent opacity={0.25} />
               </mesh>
 
               <mesh 
@@ -1529,7 +1529,7 @@ function PCBuilder3DWorkspace() {
                 <group key={`tray-${idx}`} position={pos}>
                   <mesh>
                     <boxGeometry args={[2.2, 0.05, 2.2]} />
-                    <meshStandardMaterial color="#17151A" roughness={0.9} />
+                    <meshStandardMaterial color="#0C0C0F" roughness={0.9} />
                   </mesh>
                   <mesh position={[0, 0.03, 0]}>
                     <boxGeometry args={[2.0, 0.02, 2.0]} />

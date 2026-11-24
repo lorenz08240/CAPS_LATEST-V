@@ -39,7 +39,7 @@ export default function ModeSelectionCards({
         aria-label="Start Guided Course"
       >
         <PixelCanvas
-          colors={["#ffffff", "#f5e6c7", "#b08d57", "#3a2e1e"]}
+          colors={["#0C0C0F", "#202023", "#3F3F45", "#C9C7C0", "#F5F4F0"]}
           gap={8}
           className="mode-selection-pixels"
         />

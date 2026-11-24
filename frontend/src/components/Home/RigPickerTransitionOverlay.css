@@ -7,8 +7,8 @@
   position: fixed;
   inset: 0;
   z-index: 99999;
-  background: #17151A;
-  color: #F4F1E9;
+  background: #0C0C0F;
+  color: #F5F4F0;
   display: flex;
   flex-direction: column;
   justify-content: space-between;

@@ -1,24 +1,24 @@
 :root {
-  --cyber-bg: #17151A;
+  --cyber-bg: #0C0C0F;
   --cyber-panel: rgba(36, 27, 20, 0.94);
   --cyber-panel-card: rgba(27, 25, 31, 0.55);
   --cyber-panel-hover: rgba(27, 25, 31, 0.85);
-  --cyber-border: rgba(211, 205, 198, 0.16);
-  --cyber-border-subtle: rgba(211, 205, 198, 0.08);
-  --cyber-rose: #D3CDC6;
+  --cyber-border: rgba(201, 199, 192, 0.16);
+  --cyber-border-subtle: rgba(201, 199, 192, 0.08);
+  --cyber-rose: #C9C7C0;
   --cyber-rose-dark: #b8b085;
-  --cyber-rose-light: #F4F1E9;
-  --cyber-rose-glow: rgba(211, 205, 198, 0.35);
-  --cyber-sky: #F4F1E9;
+  --cyber-rose-light: #F5F4F0;
+  --cyber-rose-glow: rgba(201, 199, 192, 0.35);
+  --cyber-sky: #F5F4F0;
   --cyber-sky-glow: rgba(244, 241, 233, 0.15);
   --cyber-green: #4ade80;
   --cyber-green-glow: rgba(74, 222, 128, 0.35);
-  --cyber-text-main: #F4F1E9;
-  --cyber-text-muted: #D3CDC6;
+  --cyber-text-main: #F5F4F0;
+  --cyber-text-muted: #C9C7C0;
   --cyber-text-dim: #a89f82;
   --white: #ffffff;
-  --muted: #D3CDC6;
-  --yellow: #D3CDC6;
+  --muted: #C9C7C0;
+  --yellow: #C9C7C0;
   --green: #4ade80;
 }
 
@@ -1150,7 +1150,7 @@
   flex-direction: column;
   padding-right: 6px;
   scrollbar-width: thin !important;
-  scrollbar-color: rgba(211, 205, 198, 0.28) rgba(255, 255, 255, 0.04) !important;
+  scrollbar-color: rgba(201, 199, 192, 0.28) rgba(255, 255, 255, 0.04) !important;
 }
 
 .spec-scrollable-body::-webkit-scrollbar {
@@ -1164,12 +1164,12 @@
 }
 
 .spec-scrollable-body::-webkit-scrollbar-thumb {
-  background: rgba(211, 205, 198, 0.28) !important;
+  background: rgba(201, 199, 192, 0.28) !important;
   border-radius: 999px !important;
 }
 
 .spec-scrollable-body::-webkit-scrollbar-thumb:hover {
-  background: rgba(211, 205, 198, 0.45) !important;
+  background: rgba(201, 199, 192, 0.45) !important;
 }
 
 /* Permanent Docked CTA Footer */

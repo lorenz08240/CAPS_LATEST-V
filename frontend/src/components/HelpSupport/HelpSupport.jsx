@@ -205,7 +205,7 @@ const TRIAGE_SYMPTOMS = [
   {
     symptom: "PC boots into BIOS, but M.2 NVMe SSD is not detected",
     urgency: "LOW",
-    color: "#b08d57",
+    color: "#00e5a0",
     cause: "Drive Seating or M.2 Lane Sharing",
     action: "1. Power down and reseat the M.2 SSD into the top CPU-direct slot (M2_1).\n2. Fasten the retention standoff screw or EZ-latch.\n3. Ensure CSM/Legacy mode is disabled and UEFI Boot is active in BIOS.",
   },

@@ -12,11 +12,11 @@
 
 .platform-services-section {
   position: relative;
-  background-color: #17151A;
-  color: #F4F1E9;
+  background-color: #0C0C0F;
+  color: #F5F4F0;
   padding: 100px 32px 120px;
-  border-top: 1px solid rgba(211, 205, 198, 0.16);
-  border-bottom: 1px solid rgba(211, 205, 198, 0.16);
+  border-top: 1px solid rgba(201, 199, 192, 0.16);
+  border-bottom: 1px solid rgba(201, 199, 192, 0.16);
   overflow: hidden;
   z-index: 2;
 }
@@ -233,8 +233,8 @@
 }
 
 .telemetry-demo-card {
-  background: #27252E;
-  border: 1px solid rgba(211, 205, 198, 0.22);
+  background: #202023;
+  border: 1px solid rgba(201, 199, 192, 0.22);
   border-radius: 12px;
   padding: 24px 28px;
   width: 100%;
@@ -407,12 +407,12 @@
 
 /* ── CARD BAY: DUAL RIG COMPARISON CARD (SERVICE 2) ── */
 .rig-compare-card {
-  background: #27252E;
-  border: 1px solid rgba(211, 205, 198, 0.28);
+  background: #202023;
+  border: 1px solid rgba(201, 199, 192, 0.28);
   border-radius: 12px;
   padding: 24px;
   width: 100%;
-  box-shadow: 0 20px 50px rgba(8, 6, 12, 0.75), 0 0 24px rgba(211, 205, 198, 0.08);
+  box-shadow: 0 20px 50px rgba(8, 6, 12, 0.75), 0 0 24px rgba(201, 199, 192, 0.08);
 }
 
 .rig-compare-nav {
@@ -559,8 +559,8 @@
 
 /* ── CARD BAY: ACADEMY BLUEPRINT CARD (SERVICE 3) ── */
 .academy-preview-card {
-  background: #27252E;
-  border: 1px solid rgba(211, 205, 198, 0.22);
+  background: #202023;
+  border: 1px solid rgba(201, 199, 192, 0.22);
   border-radius: 12px;
   padding: 24px;
   width: 100%;
@@ -721,12 +721,12 @@
 
 /* ── CARD BAY: 3D STUDIO PREVIEW (SERVICE 4) ── */
 .studio-preview-card {
-  background: #27252E;
-  border: 1px solid rgba(211, 205, 198, 0.28);
+  background: #202023;
+  border: 1px solid rgba(201, 199, 192, 0.28);
   border-radius: 12px;
   padding: 24px;
   width: 100%;
-  box-shadow: 0 20px 50px rgba(8, 6, 12, 0.75), 0 0 24px rgba(211, 205, 198, 0.08);
+  box-shadow: 0 20px 50px rgba(8, 6, 12, 0.75), 0 0 24px rgba(201, 199, 192, 0.08);
 }
 
 .studio-card-head {
@@ -963,7 +963,7 @@ body.theme-light .platform-services-section,
 .theme-light .platform-services-section,
 [data-theme="light"] .platform-services-section {
   background-color: #f8fafc;
-  color: #17151A;
+  color: #0C0C0F;
   border-top: 1px solid rgba(23, 21, 26, 0.08);
   border-bottom: 1px solid rgba(23, 21, 26, 0.08);
 }
@@ -977,13 +977,13 @@ body.theme-light .services-ambient-glow,
 body.theme-light .services-headline,
 .theme-light .services-headline,
 [data-theme="light"] .services-headline {
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 body.theme-light .service-title,
 .theme-light .service-title,
 [data-theme="light"] .service-title {
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 body.theme-light .service-description,
@@ -1037,7 +1037,7 @@ body.theme-light .telemetry-stat-cell .stat-label,
 body.theme-light .telemetry-stat-cell .stat-value,
 .theme-light .telemetry-stat-cell .stat-value,
 [data-theme="light"] .telemetry-stat-cell .stat-value {
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 body.theme-light .telemetry-bar-bg,
@@ -1104,7 +1104,7 @@ body.theme-light .metric-eyebrow,
 body.theme-light .metric-val,
 .theme-light .metric-val,
 [data-theme="light"] .metric-val {
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 body.theme-light .metric-sub,
@@ -1128,7 +1128,7 @@ body.theme-light .power-data-row,
 body.theme-light .power-data-row strong,
 .theme-light .power-data-row strong,
 [data-theme="light"] .power-data-row strong {
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 body.theme-light .c-label,
@@ -1140,7 +1140,7 @@ body.theme-light .c-label,
 body.theme-light .c-val,
 .theme-light .c-val,
 [data-theme="light"] .c-val {
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 /* Service 2: Dual Rig Comparison */
@@ -1264,7 +1264,7 @@ body.theme-light .blueprint-meta-bar,
 body.theme-light .blueprint-meta-bar strong,
 .theme-light .blueprint-meta-bar strong,
 [data-theme="light"] .blueprint-meta-bar strong {
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 body.theme-light .syllabus-module-pill,
@@ -1280,7 +1280,7 @@ body.theme-light .syllabus-module-pill.active,
 [data-theme="light"] .syllabus-module-pill.active {
   background: rgba(27, 25, 31, 0.08);
   border-color: rgba(27, 25, 31, 0.3);
-  color: #35323D;
+  color: #C9C7C0;
 }
 
 /* Service 4: 3D Studio */
@@ -1289,7 +1289,7 @@ body.theme-light .studio-fps,
 [data-theme="light"] .studio-fps {
   border-color: rgba(27, 25, 31, 0.25);
   background: rgba(27, 25, 31, 0.08);
-  color: #35323D;
+  color: #C9C7C0;
 }
 
 body.theme-light .rig-slot,
@@ -1310,7 +1310,7 @@ body.theme-light .rig-slot.rig-b,
 body.theme-light .rig-name,
 .theme-light .rig-name,
 [data-theme="light"] .rig-name {
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 body.theme-light .rig-spec-list .spec-k,
@@ -1354,7 +1354,7 @@ body.theme-light .path-step-card.active-step,
 body.theme-light .step-body strong,
 .theme-light .step-body strong,
 [data-theme="light"] .step-body strong {
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 body.theme-light .step-body p,
@@ -1399,8 +1399,8 @@ body.theme-light .cam-pill,
    INTERACTIVE LABORATORY PREVIEW WINDOWS (REAL SCREEN EMBEDS)
    ═════════════════════════════════════════════════════════════════════ */
 .interactive-preview-window {
-  background: #27252E;
-  border: 1px solid rgba(211, 205, 198, 0.2);
+  background: #202023;
+  border: 1px solid rgba(201, 199, 192, 0.2);
   border-radius: 14px;
   overflow: hidden;
   width: 100%;
@@ -1528,7 +1528,7 @@ body.theme-light .cam-pill,
   width: 100%;
   aspect-ratio: 16 / 10;
   overflow: hidden;
-  background: #17151A;
+  background: #0C0C0F;
 }
 
 .preview-viewport-img {
@@ -1547,8 +1547,8 @@ body.theme-light .cam-pill,
 .preview-glass-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, transparent 60%, rgba(26, 18, 11, 0.88) 100%),
-              radial-gradient(circle at center, transparent 40%, rgba(26, 18, 11, 0.6) 100%);
+  background: linear-gradient(180deg, transparent 60%, rgba(12, 12, 15, 0.88) 100%),
+              radial-gradient(circle at center, transparent 40%, rgba(12, 12, 15, 0.6) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1568,8 +1568,8 @@ body.theme-light .cam-pill,
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: #D3CDC6;
-  color: #17151A;
+  background: #C9C7C0;
+  color: #0C0C0F;
   font-family: ui-monospace, SFMono-Regular, monospace;
   font-size: 0.76rem;
   font-weight: 800;
@@ -1586,21 +1586,21 @@ body.theme-light .cam-pill,
 }
 
 .overlay-badge-pill.pill-emerald {
-  background: #F4F1E9;
-  color: #17151A;
+  background: #F5F4F0;
+  color: #0C0C0F;
   box-shadow: 0 4px 16px rgba(8, 6, 12, 0.6);
 }
 
 .overlay-badge-pill.pill-sky {
-  background: #D3CDC6;
-  color: #17151A;
+  background: #C9C7C0;
+  color: #0C0C0F;
   box-shadow: 0 4px 16px rgba(8, 6, 12, 0.6);
 }
 
 /* Preview Window Footer */
 .preview-window-footer {
-  background: #201E25;
-  border-top: 1px solid rgba(211, 205, 198, 0.14);
+  background: #202023;
+  border-top: 1px solid rgba(201, 199, 192, 0.14);
   padding: 12px 16px;
 }
 
@@ -2127,11 +2127,11 @@ body.theme-light .feat-chip,
 .twod-demo-thumb {
   height: 34px;
   border-radius: 4px;
-  background: linear-gradient(135deg, #334155, #17151A);
+  background: linear-gradient(135deg, #334155, #0C0C0F);
 }
 
 .thumb-2 { background: linear-gradient(135deg, #4c1d95, #1e1b4b); }
-.thumb-3 { background: linear-gradient(135deg, #7f1d1d, #17151A); }
+.thumb-3 { background: linear-gradient(135deg, #7f1d1d, #0C0C0F); }
 .thumb-4 { background: linear-gradient(135deg, #e2e8f0, #94a3b8); }
 
 .twod-demo-brand {
@@ -2151,7 +2151,7 @@ body.theme-light .feat-chip,
 .twod-demo-specimg {
   height: 40px;
   border-radius: 4px;
-  background: linear-gradient(135deg, #334155, #17151A);
+  background: linear-gradient(135deg, #334155, #0C0C0F);
   margin-bottom: 5px;
 }
 

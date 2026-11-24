@@ -492,7 +492,7 @@ body.theme-light .account-modal-card,
   background: #ffffff;
   border: 1px solid rgba(23, 21, 26, 0.12);
   box-shadow: 0 24px 64px rgba(23, 21, 26, 0.14);
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 body.theme-light .account-modal-header,
@@ -502,7 +502,7 @@ body.theme-light .account-modal-header,
 
 body.theme-light .account-title-text h3,
 .theme-light .account-title-text h3 {
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 body.theme-light .account-title-text p,
@@ -519,12 +519,12 @@ body.theme-light .account-field-input,
 .theme-light .account-field-input {
   background: #f8fafc;
   border-color: rgba(23, 21, 26, 0.14);
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 body.theme-light .account-field-input:focus,
 .theme-light .account-field-input:focus {
-  border-color: #35323D;
+  border-color: #3F3F45;
   background: #ffffff;
 }
 
@@ -532,12 +532,12 @@ body.theme-light .account-status-card,
 .theme-light .account-status-card {
   background: #f8fafc;
   border-color: rgba(23, 21, 26, 0.1);
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 body.theme-light .account-user-name,
 .theme-light .account-user-name {
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 body.theme-light .account-user-email,
@@ -668,13 +668,13 @@ body.theme-light .account-select,
 .theme-light .account-select {
   background: #f8fafc;
   border-color: rgba(23, 21, 26, 0.15);
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 body.theme-light .account-select option,
 .theme-light .account-select option {
   background: #ffffff;
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 body.theme-light .interest-card-pill,
@@ -688,13 +688,13 @@ body.theme-light .interest-card-pill:hover,
 .theme-light .interest-card-pill:hover {
   background: rgba(5, 150, 105, 0.06);
   border-color: rgba(5, 150, 105, 0.35);
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 body.theme-light .interest-card-pill.is-selected,
 .theme-light .interest-card-pill.is-selected {
   background: #ecfdf5;
-  border-color: #35323D;
+  border-color: #3F3F45;
   color: #064e3b;
   box-shadow: 0 0 12px rgba(5, 150, 105, 0.15);
 }

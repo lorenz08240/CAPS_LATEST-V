@@ -13,7 +13,7 @@
 body.theme-light .settings-page-wrapper,
 .theme-light .settings-page-wrapper {
   background: #f8fafc;
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 .settings-container {
@@ -79,8 +79,8 @@ body.theme-light .settings-back-btn,
 body.theme-light .settings-back-btn:hover,
 .theme-light .settings-back-btn:hover {
   background: #f1f5f9;
-  border-color: #35323D;
-  color: #35323D;
+  border-color: #3F3F45;
+  color: #C9C7C0;
 }
 
 .settings-meta-tags {
@@ -150,7 +150,7 @@ body.theme-light .settings-icon-badge,
 .theme-light .settings-icon-badge {
   background: rgba(5, 150, 105, 0.1);
   border-color: rgba(5, 150, 105, 0.3);
-  color: #35323D;
+  color: #C9C7C0;
 }
 
 .settings-main-title {
@@ -163,7 +163,7 @@ body.theme-light .settings-icon-badge,
 
 body.theme-light .settings-main-title,
 .theme-light .settings-main-title {
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 /* Nav Filter Tabs (Phone-style Segmented Control) */
@@ -238,14 +238,14 @@ body.theme-light .tab-btn,
 
 body.theme-light .tab-btn:hover,
 .theme-light .tab-btn:hover {
-  color: #17151A;
+  color: #0C0C0F;
   background: rgba(23, 21, 26, 0.06);
 }
 
 body.theme-light .tab-btn.active,
 .theme-light .tab-btn.active {
-  background: #17151A;
-  border-color: #17151A;
+  background: #0C0C0F;
+  border-color: #0C0C0F;
   color: #ffffff;
   box-shadow: 0 2px 6px rgba(23, 21, 26, 0.18);
 }
@@ -359,7 +359,7 @@ body.theme-light .card-header-icon,
 .theme-light .card-header-icon {
   background: rgba(5, 150, 105, 0.08);
   border-color: rgba(5, 150, 105, 0.2);
-  color: #35323D;
+  color: #C9C7C0;
 }
 
 .card-title {
@@ -372,7 +372,7 @@ body.theme-light .card-header-icon,
 
 body.theme-light .card-title,
 .theme-light .card-title {
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 /* ── ACCOUNT DETAILS GRID ── */
@@ -463,7 +463,7 @@ body.theme-light .card-title,
 
 body.theme-light .profile-fullname,
 .theme-light .profile-fullname {
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 .profile-badge {
@@ -580,7 +580,7 @@ body.theme-light .profile-fullname,
 
 body.theme-light .general-subgroup-title,
 .theme-light .general-subgroup-title {
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 .general-subgroup-desc {
@@ -632,7 +632,7 @@ body.theme-light .language-option-card,
 body.theme-light .language-option-card.active,
 .theme-light .language-option-card.active {
   background: rgba(5, 150, 105, 0.08);
-  border-color: #35323D;
+  border-color: #3F3F45;
 }
 
 .lang-flag-badge {
@@ -655,7 +655,7 @@ body.theme-light .lang-flag-badge,
 .theme-light .lang-flag-badge {
   background: #e2e8f0;
   border-color: #cbd5e1;
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 .lang-flag {
@@ -676,7 +676,7 @@ body.theme-light .lang-flag-badge,
 
 body.theme-light .lang-name,
 .theme-light .lang-name {
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 .lang-check {
@@ -687,7 +687,7 @@ body.theme-light .lang-name,
 
 body.theme-light .lang-check,
 .theme-light .lang-check {
-  color: #35323D;
+  color: #C9C7C0;
 }
 
 /* ── SYSTEM SPECIFICATIONS BOX (Phone About Style) ── */
@@ -835,7 +835,7 @@ body.theme-light .language-option-card.locked:hover,
 body.theme-light .coming-soon-overlay,
 .theme-light .coming-soon-overlay {
   background: rgba(248, 250, 252, 0.94);
-  color: #35323D;
+  color: #C9C7C0;
 }
 
 /* ── THEME SELECTION GRID ── */
@@ -879,12 +879,12 @@ body.theme-light .coming-soon-overlay,
 }
 
 .theme-preview-box.dark {
-  background: #17151A;
-  border: 1px solid rgba(211, 205, 198, 0.25);
+  background: #0C0C0F;
+  border: 1px solid rgba(201, 199, 192, 0.25);
 }
 
 .theme-preview-box.light {
-  background: #FBF9F3;
+  background: #F5F4F0;
   border: 1px solid rgba(27, 25, 31, 0.2);
 }
 
@@ -947,7 +947,7 @@ body.theme-light .coming-soon-overlay,
 
 body.theme-light .theme-title,
 .theme-light .theme-title {
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 .theme-active-tag {
@@ -985,7 +985,7 @@ body.theme-light .theme-title,
 
 body.theme-light .setting-label,
 .theme-light .setting-label {
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 .toggle-switch-btn {
@@ -1089,7 +1089,7 @@ body.theme-light .sound-test-btn:hover,
 .theme-light .sound-test-btn:hover {
   background: #f1f5f9;
   border-color: rgba(23, 21, 26, 0.2);
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 /* ── STAGES GRID ── */
@@ -1142,7 +1142,7 @@ body.theme-light .sound-test-btn:hover,
 
 body.theme-light .stage-name,
 .theme-light .stage-name {
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 .stage-status-tag {
@@ -1358,13 +1358,13 @@ body.theme-light .stage-name,
 
 body.theme-light .pin-confirm-label,
 .theme-light .pin-confirm-label {
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 body.theme-light .pin-confirm-input,
 .theme-light .pin-confirm-input {
   background: #f8fafc;
-  color: #17151A;
+  color: #0C0C0F;
   border-color: rgba(239, 68, 68, 0.4);
 }
 
@@ -1503,7 +1503,7 @@ body.theme-light .account-dashboard,
 
 body.theme-light .account-dashboard-toggle,
 .theme-light .account-dashboard-toggle {
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 body.theme-light .account-dashboard-toggle:hover .dashboard-toggle-label,
@@ -1525,19 +1525,19 @@ body.theme-light .dashboard-stage-circle,
 
 body.theme-light .dashboard-ring,
 .theme-light .dashboard-ring {
-  --ring-fill: #35323D;
+  --ring-fill: #3F3F45;
   --ring-track: rgba(27, 25, 31, 0.12);
 }
 
 body.theme-light .dashboard-ring-core,
 .theme-light .dashboard-ring-core {
   background: #ffffff;
-  color: #17151A;
+  color: #0C0C0F;
 }
 
 body.theme-light .dashboard-stage.done .dashboard-stage-circle,
 .theme-light .dashboard-stage.done .dashboard-stage-circle {
-  background: #35323D;
-  border-color: #35323D;
+  background: #202023;
+  border-color: #3F3F45;
   color: #ffffff;
 }

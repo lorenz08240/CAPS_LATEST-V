@@ -33,9 +33,9 @@
   font-weight: 700;
   padding: 6px 14px;
   border-radius: 999px;
-  background: #D3CDC6;
-  color: #17151A;
-  border: 1px solid rgba(26, 18, 11, 0.2);
+  background: #C9C7C0;
+  color: #0C0C0F;
+  border: 1px solid rgba(12, 12, 15, 0.2);
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
@@ -590,7 +590,7 @@
 /* All Installed POST Card */
 .tray-post-card {
   padding: 14px;
-  background: linear-gradient(135deg, rgba(176, 141, 87, 0.2) 0%, rgba(6, 78, 59, 0.25) 100%);
+  background: linear-gradient(135deg, rgba(63, 63, 69, 0.2) 0%, rgba(6, 78, 59, 0.25) 100%);
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 10px;
   margin-top: 10px;
@@ -649,7 +649,7 @@
 .wb-celebration-card {
   max-width: 460px;
   width: 100%;
-  background: #17151A;
+  background: #0C0C0F;
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 16px;
   padding: 24px;
@@ -741,8 +741,8 @@
 .btn-celebration-disassemble {
   width: 100%;
   padding: 10px 16px;
-  background: #D3CDC6;
-  color: #17151A;
+  background: #C9C7C0;
+  color: #0C0C0F;
   font-size: 12.5px;
   font-weight: 800;
   border: 1px solid #e5debe;
@@ -752,7 +752,7 @@
 }
 
 .btn-celebration-disassemble:hover {
-  background: #FBF9F3;
+  background: #F5F4F0;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
   transform: translateY(-1px);
 }
@@ -776,11 +776,11 @@
 }
 
 .assembly-reset-btn.is-ready-teardown {
-  background: #D3CDC6;
-  color: #17151A;
-  border-color: #FBF9F3;
+  background: #C9C7C0;
+  color: #0C0C0F;
+  border-color: #F5F4F0;
   font-weight: 850;
-  box-shadow: 0 0 14px rgba(211, 205, 198, 0.4);
+  box-shadow: 0 0 14px rgba(201, 199, 192, 0.4);
 }
 
 /* ── Tray Header Row & Reset Button ── */
@@ -819,7 +819,7 @@
   font-weight: 700;
   border-radius: 999px;
   background: #38bdf8;
-  color: #17151A;
+  color: #0C0C0F;
   border: none;
   cursor: pointer;
   transition: all 0.2s ease;
