@@ -2712,7 +2712,118 @@ body.theme-light .brand-monogram-pill,
   border-color: rgba(23, 21, 26, 0.1);
 }
 
+/* ── Hardware Specs Title ── */
+.specs-list-title {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #94a3b8;
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+}
 
+body.theme-light .specs-list-title,
+.theme-light .specs-list-title,
+[data-theme="light"] .specs-list-title {
+  color: #475569;
+}
 
+/* ── Rig Quick Action Buttons in Light Mode ── */
+body.theme-light .btn-rig-action,
+.theme-light .btn-rig-action,
+[data-theme="light"] .btn-rig-action {
+  background: #f1f5f9;
+  border-color: rgba(23, 21, 26, 0.16);
+  color: #1e293b;
+}
 
+body.theme-light .btn-rig-action:hover,
+.theme-light .btn-rig-action:hover,
+[data-theme="light"] .btn-rig-action:hover {
+  background: #e2e8f0;
+  border-color: rgba(23, 21, 26, 0.28);
+  color: #0f172a;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+body.theme-light .btn-rig-action.btn-delete-assembly,
+.theme-light .btn-rig-action.btn-delete-assembly,
+[data-theme="light"] .btn-rig-action.btn-delete-assembly {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #dc2626;
+}
+
+body.theme-light .btn-rig-action.btn-delete-assembly:hover,
+.theme-light .btn-rig-action.btn-delete-assembly:hover,
+[data-theme="light"] .btn-rig-action.btn-delete-assembly:hover {
+  background: rgba(239, 68, 68, 0.16);
+  border-color: #dc2626;
+  color: #b91c1c;
+}
+
+/* ── Rig Source Dropdown Select in Light Mode ── */
+body.theme-light .rig-source-dropdown-select,
+.theme-light .rig-source-dropdown-select,
+[data-theme="light"] .rig-source-dropdown-select {
+  background: #f8fafc;
+  border-color: rgba(23, 21, 26, 0.18);
+  color: #17151a;
+}
+
+body.theme-light .rig-source-dropdown-select option,
+.theme-light .rig-source-dropdown-select option,
+[data-theme="light"] .rig-source-dropdown-select option {
+  background: #ffffff;
+  color: #17151a;
+}
+
+/* ── Architect Summary Banner Base & Light Theme ── */
+.overview-summary-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+}
+
+.summary-title {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  color: #ffffff;
+  margin: 0 0 0.4rem;
+  text-transform: uppercase;
+}
+
+.summary-copy {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: #cbd5e1;
+  margin: 0;
+}
+
+body.theme-light .overview-summary-banner,
+.theme-light .overview-summary-banner,
+[data-theme="light"] .overview-summary-banner {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(23, 21, 26, 0.12);
+  box-shadow: 0 4px 14px -2px rgba(23, 21, 26, 0.06);
+}
+
+body.theme-light .summary-title,
+.theme-light .summary-title,
+[data-theme="light"] .summary-title {
+  color: #17151a;
+}
+
+body.theme-light .summary-copy,
+.theme-light .summary-copy,
+[data-theme="light"] .summary-copy {
+  color: #334155;
+}
 

@@ -1,0 +1,44 @@
+/* ScrollAIResponseText Component Styles */
+
+.scroll-ai-response-text {
+  display: block;
+  font-size: 1.12rem;
+  line-height: 1.75;
+  color: #cbd5e1;
+  margin: 0;
+  overflow-wrap: break-word;
+}
+
+.scroll-ai-word-wrapper {
+  position: relative;
+  display: inline-block;
+  margin-right: 0.28em;
+  will-change: opacity, filter;
+}
+
+.scroll-ai-word-wrapper:last-child {
+  margin-right: 0;
+}
+
+.scroll-ai-word-base {
+  display: inline-block;
+  color: inherit;
+}
+
+.scroll-ai-word-highlight {
+  position: absolute;
+  inset: 0;
+  display: inline-block;
+  pointer-events: none;
+  user-select: none;
+  font-weight: 500;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-ai-word-base,
+  .scroll-ai-word-highlight {
+    filter: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}

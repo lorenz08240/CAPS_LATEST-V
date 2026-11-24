@@ -95,13 +95,14 @@ export const checkCompatibility = (arg1, arg2) => {
   switch (category) {
     case "cpu": {
       // Check Motherboard Socket Match
-      if (currentBuild.motherboard && currentBuild.motherboard.socket_type) {
-        const cpuSocket = normalizeSocket(componentToTest.socket_type);
-        const moboSocket = normalizeSocket(currentBuild.motherboard.socket_type);
+      const mobo = currentBuild.motherboard;
+      if (mobo && (mobo.socket_type || mobo.socket)) {
+        const cpuSocket = normalizeSocket(componentToTest.socket_type || componentToTest.socket);
+        const moboSocket = normalizeSocket(mobo.socket_type || mobo.socket);
 
         if (cpuSocket && moboSocket && cpuSocket !== moboSocket) {
           isCompatible = false;
-          reason = `Socket mismatch: CPU uses ${componentToTest.socket_type}, but motherboard has ${currentBuild.motherboard.socket_type}.`;
+          reason = `Socket mismatch: CPU uses ${componentToTest.socket_type || componentToTest.socket}, but motherboard has ${mobo.socket_type || mobo.socket}.`;
           tip = "Make sure the motherboard and CPU share the same socket type so they physically align.";
         }
       }
@@ -110,37 +111,40 @@ export const checkCompatibility = (arg1, arg2) => {
 
     case "motherboard": {
       // 1. Check CPU Socket Match
-      if (currentBuild.cpu && currentBuild.cpu.socket_type) {
-        const moboSocket = normalizeSocket(componentToTest.socket_type);
-        const cpuSocket = normalizeSocket(currentBuild.cpu.socket_type);
+      const cpu = currentBuild.cpu;
+      if (cpu && (cpu.socket_type || cpu.socket)) {
+        const moboSocket = normalizeSocket(componentToTest.socket_type || componentToTest.socket);
+        const cpuSocket = normalizeSocket(cpu.socket_type || cpu.socket);
 
         if (moboSocket && cpuSocket && moboSocket !== cpuSocket) {
           isCompatible = false;
-          reason = `Socket mismatch: Motherboard has ${componentToTest.socket_type}, but CPU requires ${currentBuild.cpu.socket_type}.`;
+          reason = `Socket mismatch: Motherboard has ${componentToTest.socket_type || componentToTest.socket}, but CPU requires ${cpu.socket_type || cpu.socket}.`;
           tip = "Ensure the motherboard chipset and socket match your chosen processor.";
         }
       }
 
       // 2. Check RAM DDR Generation Match
-      if (isCompatible && currentBuild.ram && currentBuild.ram.ddr_type) {
-        const moboDdr = normalizeDdr(componentToTest.ddr_type);
-        const ramDdr = normalizeDdr(currentBuild.ram.ddr_type);
+      const ram = currentBuild.ram;
+      if (isCompatible && ram && (ram.ddr_type || ram.ramType)) {
+        const moboDdr = normalizeDdr(componentToTest.ddr_type || componentToTest.ramType);
+        const ramDdr = normalizeDdr(ram.ddr_type || ram.ramType);
 
         if (moboDdr && ramDdr && moboDdr !== ramDdr) {
           isCompatible = false;
-          reason = `Memory mismatch: Motherboard supports ${componentToTest.ddr_type}, but chosen RAM is ${currentBuild.ram.ddr_type}.`;
+          reason = `Memory mismatch: Motherboard supports ${componentToTest.ddr_type || componentToTest.ramType}, but chosen RAM is ${ram.ddr_type || ram.ramType}.`;
           tip = "DDR generations are physically keyed and cannot be mixed (e.g. DDR4 vs DDR5).";
         }
       }
 
       // 3. Check Case Size Compatibility
-      if (isCompatible && currentBuild.case && currentBuild.case.form_factor) {
-        const moboRank = getMoboFormFactorRank(componentToTest.form_factor);
-        const caseCapacity = getCaseFormFactorCapacity(currentBuild.case.form_factor);
+      const pcCase = currentBuild.case;
+      if (isCompatible && pcCase && (pcCase.form_factor || pcCase.formFactor)) {
+        const moboRank = getMoboFormFactorRank(componentToTest.form_factor || componentToTest.formFactor);
+        const caseCapacity = getCaseFormFactorCapacity(pcCase.form_factor || pcCase.formFactor);
 
         if (moboRank > caseCapacity) {
           isCompatible = false;
-          reason = `Form factor collision: ${componentToTest.form_factor || "ATX"} motherboard is too large for your ${currentBuild.case.form_factor} case.`;
+          reason = `Form factor collision: ${componentToTest.form_factor || componentToTest.formFactor || "ATX"} motherboard is too large for your ${pcCase.form_factor || pcCase.formFactor} case.`;
           tip = "Choose a chassis that accommodates your motherboard dimensions or step down to an mATX/ITX board.";
         }
       }
@@ -149,13 +153,14 @@ export const checkCompatibility = (arg1, arg2) => {
 
     case "ram": {
       // Check Motherboard DDR Match
-      if (currentBuild.motherboard && currentBuild.motherboard.ddr_type) {
-        const ramDdr = normalizeDdr(componentToTest.ddr_type);
-        const moboDdr = normalizeDdr(currentBuild.motherboard.ddr_type);
+      const mobo = currentBuild.motherboard;
+      if (mobo && (mobo.ddr_type || mobo.ramType)) {
+        const ramDdr = normalizeDdr(componentToTest.ddr_type || componentToTest.ramType);
+        const moboDdr = normalizeDdr(mobo.ddr_type || mobo.ramType);
 
         if (ramDdr && moboDdr && ramDdr !== moboDdr) {
           isCompatible = false;
-          reason = `Memory mismatch: RAM is ${componentToTest.ddr_type}, but motherboard requires ${currentBuild.motherboard.ddr_type}.`;
+          reason = `Memory mismatch: RAM is ${componentToTest.ddr_type || componentToTest.ramType}, but motherboard requires ${mobo.ddr_type || mobo.ramType}.`;
           tip = "Match the DDR standard supported by the motherboard memory slots.";
         }
       }
@@ -163,10 +168,11 @@ export const checkCompatibility = (arg1, arg2) => {
     }
 
     case "gpu": {
-      // Check PSU Wattage Headroom
-      if (currentBuild.psu && currentBuild.psu.wattage) {
-        const psuWatts = getNumber(currentBuild.psu.wattage);
-        const gpuRequired = getNumber(componentToTest.power_required);
+      // 1. Check PSU Wattage Headroom
+      const psu = currentBuild.psu;
+      if (psu && (psu.wattage || psu.power_output)) {
+        const psuWatts = getNumber(psu.wattage || psu.power_output);
+        const gpuRequired = getNumber(componentToTest.power_required || componentToTest.recommendedPsu || componentToTest.recommended_psu);
 
         if (psuWatts > 0 && gpuRequired > 0 && psuWatts < gpuRequired) {
           isCompatible = false;
@@ -174,14 +180,27 @@ export const checkCompatibility = (arg1, arg2) => {
           tip = "Upgrade your Power Supply Unit to prevent system shutdowns under heavy graphics loads.";
         }
       }
+
+      // 2. Check Case Length Clearance
+      const pcCase = currentBuild.case;
+      if (isCompatible && pcCase && (pcCase.max_gpu_length || pcCase.maxGpuLength) && (componentToTest.length || componentToTest.maxGpuLength)) {
+        const maxLen = getNumber(pcCase.max_gpu_length || pcCase.maxGpuLength);
+        const gpuLen = getNumber(componentToTest.length);
+        if (maxLen > 0 && gpuLen > maxLen) {
+          isCompatible = false;
+          reason = `Clearance collision: GPU length (${gpuLen}mm) exceeds case clearance (${maxLen}mm).`;
+          tip = "Choose a chassis with greater GPU clearance or select a more compact graphics card.";
+        }
+      }
       break;
     }
 
     case "psu": {
       // Check against GPU requirement
-      if (currentBuild.gpu && currentBuild.gpu.power_required) {
-        const psuWatts = getNumber(componentToTest.wattage);
-        const gpuRequired = getNumber(currentBuild.gpu.power_required);
+      const gpu = currentBuild.gpu;
+      if (gpu && (gpu.power_required || gpu.recommendedPsu || gpu.recommended_psu)) {
+        const psuWatts = getNumber(componentToTest.wattage || componentToTest.power_output);
+        const gpuRequired = getNumber(gpu.power_required || gpu.recommendedPsu || gpu.recommended_psu);
 
         if (psuWatts > 0 && gpuRequired > 0 && psuWatts < gpuRequired) {
           isCompatible = false;
@@ -193,15 +212,28 @@ export const checkCompatibility = (arg1, arg2) => {
     }
 
     case "case": {
-      // Check Motherboard fit inside Case
-      if (currentBuild.motherboard && currentBuild.motherboard.form_factor) {
-        const moboRank = getMoboFormFactorRank(currentBuild.motherboard.form_factor);
-        const caseCapacity = getCaseFormFactorCapacity(componentToTest.form_factor);
+      // 1. Check Motherboard fit inside Case
+      const mobo = currentBuild.motherboard;
+      if (mobo && (mobo.form_factor || mobo.formFactor)) {
+        const moboRank = getMoboFormFactorRank(mobo.form_factor || mobo.formFactor);
+        const caseCapacity = getCaseFormFactorCapacity(componentToTest.form_factor || componentToTest.formFactor);
 
         if (moboRank > caseCapacity) {
           isCompatible = false;
-          reason = `Form factor collision: Selected case (${componentToTest.form_factor}) cannot fit your ${currentBuild.motherboard.form_factor || "ATX"} motherboard.`;
+          reason = `Form factor collision: Selected case (${componentToTest.form_factor || componentToTest.formFactor}) cannot fit your ${mobo.form_factor || mobo.formFactor || "ATX"} motherboard.`;
           tip = "Pick a Mid-Tower or Full-Tower chassis that supports your motherboard size.";
+        }
+      }
+
+      // 2. Check GPU Length fit inside Case
+      const gpu = currentBuild.gpu;
+      if (isCompatible && gpu && gpu.length && (componentToTest.max_gpu_length || componentToTest.maxGpuLength)) {
+        const maxLen = getNumber(componentToTest.max_gpu_length || componentToTest.maxGpuLength);
+        const gpuLen = getNumber(gpu.length);
+        if (maxLen > 0 && gpuLen > maxLen) {
+          isCompatible = false;
+          reason = `Clearance collision: Chosen GPU (${gpuLen}mm) exceeds case clearance (${maxLen}mm).`;
+          tip = "Pick a Mid-Tower or Full-Tower chassis with greater graphics card clearance.";
         }
       }
       break;

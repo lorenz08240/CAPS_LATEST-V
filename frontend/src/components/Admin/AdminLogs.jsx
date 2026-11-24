@@ -44,6 +44,7 @@ export const AdminLogs = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterAction, setFilterAction] = useState("all");
+  const [filterSeverity, setFilterSeverity] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [notification, setNotification] = useState({ text: "", type: "info" });
   const [categoryCounts, setCategoryCounts] = useState({});
@@ -140,7 +141,36 @@ export const AdminLogs = () => {
     }
   };
 
-  // Filter logs based on search and action dropdown
+  // Export filtered audit logs to CSV
+  const handleExportCSV = () => {
+    if (filteredLogs.length === 0) {
+      setNotification({ text: "No logs found to export.", type: "error" });
+      return;
+    }
+    const headers = ["ID", "Timestamp", "Action Type", "Admin User", "Target Category", "Target ID", "Status", "IP Address", "Details"];
+    const rows = filteredLogs.map((log) => [
+      log.id,
+      `"${formatDate(log.timestamp)}"`,
+      `"${(log.action_type || "").replace(/"/g, '""')}"`,
+      `"${(log.admin_user || "").replace(/"/g, '""')}"`,
+      `"${(log.target_category || "").replace(/"/g, '""')}"`,
+      `"${(log.target_id || "").replace(/"/g, '""')}"`,
+      `"${(log.status || "").replace(/"/g, '""')}"`,
+      `"${(log.ip_address || "").replace(/"/g, '""')}"`,
+      `"${(log.details || "").replace(/"/g, '""')}"`
+    ]);
+    const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map((e) => e.join(","))].join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `buildlab_audit_trail_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    setNotification({ text: `Exported ${filteredLogs.length} audit log entries as CSV.`, type: "success" });
+  };
+
+  // Filter logs based on search, action, and severity
   const filteredLogs = useMemo(() => {
     let result = [...logs];
 
@@ -165,8 +195,25 @@ export const AdminLogs = () => {
       );
     }
 
+    if (filterSeverity !== "all") {
+      result = result.filter((log) => {
+        const status = (log.status || "").toLowerCase();
+        const action = (log.action_type || "").toLowerCase();
+        if (filterSeverity === "error") {
+          return status === "error" || action.includes("delete") || action.includes("fail");
+        }
+        if (filterSeverity === "warn") {
+          return status === "warn" || action.includes("update") || action.includes("sanitize");
+        }
+        if (filterSeverity === "info") {
+          return status === "info" || status === "success" || action.includes("add") || action.includes("merge") || action.includes("init");
+        }
+        return status === filterSeverity;
+      });
+    }
+
     return result;
-  }, [logs, searchTerm, filterAction]);
+  }, [logs, searchTerm, filterAction, filterSeverity]);
 
   // Strict Pagination
   const totalPages = Math.max(1, Math.ceil(filteredLogs.length / PAGE_SIZE));
@@ -180,7 +227,7 @@ export const AdminLogs = () => {
   // Reset page on search/filter changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, filterAction]);
+  }, [searchTerm, filterAction, filterSeverity]);
 
   if (!isAdmin) {
     return <Navigate to="/admin/login" replace />;
@@ -320,27 +367,53 @@ export const AdminLogs = () => {
                   </select>
                 </div>
 
+                <div className="inventory-sort-dropdown">
+                  <label htmlFor="log-severity" className="sort-label">Severity:</label>
+                  <select
+                    id="log-severity"
+                    value={filterSeverity}
+                    onChange={(e) => setFilterSeverity(e.target.value)}
+                    className="admin-sort-select"
+                  >
+                    <option value="all">All Severities</option>
+                    <option value="info">Info / Normal</option>
+                    <option value="warn">Warn / Modifications</option>
+                    <option value="error">Error / Deletions</option>
+                  </select>
+                </div>
+
                 <div className="quick-filter-pills">
                   <button
                     type="button"
-                    className={`quick-pill ${filterAction === "all" ? "active" : ""}`}
-                    onClick={() => setFilterAction("all")}
+                    className={`quick-pill ${filterAction === "all" && filterSeverity === "all" ? "active" : ""}`}
+                    onClick={() => {
+                      setFilterAction("all");
+                      setFilterSeverity("all");
+                    }}
                   >
                     All Logs ({filteredLogs.length})
                   </button>
                   <button
                     type="button"
-                    className={`quick-pill pill-new ${filterAction === "ADD_COMPONENT" ? "active" : ""}`}
-                    onClick={() => setFilterAction("ADD_COMPONENT")}
+                    className={`quick-pill pill-new ${filterSeverity === "info" ? "active" : ""}`}
+                    onClick={() => setFilterSeverity(filterSeverity === "info" ? "all" : "info")}
                   >
-                    Adds
+                    Info
                   </button>
                   <button
                     type="button"
-                    className={`quick-pill pill-week ${filterAction === "UPDATE_COMPONENT" ? "active" : ""}`}
-                    onClick={() => setFilterAction("UPDATE_COMPONENT")}
+                    className={`quick-pill pill-week ${filterSeverity === "warn" ? "active" : ""}`}
+                    onClick={() => setFilterSeverity(filterSeverity === "warn" ? "all" : "warn")}
                   >
-                    Updates
+                    Warn
+                  </button>
+                  <button
+                    type="button"
+                    className={`quick-pill ${filterSeverity === "error" ? "active" : ""}`}
+                    style={filterSeverity === "error" ? { borderColor: "#f43f5e", color: "#f43f5e", background: "rgba(244, 63, 94, 0.15)" } : {}}
+                    onClick={() => setFilterSeverity(filterSeverity === "error" ? "all" : "error")}
+                  >
+                    Error
                   </button>
                 </div>
               </div>
@@ -349,7 +422,18 @@ export const AdminLogs = () => {
                 <button
                   type="button"
                   className="btn-add-component-neon"
-                  style={{ background: "rgba(56, 189, 248, 0.15)", borderColor: "#38bdf8", color: "#38bdf8" }}
+                  style={{ background: "#F5E6C8", borderColor: "#F5E6C8", color: "#090909" }}
+                  onClick={handleExportCSV}
+                  title="Export audit trail to CSV file"
+                >
+                  <span className="btn-plus-icon">↓</span>
+                  <span>Export CSV</span>
+                </button>
+
+                <button
+                  type="button"
+                  className="btn-add-component-neon"
+                  style={{ background: "rgba(176, 141, 87, 0.15)", borderColor: "rgba(176, 141, 87, 0.4)", color: "#F5E6C8" }}
                   onClick={() => loadAllData(true)}
                   disabled={refreshing}
                   title="Refresh logs and system status telemetry"
@@ -360,8 +444,7 @@ export const AdminLogs = () => {
 
                 <button
                   type="button"
-                  className="btn-add-component-neon"
-                  style={{ background: "rgba(244, 63, 94, 0.12)", borderColor: "#f43f5e", color: "#f43f5e" }}
+                  className="btn-clear-logs-action"
                   onClick={handleClearLogs}
                   title="Purge audit log records"
                 >
@@ -401,15 +484,15 @@ export const AdminLogs = () => {
                             className="brand-badge-pill"
                             style={{
                               borderColor: log.action_type?.includes("DELETE")
-                                ? "rgba(244, 63, 94, 0.4)"
+                                ? "rgba(226, 59, 59, 0.4)"
                                 : log.action_type?.includes("UPDATE")
-                                ? "rgba(250, 204, 21, 0.4)"
-                                : "rgba(56, 189, 248, 0.4)",
+                                ? "rgba(176, 141, 87, 0.4)"
+                                : "rgba(245, 230, 200, 0.3)",
                               color: log.action_type?.includes("DELETE")
-                                ? "#f43f5e"
+                                ? "#F04B4B"
                                 : log.action_type?.includes("UPDATE")
-                                ? "#facc15"
-                                : "#38bdf8"
+                                ? "#B08D57"
+                                : "#F5E6C8"
                             }}
                           >
                             {log.action_type}

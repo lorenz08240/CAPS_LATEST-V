@@ -50,13 +50,13 @@
   {
     "id": "DEV-03",
     "name": "Andrei Jose Tuazon",
-    "designation": "System's Backend Infrastructure Specialist",
-    "codename": "ANALYSIST",
+    "designation": "3D Graphics & Simulation Specialist",
+    "codename": "ANALYST",
     "role_category": "core",
-    "avatar_badge": "ANALYSIST",
+    "avatar_badge": "ANALYST",
     "photo_url": "/uploads/profiles/photo-1795206704694-xgy9w7.jpg",
-    "highlight": "NA",
-    "bio": "NA",
+    "highlight": "3D Component Modeling & Studio Simulation",
+    "bio": "Specializes in 3D computer component rendering and interactive simulations. Engineered the 360-degree virtual studio where users can inspect, rotate, and assemble hardware in full 3D.",
     "key_contributions": [],
     "tech_stack": [
       "Three.js",

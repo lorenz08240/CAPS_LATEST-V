@@ -22,7 +22,7 @@ export const AdminAccounts = () => {
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const fileInputRef = useRef(null);
 
-  const getAdminKey = () => localStorage.getItem("adminKey") || "admin12345";
+  const getAdminKey = () => sessionStorage.getItem("buildlab_admin_token") || localStorage.getItem("adminKey") || "admin12345";
 
   const showToast = (msg, type = "success") => {
     setNotification({ message: msg, type });

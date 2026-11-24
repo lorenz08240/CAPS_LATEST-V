@@ -435,7 +435,7 @@ export const EditComponentDrawer = ({
                     )}
                     {imgError || !formData.img || formData.img === "/pcbackground.png" ? (
                       <div className="preview-fallback-icon">
-                        <HardwareIcon category={formData.category} size={36} color="#00F2FE" />
+                        <HardwareIcon category={formData.category} size={36} color="#F5E6C8" />
                         <span className="fallback-text">Default Icon</span>
                       </div>
                     ) : (

@@ -35,9 +35,9 @@ const TEAM_MEMBERS = [
   },
   {
     id: "DEV-03",
-    name: "Developer 03",
+    name: "Andrei Jose Tuazon",
     designation: "3D Graphics & Simulation Specialist",
-    avatarBadge: "3D/GL",
+    avatarBadge: "ANALYST",
     photoUrl: "/assets/profiles/hardware_3d_engineer.jpg",
     image: "/assets/profiles/hardware_3d_engineer.jpg",
     highlight: "Three.js Hardware Models & 3D Studio",

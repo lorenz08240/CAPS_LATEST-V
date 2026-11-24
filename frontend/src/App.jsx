@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, Suspense, lazy } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -18,32 +18,66 @@ import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
 import Home from "./components/Home/Home";
 import Build from "./components/Build/Build";
-import Compatibility from "./components/Compatibility/Compatibility";
-import Learn from "./components/Learn/Learn";
-import CertificationPage from "./components/Learn/CertificationPage";
-import HelpSupport from "./components/HelpSupport/HelpSupport";
-import AboutUs from "./components/AboutUs/AboutUs";
-import Brands from "./components/Brands/Brands";
-import LegalPage from "./components/Legal/LegalPage";
-import SettingsPage from "./components/Settings/SettingsPage";
-import PCBuilder3D from "./components/3D/PCBuilder3D";
-import StudentDashboard from "./components/Dashboard/StudentDashboard";
 import FullscreenGate from "./components/FullscreenGate/FullscreenGate";
 import Preloader from "./components/Home/Preloader";
 import CookieConsent from "./components/Navigation/CookieConsent";
 import LearnModeGuard from "./components/Navigation/LearnModeGuard";
-import {
-  AdminInventory,
-  AdminCrawler,
-  AdminAddComponent,
-  AdminEditComponent,
-  AdminLogin,
-  AdminAuthGuard,
-  AdminLogs,
-  AdminAccounts,
-  AdminContent
-} from "./components/Admin/Admin";
+import AdminAuthGuard from "./components/Admin/AdminAuthGuard";
 import MotionPage from "./utilities/pageTransitions";
+
+// ── Lazy-loaded Route Components for Code Splitting ──
+const PCBuilder3D = lazy(() => import("./components/3D/PCBuilder3D"));
+const Compatibility = lazy(() => import("./components/Compatibility/Compatibility"));
+const Learn = lazy(() => import("./components/Learn/Learn"));
+const CertificationPage = lazy(() => import("./components/Learn/CertificationPage"));
+const StudentDashboard = lazy(() => import("./components/Dashboard/StudentDashboard"));
+const Brands = lazy(() => import("./components/Brands/Brands"));
+const AboutUs = lazy(() => import("./components/AboutUs/AboutUs"));
+const HelpSupport = lazy(() => import("./components/HelpSupport/HelpSupport"));
+const LegalPage = lazy(() => import("./components/Legal/LegalPage"));
+const SettingsPage = lazy(() => import("./components/Settings/SettingsPage"));
+
+const AdminInventory = lazy(() => import("./components/Admin/AdminInventory"));
+const AdminCrawler = lazy(() => import("./components/Admin/AdminCrawler"));
+const AdminAddComponent = lazy(() => import("./components/Admin/AdminAddComponent"));
+const AdminEditComponent = lazy(() => import("./components/Admin/AdminEditComponent"));
+const AdminLogin = lazy(() => import("./components/Admin/AdminLogin"));
+const AdminLogs = lazy(() => import("./components/Admin/AdminLogs"));
+const AdminAccounts = lazy(() => import("./components/Admin/AdminAccounts"));
+const AdminContent = lazy(() => import("./components/Admin/AdminContent"));
+
+const RouteFallback = () => (
+  <div
+    style={{
+      minHeight: "60vh",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      flexDirection: "column",
+      gap: "0.75rem",
+      color: "#00e5a0",
+      fontFamily: "monospace",
+      letterSpacing: "0.08em",
+    }}
+  >
+    <div
+      style={{
+        width: "32px",
+        height: "32px",
+        border: "2px solid rgba(0, 229, 160, 0.2)",
+        borderTopColor: "#00e5a0",
+        borderRadius: "50%",
+        animation: "route-spin 0.75s linear infinite",
+      }}
+    />
+    <span style={{ fontSize: "0.75rem", opacity: 0.8 }}>LOADING MODULE...</span>
+    <style>{`
+      @keyframes route-spin {
+        to { transform: rotate(360deg); }
+      }
+    `}</style>
+  </div>
+);
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -117,8 +151,9 @@ function AppContent() {
         <CookieConsent />
         <Navbar />
         <main className="main-content">
-          <AnimatePresence mode="wait" initial={false}>
-            <Routes location={location} key={location.pathname}>
+          <Suspense fallback={<RouteFallback />}>
+            <AnimatePresence mode="wait" initial={false}>
+              <Routes location={location} key={location.pathname}>
             <Route path="/" element={<MotionPage routeKey="/"><Home /></MotionPage>} />
 
             <Route path="/build" element={<MotionPage routeKey="/build"><Build /></MotionPage>} />
@@ -313,6 +348,7 @@ function AppContent() {
 
           </Routes>
         </AnimatePresence>
+      </Suspense>
         {location.pathname !== "/" &&
           location.pathname !== "/build" &&
           location.pathname !== "/compatibility" &&

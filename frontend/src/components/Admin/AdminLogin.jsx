@@ -56,7 +56,7 @@ export const AdminLogin = () => {
     <div className="admin-login-hero-container">
       {/* ── INTERACTIVE MOUSE TRAIL PIXEL CANVAS (Whole Screen Background) ── */}
       <PixelCanvas
-        colors={["#00e5a0", "#10b981", "#38bdf8", "#facc15"]}
+        colors={["#F5E6C8", "#B08D57", "#3A2F1F", "#D3CDC6"]}
         gap={8}
         speed={30}
         className="admin-login-pixel-trail"

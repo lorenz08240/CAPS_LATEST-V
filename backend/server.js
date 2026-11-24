@@ -1,7 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const { exec } = require("child_process");
+const { exec, execFile } = require("child_process");
 const db = require("./config/db");
 const teamStore = require("./contentStore");
 const crypto = require("crypto");
@@ -23,17 +23,23 @@ const uploadsDir = path.join(__dirname, "uploads", "profiles");
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/uploads", express.static(path.join(__dirname, "uploads"), { maxAge: "1h" }));
 app.use(express.json({ limit: "25mb" }));
 app.use(express.urlencoded({ limit: "25mb", extended: true }));
 
 // ── Admin Authentication Middleware ──
 const adminAuth = (req, res, next) => {
-  const adminKey = req.headers["x-admin-key"] || req.query.admin_key;
-  const expectedKey = process.env.ADMIN_API_KEY || "admin12345";
+  const adminKey = req.headers["x-admin-key"];
+  const expectedKey = process.env.ADMIN_API_KEY;
 
-  // Accepts standard API key or single root password (admin12345)
-  if (!adminKey || (adminKey !== expectedKey && adminKey !== "admin12345")) {
+  if (!expectedKey || !adminKey) {
+    return res.status(401).json({ error: "Unauthorized: Admin authorization required" });
+  }
+
+  const adminKeyBuf = Buffer.from(String(adminKey));
+  const expectedKeyBuf = Buffer.from(String(expectedKey));
+
+  if (adminKeyBuf.length !== expectedKeyBuf.length || !crypto.timingSafeEqual(adminKeyBuf, expectedKeyBuf)) {
     return res.status(401).json({ error: "Unauthorized: Admin authorization required" });
   }
   next();
@@ -277,8 +283,6 @@ async function initContentAndAccountsSchema() {
         INSERT INTO admin_accounts (username, display_name, email, role, avatar_url, passcode, status) VALUES 
         ('root', 'Root Administrator', 'root@buildlab.internal', 'Root Administrator', 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=200', 'admin12345', 'ACTIVE')
       `);
-    } else {
-      await db.query("UPDATE admin_accounts SET passcode = 'admin12345', role = 'Root Administrator' WHERE username = 'root'");
     }
 
     // Seed sample Google learner accounts if empty
@@ -872,16 +876,20 @@ app.delete("/api/scraped-queue", adminAuth, async (req, res) => {
 
 // API to merge all approved scraped items into production pc_parts table (Admin Protected)
 app.post("/api/scraped-queue/merge", adminAuth, async (req, res) => {
+  let conn;
   try {
     const [approvedItems] = await db.query("SELECT * FROM scraped_queue WHERE approved = 1");
     if (!approvedItems || approvedItems.length === 0) {
       return res.status(400).json({ error: "No items are approved for merging." });
     }
 
+    conn = await db.getConnection();
+    await conn.beginTransaction();
+
     let mergedCount = 0;
     for (const item of approvedItems) {
       // Deduplicate: check if a part with same name already exists in active inventory
-      const [existingByName] = await db.query("SELECT id FROM pc_parts WHERE LOWER(name) = LOWER(?)", [item.scraped_name]);
+      const [existingByName] = await conn.query("SELECT id FROM pc_parts WHERE LOWER(name) = LOWER(?)", [item.scraped_name]);
       let prodId;
       if (existingByName && existingByName.length > 0) {
         prodId = existingByName[0].id;
@@ -907,11 +915,12 @@ app.post("/api/scraped-queue/merge", adminAuth, async (req, res) => {
         item.speed || null, item.type || null, item.efficiency || null
       ];
 
-      await db.query(query, values);
+      await conn.query(query, values);
       mergedCount++;
     }
 
-    await db.query("DELETE FROM scraped_queue WHERE approved = 1");
+    await conn.query("DELETE FROM scraped_queue WHERE approved = 1");
+    await conn.commit();
 
     logSystemActivity({
       actionType: "MERGE_SCRAPED_DATA",
@@ -929,19 +938,32 @@ app.post("/api/scraped-queue/merge", adminAuth, async (req, res) => {
       message: `Successfully verified and merged ${mergedCount} item(s) from EasyPC into production inventory!`
     });
   } catch (err) {
+    if (conn) await conn.rollback();
     console.error("Scraped queue merge error:", err);
     res.status(500).json({ error: "Failed to merge verified components" });
+  } finally {
+    if (conn) conn.release();
   }
 });
 
 // API to trigger crawler (scraping EasyPC or Bermor Techzone to Review Queue, Admin Protected)
 app.post("/api/crawl", adminAuth, (req, res) => {
-  const store = req.body?.store || "EasyPC";
-  const category = req.body?.category || "all";
-  const maxPages = req.body?.maxPages || 1;
+  const ALLOWED_STORES = ["EasyPC", "Bermor Techzone"];
+  const ALLOWED_CATEGORIES = ["all", "case", "motherboard", "cpu", "ram", "gpu", "storage", "psu"];
+
+  const store = ALLOWED_STORES.includes(req.body?.store) ? req.body.store : "EasyPC";
+  const category = ALLOWED_CATEGORIES.includes(req.body?.category) ? req.body.category : "all";
+  const maxPages = Math.min(5, Math.max(1, parseInt(req.body?.maxPages, 10) || 1));
   const scriptPath = path.join(__dirname, "crawler.js");
-  const cmd = `node "${scriptPath}" --store="${store}" --category="${category}" --pages=${maxPages}`;
-  exec(cmd, { cwd: __dirname }, (error, stdout, stderr) => {
+
+  const args = [
+    scriptPath,
+    `--store=${store}`,
+    `--category=${category}`,
+    `--pages=${maxPages}`
+  ];
+
+  execFile(process.execPath, args, { cwd: __dirname }, (error, stdout, stderr) => {
     if (error) {
       console.error(`Crawler execution error: ${error.message}`);
       return res.status(500).json({ error: error.message, stderr, output: stdout });
@@ -958,7 +980,7 @@ app.post("/api/crawl", adminAuth, (req, res) => {
 });
 
 // ── Profile Photo Upload API ──
-app.post("/api/upload/profile-photo", (req, res) => {
+app.post("/api/upload/profile-photo", adminAuth, (req, res) => {
   try {
     const { image } = req.body;
     if (!image) {
@@ -974,6 +996,11 @@ app.post("/api/upload/profile-photo", (req, res) => {
       let ext = matches[1].toLowerCase();
       if (ext === "jpeg") ext = "jpg";
       if (ext.includes("+")) ext = ext.split("+")[0];
+
+      const allowedExts = ["jpg", "jpeg", "png", "webp"];
+      if (!allowedExts.includes(ext) || ext.includes("svg") || ext.includes("html") || ext.includes("xml")) {
+        return res.status(400).json({ error: "Unsupported image format. Allowed: JPG, PNG, WEBP." });
+      }
 
       const buffer = Buffer.from(matches[2], "base64");
       const safeName = `photo-${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${ext}`;
@@ -999,7 +1026,7 @@ app.post("/api/upload/profile-photo", (req, res) => {
 app.get("/api/admin/accounts", adminAuth, async (req, res) => {
   try {
     const [rows] = await db.query(
-      "SELECT id, username, display_name, email, role, avatar_url, passcode, status, last_login, created_at, updated_at FROM admin_accounts ORDER BY id ASC"
+      "SELECT id, username, display_name, email, role, avatar_url, status, last_login, created_at, updated_at FROM admin_accounts ORDER BY id ASC"
     );
     res.json(rows);
   } catch (err) {
@@ -1292,7 +1319,13 @@ app.delete("/api/content/team/:id", adminAuth, (req, res) => {
 
 // ── Serve Built Frontend (Production SPA) ──
 const distPath = path.join(__dirname, "../frontend/dist");
-app.use(express.static(distPath));
+app.use(express.static(distPath, {
+  setHeaders: (res, filePath) => {
+    if (filePath.includes('/assets/') || filePath.includes('\\assets\\')) {
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    }
+  }
+}));
 app.use((req, res, next) => {
   if (req.path.startsWith("/api")) return next();
   res.sendFile(path.join(distPath, "index.html"), (err) => {

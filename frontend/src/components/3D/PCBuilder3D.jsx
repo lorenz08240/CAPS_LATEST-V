@@ -1377,7 +1377,7 @@ function PCBuilder3DWorkspace() {
           </div>
 
           <Canvas 
-            dpr={[1, Math.min(typeof window !== 'undefined' ? window.devicePixelRatio : 1, 1.5)]}
+            dpr={[1, typeof window !== 'undefined' ? Math.min(window.devicePixelRatio || 1, 1.5) : 1]}
             camera={{ position: CAMERA_PRESETS.isometric.position, fov: 42 }}
             gl={{ 
               powerPreference: "high-performance",

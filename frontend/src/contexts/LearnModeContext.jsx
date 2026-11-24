@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react";
 
 const LearnModeContext = createContext();
 
@@ -446,30 +446,53 @@ export const LearnModeProvider = ({ children }) => {
     }
   }, [userProfile, unlockedStages]);
 
+  const hasCompletedProfile = Boolean(
+    userProfile?.setupCompleted && (userProfile?.fullName || userProfile?.email)
+  );
+
+  const value = useMemo(
+    () => ({
+      mode,
+      setAppMode,
+      userProfile,
+      setUserProfile,
+      unlockedStages,
+      setUnlockedStages,
+      unlockStage,
+      seenBanners,
+      markBannerSeen,
+      activeUnlockBanner,
+      triggerUnlockBanner,
+      closeUnlockBanner,
+      canAccessPath,
+      resetLearnProgress,
+      logoutLearner,
+      restoreStudentAccount,
+      hasCompletedProfile,
+    }),
+    [
+      mode,
+      setAppMode,
+      userProfile,
+      setUserProfile,
+      unlockedStages,
+      setUnlockedStages,
+      unlockStage,
+      seenBanners,
+      markBannerSeen,
+      activeUnlockBanner,
+      triggerUnlockBanner,
+      closeUnlockBanner,
+      canAccessPath,
+      resetLearnProgress,
+      logoutLearner,
+      restoreStudentAccount,
+      hasCompletedProfile,
+    ]
+  );
+
   return (
-    <LearnModeContext.Provider
-      value={{
-        mode,
-        setAppMode,
-        userProfile,
-        setUserProfile,
-        unlockedStages,
-        setUnlockedStages,
-        unlockStage,
-        seenBanners,
-        markBannerSeen,
-        activeUnlockBanner,
-        triggerUnlockBanner,
-        closeUnlockBanner,
-        canAccessPath,
-        resetLearnProgress,
-        logoutLearner,
-        restoreStudentAccount,
-        hasCompletedProfile: Boolean(
-          userProfile?.setupCompleted && (userProfile?.fullName || userProfile?.email)
-        ),
-      }}
-    >
+    <LearnModeContext.Provider value={value}>
       {children}
     </LearnModeContext.Provider>
   );

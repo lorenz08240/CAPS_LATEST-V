@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react";
 
 const AuthContext = createContext();
 
@@ -18,6 +18,7 @@ export function AuthProvider({ children }) {
     try {
       localStorage.removeItem("buildlab_admin");
       localStorage.removeItem("buildlab_admin_token");
+      localStorage.removeItem("adminKey");
     } catch {}
 
     try {
@@ -27,7 +28,7 @@ export function AuthProvider({ children }) {
     }
   });
 
-  const loginAdmin = (usernameOrPass, maybePass) => {
+  const loginAdmin = useCallback((usernameOrPass, maybePass) => {
     let id = "root";
     let pass = "";
 
@@ -49,19 +50,19 @@ export function AuthProvider({ children }) {
         sessionStorage.setItem(SESSION_TIMESTAMP_KEY, Date.now().toString());
         sessionStorage.setItem(SESSION_TOKEN_KEY, pass);
         sessionStorage.setItem("buildlab_admin_id", id);
-        localStorage.setItem("adminKey", pass);
       } catch {}
       return true;
     }
     return false;
-  };
+  }, []);
 
-  const logoutAdmin = () => {
+  const logoutAdmin = useCallback(() => {
     setIsAdmin(false);
     try {
       sessionStorage.removeItem(SESSION_AUTH_KEY);
       sessionStorage.removeItem(SESSION_TIMESTAMP_KEY);
       sessionStorage.removeItem(SESSION_TOKEN_KEY);
+      sessionStorage.removeItem("buildlab_admin_id");
       // Clean up drafts upon explicit logout
       sessionStorage.removeItem("buildlab_admin_drawer_draft");
       sessionStorage.removeItem("buildlab_admin_crawler_draft");
@@ -73,8 +74,9 @@ export function AuthProvider({ children }) {
       // Clean up legacy localStorage if present
       localStorage.removeItem("buildlab_admin");
       localStorage.removeItem("buildlab_admin_token");
+      localStorage.removeItem("adminKey");
     } catch {}
-  };
+  }, []);
 
   // Cross-tab synchronization within the same session or storage changes
   useEffect(() => {
@@ -89,8 +91,13 @@ export function AuthProvider({ children }) {
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
+  const value = useMemo(
+    () => ({ isAdmin, loginAdmin, logoutAdmin }),
+    [isAdmin, loginAdmin, logoutAdmin]
+  );
+
   return (
-    <AuthContext.Provider value={{ isAdmin, loginAdmin, logoutAdmin }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );

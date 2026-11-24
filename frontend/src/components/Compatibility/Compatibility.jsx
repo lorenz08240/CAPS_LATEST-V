@@ -234,10 +234,21 @@ const COMPAT_BOB_PHRASES = [
   "Everything looks well-balanced here!"
 ];
 
+const formatComponentName = (comp) => {
+  if (!comp) return "-- Not Selected --";
+  const brand = (comp.brand || "").trim();
+  const rawName = (comp.name || "").trim();
+  if (!brand) return rawName;
+  if (rawName.toLowerCase().startsWith(brand.toLowerCase())) {
+    return rawName;
+  }
+  return `${brand} ${rawName}`;
+};
+
 const getComponentBobHint = (comp) => {
   if (!comp) return "Hardware component slot.";
   const cat = (comp.category || "").toLowerCase();
-  const name = `${comp.brand || ""} ${comp.name || ""}`.trim();
+  const name = formatComponentName(comp);
   if (cat.includes("cpu")) {
     return `Inspecting CPU (${name}): Checking socket pinout and thermal TDP demand.`;
   }
@@ -556,7 +567,7 @@ function CompatibilityView({ isIntegrated = false }) {
 
   /* ── Compatibility Summary ── */
   const checkAllCompatibility = () => {
-    return getCompatibilitySummary(currentBuild, allComponents);
+    return getCompatibilitySummary(activeRig1, allComponents);
   };
 
   const checkBuildCompatibility = (build) => {
@@ -586,8 +597,8 @@ function CompatibilityView({ isIntegrated = false }) {
 
   const compatibilityIssues = checkAllCompatibility();
   const radarLabels = getRadarLabels();
-  const currentPoints = getRadarPoints(currentBuild, radarProfileMode);
-  const estWattage = estimateWattage(currentBuild);
+  const currentPoints = getRadarPoints(activeRig1, radarProfileMode);
+  const estWattage = estimateWattage(activeRig1);
 
   // Diagnostic filter checks for Learn Mode
   const hasSocketIssue = compatibilityIssues.some((iss) =>
@@ -694,7 +705,7 @@ function CompatibilityView({ isIntegrated = false }) {
         doc.text(cat.toUpperCase(), 17, y + 7);
 
         doc.setFont("helvetica", "normal");
-        const modelText = comp ? `${comp.brand || ""} ${comp.name || ""}`.trim() : "-- Not Selected --";
+        const modelText = formatComponentName(comp);
         doc.text(modelText.slice(0, 42), 50, y + 7);
 
         let specStr = "N/A";
@@ -789,34 +800,32 @@ function CompatibilityView({ isIntegrated = false }) {
   /* ── Hardware Spec Summary Helper matching Image 2 (Free Workbench) ── */
   const getCompSpecSummary = (comp, category) => {
     if (!comp) return { main: "-- Not Selected --", tag: "EMPTY", isSet: false };
-    const brand = comp.brand || "";
-    const name = comp.name || "";
-    const fullName = `${brand} ${name}`.trim();
+    const fullName = formatComponentName(comp);
 
     if (category === "case") {
-      return { main: fullName, tag: comp.form_factor || "ATX", isSet: true };
+      return { main: fullName, tag: comp.form_factor || comp.formFactor || "ATX", isSet: true };
     }
     if (category === "motherboard") {
-      const sock = comp.socket_type || (Array.isArray(comp.tags) ? comp.tags.find((t) => /(am\d|lga\d+)/i.test(t)) : "") || "ATX";
+      const sock = comp.socket_type || comp.socket || (Array.isArray(comp.tags) ? comp.tags.find((t) => /(am\d|lga\d+)/i.test(t)) : "") || "ATX";
       return { main: fullName, tag: sock.toUpperCase(), isSet: true };
     }
     if (category === "cpu") {
-      const sock = comp.socket_type || "";
-      return { main: fullName, tag: sock || "CPU", isSet: true };
+      const sock = comp.socket_type || comp.socket || "";
+      return { main: fullName, tag: sock ? sock.toUpperCase() : "CPU", isSet: true };
     }
     if (category === "ram") {
-      const ddr = comp.ddr_type || (Array.isArray(comp.tags) ? comp.tags.find((t) => /ddr\d/i.test(t)) : "") || "DDR5";
+      const ddr = comp.ddr_type || comp.ramType || (comp.name && comp.name.match(/DDR[345]/i) ? comp.name.match(/DDR[345]/i)[0] : "") || (Array.isArray(comp.tags) ? comp.tags.find((t) => /ddr\d/i.test(t)) : "") || "DDR4";
       return { main: fullName, tag: ddr.toUpperCase(), isSet: true };
     }
     if (category === "storage") {
-      const type = comp.type || (Array.isArray(comp.tags) ? comp.tags.find((t) => /(nvme|ssd|hdd)/i.test(t)) : "") || "NVME";
+      const type = comp.type || (comp.interface && comp.interface.includes("M.2") ? "M.2" : "") || (Array.isArray(comp.tags) ? comp.tags.find((t) => /(nvme|ssd|hdd)/i.test(t)) : "") || "NVME";
       return { main: fullName, tag: type.toUpperCase(), isSet: true };
     }
     if (category === "gpu") {
       return { main: fullName, tag: "PCIE", isSet: true };
     }
     if (category === "psu") {
-      const w = comp.wattage ? `${comp.wattage}W` : "850W";
+      const w = comp.wattage ? `${comp.wattage}W` : (comp.power_output ? `${comp.power_output}W` : "850W");
       return { main: fullName, tag: w, isSet: true };
     }
     return { main: fullName, tag: "READY", isSet: true };

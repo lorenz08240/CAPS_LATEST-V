@@ -77,7 +77,8 @@ CREATE TABLE `google_learner_accounts` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `pin_hash` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `google_id` (`google_id`)
+  UNIQUE KEY `google_id` (`google_id`),
+  UNIQUE KEY `idx_learner_email` (`email`)
 ) ENGINE=InnoDB AUTO_INCREMENT=50 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -119,7 +120,9 @@ CREATE TABLE `pc_parts` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `is_archived` tinyint(1) DEFAULT 0,
   `deleted_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `idx_parts_cat_arch` (`category`,`is_archived`,`id`),
+  KEY `idx_parts_name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -187,7 +190,8 @@ CREATE TABLE `scraped_queue` (
   `tags` text DEFAULT NULL,
   `approved` tinyint(1) DEFAULT 0,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `idx_scraped_approved` (`approved`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -218,7 +222,8 @@ CREATE TABLE `system_logs` (
   `status` varchar(30) DEFAULT 'SUCCESS',
   `ip_address` varchar(45) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `idx_logs_action_cat` (`action_type`,`target_category`,`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -268,7 +273,7 @@ CREATE TABLE `team_members` (
 
 LOCK TABLES `team_members` WRITE;
 /*!40000 ALTER TABLE `team_members` DISABLE KEYS */;
-INSERT INTO `team_members` VALUES ('DEV-01','Jay Mark Piano','Full-Stack Developer & Project Lead','LEAD','core','LEAD','/uploads/profiles/photo-1795205911215-87i1uf.jpg','System Architecture & Core Logic','Leads the overall software engineering and technical direction of BuildLab. Connects the user interface with the 3D PC builder, real-time compatibility checks, and backend database systems.','[]','[\"React 19\",\"Three.js\",\"Node.js\",\"Express\",\"MySQL\"]','{}','Never cheap out on your power supply. An efficient Tier-A PSU protects your entire PC from sudden power spikes and keeps all parts running safely.','https://github.com','https://linkedin.com',1,'2026-11-08 21:57:27','2026-11-20 20:18:31'),('DEV-02','Judiel Gollena','UI/UX & Frontend Developer','UI/UX','frontend','UI/UX','/assets/profiles/jude_gollena.jpg','User Interface & Visual Design','Designs and crafts how BuildLab looks and feels. Engineered the sleek obsidian dark theme, interactive navigation drawers, tactile audio effects, and mobile responsive layouts.','[]','[\"React\",\"Motion/React\",\"CSS3 / Variables\",\"Web Audio API\",\"Figma\"]','{}','Assemble your motherboard, CPU, RAM, and SSD on top of the motherboard box before putting them inside the PC case. It gives you plenty of room to work safely.','https://github.com','https://linkedin.com',2,'2026-11-08 21:57:27','2026-11-20 20:38:34'),('DEV-03','Andrei Jose Tuazon','System\'s Backend Infrastructure Specialist','ANALYSIST','core','ANALYSIST','/uploads/profiles/photo-1795206704694-xgy9w7.jpg','NA','NA','[]','[\"Three.js\",\"WebGL\",\"GLTF / GLB\",\"Blender\",\"Canvas API\"]','{}','Always remember to remove the clear plastic protective film from the bottom of your CPU cooler before applying thermal paste and installing it!','https://github.com','https://linkedin.com',3,'2026-11-08 21:57:27','2026-11-20 20:40:22'),('DEV-04','Shin Ariane Pol','Project Documentation Lead','DOCS','backend','DOCS','/assets/profiles/shin_ariane_pol.jpg','Project Documentation & Manuals','Writes, organizes, and maintains all project documentation, thesis manuals, research papers, system user guides, and ISO/IEC 25010 academic compliance instruments.','[]','[\"Technical Writing\",\"System Documentation\",\"Markdown\",\"SRS / IEEE\",\"Git\"]','{}','Always double-check your part dimensions and cable layout before screwing down the motherboard into your PC case.','https://github.com','https://linkedin.com',4,'2026-11-08 21:57:27','2026-11-20 07:41:23'),('DEV-05','Lorenz Tejado','Backend Developer & Systems Architect','BACKEND','backend','BACKEND','/assets/profiles/lorenz_tejado.jpg','MySQL Normalization & API Services','Engineered BuildLab\'s normalized MySQL relational database, RESTful Express backend services, crawler integration pipeline, and authentication security.','[]','[\"Hardware Specs Audit\",\"Benchmarking\",\"Node.js\",\"Express\",\"MySQL\"]','{}','Dual-channel memory goes into slots 2 and 4 (A2/B2). Check your motherboard\'s PCB silkscreen to ensure maximum signal trace impedance.','https://github.com','https://linkedin.com',5,'2026-11-08 21:57:27','2026-11-20 07:41:23');
+INSERT INTO `team_members` VALUES ('DEV-01','Jay Mark Piano','Full-Stack Developer & Project Lead','LEAD','core','LEAD','/uploads/profiles/photo-1795205911215-87i1uf.jpg','System Architecture & Core Logic','Leads the overall software engineering and technical direction of BuildLab. Connects the user interface with the 3D PC builder, real-time compatibility checks, and backend database systems.','[]','[\"React 19\",\"Three.js\",\"Node.js\",\"Express\",\"MySQL\"]','{}','Never cheap out on your power supply. An efficient Tier-A PSU protects your entire PC from sudden power spikes and keeps all parts running safely.','https://github.com','https://linkedin.com',1,'2026-11-08 21:57:27','2026-11-20 20:18:31'),('DEV-02','Judiel Gollena','UI/UX & Frontend Developer','UI/UX','frontend','UI/UX','/assets/profiles/jude_gollena.jpg','User Interface & Visual Design','Designs and crafts how BuildLab looks and feels. Engineered the sleek obsidian dark theme, interactive navigation drawers, tactile audio effects, and mobile responsive layouts.','[]','[\"React\",\"Motion/React\",\"CSS3 / Variables\",\"Web Audio API\",\"Figma\"]','{}','Assemble your motherboard, CPU, RAM, and SSD on top of the motherboard box before putting them inside the PC case. It gives you plenty of room to work safely.','https://github.com','https://linkedin.com',2,'2026-11-08 21:57:27','2026-11-20 20:38:34'),('DEV-03','Andrei Jose Tuazon','3D Graphics & Simulation Specialist','ANALYST','core','ANALYST','/uploads/profiles/photo-1795206704694-xgy9w7.jpg','3D Component Modeling & Studio Simulation','Specializes in 3D computer component rendering and interactive simulations. Engineered the 360-degree virtual studio where users can inspect, rotate, and assemble hardware in full 3D.','[]','[\"Three.js\",\"WebGL\",\"GLTF / GLB\",\"Blender\",\"Canvas API\"]','{}','Always remember to remove the clear plastic protective film from the bottom of your CPU cooler before applying thermal paste and installing it!','https://github.com','https://linkedin.com',3,'2026-11-08 21:57:27','2026-11-20 20:40:22'),('DEV-04','Shin Ariane Pol','Project Documentation Lead','DOCS','backend','DOCS','/assets/profiles/shin_ariane_pol.jpg','Project Documentation & Manuals','Writes, organizes, and maintains all project documentation, thesis manuals, research papers, system user guides, and ISO/IEC 25010 academic compliance instruments.','[]','[\"Technical Writing\",\"System Documentation\",\"Markdown\",\"SRS / IEEE\",\"Git\"]','{}','Always double-check your part dimensions and cable layout before screwing down the motherboard into your PC case.','https://github.com','https://linkedin.com',4,'2026-11-08 21:57:27','2026-11-20 07:41:23'),('DEV-05','Lorenz Tejado','Backend Developer & Systems Architect','BACKEND','backend','BACKEND','/assets/profiles/lorenz_tejado.jpg','MySQL Normalization & API Services','Engineered BuildLab\'s normalized MySQL relational database, RESTful Express backend services, crawler integration pipeline, and authentication security.','[]','[\"Hardware Specs Audit\",\"Benchmarking\",\"Node.js\",\"Express\",\"MySQL\"]','{}','Dual-channel memory goes into slots 2 and 4 (A2/B2). Check your motherboard\'s PCB silkscreen to ensure maximum signal trace impedance.','https://github.com','https://linkedin.com',5,'2026-11-08 21:57:27','2026-11-20 07:41:23');
 /*!40000 ALTER TABLE `team_members` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

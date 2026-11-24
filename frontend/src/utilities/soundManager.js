@@ -245,6 +245,10 @@ class SoundManager {
           `/sfx/${soundName}.wav`,
         ];
         audio = new Audio(candidates[0]);
+        audio.preload = "auto";
+        audio.onerror = () => {
+          // Graceful fallback to avoid console error noise
+        };
         pool.push(audio);
       } catch {
         return null;

@@ -438,9 +438,20 @@ export default function Home3DHero({
   const isInteractingRef = useRef(false);
   const containerRef = useRef(null);
   const [isInView, setIsInView] = useState(true);
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== 'undefined' ? window.innerWidth <= 768 : false
+  );
   const { isDark } = useTheme();
   const caseColor = isDark ? 'black' : 'white';
   const envPreset = isDark ? 'night' : 'city';
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Suspend WebGL loop when scrolled out of view to free 100% GPU for page scrolling
   useEffect(() => {
@@ -477,13 +488,19 @@ export default function Home3DHero({
       <div className="home-3d-canvas-wrap">
         <Canvas
           frameloop={isInView ? "always" : "demand"}
-          dpr={[1, Math.min(typeof window !== 'undefined' ? window.devicePixelRatio : 1, 1.5)]}
+          dpr={[1, typeof window !== 'undefined' ? Math.min(window.devicePixelRatio || 1, 1.5) : 1]}
           camera={{ position: [0, 0.6, 7.2], fov: 42 }}
           gl={{
+            powerPreference: "high-performance",
             antialias: true,
             alpha: true,
             toneMapping: THREE.ACESFilmicToneMapping,
             toneMappingExposure: 1.15
+          }}
+          onCreated={() => {
+            if (typeof window !== 'undefined') {
+              window.dispatchEvent(new CustomEvent('buildlab:3d-ready'));
+            }
           }}
         >
           <ambientLight intensity={1.3} color="#f8fafc" />
@@ -501,10 +518,10 @@ export default function Home3DHero({
           />
 
           <Sparkles
-            count={60}
+            count={isMobile ? 18 : 60}
             scale={16}
             size={3.2}
-            speed={0.65}
+            speed={isMobile ? 0.4 : 0.65}
             opacity={0.4}
             color={rgbColor}
           />

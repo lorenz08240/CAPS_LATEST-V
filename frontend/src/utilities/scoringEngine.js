@@ -95,7 +95,7 @@ export const calculateScores = (build) => {
     componentsCount++;
     estWattage += 15;
     const capacity = getNumber(build.ram.capacity) || 16;
-    const ddr = (build.ram.ddr_type || "").toUpperCase();
+    const ddr = String(build.ram.ddr_type || "").toUpperCase();
 
     const ddrBonus = ddr.includes("5") ? 6 : 2;
     productivity += Math.min(22, Math.round(capacity * 0.7)) + ddrBonus;
@@ -108,7 +108,7 @@ export const calculateScores = (build) => {
   if (build.storage) {
     componentsCount++;
     estWattage += 10;
-    const isTb = (build.storage.capacity || "").toUpperCase().includes("TB");
+    const isTb = String(build.storage.capacity || "").toUpperCase().includes("TB");
     const rawCap = getNumber(build.storage.capacity) || (isTb ? 1 : 512);
     const capacityGb = isTb ? rawCap * 1000 : rawCap;
 

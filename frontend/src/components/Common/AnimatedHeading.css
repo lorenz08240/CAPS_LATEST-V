@@ -27,8 +27,8 @@
 .animated-heading__underline {
   display: block;
   height: 4px;
-  width: 10rem; /* w-40 */
-  margin: 1.5rem auto 0 auto; /* centered by default */
+  width: 9rem;
+  margin: 1.15rem 0 0 0; /* Left-aligned under text by default */
   background: var(--accent-rose, #f43f5e);
   clip-path: inset(0% 100% 0% 0%);
   will-change: clip-path;
@@ -36,8 +36,35 @@
 
 @media (min-width: 640px) {
   .animated-heading__underline {
-    width: 14rem; /* sm:w-56 */
+    width: 13rem;
   }
+}
+
+/* Centered modifier for centered headings (e.g. master header) */
+.animated-heading__underline.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Theme accent color classes */
+.animated-heading__underline.service-underline-rose {
+  background: #f43f5e;
+}
+
+.animated-heading__underline.service-underline-amber {
+  background: #f59e0b;
+}
+
+.animated-heading__underline.service-underline-cyan {
+  background: #38bdf8;
+}
+
+.animated-heading__underline.service-underline-emerald {
+  background: #10b981;
+}
+
+.animated-heading__underline.service-underline-sky {
+  background: #818cf8;
 }
 
 @media (prefers-reduced-motion: reduce) {

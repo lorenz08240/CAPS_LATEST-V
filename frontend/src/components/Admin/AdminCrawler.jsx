@@ -4,6 +4,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { apiFetch } from "../../utilities/api";
 import { parseProductMeta, buildQuickSpecs } from "../../utilities/scrapedMeta";
 import AdminHeader from "./AdminHeader";
+import AdminSidebar from "./AdminSidebar";
 import EditComponentDrawer from "./EditComponentDrawer";
 import "./Admin.css";
 
@@ -507,7 +508,9 @@ export const AdminCrawler = () => {
 
   return (
     <div className="admin-page-wrapper">
-      <div className="admin-layout-container crawler-full-width">
+      <div className="admin-layout-container">
+        <AdminSidebar />
+
         <main className="admin-main-content">
           <AdminHeader breadcrumbCurrent="Crawler & Ingestion Hub" />
 

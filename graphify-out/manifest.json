@@ -6,9 +6,9 @@
     "semantic_hash": ""
   },
   "backend/config/db.js": {
-    "mtime": 1794199439.2433949,
-    "seen": 1794199479.0796015,
-    "ast_hash": "c2c0d884321b5e7093b8fc660dbea22a",
+    "mtime": 1795468060.8279295,
+    "seen": 1795468100.1083562,
+    "ast_hash": "9927c568446ff83e559caff89bd4be06",
     "semantic_hash": ""
   },
   "backend/crawler.js": {
@@ -18,15 +18,15 @@
     "semantic_hash": ""
   },
   "backend/package.json": {
-    "mtime": 1795147673.490763,
-    "seen": 1795149626.8262918,
-    "ast_hash": "11b6b0842b7b5ddd1642fb92f862a30e",
+    "mtime": 1795412578.3296385,
+    "seen": 1795425153.3567512,
+    "ast_hash": "263c4b549bdfee5605ab066cef4a3bfb",
     "semantic_hash": ""
   },
   "backend/server.js": {
-    "mtime": 1795154892.8437252,
-    "seen": 1795156045.454421,
-    "ast_hash": "4d08056cad008ec6e74c8d4647d60a0e",
+    "mtime": 1795498391.3780675,
+    "seen": 1795498479.2272878,
+    "ast_hash": "c7fda954289a84730943f02d2d65c9ef",
     "semantic_hash": ""
   },
   "backend/tests/compatibility.test.js": {
@@ -54,33 +54,33 @@
     "semantic_hash": "8e5f2021f5b1721b527c842f43f78c73"
   },
   "frontend/src/App.jsx": {
-    "mtime": 1795033588.3691225,
-    "seen": 1795034162.1522799,
-    "ast_hash": "ad1e8c2e73f26f002b4171602593f960",
+    "mtime": 1795498416.8895779,
+    "seen": 1795498479.2303233,
+    "ast_hash": "96086f5d09425f6b045839ed1a33a918",
     "semantic_hash": ""
   },
   "frontend/src/components/3D/ComponentModels3D.jsx": {
-    "mtime": 1795151848.2013168,
-    "seen": 1795153304.2350116,
-    "ast_hash": "38a3e6c4f19df021da9167c579dd009e",
+    "mtime": 1795205341.6974516,
+    "seen": 1795425153.358901,
+    "ast_hash": "6f597c58f0aeb17c669d6ef93ffbc6e2",
     "semantic_hash": ""
   },
   "frontend/src/components/3D/GenericPCCase.jsx": {
-    "mtime": 1795004603.2208219,
-    "seen": 1795004738.29467,
-    "ast_hash": "a3c3ef41bbedf9c63fd12989a8556e30",
+    "mtime": 1795205341.6979556,
+    "seen": 1795425153.3593109,
+    "ast_hash": "e06b95e451e564cf76bac68af77aaefe",
     "semantic_hash": ""
   },
   "frontend/src/components/3D/PCBuilder3D.jsx": {
-    "mtime": 1795004603.2248242,
-    "seen": 1795004738.2946804,
-    "ast_hash": "5da6eca1287a5808758b5bc9ad4206dc",
+    "mtime": 1795498367.3376942,
+    "seen": 1795498479.233866,
+    "ast_hash": "9e72cdb14c15c199432757178792d530",
     "semantic_hash": ""
   },
   "frontend/src/components/3D/ProceduralSickleFan.jsx": {
-    "mtime": 1795004603.2228234,
-    "seen": 1795004738.2946851,
-    "ast_hash": "216e95a835c9ec02e701a226331fa455",
+    "mtime": 1795205341.7004638,
+    "seen": 1795425153.3605077,
+    "ast_hash": "443e244736953cfeefa857e0c80132eb",
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/Admin.jsx": {
@@ -90,21 +90,15 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Brands/Brands.jsx": {
-    "mtime": 1795004603.2253337,
-    "seen": 1795004738.2975862,
-    "ast_hash": "332a35ec5891f0df08212d84675c44c8",
-    "semantic_hash": ""
-  },
-  "frontend/src/components/Build/Build.jsx": {
-    "mtime": 1795017038.9496322,
-    "seen": 1795017150.9466412,
-    "ast_hash": "081322ab6240e290e316d4cc3f6d30d9",
+    "mtime": 1795205341.70705,
+    "seen": 1795425153.364933,
+    "ast_hash": "b93a602dc70dd354dcea623e78b9a33e",
     "semantic_hash": ""
   },
   "frontend/src/components/Compatibility/Compatibility.jsx": {
-    "mtime": 1795042265.042222,
-    "seen": 1795043698.5366223,
-    "ast_hash": "7aae9ce935125cffe8f760e3cdfb06f3",
+    "mtime": 1795467559.404184,
+    "seen": 1795467822.6422565,
+    "ast_hash": "96dd269eb869eef817754fd51ad4ed8c",
     "semantic_hash": ""
   },
   "frontend/src/components/FeatureCarousel/FeatureCarousel.jsx": {
@@ -114,27 +108,27 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Footer/Footer.jsx": {
-    "mtime": 1795158973.9611087,
-    "seen": 1795159020.2959535,
-    "ast_hash": "52f44105d0262691f23f024a7918ead5",
+    "mtime": 1795205341.7145655,
+    "seen": 1795425153.3663023,
+    "ast_hash": "1468ff457a9305c14ea89848e81c8e90",
     "semantic_hash": ""
   },
   "frontend/src/components/FullscreenGate/FullscreenGate.jsx": {
-    "mtime": 1795007501.4142363,
-    "seen": 1795007565.076226,
-    "ast_hash": "535c24e3b68e7e4263a1bf92223eb60a",
+    "mtime": 1795361204.0146086,
+    "seen": 1795425153.3663075,
+    "ast_hash": "992274bf0556b69e647cf043c845e555",
     "semantic_hash": ""
   },
   "frontend/src/components/Home/Home.jsx": {
-    "mtime": 1795150491.3169847,
-    "seen": 1795150798.0311077,
-    "ast_hash": "ef923a5896bb76d7606947f651368491",
+    "mtime": 1795498457.6602788,
+    "seen": 1795498479.2524402,
+    "ast_hash": "25e932bb7bd95930653d26dbd643c9df",
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/CourseShell.jsx": {
-    "mtime": 1795153558.815,
-    "seen": 1795154036.56811,
-    "ast_hash": "3ab2cf4999e1cead068a0ebf4984b1cb",
+    "mtime": 1795361418.9721951,
+    "seen": 1795425153.3675327,
+    "ast_hash": "2ad667287877a7b52b3a3c71db132440",
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/CourseVideoPlayer.jsx": {
@@ -144,21 +138,21 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/Learn.jsx": {
-    "mtime": 1795028004.2350278,
-    "seen": 1795028132.5370648,
-    "ast_hash": "562317552b469ce9efc3c07787a372b5",
+    "mtime": 1795205341.738636,
+    "seen": 1795425153.3677073,
+    "ast_hash": "a6943237c61029560501f6250ea8820e",
     "semantic_hash": ""
   },
   "frontend/src/components/Navbar/Navbar.jsx": {
-    "mtime": 1795145468.8920262,
-    "seen": 1795146607.5853322,
-    "ast_hash": "bc2533756f991fbd8ef8078c37c0778a",
+    "mtime": 1795361450.3939686,
+    "seen": 1795425153.3686059,
+    "ast_hash": "23024233d87ef343f7e795e2c5890523",
     "semantic_hash": ""
   },
   "frontend/src/contexts/AuthContext.jsx": {
-    "mtime": 1795154897.5219598,
-    "seen": 1795156045.4778438,
-    "ast_hash": "58e2e2b8e42da4c71cdd94c922173714",
+    "mtime": 1795468111.7257047,
+    "seen": 1795468280.8723195,
+    "ast_hash": "46c3b407eaeee6bb03be4da24d9b7657",
     "semantic_hash": ""
   },
   "frontend/src/contexts/BuildContext.jsx": {
@@ -186,15 +180,15 @@
     "semantic_hash": ""
   },
   "frontend/src/utilities/compatibilityEngine.js": {
-    "mtime": 1794563146.5031161,
-    "seen": 1794564089.1059067,
-    "ast_hash": "5bec78c388e9f43b9654f6dc13af39b6",
+    "mtime": 1795467481.9991949,
+    "seen": 1795467822.6525164,
+    "ast_hash": "86808c07a43bd0a8345dbb63317ff45f",
     "semantic_hash": ""
   },
   "frontend/src/utilities/fullscreen.js": {
-    "mtime": 1794183348.904241,
-    "seen": 1794183525.714,
-    "ast_hash": "0e152ef377ebf81774fce92bd27c7a0f",
+    "mtime": 1795361187.4826508,
+    "seen": 1795425153.3711014,
+    "ast_hash": "0080edc661d657fdf9ee0c0135bd0bbf",
     "semantic_hash": ""
   },
   "frontend/src/utilities/offlineParts.js": {
@@ -204,9 +198,9 @@
     "semantic_hash": ""
   },
   "frontend/src/utilities/pageTransitions.jsx": {
-    "mtime": 1793930979.3582413,
-    "seen": 1793931109.0880892,
-    "ast_hash": "9227a57cbab8b921b8b7865806033ef5",
+    "mtime": 1795205341.74846,
+    "seen": 1795425153.371481,
+    "ast_hash": "4ae9ca058a57f471cda2ee24d0d462e2",
     "semantic_hash": ""
   },
   "frontend/src/utilities/rules.js": {
@@ -216,15 +210,15 @@
     "semantic_hash": ""
   },
   "frontend/src/utilities/scoringEngine.js": {
-    "mtime": 1793931234.1626062,
-    "seen": 1793931275.1741836,
-    "ast_hash": "f13a75562442cc0a275a0ad14cc7c768",
+    "mtime": 1795467145.2023418,
+    "seen": 1795467822.653608,
+    "ast_hash": "a66d3d7c8f3b802e9316d5ef2fc176ab",
     "semantic_hash": ""
   },
   "frontend/src/utilities/soundManager.js": {
-    "mtime": 1794202044.5880208,
-    "seen": 1794202115.1059058,
-    "ast_hash": "4adb3672f1713fc136ebc5eaddae0ede",
+    "mtime": 1795467865.0142808,
+    "seen": 1795467980.3483503,
+    "ast_hash": "63e662e47384310a241df17b9dbbbdd7",
     "semantic_hash": ""
   },
   "frontend/tailwind.config.js": {
@@ -234,9 +228,9 @@
     "semantic_hash": "0a4eec1bc2d10c604a1e23e739035357"
   },
   "frontend/vite.config.js": {
-    "mtime": 1794822765.277321,
-    "seen": 1794822790.5380046,
-    "ast_hash": "c3c83f23d6f50575d0f9ba056d53f071",
+    "mtime": 1795205341.749467,
+    "seen": 1795425153.372516,
+    "ast_hash": "0bca18c7b9456271d9268804779d1eca",
     "semantic_hash": ""
   },
   "CHANGELOG.md": {
@@ -414,15 +408,15 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Home/Home3DHero.jsx": {
-    "mtime": 1795025160.5889382,
-    "seen": 1795025227.547339,
-    "ast_hash": "4e1769ec51e56fee168f34e6812a6a7b",
+    "mtime": 1795498358.17148,
+    "seen": 1795498479.25245,
+    "ast_hash": "04b4a9a1d008e921adfc1b6f8ba2e94e",
     "semantic_hash": ""
   },
   "frontend/src/components/3D/DDR4RAMModel.jsx": {
-    "mtime": 1795004603.219815,
-    "seen": 1795004738.2946677,
-    "ast_hash": "7dd3210008dd1cfbe0c816c2014f084e",
+    "mtime": 1795207158.4090242,
+    "seen": 1795425153.358906,
+    "ast_hash": "d014b10671ac8d52034257b0f59985a4",
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/AdminAuthGuard.jsx": {
@@ -432,9 +426,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/AdminCrawler.jsx": {
-    "mtime": 1795155459.4543145,
-    "seen": 1795156045.4601698,
-    "ast_hash": "101d0cbb3aba9d507ed8bd64eebcd1af",
+    "mtime": 1795467690.50237,
+    "seen": 1795467822.6388273,
+    "ast_hash": "14954033f140755f58c37ac95775ec55",
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/AdminHeader.jsx": {
@@ -444,21 +438,21 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/AdminInventory.jsx": {
-    "mtime": 1795155516.414472,
-    "seen": 1795156045.460182,
-    "ast_hash": "ca5ac5ea598a33d8bd5bd7b235cc3e28",
+    "mtime": 1795498178.7058244,
+    "seen": 1795498479.2421267,
+    "ast_hash": "9cada845c1507df63905fa3c5812d1ff",
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/AdminLogin.jsx": {
-    "mtime": 1794202196.547535,
-    "seen": 1794202260.504107,
-    "ast_hash": "0d34cb2b4788bbca4486424c215982ad",
+    "mtime": 1795497637.692059,
+    "seen": 1795497857.260606,
+    "ast_hash": "8a9731ee0cf64387eae38db4b7b05a96",
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/EditComponentDrawer.jsx": {
-    "mtime": 1794159497.7936106,
-    "seen": 1794159505.8633707,
-    "ast_hash": "eaa2511bb1d3c35a9b84f983319dcfa8",
+    "mtime": 1795498192.2162726,
+    "seen": 1795498479.2430928,
+    "ast_hash": "8a1a607497b859c2f885ec3233085e38",
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/HardwareIcon.jsx": {
@@ -474,15 +468,15 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Home/Preloader.jsx": {
-    "mtime": 1794183662.6210089,
-    "seen": 1794183788.532731,
-    "ast_hash": "ed9fc3919b74dde3254e81a6276fd099",
+    "mtime": 1795498327.513023,
+    "seen": 1795498479.2533834,
+    "ast_hash": "3c23b5bd864ea898a2ca2408a1d3182d",
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/AdminSidebar.jsx": {
-    "mtime": 1795155336.493769,
-    "seen": 1795156045.4604392,
-    "ast_hash": "27b9af25c9bf329426ecc68195fd1a51",
+    "mtime": 1795467731.6289303,
+    "seen": 1795467822.640119,
+    "ast_hash": "c33f29e662f69b3a69c290e9637a04c0",
     "semantic_hash": ""
   },
   "frontend/src/components/3D/NVMeSSDModel.jsx": {
@@ -522,9 +516,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/EyeTracker/EyeTracker.tsx": {
-    "mtime": 1795004552.4949245,
-    "seen": 1795004738.2979789,
-    "ast_hash": "a47d9e47915596378a8734b4469982af",
+    "mtime": 1795355638.9512582,
+    "seen": 1795425153.3656778,
+    "ast_hash": "40a080dfc2798dc39917289dde760537",
     "semantic_hash": ""
   },
   "frontend/src/components/EyeTracker/index.ts": {
@@ -540,9 +534,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Navigation/CyberBrand.jsx": {
-    "mtime": 1795025155.0970197,
-    "seen": 1795025227.5541523,
-    "ast_hash": "7fdb79b47481d67dce5f250fcc6eb33f",
+    "mtime": 1795205341.745156,
+    "seen": 1795425153.3687758,
+    "ast_hash": "ec84704570789328aa19061331f42619",
     "semantic_hash": ""
   },
   "frontend/src/contexts/SidebarContext.jsx": {
@@ -588,15 +582,15 @@
     "semantic_hash": ""
   },
   "frontend/src/components/AboutUs/AboutUs.jsx": {
-    "mtime": 1795160454.9747078,
-    "seen": 1795160574.4824378,
-    "ast_hash": "00359465d5da5ca6626fb38ceb231201",
+    "mtime": 1795467920.3188415,
+    "seen": 1795467980.3320553,
+    "ast_hash": "22b1b4edb5ef09cd8ad3eedddac084c9",
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/AdminLogs.jsx": {
-    "mtime": 1795155526.8212488,
-    "seen": 1795156045.4604356,
-    "ast_hash": "01c8490650c02b25faae482ece939581",
+    "mtime": 1795498767.0345125,
+    "seen": 1795499000.062005,
+    "ast_hash": "c3077b7c396fcab16d62ed4f05a3c246",
     "semantic_hash": ""
   },
   "frontend/public/sfx/audio/alarm.wav": {
@@ -678,21 +672,21 @@
     "semantic_hash": ""
   },
   "frontend/src/components/3D/PSUModel.jsx": {
-    "mtime": 1795004603.2228234,
-    "seen": 1795004738.2946832,
-    "ast_hash": "9abfcc432aaaf2a629b5eb03e1463656",
+    "mtime": 1795205341.6994593,
+    "seen": 1795425153.360503,
+    "ast_hash": "beb695b15eb8fea7b60c4a3bcbf2c436",
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/AdminAccounts.jsx": {
-    "mtime": 1795155695.161027,
-    "seen": 1795156045.4598777,
-    "ast_hash": "a2990a78cdd2fbed22b44aa026471a6d",
+    "mtime": 1795468115.7893126,
+    "seen": 1795468280.8635337,
+    "ast_hash": "e5db4654fac3321b0a28c524955b7ccb",
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/AdminContent.jsx": {
-    "mtime": 1795160016.9066384,
-    "seen": 1795160574.4836166,
-    "ast_hash": "554a69967572cd3a2a48982d5a2d71bb",
+    "mtime": 1795468122.099886,
+    "seen": 1795468280.8638325,
+    "ast_hash": "a0c6fa601e5aa1d52f75212a55dd5ba6",
     "semantic_hash": ""
   },
   "frontend/src/components/Home/AccountSetupModal.jsx": {
@@ -702,9 +696,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/CertificationPage.jsx": {
-    "mtime": 1795153528.0862148,
-    "seen": 1795154036.5677805,
-    "ast_hash": "432abed432d431deb287b928253736b2",
+    "mtime": 1795205341.731124,
+    "seen": 1795425153.367527,
+    "ast_hash": "e0ea3d69a60b09cd05dff64b30f93afb",
     "semantic_hash": ""
   },
   "frontend/src/components/Navigation/CookieConsent.jsx": {
@@ -726,27 +720,9 @@
     "semantic_hash": ""
   },
   "frontend/src/contexts/LearnModeContext.jsx": {
-    "mtime": 1795147981.6221018,
-    "seen": 1795149626.8374646,
-    "ast_hash": "edfab1d3ad39c7290da02a538ef2484c",
-    "semantic_hash": ""
-  },
-  "backend/uploads/profiles/photo-1794176073655-f3qzal.gif": {
-    "mtime": 1794176073.6566453,
-    "seen": 1794176494.1616318,
-    "ast_hash": "05e5244a42bea6b5a3ef3d2472f4b030",
-    "semantic_hash": ""
-  },
-  "backend/uploads/profiles/photo-1794176080611-d0vfrg.gif": {
-    "mtime": 1794176080.6114943,
-    "seen": 1794176494.161635,
-    "ast_hash": "05e5244a42bea6b5a3ef3d2472f4b030",
-    "semantic_hash": ""
-  },
-  "backend/uploads/profiles/photo-1794176086486-hn7tru.jpg": {
-    "mtime": 1794176086.4874146,
-    "seen": 1794176494.1616364,
-    "ast_hash": "0fb67551fd8e2c455fe60c43b2680717",
+    "mtime": 1795468140.0339272,
+    "seen": 1795468280.872631,
+    "ast_hash": "4cddecee2fb4d85fa0f9fb9da2c871ae",
     "semantic_hash": ""
   },
   "frontend/public/sfx/audio/Error1.mp3": {
@@ -798,9 +774,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Common/PixelCanvas.jsx": {
-    "mtime": 1795004552.4969263,
-    "seen": 1795004738.297592,
-    "ast_hash": "c8b6405c47eae178152e408378dac0b0",
+    "mtime": 1795355339.5637538,
+    "seen": 1795425153.3649454,
+    "ast_hash": "f4c6f6d8fe85138664484a628aa22d2f",
     "semantic_hash": ""
   },
   "frontend/src/components/Home/ModeSelectionCards.jsx": {
@@ -833,16 +809,10 @@
     "ast_hash": "3eb6b7076923bf4a7c212ec08394b2c8",
     "semantic_hash": ""
   },
-  "backend/uploads/profiles/photo-1794214083340-kb6u7l.jpg": {
-    "mtime": 1794214083.3416743,
-    "seen": 1794368515.5887816,
-    "ast_hash": "d4d27dbc02701ffab4072c94002e676b",
-    "semantic_hash": ""
-  },
   "frontend/src/components/Learn/LearnHardwareStage.jsx": {
-    "mtime": 1795152097.97696,
-    "seen": 1795153304.2642803,
-    "ast_hash": "ee2108993c93a0e0b8f6a69b12bcf5d1",
+    "mtime": 1795355425.0912385,
+    "seen": 1795425153.36771,
+    "ast_hash": "20a346e9291d1352f85957a8e73ef354",
     "semantic_hash": ""
   },
   "frontend/src/components/Legal/LegalPage.jsx": {
@@ -852,9 +822,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/curriculumData.js": {
-    "mtime": 1795105138.2676616,
-    "seen": 1795105428.2591503,
-    "ast_hash": "05dbcafd0d7c7481a45e07850799cf75",
+    "mtime": 1795205341.743156,
+    "seen": 1795425153.3678977,
+    "ast_hash": "3ff8ddbb568e209a37b23e02bca36a8d",
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/curriculumTypes.d.ts": {
@@ -882,9 +852,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Home/PlatformServices.jsx": {
-    "mtime": 1795025155.093198,
-    "seen": 1795025227.5473459,
-    "ast_hash": "03acbccaa7826bc7b4e8a2fb3c5beec1",
+    "mtime": 1795497543.1039376,
+    "seen": 1795497857.2881591,
+    "ast_hash": "8e7e316a7287fd39aba462b3efc21170",
     "semantic_hash": ""
   },
   "frontend/src/assets/buildlab_logo_tight.png": {
@@ -900,9 +870,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/VirtualAssemblyLab.jsx": {
-    "mtime": 1795154166.5430312,
-    "seen": 1795154327.3078763,
-    "ast_hash": "25dca9efc4fe8b60c6db2065ba9fddd7",
+    "mtime": 1795355417.1263242,
+    "seen": 1795425153.3678913,
+    "ast_hash": "57d081ff20f8cfb2e5b74fa629555c8d",
     "semantic_hash": ""
   },
   "frontend/public/assets/shin_ariane_pol.jpg": {
@@ -930,51 +900,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/CourseBriefingOverlay.jsx": {
-    "mtime": 1795028004.2279778,
-    "seen": 1795028132.5370526,
-    "ast_hash": "867d133cc008190103e73d39332662ae",
-    "semantic_hash": ""
-  },
-  "backend/uploads/profiles/photo-1794931704599-b2bbc1.jpg": {
-    "mtime": 1794938536.9734926,
-    "seen": 1794938580.3323212,
-    "ast_hash": "474109fed2113f03bed32502d3f08003",
-    "semantic_hash": ""
-  },
-  "backend/uploads/profiles/photo-1794931759308-ifoxg7.webp": {
-    "mtime": 1794938536.9750736,
-    "seen": 1794938580.3323278,
-    "ast_hash": "18f86f948abb0364ab48f40ff123207e",
-    "semantic_hash": ""
-  },
-  "backend/uploads/profiles/photo-1794932155207-7mr8qq.jpg": {
-    "mtime": 1794938535.4227607,
-    "seen": 1794938580.3323324,
-    "ast_hash": "aaaa50dab3404ec2d24cf4586df5e27c",
-    "semantic_hash": ""
-  },
-  "backend/uploads/profiles/photo-1794932442609-7x6snx.jpg": {
-    "mtime": 1794938535.449193,
-    "seen": 1794938580.3323364,
-    "ast_hash": "c07f038bb04924f96f44bb9656fe2a55",
-    "semantic_hash": ""
-  },
-  "backend/uploads/profiles/photo-1794932639998-kwb5sk.jpg": {
-    "mtime": 1794938535.4559398,
-    "seen": 1794938580.3323414,
-    "ast_hash": "18ab43375f4d495835a16c647f1e9cf1",
-    "semantic_hash": ""
-  },
-  "backend/uploads/profiles/photo-1794932743363-a0vy3q.jpg": {
-    "mtime": 1794938535.488388,
-    "seen": 1794938580.3323538,
-    "ast_hash": "01777b3db105e4ef66d8f62623750137",
-    "semantic_hash": ""
-  },
-  "backend/uploads/profiles/photo-1794932764614-u44pb4.jpg": {
-    "mtime": 1794938535.4962335,
-    "seen": 1794938580.332365,
-    "ast_hash": "d5ad9330e8a0ced83759a02c988f3415",
+    "mtime": 1795205341.7331264,
+    "seen": 1795425153.3675299,
+    "ast_hash": "c279b53689f5fd3d5b7fee7e9b563858",
     "semantic_hash": ""
   },
   "frontend/src/components/3D/NorthChalkWhiteCase.jsx": {
@@ -984,9 +912,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/LessonPresentationView.jsx": {
-    "mtime": 1795111926.78788,
-    "seen": 1795112483.4024885,
-    "ast_hash": "b1080717cf97bcff90105aa91b10fbb2",
+    "mtime": 1795205341.740142,
+    "seen": 1795425153.367713,
+    "ast_hash": "eaca701066f1d57196307047f1b2a697",
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/ModuleQuizModal.jsx": {
@@ -1008,9 +936,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/3D/ROGStrixMotherboard.jsx": {
-    "mtime": 1795151693.3612244,
-    "seen": 1795153304.238756,
-    "ast_hash": "8fa779f6de5489614a72a7c81f03f7f0",
+    "mtime": 1795206977.1680102,
+    "seen": 1795425153.360512,
+    "ast_hash": "c2822ab15c143d88a069e79d5191b18a",
     "semantic_hash": ""
   },
   "frontend/src/utilities/useGoogleSignIn.js": {
@@ -1079,22 +1007,10 @@
     "ast_hash": "620754c6c171b676f907089825eaf8ca",
     "semantic_hash": ""
   },
-  "backend/uploads/profiles/photo-1795023027468-u49rt5.jpg": {
-    "mtime": 1795028004.224981,
-    "seen": 1795028132.5475357,
-    "ast_hash": "aae3235dfd01bff0b46fee97501d5320",
-    "semantic_hash": ""
-  },
   "product_launch_assets/GOOGLE_FLOW_PROMPTS.md": {
     "mtime": 1795158355.7984202,
     "seen": 1795158564.6886973,
     "ast_hash": "1acd819d29cf0b74dd9941a9134eff03",
-    "semantic_hash": ""
-  },
-  "backend/uploads/profiles/photo-1795158118621-8nbk65.jpg": {
-    "mtime": 1795158118.621601,
-    "seen": 1795158564.694845,
-    "ast_hash": "aaaa50dab3404ec2d24cf4586df5e27c",
     "semantic_hash": ""
   },
   "product_launch_assets/01_hero_launch_reveal.png": {
@@ -1151,54 +1067,6 @@
     "ast_hash": "591ff267b1c2b0701110876b854bdecd",
     "semantic_hash": ""
   },
-  "backend/uploads/profiles/hardware_3d_engineer.jpg": {
-    "mtime": 1795160413.1145027,
-    "seen": 1795160574.5035925,
-    "ast_hash": "83f0cdc6d6ef4617969101f75fa35b7c",
-    "semantic_hash": ""
-  },
-  "backend/uploads/profiles/jay_mark_piano.jpg": {
-    "mtime": 1795160413.0955606,
-    "seen": 1795160574.503596,
-    "ast_hash": "73b45377bfad00dfdcbe64b54622f37d",
-    "semantic_hash": ""
-  },
-  "backend/uploads/profiles/jude_gollena.jpg": {
-    "mtime": 1795160413.106842,
-    "seen": 1795160574.5035985,
-    "ast_hash": "5f8599a016d12e6430d954a8ffd2ca6a",
-    "semantic_hash": ""
-  },
-  "backend/uploads/profiles/lorenz_tejado.jpg": {
-    "mtime": 1795160413.1109743,
-    "seen": 1795160574.5036006,
-    "ast_hash": "95184342c8fe21efa8db9577b83ed943",
-    "semantic_hash": ""
-  },
-  "backend/uploads/profiles/photo_black_suit.jpg": {
-    "mtime": 1795159941.972278,
-    "seen": 1795160574.5071702,
-    "ast_hash": "83f0cdc6d6ef4617969101f75fa35b7c",
-    "semantic_hash": ""
-  },
-  "backend/uploads/profiles/photo_fringe_tie.jpg": {
-    "mtime": 1795159941.9665544,
-    "seen": 1795160574.5071738,
-    "ast_hash": "95184342c8fe21efa8db9577b83ed943",
-    "semantic_hash": ""
-  },
-  "backend/uploads/profiles/photo_glasses_suit.jpg": {
-    "mtime": 1795159941.9511988,
-    "seen": 1795160574.5071762,
-    "ast_hash": "5f8599a016d12e6430d954a8ffd2ca6a",
-    "semantic_hash": ""
-  },
-  "backend/uploads/profiles/shin_ariane_pol.jpg": {
-    "mtime": 1795160413.1086257,
-    "seen": 1795160574.5071795,
-    "ast_hash": "d3ddeefe581c1731d31e8c4c613c2435",
-    "semantic_hash": ""
-  },
   "frontend/public/assets/profiles/hardware_3d_engineer.jpg": {
     "mtime": 1795160413.1139314,
     "seen": 1795160574.5129004,
@@ -1247,16 +1115,2458 @@
     "ast_hash": "d3ddeefe581c1731d31e8c4c613c2435",
     "semantic_hash": ""
   },
+  ".agents/skills.json": {
+    "mtime": 1795205341.3349135,
+    "seen": 1795425153.3542378,
+    "ast_hash": "04e34c928aed77b9f8057e1df8d159c6",
+    "semantic_hash": ""
+  },
+  ".agents/skills/antislop-human/contrast-check.py": {
+    "mtime": 1795205341.3388,
+    "seen": 1795425153.3542552,
+    "ast_hash": "05da8206da20194c76032a8eaef6b3a7",
+    "semantic_hash": ""
+  },
+  ".agents/skills/antislop-human/contrast-mcp.py": {
+    "mtime": 1795205341.3388,
+    "seen": 1795425153.3542612,
+    "ast_hash": "6707dba191ab8902eb070ec81bf05271",
+    "semantic_hash": ""
+  },
+  ".agents/skills/deploy/scripts/deploy.ps1": {
+    "mtime": 1795425074.4207351,
+    "seen": 1795425153.354265,
+    "ast_hash": "e9ded43a34ead37b813e9d3ba5efb3ea",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/.github/FUNDING.yml": {
+    "mtime": 1795205341.3446252,
+    "seen": 1795425153.3542683,
+    "ast_hash": "cba71b8b17057b5d8ad2dd5fbe451273",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/.github/ISSUE_TEMPLATE/bug_report.yml": {
+    "mtime": 1795205341.3446252,
+    "seen": 1795425153.3542714,
+    "ast_hash": "8a530d61257940c68dcef538fd9e726f",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/.github/ISSUE_TEMPLATE/contribution_intent.yml": {
+    "mtime": 1795205341.3446252,
+    "seen": 1795425153.3542745,
+    "ast_hash": "334fcb223aec01a5a758c87da1c1655f",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/.github/ISSUE_TEMPLATE/feature_request.yml": {
+    "mtime": 1795205341.3456328,
+    "seen": 1795425153.3542778,
+    "ast_hash": "2ea980f8b206506f7eca78c8de55063f",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/.github/release.yml": {
+    "mtime": 1795205341.3456328,
+    "seen": 1795425153.3542807,
+    "ast_hash": "d7e87bc1d2d014adad4f0d0d2a33e648",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/.github/workflows/beta-release.yml": {
+    "mtime": 1795205341.346636,
+    "seen": 1795425153.354284,
+    "ast_hash": "978acd8bf278b9c68da2121537e9defa",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/.github/workflows/ci.yml": {
+    "mtime": 1795205341.346636,
+    "seen": 1795425153.3542871,
+    "ast_hash": "e204362a42023665cee34d68c548b94e",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/.github/workflows/cli-publish.yml": {
+    "mtime": 1795205341.346636,
+    "seen": 1795425153.35429,
+    "ast_hash": "246bb00514bcd60cc8a31e934d37e169",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/.github/workflows/docs-quality.yml": {
+    "mtime": 1795205341.347636,
+    "seen": 1795425153.3542933,
+    "ast_hash": "2c1dc2a3d639513c865efba92f774405",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/.github/workflows/issue-triage.yml": {
+    "mtime": 1795205341.347636,
+    "seen": 1795425153.3542967,
+    "ast_hash": "ed9280075a2684738fdaaa2952bb9d9f",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/.github/workflows/pr-issue-close-policy.yml": {
+    "mtime": 1795205341.3486369,
+    "seen": 1795425153.3543,
+    "ast_hash": "c73d03831a1fb7f716f144ebf0c061ef",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/.github/workflows/readme-tables-sync.yml": {
+    "mtime": 1795205341.3486369,
+    "seen": 1795425153.3543026,
+    "ast_hash": "4b2030094324231fb4cc5c2612546650",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/.github/workflows/release.yml": {
+    "mtime": 1795205341.3491476,
+    "seen": 1795425153.3543057,
+    "ast_hash": "ca834c67b38e2f60885509932c008a11",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/NorthCaseFactory.ts": {
+    "mtime": 1795205341.3536677,
+    "seen": 1795425153.354309,
+    "ast_hash": "e803156936ad71acca8d1921ab7e8818",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/assessment_cooler.json": {
+    "mtime": 1795205341.3556643,
+    "seen": 1795425153.354312,
+    "ast_hash": "fd3f593ba95ddb090c5226e560f8d17d",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/assessment_mobo.json": {
+    "mtime": 1795205341.3556643,
+    "seen": 1795425153.354315,
+    "ast_hash": "62279b85181ed8be9db020b21b7c9252",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/bin/img2threejs.mjs": {
+    "mtime": 1795205341.358663,
+    "seen": 1795425153.3543177,
+    "ast_hash": "41a84d242c846b282d571bc8a1a5ec3b",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/bin/img2threejs.mjs-test.mjs": {
+    "mtime": 1795205341.3596635,
+    "seen": 1795425153.3543203,
+    "ast_hash": "8d424f0741aab71f6031f6be542e4ea9",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/cooler_sculpt_spec.json": {
+    "mtime": 1795205341.3596635,
+    "seen": 1795425153.3543234,
+    "ast_hash": "fec4a2808bcdd552ed9c3d5ea385f823",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/docs/materials/material-reference.json": {
+    "mtime": 1795205341.3679402,
+    "seen": 1795425153.3543265,
+    "ast_hash": "3b2fd1a1091d128efe3a6716508ea5ac",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/docs/raw/img2threejs-skill-dataset.json": {
+    "mtime": 1795205341.3722045,
+    "seen": 1795425153.3543293,
+    "ast_hash": "f71a82d3891496bd33b1d13179ea2398",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/docs/specs/render-profile.v2.example.json": {
+    "mtime": 1795205341.3722045,
+    "seen": 1795425153.3543322,
+    "ast_hash": "35a48ae1eccfa3e1cd197fb66943c4a8",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/docs/specs/render-profile.v2.schema.json": {
+    "mtime": 1795205341.3727312,
+    "seen": 1795425153.3543353,
+    "ast_hash": "9e88460ec9087cf2537fa0d21b8a1464",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/_shared/artifact_cache.py": {
+    "mtime": 1795205341.3758311,
+    "seen": 1795425153.3543384,
+    "ast_hash": "26f0b9693c7bb5000aa4a29c3b8f6e58",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/_shared/chirality.py": {
+    "mtime": 1795205341.3758311,
+    "seen": 1795425153.3543413,
+    "ast_hash": "7572187ab997f679be0b285318150560",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/_shared/color_metrics.py": {
+    "mtime": 1795205341.3768387,
+    "seen": 1795425153.3543441,
+    "ast_hash": "d4a19fdf17163bb913e38a288cd7a2d2",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/_shared/domains/__init__.py": {
+    "mtime": 1795205341.3768387,
+    "seen": 1795425153.3543472,
+    "ast_hash": "f1e0d2283206bfb08d78fee5d210d5fa",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/_shared/domains/character.py": {
+    "mtime": 1795205341.3778393,
+    "seen": 1795425153.3543503,
+    "ast_hash": "7f46aa4c6f6278c5ca82b3ccaafdf482",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/_shared/feature_acceptance_policy.py": {
+    "mtime": 1795205341.3778393,
+    "seen": 1795425153.3543537,
+    "ast_hash": "297b39a4dbcc474eab927b68fa6190ec",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/_shared/glb_container.py": {
+    "mtime": 1795205341.3778393,
+    "seen": 1795425153.3543565,
+    "ast_hash": "8bf4de963d012993e09e346f2077100e",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/_shared/image_hash.py": {
+    "mtime": 1795205341.3778393,
+    "seen": 1795425153.3543599,
+    "ast_hash": "e8f0e53744c005163e81d958a46b7430",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/_shared/jpeg.py": {
+    "mtime": 1795205341.3778393,
+    "seen": 1795425153.354363,
+    "ast_hash": "19a472c2d2ea0e28a2dc64ad240a4073",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/_shared/material_physics.py": {
+    "mtime": 1795205341.3793635,
+    "seen": 1795425153.3543656,
+    "ast_hash": "3f669f0e6c69113068a2057131af0bdf",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/_shared/pipeline_routing.py": {
+    "mtime": 1795205341.3793635,
+    "seen": 1795425153.3543684,
+    "ast_hash": "faf47788c7349e5fb18c27328990525b",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/_shared/scalp_field.py": {
+    "mtime": 1795205341.3793635,
+    "seen": 1795425153.3543713,
+    "ast_hash": "2bed65e09382c23ed63aa443de077f3e",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/_shared/sdf_primitives.py": {
+    "mtime": 1795205341.3803701,
+    "seen": 1795425153.3543742,
+    "ast_hash": "e0d5de727903e2bc1dcf0771ea5de969",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/_shared/spec_augmentation.py": {
+    "mtime": 1795205341.3803701,
+    "seen": 1795425153.354377,
+    "ast_hash": "ab071b983e49e8369ef46be56e7f7ea5",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/_shared/spec_search.py": {
+    "mtime": 1795205341.3813715,
+    "seen": 1795425153.3543794,
+    "ast_hash": "57c37b7180635d40efa7dc3dcb3639fe",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/_shared/spec_search_profiles.json": {
+    "mtime": 1795205341.3813715,
+    "seen": 1795425153.3543823,
+    "ast_hash": "9e91ec9008e61423e206107070d70be6",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/_shared/status_banner.py": {
+    "mtime": 1795205341.3813715,
+    "seen": 1795425153.3543854,
+    "ast_hash": "ce0b14ce13225149ff30ffc3831f9e1b",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/_shared/subdivision.py": {
+    "mtime": 1795205341.3823822,
+    "seen": 1795425153.3543885,
+    "ast_hash": "da2e5a8312137776894aa70490795dcf",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/_shared/targets.py": {
+    "mtime": 1795205341.3823822,
+    "seen": 1795425153.354391,
+    "ast_hash": "9bf4948519e5d1f3eb29cb4464939b09",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/_shared/vertex_paint.py": {
+    "mtime": 1795205341.3830547,
+    "seen": 1795425153.354394,
+    "ast_hash": "70dc93ad25b2684897c52e2f98e3cc42",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/_shared/workflow_state.py": {
+    "mtime": 1795205341.3835957,
+    "seen": 1795425153.3543968,
+    "ast_hash": "195efaf0d9cc47bd4a87c5da111a983f",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/materials/__init__.py": {
+    "mtime": 1795205341.3835957,
+    "seen": 1795425153.3544,
+    "ast_hash": "1fc9a72fad476ece790cb17f45a65875",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/materials/compatibility.py": {
+    "mtime": 1795205341.3841403,
+    "seen": 1795425153.3544025,
+    "ast_hash": "93fd4f87546c96c1d3427d9e8bb4342a",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/materials/reference.py": {
+    "mtime": 1795205341.3841403,
+    "seen": 1795425153.3544052,
+    "ast_hash": "428e685a5c48bb9f4d968779c0ead0af",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/next.py": {
+    "mtime": 1795205341.3846827,
+    "seen": 1795425153.354408,
+    "ast_hash": "741aa682e1ec1086e0c4ae026c91322d",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/report.py": {
+    "mtime": 1795205341.3852334,
+    "seen": 1795425153.3544116,
+    "ast_hash": "54740ac1468690f19edc61704196b7ad",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage1_intake/analyze_texture.py": {
+    "mtime": 1795205341.386325,
+    "seen": 1795425153.354414,
+    "ast_hash": "c43e5b097e81d83744605b74dedeaea6",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage1_intake/bind_detail_properties.py": {
+    "mtime": 1795205341.3868682,
+    "seen": 1795425153.354417,
+    "ast_hash": "e8c045972e3d41ef007fda0defa2a346",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage1_intake/build_detail_inventory.py": {
+    "mtime": 1795205341.3874483,
+    "seen": 1795425153.3544202,
+    "ast_hash": "38922a28b3221667805d78cd1de003c9",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage1_intake/camera_fitting_math.py": {
+    "mtime": 1795205341.3880236,
+    "seen": 1795425153.354423,
+    "ast_hash": "da7710f9fb261d2fa07ee4478f06c38b",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage1_intake/camera_fitting_solver.py": {
+    "mtime": 1795205341.3885286,
+    "seen": 1795425153.3544261,
+    "ast_hash": "73c6789e0f9251d98a27463bc5b0c727",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage1_intake/camera_fitting_types.py": {
+    "mtime": 1795205341.3890617,
+    "seen": 1795425153.3544295,
+    "ast_hash": "9fadb0070b38cd344cbff6bd15268780",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage1_intake/camera_image_helpers.py": {
+    "mtime": 1795205341.3895836,
+    "seen": 1795425153.3544333,
+    "ast_hash": "f07c5c61cbb73be2838678fecdda1c9e",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage1_intake/check_intake_correctness.py": {
+    "mtime": 1795205341.3901038,
+    "seen": 1795425153.3544362,
+    "ast_hash": "40fc1b0ecdfdd9de0c3e86cd48514291",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage1_intake/check_reference_admission.py": {
+    "mtime": 1795205341.3906515,
+    "seen": 1795425153.354439,
+    "ast_hash": "228b606be2e5e4c3d39e846a9fde5f92",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage1_intake/delight_albedo.py": {
+    "mtime": 1795205341.3911872,
+    "seen": 1795425153.354442,
+    "ast_hash": "f39c77a18fface505b9d9239afc4e4b4",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage1_intake/detect_reference_effects.py": {
+    "mtime": 1795205341.3911872,
+    "seen": 1795425153.3544452,
+    "ast_hash": "c5bd6b043ad52ccb9b5f6934d1ff4dee",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage1_intake/extract_gradient_stops.py": {
+    "mtime": 1795205341.3917973,
+    "seen": 1795425153.354448,
+    "ast_hash": "fc8ef75658fc292ad748418c13a4a3cf",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage1_intake/extract_hair_evidence.py": {
+    "mtime": 1795205341.3923266,
+    "seen": 1795425153.354451,
+    "ast_hash": "71101d3b95879868b2a66f46c890e009",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage1_intake/extract_landmarks.py": {
+    "mtime": 1795205341.3929718,
+    "seen": 1795425153.3544543,
+    "ast_hash": "449b051705a3965e03edf9f2e8da2cfe",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage1_intake/extract_part_color_recipe.py": {
+    "mtime": 1795205341.3935008,
+    "seen": 1795425153.3544571,
+    "ast_hash": "22ee73bea5f9e7c6a016ff9ea62feffe",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage1_intake/extract_pbr_evidence.py": {
+    "mtime": 1795205341.3940437,
+    "seen": 1795425153.35446,
+    "ast_hash": "988019f01acfee3b3bde8a78b5e141a2",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage1_intake/label_glb_nodes.py": {
+    "mtime": 1795205341.3945785,
+    "seen": 1795425153.3544626,
+    "ast_hash": "92911e8c9c7911ed98b1080e07573eaa",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage1_intake/material_region_analysis.py": {
+    "mtime": 1795205341.3951204,
+    "seen": 1795425153.3544657,
+    "ast_hash": "15483e5632c33bed8600540936d4fe4c",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage1_intake/probe_glb.py": {
+    "mtime": 1795205341.3956623,
+    "seen": 1795425153.3544688,
+    "ast_hash": "770bbad992518dbb5419201545af045c",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage1_intake/probe_image.py": {
+    "mtime": 1795205341.3962164,
+    "seen": 1795425153.3544717,
+    "ast_hash": "ef106fcbb2ca59d85a7eefb0a6ef2674",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage1_intake/run_vision_adapter.py": {
+    "mtime": 1795205341.3962164,
+    "seen": 1795425153.3544743,
+    "ast_hash": "4f5fc3c9e2b54ff637044a6c11296286",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage1_intake/search_specs.py": {
+    "mtime": 1795205341.3967533,
+    "seen": 1795425153.3544774,
+    "ast_hash": "d53d07610beece9b07b9aee99bae6301",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage1_intake/semantic_decomposition.py": {
+    "mtime": 1795205341.3973086,
+    "seen": 1795425153.3544798,
+    "ast_hash": "f89fc1e307f88fdcf6b005b3d73487bc",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage1_intake/solve_camera_pose.py": {
+    "mtime": 1795205341.3978243,
+    "seen": 1795425153.3544824,
+    "ast_hash": "c31855c6211f10765f01e36653e59789",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage2_spec/apply_material_analysis.py": {
+    "mtime": 1795205341.3983846,
+    "seen": 1795425153.3544853,
+    "ast_hash": "a289db72d1c7982dcdc2741af7ed2b9c",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage2_spec/derive_geometry.py": {
+    "mtime": 1795205341.398942,
+    "seen": 1795425153.3544884,
+    "ast_hash": "91f680e2f4e17b25337c5a1cafa0fd2d",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage2_spec/hair_profile.py": {
+    "mtime": 1795205341.3994646,
+    "seen": 1795425153.3544905,
+    "ast_hash": "681cececcf9cfdf511c4649a96ed4572",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage2_spec/humanoid_proportions.py": {
+    "mtime": 1795205341.3994646,
+    "seen": 1795425153.3544939,
+    "ast_hash": "943e0bc49c871f41394359ed77bfdf5e",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage2_spec/new_pre_spec_assessment.py": {
+    "mtime": 1795205341.4000504,
+    "seen": 1795425153.3544974,
+    "ast_hash": "ef99479a1ef7aae4c8a1a4f786b3173b",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage2_spec/new_sculpt_spec.py": {
+    "mtime": 1795205341.4021726,
+    "seen": 1795425153.3545005,
+    "ast_hash": "7f844098f3f84616aef22c2ea97c5963",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage2_spec/validate_sculpt_spec.py": {
+    "mtime": 1795205341.40418,
+    "seen": 1795425153.3545034,
+    "ast_hash": "b3f02edac12f3d3d7b6c7c56587004fb",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage3_build/bake_projected_texture.py": {
+    "mtime": 1795205341.4051845,
+    "seen": 1795425153.354506,
+    "ast_hash": "ffa47cc2df60937fba6d8a4a688048d9",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage3_build/decimate.py": {
+    "mtime": 1795205341.4051845,
+    "seen": 1795425153.3545089,
+    "ast_hash": "a19d66565bc1b3403afd9134247eae8b",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage3_build/emit_target.py": {
+    "mtime": 1795205341.4061816,
+    "seen": 1795425153.354512,
+    "ast_hash": "cc4e9f12aad497d91cc7667cf9e19541",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage3_build/generate_threejs_factory.py": {
+    "mtime": 1795205341.4084752,
+    "seen": 1795425153.3545146,
+    "ast_hash": "bc6d9044cd7afd0e623649cf989e3376",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage3_build/module_cache.py": {
+    "mtime": 1795205341.4084752,
+    "seen": 1795425153.3545177,
+    "ast_hash": "d92c9e6a5a7259ed3e8f839bf9d67590",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage3_build/morph_targets.py": {
+    "mtime": 1795205341.4099903,
+    "seen": 1795425153.3545203,
+    "ast_hash": "8858675a2f8292322be9397efedd8f45",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage3_build/orchestrate_passes.py": {
+    "mtime": 1795205341.4099903,
+    "seen": 1795425153.3545234,
+    "ast_hash": "8a427f2ce10ba0cffb6c221644b1fc9c",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage3_build/run_gates.py": {
+    "mtime": 1795205341.411304,
+    "seen": 1795425153.3545263,
+    "ast_hash": "92c694dee0fd4d636975bbec0fb3da1c",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage3_build/uv_unwrap.py": {
+    "mtime": 1795205341.411999,
+    "seen": 1795425153.3545291,
+    "ast_hash": "5c8708308fccefb6df2927152559b423",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage3_build/visual_hull.py": {
+    "mtime": 1795205341.4124968,
+    "seen": 1795425153.3545322,
+    "ast_hash": "7fd95c29bb6701f494962b2df67468b3",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage4_review/_fit_divine_eye.py": {
+    "mtime": 1795205341.4135325,
+    "seen": 1795425153.3545356,
+    "ast_hash": "45ba0efaa6494e61c1156a12d8f53952",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage4_review/append_review.py": {
+    "mtime": 1795205341.4135325,
+    "seen": 1795425153.3545387,
+    "ast_hash": "55c15e7bff398ef055f2cd645410a235",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage4_review/attachment_anchor.py": {
+    "mtime": 1795205341.4145422,
+    "seen": 1795425153.3545418,
+    "ast_hash": "a37f35263cd41cf443f96f251502c9cb",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage4_review/calibrate_eye.py": {
+    "mtime": 1795205341.4145422,
+    "seen": 1795425153.3545446,
+    "ast_hash": "86ca06f1f50fb913970685455729abe4",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage4_review/check_part_coverage.py": {
+    "mtime": 1795205341.4155426,
+    "seen": 1795425153.354548,
+    "ast_hash": "ae51feb315b4b29b824fc617d5704adb",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage4_review/compare_region_passes.py": {
+    "mtime": 1795205341.416049,
+    "seen": 1795425153.3545508,
+    "ast_hash": "1daac73e9a1da4482cf02f94fa65cf31",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage4_review/correction_loop.py": {
+    "mtime": 1795205341.4170568,
+    "seen": 1795425153.3545723,
+    "ast_hash": "f1b147ecfb9d97067bfc8594d984990d",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage4_review/diagnose_render.py": {
+    "mtime": 1795205341.4170568,
+    "seen": 1795425153.3545752,
+    "ast_hash": "52d95c8206ea30188dfe2d7e95d732c7",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage4_review/diagnose_render_multi_angle.py": {
+    "mtime": 1795205341.4180584,
+    "seen": 1795425153.3545785,
+    "ast_hash": "d89289cac14a78107218e3eef5d1f35b",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage4_review/divine_eye.py": {
+    "mtime": 1795205341.4180584,
+    "seen": 1795425153.3545818,
+    "ast_hash": "53f282c9adf5af6a7c8b108d9b8e6371",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage4_review/fit_params.py": {
+    "mtime": 1795205341.4195693,
+    "seen": 1795425153.3545847,
+    "ast_hash": "cee2aa7e376d8b551374d281bc8ec081",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage4_review/geometry_integrity.py": {
+    "mtime": 1795205341.4205787,
+    "seen": 1795425153.3545878,
+    "ast_hash": "057656820afe6169ef8e050f56c3bdd4",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage4_review/hair_gate.py": {
+    "mtime": 1795205341.4205787,
+    "seen": 1795425153.3545907,
+    "ast_hash": "27df54bc62c1b23da641aa556b828ec5",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage4_review/interior_difference.py": {
+    "mtime": 1795205341.4215794,
+    "seen": 1795425153.3545935,
+    "ast_hash": "b6b7747af925852d70ad7ee67f2c956f",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage4_review/joint_loops.py": {
+    "mtime": 1795205341.422578,
+    "seen": 1795425153.354597,
+    "ast_hash": "f82106612a5ca17a141593e1f28c1af8",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage4_review/make_comparison_sheet.py": {
+    "mtime": 1795205341.422578,
+    "seen": 1795425153.3546002,
+    "ast_hash": "8cfdd3d477862644e36f37e49447f013",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage4_review/material_comparator.py": {
+    "mtime": 1795205341.4235854,
+    "seen": 1795425153.354603,
+    "ast_hash": "4d3038b5482438a6657118345824ef39",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage4_review/material_feedback.py": {
+    "mtime": 1795205341.4235854,
+    "seen": 1795425153.3546062,
+    "ast_hash": "40e04a5cfb292155587372ff31c9b07b",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage4_review/material_gate.py": {
+    "mtime": 1795205341.4245868,
+    "seen": 1795425153.3546093,
+    "ast_hash": "2eb64d70b37fca86ff0f06a920022e89",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage4_review/material_views.py": {
+    "mtime": 1795205341.4245868,
+    "seen": 1795425153.3546116,
+    "ast_hash": "00460f6fdd6f685d3bffcb4bbea9c551",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage4_review/mesh_reference_compare.py": {
+    "mtime": 1795205341.4255865,
+    "seen": 1795425153.3546147,
+    "ast_hash": "6519f8597382590407858062e00af3f9",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage4_review/multi_pass.py": {
+    "mtime": 1795205341.4260933,
+    "seen": 1795425153.3546176,
+    "ast_hash": "be310b7939d71c65a9483cde533882b4",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage4_review/objectness.py": {
+    "mtime": 1795205341.4260933,
+    "seen": 1795425153.3546205,
+    "ast_hash": "8922ceef53964b92ebaf3f33692f46a9",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage4_review/pairwise_penetration.py": {
+    "mtime": 1795205341.4271028,
+    "seen": 1795425153.3546233,
+    "ast_hash": "7a5d1629de7dc84fc9050f7e279c03e3",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage4_review/per_feature.py": {
+    "mtime": 1795205341.4271028,
+    "seen": 1795425153.354626,
+    "ast_hash": "234f0152d26af69e1f3991c32d6a5499",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage4_review/render_bridge.py": {
+    "mtime": 1795205341.428104,
+    "seen": 1795425153.354629,
+    "ast_hash": "cdeb4aeebbdf758c40a9b3c5d2457a05",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage4_review/scalp_exposure.py": {
+    "mtime": 1795205341.428104,
+    "seen": 1795425153.3546317,
+    "ast_hash": "3b9d611fd7394ea03a69d43550d625bc",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage4_review/self_intersection.py": {
+    "mtime": 1795205341.4296114,
+    "seen": 1795425153.3546348,
+    "ast_hash": "292821f3a1cb6dd159ef38259f3acf0a",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage4_review/swept_arc_gate.py": {
+    "mtime": 1795205341.4296114,
+    "seen": 1795425153.3546376,
+    "ast_hash": "d92da9e827df2c4bc403b07e4d8621ce",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage4_review/turntable_gate.py": {
+    "mtime": 1795205341.4306202,
+    "seen": 1795425153.354641,
+    "ast_hash": "f412f1131ca95d17859fe90745a9d3f9",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage4_review/validate_render_profile.py": {
+    "mtime": 1795205341.4306202,
+    "seen": 1795425153.3546443,
+    "ast_hash": "ed583f6cfd1438e32442b781b041bcbd",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage4_review/vertex_region_gate.py": {
+    "mtime": 1795205341.431622,
+    "seen": 1795425153.3546479,
+    "ast_hash": "21de123c48187f9238a360a9cb661267",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage4_review/vlm_gate.py": {
+    "mtime": 1795205341.4326217,
+    "seen": 1795425153.35465,
+    "ast_hash": "1cf5060b3c126f67de81c3c161436f20",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage5_rig/__init__.py": {
+    "mtime": 1795205341.4341292,
+    "seen": 1795425153.3546538,
+    "ast_hash": "30379d8407cdfd01327c6386d6fe367c",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage5_rig/action_design.py": {
+    "mtime": 1795205341.4361393,
+    "seen": 1795425153.3546567,
+    "ast_hash": "10e5f01a6a532f64527a9d2f8652b76c",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage5_rig/clip_features.py": {
+    "mtime": 1795205341.4371383,
+    "seen": 1795425153.3546593,
+    "ast_hash": "a06c5d8b3bd5376d8c46d3a24d70f7c8",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage5_rig/emit_animation_runtime.py": {
+    "mtime": 1795205341.4381373,
+    "seen": 1795425153.354662,
+    "ast_hash": "2921137d0b229b6436781480baf3fade",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage5_rig/emit_rig.py": {
+    "mtime": 1795205341.4381373,
+    "seen": 1795425153.3546648,
+    "ast_hash": "77b807b42e18ea0ddeddc9b7e865aa03",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage5_rig/geodesic_skinning.py": {
+    "mtime": 1795205341.4381373,
+    "seen": 1795425153.3546677,
+    "ast_hash": "178c4ee6e72c21422022e4dda2411b89",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage5_rig/glb_rig_reference.py": {
+    "mtime": 1795205341.439644,
+    "seen": 1795425153.3546708,
+    "ast_hash": "416a80b633a9b34010f578b931ab51ce",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage5_rig/mesh_parity.py": {
+    "mtime": 1795205341.4411595,
+    "seen": 1795425153.3546739,
+    "ast_hash": "3c060d9784811c85711156217c71f5ee",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage5_rig/rig_gates.py": {
+    "mtime": 1795205341.442168,
+    "seen": 1795425153.354677,
+    "ast_hash": "cb4c8697ce13b2ae2fe07f5522528491",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage5_rig/rig_spec.py": {
+    "mtime": 1795205341.442168,
+    "seen": 1795425153.3546803,
+    "ast_hash": "1513d344e976a8bce69915ed4daa54ed",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage5_rig/skin_conditioning.py": {
+    "mtime": 1795205341.442168,
+    "seen": 1795425153.3546836,
+    "ast_hash": "3c7edbfca7fccfd51e5371ad34c31227",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage5_rig/validate_rig_payload.py": {
+    "mtime": 1795205341.4436743,
+    "seen": 1795425153.354687,
+    "ast_hash": "994dc7395e06c8f332f169eae0d041c9",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/state.py": {
+    "mtime": 1795205341.4436743,
+    "seen": 1795425153.3546898,
+    "ast_hash": "a48f825c51bd6ad61180a924e24d149c",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/fixtures/implicit_character_torso_limb.json": {
+    "mtime": 1795205341.444684,
+    "seen": 1795425153.3546927,
+    "ast_hash": "77ad9b1f4de11f41194dd672084be25b",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/fixtures/knife_review_scene.json": {
+    "mtime": 1795205341.4456859,
+    "seen": 1795425153.3546958,
+    "ast_hash": "e1e99c8aa2ce108d905487c58646b5b2",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/fixtures/reference_target_conformance_spec.json": {
+    "mtime": 1795205341.4466846,
+    "seen": 1795425153.354699,
+    "ast_hash": "d8c121fc5d438fcce16b660882956308",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/fixtures/reference_target_oracle.ts": {
+    "mtime": 1795205341.4476836,
+    "seen": 1795425153.3547018,
+    "ast_hash": "6474041824e5f6ac4c8122eb1fe61761",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/fixtures/stand_proud_hair_on_head.json": {
+    "mtime": 1795205341.44819,
+    "seen": 1795425153.3547049,
+    "ast_hash": "b676057246fb2d9c8363efc9516bb664",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/fixtures/subdivision_cage.json": {
+    "mtime": 1795205341.44819,
+    "seen": 1795425153.3547077,
+    "ast_hash": "fc28c41f4bdbf055edc801319459d760",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/fixtures/visual_hull_two_views.json": {
+    "mtime": 1795205341.44819,
+    "seen": 1795425153.3547108,
+    "ast_hash": "a1f9432466a9598e1bad522afc37b0d9",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/oracle_support.py": {
+    "mtime": 1795205341.4496956,
+    "seen": 1795425153.354714,
+    "ast_hash": "27a56bfa4422b43f628d78aef85b30e4",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/showcase_test_support.py": {
+    "mtime": 1795205341.4496956,
+    "seen": 1795425153.3547175,
+    "ast_hash": "347f3eb2080e08da11bbee58236cdcfc",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_action_design.py": {
+    "mtime": 1795205341.4507031,
+    "seen": 1795425153.354721,
+    "ast_hash": "eea137e7e3ead3c2f6e912b18a938126",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_albedo_color_space.py": {
+    "mtime": 1795205341.4507031,
+    "seen": 1795425153.354724,
+    "ast_hash": "c95aa875e0854048c54d912a75304f49",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_analyze_texture.py": {
+    "mtime": 1795205341.4517038,
+    "seen": 1795425153.3547273,
+    "ast_hash": "4d6be19dbfdb68275e329cbd0bebe6b6",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_attachment_anchor.py": {
+    "mtime": 1795205341.4527073,
+    "seen": 1795425153.3547306,
+    "ast_hash": "bf6bb7cee4e2c67f087beaf8f8b4f347",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_attachment_does_not_override_primitive.py": {
+    "mtime": 1795205341.4527073,
+    "seen": 1795425153.3547335,
+    "ast_hash": "1030db5990c58ed083f4fe1f12a9f715",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_calibrate_eye.py": {
+    "mtime": 1795205341.4542203,
+    "seen": 1795425153.3547363,
+    "ast_hash": "257601e727e7cd6e5faed858d0791412",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_camera_fitting.py": {
+    "mtime": 1795205341.4552329,
+    "seen": 1795425153.3547392,
+    "ast_hash": "160e9f4b0ca62303cda922372c9030a7",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_camera_fitting_cli.py": {
+    "mtime": 1795205341.4557846,
+    "seen": 1795425153.3547726,
+    "ast_hash": "0a24b6e793b420e56fd4c1eb96550bc6",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_camera_fitting_safety.py": {
+    "mtime": 1795205341.456292,
+    "seen": 1795425153.3547769,
+    "ast_hash": "e4ec7a106777f729a278e41dcd54c7f6",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_character_rig_derivation.py": {
+    "mtime": 1795205341.456292,
+    "seen": 1795425153.35478,
+    "ast_hash": "8248313fe7b6959e4953a86d5f7151c0",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_chirality.py": {
+    "mtime": 1795205341.4573016,
+    "seen": 1795425153.354783,
+    "ast_hash": "a88209d56569bb03dc500ca42d5b9e88",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_clip_features.py": {
+    "mtime": 1795205341.4583032,
+    "seen": 1795425153.3547862,
+    "ast_hash": "26e40d568ceac43ba79a424cb706a151",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_color_metrics.py": {
+    "mtime": 1795205341.4583032,
+    "seen": 1795425153.3547893,
+    "ast_hash": "cded02bc37d6e174619f6c9ce701460d",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_color_recipe.py": {
+    "mtime": 1795205341.4583032,
+    "seen": 1795425153.3547926,
+    "ast_hash": "83b613e719a255f4b309c260565aab38",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_correction_loop.py": {
+    "mtime": 1795205341.45981,
+    "seen": 1795425153.3547962,
+    "ast_hash": "646839dd3f75a110be4698a5d220de4a",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_decimation_wiring.py": {
+    "mtime": 1795205341.45981,
+    "seen": 1795425153.3548,
+    "ast_hash": "3a6d6695540ab032a969e1b59b3ff2bf",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_divine_eye.py": {
+    "mtime": 1795205341.45981,
+    "seen": 1795425153.3548026,
+    "ast_hash": "cd2ef66b0d0f51c117f17dd3d35c54b7",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_domain_registry.py": {
+    "mtime": 1795205341.4608173,
+    "seen": 1795425153.3548055,
+    "ast_hash": "4c783d14c23faccef977931d8cfec1f0",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_domain_spec_contract.py": {
+    "mtime": 1795205341.4608173,
+    "seen": 1795425153.3548086,
+    "ast_hash": "e243295222e04279d97cdac6c1825f62",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_emit_animation_runtime.py": {
+    "mtime": 1795205341.4617538,
+    "seen": 1795425153.3548114,
+    "ast_hash": "7a43ee8fcdbefb5e280e5ed2fdc83e6c",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_emit_animation_runtime_tsc_smoke.py": {
+    "mtime": 1795205341.4617538,
+    "seen": 1795425153.3548145,
+    "ast_hash": "fc79b06f8fbf53c47568fb2cc9c0b3c1",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_emit_target.py": {
+    "mtime": 1795205341.4627593,
+    "seen": 1795425153.3548176,
+    "ast_hash": "f525712e08fc9a9ff98c01d1da92c833",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_fit_params.py": {
+    "mtime": 1795205341.4627593,
+    "seen": 1795425153.3548205,
+    "ast_hash": "acec44a6400bb187861c07cb0d2ded9f",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_geodesic_skinning.py": {
+    "mtime": 1795205341.4637592,
+    "seen": 1795425153.3548236,
+    "ast_hash": "539f15a5326e8475211d9623c937d195",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_geometry_derivation.py": {
+    "mtime": 1795205341.4637592,
+    "seen": 1795425153.3548265,
+    "ast_hash": "6876f3b231bcf4cc1b856a762d49ff97",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_glb_reference.py": {
+    "mtime": 1795205341.4642646,
+    "seen": 1795425153.3548298,
+    "ast_hash": "2d2f391f46d7bf056825a9bd845b4545",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_glb_rig_reference.py": {
+    "mtime": 1795205341.4652703,
+    "seen": 1795425153.3548324,
+    "ast_hash": "8b54319396f9760ff560499b0c950463",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_gradient_stops.py": {
+    "mtime": 1795205341.4652703,
+    "seen": 1795425153.3548353,
+    "ast_hash": "b4cc0ba8d5dac7220350fcc0efc88853",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_hair_evidence.py": {
+    "mtime": 1795205341.4662738,
+    "seen": 1795425153.3548384,
+    "ast_hash": "a3ad8008f4a7d84d083fe0d3f11ccfca",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_hair_gate.py": {
+    "mtime": 1795205341.4662738,
+    "seen": 1795425153.354841,
+    "ast_hash": "5836b96bfa7e0049abfb5aea75c55de2",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_hair_material.py": {
+    "mtime": 1795205341.467273,
+    "seen": 1795425153.3548439,
+    "ast_hash": "1bcd14607e531541259b7974a9f78b0d",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_hair_profile.py": {
+    "mtime": 1795205341.467273,
+    "seen": 1795425153.3548467,
+    "ast_hash": "fbedb5cfe778bad31142de826e8c6b85",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_hierarchy_scale.py": {
+    "mtime": 1795205341.467273,
+    "seen": 1795425153.354849,
+    "ast_hash": "2bdb7fdf788a9b16167461c8321f93a7",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_hue_zone_parity.py": {
+    "mtime": 1795205341.4683003,
+    "seen": 1795425153.3548515,
+    "ast_hash": "d40478a425402e3500ef07940449b0a1",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_humanoid_proportions.py": {
+    "mtime": 1795205341.4683003,
+    "seen": 1795425153.3548543,
+    "ast_hash": "3fc5d490ed27a1cc4fdfc38eabf48034",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_humanoid_silhouette_profile.py": {
+    "mtime": 1795205341.469811,
+    "seen": 1795425153.3548577,
+    "ast_hash": "89d10cd03c8bbaa3b25a7710b7ccb610",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_intake_binding.py": {
+    "mtime": 1795205341.4714818,
+    "seen": 1795425153.3548605,
+    "ast_hash": "0783e2560cbdfabdb76dc1195acec2fd",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_interior_difference.py": {
+    "mtime": 1795205341.4714818,
+    "seen": 1795425153.3548636,
+    "ast_hash": "2b7727d2461f9ff5c01e26310fa98bf6",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_issue_triage.py": {
+    "mtime": 1795205341.4724905,
+    "seen": 1795425153.3548667,
+    "ast_hash": "ee06b93b7b265fb9a10d8a088dc6545b",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_joint_admission_gate.py": {
+    "mtime": 1795205341.4724905,
+    "seen": 1795425153.35487,
+    "ast_hash": "bd511dc8b96a3a68dbc496bad36a6819",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_joint_loops.py": {
+    "mtime": 1795205341.473491,
+    "seen": 1795425153.3548722,
+    "ast_hash": "a2a9d5d87c12abfdda6cc69d055292ed",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_jpeg.py": {
+    "mtime": 1795205341.4749918,
+    "seen": 1795425153.3548753,
+    "ast_hash": "e22370a8b2a9a1e5cfb445a8c0aa3eaf",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_label_glb_nodes.py": {
+    "mtime": 1795205341.4759915,
+    "seen": 1795425153.3548784,
+    "ast_hash": "7f0a3210c74f5f84fc29e817fef9b0d2",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_material_physics.py": {
+    "mtime": 1795205341.4759915,
+    "seen": 1795425153.354881,
+    "ast_hash": "f2a250199fb69598e375a13329e35071",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_material_pipeline.py": {
+    "mtime": 1795205341.4769914,
+    "seen": 1795425153.354884,
+    "ast_hash": "145fc89579dbbfb3930949700921e47b",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_material_reference.py": {
+    "mtime": 1795205341.4769914,
+    "seen": 1795425153.354887,
+    "ast_hash": "b993bd905e38dcd8e9eeff59934fbdff",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_mesh_parity.py": {
+    "mtime": 1795205341.4779932,
+    "seen": 1795425153.3548906,
+    "ast_hash": "e308f548eff58c8556af380ae5eeca23",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_module_cache.py": {
+    "mtime": 1795205341.4779932,
+    "seen": 1795425153.3548932,
+    "ast_hash": "ce8edee6bb1c8990cfe2d5a3ca54dfff",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_multi_angle.py": {
+    "mtime": 1795205341.4779932,
+    "seen": 1795425153.3548963,
+    "ast_hash": "75fcf57277438841a11f3993a8458525",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_objectness.py": {
+    "mtime": 1795205341.4795032,
+    "seen": 1795425153.3548996,
+    "ast_hash": "743028424cf0d5921e7253704cb6429a",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_optional_vision_tooling.py": {
+    "mtime": 1795205341.4795032,
+    "seen": 1795425153.354903,
+    "ast_hash": "928193d3505f6924c740b4e32862414a",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_part_collision_morphs_lod.py": {
+    "mtime": 1795205341.4805138,
+    "seen": 1795425153.3549063,
+    "ast_hash": "42b7fb337aa32f6e26e802d735f28e0a",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_pass_identifier_authority.py": {
+    "mtime": 1795205341.4814403,
+    "seen": 1795425153.3549092,
+    "ast_hash": "0f080d09de9b879365fd59f2faf5af01",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_per_feature.py": {
+    "mtime": 1795205341.4814403,
+    "seen": 1795425153.3549125,
+    "ast_hash": "82483204d2527e5c1fe3fce5d9e3a1be",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_pipeline.py": {
+    "mtime": 1795205341.482448,
+    "seen": 1795425153.3549159,
+    "ast_hash": "86bf5b193c4efc0b4b714da9adfa1c8f",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_pipeline_routing.py": {
+    "mtime": 1795205341.482448,
+    "seen": 1795425153.3549192,
+    "ast_hash": "6e2740a57c45972b9ddacb71b1fc422f",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_primitive_watertightness.py": {
+    "mtime": 1795205341.483449,
+    "seen": 1795425153.3549218,
+    "ast_hash": "2e81e768ef48c3eca5ebf78c14058b3b",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_recessed_and_open_shell_topology.py": {
+    "mtime": 1795205341.4839556,
+    "seen": 1795425153.3549242,
+    "ast_hash": "56e7e6442db54442567e12838c6d6373",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_reference_admission.py": {
+    "mtime": 1795205341.484964,
+    "seen": 1795425153.354927,
+    "ast_hash": "43b609e78e0eb5cf0c39bb30fd0f44a7",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_reference_effects.py": {
+    "mtime": 1795205341.4859662,
+    "seen": 1795425153.3549302,
+    "ast_hash": "d1bbdb8c1ff68100d44be8d430a297a9",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_region_and_arc_gates.py": {
+    "mtime": 1795205341.4869647,
+    "seen": 1795425153.354933,
+    "ast_hash": "ba651f330c868768903d5e989a615c67",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_release_metadata.py": {
+    "mtime": 1795205341.4884737,
+    "seen": 1795425153.3549361,
+    "ast_hash": "d2226aa78bd46f9f6ad5407bb8b8c6d9",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_render_bridge.py": {
+    "mtime": 1795205341.4884737,
+    "seen": 1795425153.354939,
+    "ast_hash": "1fcc440a9f6f71a7ae765a160dcaadcf",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_render_profile.py": {
+    "mtime": 1795205341.4894836,
+    "seen": 1795425153.3549418,
+    "ast_hash": "a0730bb3a1721e7bd89f524b58875268",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_repetition_system_scale.py": {
+    "mtime": 1795205341.4899905,
+    "seen": 1795425153.354945,
+    "ast_hash": "de7b0f56fc4c3b1e98095355453d084a",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_rig_gates.py": {
+    "mtime": 1795205341.491,
+    "seen": 1795425153.3549478,
+    "ast_hash": "f592df22464c906ffd50814b2934ad71",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_rig_hierarchy_emission.py": {
+    "mtime": 1795205341.491,
+    "seen": 1795425153.3549504,
+    "ast_hash": "ce3076bb6b254a31ddefdb4a4b7479e6",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_rig_milestone0.py": {
+    "mtime": 1795205341.4925075,
+    "seen": 1795425153.3549533,
+    "ast_hash": "893976d5a25446b75d20b9d1d04d266a",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_rig_workflow_steps.py": {
+    "mtime": 1795205341.4925075,
+    "seen": 1795425153.3549557,
+    "ast_hash": "1c6e624b8afc2580b8f98da773e4a727",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_rigid_hair_binding.py": {
+    "mtime": 1795205341.4935174,
+    "seen": 1795425153.3549585,
+    "ast_hash": "6d4a01428115f85e639045f54363207a",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_run_gates.py": {
+    "mtime": 1795205341.4940228,
+    "seen": 1795425153.3549614,
+    "ast_hash": "561aa1521fb907b65fd260ef5271aeb2",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_scalp_exposure.py": {
+    "mtime": 1795205341.4940228,
+    "seen": 1795425153.354964,
+    "ast_hash": "52f5caa508feb2e892d271ba8359e5e5",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_scalp_field.py": {
+    "mtime": 1795205341.495031,
+    "seen": 1795425153.3549674,
+    "ast_hash": "d16ab201f9ddc5798825d13d8e3eb44e",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_sculpt_echo_failure_matrix.py": {
+    "mtime": 1795205341.496031,
+    "seen": 1795425153.3549695,
+    "ast_hash": "dc528ff45ee14dbb2d0823dce85eaa98",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_sculpt_echo_roundtrip.py": {
+    "mtime": 1795205341.496031,
+    "seen": 1795425153.3549724,
+    "ast_hash": "8e7f1bd512ce6058769f6192f4a11fea",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_sdf_primitives.py": {
+    "mtime": 1795205341.497538,
+    "seen": 1795425153.3549752,
+    "ast_hash": "93c50a9198f6c66b2d15c0a90e6aec37",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_search_specs.py": {
+    "mtime": 1795205341.498548,
+    "seen": 1795425153.354978,
+    "ast_hash": "61d431bcd96a7af2b735b6fda5dcfee9",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_self_intersection.py": {
+    "mtime": 1795205341.498548,
+    "seen": 1795425153.35498,
+    "ast_hash": "d5eaeb8e452b51cb28a3ab56ac4a76c4",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_showcase_tsc_smoke.py": {
+    "mtime": 1795205341.4995463,
+    "seen": 1795425153.3549824,
+    "ast_hash": "382844117023c74ed16b1386b45d49bc",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_skin_conditioning.py": {
+    "mtime": 1795205341.5000515,
+    "seen": 1795425153.354985,
+    "ast_hash": "1557c1193c7651386cb68da9b00b0346",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_specular_wash.py": {
+    "mtime": 1795205341.5000515,
+    "seen": 1795425153.3549874,
+    "ast_hash": "0261b2d16264d1f5e618119054435bb7",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_stand_proud.py": {
+    "mtime": 1795205341.5010598,
+    "seen": 1795425153.35499,
+    "ast_hash": "4559cdb44cb2594237c7972886ce0593",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_stand_proud_emission.py": {
+    "mtime": 1795205341.506066,
+    "seen": 1795425153.3549929,
+    "ast_hash": "4fa6126e77ea80c74531f6e024688a45",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_structure_gates.py": {
+    "mtime": 1795205341.506816,
+    "seen": 1795425153.354996,
+    "ast_hash": "139e8c3ab075cc033556401727df4123",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_subdivision.py": {
+    "mtime": 1795205341.5078235,
+    "seen": 1795425153.3549986,
+    "ast_hash": "2b194f705bb1e05f3759ae717c8969eb",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_suite_integrity.py": {
+    "mtime": 1795205341.5086086,
+    "seen": 1795425153.3550014,
+    "ast_hash": "98617af447e8d344cdd8871af688f613",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_tapered_sweep.py": {
+    "mtime": 1795205341.509118,
+    "seen": 1795425153.3550043,
+    "ast_hash": "cc1db3543b552a2db8467b8090667712",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_target_reference_conformance.py": {
+    "mtime": 1795205341.5096474,
+    "seen": 1795425153.3550076,
+    "ast_hash": "3f09d92212dcbc7d72075149f22f2d7d",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_targets.py": {
+    "mtime": 1795205341.516238,
+    "seen": 1795425153.3550107,
+    "ast_hash": "a54b777507940a044a29e28df50da014",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_tessellation_tiers.py": {
+    "mtime": 1795205341.5172462,
+    "seen": 1795425153.3550134,
+    "ast_hash": "d67e7bbc91c75cf1b9c3e1cc645d6290",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_textureless_material.py": {
+    "mtime": 1795205341.5172462,
+    "seen": 1795425153.3550158,
+    "ast_hash": "7446f557c418512cff14219debfcef4d",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_tier1_diagnostics.py": {
+    "mtime": 1795205341.5197597,
+    "seen": 1795425153.3550189,
+    "ast_hash": "45825449c72006af758b5cdd76f6ec00",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_turntable_gate.py": {
+    "mtime": 1795205341.52077,
+    "seen": 1795425153.3550217,
+    "ast_hash": "02daae6d90f2b7893a42a981e895fd00",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_uv_unwrap.py": {
+    "mtime": 1795205341.52077,
+    "seen": 1795425153.3550243,
+    "ast_hash": "6b5d0bff1d0e82abbafe3adba8cae6e5",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_validate_rig_payload.py": {
+    "mtime": 1795205341.5217688,
+    "seen": 1795425153.3550267,
+    "ast_hash": "c87c69c8d93c461c5a1fbd42044f7dba",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_vertex_paint.py": {
+    "mtime": 1795205341.5217688,
+    "seen": 1795425153.3550296,
+    "ast_hash": "bd2ad2bb591f4f6a59032f091246724d",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_visual_hull.py": {
+    "mtime": 1795205341.5227692,
+    "seen": 1795425153.355032,
+    "ast_hash": "280b7e8c0f749653f16dd14a1cccc642",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_visual_hull_carve.py": {
+    "mtime": 1795205341.5227692,
+    "seen": 1795425153.3550348,
+    "ast_hash": "af29ac6ca71ac327d5ec0632df153663",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_vlm_gate.py": {
+    "mtime": 1795205341.5227692,
+    "seen": 1795425153.3550372,
+    "ast_hash": "46d5e58b662f89ad0eecf0b148cdea46",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_workflow_state.py": {
+    "mtime": 1795205341.5242767,
+    "seen": 1795425153.3550398,
+    "ast_hash": "83fe66a549c94ae30779e0546f4a411e",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/tests/test_ws6_docs.py": {
+    "mtime": 1795205341.5242767,
+    "seen": 1795425153.3550422,
+    "ast_hash": "bfebad085a811812004a80a580294e70",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/grimoire/character/threejs_hair_parameter_contract.json": {
+    "mtime": 1795205341.5287998,
+    "seen": 1795425153.355045,
+    "ast_hash": "4e52c693c0210a37dd9b553a9ac9ddbf",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/integrations/glb_character_pipeline/build-character.sh": {
+    "mtime": 1795205341.5416825,
+    "seen": 1795425153.355048,
+    "ast_hash": "ef4fa44706e552ad6eadaf0eb9d394a4",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/integrations/glb_character_pipeline/configs/girl-character-section-regions.json": {
+    "mtime": 1795205341.5429103,
+    "seen": 1795425153.3550508,
+    "ast_hash": "4c2f65f24d73443ba1260e38b61403dc",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/integrations/glb_character_pipeline/configs/girl-character-spokes.json": {
+    "mtime": 1795205341.5429103,
+    "seen": 1795425153.3550534,
+    "ast_hash": "f4bdcc813180fe50f734f1b61f104603",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/integrations/glb_character_pipeline/node/capture-character.mjs": {
+    "mtime": 1795205341.544519,
+    "seen": 1795425153.3550565,
+    "ast_hash": "28f3532d89229f7efec4572146360533",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/integrations/glb_character_pipeline/node/compare_views.mjs": {
+    "mtime": 1795205341.545054,
+    "seen": 1795425153.3550591,
+    "ast_hash": "0a5a5da389ef466e0926720b2722b106",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/integrations/glb_character_pipeline/node/emit_surface_module.mjs": {
+    "mtime": 1795205341.545612,
+    "seen": 1795425153.355062,
+    "ast_hash": "ab7f578bb342a1456a0ad2884893a1a9",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/integrations/glb_character_pipeline/node/encode_surfaces.mjs": {
+    "mtime": 1795205341.5461452,
+    "seen": 1795425153.3550646,
+    "ast_hash": "83cb4ddca13eddd35257e36409aa9dc5",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/integrations/glb_character_pipeline/node/package.json": {
+    "mtime": 1795205341.5466943,
+    "seen": 1795425153.3550673,
+    "ast_hash": "801ba01c4524d40970426e19d9fc46c6",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/integrations/glb_character_pipeline/node/verify_cells.mjs": {
+    "mtime": 1795205341.547488,
+    "seen": 1795425153.3550699,
+    "ast_hash": "0c63a1bdfa9816d94760a10941f71f9b",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/integrations/glb_character_pipeline/node/verify_roundtrip.mjs": {
+    "mtime": 1795205341.5480125,
+    "seen": 1795425153.3550725,
+    "ast_hash": "545bddd13dd678424691a15fd6100e4a",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/integrations/glb_character_pipeline/pyproject.toml": {
+    "mtime": 1795205341.5484636,
+    "seen": 1795425153.3550756,
+    "ast_hash": "2f052d082873d3ab058588e58f5657b0",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/integrations/glb_character_pipeline/python/bake_atlas_uvs.py": {
+    "mtime": 1795205341.5495045,
+    "seen": 1795425153.3550785,
+    "ast_hash": "866ed2789aad94f4bc9c9ac87fa00b4b",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/integrations/glb_character_pipeline/python/build_cross_sections.py": {
+    "mtime": 1795205341.550258,
+    "seen": 1795425153.355082,
+    "ast_hash": "0d54dc36d45c94559d11a5f77f07a486",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/integrations/glb_character_pipeline/python/build_head_surface.py": {
+    "mtime": 1795205341.5508132,
+    "seen": 1795425153.355085,
+    "ast_hash": "af15bec386d0b767583ab789e7e49c1c",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/integrations/glb_character_pipeline/python/export_sdf_surfaces.py": {
+    "mtime": 1795205341.551357,
+    "seen": 1795425153.3550875,
+    "ast_hash": "14a69aef563dd4b7eb0d70f238ea6fac",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/integrations/glb_character_pipeline/python/measure_density_convergence.py": {
+    "mtime": 1795205341.552445,
+    "seen": 1795425153.355091,
+    "ast_hash": "36cbd83f76c86d130bd46a0432dd05bf",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/integrations/glb_character_pipeline/python/slice_node.py": {
+    "mtime": 1795205341.5539637,
+    "seen": 1795425153.3550944,
+    "ast_hash": "ce94c6ed92ea560da38cec925fe3313f",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/integrations/mesh3d/generate_reference_mesh.py": {
+    "mtime": 1795205341.5561473,
+    "seen": 1795425153.3550973,
+    "ast_hash": "e1aa1efa7e92a181a507d6bbc0171526",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/integrations/vision/pyproject.toml": {
+    "mtime": 1795205341.55714,
+    "seen": 1795425153.3551,
+    "ast_hash": "da654fafab9bd98341672b2852c58941",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/integrations/vision/reference_vision.py": {
+    "mtime": 1795205341.55714,
+    "seen": 1795425153.3551028,
+    "ast_hash": "8fe06a28234371c54623ddf8faf90efa",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/mobo_sculpt_spec.json": {
+    "mtime": 1795205341.5581474,
+    "seen": 1795425153.3551064,
+    "ast_hash": "c44d2b9cdd93623af43c847345d690a6",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/package.json": {
+    "mtime": 1795205341.5596535,
+    "seen": 1795425153.3551092,
+    "ast_hash": "877d9d7fb946ad9cf70fa8cdde45c98a",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/pc_case_sculpt_spec.json": {
+    "mtime": 1795205341.560179,
+    "seen": 1795425153.3551116,
+    "ast_hash": "899dfd5e7111a82910447e2ea0affd32",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/scripts/capture_threejs_playwright.py": {
+    "mtime": 1795205341.5608282,
+    "seen": 1795425153.355115,
+    "ast_hash": "4bef747de3a8be374c3e83cc0124ea1b",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/scripts/character_audit.sh": {
+    "mtime": 1795205341.5608282,
+    "seen": 1795425153.3551183,
+    "ast_hash": "93459fb831d9f0305253a5c644c6ce80",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/scripts/ci/md_links.py": {
+    "mtime": 1795205341.5623565,
+    "seen": 1795425153.3551219,
+    "ast_hash": "1e588b826fe4668c3ebacd3496923f41",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/scripts/ci/md_tables.py": {
+    "mtime": 1795205341.5623565,
+    "seen": 1795425153.355125,
+    "ast_hash": "dded4d18179446e8a5e87b033be92b8e",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/scripts/ci/mdcommon.py": {
+    "mtime": 1795205341.5623565,
+    "seen": 1795425153.3551283,
+    "ast_hash": "88606b06eee4dd091f4b02cd6eaae53a",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/scripts/ci/plugin_table.py": {
+    "mtime": 1795205341.5623565,
+    "seen": 1795425153.3551307,
+    "ast_hash": "6a3e2bfe61654762d7caa0aaca531b72",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/scripts/ci/pr_scope.py": {
+    "mtime": 1795205341.5623565,
+    "seen": 1795425153.3551338,
+    "ast_hash": "2d54d3718bd6f9140dcfb7a56a2d3772",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/scripts/ci/showcase_table.py": {
+    "mtime": 1795205341.563885,
+    "seen": 1795425153.3551364,
+    "ast_hash": "ca1e074f1546c86e97429f1b5ee525da",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/scripts/ci/skill-budget.json": {
+    "mtime": 1795205341.563885,
+    "seen": 1795425153.355139,
+    "ast_hash": "72b147a583bbd04c1306e21d902ed3ce",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/scripts/ci/skill_budget.py": {
+    "mtime": 1795205341.5648947,
+    "seen": 1795425153.3551414,
+    "ast_hash": "9c0e6671a37e2becadfb8e21c5a93c06",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/scripts/ci/tests/test_ci_scripts.py": {
+    "mtime": 1795205341.5648947,
+    "seen": 1795425153.3551438,
+    "ast_hash": "cc417edefaccefe03557963d7d371346",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/scripts/issue_triage.py": {
+    "mtime": 1795205341.5658937,
+    "seen": 1795425153.3551464,
+    "ast_hash": "6cc25408b158988a852e26d33d6d6ab6",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/scripts/release_metadata.py": {
+    "mtime": 1795205341.5658937,
+    "seen": 1795425153.3551493,
+    "ast_hash": "1358c58e14e8f8b398040e7be613c181",
+    "semantic_hash": ""
+  },
+  ".agents/skills/reanimate/scripts/capture.ts": {
+    "mtime": 1795205341.572375,
+    "seen": 1795425153.3551528,
+    "ast_hash": "e771e8191ff474a5309b3e96a68566d5",
+    "semantic_hash": ""
+  },
+  ".agents/skills/reanimate/scripts/compare.ts": {
+    "mtime": 1795205341.572375,
+    "seen": 1795425153.3551557,
+    "ast_hash": "3da5ba9dc6700a0351d9f15b6e66690d",
+    "semantic_hash": ""
+  },
+  ".agents/skills/reanimate/scripts/easing.ts": {
+    "mtime": 1795205341.572916,
+    "seen": 1795425153.3551583,
+    "ast_hash": "485d529d1e88a67b5c47471daee5c38a",
+    "semantic_hash": ""
+  },
+  ".agents/skills/reanimate/scripts/frames.ts": {
+    "mtime": 1795205341.572916,
+    "seen": 1795425153.3551607,
+    "ast_hash": "5227ba4d70f92cd68f0ab6c0b4ac2a2b",
+    "semantic_hash": ""
+  },
+  ".agents/skills/reanimate/scripts/gl.ts": {
+    "mtime": 1795205341.573461,
+    "seen": 1795425153.3551633,
+    "ast_hash": "6c2525cf2eb30bfcf6640bff7ba249b4",
+    "semantic_hash": ""
+  },
+  ".agents/skills/reanimate/scripts/inpage/clock.js": {
+    "mtime": 1795205341.5740008,
+    "seen": 1795425153.3551662,
+    "ast_hash": "27323ead9aed81af954fdffabfbe9822",
+    "semantic_hash": ""
+  },
+  ".agents/skills/reanimate/scripts/inpage/gl-hooks.js": {
+    "mtime": 1795205341.5745432,
+    "seen": 1795425153.35517,
+    "ast_hash": "e9d25c6f8d9c414099c44741412cd716",
+    "semantic_hash": ""
+  },
+  ".agents/skills/reanimate/scripts/lib.ts": {
+    "mtime": 1795205341.5750818,
+    "seen": 1795425153.3551726,
+    "ast_hash": "85ab656657cd5eca8d3758f87891d1a6",
+    "semantic_hash": ""
+  },
+  ".agents/skills/reanimate/scripts/package.json": {
+    "mtime": 1795205341.5750818,
+    "seen": 1795425153.3551908,
+    "ast_hash": "69ba01f1c2ecbe4800572041c1e10326",
+    "semantic_hash": ""
+  },
+  ".agents/skills/reanimate/scripts/setup.sh": {
+    "mtime": 1795205341.5756257,
+    "seen": 1795425153.3551936,
+    "ast_hash": "467691f94e8a26b123c7157719281f37",
+    "semantic_hash": ""
+  },
+  ".agents/skills/reanimate/scripts/sheet.ts": {
+    "mtime": 1795205341.5756257,
+    "seen": 1795425153.355222,
+    "ast_hash": "85aed72be6f373b848caa2564d378701",
+    "semantic_hash": ""
+  },
+  "backend/contentStore.js": {
+    "mtime": 1795205341.576707,
+    "seen": 1795425153.3562806,
+    "ast_hash": "00ae48e640b7002e51124309f763379c",
+    "semantic_hash": ""
+  },
+  "backend/data/team-members.json": {
+    "mtime": 1795467846.326507,
+    "seen": 1795467980.327994,
+    "ast_hash": "679420235dad2edd5449061dd4bc357e",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Common/AnimatedHeading.jsx": {
+    "mtime": 1795356631.8616805,
+    "seen": 1795425153.3649397,
+    "ast_hash": "da0b75478b70dd55962b78ce8676d67f",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Common/RevealHeading.jsx": {
+    "mtime": 1795205341.7105675,
+    "seen": 1795425153.36495,
+    "ast_hash": "8795425ccc98961b879aa240aa59653a",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Learn/articleHotspots.js": {
+    "mtime": 1795207111.9420538,
+    "seen": 1795425153.367895,
+    "ast_hash": "d294ea672008b8207dbc2fb0a7bedb84",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Navigation/DiscreetFullscreenToggle.jsx": {
+    "mtime": 1795361219.1739378,
+    "seen": 1795425153.3687792,
+    "ast_hash": "a8fa1f762a4c5a2e179c0d78d0cdb875",
+    "semantic_hash": ""
+  },
+  ".agents/rules/dev_protocol.md": {
+    "mtime": 1792864807.8923836,
+    "seen": 1795425153.372676,
+    "ast_hash": "162a73b73e23c553e210a8bea40e0e67",
+    "semantic_hash": ""
+  },
+  ".agents/skills/antislop-code/SKILL.md": {
+    "mtime": 1795205341.3360772,
+    "seen": 1795425153.3726785,
+    "ast_hash": "0fc5a2518c404baee981e3cec2d131f7",
+    "semantic_hash": ""
+  },
+  ".agents/skills/antislop-copywriting/SKILL.md": {
+    "mtime": 1795205341.3371806,
+    "seen": 1795425153.372681,
+    "ast_hash": "35c54e34c1d99c848658e7eaf0d95693",
+    "semantic_hash": ""
+  },
+  ".agents/skills/antislop-human/SKILL.md": {
+    "mtime": 1795205341.338264,
+    "seen": 1795425153.3726828,
+    "ast_hash": "bdaca9509f62c5c8b98e6b3e0e26bd7c",
+    "semantic_hash": ""
+  },
+  ".agents/skills/antislop-human/references/A11Y-PATTERNS.md": {
+    "mtime": 1795205341.33932,
+    "seen": 1795425153.3726842,
+    "ast_hash": "4e2c9dc47e69444057900c2cb87d8fc8",
+    "semantic_hash": ""
+  },
+  ".agents/skills/antislop-human/references/WCAG.md": {
+    "mtime": 1795205341.3398373,
+    "seen": 1795425153.3726866,
+    "ast_hash": "881b885fa0ffbecddb0198334b020866",
+    "semantic_hash": ""
+  },
+  ".agents/skills/antislop-layoutmobile/SKILL.md": {
+    "mtime": 1795205341.3403773,
+    "seen": 1795425153.3726885,
+    "ast_hash": "5da7f52e8a7d9105cdb37f471c223eb2",
+    "semantic_hash": ""
+  },
+  ".agents/skills/antislop-ui/SKILL.md": {
+    "mtime": 1795205341.341434,
+    "seen": 1795425153.3726912,
+    "ast_hash": "ca8689a1531cf367ca4cfe1e57110b8a",
+    "semantic_hash": ""
+  },
+  ".agents/skills/antislop-ui/references/CORE-WEB-VITALS.md": {
+    "mtime": 1795205341.3419683,
+    "seen": 1795425153.3726928,
+    "ast_hash": "a266f99c9c08036eed19675726aa3d72",
+    "semantic_hash": ""
+  },
+  ".agents/skills/antislop-ui/references/WEB-BASELINE.md": {
+    "mtime": 1795205341.3425038,
+    "seen": 1795425153.3726945,
+    "ast_hash": "fb61b3f738d53396716073cc1d2b747d",
+    "semantic_hash": ""
+  },
+  ".agents/skills/antislop/SKILL.md": {
+    "mtime": 1795205341.3430388,
+    "seen": 1795425153.3726964,
+    "ast_hash": "9e4350f7de78fca9e6e0229c368ed6ac",
+    "semantic_hash": ""
+  },
+  ".agents/skills/deploy/SKILL.md": {
+    "mtime": 1795205341.3440905,
+    "seen": 1795425153.372698,
+    "ast_hash": "5bf31cab07b3c649b4ad39002f3c9d5b",
+    "semantic_hash": ""
+  },
+  ".agents/skills/eval/SKILL.md": {
+    "mtime": 1795032904.528235,
+    "seen": 1795425153.3727,
+    "ast_hash": "bb667dd848434ad91cc9d07017ae73be",
+    "semantic_hash": ""
+  },
+  ".agents/skills/eval/resources/BuildLab_ISO_25010_Evaluation_Form_Updated.md": {
+    "mtime": 1795032870.907801,
+    "seen": 1795425153.3727021,
+    "ast_hash": "d4ca5d0ed0597619df50a0d1ddb0fa4d",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/.github/pull_request_template.md": {
+    "mtime": 1795205341.3456328,
+    "seen": 1795425153.3727038,
+    "ast_hash": "dba41c324221c2e80554c31c1c498027",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/CHANGELOG.md": {
+    "mtime": 1795205341.3496554,
+    "seen": 1795425153.3727052,
+    "ast_hash": "ec294daf20f689a5d4e08354414b5dac",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/CLAUDE.md": {
+    "mtime": 1795205341.3496554,
+    "seen": 1795425153.3727071,
+    "ast_hash": "1436fff30ff641f7a044bcc81c50274c",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/CONTRIBUTING.md": {
+    "mtime": 1795205341.3506622,
+    "seen": 1795425153.3727088,
+    "ast_hash": "afe246a8f09e9ae5125b0f84cc187348",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/LAB-FINDINGS.md": {
+    "mtime": 1795205341.3506622,
+    "seen": 1795425153.3727105,
+    "ast_hash": "2d57872c2e29e2d8744a285690d3aa1a",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/README.md": {
+    "mtime": 1795205341.3546631,
+    "seen": 1795425153.3727126,
+    "ast_hash": "ef39a1cec7d6f2d652749412439093d9",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/ROADMAP.md": {
+    "mtime": 1795205341.3546631,
+    "seen": 1795425153.372714,
+    "ast_hash": "c1c63025c57d45178b1c1ceec8bf62ab",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/SKILL.md": {
+    "mtime": 1795205341.3556643,
+    "seen": 1795425153.3727155,
+    "ast_hash": "b9c34eec70a471f6c67b0d3261aaa3d0",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/docs/ARCHITECTURE.md": {
+    "mtime": 1795205341.3607087,
+    "seen": 1795425153.3727171,
+    "ast_hash": "022c22d3f7e26ad0fff94b1f8fe527f4",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/docs/EMISSION_TARGET_SOCKET.md": {
+    "mtime": 1795205341.3607087,
+    "seen": 1795425153.3727186,
+    "ast_hash": "3fc39d7f15bbff0111b35d26f58c2f64",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/docs/GLB_ANIMATED_CHARACTER_PROMPT.md": {
+    "mtime": 1795205341.3615787,
+    "seen": 1795425153.3727202,
+    "ast_hash": "d3a1eadb9f94c87e4558555e7ac39f8a",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/docs/GLB_CHARACTER_ANIMATION_PROMPT.md": {
+    "mtime": 1795205341.3615787,
+    "seen": 1795425153.3727214,
+    "ast_hash": "53853db02593a30a61dd81d368a86841",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/docs/GLB_CHARACTER_POLISH_PROMPT.md": {
+    "mtime": 1795205341.3621817,
+    "seen": 1795425153.3727229,
+    "ast_hash": "4e856114f4804d65ef5ca2fe99d3fa2a",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/docs/GLB_CHARACTER_PROMPT.md": {
+    "mtime": 1795205341.3621817,
+    "seen": 1795425153.3727248,
+    "ast_hash": "6176e2fc8977878816617150a5d819d5",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/docs/HAIR_PIPELINE.md": {
+    "mtime": 1795205341.3621817,
+    "seen": 1795425153.3727262,
+    "ast_hash": "f12b7d354d4e969710a5fbd31a602b64",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/docs/INSTALL.md": {
+    "mtime": 1795205341.3637018,
+    "seen": 1795425153.3727279,
+    "ast_hash": "830fcc4de655908921215e3f7b0a8ca5",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/docs/PLUGINS.md": {
+    "mtime": 1795205341.3637018,
+    "seen": 1795425153.3727293,
+    "ast_hash": "676b4a7708dc39ac2f232dae13916639",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/docs/RESEARCH_TRELLIS2_TO_IMG2THREEJS.md": {
+    "mtime": 1795205341.364708,
+    "seen": 1795425153.3727312,
+    "ast_hash": "6b7f742344f962cedcd9ed2d9b441873",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/docs/STAGE_R_BACKLOG.md": {
+    "mtime": 1795205341.364708,
+    "seen": 1795425153.3727326,
+    "ast_hash": "123c1eb1036610a2ee18d5ae56648e39",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/docs/STAGE_R_TEST_PLAN.md": {
+    "mtime": 1795205341.364708,
+    "seen": 1795425153.3727343,
+    "ast_hash": "0a30ce2c52e331e6197e5cf1c62dd6a4",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/docs/TOKEN_COST.md": {
+    "mtime": 1795205341.3659403,
+    "seen": 1795425153.3727357,
+    "ast_hash": "a6d38f37997c5959c593da964e5af6f0",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/docs/UPGRADE_PLAN.md": {
+    "mtime": 1795205341.3659403,
+    "seen": 1795425153.3727372,
+    "ast_hash": "0072bdf239018914e44d8b5769eb9058",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/docs/integrations/reference_fidelity_tooling.md": {
+    "mtime": 1795205341.3659403,
+    "seen": 1795425153.3727388,
+    "ast_hash": "071aa0edeff17ce8bc1cc9ca73b6912d",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/docs/issue-triage.md": {
+    "mtime": 1795205341.366942,
+    "seen": 1795425153.3727412,
+    "ast_hash": "b6fbac6c1f68308bead8c19c0f2ff970",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/docs/materials/IMAGE_MATERIAL_ANALYSIS.md": {
+    "mtime": 1795205341.366942,
+    "seen": 1795425153.3727424,
+    "ast_hash": "3a5ac59382a3aad1e2b7901512b288ea",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/docs/materials/README.md": {
+    "mtime": 1795205341.366942,
+    "seen": 1795425153.3727438,
+    "ast_hash": "b0de795edaaf93c290e117894ceff191",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/docs/materials/THREEJS_MATERIAL_REFERENCE.md": {
+    "mtime": 1795205341.3679402,
+    "seen": 1795425153.3727453,
+    "ast_hash": "dd0d54e43d6e336cf9f4f4856e988da6",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/docs/pipelines/character-rigging-animation-1.5.2.md": {
+    "mtime": 1795205341.3694477,
+    "seen": 1795425153.3727465,
+    "ast_hash": "df5eabd85747e2d4f29b986c9001554a",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/docs/specs/vocabulary/README.md": {
+    "mtime": 1795205341.3727312,
+    "seen": 1795425153.3727484,
+    "ast_hash": "f8402301e939720b00221a77feb8dc4a",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/docs/standard-prompts/README.md": {
+    "mtime": 1795205341.3737435,
+    "seen": 1795425153.3727498,
+    "ast_hash": "883c5d5b8beb943bbb8e8a4be47f63aa",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/docs/standard-prompts/build.md": {
+    "mtime": 1795205341.3737435,
+    "seen": 1795425153.372751,
+    "ast_hash": "7b87f7ae4ea0d57d4bd7100d46fe954e",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/docs/standard-prompts/glb-force-measured.md": {
+    "mtime": 1795205341.3752491,
+    "seen": 1795425153.372753,
+    "ast_hash": "267a0f35e28a3ab47e60e35b7af079e9",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/docs/standard-prompts/polish.md": {
+    "mtime": 1795205341.3752491,
+    "seen": 1795425153.372754,
+    "ast_hash": "4d36bd3f4cd485d8fec8d7758ad8b67e",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/docs/standard-prompts/vfx.md": {
+    "mtime": 1795205341.3758311,
+    "seen": 1795425153.3727558,
+    "ast_hash": "8c95451f5b5a8a03b574d582157ed1dd",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/requirements.txt": {
+    "mtime": 1795205341.3857706,
+    "seen": 1795425153.3727572,
+    "ast_hash": "8275655c2e47ba37581bc61bad68bb8c",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage5_rig/CONTRACT_1.5.2.md": {
+    "mtime": 1795205341.4326217,
+    "seen": 1795425153.3727589,
+    "ast_hash": "0b8bfee5cd73474618bc6e7b761fd606",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/forge/stage5_rig/NOTES.md": {
+    "mtime": 1795205341.4341292,
+    "seen": 1795425153.3727603,
+    "ast_hash": "77bb973dc9f10d75c3906fc5a2f1791b",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/grimoire/character/head_construction.md": {
+    "mtime": 1795205341.5252852,
+    "seen": 1795425153.3727615,
+    "ast_hash": "433f408bb6c2696da24b7e046c94c8a2",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/grimoire/character/likeness_maximization.md": {
+    "mtime": 1795205341.5262864,
+    "seen": 1795425153.3727632,
+    "ast_hash": "a29c8504e29a524f7a89d28b4c5b7812",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/grimoire/character/reconstruction.md": {
+    "mtime": 1795205341.5262864,
+    "seen": 1795425153.3727646,
+    "ast_hash": "89eb83adfa13a84394ff2d4e8c9b13c4",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/grimoire/character/structure_decomposition.md": {
+    "mtime": 1795205341.5272865,
+    "seen": 1795425153.3727663,
+    "ast_hash": "28272cafb3d32c06eaa9f9ff752f1ab8",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/grimoire/character/stylized_hair_threejs.md": {
+    "mtime": 1795205341.5272865,
+    "seen": 1795425153.372768,
+    "ast_hash": "3cb8c62879dc44ab84c5081c75647484",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/grimoire/feedback/render_capture.md": {
+    "mtime": 1795205341.5287998,
+    "seen": 1795425153.3727694,
+    "ast_hash": "07211abcd191de02c7a45702cd7cb56c",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/grimoire/feedback/shading_realism.md": {
+    "mtime": 1795205341.5298073,
+    "seen": 1795425153.372771,
+    "ast_hash": "de613f0a141e595d909f61f751e1df59",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/grimoire/glossary/3d_vocabulary.md": {
+    "mtime": 1795205341.5303135,
+    "seen": 1795425153.3727727,
+    "ast_hash": "b76f7d43cba143a00520f346d6288194",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/grimoire/intake/detail_inventory.md": {
+    "mtime": 1795205341.5314722,
+    "seen": 1795425153.3727741,
+    "ast_hash": "74388a1a73a136ddc1f12889273be1b4",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/grimoire/intake/image_analysis.md": {
+    "mtime": 1795205341.532045,
+    "seen": 1795425153.3727758,
+    "ast_hash": "5ce1267fb55239dfcefb32ce28d91c6a",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/grimoire/intake/local_spec_search.md": {
+    "mtime": 1795205341.532717,
+    "seen": 1795425153.3727775,
+    "ast_hash": "3f1399c5d941b60dbaf3f33a18f996cf",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/grimoire/intake/quality_contract.md": {
+    "mtime": 1795205341.532717,
+    "seen": 1795425153.372779,
+    "ast_hash": "c97d526ad4bcab6754ee10210fce7ab2",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/grimoire/intake/surface_topology.md": {
+    "mtime": 1795205341.532717,
+    "seen": 1795425153.3727803,
+    "ast_hash": "69bb0e46fa23b155eacbc13fcf99324d",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/grimoire/intake/validation_rubric.md": {
+    "mtime": 1795205341.5337243,
+    "seen": 1795425153.372782,
+    "ast_hash": "de921841554342b5174c03926c68c276",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/grimoire/readiness/action_rigging.md": {
+    "mtime": 1795205341.5342302,
+    "seen": 1795425153.3727837,
+    "ast_hash": "e32478ee050dbdf2badf2b9b207bc627",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/grimoire/readiness/animation_contract.md": {
+    "mtime": 1795205341.5347636,
+    "seen": 1795425153.372785,
+    "ast_hash": "16bae7bcc1845c7732b63c162f14634b",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/grimoire/readiness/joint_attachment.md": {
+    "mtime": 1795205341.535307,
+    "seen": 1795425153.3727865,
+    "ast_hash": "c30207c2a2f4a0d9bc792cbd78df7e16",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/grimoire/readiness/procedural_rigging_contract.md": {
+    "mtime": 1795205341.535858,
+    "seen": 1795425153.372788,
+    "ast_hash": "d8c4027b513855f46c36c3983584decd",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/grimoire/readiness/standard_character_pipeline.md": {
+    "mtime": 1795205341.5364487,
+    "seen": 1795425153.3727891,
+    "ast_hash": "e5f426a5fd4bc049613b2c5d46a8836e",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/grimoire/review/divine_eye_microscope.md": {
+    "mtime": 1795205341.5375385,
+    "seen": 1795425153.3727906,
+    "ast_hash": "87ea1496d6ea923a8102262e7af7827f",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/grimoire/review/gates_reference.md": {
+    "mtime": 1795205341.5375385,
+    "seen": 1795425153.372792,
+    "ast_hash": "19fc1c43678cc6fba069bc4512ea2a1c",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/grimoire/review/self_correction.md": {
+    "mtime": 1795205341.5381055,
+    "seen": 1795425153.3727934,
+    "ast_hash": "34bc96c8ff94773dabbedbedc6f06f24",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/grimoire/scripts.md": {
+    "mtime": 1795205341.5391748,
+    "seen": 1795425153.3727949,
+    "ast_hash": "54fb30d724f573e73bb1f017dc13c70c",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/integrations/glb_character_pipeline/PIPELINE.md": {
+    "mtime": 1795205341.540786,
+    "seen": 1795425153.3727968,
+    "ast_hash": "1a00882f9bf9e795ced1c1ddc7b45bb0",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/integrations/glb_character_pipeline/README.md": {
+    "mtime": 1795205341.5411744,
+    "seen": 1795425153.3727982,
+    "ast_hash": "aab4057ccabb2537607746ddfb0ebb5d",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/integrations/vision/README.md": {
+    "mtime": 1795205341.55714,
+    "seen": 1795425153.3727996,
+    "ast_hash": "ebe7222da60559f4c06b7991f250fd27",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/scripts/ci/link-baseline.txt": {
+    "mtime": 1795205341.5618496,
+    "seen": 1795425153.372801,
+    "ast_hash": "0f478e25ccfd16b9e87647058b2e42ab",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/skills/generic-extract-skill.md": {
+    "mtime": 1795205341.5658937,
+    "seen": 1795425153.3728025,
+    "ast_hash": "b62aa93675fb0a491bc71ad62289d0ec",
+    "semantic_hash": ""
+  },
+  ".agents/skills/pull/SKILL.md": {
+    "mtime": 1795205341.5668957,
+    "seen": 1795425153.3728042,
+    "ast_hash": "69f38aa3fe4eecfa2f01eb2402ae45e0",
+    "semantic_hash": ""
+  },
+  ".agents/skills/push/SKILL.md": {
+    "mtime": 1795205341.5668957,
+    "seen": 1795425153.3728054,
+    "ast_hash": "5acef26a867dabffe5c0ece6a2a8f3ef",
+    "semantic_hash": ""
+  },
+  ".agents/skills/reanimate/SKILL.md": {
+    "mtime": 1795205341.5678926,
+    "seen": 1795425153.372807,
+    "ast_hash": "2204aaee519f0d94eb29ba44b82e34fc",
+    "semantic_hash": ""
+  },
+  ".agents/skills/reanimate/references/analysis.md": {
+    "mtime": 1795205341.5678926,
+    "seen": 1795425153.3728082,
+    "ast_hash": "b54c0ce9f1b4d6493ced6b7e5ac5312a",
+    "semantic_hash": ""
+  },
+  ".agents/skills/reanimate/references/capture.md": {
+    "mtime": 1795205341.569402,
+    "seen": 1795425153.3728096,
+    "ast_hash": "c852f08144f85409333e76839e717b9d",
+    "semantic_hash": ""
+  },
+  ".agents/skills/reanimate/references/implementation.md": {
+    "mtime": 1795205341.5699716,
+    "seen": 1795425153.372811,
+    "ast_hash": "c2a150af377472f7744ebc0b742800dd",
+    "semantic_hash": ""
+  },
+  ".agents/skills/reanimate/references/verify.md": {
+    "mtime": 1795205341.5705807,
+    "seen": 1795425153.3728125,
+    "ast_hash": "4d7ea50da6b3f044319a326c0af26d54",
+    "semantic_hash": ""
+  },
+  ".agents/skills/reanimate/references/webgl.md": {
+    "mtime": 1795205341.5712805,
+    "seen": 1795425153.372814,
+    "ast_hash": "499446b4c82e428d92e62fc064da3bb2",
+    "semantic_hash": ""
+  },
+  ".agents/workflows/antislop.md": {
+    "mtime": 1795005886.61285,
+    "seen": 1795425153.3728156,
+    "ast_hash": "993162744914029fb921a361137a07f8",
+    "semantic_hash": ""
+  },
+  ".agents/workflows/clean.md": {
+    "mtime": 1792864837.624513,
+    "seen": 1795425153.3728168,
+    "ast_hash": "afc946d14fa792b3da642c2cadc2cc76",
+    "semantic_hash": ""
+  },
+  ".agents/workflows/commands.md": {
+    "mtime": 1793864947.353559,
+    "seen": 1795425153.3728185,
+    "ast_hash": "8dc4340f348c3aeff1283292d5e33a6b",
+    "semantic_hash": ""
+  },
+  ".agents/workflows/deploy.md": {
+    "mtime": 1793864939.547513,
+    "seen": 1795425153.3728201,
+    "ast_hash": "be5d7cd0ccc9d443a466fea0fa5e51b6",
+    "semantic_hash": ""
+  },
+  ".agents/workflows/notes.md": {
+    "mtime": 1792704100.093628,
+    "seen": 1795425153.3728218,
+    "ast_hash": "8faf9984d4aa2e399cd0bea2138230cd",
+    "semantic_hash": ""
+  },
+  "AGENTS.md": {
+    "mtime": 1795205341.5761666,
+    "seen": 1795425153.3728232,
+    "ast_hash": "e9f7404dc1948b2efb11305108d95ae0",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Learn/PANELIST_DEMO_SCRIPT.md": {
+    "mtime": 1795205341.7411482,
+    "seen": 1795425153.37315,
+    "ast_hash": "479f42e38894568c0b266a1be4cf71cf",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/assets/logo.svg": {
+    "mtime": 1795205341.3566625,
+    "seen": 1795425153.373407,
+    "ast_hash": "b2fa58130537f6fe44fd9c46edd3e271",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/assets/sponsors/atlas-cloud-logomark-black.svg": {
+    "mtime": 1795205341.3566625,
+    "seen": 1795425153.3734102,
+    "ast_hash": "b85f3020f6745e9cdd6cae51ebf00d1c",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/assets/sponsors/atlas-cloud-logomark-white.svg": {
+    "mtime": 1795205341.3566625,
+    "seen": 1795425153.3734126,
+    "ast_hash": "2855b8b4e6995e517ad027c6ca989860",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/assets/sponsors/hyper3d-logomark-black.png": {
+    "mtime": 1795205341.3576624,
+    "seen": 1795425153.3734148,
+    "ast_hash": "2eb9b16df6f48595676045bc56d72c3d",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/assets/sponsors/hyper3d-logomark-white.png": {
+    "mtime": 1795205341.3576624,
+    "seen": 1795425153.3734164,
+    "ast_hash": "bad1fa89314b2eaf0d9fba91a52b1fbc",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/assets/sponsors/minimax-logomark.svg": {
+    "mtime": 1795205341.3576624,
+    "seen": 1795425153.373418,
+    "ast_hash": "28c7ed7de63dfad6df5a74129498ccaf",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/assets/sponsors/tripo-logomark-black.svg": {
+    "mtime": 1795205341.358663,
+    "seen": 1795425153.3734198,
+    "ast_hash": "e7f614e6d3764ccb1716bd7be8cd6df0",
+    "semantic_hash": ""
+  },
+  ".agents/skills/img2threejs/assets/sponsors/tripo-logomark-white.svg": {
+    "mtime": 1795205341.358663,
+    "seen": 1795425153.3734217,
+    "ast_hash": "9d6ada372551c2cf11807105192f9426",
+    "semantic_hash": ""
+  },
+  "frontend/src/components/Common/ScrollAIResponseText.jsx": {
+    "mtime": 1795497456.8281553,
+    "seen": 1795497857.2740054,
+    "ast_hash": "261a7ad7d824ee964cc58189a064f86e",
+    "semantic_hash": ""
+  },
   "backend/package-lock.json": {
-    "mtime": 1795147673.5231445,
-    "seen": 1795149626.8520095,
-    "ast_hash": "14903187cbbce239885650235d4ca1c6",
+    "mtime": 1795412578.36729,
+    "seen": 1795425153.3867958,
+    "ast_hash": "58ac2397f4171b135b9c5d6a35a2dca5",
     "semantic_hash": ""
   },
   "frontend/package-lock.json": {
-    "mtime": 1794818386.6978264,
-    "seen": 1795011909.1145158,
-    "ast_hash": "0c6fc47eaf8415fe284f5df235694a53",
+    "mtime": 1795205341.696453,
+    "seen": 1795425153.386799,
+    "ast_hash": "c096cf55ca8ff678f9f6e92ba96ca16a",
     "semantic_hash": ""
   }
 }

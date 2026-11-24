@@ -204,7 +204,7 @@ if (Test-PortOpen 5173) {
 # 4. Live Public Tunnel (Permanent Static Domain)
 # ----------------------------------------------------
 Write-Host "[4/4] Checking Live Public Tunnel (Permanent Domain)..." -ForegroundColor Cyan
-$permanentDomain = "disposal-cylinder-flounder.ngrok-free.dev"
+$permanentDomain = "deem-domestic-usher.ngrok-free.dev"
 $ngrokBin = "C:\Users\jayma\.gemini\tools\ngrok.exe"
 if (-not (Test-Path $ngrokBin)) {
     $ngrokBin = Join-Path $rootDir ".bin\ngrok.exe"

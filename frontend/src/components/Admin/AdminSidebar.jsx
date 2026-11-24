@@ -33,6 +33,37 @@ export const AdminSidebar = ({
   const isLogs = location.pathname.includes("/admin/logs");
 
   const [inventoryOpen, setInventoryOpen] = useState(() => isInventory && inventoryOpenPersisted);
+  const [fetchedCounts, setFetchedCounts] = useState({});
+
+  useEffect(() => {
+    if (categoryCounts && Object.keys(categoryCounts).length > 0) {
+      return;
+    }
+    let isMounted = true;
+    fetch("/api/parts")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!isMounted || !data) return;
+        let total = 0;
+        const counts = {};
+        Object.keys(data).forEach((cat) => {
+          const c = (data[cat] || []).length;
+          counts[cat] = c;
+          total += c;
+        });
+        counts.all = total;
+        setFetchedCounts(counts);
+      })
+      .catch(() => {});
+    return () => {
+      isMounted = false;
+    };
+  }, [categoryCounts]);
+
+  const effectiveCounts =
+    categoryCounts && Object.keys(categoryCounts).length > 0
+      ? categoryCounts
+      : fetchedCounts;
 
   const handleCategoryClick = (catKey) => {
     if (onSelectCategory) {
@@ -105,7 +136,7 @@ export const AdminSidebar = ({
             </svg>
           </span>
           <span className="inventory-toggle-label">Inventory</span>
-          <span className="inventory-toggle-count">{categoryCounts.all ?? 0}</span>
+          <span className="inventory-toggle-count">{effectiveCounts.all ?? 0}</span>
           <svg
             className={`inventory-toggle-chevron ${inventoryOpen ? "open" : ""}`}
             width="14"
@@ -122,7 +153,7 @@ export const AdminSidebar = ({
         {inventoryOpen && (
           <div className="admin-category-list">
             {CATEGORIES.map((cat) => {
-              const count = categoryCounts[cat.key] ?? (cat.key === "all" ? categoryCounts.all : 0) ?? 0;
+              const count = effectiveCounts[cat.key] ?? (cat.key === "all" ? effectiveCounts.all : 0) ?? 0;
               const isSelected = isInventory && activeCategory === cat.key;
 
               return (

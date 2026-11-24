@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback, Suspense, lazy } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { gsap } from "gsap";
 import "./Home.css";
-import Brands from "../Brands/Brands";
+const Brands = lazy(() => import("../Brands/Brands"));
 import Build from "../Build/Build";
 import Footer from "../Footer/Footer";
 import Home3DHero from "./Home3DHero";
@@ -522,7 +522,9 @@ function Home() {
 
           {/* ── Certified Hardware Ecosystem & Brands ── */}
           <section id="brands-station" className="home-brands-section">
-            <Brands isIntegrated={true} />
+            <Suspense fallback={null}>
+              <Brands isIntegrated={true} />
+            </Suspense>
           </section>
 
           {/* ── Global Footer ── */}
