@@ -1,0 +1,8 @@
+{
+  "name": "buildlab",
+  "private": true,
+  "scripts": {
+    "build": "npm ci --prefix backend && npm ci --include=dev --prefix frontend && npm run build --prefix frontend",
+    "start": "npm start --prefix backend"
+  }
+}
