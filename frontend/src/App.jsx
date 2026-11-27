@@ -14,6 +14,7 @@ import { ThemeProvider, useTheme } from "./contexts/ThemeContext";
 import { SidebarProvider, useSidebar } from "./contexts/SidebarContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { AnimatePresence } from "motion/react";
+import "./App.css";
 import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
 import Home from "./components/Home/Home";

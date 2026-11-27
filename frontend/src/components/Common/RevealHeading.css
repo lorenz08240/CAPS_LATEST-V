@@ -3,6 +3,7 @@
 
 .reveal-heading {
   margin: 0;
+  color: inherit;
 }
 
 .reveal-words {
@@ -27,13 +28,13 @@
   opacity: 1;
 }
 
-/* One deliberate accent per page, tied to the red brand mark. */
+/* Deliberate section accent tied to the brand rose token */
 .reveal-heading__underline {
   display: block;
   width: 3.5rem;
   height: 3px;
   margin-top: 1.25rem;
-  background: #e23b3b;
+  background: var(--accent-rose, #F04B4B);
   clip-path: inset(0 100% 0 0);
   transition: clip-path 0.7s cubic-bezier(0.4, 0, 0.2, 1);
   transition-delay: calc(var(--word-count) * 0.055s + 0.15s);

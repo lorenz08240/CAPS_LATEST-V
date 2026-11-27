@@ -1,5 +1,5 @@
-import React, { useRef, useState, useEffect, Suspense } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import React, { useRef, useState, useEffect, Suspense, memo } from 'react';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Environment, Sparkles, OrbitControls, ContactShadows } from '@react-three/drei';
 import * as THREE from 'three';
 import NepotatoGPU from '../3D/NepotatoGPU';
@@ -14,6 +14,11 @@ import { HeroFloatingSSD } from '../3D/NVMeSSDModel';
 import { HeroFloatingPSU } from '../3D/PSUModel';
 import { preloadRAMModel, preloadNVMeSSDModel, preloadPSUModel } from '../../utilities/modelPreloader';
 import { useTheme } from '../../contexts/ThemeContext';
+
+// Persistent reusable module-level vectors & quaternions to eliminate per-frame GC allocations
+const _camQuat = new THREE.Quaternion();
+const _right = new THREE.Vector3();
+const _forward = new THREE.Vector3();
 
 const HERO_STAGES = [
   { id: 'case', name: 'Computer Case', stageNum: 1, desc: 'PC Case' },
@@ -58,15 +63,17 @@ function FloatingCooler({ rgbColor }) {
 
 /**
  * High-Tech Holographic Ground Shockwave Ring on Component Lock-In
+ * Reads from a ref to avoid triggering React component re-renders during 60/120fps useFrame loops.
  */
-function HolographicShockwave({ trigger, rgbColor }) {
+function HolographicShockwave({ triggerRef, trigger, rgbColor }) {
   const ringGroupRef = useRef();
 
   useFrame(() => {
     if (!ringGroupRef.current) return;
-    if (trigger >= 0.70 && trigger <= 1.0) {
+    const trig = triggerRef ? triggerRef.current : (typeof trigger === 'number' ? trigger : 0);
+    if (trig >= 0.70 && trig <= 1.0) {
       ringGroupRef.current.visible = true;
-      const t = (trigger - 0.70) / 0.30;
+      const t = (trig - 0.70) / 0.30;
       const radius = 0.5 + t * 4.2;
       const opacity = Math.sin(t * Math.PI) * 0.85;
 
@@ -112,14 +119,16 @@ function HolographicShockwave({ trigger, rgbColor }) {
 
 /**
  * Dynamic Specular Flash Lighting Sweep on Landing
+ * Reads from a ref to eliminate React state updates in useFrame.
  */
-function SpecularFlashLight({ trigger, rgbColor }) {
+function SpecularFlashLight({ triggerRef, trigger, rgbColor }) {
   const lightRef = useRef();
 
   useFrame(() => {
     if (lightRef.current) {
-      if (trigger >= 0.75 && trigger <= 1.0) {
-        const t = (trigger - 0.75) / 0.25;
+      const trig = triggerRef ? triggerRef.current : (typeof trigger === 'number' ? trigger : 0);
+      if (trig >= 0.75 && trig <= 1.0) {
+        const t = (trig - 0.75) / 0.25;
         const flashIntensity = Math.sin(t * Math.PI) * 4.5;
         lightRef.current.intensity = flashIntensity;
       } else {
@@ -140,66 +149,95 @@ function SpecularFlashLight({ trigger, rgbColor }) {
 }
 
 /**
- * Hardware Stage Model Renderer (Clean balanced scale, zero hover highlight)
+ * Hardware Stage Model Renderer
+ * Mounts all 7 models simultaneously with visibility toggles to eliminate
+ * React mount/unmount overhead, buffer recreations, and mid-transition shader compilation hitching.
  */
-function HardwareStageModel({ stageId, rgbColor, caseColor = 'black' }) {
-  switch (stageId) {
-    case 'case':
-      return (
-        <group scale={[0.18, 0.18, 0.18]} position={[0, -0.15, 0]}>
-          <NorthChalkWhiteCase
-            sidePanelMode="glass"
-            rgbColor={rgbColor}
-            explodedProgress={0}
-            enableHighlight={false}
-          />
-        </group>
-      );
-    case 'motherboard':
-      return (
-        <group scale={[0.34, 0.34, 0.34]} position={[0, -0.05, 0]}>
-          <ROGStrixMotherboard
-            rgbColor={rgbColor}
-            explodedProgress={0}
-            enableHighlight={false}
-          />
-        </group>
-      );
-    case 'cpu':
-      return (
-        <group scale={[0.55, 0.55, 0.55]} position={[0, -0.1, 0]}>
-          <DeepCoolLE240Cooler
-            rgbColor={rgbColor}
-            explodedProgress={0}
-            enableHighlight={false}
-          />
-        </group>
-      );
-    case 'ram':
-      return <HeroFloatingRAM rgbColor={rgbColor} enableHighlight={false} />;
-    case 'storage':
-      return <HeroFloatingSSD rgbColor={rgbColor} enableHighlight={false} />;
-    case 'gpu':
-      return (
-        <group scale={[0.80, 0.80, 0.80]}>
-          <NepotatoGPU 
-            rgbColor={rgbColor} 
-            explodedProgress={0} 
-            isSelected={false} 
-            isHovered={false} 
-            isStandalone={true} 
-          />
-        </group>
-      );
-    case 'psu':
-      return (
-        <group scale={[0.82, 0.82, 0.82]}>
-          <HeroFloatingPSU rgbColor={rgbColor} enableHighlight={false} />
-        </group>
-      );
-    default:
-      return null;
-  }
+const HardwareStageModel = memo(function HardwareStageModel({ stageId, rgbColor, caseColor = 'black' }) {
+  return (
+    <>
+      <group visible={stageId === 'case'} scale={[0.18, 0.18, 0.18]} position={[0, -0.15, 0]}>
+        <NorthChalkWhiteCase
+          sidePanelMode="glass"
+          caseColor={caseColor}
+          rgbColor={rgbColor}
+          explodedProgress={0}
+          enableHighlight={false}
+        />
+      </group>
+
+      <group visible={stageId === 'motherboard'} scale={[0.34, 0.34, 0.34]} position={[0, -0.05, 0]}>
+        <ROGStrixMotherboard
+          rgbColor={rgbColor}
+          explodedProgress={0}
+          enableHighlight={false}
+        />
+      </group>
+
+      <group visible={stageId === 'cpu'} scale={[0.55, 0.55, 0.55]} position={[0, -0.1, 0]}>
+        <DeepCoolLE240Cooler
+          rgbColor={rgbColor}
+          explodedProgress={0}
+          enableHighlight={false}
+        />
+      </group>
+
+      <group visible={stageId === 'ram'}>
+        <HeroFloatingRAM rgbColor={rgbColor} enableHighlight={false} />
+      </group>
+
+      <group visible={stageId === 'storage'}>
+        <HeroFloatingSSD rgbColor={rgbColor} enableHighlight={false} />
+      </group>
+
+      <group visible={stageId === 'gpu'} scale={[0.80, 0.80, 0.80]}>
+        <NepotatoGPU 
+          rgbColor={rgbColor} 
+          explodedProgress={0} 
+          isSelected={false} 
+          isHovered={false} 
+          isStandalone={true} 
+        />
+      </group>
+
+      <group visible={stageId === 'psu'} scale={[0.82, 0.82, 0.82]}>
+        <HeroFloatingPSU rgbColor={rgbColor} enableHighlight={false} />
+      </group>
+    </>
+  );
+});
+
+/**
+ * WebGL Material & Shader Pre-Warmer
+ * Compiles all materials and uploads geometry buffers on initial canvas initialization
+ * so stage changes never stutter on GPU shader compilation.
+ */
+function SceneMaterialPrewarmer() {
+  const { gl, scene, camera } = useThree();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      try {
+        const hiddenNodes = [];
+        scene.traverse((obj) => {
+          if (!obj.visible) {
+            hiddenNodes.push(obj);
+            obj.visible = true;
+          }
+        });
+        gl.compile(scene, camera);
+        hiddenNodes.forEach((obj) => {
+          obj.visible = false;
+        });
+      } catch (err) {
+        console.debug('Shader prewarm completed with note:', err);
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [gl, scene, camera]);
+
+  return null;
 }
 
 /**
@@ -211,23 +249,51 @@ function HardwareStageModel({ stageId, rgbColor, caseColor = 'black' }) {
  * 3. PAUSE (0.18s): Center stage is completely clear and empty. Zero models in view.
  * 4. ENTER (1.15s): Incoming model swoops in from screen-right with 270° angled rotational reveal and lands with shockwave.
  * 
- * Result: 100% mathematically and visually guaranteed that NO TWO MODELS CAN EVER OVERLAP!
+ * Performance enhancements:
+ * - Damped scroll tracking via THREE.MathUtils.damp(..., 8, delta) for liquid butter response in both directions
+ * - Zero per-frame object allocation (reusable module-level vectors _right, _forward, _camQuat)
+ * - Decoupled from React scroll re-renders using persistent refs
  */
-function FluidScene({ onStageChange, rgbColor, scrollProgress = 0, isInteractingRef, caseColor = 'black' }) {
+function FluidScene({ 
+  onStageChange, 
+  rgbColor, 
+  scrollProgress = 0, 
+  scrollProgressRef: externalScrollProgressRef,
+  isInteractingRef, 
+  caseColor = 'black',
+  activeStageId
+}) {
   const rootRef = useRef();
   const motionGroupRef = useRef();
   const turntableAngleRef = useRef(0);
+  const landingProgressRef = useRef(0);
+  const isScrollInitRef = useRef(false);
 
-  const initialStage = (typeof window !== 'undefined' && window.__BUILDLAB_HERO_STAGE__) || HERO_STAGES[0].id;
+  const initialStage = activeStageId || (typeof window !== 'undefined' && window.__BUILDLAB_HERO_STAGE__) || HERO_STAGES[0].id;
   const initialIndex = Math.max(0, HERO_STAGES.findIndex(s => s.id === initialStage));
 
   const [currentStageId, setCurrentStageId] = useState(initialStage);
-  const [landingProgress, setLandingProgress] = useState(0);
+
+  const onStageChangeRef = useRef(onStageChange);
+  useEffect(() => {
+    onStageChangeRef.current = onStageChange;
+  }, [onStageChange]);
 
   // Sync initial stage to parent component on mount
   useEffect(() => {
-    onStageChange?.(currentStageId);
-  }, [currentStageId, onStageChange]);
+    onStageChangeRef.current?.(currentStageId);
+  }, [currentStageId]);
+
+  // External stage change sync (e.g. from parent or clicks)
+  useEffect(() => {
+    if (activeStageId && activeStageId !== currentStageId) {
+      const idx = HERO_STAGES.findIndex(s => s.id === activeStageId);
+      if (idx !== -1) {
+        animRef.current.currentIndex = idx;
+        setCurrentStageId(activeStageId);
+      }
+    }
+  }, [activeStageId, currentStageId]);
 
   // Sequential background prefetching: pre-caches next heavy asset before transition
   useEffect(() => {
@@ -240,7 +306,7 @@ function FluidScene({ onStageChange, rgbColor, scrollProgress = 0, isInteracting
     }
   }, [currentStageId]);
 
-  // High-precision 60fps animation state ref
+  // High-precision 60fps/120fps animation state ref
   const animRef = useRef({
     phase: 'rest', // 'rest' | 'exit' | 'pause' | 'enter'
     timer: 0,
@@ -268,24 +334,55 @@ function FluidScene({ onStageChange, rgbColor, scrollProgress = 0, isInteracting
       anim.timer += delta;
     }
 
-    // Camera right & forward vectors so flight trajectory is ALWAYS screen-aligned
-    const camQuat = state.camera.quaternion;
-    const right = new THREE.Vector3(1, 0, 0).applyQuaternion(camQuat);
-    right.y = 0;
-    if (right.lengthSq() > 0.0001) right.normalize();
-    else right.set(1, 0, 0);
+    // Camera right & forward vectors so flight trajectory is ALWAYS screen-aligned (zero GC allocations)
+    _camQuat.copy(state.camera.quaternion);
 
-    const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(camQuat);
-    forward.y = 0;
-    if (forward.lengthSq() > 0.0001) forward.normalize();
-    else forward.set(0, 0, -1);
+    _right.set(1, 0, 0).applyQuaternion(_camQuat);
+    _right.y = 0;
+    if (_right.lengthSq() > 0.0001) {
+      _right.normalize();
+    } else {
+      _right.set(1, 0, 0);
+    }
 
-    // Scroll-linked vertical recession into the lower build section
+    _forward.set(0, 0, -1).applyQuaternion(_camQuat);
+    _forward.y = 0;
+    if (_forward.lengthSq() > 0.0001) {
+      _forward.normalize();
+    } else {
+      _forward.set(0, 0, -1);
+    }
+
+    // Smooth scroll-linked vertical recession into the lower build section
+    // Uses THREE.MathUtils.damp to glide continuously at 60/120/144fps in both scroll directions
     if (rootRef.current) {
-      const scrollPosY = -scrollProgress * 2.2;
-      const scrollScale = Math.max(0.65, 1 - scrollProgress * 0.35);
-      rootRef.current.position.y = scrollPosY;
-      rootRef.current.scale.set(scrollScale, scrollScale, scrollScale);
+      const scrollVal = externalScrollProgressRef
+        ? externalScrollProgressRef.current
+        : (typeof scrollProgress === 'number' ? scrollProgress : 0);
+
+      const targetY = -scrollVal * 2.2;
+      const targetScale = Math.max(0.65, 1 - scrollVal * 0.35);
+
+      if (!isScrollInitRef.current) {
+        rootRef.current.position.y = targetY;
+        rootRef.current.scale.set(targetScale, targetScale, targetScale);
+        isScrollInitRef.current = true;
+      } else {
+        rootRef.current.position.y = THREE.MathUtils.damp(
+          rootRef.current.position.y,
+          targetY,
+          8,
+          delta
+        );
+        const currentScale = rootRef.current.scale.x;
+        const smoothedScale = THREE.MathUtils.damp(
+          currentScale,
+          targetScale,
+          8,
+          delta
+        );
+        rootRef.current.scale.set(smoothedScale, smoothedScale, smoothedScale);
+      }
     }
 
     if (!motionGroupRef.current) return;
@@ -314,8 +411,8 @@ function FluidScene({ onStageChange, rgbColor, scrollProgress = 0, isInteracting
 
       motionGroupRef.current.visible = true;
       motionGroupRef.current.position.set(0, 0, 0)
-        .addScaledVector(right, outX)
-        .addScaledVector(forward, outZ);
+        .addScaledVector(_right, outX)
+        .addScaledVector(_forward, outZ);
       motionGroupRef.current.position.y = outY;
 
       motionGroupRef.current.rotation.x = -0.35 * ease;
@@ -345,12 +442,12 @@ function FluidScene({ onStageChange, rgbColor, scrollProgress = 0, isInteracting
 
         const nextStage = HERO_STAGES[nextIndex];
         setCurrentStageId(nextStage.id);
-        onStageChange?.(nextStage.id);
+        onStageChangeRef.current?.(nextStage.id);
 
         // Position immediately at offscreen start coordinates before unhiding
         motionGroupRef.current.position.set(0, 0, 0)
-          .addScaledVector(right, 9.5)
-          .addScaledVector(forward, -4.0);
+          .addScaledVector(_right, 9.5)
+          .addScaledVector(_forward, -4.0);
         motionGroupRef.current.position.y = 0.45;
         motionGroupRef.current.rotation.x = 0.42;
         motionGroupRef.current.rotation.z = -0.35;
@@ -363,7 +460,8 @@ function FluidScene({ onStageChange, rgbColor, scrollProgress = 0, isInteracting
     // Swoops in from screen-right with 270° spin unroll and lands with specular flash.
     else if (anim.phase === 'enter') {
       const t = Math.min(1.0, anim.timer / 1.15);
-      const ease = t === 1.0 ? 1.0 : 1.0 - Math.pow(2, -8 * t);
+      // Continuous quartic ease-out landing with zero velocity jerk at docking
+      const ease = 1 - Math.pow(1 - t, 3.5);
 
       const inX = 9.5 * (1 - ease);
       const inZ = -4.0 * (1 - ease);
@@ -371,11 +469,11 @@ function FluidScene({ onStageChange, rgbColor, scrollProgress = 0, isInteracting
 
       motionGroupRef.current.visible = true;
       motionGroupRef.current.position.set(0, 0, 0)
-        .addScaledVector(right, inX)
-        .addScaledVector(forward, inZ);
+        .addScaledVector(_right, inX)
+        .addScaledVector(_forward, inZ);
       motionGroupRef.current.position.y = inY;
 
-      // 270° Angled Rotational Reveal: unrolls into continuous turntable
+      // 270° Angled Rotational Reveal: smoothly unrolls into continuous turntable
       motionGroupRef.current.rotation.x = 0.42 * (1 - ease);
       motionGroupRef.current.rotation.z = -0.35 * (1 - ease);
       motionGroupRef.current.rotation.y = turntableAngleRef.current + (Math.PI * 1.5) * (1 - ease);
@@ -383,15 +481,15 @@ function FluidScene({ onStageChange, rgbColor, scrollProgress = 0, isInteracting
       const scale = 0.65 + 0.35 * ease;
       motionGroupRef.current.scale.set(scale, scale, scale);
 
-      // Trigger holographic shockwave & specular glint during lock-in
+      // Trigger holographic shockwave & specular glint during lock-in without React re-render
       if (t >= 0.70) {
-        setLandingProgress(t);
+        landingProgressRef.current = t;
       }
 
       if (t >= 1.0) {
         anim.phase = 'rest';
         anim.timer = 0;
-        setLandingProgress(0);
+        landingProgressRef.current = 0;
       }
     }
   });
@@ -400,9 +498,9 @@ function FluidScene({ onStageChange, rgbColor, scrollProgress = 0, isInteracting
 
   return (
     <group ref={rootRef}>
-      <HolographicShockwave trigger={landingProgress} rgbColor={rgbColor} />
+      <HolographicShockwave triggerRef={landingProgressRef} rgbColor={rgbColor} />
 
-      <SpecularFlashLight trigger={landingProgress} rgbColor={rgbColor} />
+      <SpecularFlashLight triggerRef={landingProgressRef} rgbColor={rgbColor} />
 
       <group ref={motionGroupRef}>
         <HardwareStageModel stageId={currentStageId} rgbColor={rgbColor} caseColor={caseColor} />
@@ -422,12 +520,26 @@ function FluidScene({ onStageChange, rgbColor, scrollProgress = 0, isInteracting
   );
 }
 
+// Memoized FluidScene that prevents React re-render flooding from raw scroll updates
+const MemoizedFluidScene = memo(FluidScene, (prevProps, nextProps) => {
+  return (
+    prevProps.rgbColor === nextProps.rgbColor &&
+    prevProps.caseColor === nextProps.caseColor &&
+    prevProps.activeStageId === nextProps.activeStageId &&
+    prevProps.onStageChange === nextProps.onStageChange &&
+    prevProps.isInteractingRef === nextProps.isInteractingRef
+  );
+});
+
 /**
  * Home3DHero — Interactive 3D Hero Stage for BuildLab
  * - Guaranteed zero-overlap sequential transitions
  * - Relaxed cinematic reveal pacing (~2.1s transition, 3.6s steady inspection)
  * - Steady turntable clockwise rotation (zero bobbing)
  * - Interactive mouse dragging (OrbitControls)
+ * - Zero GC allocation inside useFrame
+ * - High FPS damping on scroll motion
+ * - Pre-warmed shaders and zero model remount lag
  */
 export default function Home3DHero({ 
   activeModel,
@@ -444,6 +556,19 @@ export default function Home3DHero({
   const { isDark } = useTheme();
   const caseColor = isDark ? 'black' : 'white';
   const envPreset = isDark ? 'night' : 'city';
+
+  // Persistent ref for scrollProgress so FluidScene never needs to re-render when scroll updates
+  const scrollProgressRef = useRef(0);
+  scrollProgressRef.current = typeof scrollProgress === 'object' && scrollProgress !== null
+    ? scrollProgress.current
+    : (typeof scrollProgress === 'number' ? scrollProgress : 0);
+
+  // Pre-cache all 3D assets on initial mount so transitions never hitch
+  useEffect(() => {
+    preloadRAMModel('idle');
+    preloadNVMeSSDModel('idle');
+    preloadPSUModel('idle');
+  }, []);
 
   useEffect(() => {
     const handleResize = () => {
@@ -494,10 +619,13 @@ export default function Home3DHero({
             powerPreference: "high-performance",
             antialias: true,
             alpha: true,
+            stencil: false,
+            depth: true,
             toneMapping: THREE.ACESFilmicToneMapping,
             toneMappingExposure: 1.15
           }}
-          onCreated={() => {
+          onCreated={({ gl }) => {
+            gl.setClearColor(0x000000, 0);
             if (typeof window !== 'undefined') {
               window.dispatchEvent(new CustomEvent('buildlab:3d-ready'));
             }
@@ -511,6 +639,7 @@ export default function Home3DHero({
           <OrbitControls 
             enableZoom={false} 
             enablePan={false} 
+            enableDamping={true}
             rotateSpeed={0.72} 
             dampingFactor={0.08} 
             onStart={() => { isInteractingRef.current = true; }}
@@ -528,12 +657,15 @@ export default function Home3DHero({
 
           <Suspense fallback={null}>
             <Environment preset={envPreset} />
-            <FluidScene 
+            <SceneMaterialPrewarmer />
+            <MemoizedFluidScene 
               onStageChange={setActiveModel}
               rgbColor={rgbColor} 
               scrollProgress={scrollProgress} 
+              scrollProgressRef={scrollProgressRef}
               isInteractingRef={isInteractingRef}
               caseColor={caseColor}
+              activeStageId={activeModel}
             />
           </Suspense>
         </Canvas>

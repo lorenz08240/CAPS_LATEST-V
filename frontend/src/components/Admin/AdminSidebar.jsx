@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import DiscreetFullscreenToggle from "../Navigation/DiscreetFullscreenToggle";
-import "./Admin.css";
+import "./styles/AdminBase.css";
 
 const CATEGORIES = [
   { key: "all", label: "All Components", step: "00", desc: "Complete Inventory" },

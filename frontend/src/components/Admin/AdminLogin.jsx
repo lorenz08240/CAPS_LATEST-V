@@ -5,7 +5,8 @@ import PixelCanvas from "../Common/PixelCanvas";
 import soundManager from "../../utilities/soundManager";
 import systemLogo from "../../assets/system_logo.png";
 import DiscreetFullscreenToggle from "../Navigation/DiscreetFullscreenToggle";
-import "./Admin.css";
+import "./styles/AdminBase.css";
+import "./styles/AdminLogin.css";
 
 export const AdminLogin = () => {
   const { isAdmin, loginAdmin } = useAuth();

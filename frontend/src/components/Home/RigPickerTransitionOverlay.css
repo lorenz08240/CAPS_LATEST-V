@@ -1,14 +1,14 @@
 /* ═════════════════════════════════════════════════════════════════════════════
    BUILDLAB // RIG COMPONENT PICKER TRANSITION OVERLAY
-   Quick Fade-In / Fade-Out Cyber Workstation Transition Screen
+   Charcoal & Muted Silver Workstation Transition Screen
    ═════════════════════════════════════════════════════════════════════════════ */
 
 .rig-transition-overlay {
   position: fixed;
   inset: 0;
   z-index: 99999;
-  background: #0C0C0F;
-  color: #F5F4F0;
+  background: var(--bg-primary, #0C0C0F);
+  color: var(--text-primary, #F5F4F0);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -23,11 +23,7 @@
   will-change: opacity;
 }
 
-/* Phase Transitions */
-.rig-transition-overlay.entering {
-  opacity: 1;
-}
-
+.rig-transition-overlay.entering,
 .rig-transition-overlay.holding {
   opacity: 1;
 }
@@ -42,9 +38,9 @@
 .rig-trans-grid {
   position: absolute;
   inset: 0;
-  background-image: 
-    linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
+  background-image:
+    linear-gradient(rgba(201, 199, 192, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201, 199, 192, 0.03) 1px, transparent 1px);
   background-size: 48px 48px;
   opacity: 0.7;
   pointer-events: none;
@@ -59,8 +55,8 @@
   height: 60vh;
   background: radial-gradient(
     ellipse at center,
-    rgba(244, 63, 94, 0.18) 0%,
-    rgba(255, 255, 255, 0.12) 50%,
+    rgba(244, 63, 94, 0.16) 0%,
+    rgba(201, 199, 192, 0.08) 50%,
     transparent 75%
   );
   filter: blur(75px);
@@ -73,11 +69,12 @@
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(90deg, 
-    transparent 0%, 
-    rgba(244, 63, 94, 0.15) 20%, 
-    rgba(255, 255, 255, 0.12) 50%, 
-    rgba(244, 63, 94, 0.15) 80%, 
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(244, 63, 94, 0.18) 20%,
+    rgba(201, 199, 192, 0.14) 50%,
+    rgba(244, 63, 94, 0.18) 80%,
     transparent 100%
   );
   transform: translateY(-50%);
@@ -110,10 +107,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #F04B4B;
+  color: var(--accent-rose, #F04B4B);
   font-size: 1rem;
   font-weight: 900;
-  box-shadow: 0 0 20px rgba(244, 63, 94, 0.35);
+  box-shadow: 0 0 20px rgba(244, 63, 94, 0.3);
 }
 
 .rig-trans-brand-info {
@@ -126,7 +123,7 @@
   font-weight: 800;
   font-size: 1.05rem;
   letter-spacing: 0.18em;
-  color: #ffffff;
+  color: var(--text-primary, #F5F4F0);
 }
 
 .rig-trans-brand-sub {
@@ -134,34 +131,41 @@
   font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.12em;
-  color: #ffffff;
+  color: var(--text-muted, #C9C7C0);
 }
 
 .rig-trans-status-chip {
   display: flex;
   align-items: center;
   gap: 0.8rem;
-  background: rgba(23, 21, 26, 0.65);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--bg-card, #202023);
+  border: 1px solid var(--border-color, #3F3F45);
   padding: 0.5rem 1.25rem;
   border-radius: 9999px;
+  -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+  box-shadow: var(--ao-shadow-md, 0 10px 25px rgba(0, 0, 0, 0.45));
 }
 
 .rig-trans-pulse-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #ffffff;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  background: var(--text-primary, #F5F4F0);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
   position: relative;
   animation: rigPulse 1.4s ease-in-out infinite alternate;
 }
 
 @keyframes rigPulse {
-  0% { transform: scale(0.85); opacity: 0.7; }
-  100% { transform: scale(1.15); opacity: 1; }
+  from {
+    transform: scale(0.85);
+    opacity: 0.7;
+  }
+  to {
+    transform: scale(1.15);
+    opacity: 1;
+  }
 }
 
 .rig-trans-status-text {
@@ -169,7 +173,7 @@
   font-size: 0.74rem;
   font-weight: 600;
   letter-spacing: 0.12em;
-  color: #e2e8f0;
+  color: var(--text-secondary, #E4E3DF);
 }
 
 /* ── 2. Center Hero Banner ── */
@@ -195,7 +199,6 @@
   justify-content: center;
 }
 
-/* Reticle Corner Brackets */
 .rig-bracket {
   position: absolute;
   width: 26px;
@@ -232,7 +235,6 @@
   border-right: 2px solid;
 }
 
-/* Eyebrow */
 .rig-trans-eyebrow {
   display: inline-flex;
   align-items: center;
@@ -245,13 +247,12 @@
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.22em;
-  color: #F04B4B;
+  color: var(--accent-rose, #F04B4B);
   text-transform: uppercase;
   margin-bottom: 1.6rem;
-  box-shadow: 0 0 20px rgba(244, 63, 94, 0.15);
+  box-shadow: 0 0 20px rgba(244, 63, 94, 0.14);
 }
 
-/* Big Title */
 .rig-trans-title {
   margin: 0 0 1.2rem;
   font-family: 'Syne', sans-serif;
@@ -260,50 +261,48 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   line-height: 1.05;
-  background: linear-gradient(180deg, #ffffff 15%, rgba(255, 255, 255, 0.55) 90%);
+  background: linear-gradient(180deg, #F5F4F0 15%, rgba(201, 199, 192, 0.68) 90%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  text-shadow: 0 0 60px rgba(244, 63, 94, 0.35), 0 0 100px rgba(255, 255, 255, 0.12);
+  text-shadow: 0 0 60px rgba(244, 63, 94, 0.3);
 }
 
-/* Underline glow */
 .rig-trans-underline {
   width: 140px;
   height: 3px;
   border-radius: 3px;
-  background: linear-gradient(135deg, #ffffff 0%, #d4d4d8 100%);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  background: linear-gradient(135deg, var(--text-primary, #F5F4F0) 0%, var(--text-muted, #C9C7C0) 100%);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
   margin-bottom: 1.6rem;
 }
 
-/* Subtext */
 .rig-trans-subtext {
   margin: 0 0 1.8rem;
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.85rem;
   font-weight: 500;
   letter-spacing: 0.14em;
-  color: #94a3b8;
+  color: var(--text-muted, #C9C7C0);
   max-width: 620px;
   line-height: 1.6;
   text-transform: uppercase;
 }
 
 .rig-cyan-hi {
-  color: #ffffff;
+  color: var(--text-primary, #F5F4F0);
   font-weight: 700;
 }
 
-/* Mini Loader */
 .rig-trans-mini-loader {
   display: flex;
   align-items: center;
   gap: 1.2rem;
   padding: 0.55rem 1.4rem;
-  background: rgba(23, 21, 26, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--bg-card, #202023);
+  border: 1px solid var(--border-color, #3F3F45);
   border-radius: 12px;
+  -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
 }
 
@@ -316,17 +315,17 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(201, 199, 192, 0.28);
 }
 
 .rig-dot.active-rose {
-  background: #F04B4B;
-  box-shadow: 0 0 8px #F04B4B;
+  background: var(--accent-rose, #F04B4B);
+  box-shadow: 0 0 8px var(--accent-rose, #F04B4B);
 }
 
 .rig-dot.active-cyan {
-  background: #ffffff;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  background: var(--text-primary, #F5F4F0);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
 }
 
 .rig-loader-label {
@@ -334,7 +333,7 @@
   font-size: 0.7rem;
   font-weight: 600;
   letter-spacing: 0.12em;
-  color: #64748b;
+  color: var(--text-dim, #8E8D88);
 }
 
 /* ── 3. Bottom HUD Bar ── */
@@ -348,7 +347,7 @@
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.72rem;
   letter-spacing: 0.14em;
-  color: #475569;
+  color: var(--text-dim, #8E8D88);
 }
 
 .rig-trans-tag {
@@ -358,14 +357,43 @@
 }
 
 .tag-rose {
-  color: #F04B4B;
+  color: var(--accent-rose, #F04B4B);
 }
 
 .tag-cyan {
-  color: #ffffff;
+  color: var(--text-primary, #F5F4F0);
 }
 
-/* Responsive tweaks */
+/* ── LIGHT MODE OVERRIDES ── */
+body.theme-light .rig-trans-grid,
+.theme-light .rig-trans-grid,
+[data-theme="light"] .rig-trans-grid {
+  background-image:
+    linear-gradient(rgba(12, 12, 15, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(12, 12, 15, 0.05) 1px, transparent 1px);
+}
+
+body.theme-light .rig-trans-title,
+.theme-light .rig-trans-title,
+[data-theme="light"] .rig-trans-title {
+  background: linear-gradient(180deg, #0C0C0F 15%, #525058 95%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  text-shadow: none;
+}
+
+body.theme-light .rig-trans-underline,
+.theme-light .rig-trans-underline,
+[data-theme="light"] .rig-trans-underline {
+  box-shadow: none;
+}
+
+body.theme-light .rig-dot,
+.theme-light .rig-dot,
+[data-theme="light"] .rig-dot {
+  background: rgba(12, 12, 15, 0.18);
+}
+
 @media (max-width: 768px) {
   .rig-transition-overlay {
     padding: 2rem 1.5rem;

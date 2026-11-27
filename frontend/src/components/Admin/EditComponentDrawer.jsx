@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import ReactDOM from "react-dom";
 import HardwareIcon from "./HardwareIcon";
-import "./Admin.css";
+import "./styles/AdminBase.css";
+import "./styles/AdminInventory.css";
 
 const CATEGORIES = ["gpu", "motherboard", "cpu", "ram", "storage", "case", "psu"];
 

@@ -1,12 +1,12 @@
-
 .bob-floating-free {
+  --bob-bubble-bg: rgba(24, 24, 28, 0.9);
   position: fixed;
   bottom: 28px;
   right: var(--bob-right, 32px);
   z-index: 950;
   -webkit-user-select: none;
   user-select: none;
-  transition: right 480ms cubic-bezier(0.16, 1, 0.3, 1), 
+  transition: right 480ms cubic-bezier(0.16, 1, 0.3, 1),
               bottom 520ms cubic-bezier(0.16, 1, 0.3, 1),
               top 520ms cubic-bezier(0.16, 1, 0.3, 1),
               left 520ms cubic-bezier(0.16, 1, 0.3, 1),
@@ -35,7 +35,7 @@
   transform: scale(0.95);
 }
 
-/* Chat bubble styling for floating BOB: wide, horizontal stretchable card with translucent glass */
+/* Chat bubble styling for floating BOB */
 .bob-floating-free .eyt-say {
   position: absolute !important;
   left: auto !important;
@@ -56,13 +56,13 @@
   line-height: 1.55 !important;
   border-radius: 14px 14px 4px 14px !important;
   padding: 12px 20px !important;
-  background: rgba(10, 16, 28, 0.78) !important;
+  background: var(--bob-bubble-bg) !important;
   -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
   backdrop-filter: blur(20px) saturate(180%) !important;
-  border: 1.5px solid var(--tint, #ffffff) !important;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
-  color: #ffffff !important;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8) !important;
+  border: 1.5px solid var(--tint, var(--border-strong, #F5F4F0)) !important;
+  box-shadow: var(--card-shadow, 0 16px 36px rgba(0, 0, 0, 0.7));
+  color: var(--text-primary, #F5F4F0) !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7) !important;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -80,8 +80,8 @@
 }
 
 .bob-floating-free .eyt-say[data-on]:hover {
-  border-color: #ffffff !important;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  border-color: var(--text-primary, #F5F4F0) !important;
+  box-shadow: var(--card-shadow, 0 16px 36px rgba(0, 0, 0, 0.7));
 }
 
 .bob-floating-free .eyt-say::after {
@@ -91,9 +91,9 @@
   right: 28px;
   width: 10px;
   height: 10px;
-  background: rgba(10, 16, 28, 0.78);
-  border-right: 1.5px solid var(--tint, #ffffff);
-  border-bottom: 1.5px solid var(--tint, #ffffff);
+  background: var(--bob-bubble-bg);
+  border-right: 1.5px solid var(--tint, var(--border-strong, #F5F4F0));
+  border-bottom: 1.5px solid var(--tint, var(--border-strong, #F5F4F0));
   transform: rotate(45deg);
 }
 
@@ -141,22 +141,28 @@
 }
 
 /* ── LIGHT MODE COMPANION STYLING ── */
+body.theme-light .bob-floating-free,
+.theme-light .bob-floating-free,
+[data-theme="light"] .bob-floating-free {
+  --bob-bubble-bg: var(--bg-card, #FFFFFF);
+}
+
 body.theme-light .bob-free-stage,
 .theme-light .bob-free-stage {
-  filter: drop-shadow(0 6px 16px rgba(27, 25, 31, 0.16)) drop-shadow(0 0 12px rgba(27, 25, 31, 0.2));
+  filter: drop-shadow(0 6px 16px rgba(12, 12, 15, 0.16)) drop-shadow(0 0 12px rgba(12, 12, 15, 0.14));
 }
 
 body.theme-light .bob-floating-free .eyt-say,
 .theme-light .bob-floating-free .eyt-say {
-  background: rgba(255, 255, 255, 0.96) !important;
-  border-color: #3F3F45 !important;
-  color: #0C0C0F !important;
+  background: var(--bob-bubble-bg) !important;
+  border-color: var(--border-strong, rgba(12, 12, 15, 0.35)) !important;
+  color: var(--text-primary, #0C0C0F) !important;
   text-shadow: none !important;
-  box-shadow: 0 12px 28px rgba(27, 25, 31, 0.12), 0 0 16px rgba(27, 25, 31, 0.15) !important;
+  box-shadow: var(--card-shadow) !important;
 }
 
 body.theme-light .bob-floating-free .eyt-say::after,
 .theme-light .bob-floating-free .eyt-say::after {
-  background: rgba(255, 255, 255, 0.96) !important;
-  border-color: #3F3F45 !important;
+  background: var(--bob-bubble-bg) !important;
+  border-color: var(--border-strong, rgba(12, 12, 15, 0.35)) !important;
 }

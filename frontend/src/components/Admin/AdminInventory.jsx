@@ -6,7 +6,8 @@ import AdminHeader from "./AdminHeader";
 import AdminSidebar from "./AdminSidebar";
 import EditComponentDrawer from "./EditComponentDrawer";
 import HoverImagePreview from "./HoverImagePreview";
-import "./Admin.css";
+import "./styles/AdminBase.css";
+import "./styles/AdminInventory.css";
 
 const CATEGORIES = ["all", "gpu", "motherboard", "cpu", "ram", "storage", "case", "psu"];
 

@@ -1,5 +1,11 @@
-/* ── DISCREET FULLSCREEN TOGGLE (Anti-Slop, Low Visual Prominence) ── */
+/* ── DISCREET FULLSCREEN TOGGLE (Charcoal & Alabaster Tokens) ── */
 .discreet-fs-toggle {
+  --fs-bg: rgba(32, 32, 35, 0.72);
+  --fs-bg-hover: rgba(40, 40, 45, 0.92);
+  --fs-border: var(--border-color, #3F3F45);
+  --fs-ink: var(--text-muted, #C9C7C0);
+  --fs-ink-hover: var(--text-primary, #F5F4F0);
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -14,6 +20,14 @@
   transition: opacity 0.18s ease, background 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.1s ease;
 }
 
+:is(.theme-light, [data-theme="light"]) .discreet-fs-toggle {
+  --fs-bg: rgba(245, 244, 240, 0.8);
+  --fs-bg-hover: #EAE6DD;
+  --fs-border: var(--border-color, rgba(12, 12, 15, 0.18));
+  --fs-ink: var(--text-muted, #525058);
+  --fs-ink-hover: var(--text-primary, #0C0C0F);
+}
+
 .discreet-fs-toggle:active {
   transform: scale(0.94);
 }
@@ -25,7 +39,7 @@
   pointer-events: none;
 }
 
-/* ── CORNER FLOATING VARIANT (Quiet corner utility on all pages) ── */
+/* Corner floating variant */
 .discreet-fs-corner {
   position: fixed;
   bottom: 14px;
@@ -34,65 +48,37 @@
   width: 28px;
   height: 28px;
   border-radius: 6px;
-  background: rgba(15, 23, 42, 0.45);
+  background: var(--fs-bg);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #64748b;
-  opacity: 0.45;
+  border-color: var(--fs-border);
+  color: var(--fs-ink);
+  opacity: 0.55;
 }
 
 .discreet-fs-corner:hover {
-  opacity: 0.92;
-  color: #cbd5e1;
-  background: rgba(30, 41, 59, 0.72);
-  border-color: rgba(255, 255, 255, 0.16);
+  opacity: 0.96;
+  color: var(--fs-ink-hover);
+  background: var(--fs-bg-hover);
 }
 
-/* Light Theme support for corner toggle */
-body.theme-light .discreet-fs-corner,
-.theme-light .discreet-fs-corner {
-  background: rgba(244, 241, 233, 0.65);
-  border: 1px solid rgba(27, 25, 31, 0.1);
-  color: #64748b;
-}
-
-body.theme-light .discreet-fs-corner:hover,
-.theme-light .discreet-fs-corner:hover {
-  background: rgba(235, 231, 222, 0.9);
-  color: #1e293b;
-  border-color: rgba(27, 25, 31, 0.22);
-}
-
-/* ── SIDEBAR / INLINE VARIANT (Quiet dock in sidebar footers) ── */
-.discreet-fs-sidebar {
+/* Sidebar & inline variants */
+.discreet-fs-sidebar,
+.discreet-fs-inline {
   width: 28px;
   height: 28px;
   flex-shrink: 0;
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #94a3b8;
-  opacity: 0.75;
+  background: var(--fs-bg);
+  border-color: var(--fs-border);
+  color: var(--fs-ink);
+  opacity: 0.78;
 }
 
-.discreet-fs-sidebar:hover {
+.discreet-fs-sidebar:hover,
+.discreet-fs-inline:hover,
+.discreet-fs-toggle.is-fs-active {
   opacity: 1;
-  color: #38bdf8;
-  background: rgba(56, 189, 248, 0.08);
-  border-color: rgba(56, 189, 248, 0.25);
-}
-
-body.theme-light .discreet-fs-sidebar,
-.theme-light .discreet-fs-sidebar {
-  background: rgba(27, 25, 31, 0.04);
-  border-color: rgba(27, 25, 31, 0.12);
-  color: #475569;
-}
-
-body.theme-light .discreet-fs-sidebar:hover,
-.theme-light .discreet-fs-sidebar:hover {
-  background: rgba(27, 25, 31, 0.08);
-  border-color: rgba(27, 25, 31, 0.25);
-  color: #0f172a;
+  color: var(--fs-ink-hover);
+  background: var(--fs-bg-hover);
 }

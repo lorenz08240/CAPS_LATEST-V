@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import AdminSidebar from "./AdminSidebar";
 import AdminHeader from "./AdminHeader";
 import soundManager from "../../utilities/soundManager";
-import "./Admin.css";
+import "./styles/AdminBase.css";
+import "./styles/AdminContent.css";
 
 export const AdminContent = () => {
   const [members, setMembers] = useState([]);

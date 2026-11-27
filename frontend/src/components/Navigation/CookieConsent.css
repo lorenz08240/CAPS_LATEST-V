@@ -1,7 +1,49 @@
 /* ═════════════════════════════════════════════════════════════════
-   CookieConsent.css — BuildLab Hero Themed Cookie Preferences Card
-   Matches the Dark Cyberpunk Glassmorphic Hero & Mode Selection Theme
+   CookieConsent.css — Charcoal & Alabaster Cookie Banner & Modal
    ═════════════════════════════════════════════════════════════════ */
+
+.buildlab-cookie-banner,
+.cookie-prefs-overlay {
+  --cc-banner-bg: rgba(32, 32, 35, 0.95);
+  --cc-dialog-bg: linear-gradient(180deg, #18181C 0%, #0C0C0F 100%);
+  --cc-surface: #202023;
+  --cc-surface-hover: #28282D;
+  --cc-inset: #141418;
+  --cc-footer-bg: #141418;
+  --cc-ink: var(--text-primary, #F5F4F0);
+  --cc-ink-sec: var(--text-secondary, #E4E3DF);
+  --cc-ink-muted: var(--text-muted, #C9C7C0);
+  --cc-ink-dim: var(--text-dim, #8E8D88);
+  --cc-border: var(--border-color, #3F3F45);
+  --cc-border-subtle: var(--border-subtle, rgba(201, 199, 192, 0.14));
+  --cc-tint: rgba(201, 199, 192, 0.08);
+  --cc-accent: #F5F4F0;
+  --cc-on-accent: #0C0C0F;
+  --cc-link: #38bdf8;
+  --cc-link-hover: #7dd3fc;
+  --cc-shadow: 0 16px 40px rgba(0, 0, 0, 0.65);
+}
+
+:is(.theme-light, [data-theme="light"]) :is(.buildlab-cookie-banner, .cookie-prefs-overlay) {
+  --cc-banner-bg: rgba(255, 255, 255, 0.96);
+  --cc-dialog-bg: #FFFFFF;
+  --cc-surface: #F5F4F0;
+  --cc-surface-hover: #EAE6DD;
+  --cc-inset: #F0ECE3;
+  --cc-footer-bg: #F5F4F0;
+  --cc-ink: var(--text-primary, #0C0C0F);
+  --cc-ink-sec: var(--text-secondary, #2A292E);
+  --cc-ink-muted: var(--text-muted, #525058);
+  --cc-ink-dim: var(--text-dim, #6E6C74);
+  --cc-border: var(--border-color, rgba(12, 12, 15, 0.18));
+  --cc-border-subtle: var(--border-subtle, rgba(12, 12, 15, 0.08));
+  --cc-tint: rgba(12, 12, 15, 0.06);
+  --cc-accent: #202023;
+  --cc-on-accent: #F5F4F0;
+  --cc-link: #0c4a6e;
+  --cc-link-hover: #0C0C0F;
+  --cc-shadow: 0 20px 50px rgba(12, 12, 15, 0.14);
+}
 
 /* ── 1. BOTTOM NOTICE BANNER ── */
 .buildlab-cookie-banner {
@@ -11,11 +53,11 @@
   right: 24px;
   max-width: 1100px;
   margin: 0 auto;
-  z-index: 9990; /* Safely layered below FullscreenGate (99992) and modals */
-  background: rgba(11, 17, 30, 0.94);
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  z-index: 9990;
+  background: var(--cc-banner-bg);
+  border: 1px solid var(--cc-border);
   border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  box-shadow: var(--cc-shadow);
   -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px);
   animation: bannerSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
@@ -24,7 +66,7 @@
   transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
-/* When on /learn or when workbench shell is present, position at top below header so it NEVER obstructs the 3D stepper or lesson footer */
+/* On /learn workbench shell, dock top-center below header so 3D stepper/footer stay clear */
 body:has(.wb-shell) .buildlab-cookie-banner,
 .wb-shell ~ .buildlab-cookie-banner {
   top: 76px !important;
@@ -32,50 +74,49 @@ body:has(.wb-shell) .buildlab-cookie-banner,
   left: 45% !important;
   right: auto !important;
   transform: translateX(-50%) !important;
-  width: min(540px, calc(100vw - 48px)) !important;
-  max-width: 540px !important;
-  margin: 0 !important;
-  z-index: 9995 !important;
-}
-
-body:has(.wb-3d-guided-stepper) .buildlab-cookie-banner {
-  display: none !important;
-  pointer-events: none !important;
+  width: min(540px, calc(100vw - 48px));
+  max-width: 540px;
+  margin: 0;
+  z-index: 9995;
+  animation: none;
 }
 
 body:has(.wb-shell) .buildlab-cookie-banner .cookie-banner-content,
 .wb-shell ~ .buildlab-cookie-banner .cookie-banner-content {
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: stretch !important;
-  gap: 12px !important;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
 }
 
 body:has(.wb-shell) .buildlab-cookie-banner .cookie-text-col,
 .wb-shell ~ .buildlab-cookie-banner .cookie-text-col {
-  width: 100% !important;
+  width: 100%;
 }
 
 body:has(.wb-shell) .buildlab-cookie-banner .cookie-actions-col,
 .wb-shell ~ .buildlab-cookie-banner .cookie-actions-col {
-  display: flex !important;
-  flex-direction: row !important;
-  gap: 10px !important;
-  width: 100% !important;
-  justify-content: flex-end !important;
+  width: 100%;
+  justify-content: flex-end;
 }
 
-/* While any modal, dialog, first-time tour, welcome overlay, or fullscreen gate is active, suppress the banner to eliminate prompt stacking */
-body:has(.is-tour-active) .buildlab-cookie-banner,
-body:has(.wb-welcome-overlay-backdrop) .buildlab-cookie-banner,
-body:has(.wb-welcome-overlay-card) .buildlab-cookie-banner,
-body:has(.stage-unlock-overlay) .buildlab-cookie-banner,
-body:has(.fs-gate-overlay) .buildlab-cookie-banner,
-body:has(.account-modal-overlay) .buildlab-cookie-banner,
-body:has(.mode-selection-overlay) .buildlab-cookie-banner,
-body:has(.learn-guard-screen) .buildlab-cookie-banner,
-body:has(.learn-guard-card) .buildlab-cookie-banner,
-body:has([role="dialog"]:not(.buildlab-cookie-banner)) .buildlab-cookie-banner {
+body:has(.wb-3d-guided-stepper) .buildlab-cookie-banner {
+  display: none !important;
+  pointer-events: none;
+}
+
+/* Suppress banner whenever a tour, overlay, gate, guard, or modal dialog is active */
+body:has(:is(
+  .is-tour-active,
+  .wb-welcome-overlay-backdrop,
+  .wb-welcome-overlay-card,
+  .stage-unlock-overlay,
+  .fs-gate-overlay,
+  .account-modal-overlay,
+  .mode-selection-overlay,
+  .learn-guard-screen,
+  .learn-guard-card,
+  [role="dialog"]:not(.buildlab-cookie-banner)
+)) .buildlab-cookie-banner {
   opacity: 0 !important;
   pointer-events: none !important;
   transform: translateY(20px) !important;
@@ -101,12 +142,16 @@ body:has([role="dialog"]:not(.buildlab-cookie-banner)) .buildlab-cookie-banner {
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: var(--cc-tint);
+  border: 1px solid var(--cc-border);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 22px;
+}
+
+.cookie-icon {
+  line-height: 1;
 }
 
 .cookie-text-col {
@@ -125,14 +170,8 @@ body:has([role="dialog"]:not(.buildlab-cookie-banner)) .buildlab-cookie-banner {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #ffffff;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  background: #00e5a0;
   animation: cyberPulse 1.4s infinite alternate;
-}
-
-@keyframes cyberPulse {
-  0% { opacity: 0.4; transform: scale(0.85); }
-  100% { opacity: 1; transform: scale(1.15); }
 }
 
 .cookie-heading {
@@ -140,19 +179,19 @@ body:has([role="dialog"]:not(.buildlab-cookie-banner)) .buildlab-cookie-banner {
   font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.12em;
-  color: #ffffff;
+  color: var(--cc-ink);
   text-transform: uppercase;
 }
 
 .cookie-description {
   font-size: 0.84rem;
-  color: #cbd5e1;
+  color: var(--cc-ink-sec);
   line-height: 1.45;
   margin: 0;
 }
 
 .cookie-policy-link {
-  color: #38bdf8;
+  color: var(--cc-link);
   font-weight: 600;
   text-decoration: underline;
   text-underline-offset: 3px;
@@ -160,19 +199,7 @@ body:has([role="dialog"]:not(.buildlab-cookie-banner)) .buildlab-cookie-banner {
 }
 
 .cookie-policy-link:hover {
-  color: #7dd3fc;
-}
-
-body.theme-light .cookie-policy-link,
-.theme-light .cookie-policy-link,
-[data-theme="light"] .cookie-policy-link {
-  color: #b45309 !important;
-}
-
-body.theme-light .cookie-policy-link:hover,
-.theme-light .cookie-policy-link:hover,
-[data-theme="light"] .cookie-policy-link:hover {
-  color: #78350f !important;
+  color: var(--cc-link-hover);
 }
 
 .cookie-actions-col {
@@ -188,9 +215,9 @@ body.theme-light .cookie-policy-link:hover,
   gap: 8px;
   padding: 10px 20px;
   border-radius: 8px;
-  background: linear-gradient(135deg, #ffffff 0%, #d4d4d8 100%);
-  border: 1px solid #ffffff;
-  color: #060911;
+  background: var(--cc-accent);
+  border: 1px solid var(--cc-accent);
+  color: var(--cc-on-accent);
   font-size: 0.84rem;
   font-weight: 800;
   cursor: pointer;
@@ -199,17 +226,16 @@ body.theme-light .cookie-policy-link:hover,
 }
 
 .cookie-btn-accept:hover {
-  background: linear-gradient(135deg, #ffffff 0%, #d4d4d8 100%);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  box-shadow: var(--cc-shadow);
   transform: translateY(-2px);
 }
 
 .cookie-btn-secondary {
   padding: 10px 16px;
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #cbd5e1;
+  background: var(--cc-tint);
+  border: 1px solid var(--cc-border);
+  color: var(--cc-ink-sec);
   font-size: 0.82rem;
   font-weight: 700;
   cursor: pointer;
@@ -218,21 +244,17 @@ body.theme-light .cookie-policy-link:hover,
 }
 
 .cookie-btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
-  border-color: rgba(255, 255, 255, 0.3);
+  background: var(--cc-surface-hover);
+  color: var(--cc-ink);
   transform: translateY(-1px);
 }
 
-/* ═════════════════════════════════════════════════════════════════
-   2. REDESIGNED COOKIE PREFERENCES MODAL (MATCHING HERO SECTION)
-   ═════════════════════════════════════════════════════════════════ */
-
+/* ── 2. COOKIE PREFERENCES MODAL ── */
 .cookie-prefs-overlay {
   position: fixed;
   inset: 0;
   z-index: 100000;
-  background: rgba(3, 7, 18, 0.86);
+  background: rgba(12, 12, 15, 0.84);
   -webkit-backdrop-filter: blur(14px);
   backdrop-filter: blur(14px);
   display: flex;
@@ -254,10 +276,10 @@ body.theme-light .cookie-policy-link:hover,
   max-height: min(88vh, 88dvh);
   height: min(88vh, 760px);
   min-height: 380px;
-  background: linear-gradient(180deg, #0b111e 0%, #060911 100%);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--cc-dialog-bg);
+  border: 1px solid var(--cc-border);
   border-radius: 20px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  box-shadow: var(--cc-shadow);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -265,7 +287,6 @@ body.theme-light .cookie-policy-link:hover,
   animation: prefsSlideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Top Cyber Gradient Accent Line (matching ModeSelectionCards & Hero) */
 .cookie-prefs-dialog::before {
   content: "";
   position: absolute;
@@ -273,7 +294,7 @@ body.theme-light .cookie-policy-link:hover,
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(135deg, #ffffff 0%, #d4d4d8 100%);
+  background: linear-gradient(90deg, transparent, var(--cc-ink-muted), transparent);
   z-index: 10;
 }
 
@@ -282,13 +303,13 @@ body.theme-light .cookie-policy-link:hover,
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* ── Header ── */
+/* Header */
 .cookie-prefs-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   padding: 22px 26px 18px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--cc-border-subtle);
   flex-shrink: 0;
   gap: 16px;
 }
@@ -307,12 +328,12 @@ body.theme-light .cookie-policy-link:hover,
   font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.12em;
-  color: #ffffff;
+  color: var(--cc-ink-muted);
   text-transform: uppercase;
 }
 
 .tag-bracket {
-  color: rgba(255, 255, 255, 0.12);
+  color: var(--cc-ink-dim);
   font-weight: 900;
 }
 
@@ -320,23 +341,22 @@ body.theme-light .cookie-policy-link:hover,
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #ffffff;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  background: var(--cc-ink);
 }
 
 .cookie-prefs-title {
   font-size: 1.55rem;
   font-weight: 900;
-  color: #ffffff;
+  color: var(--cc-ink);
   margin: 0;
   letter-spacing: -0.01em;
   line-height: 1.2;
 }
 
 .cookie-prefs-close-btn {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #94a3b8;
+  background: var(--cc-tint);
+  border: 1px solid var(--cc-border);
+  color: var(--cc-ink-muted);
   width: 34px;
   height: 34px;
   border-radius: 8px;
@@ -350,14 +370,13 @@ body.theme-light .cookie-policy-link:hover,
 }
 
 .cookie-prefs-close-btn:hover {
-  background: rgba(244, 63, 94, 0.18);
-  border-color: rgba(244, 63, 94, 0.55);
+  background: rgba(240, 75, 75, 0.18);
+  border-color: rgba(240, 75, 75, 0.55);
   color: #F04B4B;
   transform: rotate(90deg);
-  box-shadow: 0 0 16px rgba(244, 63, 94, 0.35);
 }
 
-/* ── Body (Scrollable Container) ── */
+/* Body */
 .cookie-prefs-body {
   padding: 22px 26px;
   overflow-y: auto;
@@ -371,7 +390,7 @@ body.theme-light .cookie-policy-link:hover,
   flex-direction: column;
   gap: 16px;
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.14) rgba(255, 255, 255, 0.04);
+  scrollbar-color: var(--cc-border) transparent;
 }
 
 .cookie-prefs-body::-webkit-scrollbar {
@@ -379,23 +398,19 @@ body.theme-light .cookie-policy-link:hover,
 }
 
 .cookie-prefs-body::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 4px;
+  background: transparent;
   margin: 8px 0;
 }
 
 .cookie-prefs-body::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--cc-border);
   border-radius: 4px;
-  border: 1px solid rgba(255, 255, 255, 0.16);
 }
 
 .cookie-prefs-body::-webkit-scrollbar-thumb:hover {
-  background: #ffffff;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  background: var(--cc-ink-muted);
 }
 
-/* Usage Intro */
 .cookie-usage-intro {
   margin-bottom: 2px;
   flex-shrink: 0;
@@ -404,22 +419,22 @@ body.theme-light .cookie-policy-link:hover,
 .cookie-usage-heading {
   font-size: 1.02rem;
   font-weight: 800;
-  color: #f8fafc;
-  margin: 0 0 6px 0;
+  color: var(--cc-ink);
+  margin: 0 0 6px;
   letter-spacing: -0.01em;
 }
 
 .cookie-usage-desc {
   font-size: 0.85rem;
   line-height: 1.55;
-  color: #94a3b8;
+  color: var(--cc-ink-muted);
   margin: 0;
 }
 
 /* ── 3. ACCORDION CATEGORY CARDS ── */
 .cookie-category-card {
-  background: rgba(255, 255, 255, 0.025);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--cc-surface);
+  border: 1px solid var(--cc-border-subtle);
   border-radius: 14px;
   overflow: hidden;
   flex-shrink: 0;
@@ -427,18 +442,16 @@ body.theme-light .cookie-policy-link:hover,
 }
 
 .cookie-category-card:hover {
-  background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(255, 255, 255, 0.16);
+  background: var(--cc-surface-hover);
+  border-color: var(--cc-border);
   transform: translateY(-1px);
 }
 
 .cookie-category-card.expanded {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.18);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  border-color: var(--cc-border);
+  box-shadow: var(--cc-shadow);
 }
 
-/* Accordion Header */
 .category-card-header {
   display: flex;
   align-items: center;
@@ -451,10 +464,6 @@ body.theme-light .cookie-policy-link:hover,
   transition: background 0.2s ease;
 }
 
-.category-card-header:hover {
-  background: rgba(255, 255, 255, 0.02);
-}
-
 .category-header-left {
   display: flex;
   align-items: center;
@@ -462,14 +471,19 @@ body.theme-light .cookie-policy-link:hover,
   min-width: 0;
 }
 
+.category-header-right {
+  display: flex;
+  align-items: center;
+}
+
 .accordion-chevron {
   font-size: 10px;
-  color: #64748b;
+  color: var(--cc-ink-dim);
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s ease;
 }
 
 .cookie-category-card.expanded .accordion-chevron {
-  color: #ffffff;
+  color: var(--cc-ink);
   transform: rotate(180deg);
 }
 
@@ -483,16 +497,10 @@ body.theme-light .cookie-policy-link:hover,
 .category-title {
   font-size: 0.95rem;
   font-weight: 700;
-  color: #f1f5f9;
+  color: var(--cc-ink);
   letter-spacing: 0.01em;
-  transition: color 0.2s ease;
 }
 
-.cookie-category-card.expanded .category-title {
-  color: #ffffff;
-}
-
-/* Status Pills */
 .category-status-pill {
   font-family: 'JetBrains Mono', 'Consolas', monospace;
   font-size: 0.65rem;
@@ -501,27 +509,17 @@ body.theme-light .cookie-policy-link:hover,
   padding: 2px 7px;
   border-radius: 4px;
   text-transform: uppercase;
-}
-
-.category-status-pill.locked {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  color: #ffffff;
-}
-
-.category-status-pill.active {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  color: #ffffff;
+  background: var(--cc-tint);
+  border: 1px solid var(--cc-border);
+  color: var(--cc-ink);
 }
 
 .category-status-pill.inactive {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #64748b;
+  border-color: var(--cc-border-subtle);
+  color: var(--cc-ink-dim);
 }
 
-/* ── 4. SMOOTH ACCORDION TRANSITION (@reanimate CSS Grid) ── */
+/* Accordion Transition */
 .category-card-content-wrap {
   display: grid;
   grid-template-rows: 0fr;
@@ -537,7 +535,7 @@ body.theme-light .cookie-policy-link:hover,
   overflow: hidden;
   opacity: 0;
   transition: opacity 0.28s ease, padding 0.34s ease;
-  padding: 0 18px 0;
+  padding: 0 18px;
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -546,25 +544,25 @@ body.theme-light .cookie-policy-link:hover,
 .cookie-category-card.expanded .category-card-content {
   opacity: 1;
   padding: 0 18px 18px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid var(--cc-border-subtle);
   margin-top: 4px;
 }
 
 .category-explanation {
   font-size: 0.83rem;
   line-height: 1.55;
-  color: #94a3b8;
+  color: var(--cc-ink-muted);
   margin: 10px 0 0;
 }
 
-/* ── 5. SUB-SERVICES LIST (TOGGLE PANELS) ── */
+/* ── 4. SUB-SERVICES & DETAIL CARDS ── */
 .sub-services-list {
   display: flex;
   flex-direction: column;
   gap: 10px;
   padding: 12px 14px;
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: var(--cc-inset);
+  border: 1px solid var(--cc-border-subtle);
   border-radius: 10px;
 }
 
@@ -583,16 +581,15 @@ body.theme-light .cookie-policy-link:hover,
 
 .sub-service-name {
   font-size: 0.84rem;
-  color: #f1f5f9;
+  color: var(--cc-ink);
   font-weight: 700;
 }
 
 .sub-service-sub {
   font-size: 0.73rem;
-  color: #64748b;
+  color: var(--cc-ink-dim);
 }
 
-/* ── 6. SPECIFIC COOKIE DETAILS (CRYSTAL CLEAR HIGH CONTRAST) ── */
 .cookie-details-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -600,19 +597,18 @@ body.theme-light .cookie-policy-link:hover,
 }
 
 .cookie-detail-card {
-  background: rgba(5, 9, 18, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--cc-inset);
+  border: 1px solid var(--cc-border-subtle);
   border-radius: 10px;
   padding: 12px 14px;
   display: flex;
   flex-direction: column;
   gap: 6px;
-  transition: all 0.2s ease;
+  transition: border-color 0.2s ease, transform 0.2s ease;
 }
 
 .cookie-detail-card:hover {
-  background: rgba(8, 14, 28, 0.85);
-  border-color: rgba(255, 255, 255, 0.18);
+  border-color: var(--cc-border);
   transform: translateY(-1px);
 }
 
@@ -623,26 +619,25 @@ body.theme-light .cookie-policy-link:hover,
   gap: 8px;
 }
 
-.cookie-name-badge {
+.cookie-name-badge,
+.cookie-expiry-tag {
   font-family: 'JetBrains Mono', 'Consolas', monospace;
-  font-size: 0.76rem;
   font-weight: 800;
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  padding: 2px 7px;
+  color: var(--cc-ink);
+  background: var(--cc-tint);
+  border: 1px solid var(--cc-border-subtle);
   border-radius: 5px;
 }
 
+.cookie-name-badge {
+  font-size: 0.76rem;
+  padding: 2px 7px;
+}
+
 .cookie-expiry-tag {
-  font-family: 'JetBrains Mono', 'Consolas', monospace;
   font-size: 0.65rem;
   font-weight: 700;
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.16);
   padding: 2px 6px;
-  border-radius: 4px;
 }
 
 .cookie-detail-meta {
@@ -655,26 +650,26 @@ body.theme-light .cookie-policy-link:hover,
 .meta-label {
   font-family: 'JetBrains Mono', 'Consolas', monospace;
   font-weight: 700;
-  color: #64748b;
+  color: var(--cc-ink-dim);
 }
 
 .meta-value {
-  color: #94a3b8;
+  color: var(--cc-ink-muted);
 }
 
 .cookie-detail-desc {
   font-size: 0.78rem;
   line-height: 1.45;
-  color: #cbd5e1;
+  color: var(--cc-ink-sec);
   margin: 2px 0 0;
 }
 
-/* ── 7. MORE INFORMATION & TRANSPARENCY ── */
+/* ── 5. MORE INFO ── */
 .cookie-more-info {
   margin-top: 4px;
   padding: 12px 14px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px dashed rgba(255, 255, 255, 0.09);
+  background: var(--cc-inset);
+  border: 1px dashed var(--cc-border);
   border-radius: 10px;
   flex-shrink: 0;
 }
@@ -690,14 +685,13 @@ body.theme-light .cookie-policy-link:hover,
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: #ffffff;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  background: var(--cc-ink);
 }
 
 .more-info-title {
   font-size: 0.82rem;
   font-weight: 800;
-  color: #f1f5f9;
+  color: var(--cc-ink);
   margin: 0;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -706,22 +700,17 @@ body.theme-light .cookie-policy-link:hover,
 .more-info-text {
   font-size: 0.78rem;
   line-height: 1.5;
-  color: #94a3b8;
+  color: var(--cc-ink-muted);
   margin: 0;
 }
 
 .more-info-text a {
-  color: #ffffff;
+  color: var(--cc-ink);
   text-decoration: underline;
   text-underline-offset: 2px;
-  transition: color 0.15s ease;
 }
 
-.more-info-text a:hover {
-  color: #ffffff;
-}
-
-/* ── 8. TOGGLE SWITCH (CLEAN CYBER STYLE) ── */
+/* ── 6. TOGGLE SWITCH ── */
 .toggle-switch {
   position: relative;
   display: inline-block;
@@ -745,8 +734,8 @@ body.theme-light .cookie-policy-link:hover,
 .toggle-slider {
   position: absolute;
   inset: 0;
-  background: #1e293b;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: var(--cc-inset);
+  border: 1px solid var(--cc-border);
   border-radius: 24px;
   transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -758,10 +747,10 @@ body.theme-light .cookie-policy-link:hover,
   width: 16px;
   left: 3px;
   bottom: 3px;
-  background: #ffffff;
+  background: var(--cc-ink-muted);
   border-radius: 50%;
   transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .toggle-switch.small .toggle-slider::before {
@@ -772,14 +761,13 @@ body.theme-light .cookie-policy-link:hover,
 }
 
 .toggle-switch input:checked + .toggle-slider {
-  background: #ffffff;
-  border-color: rgba(255, 255, 255, 0.35);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  background: var(--cc-accent);
+  border-color: var(--cc-accent);
 }
 
 .toggle-switch input:checked + .toggle-slider::before {
   transform: translateX(20px);
-  background: #060911;
+  background: var(--cc-on-accent);
 }
 
 .toggle-switch.small input:checked + .toggle-slider::before {
@@ -788,24 +776,27 @@ body.theme-light .cookie-policy-link:hover,
 
 .toggle-switch.locked {
   cursor: not-allowed;
-  opacity: 0.75;
+  opacity: 0.72;
 }
 
 .toggle-switch.locked input:checked + .toggle-slider {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.18);
-  box-shadow: none;
+  background: var(--cc-tint);
+  border-color: var(--cc-border);
 }
 
-/* ── 9. BOTTOM ACTIONS (HERO-THEMED ACTION BAR) ── */
+.toggle-switch.locked input:checked + .toggle-slider::before {
+  background: var(--cc-ink);
+}
+
+/* ── 7. FOOTER ACTIONS ── */
 .cookie-prefs-footer {
   padding: 16px 26px 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid var(--cc-border-subtle);
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: 12px;
-  background: #070b14;
+  background: var(--cc-footer-bg);
   flex-shrink: 0;
 }
 
@@ -821,52 +812,43 @@ body.theme-light .cookie-policy-link:hover,
   white-space: nowrap;
 }
 
-/* Reject All: Sleek Ghost / Cyber Outline */
 .btn-cookie-action.reject-all {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #94a3b8;
+  background: var(--cc-tint);
+  border: 1px solid var(--cc-border);
+  color: var(--cc-ink-muted);
 }
 
 .btn-cookie-action.reject-all:hover {
-  background: rgba(244, 63, 94, 0.12);
-  border-color: rgba(244, 63, 94, 0.4);
+  background: rgba(240, 75, 75, 0.14);
+  border-color: rgba(240, 75, 75, 0.5);
   color: #F04B4B;
   transform: translateY(-1px);
 }
 
-/* Save Preferences: Cyan Tech Button */
 .btn-cookie-action.save-prefs {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  color: #ffffff;
+  background: var(--cc-surface);
+  border: 1px solid var(--cc-border);
+  color: var(--cc-ink);
 }
 
 .btn-cookie-action.save-prefs:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.35);
-  color: #ffffff;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  background: var(--cc-surface-hover);
   transform: translateY(-1px);
 }
 
-/* Accept All: Hero Emerald Neon Gradient with Arrow */
 .btn-cookie-action.accept-all {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   padding: 10px 22px;
-  background: linear-gradient(135deg, #ffffff 0%, #d4d4d8 100%);
-  border: 1.5px solid rgba(255, 255, 255, 0.3);
-  color: #041f17;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  background: var(--cc-accent);
+  border: 1.5px solid var(--cc-accent);
+  color: var(--cc-on-accent);
 }
 
 .btn-cookie-action.accept-all:hover {
-  background: linear-gradient(135deg, #ffffff 0%, #d4d4d8 100%);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
   transform: translateY(-2px) scale(1.02);
-  border-color: rgba(255, 255, 255, 0.6);
+  box-shadow: var(--cc-shadow);
 }
 
 .btn-cookie-action.accept-all .btn-arrow {
@@ -877,130 +859,32 @@ body.theme-light .cookie-policy-link:hover,
   transform: translateX(3px);
 }
 
-/* ── 10. RESPONSIVE DESIGN ── */
 @media (max-width: 680px) {
   .cookie-prefs-dialog {
     max-height: 92vh;
     border-radius: 16px;
   }
-
   .cookie-prefs-header {
     padding: 18px 18px 14px;
   }
-
   .cookie-prefs-body {
     padding: 16px 18px;
   }
-
   .cookie-details-grid {
     grid-template-columns: 1fr;
   }
-
   .cookie-prefs-footer {
     padding: 14px 18px 16px;
     flex-wrap: wrap;
     gap: 8px;
   }
-
   .btn-cookie-action {
     flex: 1 1 calc(50% - 8px);
     padding: 10px 14px;
     font-size: 0.8rem;
   }
-
   .btn-cookie-action.accept-all {
     flex: 1 1 100%;
     justify-content: center;
   }
 }
-
-/* ═════════════════════════════════════════════════════════════════════
-   LIGHT MODE COMPREHENSIVE STYLING (Soft Titanium / Crisp Slate Laboratory)
-   ═════════════════════════════════════════════ */
-body.theme-light .buildlab-cookie-banner,
-.theme-light .buildlab-cookie-banner,
-[data-theme="light"] .buildlab-cookie-banner {
-  background: rgba(255, 255, 255, 0.95);
-  border-color: rgba(5, 150, 105, 0.3);
-  box-shadow: 0 20px 50px rgba(23, 21, 26, 0.12), 0 0 25px rgba(5, 150, 105, 0.08);
-}
-
-body.theme-light .cookie-hex-badge,
-.theme-light .cookie-hex-badge,
-[data-theme="light"] .cookie-hex-badge {
-  background: rgba(5, 150, 105, 0.1);
-  border-color: rgba(5, 150, 105, 0.3);
-}
-
-body.theme-light .cookie-heading,
-.theme-light .cookie-heading,
-[data-theme="light"] .cookie-heading {
-  color: #C9C7C0;
-}
-
-body.theme-light .cookie-description,
-.theme-light .cookie-description,
-[data-theme="light"] .cookie-description {
-  color: #475569;
-}
-
-body.theme-light .cookie-btn-secondary,
-.theme-light .cookie-btn-secondary,
-[data-theme="light"] .cookie-btn-secondary {
-  background: #f8fafc;
-  border-color: rgba(23, 21, 26, 0.12);
-  color: #334155;
-}
-
-body.theme-light .cookie-btn-secondary:hover,
-.theme-light .cookie-btn-secondary:hover,
-[data-theme="light"] .cookie-btn-secondary:hover {
-  background: #f1f5f9;
-  color: #0C0C0F;
-}
-
-body.theme-light .cookie-prefs-dialog,
-.theme-light .cookie-prefs-dialog,
-[data-theme="light"] .cookie-prefs-dialog {
-  background: #ffffff;
-  border-color: rgba(23, 21, 26, 0.12);
-  box-shadow: 0 24px 60px rgba(23, 21, 26, 0.14);
-}
-
-body.theme-light .cookie-prefs-header,
-.theme-light .cookie-prefs-header,
-[data-theme="light"] .cookie-prefs-header {
-  border-bottom-color: rgba(23, 21, 26, 0.08);
-}
-
-body.theme-light .cookie-prefs-title,
-.theme-light .cookie-prefs-title,
-[data-theme="light"] .cookie-prefs-title {
-  color: #0C0C0F;
-}
-
-body.theme-light .cookie-prefs-sub,
-.theme-light .cookie-prefs-sub,
-[data-theme="light"] .cookie-prefs-sub {
-  color: #64748b;
-}
-
-body.theme-light .cookie-card-toggle,
-.theme-light .cookie-card-toggle,
-[data-theme="light"] .cookie-card-toggle {
-  background: #f8fafc;
-  border-color: rgba(23, 21, 26, 0.08);
-}
-
-body.theme-light .cookie-toggle-name,
-.theme-light .cookie-toggle-name,
-[data-theme="light"] .cookie-toggle-name {
-  color: #0C0C0F;
-}
-
-body.theme-light .cookie-toggle-desc,
-.theme-light .cookie-toggle-desc,
-[data-theme="light"] .cookie-toggle-desc {
-  color: #475569;
-}
-

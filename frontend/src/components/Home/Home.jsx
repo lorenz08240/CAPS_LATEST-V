@@ -72,6 +72,79 @@ const HERO_DYNAMIC_CONTEXTS = {
   },
 };
 
+const MemoizedPlatformServices = React.memo(PlatformServices);
+const MemoizedFooter = React.memo(Footer);
+
+/**
+ * Isolated 3D hero stage wrapper.
+ * Manages throttled scroll progress locally so the parent Home component
+ * and its entire component tree (PlatformServices, Brands, Footer, modals) are
+ * never re-rendered during scrolling.
+ */
+const Home3DHeroStage = React.memo(function Home3DHeroStage({
+  activeModel,
+  setActiveModel,
+  rgbColor = "#f43f5e",
+}) {
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const lastProgressRef = useRef(0);
+  const rafIdRef = useRef(null);
+
+  useEffect(() => {
+    const updateProgress = () => {
+      const currentScroll = window.scrollY || window.pageYOffset || 0;
+      const hero = document.getElementById("cyber-hero");
+      const heroHeight = hero?.offsetHeight || window.innerHeight;
+      const isDeepPast = currentScroll > heroHeight * 1.25;
+
+      if (isDeepPast && lastProgressRef.current === 1) {
+        return;
+      }
+
+      const rawProgress = Math.min(1, Math.max(0, currentScroll / (heroHeight * 0.85)));
+
+      // Throttled: only re-render when difference > 0.005 or boundary reached (0 or 1)
+      if (
+        Math.abs(rawProgress - lastProgressRef.current) > 0.005 ||
+        (rawProgress === 0 && lastProgressRef.current !== 0) ||
+        (rawProgress === 1 && lastProgressRef.current !== 1)
+      ) {
+        lastProgressRef.current = rawProgress;
+        setScrollProgress(rawProgress);
+      }
+    };
+
+    const handleScroll = () => {
+      if (rafIdRef.current) return;
+      rafIdRef.current = requestAnimationFrame(() => {
+        rafIdRef.current = null;
+        updateProgress();
+      });
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    updateProgress();
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (rafIdRef.current) {
+        cancelAnimationFrame(rafIdRef.current);
+      }
+    };
+  }, []);
+
+  return (
+    <div className="cyber-canvas-stage">
+      <Home3DHero
+        activeModel={activeModel}
+        setActiveModel={setActiveModel}
+        rgbColor={rgbColor}
+        scrollProgress={scrollProgress}
+      />
+    </div>
+  );
+});
+
 function Home() {
   const navigate = useNavigate();
   const { mode, setAppMode, userProfile, unlockedStages } = useLearnMode();
@@ -95,7 +168,10 @@ function Home() {
   const [displayedModel, setDisplayedModel] = useState('case');
   const latestActiveModelRef = useRef(activeModel);
   latestActiveModelRef.current = activeModel;
-  const [scrollProgress, setScrollProgress] = useState(0);
+  const isScrolledDownRef = useRef(false);
+  const showLearnNavRef = useRef(false);
+  const backdropRef = useRef(null);
+  const wasPastHeroRef = useRef(false);
   const [isScrolledDown, setIsScrolledDown] = useState(false);
   const [showLearnNav, setShowLearnNav] = useState(false);
   const [startBuildRequested, setStartBuildRequested] = useState(false);
@@ -264,7 +340,7 @@ function Home() {
       // Hero/top: direct entrance into the Compatibility screen.
       // Once scrolled: land on the "Compare Two PC Builds Side by Side" area
       // on this page, not the smaller compatibility card further down.
-      if (isScrolledDown) {
+      if (isScrolledDownRef.current || isScrolledDown) {
         const compareSection = document.getElementById("service-compare");
         if (compareSection) {
           compareSection.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -296,28 +372,54 @@ function Home() {
       document.documentElement.style.overflow = "";
       document.body.style.overflow = "";
 
-      const handleScroll = () => {
-        const currentScroll = window.scrollY || window.pageYOffset || 0;
-        // Hysteresis: turn on at 40px, off only below 8px. A single threshold
-        // makes tiny scroll jitter retrigger the nav crossfade.
-        setIsScrolledDown((prev) => (prev ? currentScroll > 8 : currentScroll > 40));
+      let rafId = null;
 
-        // LEARN nav item only appears once the services/course plate comes into view.
-        const servicesPlate = document.getElementById("platform-services");
-        if (servicesPlate) {
-          setShowLearnNav(servicesPlate.getBoundingClientRect().top < window.innerHeight * 0.7);
+      const updateScroll = () => {
+        const currentScroll = window.scrollY || window.pageYOffset || 0;
+
+        // 1. Hysteresis: turn on at 40px, off only below 8px.
+        // Only trigger state update when the boolean value actually flips.
+        const nextScrolledDown = isScrolledDownRef.current ? currentScroll > 8 : currentScroll > 40;
+        if (nextScrolledDown !== isScrolledDownRef.current) {
+          isScrolledDownRef.current = nextScrolledDown;
+          setIsScrolledDown(nextScrolledDown);
         }
 
+        // 2. LEARN nav item only appears once the services/course plate comes into view.
+        const servicesPlate = document.getElementById("platform-services");
+        if (servicesPlate) {
+          const nextShowLearnNav = servicesPlate.getBoundingClientRect().top < window.innerHeight * 0.7;
+          if (nextShowLearnNav !== showLearnNavRef.current) {
+            showLearnNavRef.current = nextShowLearnNav;
+            setShowLearnNav(nextShowLearnNav);
+          }
+        }
+
+        // 3. Direct DOM update for giant typography backdrop (zero React re-renders)
         const hero = document.getElementById("cyber-hero");
-        if (hero) {
+        if (hero && backdropRef.current) {
           const heroHeight = hero.offsetHeight || window.innerHeight;
-          const progress = Math.min(1, Math.max(0, currentScroll / (heroHeight * 0.85)));
-          setScrollProgress(progress);
+          const isPastHero = currentScroll > heroHeight * 1.25;
+
+          if (!isPastHero || !wasPastHeroRef.current) {
+            wasPastHeroRef.current = isPastHero;
+            const progress = Math.min(1, Math.max(0, currentScroll / (heroHeight * 0.85)));
+            backdropRef.current.style.transform = `translate(-50%, calc(-50% + ${progress * 90}px)) scale(${1 - progress * 0.08})`;
+            backdropRef.current.style.opacity = Math.max(0.15, 1 - progress * 1.2);
+          }
         }
       };
 
+      const handleScroll = () => {
+        if (rafId) return;
+        rafId = requestAnimationFrame(() => {
+          rafId = null;
+          updateScroll();
+        });
+      };
+
       window.addEventListener("scroll", handleScroll, { passive: true });
-      handleScroll();
+      updateScroll();
 
       // Support direct hash navigation (e.g. /#brands-station)
       const checkAndScrollToBrands = () => {
@@ -335,21 +437,24 @@ function Home() {
       return () => {
         window.removeEventListener("scroll", handleScroll);
         window.removeEventListener("hashchange", checkAndScrollToBrands);
+        if (rafId) cancelAnimationFrame(rafId);
         document.documentElement.style.overflow = "";
         document.body.style.overflow = "";
       };
     }, []);
 
-    const handleNavigateHome = () => {
+    const handleNavigateHome = useCallback(() => {
       window.scrollTo({ top: 0, behavior: "smooth" });
-    };
+    }, []);
 
     return (
       <>
         <div className="home-page">
+          {/* Static full-page cyber grid overlay: fixed viewport layer creating parallax depth behind cards and text */}
+          <div className="cyber-ambient-grid home-static-grid-overlay" aria-hidden="true" />
+
           <section id="cyber-hero" className="cyber-hero-section">
             <div className="cyber-ambient-pink-spot" />
-            <div className="cyber-ambient-grid" />
 
             {/* Persistent layout anchor ensures zero layout jerk when top navbar is fixed */}
             <div className="cyber-top-nav-placeholder" aria-hidden="true" />
@@ -415,11 +520,8 @@ function Home() {
             </header>
 
             <div
+              ref={backdropRef}
               className="cyber-giant-text-backdrop"
-              style={{
-                transform: `translate(-50%, calc(-50% + ${scrollProgress * 90}px)) scale(${1 - scrollProgress * 0.08})`,
-                opacity: Math.max(0.15, 1 - scrollProgress * 1.2)
-              }}
             >
               <h1 className="giant-bg-text" aria-label="BUILDLAB">
                 <span className="giant-bg-word">BUILD</span>
@@ -438,14 +540,11 @@ function Home() {
               </h1>
             </div>
 
-            <div className="cyber-canvas-stage">
-              <Home3DHero
-                activeModel={activeModel}
-                setActiveModel={setActiveModel}
-                rgbColor="#f43f5e"
-                scrollProgress={scrollProgress}
-              />
-            </div>
+            <Home3DHeroStage
+              activeModel={activeModel}
+              setActiveModel={setActiveModel}
+              rgbColor="#f43f5e"
+            />
 
             <div className="cyber-editorial-grid">
               <div className="cyber-editorial-col cyber-col-left" ref={leftColRef}>
@@ -518,7 +617,7 @@ function Home() {
           </section>
 
           {/* ── Platform Capabilities & Services Showcase ── */}
-          <PlatformServices />
+          <MemoizedPlatformServices />
 
           {/* ── Certified Hardware Ecosystem & Brands ── */}
           <section id="brands-station" className="home-brands-section">
@@ -528,7 +627,7 @@ function Home() {
           </section>
 
           {/* ── Global Footer ── */}
-          <Footer />
+          <MemoizedFooter />
         </div>
 
         {/* ── 2-Card Mode Selection (Split Staggered Reveal + PixelCanvas Hover) ── */}

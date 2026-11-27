@@ -6,7 +6,8 @@ import { parseProductMeta, buildQuickSpecs } from "../../utilities/scrapedMeta";
 import AdminHeader from "./AdminHeader";
 import AdminSidebar from "./AdminSidebar";
 import EditComponentDrawer from "./EditComponentDrawer";
-import "./Admin.css";
+import "./styles/AdminBase.css";
+import "./styles/AdminCrawler.css";
 
 const CATEGORIES = ["all", "gpu", "motherboard", "cpu", "ram", "storage", "case", "psu"];
 

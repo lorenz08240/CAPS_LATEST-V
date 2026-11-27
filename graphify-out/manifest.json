@@ -54,9 +54,9 @@
     "semantic_hash": "8e5f2021f5b1721b527c842f43f78c73"
   },
   "frontend/src/App.jsx": {
-    "mtime": 1795498416.8895779,
-    "seen": 1795498479.2303233,
-    "ast_hash": "96086f5d09425f6b045839ed1a33a918",
+    "mtime": 1795546083.9504018,
+    "seen": 1795609114.2877831,
+    "ast_hash": "82d7b06c7e64afdecaef6b6ceede2590",
     "semantic_hash": ""
   },
   "frontend/src/components/3D/ComponentModels3D.jsx": {
@@ -72,9 +72,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/3D/PCBuilder3D.jsx": {
-    "mtime": 1795501300.7718024,
-    "seen": 1795501439.655678,
-    "ast_hash": "8b9ade36776486ee6988fb6664799c75",
+    "mtime": 1795526259.7406244,
+    "seen": 1795526357.756328,
+    "ast_hash": "7a42867a2b640686ef80c863b4ac41c2",
     "semantic_hash": ""
   },
   "frontend/src/components/3D/ProceduralSickleFan.jsx": {
@@ -96,9 +96,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Compatibility/Compatibility.jsx": {
-    "mtime": 1795467559.404184,
-    "seen": 1795467822.6422565,
-    "ast_hash": "96dd269eb869eef817754fd51ad4ed8c",
+    "mtime": 1795524958.793476,
+    "seen": 1795525000.8587322,
+    "ast_hash": "b6875d780023842271c27670182405e7",
     "semantic_hash": ""
   },
   "frontend/src/components/FeatureCarousel/FeatureCarousel.jsx": {
@@ -120,9 +120,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Home/Home.jsx": {
-    "mtime": 1795498457.6602788,
-    "seen": 1795498479.2524402,
-    "ast_hash": "25e932bb7bd95930653d26dbd643c9df",
+    "mtime": 1795525775.9493732,
+    "seen": 1795525798.88886,
+    "ast_hash": "3528d583c52cb2e411c707393c4df363",
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/CourseShell.jsx": {
@@ -180,9 +180,9 @@
     "semantic_hash": ""
   },
   "frontend/src/utilities/compatibilityEngine.js": {
-    "mtime": 1795467481.9991949,
-    "seen": 1795467822.6525164,
-    "ast_hash": "86808c07a43bd0a8345dbb63317ff45f",
+    "mtime": 1795524958.7945552,
+    "seen": 1795525000.8656738,
+    "ast_hash": "66f26f05509cd60512f98907bcb02cd6",
     "semantic_hash": ""
   },
   "frontend/src/utilities/fullscreen.js": {
@@ -408,9 +408,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Home/Home3DHero.jsx": {
-    "mtime": 1795501286.2096338,
-    "seen": 1795501439.6691048,
-    "ast_hash": "726c0d4c5a596c9101867d70aec5dd5d",
+    "mtime": 1795525752.3599696,
+    "seen": 1795525798.8888638,
+    "ast_hash": "c04fd29265e62a58e124746d47815a7b",
     "semantic_hash": ""
   },
   "frontend/src/components/3D/DDR4RAMModel.jsx": {
@@ -426,9 +426,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/AdminCrawler.jsx": {
-    "mtime": 1795467690.50237,
-    "seen": 1795467822.6388273,
-    "ast_hash": "14954033f140755f58c37ac95775ec55",
+    "mtime": 1795546294.7323446,
+    "seen": 1795609114.2965171,
+    "ast_hash": "c646b57cf3e2633779f5f7eec26440f7",
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/AdminHeader.jsx": {
@@ -438,21 +438,21 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/AdminInventory.jsx": {
-    "mtime": 1795501275.6287198,
-    "seen": 1795501439.6587136,
-    "ast_hash": "974129ca7c57adc9fb245726b89b05c9",
+    "mtime": 1795546297.9610686,
+    "seen": 1795609114.2969656,
+    "ast_hash": "a9532691875fa00b68212932b3e7d094",
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/AdminLogin.jsx": {
-    "mtime": 1795501271.7294273,
-    "seen": 1795501439.6587214,
-    "ast_hash": "7da9c9965c1484f343da17be21c064c5",
+    "mtime": 1795546299.4151473,
+    "seen": 1795609114.2969697,
+    "ast_hash": "f310f377e79575186875900a82edb69e",
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/EditComponentDrawer.jsx": {
-    "mtime": 1795501345.7432127,
-    "seen": 1795501439.6610174,
-    "ast_hash": "e0d4dc18995fff4f3dd1f442941db153",
+    "mtime": 1795546303.914418,
+    "seen": 1795609114.2969801,
+    "ast_hash": "21d588c44fe1bec5d8b567c9108079bc",
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/HardwareIcon.jsx": {
@@ -468,15 +468,15 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Home/Preloader.jsx": {
-    "mtime": 1795498327.513023,
-    "seen": 1795498479.2533834,
-    "ast_hash": "3c23b5bd864ea898a2ca2408a1d3182d",
+    "mtime": 1795525762.949936,
+    "seen": 1795525798.8891723,
+    "ast_hash": "c7e10f70d3c896b17e83cbfc2da5911f",
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/AdminSidebar.jsx": {
-    "mtime": 1795467731.6289303,
-    "seen": 1795467822.640119,
-    "ast_hash": "c33f29e662f69b3a69c290e9637a04c0",
+    "mtime": 1795546302.800394,
+    "seen": 1795609114.296977,
+    "ast_hash": "983b3a37d43f603be75555d55b929053",
     "semantic_hash": ""
   },
   "frontend/src/components/3D/NVMeSSDModel.jsx": {
@@ -486,27 +486,27 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/AdminAddComponent.jsx": {
-    "mtime": 1795155413.3910537,
-    "seen": 1795156045.4598815,
-    "ast_hash": "69f02e09a0bcfc3c0bbadf8c8a431e7a",
+    "mtime": 1795546292.9059927,
+    "seen": 1795609114.2960165,
+    "ast_hash": "d512a60eec983584bbbd2639beec4e0e",
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/AdminDeleteComponent.jsx": {
-    "mtime": 1795155482.3347795,
-    "seen": 1795156045.4601731,
-    "ast_hash": "445b2aca1447731f69d7fd3842d7908e",
+    "mtime": 1795546296.1258,
+    "seen": 1795609114.2965207,
+    "ast_hash": "7e28aa9116e7c6580d4cc0b27bf12e6b",
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/AdminEditComponent.jsx": {
-    "mtime": 1795155493.039736,
-    "seen": 1795156045.460176,
-    "ast_hash": "f3335f3703e2759da5932543ac339244",
+    "mtime": 1795546297.0289736,
+    "seen": 1795609114.296524,
+    "ast_hash": "c4f7aef418c68cfa5161cccf9335ebab",
     "semantic_hash": ""
   },
   "frontend/src/utilities/modelPreloader.js": {
-    "mtime": 1794172182.6008527,
-    "seen": 1794173179.6589324,
-    "ast_hash": "2448172e68bfcc6b0a0f237142b6d26e",
+    "mtime": 1795525721.4675543,
+    "seen": 1795525798.8943875,
+    "ast_hash": "79c42b4827d052c5c0decd9aea13b985",
     "semantic_hash": ""
   },
   "frontend/src/utilities/scrapedMeta.js": {
@@ -588,9 +588,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/AdminLogs.jsx": {
-    "mtime": 1795501345.7419348,
-    "seen": 1795501439.6587276,
-    "ast_hash": "7277831c2922933f4b9cec4bce010aa4",
+    "mtime": 1795546300.7530513,
+    "seen": 1795609114.296973,
+    "ast_hash": "63af34e0f48decee421aa24648ef2088",
     "semantic_hash": ""
   },
   "frontend/public/sfx/audio/alarm.wav": {
@@ -678,15 +678,15 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/AdminAccounts.jsx": {
-    "mtime": 1795468115.7893126,
-    "seen": 1795468280.8635337,
-    "ast_hash": "e5db4654fac3321b0a28c524955b7ccb",
+    "mtime": 1795546291.6969347,
+    "seen": 1795609114.2960114,
+    "ast_hash": "c9dfa189f0ede57d92442228ec026d47",
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/AdminContent.jsx": {
-    "mtime": 1795468122.099886,
-    "seen": 1795468280.8638325,
-    "ast_hash": "a0c6fa601e5aa1d52f75212a55dd5ba6",
+    "mtime": 1795546293.8311558,
+    "seen": 1795609114.2965114,
+    "ast_hash": "ee040609c195089053b1adee8447b944",
     "semantic_hash": ""
   },
   "frontend/src/components/Home/AccountSetupModal.jsx": {

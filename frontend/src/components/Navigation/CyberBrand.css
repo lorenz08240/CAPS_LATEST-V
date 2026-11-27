@@ -1,5 +1,14 @@
+/* ── CYBER BRAND & COMMAND DECK TRIGGER (Charcoal & Alabaster Tokens) ── */
 
 .cyber-brand-wrapper {
+  --cb-hud-bg: rgba(32, 32, 35, 0.88);
+  --cb-hud-border: rgba(201, 199, 192, 0.28);
+  --cb-hud-title: #d4a34b;
+  --cb-hud-text: var(--text-muted, #C9C7C0);
+  --cb-badge-bg: rgba(212, 163, 75, 0.16);
+  --cb-badge-border: rgba(212, 163, 75, 0.45);
+  --cb-badge-ink: #e2ba6f;
+
   display: flex;
   align-items: center;
   gap: 0.85rem;
@@ -9,13 +18,23 @@
   transition: all 300ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+:is(.theme-light, [data-theme="light"]) .cyber-brand-wrapper {
+  --cb-hud-bg: rgba(255, 255, 255, 0.92);
+  --cb-hud-border: rgba(12, 12, 15, 0.2);
+  --cb-hud-title: #0C0C0F;
+  --cb-hud-text: var(--text-muted, #525058);
+  --cb-badge-bg: rgba(12, 12, 15, 0.08);
+  --cb-badge-border: rgba(12, 12, 15, 0.25);
+  --cb-badge-ink: #202023;
+}
+
 /* ── INTERACTIVE DECK TRIGGER / LOGO BOX ── */
 .cyber-deck-trigger {
   width: 40px;
   height: 40px;
   border-radius: 9px;
-  background: rgba(244, 63, 94, 0.12);
-  border: 1.5px solid rgba(244, 63, 94, 0.7);
+  background: rgba(240, 75, 75, 0.12);
+  border: 1.5px solid rgba(240, 75, 75, 0.72);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -23,18 +42,18 @@
   position: relative;
   padding: 0;
   outline: none;
-  box-shadow: 0 0 16px rgba(244, 63, 94, 0.35);
+  box-shadow: 0 0 16px rgba(240, 75, 75, 0.3);
   transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-              border-color 0.25s ease, 
-              box-shadow 0.25s ease, 
+              border-color 0.25s ease,
+              box-shadow 0.25s ease,
               background 0.25s ease;
 }
 
 .cyber-deck-trigger:hover {
   transform: scale(1.08);
   border-color: #F04B4B;
-  box-shadow: 0 0 24px rgba(244, 63, 94, 0.65);
-  background: rgba(244, 63, 94, 0.22);
+  box-shadow: 0 0 24px rgba(240, 75, 75, 0.6);
+  background: rgba(240, 75, 75, 0.22);
 }
 
 .cyber-deck-trigger:active {
@@ -45,7 +64,7 @@
   position: absolute;
   inset: -3px;
   border-radius: 12px;
-  border: 1px solid rgba(244, 63, 94, 0.3);
+  border: 1px solid rgba(240, 75, 75, 0.32);
   opacity: 0;
   transition: opacity 0.3s ease, transform 0.3s ease;
   pointer-events: none;
@@ -56,19 +75,18 @@
   transform: scale(1.05);
 }
 
-/* ── TRIGGER ACTIVE (SIDEBAR OPEN) STATE ── */
 .cyber-deck-trigger.deck-active {
-  background: rgba(232, 180, 160, 0.18);
-  border-color: #e2ba6f;
-  box-shadow: 0 0 22px rgba(232, 180, 160, 0.5), inset 0 0 10px rgba(232, 180, 160, 0.2);
+  background: rgba(212, 163, 75, 0.16);
+  border-color: #d4a34b;
+  box-shadow: 0 0 20px rgba(212, 163, 75, 0.35), inset 0 0 10px rgba(212, 163, 75, 0.18);
 }
 
 .cyber-deck-trigger.deck-active:hover {
-  border-color: #E8B4A0;
-  box-shadow: 0 0 28px rgba(232, 180, 160, 0.75);
+  border-color: #e2ba6f;
+  box-shadow: 0 0 26px rgba(212, 163, 75, 0.55);
 }
 
-/* ── ANIMATED CORE / EQUALIZER (WHEN OPEN) ── */
+/* ── ANIMATED CORE / EQUALIZER ── */
 .deck-active-core {
   display: flex;
   align-items: center;
@@ -89,45 +107,24 @@
   width: 3px;
   background: #e2ba6f;
   border-radius: 2px;
-  box-shadow: 0 0 6px rgba(232, 180, 160, 0.6);
   animation: eq-pulse 1.2s ease-in-out infinite alternate;
 }
 
-.bar-1 {
-  height: 8px;
-  animation-delay: 0s;
-}
-
-.bar-2 {
-  height: 16px;
-  animation-delay: 0.25s;
-}
-
-.bar-3 {
-  height: 11px;
-  animation-delay: 0.5s;
-}
+.bar-1 { height: 8px; animation-delay: 0s; }
+.bar-2 { height: 16px; animation-delay: 0.25s; }
+.bar-3 { height: 11px; animation-delay: 0.5s; }
 
 @keyframes eq-pulse {
-  0% {
-    height: 4px;
-    opacity: 0.5;
-  }
-  50% {
-    height: 17px;
-    opacity: 1;
-  }
-  100% {
-    height: 9px;
-    opacity: 0.8;
-  }
+  0% { height: 4px; opacity: 0.5; }
+  50% { height: 17px; opacity: 1; }
+  100% { height: 9px; opacity: 0.8; }
 }
 
 .active-core-close-hint {
   position: absolute;
   font-size: 1.2rem;
   font-weight: 800;
-  color: #E8B4A0;
+  color: #e2ba6f;
   opacity: 0;
   transform: translateX(4px);
   transition: opacity 0.2s ease, transform 0.2s ease;
@@ -158,16 +155,16 @@
   object-fit: contain;
   padding: 3px;
   border-radius: 7px;
+  box-sizing: border-box;
 }
 
 .cyber-logo-fallback {
   color: #F04B4B;
   font-size: 1.15rem;
   line-height: 1;
-  text-shadow: 0 0 8px rgba(244, 63, 94, 0.8);
 }
 
-/* ── BRAND INFO CONTAINER ── */
+/* ── TELEMETRY HUD ── */
 .cyber-brand-info {
   display: flex;
   flex-direction: column;
@@ -175,45 +172,15 @@
   line-height: 1.15;
 }
 
-/* ── STANDARD BRAND (CLOSED) ── */
-.cyber-standard-brand {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.15;
-  animation: fadeInQuick 250ms ease forwards;
-}
-
-.cyber-brand-title {
-  font-size: 1.15rem;
-  font-weight: 900;
-  letter-spacing: 0.08em;
-  color: #ffffff;
-  transition: color 0.2s ease, text-shadow 0.2s ease;
-}
-
-.cyber-brand-wrapper:hover .cyber-brand-title {
-  color: #ffffff;
-  text-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
-}
-
-.cyber-brand-badge {
-  font-size: 0.6rem;
-  color: #F04B4B;
-  letter-spacing: 0.16em;
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
-/* ── 100X COOLER TELEMETRY HUD (OPEN / ELIMINATING REDUNDANCY) ── */
 .cyber-telemetry-hud {
   display: flex;
   flex-direction: column;
   line-height: 1.15;
-  padding: 2px 8px 2px 6px;
-  background: rgba(232, 180, 160, 0.08);
-  border: 1px solid rgba(232, 180, 160, 0.28);
+  padding: 3px 9px 3px 7px;
+  background: var(--cb-hud-bg);
+  border: 1px solid var(--cb-hud-border);
   border-radius: 6px;
-  box-shadow: 0 0 14px rgba(232, 180, 160, 0.12);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
   animation: slideFadeIn 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
@@ -227,7 +194,7 @@
   font-size: 0.75rem;
   font-weight: 800;
   letter-spacing: 0.14em;
-  color: #e2ba6f;
+  color: var(--cb-hud-title);
   text-transform: uppercase;
   font-family: 'Courier New', Courier, monospace;
 }
@@ -237,9 +204,9 @@
   font-weight: 900;
   padding: 1px 4px;
   border-radius: 3px;
-  background: rgba(232, 180, 160, 0.25);
-  border: 1px solid rgba(232, 180, 160, 0.5);
-  color: #E8B4A0;
+  background: var(--cb-badge-bg);
+  border: 1px solid var(--cb-badge-border);
+  color: var(--cb-badge-ink);
   letter-spacing: 0.1em;
 }
 
@@ -258,93 +225,48 @@
   display: inline-block;
 }
 
-.dot-ready, .dot-ok, .dot-ping {
-  background: #ffffff;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+.dot-ready,
+.dot-ok,
+.dot-ping {
+  background: #00e5a0;
+  box-shadow: 0 0 6px rgba(0, 229, 160, 0.65);
   animation: pingDot 1.5s infinite;
 }
 
 .dot-cool {
-  background: #ffffff;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  background: #38bdf8;
+  box-shadow: 0 0 6px rgba(56, 189, 248, 0.65);
 }
 
 .dot-power {
   background: #f59e0b;
-  box-shadow: 0 0 8px #f59e0b;
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.75);
 }
 
 .telemetry-metric-icon {
   font-size: 0.65rem;
-  color: #E8B4A0;
+  color: var(--cb-badge-ink);
 }
 
 .telemetry-metric-text {
   font-size: 0.65rem;
   font-weight: 700;
-  color: #d1d5db;
+  color: var(--cb-hud-text);
   letter-spacing: 0.08em;
   font-family: monospace;
 }
 
 @keyframes pingDot {
-  0%, 100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.4;
-    transform: scale(0.8);
-  }
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.8); }
 }
 
 @keyframes slideFadeIn {
-  from {
-    opacity: 0;
-    transform: translateX(-8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes fadeInQuick {
-  from {
-    opacity: 0;
-    transform: translateX(6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes metricTick {
-  from {
-    opacity: 0;
-    transform: translateY(3px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* ── LIGHT THEME ADAPTATION ── */
-body.theme-light .cyber-brand-title {
-  color: #1e293b;
-}
-
-body.theme-light .cyber-telemetry-hud {
-  background: rgba(162, 115, 60, 0.1);
-  border-color: rgba(162, 115, 60, 0.35);
-}
-
-body.theme-light .telemetry-title {
-  color: #8c5222;
-}
-
-body.theme-light .telemetry-metric-text {
-  color: #475569;
+  from { opacity: 0; transform: translateY(3px); }
+  to { opacity: 1; transform: translateY(0); }
 }

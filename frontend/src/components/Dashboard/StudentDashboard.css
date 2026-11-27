@@ -1,21 +1,106 @@
 /* ═══════════════════════════════════════════════════════════════════
-   StudentDashboard.css — Clean, Student-First Academic Dashboard
-   Design Philosophy: Anti-Slop, High Usability, DepEd TVL / PTC Aligned
-   Palette: Matches PDF Syllabus Document (Parchment Cream Ivory & Charcoal Espresso)
+   StudentDashboard.css — Academic Profile & Assessment Record
+   Home Charcoal Dark Mode (#0C0C0F / #202023 / #3F3F45 / #C9C7C0 / #F5F4F0)
+   & Warm Alabaster Parchment Light Mode (#F5F4F0 / #0C0C0F / #3F3F45)
    ═══════════════════════════════════════════════════════════════════ */
 
 .student-dashboard-page {
+  --dash-bg: transparent;
+  --dash-embed-bg: rgba(12, 12, 15, 0.88);
+  --dash-card: #202023;
+  --dash-surface: #18181C;
+  --dash-hover: #28282D;
+  --dash-border: #3F3F45;
+  --dash-border-subtle: rgba(201, 199, 192, 0.16);
+  --dash-border-strong: rgba(201, 199, 192, 0.36);
+  --dash-text: #F5F4F0;
+  --dash-secondary: #E4E3DF;
+  --dash-muted: #C9C7C0;
+  --dash-cta-bg: linear-gradient(135deg, #C9C7C0 0%, #F5F4F0 100%);
+  --dash-cta-text: #0C0C0F;
+  --dash-btn-sec-bg: #28282D;
+  --dash-btn-sec-text: #F5F4F0;
+  --dash-emerald: #00e5a0;
+  --dash-emerald-soft: rgba(0, 229, 160, 0.14);
+  --dash-emerald-border: rgba(0, 229, 160, 0.4);
+  --dash-amber: #facc15;
+  --dash-amber-soft: rgba(250, 204, 21, 0.14);
+  --dash-amber-border: rgba(250, 204, 21, 0.38);
+  --dash-rose: #fb7185;
+  --dash-rose-soft: rgba(240, 75, 75, 0.14);
+  --dash-rose-border: rgba(240, 75, 75, 0.4);
+  --dash-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+
   min-height: 100vh;
   width: 100%;
   padding: 80px 24px 60px;
-  background: transparent;
-  color: #2b211a;
+  background: var(--dash-bg);
+  color: var(--dash-text);
   display: flex;
   justify-content: center;
   box-sizing: border-box;
 }
 
-/* Embedded inside 3D Workbench in Learn Hardware */
+body.theme-light .student-dashboard-page,
+.theme-light .student-dashboard-page,
+[data-theme="light"] .student-dashboard-page,
+.wb-shell.theme-light .student-dashboard-page {
+  --dash-embed-bg: rgba(234, 230, 221, 0.88);
+  --dash-card: linear-gradient(180deg, #FAF8F3, #F5F4F0);
+  --dash-surface: #EAE6DD;
+  --dash-hover: #DFDBD0;
+  --dash-border: rgba(12, 12, 15, 0.22);
+  --dash-border-subtle: rgba(12, 12, 15, 0.14);
+  --dash-border-strong: rgba(12, 12, 15, 0.35);
+  --dash-text: #0C0C0F;
+  --dash-secondary: #3F3F45;
+  --dash-muted: #525058;
+  --dash-cta-bg: #202023;
+  --dash-cta-text: #F5F4F0;
+  --dash-btn-sec-bg: rgba(12, 12, 15, 0.08);
+  --dash-btn-sec-text: #0C0C0F;
+  --dash-emerald: #166534;
+  --dash-emerald-soft: rgba(22, 101, 52, 0.12);
+  --dash-emerald-border: rgba(22, 101, 52, 0.32);
+  --dash-amber: #92400e;
+  --dash-amber-soft: rgba(180, 83, 9, 0.12);
+  --dash-amber-border: rgba(180, 83, 9, 0.32);
+  --dash-rose: #991b1b;
+  --dash-rose-soft: rgba(185, 28, 28, 0.09);
+  --dash-rose-border: rgba(185, 28, 28, 0.3);
+  --dash-shadow: 0 10px 28px rgba(12, 12, 15, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+.wb-shell.theme-dark .student-dashboard-page,
+.wb-shell.theme-obsidian .student-dashboard-page {
+  --dash-bg: transparent;
+  --dash-embed-bg: rgba(12, 12, 15, 0.88);
+  --dash-card: #202023;
+  --dash-surface: #18181C;
+  --dash-hover: #28282D;
+  --dash-border: #3F3F45;
+  --dash-border-subtle: rgba(201, 199, 192, 0.16);
+  --dash-border-strong: rgba(201, 199, 192, 0.36);
+  --dash-text: #F5F4F0;
+  --dash-secondary: #E4E3DF;
+  --dash-muted: #C9C7C0;
+  --dash-cta-bg: linear-gradient(135deg, #C9C7C0 0%, #F5F4F0 100%);
+  --dash-cta-text: #0C0C0F;
+  --dash-btn-sec-bg: #28282D;
+  --dash-btn-sec-text: #F5F4F0;
+  --dash-emerald: #00e5a0;
+  --dash-emerald-soft: rgba(0, 229, 160, 0.14);
+  --dash-emerald-border: rgba(0, 229, 160, 0.4);
+  --dash-amber: #facc15;
+  --dash-amber-soft: rgba(250, 204, 21, 0.14);
+  --dash-amber-border: rgba(250, 204, 21, 0.38);
+  --dash-rose: #fb7185;
+  --dash-rose-soft: rgba(240, 75, 75, 0.14);
+  --dash-rose-border: rgba(240, 75, 75, 0.4);
+  --dash-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+}
+
+/* Embedded inside 3D Workbench */
 .student-dashboard-page.is-embedded {
   position: absolute;
   inset: 0;
@@ -26,20 +111,28 @@
   z-index: 50;
   display: block;
   box-sizing: border-box;
-  background: rgba(14, 10, 7, 0.65);
-  backdrop-filter: blur(10px);
+  background: var(--dash-embed-bg);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
   animation: wbEmbedIn 200ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.student-dashboard-page.is-embedded::-webkit-scrollbar {
+  width: 7px;
+}
+
+.student-dashboard-page.is-embedded::-webkit-scrollbar-track {
+  background: rgba(12, 12, 15, 0.25);
+}
+
+.student-dashboard-page.is-embedded::-webkit-scrollbar-thumb {
+  background: var(--dash-border-strong);
+  border-radius: 4px;
+}
+
 @keyframes wbEmbedIn {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .dashboard-container {
@@ -51,19 +144,23 @@
   gap: 16px;
 }
 
-/* ═══════════════════════════════════════════════════════════════════
-   CARD 1: STUDENT PROFILE IDENTITY & QUICK CONTROLS
-   ═══════════════════════════════════════════════════════════════════ */
+/* ── CARD 1: PROFILE IDENTITY ── */
+.dashboard-hero-card,
+.dashboard-progress-card,
+.dashboard-modules-card,
+.bottom-card {
+  background: var(--dash-card);
+  border: 1px solid var(--dash-border);
+  border-radius: 10px;
+  padding: 20px 24px;
+  box-shadow: var(--dash-shadow);
+}
+
 .dashboard-hero-card {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 20px;
-  background: linear-gradient(180deg, #fbf9ef, #f3efdf);
-  border: 1px solid #d8cfae;
-  border-radius: 8px;
-  padding: 20px 24px;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.85);
   flex-wrap: wrap;
 }
 
@@ -84,16 +181,15 @@
   width: 62px;
   height: 62px;
   border-radius: 50%;
-  border: 2px solid #3F3F45;
+  border: 2px solid var(--dash-border-strong);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 20px;
   font-weight: 850;
-  background: #202023;
-  color: #f4ecd8;
+  background: #141418;
+  color: #F5F4F0;
   object-fit: cover;
-  box-shadow: 0 4px 12px rgba(27, 25, 31, 0.25);
 }
 
 .hero-online-status {
@@ -104,7 +200,7 @@
   height: 12px;
   border-radius: 50%;
   background: #16a34a;
-  border: 2px solid #fbf9ef;
+  border: 2px solid #202023;
 }
 
 .hero-info-block {
@@ -127,35 +223,50 @@
   letter-spacing: 0.04em;
   padding: 2px 7px;
   border-radius: 4px;
-  background: rgba(63, 63, 69, 0.16);
-  color: #785a28;
-  border: 1px solid rgba(63, 63, 69, 0.35);
+  background: var(--dash-surface);
+  color: var(--dash-secondary);
+  border: 1px solid var(--dash-border-subtle);
 }
 
 .institution-tag {
   font-size: 10.5px;
   font-weight: 700;
-  color: #6b5744;
+  color: var(--dash-muted);
 }
 
 .verified-badge {
   font-size: 10px;
   font-weight: 700;
-  color: #166534;
+  color: var(--dash-emerald);
+}
+
+.dry-run-badge.complete {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #166534;
+  color: #F5F4F0;
+  border: 1px solid #22c55e;
+  font-size: 10px;
+  font-weight: 850;
+  padding: 3px 9px;
+  border-radius: 4px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .student-name {
   margin: 0;
   font-size: 23px;
   font-weight: 850;
-  color: #2b211a;
+  color: var(--dash-text);
   letter-spacing: -0.015em;
   line-height: 1.2;
 }
 
 .student-email-sub {
   font-size: 11.5px;
-  color: #8a7350;
+  color: var(--dash-muted);
   font-family: "JetBrains Mono", monospace;
   font-weight: 600;
 }
@@ -167,22 +278,24 @@
   flex-wrap: wrap;
 }
 
-.btn-edit-profile {
+.btn-edit-profile,
+.btn-mod-study {
   font-size: 11.5px;
   font-weight: 700;
   padding: 8px 14px;
   border-radius: 6px;
-  border: 1px solid rgba(27, 25, 31, 0.22);
-  background: rgba(27, 25, 31, 0.08);
-  color: #C9C7C0;
+  border: 1px solid var(--dash-border);
+  background: var(--dash-btn-sec-bg);
+  color: var(--dash-btn-sec-text);
   cursor: pointer;
-  transition: all 0.18s ease;
+  transition: background 0.18s ease, border-color 0.18s ease;
   white-space: nowrap;
 }
 
-.btn-edit-profile:hover {
-  background: rgba(27, 25, 31, 0.16);
-  color: #0C0C0F;
+.btn-edit-profile:hover,
+.btn-mod-study:hover {
+  background: var(--dash-hover);
+  border-color: var(--dash-border-strong);
 }
 
 .btn-dashboard-logout {
@@ -190,46 +303,45 @@
   font-weight: 700;
   padding: 8px 14px;
   border-radius: 6px;
-  border: 1px solid rgba(185, 28, 28, 0.28);
-  background: rgba(185, 28, 28, 0.08);
-  color: #991b1b;
+  border: 1px solid var(--dash-rose-border);
+  background: var(--dash-rose-soft);
+  color: var(--dash-rose);
   cursor: pointer;
-  transition: all 0.18s ease;
+  transition: background 0.18s ease, color 0.18s ease;
   white-space: nowrap;
 }
 
 .btn-dashboard-logout:hover {
   background: #b91c1c;
-  color: #ffffff;
+  color: #FFFFFF;
 }
 
-.btn-hero-close {
+.btn-hero-close,
+.btn-resume-course,
+.btn-mod-exam,
+.btn-bottom-action {
   font-size: 11.5px;
-  font-weight: 700;
+  font-weight: 800;
   padding: 8px 14px;
   border-radius: 6px;
-  border: 1px solid #2b1d16;
-  background: #202023;
-  color: #f4ecd8;
+  border: 1px solid var(--dash-border-strong);
+  background: var(--dash-cta-bg);
+  color: var(--dash-cta-text);
   cursor: pointer;
-  transition: all 0.18s ease;
+  transition: transform 0.18s ease, filter 0.18s ease;
   white-space: nowrap;
 }
 
-.btn-hero-close:hover {
-  background: #0C0C0F;
-  color: #ffffff;
+.btn-hero-close:hover,
+.btn-resume-course:hover,
+.btn-mod-exam:hover,
+.btn-bottom-action:hover:not(:disabled) {
+  transform: translateY(-1px);
+  filter: brightness(1.06);
 }
 
-/* ═══════════════════════════════════════════════════════════════════
-   CARD 2: PROGRESS & AT-A-GLANCE STANDING
-   ═══════════════════════════════════════════════════════════════════ */
+/* ── CARD 2: PROGRESS & STANDING ── */
 .dashboard-progress-card {
-  background: linear-gradient(180deg, #fbf9ef, #f3efdf);
-  border: 1px solid #d8cfae;
-  border-radius: 8px;
-  padding: 22px 24px;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.85);
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -246,7 +358,7 @@
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.08em;
-  color: #977a4d;
+  color: var(--dash-muted);
   display: block;
   margin-bottom: 3px;
   text-transform: uppercase;
@@ -256,7 +368,7 @@
   margin: 0;
   font-size: 20px;
   font-weight: 850;
-  color: #2b211a;
+  color: var(--dash-text);
   letter-spacing: -0.01em;
 }
 
@@ -264,8 +376,8 @@
   display: flex;
   align-items: baseline;
   gap: 6px;
-  background: rgba(63, 63, 69, 0.15);
-  border: 1px solid rgba(63, 63, 69, 0.35);
+  background: var(--dash-surface);
+  border: 1px solid var(--dash-border);
   padding: 6px 14px;
   border-radius: 999px;
   flex-shrink: 0;
@@ -274,7 +386,7 @@
 .progress-pct-badge strong {
   font-size: 20px;
   font-weight: 900;
-  color: #2b211a;
+  color: var(--dash-text);
   font-family: "JetBrains Mono", monospace;
 }
 
@@ -282,26 +394,26 @@
   font-size: 9.5px;
   font-weight: 800;
   letter-spacing: 0.05em;
-  color: #8a7350;
+  color: var(--dash-muted);
   text-transform: uppercase;
 }
 
 .dashboard-progress-track {
   width: 100%;
   height: 8px;
-  background: rgba(27, 25, 31, 0.12);
+  background: var(--dash-surface);
+  border: 1px solid var(--dash-border-subtle);
   border-radius: 999px;
   overflow: hidden;
 }
 
 .dashboard-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #3F3F45 0%, #3F3F45 100%);
+  background: linear-gradient(90deg, var(--dash-muted) 0%, var(--dash-emerald) 100%);
   border-radius: 999px;
   transition: width 0.4s ease;
 }
 
-/* 3 Quick Stat Chips */
 .dashboard-stats-strip {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -309,9 +421,9 @@
 }
 
 .stat-chip {
-  background: rgba(63, 63, 69, 0.09);
-  border: 1px solid rgba(63, 63, 69, 0.22);
-  border-radius: 6px;
+  background: var(--dash-surface);
+  border: 1px solid var(--dash-border-subtle);
+  border-radius: 8px;
   padding: 10px 14px;
   display: flex;
   flex-direction: column;
@@ -322,32 +434,40 @@
   font-size: 9.5px;
   font-weight: 800;
   letter-spacing: 0.06em;
-  color: #8a7350;
+  color: var(--dash-muted);
   text-transform: uppercase;
 }
 
 .stat-chip strong {
   font-size: 18px;
   font-weight: 850;
-  color: #2b211a;
+  color: var(--dash-text);
   line-height: 1.2;
 }
 
 .stat-chip small {
   font-size: 10.5px;
   font-weight: 700;
-  color: #6b5744;
+  color: var(--dash-secondary);
 }
 
-/* Resume Banner */
+.stat-chip.highlight-chip {
+  background: var(--dash-emerald-soft);
+  border-color: var(--dash-emerald-border);
+}
+
+.stat-chip.highlight-chip strong {
+  color: var(--dash-emerald);
+}
+
 .course-resume-banner {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  background: rgba(63, 63, 69, 0.12);
-  border: 1px solid rgba(63, 63, 69, 0.28);
-  border-radius: 6px;
+  background: var(--dash-surface);
+  border: 1px solid var(--dash-border-subtle);
+  border-radius: 8px;
   padding: 12px 18px;
   flex-wrap: wrap;
 }
@@ -362,43 +482,22 @@
   font-size: 9px;
   font-weight: 800;
   letter-spacing: 0.08em;
-  color: #977a4d;
+  color: var(--dash-muted);
 }
 
 .resume-info strong {
   font-size: 14px;
   font-weight: 800;
-  color: #2b211a;
+  color: var(--dash-text);
 }
 
 .btn-resume-course {
   padding: 9px 18px;
-  background: #202023;
-  color: #f4ecd8;
   font-size: 12.5px;
-  font-weight: 800;
-  border: 1px solid #2b1d16;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.18s ease;
-  white-space: nowrap;
 }
 
-.btn-resume-course:hover {
-  background: #0C0C0F;
-  color: #ffffff;
-  transform: translateY(-1px);
-}
-
-/* ═══════════════════════════════════════════════════════════════════
-   CARD 3: 7 MODULES RECORD & EXAM SCORES (STREAMLINED & SCANNABLE)
-   ═══════════════════════════════════════════════════════════════════ */
+/* ── CARD 3: 7 MODULES RECORD ── */
 .dashboard-modules-card {
-  background: linear-gradient(180deg, #fbf9ef, #f3efdf);
-  border: 1px solid #d8cfae;
-  border-radius: 8px;
-  padding: 22px 24px;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.85);
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -410,23 +509,23 @@
   justify-content: space-between;
   gap: 16px;
   padding-bottom: 12px;
-  border-bottom: 2px solid #3F3F45;
+  border-bottom: 2px solid var(--dash-border);
 }
 
 .modules-card-head h3 {
   margin: 0;
   font-size: 18px;
   font-weight: 850;
-  color: #2b211a;
+  color: var(--dash-text);
 }
 
 .passing-cutoff-badge {
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.05em;
-  color: #785a28;
-  background: rgba(63, 63, 69, 0.15);
-  border: 1px solid rgba(63, 63, 69, 0.35);
+  color: var(--dash-secondary);
+  background: var(--dash-surface);
+  border: 1px solid var(--dash-border);
   padding: 3px 8px;
   border-radius: 4px;
 }
@@ -443,20 +542,20 @@
   justify-content: space-between;
   gap: 14px;
   padding: 10px 14px;
-  background: rgba(63, 63, 69, 0.06);
-  border: 1px solid rgba(63, 63, 69, 0.18);
-  border-radius: 6px;
-  transition: all 0.15s ease;
+  background: var(--dash-surface);
+  border: 1px solid var(--dash-border-subtle);
+  border-radius: 8px;
+  transition: background 0.15s ease, border-color 0.15s ease;
   flex-wrap: wrap;
 }
 
 .streamlined-module-row:hover {
-  background: rgba(63, 63, 69, 0.12);
-  border-color: rgba(63, 63, 69, 0.35);
+  background: var(--dash-hover);
+  border-color: var(--dash-border);
 }
 
 .streamlined-module-row.is-passed {
-  border-left: 3px solid #16a34a;
+  border-left: 3px solid var(--dash-emerald);
 }
 
 .mod-row-left {
@@ -471,8 +570,9 @@
   font-size: 10.5px;
   font-weight: 850;
   font-family: "JetBrains Mono", monospace;
-  background: #202023;
-  color: #f4ecd8;
+  background: #0C0C0F;
+  color: #F5F4F0;
+  border: 1px solid #3F3F45;
   padding: 4px 7px;
   border-radius: 4px;
   flex-shrink: 0;
@@ -487,13 +587,13 @@
 .mod-info strong {
   font-size: 13.5px;
   font-weight: 800;
-  color: #2b211a;
+  color: var(--dash-text);
   line-height: 1.25;
 }
 
 .mod-info span {
   font-size: 11px;
-  color: #6b5744;
+  color: var(--dash-muted);
   font-weight: 600;
 }
 
@@ -517,13 +617,13 @@
 .mod-grade-eq {
   font-size: 10.5px;
   font-weight: 700;
-  color: #6b5744;
+  color: var(--dash-muted);
 }
 
 .mod-not-taken {
   font-size: 11px;
   font-weight: 600;
-  color: #8a7350;
+  color: var(--dash-muted);
   font-style: italic;
 }
 
@@ -545,27 +645,27 @@
 }
 
 .status-chip.passed {
-  background: rgba(22, 101, 52, 0.12);
-  color: #166534;
-  border: 1px solid rgba(22, 101, 52, 0.3);
+  background: var(--dash-emerald-soft);
+  color: var(--dash-emerald);
+  border: 1px solid var(--dash-emerald-border);
 }
 
 .status-chip.failed {
-  background: rgba(185, 28, 28, 0.08);
-  color: #991b1b;
-  border: 1px solid rgba(185, 28, 28, 0.28);
+  background: var(--dash-rose-soft);
+  color: var(--dash-rose);
+  border: 1px solid var(--dash-rose-border);
 }
 
 .status-chip.ready {
-  background: rgba(63, 63, 69, 0.16);
-  color: #785a28;
-  border: 1px solid rgba(63, 63, 69, 0.35);
+  background: var(--dash-amber-soft);
+  color: var(--dash-amber);
+  border: 1px solid var(--dash-amber-border);
 }
 
 .status-chip.in-progress {
-  background: rgba(100, 116, 139, 0.1);
-  color: #475569;
-  border: 1px solid rgba(100, 116, 139, 0.25);
+  background: var(--dash-hover);
+  color: var(--dash-secondary);
+  border: 1px solid var(--dash-border-subtle);
 }
 
 .mod-action-group {
@@ -577,40 +677,16 @@
 .btn-mod-study {
   padding: 5px 10px;
   font-size: 11px;
-  font-weight: 700;
-  background: rgba(27, 25, 31, 0.08);
-  border: 1px solid rgba(27, 25, 31, 0.22);
-  color: #C9C7C0;
   border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.btn-mod-study:hover {
-  background: rgba(27, 25, 31, 0.16);
-  color: #0C0C0F;
 }
 
 .btn-mod-exam {
   padding: 5px 11px;
   font-size: 11px;
-  font-weight: 800;
-  background: #202023;
-  border: 1px solid #2b1d16;
-  color: #f4ecd8;
   border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.15s ease;
 }
 
-.btn-mod-exam:hover {
-  background: #0C0C0F;
-  color: #ffffff;
-}
-
-/* ═══════════════════════════════════════════════════════════════════
-   CARD 4: PRACTICAL LAB & CERTIFICATE SUMMARY ROW
-   ═══════════════════════════════════════════════════════════════════ */
+/* ── CARD 4: PRACTICAL LAB & CERTIFICATE SUMMARY ROW ── */
 .dashboard-bottom-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -618,29 +694,36 @@
 }
 
 .bottom-card {
-  background: linear-gradient(180deg, #fbf9ef, #f3efdf);
-  border: 1px solid #d8cfae;
-  border-radius: 8px;
   padding: 18px 20px;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.85);
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+.bottom-card.cert-card {
+  border-color: var(--dash-border-strong);
 }
 
 .bottom-card-head h4 {
   margin: 0;
   font-size: 15px;
   font-weight: 850;
-  color: #2b211a;
+  color: var(--dash-text);
 }
 
 .bottom-card-desc {
   margin: 0;
   font-size: 12px;
-  color: #5d4a3b;
+  color: var(--dash-muted);
   line-height: 1.45;
   flex: 1;
+}
+
+.bottom-practical-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 4px 0;
 }
 
 .bottom-card-footer {
@@ -649,7 +732,7 @@
   justify-content: space-between;
   gap: 10px;
   padding-top: 10px;
-  border-top: 1px solid rgba(120, 96, 54, 0.18);
+  border-top: 1px solid var(--dash-border-subtle);
   margin-top: 4px;
 }
 
@@ -661,117 +744,66 @@
 }
 
 .status-pill-small.done {
-  background: rgba(22, 101, 52, 0.12);
-  color: #166534;
-  border: 1px solid rgba(22, 101, 52, 0.3);
+  background: var(--dash-emerald-soft);
+  color: var(--dash-emerald);
+  border: 1px solid var(--dash-emerald-border);
 }
 
 .status-pill-small.pending {
-  background: rgba(180, 83, 9, 0.12);
-  color: #b45309;
-  border: 1px solid rgba(180, 83, 9, 0.3);
+  background: var(--dash-amber-soft);
+  color: var(--dash-amber);
+  border: 1px solid var(--dash-amber-border);
 }
 
 .status-pill-small.locked {
-  background: rgba(100, 116, 139, 0.1);
-  color: #64748b;
-  border: 1px solid rgba(100, 116, 139, 0.22);
+  background: var(--dash-surface);
+  color: var(--dash-muted);
+  border: 1px solid var(--dash-border-subtle);
 }
 
 .btn-bottom-action {
   padding: 7px 14px;
-  font-size: 11.5px;
-  font-weight: 800;
-  background: #202023;
-  color: #f4ecd8;
-  border: 1px solid #2b1d16;
   border-radius: 5px;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  white-space: nowrap;
-}
-
-.btn-bottom-action:hover:not(:disabled) {
-  background: #0C0C0F;
-  color: #ffffff;
 }
 
 .btn-bottom-action.is-disabled,
 .btn-bottom-action:disabled {
-  background: rgba(27, 25, 31, 0.08);
-  color: #8a7350;
-  border-color: rgba(27, 25, 31, 0.18);
+  background: var(--dash-btn-sec-bg);
+  color: var(--dash-muted);
+  border-color: var(--dash-border-subtle);
+  opacity: 0.7;
   cursor: default;
+  transform: none;
+  filter: none;
 }
 
-/* Scrollbar styling for embedded container */
-.student-dashboard-page.is-embedded::-webkit-scrollbar {
-  width: 7px;
+.btn-bottom-action.btn-claim-cert:not(:disabled) {
+  background: #166534;
+  color: #FFFFFF;
+  border: 1px solid #22c55e;
+  box-shadow: 0 4px 14px rgba(22, 101, 52, 0.35);
 }
 
-.student-dashboard-page.is-embedded::-webkit-scrollbar-track {
-  background: rgba(12, 12, 15, 0.5);
-}
-
-.student-dashboard-page.is-embedded::-webkit-scrollbar-thumb {
-  background: rgba(201, 199, 192, 0.35);
-  border-radius: 4px;
-}
-
-.student-dashboard-page.is-embedded::-webkit-scrollbar-thumb:hover {
-  background: rgba(201, 199, 192, 0.55);
+.btn-bottom-action.btn-claim-cert:hover:not(:disabled) {
+  background: #15803d;
 }
 
 .text-emerald {
-  color: #15803d;
+  color: var(--dash-emerald);
 }
 
 .text-rose {
-  color: #b91c1c;
+  color: var(--dash-rose);
 }
 
-/* ── DRY RUN BADGE & ASSESSMENT HIGHLIGHTS ── */
-.dry-run-badge.complete {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  background: #166534;
-  color: #f0fdf4;
-  border: 1px solid #22c55e;
-  font-size: 10px;
-  font-weight: 850;
-  padding: 3px 9px;
-  border-radius: 4px;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  box-shadow: 0 2px 8px rgba(22, 101, 52, 0.35);
-}
-
-.stat-chip.highlight-chip {
-  background: rgba(22, 101, 52, 0.08);
-  border: 1px solid rgba(22, 101, 52, 0.3);
-}
-
-.stat-chip.highlight-chip strong {
-  color: #166534;
-}
-
-.bottom-practical-badges {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin: 4px 0;
-}
-
-/* ── PREREQUISITE CHECKLIST (FOR STRICT CERTIFICATION GATE) ── */
 .cert-req-checklist {
   display: flex;
   flex-direction: column;
   gap: 6px;
   margin: 6px 0 10px;
   padding: 8px 12px;
-  background: rgba(63, 63, 69, 0.08);
-  border: 1px solid rgba(63, 63, 69, 0.22);
+  background: var(--dash-surface);
+  border: 1px solid var(--dash-border-subtle);
   border-radius: 6px;
 }
 
@@ -785,12 +817,11 @@
 }
 
 .cert-req-item.is-met {
-  color: #166534;
+  color: var(--dash-emerald);
 }
 
 .cert-req-item.is-pending {
-  color: #8a7350;
-  opacity: 0.85;
+  color: var(--dash-muted);
 }
 
 .cert-req-item .req-icon {
@@ -798,17 +829,4 @@
   font-weight: 900;
   width: 14px;
   text-align: center;
-}
-
-.btn-bottom-action.btn-claim-cert:not(:disabled) {
-  background: #166534;
-  color: #ffffff;
-  border: 1px solid #22c55e;
-  box-shadow: 0 4px 14px rgba(22, 101, 52, 0.35);
-}
-
-.btn-bottom-action.btn-claim-cert:hover:not(:disabled) {
-  background: #15803d;
-  box-shadow: 0 6px 18px rgba(22, 101, 52, 0.5);
-  transform: translateY(-1px);
 }

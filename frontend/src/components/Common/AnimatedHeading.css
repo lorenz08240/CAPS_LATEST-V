@@ -1,7 +1,8 @@
-/* Kivi UI Animated Heading (Kinetic typography word-by-word reveal) */
+/* AnimatedHeading (Kinetic typography word-by-word reveal) */
 
 .animated-heading {
   margin: 0;
+  color: var(--text-primary, #F5F4F0);
 }
 
 .animated-heading__body {
@@ -29,7 +30,7 @@
   height: 4px;
   width: 9rem;
   margin: 1.15rem 0 0 0; /* Left-aligned under text by default */
-  background: var(--accent-rose, #f43f5e);
+  background: var(--accent-rose, #F04B4B);
   clip-path: inset(0% 100% 0% 0%);
   will-change: clip-path;
 }
@@ -40,7 +41,7 @@
   }
 }
 
-/* Centered modifier for centered headings (e.g. master header) */
+/* Centered modifier for centered headings */
 .animated-heading__underline.mx-auto {
   margin-left: auto;
   margin-right: auto;
@@ -48,19 +49,19 @@
 
 /* Theme accent color classes */
 .animated-heading__underline.service-underline-rose {
-  background: #f43f5e;
+  background: var(--accent-rose, #F04B4B);
 }
 
 .animated-heading__underline.service-underline-amber {
-  background: #f59e0b;
+  background: var(--accent-amber, #f59e0b);
 }
 
 .animated-heading__underline.service-underline-cyan {
-  background: #38bdf8;
+  background: var(--accent-sky, #38bdf8);
 }
 
 .animated-heading__underline.service-underline-emerald {
-  background: #10b981;
+  background: var(--accent-emerald, #00e5a0);
 }
 
 .animated-heading__underline.service-underline-sky {

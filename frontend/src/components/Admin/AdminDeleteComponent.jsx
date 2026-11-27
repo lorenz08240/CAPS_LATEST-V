@@ -3,7 +3,8 @@ import { Link, useSearchParams } from "react-router-dom";
 import { apiFetch } from "../../utilities/api";
 import AdminHeader from "./AdminHeader";
 import HardwareIcon from "./HardwareIcon";
-import "./Admin.css";
+import "./styles/AdminBase.css";
+import "./styles/AdminInventory.css";
 
 const CATEGORIES = [
   { id: "all", label: "All Types" },

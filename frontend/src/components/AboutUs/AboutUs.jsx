@@ -177,7 +177,7 @@ const WHITEHATS_PROJECTS = [
     codename: "CURRICU_SYNC",
     category: "academic",
     statusBadge: "ACCREDITATION // PILOT",
-    statusColor: "#a855f7",
+    statusColor: "#c084fc",
     year: "2024",
     targetClient: "College Deans, Department Heads & Curriculum Boards",
     summary: "Accreditation analytics platform mapping syllabus competencies, course learning outcomes, and laboratory contact hours against CHED Memorandum Orders.",

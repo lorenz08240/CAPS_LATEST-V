@@ -1,0 +1,201 @@
+/* ==========================================================================
+   BuildLab Admin Content Management (Developer Profiles CMS & Modal Editor)
+   ========================================================================== */
+
+.content-mgmt-header-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  margin-bottom: 22px;
+  flex-wrap: wrap;
+}
+.content-title-group { display: flex; flex-direction: column; }
+.content-kicker { font-size: 9.5px; font-weight: 800; letter-spacing: 0.12em; color: var(--adm-text-muted); text-transform: uppercase; margin-bottom: 4px; }
+.content-title { font-size: 28px; font-weight: 900; letter-spacing: -0.5px; line-height: 1.12; color: var(--adm-text); margin: 0 0 6px; }
+.content-subtitle { font-size: 13px; color: var(--adm-text-muted); max-width: 680px; line-height: 1.5; margin: 0; }
+.roster-header-actions { display: flex; align-items: center; gap: 10px; }
+
+.btn-refresh-accounts {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--adm-card);
+  border: 1px solid var(--adm-border);
+  color: var(--adm-text);
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 7px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.btn-refresh-accounts:hover { background: var(--adm-card-hover); border-color: var(--adm-border-strong); }
+.btn-view-live-about {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--adm-emerald-bg);
+  border: 1px solid var(--adm-emerald-bd);
+  color: var(--adm-emerald);
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 7px 14px;
+  border-radius: 6px;
+  text-decoration: none;
+}
+.btn-view-live-about:hover { border-color: var(--adm-emerald); }
+
+/* ── Developer Roster Grid & Cards ── */
+.operatives-roster-container { display: flex; flex-direction: column; gap: 16px; }
+.operatives-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 18px; }
+.operative-card {
+  background: var(--adm-card);
+  border: 1px solid var(--adm-border-subtle);
+  border-radius: 10px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+  box-shadow: var(--adm-shadow-sm);
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+.operative-card:hover { border-color: var(--adm-border); transform: translateY(-2px); box-shadow: var(--adm-shadow-md); }
+.operative-card-header { display: flex; justify-content: space-between; align-items: center; }
+.operative-id-badge {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--adm-text-sec);
+  background: var(--adm-fill);
+  border: 1px solid var(--adm-border-subtle);
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+.operative-role-pill {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: var(--adm-amber-bg);
+  border: 1px solid var(--adm-amber-bd);
+  color: var(--adm-amber);
+}
+
+.operative-avatar-preview-wrap { display: flex; justify-content: center; padding: 8px 0; }
+.avatar-profile-frame-admin {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  border: 3px solid var(--adm-border-strong);
+  border-radius: 50%;
+  background: var(--adm-bg-sec);
+  overflow: hidden;
+  box-shadow: var(--adm-shadow-sm);
+  box-sizing: border-box;
+}
+.avatar-profile-frame-admin.profile-large { width: 110px; height: 110px; }
+.avatar-img-admin { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.avatar-fallback-initials {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 13px;
+  color: var(--adm-text);
+  background: var(--adm-bg-sec);
+}
+
+.operative-card-body { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+.operative-name { font-size: 16px; font-weight: 800; letter-spacing: -0.3px; color: var(--adm-text); margin: 0; }
+.operative-designation { font-size: 12px; color: var(--adm-text-muted); line-height: 1.4; }
+.operative-highlight { margin-top: 4px; }
+.highlight-tag {
+  display: inline-block;
+  background: var(--adm-fill);
+  border: 1px solid var(--adm-border-subtle);
+  color: var(--adm-text-sec);
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+.operative-bio-snippet {
+  font-size: 11.5px;
+  color: var(--adm-text-dim);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 4px 0;
+}
+
+.operative-card-footer { margin-top: 8px; padding-top: 10px; border-top: 1px solid var(--adm-border-subtle); }
+.operative-card-actions { display: flex; gap: 8px; }
+.btn-edit-operative {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--adm-fill);
+  border: 1px solid var(--adm-border-subtle);
+  color: var(--adm-text);
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.btn-edit-operative:hover { background: var(--adm-fill-hover); border-color: var(--adm-border-strong); }
+.btn-delete-operative {
+  width: 40px;
+  flex: 0 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--adm-rose-bg);
+  border: 1px solid var(--adm-rose-bd);
+  color: var(--adm-rose);
+  font-size: 1.2rem;
+  line-height: 1;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.btn-delete-operative:hover { background: var(--adm-rose-strong); border-color: var(--adm-rose-strong); color: #F5F4F0; }
+
+/* ── Profile Editor Modal Photo Section ── */
+.content-photo-upload-section { background: var(--adm-fill); border: 1px solid var(--adm-border-subtle); border-radius: 8px; padding: 14px; }
+.photo-editor-row { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+.photo-preview-hex-wrap { display: flex; align-items: center; justify-content: center; }
+.photo-inputs-col { display: flex; flex-direction: column; gap: 8px; flex: 1; min-width: 220px; }
+.photo-buttons-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.btn-upload-photo-large {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--adm-fill);
+  border: 1px solid var(--adm-border);
+  color: var(--adm-text);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.btn-upload-photo-large:hover:not(:disabled) { background: var(--adm-fill-hover); border-color: var(--adm-border-strong); }
+.btn-upload-photo-large:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-remove-photo {
+  background: var(--adm-rose-bg);
+  border: 1px solid var(--adm-rose-bd);
+  color: var(--adm-rose);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.btn-remove-photo:hover { background: var(--adm-rose-strong); color: #F5F4F0; }

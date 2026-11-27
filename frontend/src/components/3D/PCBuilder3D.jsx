@@ -842,17 +842,28 @@ function PCBuilder3DWorkspace() {
     <div className="pc-builder-workspace cyber">
       <header className="workspace-header">
         <div className="header-left">
-          {isLearnMode ? (
-            <button className="back-build-btn learn-mode-back" onClick={() => navigate('/learn')} title="Return to CSS Hardware Curriculum">
-              ← Back to Learn Hardware
+          <div className="header-nav-group">
+            <button 
+              className="back-home-btn" 
+              onClick={() => navigate(isLearnMode ? '/learn' : '/')} 
+              title={isLearnMode ? "Return to CSS Hardware Curriculum" : "Return to BuildLab Home"}
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                <polyline points="9 22 9 12 15 12 15 22"/>
+              </svg>
+              <span>{isLearnMode ? "Curriculum" : "Home"}</span>
             </button>
-          ) : (
-            <button className="back-build-btn" onClick={() => navigate('/build')} title="Return to 2D Component Configurator">
-              ← Back to Build
-            </button>
-          )}
-          <div className="workspace-brand-wrap">
-            <div className="system-logo-mini" title="BuildLab System Logo (Canva 1000x1000 asset pending)">
+          </div>
+          <div 
+            className="workspace-brand-wrap"
+            onClick={() => navigate('/')}
+            role="button"
+            tabIndex={0}
+            title="Return to BuildLab Home"
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') navigate('/'); }}
+          >
+            <div className="system-logo-mini" title="BuildLab System Logo">
               <img
                 src="/assets/system_logo.png"
                 alt="BuildLab Logo"
@@ -887,6 +898,7 @@ function PCBuilder3DWorkspace() {
 
         <div className="header-center-metrics">
           <div className="metric-badge">
+            <span className={`assembly-status-dot ${placedParts.length === 7 ? 'complete' : ''}`} />
             <span className="metric-label">ASSEMBLY</span>
             <span className="metric-val">{placedParts.length} / 7 Parts</span>
           </div>
@@ -894,15 +906,15 @@ function PCBuilder3DWorkspace() {
           <div className="metric-divider"></div>
           <div className="metric-badge">
             <span className="metric-label">EST. POWER</span>
-            <span className="metric-val" style={{ color: scores.estWattage > 650 ? '#facc15' : '#ffffff' }}>
-              {scores.estWattage} W
+            <span className="metric-val power-val" style={{ color: scores.estWattage > 650 ? '#facc15' : '#F5F4F0' }}>
+              <span className="power-icon">⚡</span>{scores.estWattage} W
             </span>
           </div>
           <div className="metric-divider"></div>
           <div className="metric-badge">
             <span className="metric-label">MODE</span>
             {isLearnMode ? (
-              <span className="metric-val" style={{ color: '#ffffff', fontSize: '0.82rem' }}>
+              <span className="metric-val" style={{ color: '#F5F4F0', fontSize: '0.82rem' }}>
                 Standard CSS Lab
               </span>
             ) : (
@@ -1697,10 +1709,6 @@ function PCBuilder3DWorkspace() {
                 externalSpeech={bob3DSpeech}
                 speechLines={BOB_3D_CASUAL_LINES}
               />
-            </div>
-            <div className="studio-bob-status-tag">
-              <span className="tag-dot" style={{ background: rgbColor, boxShadow: `0 0 8px ${rgbColor}` }} />
-              <span>B.O.B. 3D</span>
             </div>
           </div>
 

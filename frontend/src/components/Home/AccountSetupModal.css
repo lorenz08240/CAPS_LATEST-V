@@ -1,12 +1,13 @@
 /* ═══════════════════════════════════════════════════════════════════
    ACCOUNT SETUP MODAL (GOOGLE ACCOUNT FOR CERTIFICATE)
+   Charcoal & Muted Silver Palette (#0C0C0F, #202023, #3F3F45, #C9C7C0, #F5F4F0)
    ═══════════════════════════════════════════════════════════════════ */
 
 .account-modal-overlay {
   position: fixed;
   inset: 0;
   z-index: 100000;
-  background: rgba(3, 7, 18, 0.88);
+  background: rgba(12, 12, 15, 0.88);
   -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px);
   display: flex;
@@ -24,13 +25,14 @@
 .account-modal-card {
   width: min(94vw, 520px);
   max-height: 90vh;
-  background: #0d121f;
-  border: 1px solid rgba(244, 63, 94, 0.45);
+  background: var(--bg-card, #202023);
+  border: 1px solid var(--border-color, #3F3F45);
   border-radius: 22px;
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.8), 0 0 32px rgba(244, 63, 94, 0.2);
+  box-shadow: var(--card-shadow-hover, 0 24px 64px rgba(0, 0, 0, 0.82));
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  color: var(--text-primary, #F5F4F0);
   animation: accountZoomIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -50,7 +52,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 20px 24px 14px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--border-subtle, rgba(201, 199, 192, 0.14));
 }
 
 .account-step-tag {
@@ -61,33 +63,41 @@
 
 .step-badge {
   padding: 3px 8px;
-  background: rgba(244, 63, 94, 0.15);
+  background: rgba(244, 63, 94, 0.14);
   border: 1px solid rgba(244, 63, 94, 0.4);
   border-radius: 6px;
   font-size: 10px;
   font-weight: 800;
-  color: #F04B4B;
+  color: var(--accent-rose, #F04B4B);
 }
 
 .step-title {
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.1em;
-  color: #94a3b8;
+  color: var(--text-muted, #C9C7C0);
 }
 
 .account-modal-close {
-  background: none;
-  border: none;
-  font-size: 26px;
+  background: var(--bg-surface, #18181C);
+  border: 1px solid var(--border-color, #3F3F45);
+  border-radius: 8px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
   line-height: 1;
-  color: #94a3b8;
+  color: var(--text-muted, #C9C7C0);
   cursor: pointer;
-  transition: color 0.15s ease;
+  transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
 }
 
 .account-modal-close:hover {
-  color: #F04B4B;
+  color: var(--accent-rose, #F04B4B);
+  border-color: rgba(244, 63, 94, 0.45);
+  background: rgba(244, 63, 94, 0.12);
 }
 
 .account-step-body {
@@ -102,8 +112,8 @@
   width: 58px;
   height: 58px;
   border-radius: 18px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: var(--bg-surface, #18181C);
+  border: 1px solid var(--border-color, #3F3F45);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -114,7 +124,7 @@
   margin: 0 0 8px;
   font-size: 22px;
   font-weight: 800;
-  color: #ffffff;
+  color: var(--text-primary, #F5F4F0);
   text-align: center;
 }
 
@@ -122,11 +132,10 @@
   margin: 0 0 24px;
   font-size: 13.5px;
   line-height: 1.5;
-  color: #94a3b8;
+  color: var(--text-muted, #C9C7C0);
   text-align: center;
 }
 
-.google-connect-section,
 .google-only-auth-container {
   display: flex;
   flex-direction: column;
@@ -135,7 +144,6 @@
   width: 100%;
 }
 
-.google-auth-btn,
 .google-primary-auth-btn {
   display: flex;
   align-items: center;
@@ -143,24 +151,23 @@
   gap: 14px;
   width: 100%;
   padding: 15px 24px;
-  background: #ffffff;
-  color: #1f2937;
-  border: 1px solid #e2e8f0;
+  background: #F5F4F0;
+  color: #0C0C0F;
+  border: 1px solid #C9C7C0;
   border-radius: 14px;
   font-size: 15px;
   font-weight: 800;
   cursor: pointer;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 20px rgba(66, 133, 244, 0.2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
 }
 
-.google-auth-btn:hover,
-.google-primary-auth-btn:hover {
-  background: #f8fafc;
+.google-primary-auth-btn:hover:not(:disabled) {
+  background: #FFFFFF;
   transform: translateY(-2px);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5), 0 0 30px rgba(66, 133, 244, 0.35);
-  border-color: #cbd5e1;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55);
+  border-color: #F5F4F0;
 }
 
 .google-primary-auth-btn.loading {
@@ -181,90 +188,11 @@
   to { transform: rotate(360deg); }
 }
 
-.google-divider {
-  display: flex;
-  align-items: center;
-  text-align: center;
-  margin: 10px 0 6px;
-  color: #64748b;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.1em;
-}
-
-.google-divider::before,
-.google-divider::after {
-  content: "";
-  flex: 1;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.google-divider span {
-  padding: 0 10px;
-}
-
-.demo-accounts-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.demo-account-pill {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 14px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-align: left;
-}
-
-.demo-account-pill:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.18);
-  transform: translateX(3px);
-}
-
-.demo-avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.demo-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.demo-name {
-  font-size: 13px;
-  font-weight: 700;
-  color: #f1f5f9;
-}
-
-.demo-email {
-  font-size: 11px;
-  color: #94a3b8;
-}
-
-.demo-select-tag {
-  font-size: 10px;
-  font-weight: 800;
-  color: #ffffff;
-  letter-spacing: 0.06em;
-}
-
 .account-trust-note {
   margin: 20px 0 0;
   font-size: 11.5px;
   line-height: 1.45;
-  color: #64748b;
+  color: var(--text-dim, #8E8D88);
   text-align: center;
 }
 
@@ -276,60 +204,27 @@
   flex-wrap: wrap;
   gap: 8px;
   font-size: 11px;
-  color: #64748b;
+  color: var(--text-dim, #8E8D88);
 }
 
 .account-legal-links a {
-  color: #ffffff;
+  color: var(--text-primary, #F5F4F0);
   text-decoration: none;
   font-weight: 600;
 }
 
 .account-legal-links a:hover {
-  color: #ffffff;
   text-decoration: underline;
 }
 
-.account-explore-alt {
-  margin-top: 14px;
-  padding-top: 14px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  font-size: 12px;
-  color: #94a3b8;
-}
-
-.explore-alt-btn {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 6px;
-  padding: 5px 12px;
-  color: #ffffff;
-  font-size: 11px;
-  font-weight: 700;
-  cursor: pointer;
-  letter-spacing: 0.04em;
-  transition: all 0.2s ease;
-}
-
-.explore-alt-btn:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.35);
-  color: #ffffff;
-}
-
-/* ── STEP 2: DETAILS VERIFICATION ── */
-
+/* ── STEP 2 & RETURNING PROFILE ── */
 .verified-google-badge {
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 10px 14px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: var(--bg-surface, #18181C);
+  border: 1px solid var(--border-color, #3F3F45);
   border-radius: 12px;
   margin-bottom: 20px;
 }
@@ -350,51 +245,35 @@
 .verified-pill {
   font-size: 11px;
   font-weight: 800;
-  color: #ffffff;
+  color: var(--text-primary, #F5F4F0);
   letter-spacing: 0.04em;
 }
 
 .verified-email {
   font-size: 12px;
-  color: #cbd5e1;
-}
-
-.change-account-btn {
-  background: none;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 6px;
-  padding: 4px 10px;
-  font-size: 11px;
-  color: #94a3b8;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.change-account-btn:hover {
-  color: #ffffff;
-  border-color: #ffffff;
+  color: var(--text-muted, #C9C7C0);
 }
 
 .details-heading {
   margin: 0 0 6px;
   font-size: 18px;
   font-weight: 800;
-  color: #ffffff;
+  color: var(--text-primary, #F5F4F0);
 }
 
 .details-sub {
   margin: 0 0 18px;
   font-size: 13px;
   line-height: 1.45;
-  color: #94a3b8;
+  color: var(--text-muted, #C9C7C0);
 }
 
 .account-error-alert {
   padding: 10px 14px;
-  background: rgba(244, 63, 94, 0.15);
+  background: rgba(244, 63, 94, 0.14);
   border: 1px solid rgba(244, 63, 94, 0.45);
   border-radius: 10px;
-  color: #F58A8A;
+  color: #FCA5A5;
   font-size: 12px;
   margin-bottom: 16px;
 }
@@ -409,35 +288,36 @@
 .account-form-group label {
   font-size: 12px;
   font-weight: 700;
-  color: #cbd5e1;
+  color: var(--text-secondary, #E4E3DF);
   letter-spacing: 0.02em;
 }
 
 .account-input {
   width: 100%;
+  box-sizing: border-box;
   padding: 12px 16px;
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: var(--bg-primary, #0C0C0F);
+  border: 1px solid var(--border-color, #3F3F45);
   border-radius: 10px;
-  color: #ffffff;
+  color: var(--text-primary, #F5F4F0);
   font-size: 14px;
   font-family: inherit;
-  transition: all 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .account-input:focus {
   outline: none;
-  border-color: rgba(255, 255, 255, 0.35);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  border-color: var(--text-muted, #C9C7C0);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
 }
 
 .input-hint {
   font-size: 11px;
-  color: #64748b;
+  color: var(--text-dim, #8E8D88);
 }
 
 .input-hint strong {
-  color: #ffffff;
+  color: var(--text-primary, #F5F4F0);
 }
 
 .account-form-actions {
@@ -450,13 +330,19 @@
 
 .btn-back-step {
   padding: 12px 18px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: var(--bg-surface, #18181C);
+  border: 1px solid var(--border-color, #3F3F45);
   border-radius: 10px;
-  color: #cbd5e1;
+  color: var(--text-secondary, #E4E3DF);
   font-size: 12px;
   font-weight: 700;
   cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.btn-back-step:hover {
+  background: var(--bg-card-hover, #28282D);
+  border-color: var(--text-muted, #C9C7C0);
 }
 
 .btn-confirm-track {
@@ -464,90 +350,31 @@
   align-items: center;
   gap: 8px;
   padding: 12px 22px;
-  background: linear-gradient(135deg, #ffffff 0%, #d4d4d8 100%);
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: linear-gradient(135deg, #F5F4F0 0%, #C9C7C0 100%);
+  border: 1px solid rgba(245, 244, 240, 0.25);
   border-radius: 10px;
-  color: #041f17;
+  color: #0C0C0F;
   font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.06em;
   cursor: pointer;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .btn-confirm-track:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
 }
 
-/* ── LIGHT THEME STYLING ── */
-body.theme-light .account-modal-overlay,
-.theme-light .account-modal-overlay {
-  background: rgba(23, 21, 26, 0.45);
-}
-
-body.theme-light .account-modal-card,
-.theme-light .account-modal-card {
-  background: #ffffff;
-  border: 1px solid rgba(23, 21, 26, 0.12);
-  box-shadow: 0 24px 64px rgba(23, 21, 26, 0.14);
+.btn-confirm-track.btn-unlock-all {
+  background: linear-gradient(135deg, #F5F4F0 0%, #C9C7C0 100%);
   color: #0C0C0F;
+  font-weight: 900;
 }
-
-body.theme-light .account-modal-header,
-.theme-light .account-modal-header {
-  border-bottom-color: rgba(23, 21, 26, 0.08);
-}
-
-body.theme-light .account-title-text h3,
-.theme-light .account-title-text h3 {
-  color: #0C0C0F;
-}
-
-body.theme-light .account-title-text p,
-.theme-light .account-title-text p {
-  color: #475569;
-}
-
-body.theme-light .account-field-label,
-.theme-light .account-field-label {
-  color: #334155;
-}
-
-body.theme-light .account-field-input,
-.theme-light .account-field-input {
-  background: #f8fafc;
-  border-color: rgba(23, 21, 26, 0.14);
-  color: #0C0C0F;
-}
-
-body.theme-light .account-field-input:focus,
-.theme-light .account-field-input:focus {
-  border-color: #3F3F45;
-  background: #ffffff;
-}
-
-body.theme-light .account-status-card,
-.theme-light .account-status-card {
-  background: #f8fafc;
-  border-color: rgba(23, 21, 26, 0.1);
-  color: #0C0C0F;
-}
-
-body.theme-light .account-user-name,
-.theme-light .account-user-name {
-  color: #0C0C0F;
-}
-
-body.theme-light .account-user-email,
-.theme-light .account-user-email {
-  color: #64748b;
-}
-
 
 /* ═══════════════════════════════════════════════════════════════════
-   TELL US ABOUT YOU STEP STYLING
+   STEP 3: TELL US ABOUT YOU
    ═══════════════════════════════════════════════════════════════════ */
 
 .about-you-form {
@@ -560,13 +387,13 @@ body.theme-light .account-user-email,
   gap: 6px;
   align-self: flex-start;
   padding: 4px 10px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: var(--bg-surface, #18181C);
+  border: 1px solid var(--border-color, #3F3F45);
   border-radius: 999px;
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.08em;
-  color: #ffffff;
+  color: var(--text-primary, #F5F4F0);
   margin-bottom: 2px;
 }
 
@@ -577,10 +404,10 @@ body.theme-light .account-user-email,
 .account-select {
   width: 100%;
   padding: 10px 14px;
-  background: rgba(23, 21, 26, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: var(--bg-primary, #0C0C0F);
+  border: 1px solid var(--border-color, #3F3F45);
   border-radius: 10px;
-  color: #f8fafc;
+  color: var(--text-primary, #F5F4F0);
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -589,13 +416,13 @@ body.theme-light .account-user-email,
 }
 
 .account-select:focus {
-  border-color: rgba(255, 255, 255, 0.35);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  border-color: var(--text-muted, #C9C7C0);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
 }
 
 .account-select option {
-  background: #0d121f;
-  color: #f8fafc;
+  background: var(--bg-card, #202023);
+  color: var(--text-primary, #F5F4F0);
 }
 
 .interests-grid {
@@ -610,11 +437,11 @@ body.theme-light .account-user-email,
   align-items: center;
   gap: 8px;
   padding: 8px 12px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--bg-surface, #18181C);
+  border: 1px solid var(--border-color, #3F3F45);
   border-radius: 10px;
   cursor: pointer;
-  color: #cbd5e1;
+  color: var(--text-secondary, #E4E3DF);
   font-size: 12px;
   font-weight: 600;
   text-align: left;
@@ -622,16 +449,16 @@ body.theme-light .account-user-email,
 }
 
 .interest-card-pill:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.18);
-  color: #f8fafc;
+  background: var(--bg-card-hover, #28282D);
+  border-color: var(--text-muted, #C9C7C0);
+  color: var(--text-primary, #F5F4F0);
 }
 
 .interest-card-pill.is-selected {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.35);
-  color: #ffffff;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  background: var(--bg-elevated, #24242A);
+  border-color: var(--text-primary, #F5F4F0);
+  color: var(--text-primary, #F5F4F0);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
 }
 
 .interest-icon {
@@ -646,57 +473,15 @@ body.theme-light .account-user-email,
 .interest-checkbox {
   font-size: 11px;
   font-weight: 800;
-  color: #ffffff;
+  color: var(--text-primary, #F5F4F0);
   width: 18px;
   height: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 4px;
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.btn-unlock-all {
-  background: linear-gradient(135deg, #ffffff 0%, #d4d4d8 100%) !important;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
-  color: #04130d !important;
-  font-weight: 900 !important;
-}
-
-/* ── Light theme overrides for Tell Us About You ── */
-body.theme-light .account-select,
-.theme-light .account-select {
-  background: #f8fafc;
-  border-color: rgba(23, 21, 26, 0.15);
-  color: #0C0C0F;
-}
-
-body.theme-light .account-select option,
-.theme-light .account-select option {
-  background: #ffffff;
-  color: #0C0C0F;
-}
-
-body.theme-light .interest-card-pill,
-.theme-light .interest-card-pill {
-  background: #f8fafc;
-  border-color: rgba(23, 21, 26, 0.12);
-  color: #334155;
-}
-
-body.theme-light .interest-card-pill:hover,
-.theme-light .interest-card-pill:hover {
-  background: rgba(5, 150, 105, 0.06);
-  border-color: rgba(5, 150, 105, 0.35);
-  color: #0C0C0F;
-}
-
-body.theme-light .interest-card-pill.is-selected,
-.theme-light .interest-card-pill.is-selected {
-  background: #ecfdf5;
-  border-color: #3F3F45;
-  color: #064e3b;
-  box-shadow: 0 0 12px rgba(5, 150, 105, 0.15);
+  background: var(--bg-primary, #0C0C0F);
+  border: 1px solid var(--border-subtle, rgba(201, 199, 192, 0.18));
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -706,21 +491,20 @@ body.theme-light .interest-card-pill.is-selected,
 .account-terms-agreement {
   margin: 14px 0 16px;
   padding: 12px 14px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--bg-surface, #18181C);
+  border: 1px solid var(--border-color, #3F3F45);
   border-radius: 12px;
   transition: all 0.25s ease;
 }
 
 .account-terms-agreement:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: var(--border-strong, rgba(201, 199, 192, 0.38));
 }
 
 .account-terms-agreement.is-error {
-  border-color: #F04B4B;
+  border-color: var(--accent-rose, #F04B4B);
   background: rgba(244, 63, 94, 0.08);
-  box-shadow: 0 0 16px rgba(244, 63, 94, 0.25);
+  box-shadow: 0 0 16px rgba(244, 63, 94, 0.22);
   animation: termsShakeAnim 0.4s ease-in-out;
 }
 
@@ -752,41 +536,39 @@ body.theme-light .interest-card-pill.is-selected,
   height: 18px;
   margin-top: 2px;
   border-radius: 5px;
-  background: rgba(23, 21, 26, 0.8);
-  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  background: var(--bg-primary, #0C0C0F);
+  border: 1.5px solid var(--border-strong, rgba(201, 199, 192, 0.38));
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 11px;
   font-weight: 900;
-  color: #00e5a0;
+  color: var(--accent-emerald, #00e5a0);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .terms-checkbox-label:hover .terms-checkbox-custom {
-  border-color: #00e5a0;
-  box-shadow: 0 0 8px rgba(0, 229, 160, 0.3);
+  border-color: var(--accent-emerald, #00e5a0);
 }
 
 .terms-checkbox-input:focus-visible + .terms-checkbox-custom {
-  outline: 2px solid #38bdf8;
+  outline: 2px solid var(--accent-sky, #38bdf8);
   outline-offset: 2px;
 }
 
 .terms-checkbox-input:checked + .terms-checkbox-custom {
   background: rgba(0, 229, 160, 0.15);
-  border-color: #00e5a0;
-  box-shadow: 0 0 10px rgba(0, 229, 160, 0.4);
+  border-color: var(--accent-emerald, #00e5a0);
 }
 
 .terms-agreement-text {
   font-size: 12px;
   line-height: 1.5;
-  color: #cbd5e1;
+  color: var(--text-secondary, #E4E3DF);
 }
 
 .terms-link {
-  color: #38bdf8;
+  color: var(--accent-sky, #38bdf8);
   font-weight: 700;
   text-decoration: underline;
   text-underline-offset: 3px;
@@ -794,8 +576,7 @@ body.theme-light .interest-card-pill.is-selected,
 }
 
 .terms-link:hover {
-  color: #7dd3fc;
-  text-decoration: underline;
+  color: var(--text-primary, #F5F4F0);
 }
 
 .account-terms-verified-badge {
@@ -804,11 +585,11 @@ body.theme-light .interest-card-pill.is-selected,
   gap: 8px;
   padding: 8px 12px;
   background: rgba(0, 229, 160, 0.08);
-  border: 1px solid rgba(0, 229, 160, 0.25);
+  border: 1px solid rgba(0, 229, 160, 0.28);
   border-radius: 8px;
   font-size: 11px;
   font-weight: 700;
-  color: #00e5a0;
+  color: var(--accent-emerald, #00e5a0);
   letter-spacing: 0.02em;
   margin-top: 4px;
 }
@@ -817,33 +598,65 @@ body.theme-light .interest-card-pill.is-selected,
   font-size: 13px;
 }
 
-/* Light theme support */
-body.theme-light .account-terms-agreement,
-.theme-light .account-terms-agreement {
-  background: #f8fafc;
-  border-color: rgba(23, 21, 26, 0.14);
+/* ── LIGHT THEME OVERRIDES ── */
+body.theme-light .account-modal-overlay,
+.theme-light .account-modal-overlay,
+[data-theme="light"] .account-modal-overlay {
+  background: rgba(12, 12, 15, 0.45);
 }
 
-body.theme-light .terms-checkbox-custom,
-.theme-light .terms-checkbox-custom {
-  background: #ffffff;
-  border-color: rgba(23, 21, 26, 0.3);
+body.theme-light .account-modal-card,
+.theme-light .account-modal-card,
+[data-theme="light"] .account-modal-card {
+  background: #FFFFFF;
+  box-shadow: 0 24px 64px rgba(12, 12, 15, 0.16);
 }
 
-body.theme-light .terms-agreement-text,
-.theme-light .terms-agreement-text {
-  color: #334155;
+body.theme-light .google-primary-auth-btn,
+.theme-light .google-primary-auth-btn,
+[data-theme="light"] .google-primary-auth-btn {
+  box-shadow: 0 6px 18px rgba(12, 12, 15, 0.1);
+}
+
+body.theme-light .btn-confirm-track,
+body.theme-light .btn-confirm-track.btn-unlock-all,
+.theme-light .btn-confirm-track,
+.theme-light .btn-confirm-track.btn-unlock-all,
+[data-theme="light"] .btn-confirm-track,
+[data-theme="light"] .btn-confirm-track.btn-unlock-all {
+  background: #0C0C0F;
+  border-color: #0C0C0F;
+  color: #F5F4F0;
+  box-shadow: 0 6px 18px rgba(12, 12, 15, 0.16);
+}
+
+body.theme-light .account-error-alert,
+.theme-light .account-error-alert,
+[data-theme="light"] .account-error-alert {
+  color: #B91C1C;
+  background: rgba(220, 38, 38, 0.08);
+  border-color: rgba(220, 38, 38, 0.3);
+}
+
+body.theme-light .interest-card-pill.is-selected,
+.theme-light .interest-card-pill.is-selected,
+[data-theme="light"] .interest-card-pill.is-selected {
+  background: #ecfdf5;
+  border-color: #059669;
+  color: #064e3b;
+  box-shadow: 0 2px 10px rgba(5, 150, 105, 0.12);
 }
 
 body.theme-light .terms-link,
-.theme-light .terms-link {
-  color: #0284c7;
+.theme-light .terms-link,
+[data-theme="light"] .terms-link {
+  color: var(--accent-sky, #0369a1);
 }
 
 body.theme-light .account-terms-verified-badge,
-.theme-light .account-terms-verified-badge {
+.theme-light .account-terms-verified-badge,
+[data-theme="light"] .account-terms-verified-badge {
   background: #ecfdf5;
   border-color: rgba(5, 150, 105, 0.3);
   color: #065f46;
 }
-

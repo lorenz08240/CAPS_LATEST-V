@@ -1,28 +1,60 @@
 /* ═══════════════════════════════════════════════════════════════════
    LEARN MODE ROUTE GUARD - ACADEMIC MILESTONE & ENROLLMENT GATEWAY
+   Charcoal & Alabaster Unified Design Tokens
    ═══════════════════════════════════════════════════════════════════ */
 
 .learn-guard-screen {
+  --lgd-bg: var(--bg-primary, #0C0C0F);
+  --lgd-card: rgba(32, 32, 35, 0.94);
+  --lgd-inset: #141418;
+  --lgd-tint: rgba(201, 199, 192, 0.08);
+  --lgd-ink: var(--text-primary, #F5F4F0);
+  --lgd-ink-sec: var(--text-secondary, #E4E3DF);
+  --lgd-ink-muted: var(--text-muted, #C9C7C0);
+  --lgd-ink-dim: var(--text-dim, #8E8D88);
+  --lgd-border: var(--border-color, #3F3F45);
+  --lgd-border-subtle: var(--border-subtle, rgba(201, 199, 192, 0.14));
+  --lgd-accent: #F5F4F0;
+  --lgd-on-accent: #0C0C0F;
+  --lgd-shadow: var(--card-shadow, 0 20px 50px rgba(0, 0, 0, 0.65));
+
   min-height: 100vh;
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(circle at 50% 30%, #0d1527 0%, #060911 80%);
+  background: radial-gradient(circle at 50% 30%, #18181C 0%, var(--lgd-bg) 80%);
   padding: 24px;
   position: relative;
   z-index: 50;
   box-sizing: border-box;
 }
 
+:is(.theme-light, [data-theme="light"]) .learn-guard-screen {
+  --lgd-bg: var(--bg-primary, #F5F4F0);
+  --lgd-card: #FFFFFF;
+  --lgd-inset: #F0ECE3;
+  --lgd-tint: rgba(12, 12, 15, 0.06);
+  --lgd-ink: var(--text-primary, #0C0C0F);
+  --lgd-ink-sec: var(--text-secondary, #2A292E);
+  --lgd-ink-muted: var(--text-muted, #525058);
+  --lgd-ink-dim: var(--text-dim, #6E6C74);
+  --lgd-border: var(--border-color, rgba(12, 12, 15, 0.18));
+  --lgd-border-subtle: var(--border-subtle, rgba(12, 12, 15, 0.08));
+  --lgd-accent: #202023;
+  --lgd-on-accent: #F5F4F0;
+  --lgd-shadow: 0 20px 50px rgba(12, 12, 15, 0.12);
+  background: var(--lgd-bg);
+}
+
 .learn-guard-card {
   width: min(92vw, 560px);
-  background: rgba(14, 20, 36, 0.94);
+  background: var(--lgd-card);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  border: 1px solid var(--lgd-border);
   border-radius: 22px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  box-shadow: var(--lgd-shadow);
   padding: 36px 34px;
   text-align: center;
   display: flex;
@@ -33,14 +65,8 @@
 }
 
 @keyframes guardCardSlide {
-  from {
-    opacity: 0;
-    transform: translateY(20px) scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+  from { opacity: 0; transform: translateY(20px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .guard-academic-header {
@@ -51,7 +77,9 @@
   margin-bottom: 20px;
 }
 
-.guard-badge {
+.guard-badge,
+.guard-badge.badge-account,
+.guard-badge.badge-milestone {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -60,32 +88,18 @@
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.08em;
+  background: var(--lgd-tint);
+  border: 1px solid var(--lgd-border);
+  color: var(--lgd-ink);
 }
 
-.guard-badge.badge-account {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  color: #ffffff;
-}
-
-.guard-badge.badge-milestone {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  color: #ffffff;
-}
-
-.guard-badge-pulse {
+.guard-badge-pulse,
+.guard-badge-pulse.pulse-milestone {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #ffffff;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  background: #00e5a0;
   animation: guardPulse 1.4s infinite;
-}
-
-.guard-badge-pulse.pulse-milestone {
-  background: #ffffff;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
 @keyframes guardPulse {
@@ -97,26 +111,28 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--lgd-inset);
+  border: 1px solid var(--lgd-border-subtle);
   padding: 4px 12px;
   border-radius: 9999px;
   font-size: 12px;
-  color: #94a3b8;
+  color: var(--lgd-ink-muted);
 }
 
 .guard-student-pill .student-dot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #ffffff;
+  background: #00e5a0;
 }
 
 .guard-student-pill strong {
-  color: #ffffff;
+  color: var(--lgd-ink);
 }
 
-.guard-icon-wrap {
+.guard-icon-wrap,
+.guard-icon-wrap.icon-academic,
+.guard-icon-wrap.icon-milestone {
   width: 68px;
   height: 68px;
   border-radius: 20px;
@@ -124,25 +140,20 @@
   align-items: center;
   justify-content: center;
   font-size: 32px;
+  background: var(--lgd-tint);
+  border: 1px solid var(--lgd-border);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
 }
 
-.guard-icon-wrap.icon-academic {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
-}
-
-.guard-icon-wrap.icon-milestone {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+.guard-icon {
+  line-height: 1;
 }
 
 .guard-title {
   margin: 0 0 10px;
   font-size: 24px;
   font-weight: 800;
-  color: #ffffff;
+  color: var(--lgd-ink);
   letter-spacing: -0.01em;
 }
 
@@ -150,15 +161,15 @@
   margin: 0 0 22px;
   font-size: 13.5px;
   line-height: 1.55;
-  color: #94a3b8;
+  color: var(--lgd-ink-muted);
   max-width: 460px;
 }
 
 /* ── ACCOUNT BENEFITS CHECKLIST ── */
 .guard-account-benefits {
   width: 100%;
-  background: rgba(0, 0, 0, 0.35);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--lgd-inset);
+  border: 1px solid var(--lgd-border-subtle);
   border-radius: 14px;
   padding: 14px 18px;
   display: flex;
@@ -174,25 +185,25 @@
   align-items: center;
   gap: 10px;
   font-size: 12.5px;
-  color: #e2e8f0;
+  color: var(--lgd-ink-sec);
 }
 
 .benefit-bullet {
-  color: #ffffff;
+  color: var(--lgd-ink);
   font-weight: 800;
   font-size: 14px;
   flex-shrink: 0;
 }
 
-/* ── 3-STEP MILESTONE ROADMAP WIDGET ── */
+/* ── MILESTONE ROADMAP WIDGET ── */
 .guard-roadmap {
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  background: rgba(0, 0, 0, 0.35);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--lgd-inset);
+  border: 1px solid var(--lgd-border-subtle);
   border-radius: 14px;
   padding: 14px 16px;
   margin-bottom: 26px;
@@ -218,26 +229,15 @@
   flex-shrink: 0;
 }
 
-.roadmap-step.is-active .roadmap-num {
-  background: #ffffff;
-  color: #060911;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
-}
-
+.roadmap-step.is-active .roadmap-num,
 .roadmap-step.is-completed .roadmap-num {
-  background: #ffffff;
-  color: #060911;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
-}
-
-.roadmap-step.is-completed .roadmap-info span {
-  color: #ffffff;
-  font-weight: 600;
+  background: var(--lgd-accent);
+  color: var(--lgd-on-accent);
 }
 
 .roadmap-step.is-completed {
   cursor: pointer;
-  opacity: 0.9;
+  opacity: 0.92;
   transition: opacity 0.2s, transform 0.15s;
 }
 
@@ -246,23 +246,15 @@
   transform: translateY(-1px);
 }
 
-.roadmap-connector.is-active {
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.roadmap-connector.is-completed {
-  background: rgba(255, 255, 255, 0.08);
-}
-
 .roadmap-step.is-locked .roadmap-num {
-  background: rgba(255, 255, 255, 0.08);
-  color: #64748b;
+  background: var(--lgd-tint);
+  color: var(--lgd-ink-dim);
 }
 
 .roadmap-step.is-target .roadmap-num {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  color: #ffffff;
+  background: var(--lgd-tint);
+  border: 1px solid var(--lgd-border);
+  color: var(--lgd-ink);
 }
 
 .roadmap-info {
@@ -272,25 +264,31 @@
 
 .roadmap-info strong {
   font-size: 11.5px;
-  color: #f1f5f9;
+  color: var(--lgd-ink);
   line-height: 1.3;
 }
 
 .roadmap-info span {
   font-size: 10px;
-  color: #64748b;
+  color: var(--lgd-ink-dim);
 }
 
+.roadmap-step.is-completed .roadmap-info span,
 .roadmap-step.is-active .roadmap-info span {
-  color: #ffffff;
+  color: var(--lgd-ink);
   font-weight: 700;
 }
 
 .roadmap-connector {
   width: 14px;
   height: 2px;
-  background: rgba(255, 255, 255, 0.14);
+  background: var(--lgd-border);
   flex-shrink: 0;
+}
+
+.roadmap-connector.is-active,
+.roadmap-connector.is-completed {
+  background: var(--lgd-ink-muted);
 }
 
 /* ── ACTION BUTTONS ── */
@@ -301,7 +299,9 @@
   width: 100%;
 }
 
-.guard-btn-primary {
+.guard-btn-primary,
+.guard-btn-google,
+.guard-btn-milestone {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -309,41 +309,35 @@
   padding: 13px 24px;
   border: none;
   border-radius: 12px;
-  color: #060911;
+  background: var(--lgd-accent);
+  color: var(--lgd-on-accent);
   font-size: 13px;
   font-weight: 800;
   letter-spacing: 0.05em;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
 }
 
-.guard-btn-google {
-  background: linear-gradient(135deg, #ffffff 0%, #d4d4d8 100%);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
-}
-
-.guard-btn-google:hover {
+.guard-btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  box-shadow: var(--lgd-shadow);
 }
 
-.guard-btn-milestone {
-  background: linear-gradient(135deg, #ffffff 0%, #d4d4d8 100%);
-  color: #ffffff;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+.guard-btn-primary .btn-arrow {
+  transition: transform 0.2s ease;
 }
 
-.guard-btn-milestone:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+.guard-btn-primary:hover .btn-arrow {
+  transform: translateX(3px);
 }
 
 .guard-btn-secondary {
   padding: 12px 20px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: var(--lgd-tint);
+  border: 1px solid var(--lgd-border);
   border-radius: 12px;
-  color: #cbd5e1;
+  color: var(--lgd-ink-sec);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -352,15 +346,14 @@
 }
 
 .guard-btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.10);
-  color: #ffffff;
-  border-color: rgba(255, 255, 255, 0.3);
+  background: var(--lgd-inset);
+  color: var(--lgd-ink);
 }
 
 .guard-link-home {
   background: transparent;
   border: none;
-  color: #94a3b8;
+  color: var(--lgd-ink-muted);
   font-size: 12px;
   cursor: pointer;
   padding: 6px;
@@ -370,7 +363,7 @@
 }
 
 .guard-link-home:hover {
-  color: #ffffff;
+  color: var(--lgd-ink);
   text-decoration: underline;
 }
 

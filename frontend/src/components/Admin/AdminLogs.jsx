@@ -4,7 +4,8 @@ import { useAuth } from "../../contexts/AuthContext";
 import { apiFetch } from "../../utilities/api";
 import AdminHeader from "./AdminHeader";
 import AdminSidebar from "./AdminSidebar";
-import "./Admin.css";
+import "./styles/AdminBase.css";
+import "./styles/AdminLogs.css";
 
 const PAGE_SIZE = 15;
 
