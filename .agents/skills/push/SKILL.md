@@ -44,7 +44,9 @@ This skill automates the process of inspecting, staging, committing, and pushing
 
 ### 6. Verify and Report
 - Run `git status` to confirm the working directory is clean and up to date with the remote.
+- **Railway Auto-Deploy (`main`):** When pushing to `origin/main`, Railway (`buildlab-app` in project `buildlab`, live at `https://buildlab-app-production.up.railway.app`) automatically triggers a new build and deployment from `main`. Optionally check `list-deployments` via `railway_mcp` (project `115c974f-064a-4890-8c12-4ab91c9b33c4`, service `69c2759b-2aaf-48af-b67f-d5753d6fbb0c`) if the user wants live deploy confirmation.
 - Provide the user with a concise summary:
   - Branch pushed to (e.g. `origin/main`)
   - Commit hash and message
   - List or summary of modified/added files
+  - Note that Railway is auto-deploying if pushed to `main`

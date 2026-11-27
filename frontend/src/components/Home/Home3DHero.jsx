@@ -265,14 +265,15 @@ function FluidScene({
 }) {
   const rootRef = useRef();
   const motionGroupRef = useRef();
-  const turntableAngleRef = useRef(0);
+  const turntableAngleRef = useRef(-0.35);
   const landingProgressRef = useRef(0);
   const isScrollInitRef = useRef(false);
 
-  const initialStage = activeStageId || (typeof window !== 'undefined' && window.__BUILDLAB_HERO_STAGE__) || HERO_STAGES[0].id;
+  const initialStage = (typeof window !== 'undefined' && window.__BUILDLAB_HERO_STAGE__) || activeStageId || HERO_STAGES[0].id;
   const initialIndex = Math.max(0, HERO_STAGES.findIndex(s => s.id === initialStage));
 
   const [currentStageId, setCurrentStageId] = useState(initialStage);
+  const prevExternalStageRef = useRef(activeStageId);
 
   const onStageChangeRef = useRef(onStageChange);
   useEffect(() => {
@@ -284,13 +285,17 @@ function FluidScene({
     onStageChangeRef.current?.(currentStageId);
   }, [currentStageId]);
 
-  // External stage change sync (e.g. from parent or clicks)
+  // External stage change sync (only fires when parent prop genuinely changes)
   useEffect(() => {
-    if (activeStageId && activeStageId !== currentStageId) {
-      const idx = HERO_STAGES.findIndex(s => s.id === activeStageId);
-      if (idx !== -1) {
-        animRef.current.currentIndex = idx;
-        setCurrentStageId(activeStageId);
+    if (activeStageId && activeStageId !== prevExternalStageRef.current) {
+      prevExternalStageRef.current = activeStageId;
+      if (activeStageId !== currentStageId) {
+        const idx = HERO_STAGES.findIndex(s => s.id === activeStageId);
+        if (idx !== -1) {
+          animRef.current.currentIndex = idx;
+          turntableAngleRef.current = -0.35;
+          setCurrentStageId(activeStageId);
+        }
       }
     }
   }, [activeStageId, currentStageId]);
@@ -441,6 +446,7 @@ function FluidScene({
         anim.timer = 0;
 
         const nextStage = HERO_STAGES[nextIndex];
+        turntableAngleRef.current = -0.35;
         setCurrentStageId(nextStage.id);
         onStageChangeRef.current?.(nextStage.id);
 
@@ -633,7 +639,8 @@ export default function Home3DHero({
         >
           <ambientLight intensity={1.3} color="#f8fafc" />
           <directionalLight position={[-8, 12, 10]} intensity={2.8} color="#ffffff" />
-          <directionalLight position={[8, -4, -6]} intensity={2.2} color="#f43f5e" />
+          <directionalLight position={[-6, 4, -8]} intensity={1.35} color="#e2e8f0" />
+          <directionalLight position={[8, -4, -6]} intensity={1.8} color="#f43f5e" />
           <pointLight position={[0, 0, 4]} intensity={2.4} color={rgbColor} distance={12} />
           
           <OrbitControls 

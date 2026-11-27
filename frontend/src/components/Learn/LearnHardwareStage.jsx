@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect, useMemo } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { OrbitControls, Html, Line, Environment } from "@react-three/drei";
+import { OrbitControls, Html, Line, Environment, Grid, ContactShadows } from "@react-three/drei";
 import * as THREE from "three";
 import ComponentModels3D from "../3D/ComponentModels3D";
 import GenericPCCase from "../3D/GenericPCCase";
@@ -12,47 +12,40 @@ import NepotatoGPU from "../3D/NepotatoGPU";
 import soundManager from "../../utilities/soundManager";
 import { ARTICLE_HOTSPOTS } from "./articleHotspots";
 
-/* ═══════════════════════════════════════════════════════════════════
-   LearnHardwareStage — Interactive 3D Hardware Workbench Canvas
-   Modeled after https://learn-arduino-red.vercel.app/#board:
-   • Smooth isometric 3D board & component orbit stage
-   • Pulsing cyan/teal anatomical hotspots (<Html>) with camera focus
-   • Signal/Power flow visualization beams between buses
-   • Moveable / toggleable Top-Left Bus Schematic floating window
-   • Floating Part Inspector card linked to selected hotspot
-   • Bottom-left Minimap & Bottom-center Viewport Toolbar
-   ═══════════════════════════════════════════════════════════════════ */
-
 const DEFAULT_CAMERAS = {
-  composite: { pos: [-8.6, 2.9, 6.8], target: [-0.35, 0.05, 0.0], scale: 0.96 },
+  composite: { pos: [-8.6, 2.9, 6.8], target: [-0.25, 0.05, 0.0], scale: 0.96 },
   "assembly-lab": { pos: [-9.4, 3.2, 7.8], target: [0, 0, 0], scale: 0.94 },
-  motherboard: { pos: [-7.4, 1.6, 5.2], target: [0, 0.15, 0], scale: 1.05 },
-  cpu: { pos: [-5.8, 2.2, 5.2], target: [-0.15, 0.65, 0.25], scale: 0.96 },
-  ram: { pos: [-4.6, 1.4, 3.8], target: [0, 0.1, 0], scale: 1.6 },
-  storage: { pos: [-2.8, 2.8, 2.8], target: [0, 0.05, 0], scale: 1.55 },
-  gpu: { pos: [-6.4, 1.6, 5.4], target: [0, 0, 0], scale: 1.15 },
-  psu: { pos: [4.8, 2.8, 4.8], target: [0, 0.1, 0], scale: 1.2 },
-  case: { pos: [-12.5, 4.2, 10.5], target: [0, 0.2, 0], scale: 0.72 },
+  motherboard: { pos: [-7.4, 1.6, 5.2], target: [0, 0.15, 0], scale: 1.02 },
+  cpu: { pos: [-5.2, 2.6, 4.8], target: [0, 0.25, 0], scale: 1.0 },
+  ram: { pos: [-5.4, 2.4, 4.4], target: [0, 0.25, 0], scale: 1.0 },
+  storage: { pos: [-4.8, 2.4, 4.2], target: [0, 0.15, 0], scale: 1.0 },
+  gpu: { pos: [-6.0, 1.6, 5.2], target: [0, 0, 0], scale: 1.15 },
+  psu: { pos: [4.8, 2.6, 4.8], target: [0, 0.05, 0], scale: 1.15 },
+  case: { pos: [-11.5, 3.4, 9.8], target: [0, 0.1, 0], scale: 0.72 },
 };
 
-/* ARTICLE_HOTSPOTS is imported from ./articleHotspots — shared with CourseShell. */
-
+/*
+ * CameraRig supports both free OrbitControls dragging/zooming AND
+ * smooth animated transitions when picking hotspots, resetting view,
+ * or pressing toolbar turn/zoom controls relative to current camera.
+ */
 function CameraRig({
   specimenKey,
+  cameraPreset,
   activeHotspot,
-  rotationAngle,
-  zoomFactor,
+  cameraCommand,
   resetNonce,
   isPaused = false,
 }) {
   const { camera } = useThree();
   const controlsRef = useRef();
-  const preset = DEFAULT_CAMERAS[specimenKey] || DEFAULT_CAMERAS.motherboard;
+  const preset = cameraPreset || DEFAULT_CAMERAS[specimenKey] || DEFAULT_CAMERAS.motherboard;
 
   const isTransitioning = useRef(true);
   const goalPos = useRef(new THREE.Vector3(...preset.pos));
   const goalTarget = useRef(new THREE.Vector3(...preset.target));
 
+  // Snap to topic preset or selected hotspot
   useEffect(() => {
     const base = activeHotspot
       ? new THREE.Vector3(...activeHotspot.camPos)
@@ -61,26 +54,42 @@ function CameraRig({
       ? new THREE.Vector3(...activeHotspot.target)
       : new THREE.Vector3(...preset.target);
 
-    // Apply user rotation and zoom around target
-    const offset = base.clone().sub(tgt);
-    offset.applyAxisAngle(new THREE.Vector3(0, 1, 0), rotationAngle);
-    offset.multiplyScalar(1 / Math.max(0.55, Math.min(1.9, zoomFactor)));
-    goalPos.current.copy(tgt).add(offset);
+    goalPos.current.copy(base);
     goalTarget.current.copy(tgt);
     isTransitioning.current = true;
-  }, [specimenKey, activeHotspot, rotationAngle, zoomFactor, resetNonce, preset]);
+  }, [specimenKey, preset, activeHotspot, resetNonce]);
+
+  // Apply relative turn / zoom toolbar actions around the live OrbitControls target
+  useEffect(() => {
+    if (!cameraCommand || cameraCommand.nonce === 0) return;
+    const controls = controlsRef.current;
+    const currentTgt = controls ? controls.target.clone() : goalTarget.current.clone();
+    const offset = camera.position.clone().sub(currentTgt);
+
+    if (cameraCommand.type === "turn") {
+      offset.applyAxisAngle(new THREE.Vector3(0, 1, 0), cameraCommand.delta);
+    } else if (cameraCommand.type === "zoom") {
+      const dist = offset.length();
+      const nextDist = THREE.MathUtils.clamp(dist * cameraCommand.scale, 2.0, 21.0);
+      offset.normalize().multiplyScalar(nextDist);
+    }
+
+    goalTarget.current.copy(currentTgt);
+    goalPos.current.copy(currentTgt).add(offset);
+    isTransitioning.current = true;
+  }, [cameraCommand, camera]);
 
   useFrame((_, delta) => {
     if (isPaused) return;
     const controls = controlsRef.current;
     if (!controls) return;
     if (isTransitioning.current) {
-      const alpha = 1 - Math.exp(-delta * 6.5);
+      const alpha = 1 - Math.exp(-delta * 7.2);
       camera.position.lerp(goalPos.current, alpha);
       controls.target.lerp(goalTarget.current, alpha);
       controls.update();
       if (
-        camera.position.distanceTo(goalPos.current) < 0.03 &&
+        camera.position.distanceTo(goalPos.current) < 0.025 &&
         controls.target.distanceTo(goalTarget.current) < 0.02
       ) {
         isTransitioning.current = false;
@@ -95,9 +104,15 @@ function CameraRig({
       ref={controlsRef}
       makeDefault
       enableDamping
-      dampingFactor={0.08}
-      minDistance={2.1}
-      maxDistance={19}
+      dampingFactor={0.075}
+      enablePan={true}
+      screenSpacePanning={true}
+      rotateSpeed={0.8}
+      zoomSpeed={0.95}
+      minDistance={1.9}
+      maxDistance={21}
+      minPolarAngle={0.18}
+      maxPolarAngle={Math.PI * 0.56}
       onStart={() => {
         isTransitioning.current = false;
       }}
@@ -105,47 +120,64 @@ function CameraRig({
   );
 }
 
-function SignalFlowBeams({ specimenKey, visible, isPaused = false }) {
-  const dotRef1 = useRef();
-  const dotRef2 = useRef();
-  const dotRef3 = useRef();
+/* Topic-aware animated bus / airflow signal indicators */
+function SignalFlowBeams({ sceneType, visible, isPaused = false }) {
+  const dotRefs = [useRef(), useRef(), useRef(), useRef()];
 
-  const paths = useMemo(() => {
-    if (specimenKey === "composite" || specimenKey === "motherboard") {
-      return [
-        // VRM -> CPU power
-        [
-          [-0.22, 2.25, -0.6],
-          [-0.14, 1.45, -0.6],
+  const { paths, colors } = useMemo(() => {
+    if (sceneType === "case-airflow") {
+      return {
+        paths: [
+          [[0, 2.2, 4.3], [0, 2.0, 0.0], [0.2, 1.5, -4.1]],
+          [[0, 0.2, 4.3], [0, 0.4, 0.0], [0.2, 1.3, -4.1]],
+          [[0, -2.0, 4.3], [0, -0.5, 0.4], [0, 3.8, -1.5]],
         ],
-        // CPU <-> DDR5 DIMM Slots
-        [
-          [-0.14, 1.4, -0.6],
-          [-0.14, 1.4, 0.8],
-        ],
-        // CPU <-> M.2 NVMe & PCIe x16 GPU
-        [
-          [-0.14, 1.35, -0.5],
-          [-0.14, 0.35, -0.5],
-          [-0.16, -0.7, -0.3],
-        ],
-      ];
+        colors: ["#93c5fd", "#93c5fd", "#f59e0b"],
+      };
     }
-    return [
-      [
-        [-0.3, 0.8, -0.6],
-        [-0.3, 0.0, 0.0],
-        [-0.3, -0.7, 0.6],
-      ],
-    ];
-  }, [specimenKey]);
+    if (sceneType === "vrm-power") {
+      return {
+        paths: [
+          [[-0.25, 3.04, -1.85], [-0.25, 2.68, -0.31], [-0.25, 1.45, -0.31]],
+          [[-0.25, 2.68, -0.31], [-0.25, 1.45, -0.31]],
+          [[-0.25, 1.45, -0.31], [-0.25, -1.85, 1.45]],
+        ],
+        colors: ["#f59e0b", "#f5e6c7", "#ffffff"],
+      };
+    }
+    if (sceneType === "esd-bench" || sceneType === "bench-test") {
+      return {
+        paths: [
+          [[-0.28, -0.5, -1.3], [1.8, -0.45, 0.2], [3.6, -0.45, 0.5]],
+        ],
+        colors: ["#10b981"],
+      };
+    }
+    if (
+      sceneType === "composite" ||
+      sceneType === "motherboard" ||
+      sceneType === "form-factors" ||
+      sceneType === "io-headers" ||
+      sceneType === "ez-debug" ||
+      sceneType === "bench-test"
+    ) {
+      return {
+        paths: [
+          [[-0.22, 2.25, -0.31], [-0.14, 1.41, -0.31]],
+          [[-0.14, 1.41, -0.31], [-0.14, 1.41, 1.49]],
+          [[-0.14, 1.35, -0.31], [-0.14, 0.35, -0.31], [-0.18, -0.57, -0.31]],
+        ],
+        colors: ["#f5e6c7", "#C9C7C0", "#10b981"],
+      };
+    }
+    return { paths: [], colors: [] };
+  }, [sceneType]);
 
   useFrame(({ clock }) => {
-    if (isPaused || !visible) return;
-    const t = (clock.getElapsedTime() * 0.65) % 1;
-    const refs = [dotRef1, dotRef2, dotRef3];
+    if (isPaused || !visible || !paths.length) return;
+    const t = (clock.getElapsedTime() * 0.6) % 1;
     paths.forEach((pts, idx) => {
-      const mesh = refs[idx]?.current;
+      const mesh = dotRefs[idx]?.current;
       if (!mesh || pts.length < 2) return;
       const seg = Math.min(pts.length - 2, Math.floor(t * (pts.length - 1)));
       const localT = t * (pts.length - 1) - seg;
@@ -155,9 +187,7 @@ function SignalFlowBeams({ specimenKey, visible, isPaused = false }) {
     });
   });
 
-  if (!visible) return null;
-  const refs = [dotRef1, dotRef2, dotRef3];
-  const colors = ["#ffffff", "#C9C7C0", "#00e5a0"];
+  if (!visible || !paths.length) return null;
 
   return (
     <group>
@@ -166,13 +196,13 @@ function SignalFlowBeams({ specimenKey, visible, isPaused = false }) {
           <Line
             points={pts}
             color={colors[idx % colors.length]}
-            lineWidth={2.5}
+            lineWidth={2}
             dashed
             dashSize={0.18}
             gapSize={0.12}
           />
-          <mesh ref={refs[idx]}>
-            <sphereGeometry args={[0.075, 16, 16]} />
+          <mesh ref={dotRefs[idx]}>
+            <sphereGeometry args={[0.065, 14, 14]} />
             <meshBasicMaterial color={colors[idx % colors.length]} />
           </mesh>
         </React.Fragment>
@@ -181,9 +211,343 @@ function SignalFlowBeams({ specimenKey, visible, isPaused = false }) {
   );
 }
 
+/* Wide Kraft Cardboard Retail Box Bench Pad for ESD Prep (1.1) and Test Bench (7.1) */
+function CardboardBenchBox() {
+  return (
+    <group position={[0, -1.04, 0]}>
+      <mesh receiveShadow castShadow position={[0, 0, 0]}>
+        <boxGeometry args={[5.8, 0.46, 6.8]} />
+        <meshStandardMaterial color="#a47c54" roughness={0.92} metalness={0.0} />
+      </mesh>
+      <mesh position={[0, 0.235, 0]}>
+        <boxGeometry args={[5.5, 0.02, 6.5]} />
+        <meshStandardMaterial color="#8a6540" roughness={0.95} />
+      </mesh>
+    </group>
+  );
+}
+
+/* Open LGA CPU Socket Base + Optional Seated/Hovering CPU */
+function LGACPUAssembly({ ex = 0, mode = "socket" }) {
+  const showCooler = mode === "cpu-cooling";
+
+  return (
+    <group scale={[1.35, 1.35, 1.35]}>
+      {/* Dark PCB Socket Base Plate */}
+      <mesh receiveShadow position={[0, -0.92, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <boxGeometry args={[2.5, 2.5, 0.14]} />
+        <meshStandardMaterial color="#14161b" roughness={0.85} metalness={0.1} />
+      </mesh>
+      {/* Socket Housing */}
+      <mesh receiveShadow castShadow position={[0, -0.78, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <boxGeometry args={[1.85, 1.85, 0.14]} />
+        <meshStandardMaterial color="#1e222b" roughness={0.75} />
+      </mesh>
+      {/* LGA Spring Gold Pin Field */}
+      <mesh position={[0, -0.70, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <boxGeometry args={[1.38, 1.38, 0.03]} />
+        <meshStandardMaterial color="#d97706" metalness={0.82} roughness={0.32} />
+      </mesh>
+      {/* Matching Socket Corner Pin-1 Triangle */}
+      <mesh position={[-0.64, -0.68, 0.64]} rotation={[-Math.PI / 2, 0, 0]}>
+        <boxGeometry args={[0.14, 0.14, 0.02]} />
+        <meshBasicMaterial color="#facc15" />
+      </mesh>
+
+      {!showCooler ? (
+        <>
+          {/* Open Stainless Steel Load Frame Hinged Cleanly From Rear Edge */}
+          <group position={[0, -0.72, -0.92]} rotation={[-0.62, 0, 0]}>
+            <mesh castShadow position={[0, 0.82, 0]}>
+              <boxGeometry args={[1.62, 1.62, 0.04]} />
+              <meshStandardMaterial color="#cbd5e1" metalness={0.78} roughness={0.28} />
+            </mesh>
+          </group>
+          <mesh castShadow position={[0.92, -0.25, -0.15]} rotation={[-0.52, 0, 0]}>
+            <cylinderGeometry args={[0.028, 0.028, 1.8, 12]} />
+            <meshStandardMaterial color="#f8fafc" metalness={0.85} roughness={0.2} />
+          </mesh>
+
+          {/* Hovering CPU tilted subtly so gold pads + corner triangle are inspectable */}
+          <group position={[0, 0.42 + 0.55 * ex, 0]} rotation={[0.25, 0.18, 0]}>
+            <mesh castShadow>
+              <boxGeometry args={[1.45, 0.08, 1.45]} />
+              <meshStandardMaterial color="#0f766e" roughness={0.42} />
+            </mesh>
+            {/* Underside Gold Contact Pads */}
+            <mesh position={[0, -0.045, 0]}>
+              <boxGeometry args={[1.36, 0.015, 1.36]} />
+              <meshStandardMaterial color="#d97706" metalness={0.85} roughness={0.28} />
+            </mesh>
+            {/* Golden Triangle Pin 1 Marker */}
+            <mesh position={[-0.62, 0.046, 0.62]}>
+              <boxGeometry args={[0.13, 0.015, 0.13]} />
+              <meshBasicMaterial color="#facc15" />
+            </mesh>
+            {/* Nickel-Plated IHS Lid (Satin finish catches studio key light cleanly) */}
+            <mesh castShadow position={[0, 0.075, 0]}>
+              <boxGeometry args={[1.18, 0.07, 1.18]} />
+              <meshStandardMaterial color="#edf2f7" metalness={0.76} roughness={0.26} />
+            </mesh>
+          </group>
+        </>
+      ) : (
+        <>
+          {/* Topic 3.2: Seated CPU with IHS + Pea Thermal Paste + Hovering Copper Cooler */}
+          <group position={[0, -0.64, 0]}>
+            <mesh castShadow>
+              <boxGeometry args={[1.45, 0.08, 1.45]} />
+              <meshStandardMaterial color="#0f766e" roughness={0.42} />
+            </mesh>
+            <mesh castShadow position={[0, 0.07, 0]}>
+              <boxGeometry args={[1.18, 0.07, 1.18]} />
+              <meshStandardMaterial color="#e2e8f0" metalness={0.96} roughness={0.14} />
+            </mesh>
+            {/* Pea-Sized Thermal Compound Dot */}
+            <mesh position={[0, 0.12, 0]}>
+              <cylinderGeometry args={[0.17, 0.19, 0.04, 24]} />
+              <meshStandardMaterial color="#64748b" roughness={0.75} metalness={0.1} />
+            </mesh>
+          </group>
+
+          {/* 3D Copper-Plate Tower Cooler Heatsink + PWM Fan Hovering Above */}
+          <group position={[0, 0.52 + 0.55 * ex, 0]}>
+            {/* Clean Copper Cold Plate (Plastic Peel Removed) */}
+            <mesh castShadow position={[0, -0.22, 0]}>
+              <boxGeometry args={[1.12, 0.08, 1.12]} />
+              <meshStandardMaterial color="#c26a3d" metalness={0.92} roughness={0.22} />
+            </mesh>
+            {/* 4 Heatpipes */}
+            {[-0.36, -0.12, 0.12, 0.36].map((hx, idx) => (
+              <mesh key={idx} castShadow position={[hx, 0.15, 0]} rotation={[Math.PI / 2, 0, 0]}>
+                <cylinderGeometry args={[0.045, 0.045, 1.18, 12]} />
+                <meshStandardMaterial color="#b45309" metalness={0.92} roughness={0.22} />
+              </mesh>
+            ))}
+            {/* Aluminum Fin Stack */}
+            <mesh castShadow position={[0, 0.42, 0]}>
+              <boxGeometry args={[1.45, 0.92, 1.05]} />
+              <meshStandardMaterial color="#475569" metalness={0.78} roughness={0.32} />
+            </mesh>
+            {/* Side Mounted 4-Pin PWM Fan */}
+            <mesh castShadow position={[0, 0.42, 0.62]} rotation={[Math.PI / 2, 0, 0]}>
+              <cylinderGeometry args={[0.46, 0.46, 0.18, 24]} />
+              <meshStandardMaterial color="#181b22" roughness={0.55} />
+            </mesh>
+            {/* 4 Diagonal Mounting Bracket Arms & Screws */}
+            {[
+              [-0.78, -0.22, -0.78],
+              [0.78, -0.22, -0.78],
+              [-0.78, -0.22, 0.78],
+              [0.78, -0.22, 0.78],
+            ].map((pos, idx) => (
+              <mesh key={idx} position={pos}>
+                <cylinderGeometry args={[0.06, 0.06, 0.16, 12]} />
+                <meshStandardMaterial color="#cbd5e1" metalness={0.95} roughness={0.18} />
+              </mesh>
+            ))}
+          </group>
+        </>
+      )}
+    </group>
+  );
+}
+
+/* Topic 4.1: Dedicated 4-Slot DIMM Bank with A2 & B2 Populated (Plus Explode Reveal of Key Notch) */
+function RAMDualChannelBench({ ex = 0 }) {
+  const slots = [-0.84, -0.28, 0.28, 0.84]; // A1, A2, B1, B2
+  return (
+    <group position={[0, -0.35, 0]}>
+      {/* Motherboard Section Base */}
+      <mesh receiveShadow position={[0, -0.22, 0]}>
+        <boxGeometry args={[2.6, 0.12, 4.1]} />
+        <meshStandardMaterial color="#111318" roughness={0.82} metalness={0.1} />
+      </mesh>
+
+      {slots.map((sx, idx) => {
+        const isPopulated = idx === 1 || idx === 3; // A2 and B2
+        return (
+          <group key={idx} position={[sx, -0.05, 0]}>
+            {/* Slot Track (A1/B1 Black, A2/B2 Gray) */}
+            <mesh receiveShadow castShadow>
+              <boxGeometry args={[0.18, 0.24, 3.5]} />
+              <meshStandardMaterial color={idx % 2 === 0 ? "#12141a" : "#3a4150"} roughness={0.68} />
+            </mesh>
+            {/* Off-Center Physical Key Notch Bridge */}
+            <mesh position={[0, 0.04, 0.28]}>
+              <boxGeometry args={[0.19, 0.18, 0.1]} />
+              <meshStandardMaterial color="#090a0d" />
+            </mesh>
+            {/* End Q-Latches */}
+            {[-1.82, 1.82].map((lz, lIdx) => (
+              <mesh
+                key={lIdx}
+                position={[0, isPopulated && ex < 0.15 ? 0.18 : 0.12, lz]}
+                rotation={[isPopulated && ex < 0.15 ? 0 : (lIdx === 0 ? -0.35 : 0.35), 0, 0]}
+              >
+                <boxGeometry args={[0.2, 0.22, 0.14]} />
+                <meshStandardMaterial color="#cbd5e1" metalness={0.45} roughness={0.35} />
+              </mesh>
+            ))}
+
+            {/* Mounted DDR4 Sticks Seated Vertically Upright in A2 & B2 */}
+            {isPopulated && (
+              <group position={[0, 0.24 + 0.85 * ex, 0]} rotation={[-Math.PI / 2, 0, -Math.PI / 2]}>
+                <SingleDDR4RAM scale={0.46} rgbColor="#f5e6c7" enableHighlight={false} />
+              </group>
+            )}
+          </group>
+        );
+      })}
+    </group>
+  );
+}
+
+/* Topic 4.2: M.2 NVMe SSD 25-Degree Insertion on Brass Standoff + Removable Thermal Armor */
+function NVMeBenchStage({ ex = 0 }) {
+  const entryAngle = 0.42 * (1 - ex); // 24 deg upward tilt from left socket when inserting; levels flat when exploded/pressed
+  return (
+    <group position={[0, -0.35, 0]}>
+      {/* Motherboard Section Base */}
+      <mesh receiveShadow position={[0, -0.28, 0]}>
+        <boxGeometry args={[4.4, 0.12, 1.85]} />
+        <meshStandardMaterial color="#111318" roughness={0.82} metalness={0.1} />
+      </mesh>
+      {/* M-Key Socket Housing (Left) */}
+      <mesh castShadow receiveShadow position={[-1.45, -0.1, 0]}>
+        <boxGeometry args={[0.28, 0.24, 0.92]} />
+        <meshStandardMaterial color="#1c2029" roughness={0.65} />
+      </mesh>
+      {/* Brass Standoff Spacer (Right) */}
+      <mesh castShadow position={[1.38, -0.11, 0]}>
+        <cylinderGeometry args={[0.1, 0.1, 0.22, 6]} />
+        <meshStandardMaterial color="#d97706" metalness={0.92} roughness={0.25} />
+      </mesh>
+      {/* SingleNVMeSSD pivoting cleanly from left M-Key Socket */}
+      <group position={[-1.35, -0.02, 0]} rotation={[0, 0, entryAngle]}>
+        <group position={[1.38, 0.08, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <SingleNVMeSSD scale={1.38} rgbColor="#f5e6c7" enableHighlight={false} />
+        </group>
+      </group>
+      {/* Hovering Brushed Gunmetal Thermal Armor Heatsink Plate (clear above tilted tail) */}
+      <group position={[0, 1.38 + 0.45 * ex, 0]}>
+        <mesh castShadow>
+          <boxGeometry args={[3.15, 0.1, 0.85]} />
+          <meshStandardMaterial color="#272b35" metalness={0.82} roughness={0.32} />
+        </mesh>
+        {/* Thermal Pad Strip Underneath */}
+        <mesh position={[0, -0.06, 0]}>
+          <boxGeometry args={[2.75, 0.03, 0.65]} />
+          <meshStandardMaterial color="#60a5fa" roughness={0.6} transparent opacity={0.85} />
+        </mesh>
+      </group>
+    </group>
+  );
+}
+
+/* Topic 1.3: Case Brass Standoffs + Coarse 6-32 / Fine M3 / Micro M2 Fastener Comparison */
+function ScrewsAndStandoffsBench({ isExploded = false }) {
+  return (
+    <group>
+      <group position={[0, -0.2, 0]}>
+        <GenericPCCase
+          rgbColor="#ffffff"
+          caseColor="white"
+          glassMode="open"
+          explodedProgress={isExploded ? 0.3 : 0}
+          enableHighlight={false}
+        />
+      </group>
+      {/* 9 Brass Standoffs Highlighted on the Motherboard Tray */}
+      {[
+        [1.42, 2.2, -2.5], [1.42, 2.2, -0.6], [1.42, 2.2, 1.3],
+        [1.42, 0.0, -2.5], [1.42, 0.0, -0.6], [1.42, 0.0, 1.3],
+        [1.42, -2.2, -2.5], [1.42, -2.2, -0.6], [1.42, -2.2, 1.3],
+      ].map((pos, idx) => (
+        <mesh key={idx} position={pos} rotation={[0, 0, Math.PI / 2]}>
+          <cylinderGeometry args={[0.11, 0.11, 0.24, 6]} />
+          <meshStandardMaterial color="#f59e0b" metalness={0.9} roughness={0.22} />
+        </mesh>
+      ))}
+      {/* Floating Fastener Specimen Bar (6-32, M3, M2 + Magnetic Dish) */}
+      <group position={[-3.0, 0, 1.5]}>
+        {/* Magnetic Tray Dish */}
+        <mesh position={[0, -0.95, 0]} castShadow>
+          <cylinderGeometry args={[0.72, 0.56, 0.14, 24]} />
+          <meshStandardMaterial color="#94a3b8" metalness={0.85} roughness={0.25} />
+        </mesh>
+        {/* 6-32 Coarse Screw */}
+        <group position={[0, 1.15, 0]}>
+          <mesh castShadow>
+            <cylinderGeometry args={[0.18, 0.18, 0.08, 6]} />
+            <meshStandardMaterial color="#cbd5e1" metalness={0.92} roughness={0.2} />
+          </mesh>
+          <mesh position={[0, -0.18, 0]}>
+            <cylinderGeometry args={[0.09, 0.09, 0.3, 12]} />
+            <meshStandardMaterial color="#94a3b8" metalness={0.92} roughness={0.25} />
+          </mesh>
+        </group>
+        {/* M3 Fine Screw */}
+        <group position={[0, 0.45, 0]}>
+          <mesh castShadow>
+            <cylinderGeometry args={[0.14, 0.14, 0.06, 16]} />
+            <meshStandardMaterial color="#38bdf8" metalness={0.75} roughness={0.25} />
+          </mesh>
+          <mesh position={[0, -0.15, 0]}>
+            <cylinderGeometry args={[0.065, 0.065, 0.24, 12]} />
+            <meshStandardMaterial color="#94a3b8" metalness={0.92} roughness={0.25} />
+          </mesh>
+        </group>
+        {/* M2 Micro Screw */}
+        <group position={[0, -0.15, 0]}>
+          <mesh castShadow>
+            <cylinderGeometry args={[0.1, 0.1, 0.04, 16]} />
+            <meshStandardMaterial color="#f59e0b" metalness={0.85} roughness={0.25} />
+          </mesh>
+          <mesh position={[0, -0.1, 0]}>
+            <cylinderGeometry args={[0.04, 0.04, 0.16, 12]} />
+            <meshStandardMaterial color="#cbd5e1" metalness={0.92} roughness={0.25} />
+          </mesh>
+        </group>
+      </group>
+    </group>
+  );
+}
+
+/* Topic 7.3: Physical 4-LED EZ Debug Strip Highlight */
+function EZDebugIndicatorStrip({ activeHotspotId }) {
+  const leds = [
+    { id: "dbg-cpu", y: 2.4, color: "#ef4444" },
+    { id: "dbg-dram", y: 2.1, color: "#f59e0b" },
+    { id: "dbg-vga", y: 1.8, color: "#eab308" },
+    { id: "dbg-boot", y: 1.5, color: "#10b981" },
+  ];
+  return (
+    <group position={[-0.22, 0, 2.4]}>
+      <mesh>
+        <boxGeometry args={[0.06, 1.2, 0.16]} />
+        <meshStandardMaterial color="#111318" roughness={0.8} />
+      </mesh>
+      {leds.map((led) => {
+        const bright = activeHotspotId === led.id || (!activeHotspotId && led.id === "dbg-boot");
+        return (
+          <mesh key={led.id} position={[-0.04, led.y, 0]}>
+            <boxGeometry args={[0.04, 0.12, 0.08]} />
+            <meshStandardMaterial
+              color={led.color}
+              emissive={led.color}
+              emissiveIntensity={bright ? 3.2 : 0.9}
+            />
+          </mesh>
+        );
+      })}
+    </group>
+  );
+}
+
 function StageSpecimen({
   specimenKey,
-  selectedPartName,
+  sceneType,
   showSignalFlow,
   hotspots,
   selectedHotspotId,
@@ -191,11 +555,12 @@ function StageSpecimen({
   onSelectHotspot,
   isExploded = false,
   isPaused = false,
+  cameraScale,
 }) {
-  const isComposite = specimenKey === "composite" || specimenKey === "assembly-lab";
-  const stageScale = (DEFAULT_CAMERAS[specimenKey] || DEFAULT_CAMERAS.motherboard).scale;
+  const effectiveScene = sceneType || specimenKey || "composite";
+  const stageScale =
+    cameraScale || (DEFAULT_CAMERAS[specimenKey] || DEFAULT_CAMERAS.motherboard).scale;
 
-  // Smooth exploded interpolation ratio
   const explodeRatioRef = useRef(0);
   const [explodeRatio, setExplodeRatio] = useState(0);
 
@@ -211,11 +576,43 @@ function StageSpecimen({
 
   const ex = explodeRatio;
 
+  const isFlatBench = effectiveScene === "esd-bench" || effectiveScene === "bench-test";
+
+  const isBoardBased =
+    effectiveScene === "composite" ||
+    effectiveScene === "assembly-lab" ||
+    effectiveScene === "handling-zones" ||
+    effectiveScene === "ez-debug";
+
+  const isMotherboardFamily =
+    effectiveScene === "motherboard" ||
+    effectiveScene === "form-factors" ||
+    effectiveScene === "vrm-power" ||
+    effectiveScene === "io-headers";
+
   return (
     <group scale={[stageScale, stageScale, stageScale]}>
-      {isComposite && (
+      {/* Topic 1.1 & 7.1: Motherboard Resting Flat Face-Up on Wide Cardboard Bench Box + Grounded PSU */}
+      {isFlatBench && (
         <group>
-          {/* Motherboard Base (Photorealistic ASUS ROG Strix B360-F Gaming) */}
+          <CardboardBenchBox />
+          <group position={[0, -0.75 + 0.6 * ex, 0]} rotation={[-Math.PI / 2, 0, 0]} scale={0.82}>
+            <ROGStrixMotherboard
+              rgbColor="#ffffff"
+              enableHighlight={false}
+              showCpu={true}
+              showRam={effectiveScene === "bench-test"}
+            />
+          </group>
+          <group position={[3.9, -0.55, 0.5]} scale={[0.72, 0.72, 0.72]}>
+            <PSUModel rgbColor="#ffffff" isMounted={false} isStandalone={false} enableHighlight={false} />
+          </group>
+        </group>
+      )}
+
+      {/* Full / Topic-Anchored Composite Motherboard Setups */}
+      {isBoardBased && (
+        <group>
           <group rotation={[0, -Math.PI / 2, 0]} scale={0.88}>
             <ROGStrixMotherboard
               rgbColor="#ffffff"
@@ -225,13 +622,30 @@ function StageSpecimen({
             />
           </group>
 
-          {/* Embedded / Floating CPU on socket */}
+          {/* Topic 1.2: Safe Grip Edge Bars vs Caution Rings */}
+          {effectiveScene === "handling-zones" && (
+            <group>
+              <mesh position={[-0.14, 0.1, 2.75]}>
+                <boxGeometry args={[0.1, 5.2, 0.12]} />
+                <meshBasicMaterial color="#10b981" />
+              </mesh>
+              <mesh position={[-0.14, 0.1, -2.75]}>
+                <boxGeometry args={[0.1, 5.2, 0.12]} />
+                <meshBasicMaterial color="#10b981" />
+              </mesh>
+              <mesh position={[-0.22, 1.41, -0.31]} rotation={[0, -Math.PI / 2, 0]}>
+                <ringGeometry args={[0.92, 1.05, 32]} />
+                <meshBasicMaterial color="#f59e0b" side={THREE.DoubleSide} />
+              </mesh>
+            </group>
+          )}
+
+          {/* CPU on socket */}
           <group position={[-0.14 - 1.2 * ex, 1.45 + 0.25 * ex, -0.32]}>
             <mesh>
               <boxGeometry args={[0.06, 0.95, 0.95]} />
               <meshStandardMaterial color="#e2e8f0" metalness={0.92} roughness={0.18} />
             </mesh>
-            {/* Cooler Assembly hovering above CPU when exploded */}
             {ex > 0.1 && (
               <group position={[-1.6 * ex, 0.3 * ex, 0]}>
                 <mesh>
@@ -246,17 +660,15 @@ function StageSpecimen({
             )}
           </group>
 
-          {/* Exploded RAM sticks floating out of DIMM slots A2 & B2 */}
+          {/* Exploded RAM sticks out of A2 & B2 */}
           {ex > 0.1 && (
             <group>
-              {/* Slot A2 Stick */}
               <group
                 position={[-0.14 - 1.4 * ex, 1.41 + 0.35 * ex, 1.144]}
                 rotation={[0, -Math.PI / 2, Math.PI / 2]}
               >
                 <SingleDDR4RAM scale={0.88 * 0.36} rgbColor="#ffffff" enableHighlight={false} />
               </group>
-              {/* Slot B2 Stick */}
               <group
                 position={[-0.14 - 1.4 * ex, 1.41 + 0.35 * ex, 1.848]}
                 rotation={[0, -Math.PI / 2, Math.PI / 2]}
@@ -266,165 +678,186 @@ function StageSpecimen({
             </group>
           )}
 
-          {/* Embedded / Floating NVMe SSD */}
-          <group position={[-0.12 - 0.7 * ex, -1.45 + 0.45 * ex, -0.32]}>
-            <ComponentModels3D
-              part={{ category: "storage", name: "PCIe 4.0 M.2 NVMe", targetPosition: [0, 0, 0] }}
-              rgbColor="#ffffff"
-              enableHighlight={false}
-            />
-          </group>
-
-          {/* Embedded / Floating GPU positioned outward along PCIe x16 slot */}
-          <group position={[-0.85 - 2.1 * ex, -0.6 - 0.5 * ex, -0.32]} scale={[0.72, 0.72, 0.72]}>
-            <NepotatoGPU rgbColor="#ffffff" />
-          </group>
-
-          {/* Exploded Modular PSU in lower quadrant */}
-          {ex > 0.08 && (
-            <group position={[1.4 * ex, -2.4 * ex, 1.1 * ex]} scale={[0.85, 0.85, 0.85]}>
-              <PSUModel rgbColor="#ffffff" isMounted={false} isStandalone={true} enableHighlight={false} />
-            </group>
-          )}
-
-          {/* Exploded Chassis frame behind board */}
-          {ex > 0.08 && (
-            <group position={[0, 0, -2.4 * ex]} scale={[0.88, 0.88, 0.88]}>
-              <GenericPCCase
+          {/* NVMe SSD */}
+          {effectiveScene !== "esd-bench" && effectiveScene !== "bench-test" && (
+            <group position={[-0.12 - 0.7 * ex, -1.45 + 0.45 * ex, -0.32]}>
+              <ComponentModels3D
+                part={{ category: "storage", name: "PCIe 4.0 M.2 NVMe", targetPosition: [0, 0, 0] }}
                 rgbColor="#ffffff"
-                caseColor="white"
-                glassMode="open"
-                explodedProgress={0.4}
                 enableHighlight={false}
               />
             </group>
           )}
 
-          {/* Exploded Connection Beams */}
-          {ex > 0.25 && (
+          {/* Dedicated GPU (hidden on raw safety-only ESD board) */}
+          {effectiveScene !== "esd-bench" && effectiveScene !== "handling-zones" && (
+            <group position={[-0.85 - 2.1 * ex, -0.6 - 0.5 * ex, -0.32]} scale={[0.72, 0.72, 0.72]}>
+              <NepotatoGPU rgbColor="#ffffff" />
+            </group>
+          )}
+
+          {/* Topic 7.3 EZ Debug LED Strip */}
+          {effectiveScene === "ez-debug" && (
+            <EZDebugIndicatorStrip activeHotspotId={selectedHotspotId} />
+          )}
+
+          {/* Exploded PSU + Case Frame */}
+          {ex > 0.08 && (
+            <>
+              <group position={[1.4 * ex, -2.4 * ex, 1.1 * ex]} scale={[0.85, 0.85, 0.85]}>
+                <PSUModel rgbColor="#ffffff" isMounted={false} isStandalone={true} enableHighlight={false} />
+              </group>
+              <group position={[0, 0, -2.4 * ex]} scale={[0.88, 0.88, 0.88]}>
+                <GenericPCCase
+                  rgbColor="#ffffff"
+                  caseColor="white"
+                  glassMode="open"
+                  explodedProgress={0.4}
+                  enableHighlight={false}
+                />
+              </group>
+            </>
+          )}
+        </group>
+      )}
+
+      {/* Motherboard Sub-Topics (2.1 Form Factors, 2.2 VRM & Chipset, 2.3 Rear I/O & Headers) */}
+      {isMotherboardFamily && (
+        <group>
+          <group rotation={[0, -Math.PI / 2, 0]} scale={0.88}>
+            <ROGStrixMotherboard
+              rgbColor="#ffffff"
+              enableHighlight={false}
+              showCpu={true}
+              showRam={true}
+              explodedProgress={effectiveScene === "vrm-power" ? 0.28 + ex * 0.6 : ex * 0.6}
+            />
+          </group>
+
+          {/* Topic 2.1: Form Factor Architectural Comparison Frames (ATX / mATX / Mini-ITX) */}
+          {effectiveScene === "form-factors" && (
+            <group position={[-0.24, 0, 0]}>
+              {/* Micro-ATX 244x244 outline anchored from top-left */}
+              <Line
+                points={[
+                  [0, 3.34, -2.68],
+                  [0, 3.34, 2.68],
+                  [0, -2.02, 2.68],
+                  [0, -2.02, -2.68],
+                  [0, 3.34, -2.68],
+                ]}
+                color="#f5e6c7"
+                lineWidth={1.6}
+                dashed
+                dashSize={0.22}
+                gapSize={0.14}
+              />
+              {/* Mini-ITX 170x170 outline */}
+              <Line
+                points={[
+                  [0, 3.34, -2.68],
+                  [0, 3.34, 1.05],
+                  [0, -0.39, 1.05],
+                  [0, -0.39, -2.68],
+                  [0, 3.34, -2.68],
+                ]}
+                color="#f59e0b"
+                lineWidth={1.8}
+                dashed
+                dashSize={0.18}
+                gapSize={0.12}
+              />
+            </group>
+          )}
+
+          {/* Topic 2.3: USB Speed Color Bands & Header Highlights */}
+          {effectiveScene === "io-headers" && (
             <group>
-              {/* CPU to socket line */}
+              {/* USB 2.0 Black, USB 3.0 Blue, USB 3.2 Teal Port Strips on Rear I/O */}
+              <mesh position={[-0.4, 2.25, -2.68]}>
+                <boxGeometry args={[0.12, 0.35, 0.14]} />
+                <meshBasicMaterial color="#1e293b" />
+              </mesh>
+              <mesh position={[-0.4, 1.75, -2.68]}>
+                <boxGeometry args={[0.12, 0.45, 0.14]} />
+                <meshBasicMaterial color="#2563eb" />
+              </mesh>
+              <mesh position={[-0.4, 1.15, -2.68]}>
+                <boxGeometry args={[0.12, 0.35, 0.14]} />
+                <meshBasicMaterial color="#0d9488" />
+              </mesh>
+              {/* Bottom F_PANEL Highlight Block */}
+              <mesh position={[-0.2, -3.15, 2.0]}>
+                <boxGeometry args={[0.16, 0.22, 0.55]} />
+                <meshBasicMaterial color="#f5e6c7" wireframe />
+              </mesh>
+            </group>
+          )}
+        </group>
+      )}
+
+      {/* CPU Topics (3.1 Open LGA Socket Drop vs 3.2 Thermal Paste + Cooler) */}
+      {(effectiveScene === "cpu" || effectiveScene === "cpu-socket" || effectiveScene === "cpu-cooling") && (
+        <LGACPUAssembly ex={ex} mode={effectiveScene} />
+      )}
+
+      {/* RAM Topic (4.1 4-Slot DIMM Bank with A2 & B2 Seated) */}
+      {(effectiveScene === "ram" || effectiveScene === "ram-slots") && (
+        <RAMDualChannelBench ex={ex} />
+      )}
+
+      {/* Storage Topic (4.2 25-Degree M.2 NVMe Insertion & Brass Standoff) */}
+      {(effectiveScene === "storage" || effectiveScene === "nvme-install") && (
+        <NVMeBenchStage ex={ex} />
+      )}
+
+      {/* GPU Topic (5.1 Standalone Triple-Fan GPU) */}
+      {(effectiveScene === "gpu" || effectiveScene === "gpu-standalone") && (
+        <group scale={[0.85, 0.85, 0.85]}>
+          <NepotatoGPU rgbColor="#f5e6c7" isStandalone={true} explodedProgress={ex} />
+        </group>
+      )}
+
+      {/* PSU Topic (5.2 Standalone Modular PSU) */}
+      {(effectiveScene === "psu" || effectiveScene === "psu-standalone") && (
+        <PSUModel rgbColor="#f5e6c7" isMounted={false} isStandalone={true} enableHighlight={false} />
+      )}
+
+      {/* Case Topics (1.3 Standoffs & Screws, 6.1 Airflow Physics, 6.2 Cable Routing) */}
+      {effectiveScene === "screws-standoffs" && <ScrewsAndStandoffsBench isExploded={isExploded} />}
+
+      {(effectiveScene === "case" ||
+        effectiveScene === "case-airflow" ||
+        effectiveScene === "case-cabling") && (
+        <group position={[0, -0.2, 0]}>
+          <GenericPCCase
+            rgbColor="#f5e6c7"
+            caseColor="white"
+            glassMode={isExploded || effectiveScene !== "case" ? "open" : "closed"}
+            explodedProgress={isExploded ? 0.35 : 0}
+            enableHighlight={false}
+          />
+          {effectiveScene === "case-cabling" && (
+            <group>
+              {/* Clean Grommet Route Preview Lines */}
               <Line
-                points={[[-0.14 - 1.2 * ex, 1.45 + 0.25 * ex, -0.32], [-0.14, 1.45, -0.32]]}
-                color="#ffffff"
-                lineWidth={1.5}
-                dashed
-                dashScale={10}
-              />
-              {/* RAM to DIMM slots lines */}
-              <Line
-                points={[[-0.14 - 1.4 * ex, 1.41 + 0.35 * ex, 1.144], [-0.14, 1.41, 1.144]]}
-                color="#ffffff"
-                lineWidth={1.5}
-                dashed
-                dashScale={10}
-              />
-              <Line
-                points={[[-0.14 - 1.4 * ex, 1.41 + 0.35 * ex, 1.848], [-0.14, 1.41, 1.848]]}
-                color="#ffffff"
-                lineWidth={1.5}
-                dashed
-                dashScale={10}
-              />
-              {/* GPU to PCIe x16 slot line */}
-              <Line
-                points={[[-0.85 - 2.1 * ex, -0.6 - 0.5 * ex, -0.32], [-0.85, -0.6, -0.32]]}
-                color="#ffffff"
-                lineWidth={1.5}
-                dashed
-                dashScale={10}
-              />
-              {/* SSD to M.2 slot line */}
-              <Line
-                points={[[-0.12 - 0.7 * ex, -1.45 + 0.45 * ex, -0.32], [-0.12, -1.45, -0.32]]}
-                color="#ffffff"
-                lineWidth={1.5}
-                dashed
-                dashScale={10}
+                points={[
+                  [-0.4, -3.2, -1.6],
+                  [1.55, -1.8, 0.9],
+                  [1.55, 0.5, 1.6],
+                  [1.1, 0.9, 1.4],
+                ]}
+                color="#f5e6c7"
+                lineWidth={3}
               />
             </group>
           )}
         </group>
       )}
 
-      {specimenKey === "motherboard" && (
-        <group rotation={[0, -Math.PI / 2, 0]} scale={0.88}>
-          <ROGStrixMotherboard
-            rgbColor="#ffffff"
-            enableHighlight={false}
-            showCpu={true}
-            showRam={true}
-          />
-        </group>
-      )}
+      <SignalFlowBeams sceneType={effectiveScene} visible={showSignalFlow} isPaused={isPaused} />
 
-      {specimenKey === "cpu" && (
-        <group scale={[1.4, 1.4, 1.4]}>
-          {/* Green Ceramic Substrate */}
-          <mesh position={[0, 0, 0]}>
-            <boxGeometry args={[1.75, 1.75, 0.08]} />
-            <meshStandardMaterial color="#0f766e" roughness={0.4} />
-          </mesh>
-          {/* Gold Edge Connector Contacts on back */}
-          <mesh position={[0, 0, -0.045]}>
-            <boxGeometry args={[1.65, 1.65, 0.01]} />
-            <meshStandardMaterial color="#d97706" metalness={0.95} roughness={0.2} />
-          </mesh>
-          {/* Golden Triangle Pin 1 Index Marker */}
-          <mesh position={[-0.72, -0.72, 0.042]}>
-            <boxGeometry args={[0.12, 0.12, 0.01]} />
-            <meshBasicMaterial color="#facc15" />
-          </mesh>
-          {/* Nickel-Plated Copper Integrated Heat Spreader (IHS) */}
-          <mesh position={[0, 0, 0.08]}>
-            <boxGeometry args={[1.35, 1.35, 0.08]} />
-            <meshStandardMaterial color="#f8fafc" metalness={0.98} roughness={0.12} />
-          </mesh>
-          {/* Thermal Compound Center Dot (Pea Method) */}
-          <mesh position={[0, 0, 0.13]}>
-            <cylinderGeometry args={[0.18, 0.18, 0.03, 24]} />
-            <meshStandardMaterial color="#64748b" roughness={0.85} metalness={0.1} />
-          </mesh>
-        </group>
-      )}
-
-      {specimenKey === "ram" && (
-        <group rotation={[Math.PI * 0.42, 0.1, 0]}>
-          <SingleDDR4RAM scale={1.15} rgbColor="#ffffff" enableHighlight={false} />
-        </group>
-      )}
-
-      {specimenKey === "storage" && (
-        <group rotation={[0.25, Math.PI / 2, 0]}>
-          <SingleNVMeSSD scale={1.3} rgbColor="#ffffff" enableHighlight={false} />
-        </group>
-      )}
-
-      {specimenKey === "gpu" && (
-        <group scale={[0.85, 0.85, 0.85]}>
-          <NepotatoGPU rgbColor="#ffffff" isStandalone={true} />
-        </group>
-      )}
-
-      {specimenKey === "psu" && (
-        <PSUModel rgbColor="#ffffff" isMounted={false} isStandalone={true} enableHighlight={false} />
-      )}
-
-      {specimenKey === "case" && (
-        <group position={[0, -0.2, 0]}>
-          <GenericPCCase
-            rgbColor="#ffffff"
-            caseColor="white"
-            glassMode={isExploded ? "open" : "closed"}
-            explodedProgress={isExploded ? 0.35 : 0}
-            enableHighlight={false}
-          />
-        </group>
-      )}
-
-      <SignalFlowBeams specimenKey={specimenKey} visible={showSignalFlow} isPaused={isPaused} />
-
-      {/* 3D Interactive Callout Hotspots matching learn-arduino-red.vercel.app */}
+      {/* 3D Interactive Callout Hotspots */}
       {showHotspots &&
         hotspots.map((hs) => {
           const isActive = selectedHotspotId === hs.id;
@@ -454,6 +887,7 @@ function StageSpecimen({
 export default function LearnHardwareStage({
   lessonKey,
   specimenKey: propSpecimenKey,
+  topicConfig,
   lessonType,
   lessonTitle,
   componentData,
@@ -466,81 +900,149 @@ export default function LearnHardwareStage({
   onToggleExploded,
   isPaused = false,
   isMini = false,
-  onClickMini,
 }) {
   const [internalExploded, setInternalExploded] = useState(false);
   const isExploded = propExploded !== undefined ? propExploded : internalExploded;
   const toggleExploded = onToggleExploded || (() => setInternalExploded((x) => !x));
+
   const specimenKey = propSpecimenKey || (lessonType === "component" ? lessonKey : "composite");
+  const sceneType = topicConfig?.sceneType || specimenKey;
+  const cameraPreset = topicConfig?.camera || DEFAULT_CAMERAS[specimenKey] || DEFAULT_CAMERAS.motherboard;
+  const floorY = topicConfig?.floorY ?? -3.75;
+
   const hotspots = useMemo(() => {
+    if (topicConfig?.hotspots?.length) {
+      return topicConfig.hotspots;
+    }
     if (lessonType === "component" && componentData?.hotspots?.length) {
       return componentData.hotspots;
     }
     return propHotspots?.length ? propHotspots : ARTICLE_HOTSPOTS;
-  }, [lessonType, componentData, propHotspots]);
+  }, [topicConfig, lessonType, componentData, propHotspots]);
 
   const activeHotspot = useMemo(
     () => hotspots.find((h) => h.id === selectedHotspotId) || null,
     [hotspots, selectedHotspotId]
   );
 
-  const [rotationAngle, setRotationAngle] = useState(0);
-  const [zoomFactor, setZoomFactor] = useState(1);
+  const [cameraCommand, setCameraCommand] = useState({ type: null, delta: 0, scale: 1, nonce: 0 });
   const [resetNonce, setResetNonce] = useState(0);
+  const [zoomedFocus, setZoomedFocus] = useState(false);
   const [showSignalFlow, setShowSignalFlow] = useState(true);
   const [showSchematic, setShowSchematic] = useState(false);
   const [showHotspots, setShowHotspots] = useState(true);
 
-  // Reset camera & inspector smoothly when switching lesson
   useEffect(() => {
-    setRotationAngle(0);
-    setZoomFactor(1);
+    setZoomedFocus(false);
     setResetNonce((n) => n + 1);
-  }, [lessonKey]);
+  }, [lessonKey, sceneType]);
 
   const handleTurn = (dir) => {
     try { soundManager.click(); } catch {}
-    setRotationAngle((prev) => prev + (dir === "left" ? -Math.PI / 6 : Math.PI / 6));
+    setCameraCommand((prev) => ({
+      type: "turn",
+      delta: dir === "left" ? -Math.PI / 6 : Math.PI / 6,
+      scale: 1,
+      nonce: prev.nonce + 1,
+    }));
   };
 
-  const handleZoom = (delta) => {
+  const handleZoom = (scaleMultiplier) => {
     try { soundManager.click(); } catch {}
-    setZoomFactor((prev) =>
-      Math.max(0.65, Math.min(1.85, Number((prev + delta).toFixed(2))))
-    );
+    setCameraCommand((prev) => ({
+      type: "zoom",
+      delta: 0,
+      scale: scaleMultiplier,
+      nonce: prev.nonce + 1,
+    }));
   };
 
   const handleResetView = () => {
     try { soundManager.snap(); } catch {}
-    setRotationAngle(0);
-    setZoomFactor(1);
+    setZoomedFocus(false);
     onSelectHotspotId(null);
     setResetNonce((n) => n + 1);
   };
 
+  const schematicNodes = topicConfig?.schematicNodes || [
+    { title: "PSU +12V", sub: "DC RAILS" },
+    { title: "CPU / VRM", sub: "CORE BUS" },
+    { title: "DDR4 RAM", sub: "128-BIT" },
+    { title: "PCIE / M.2", sub: "EXPANSION" },
+  ];
+
   return (
     <div className={`workbench-stage ${isMini ? "is-mini-stage" : ""}`}>
-      {/* Subtle Blueprint Grid + PCB Trace Backdrop */}
-      <div className="workbench-iso-grid" aria-hidden="true" />
-
       {/* 3D Interactive Hardware Canvas */}
       <Canvas
+        shadows="soft"
         frameloop={isPaused ? "demand" : "always"}
-        camera={isMini ? { position: [-5.6, 1.4, 4.2], fov: 36, near: 0.1, far: 100 } : { position: [-7.4, 1.8, 5.4], fov: 40, near: 0.1, far: 100 }}
+        gl={{
+          antialias: true,
+          toneMapping: THREE.ACESFilmicToneMapping,
+          toneMappingExposure: 1.02,
+        }}
+        camera={
+          isMini
+            ? { position: [-5.6, 1.8, 4.4], fov: 36, near: 0.1, far: 100 }
+            : { position: cameraPreset.pos, fov: 40, near: 0.1, far: 100 }
+        }
         dpr={[1, 1.5]}
         className="workbench-canvas"
         onPointerMissed={() => onSelectHotspotId(null)}
       >
-        <ambientLight intensity={0.95} />
-        <hemisphereLight args={["#ffffff", "#64748b", 1.35]} />
-        <directionalLight position={[-10, 9, 10]} intensity={2.1} color="#fffcf5" />
-        <directionalLight position={[8, 12, 8]} intensity={1.4} color="#ffffff" />
-        <directionalLight position={[8, 8, -8]} intensity={1.1} color="#d6f5f0" />
-        <pointLight position={[-3, 4, 4]} intensity={0.85} color="#ffffff" />
-        <Environment preset="studio" />
+        <color attach="background" args={["#101116"]} />
+        <fog attach="fog" args={["#101116", 14, 34]} />
+
+        {/* Calibrated Studio Lighting Preserving Natural Crevices & Ambient Occlusion */}
+        <ambientLight intensity={0.28} />
+        <hemisphereLight args={["#edf2f7", "#14151a", 0.52]} />
+        <directionalLight
+          position={[-7, 10, 8]}
+          intensity={1.85}
+          color="#fff7ec"
+          castShadow
+          shadow-mapSize={[1024, 1024]}
+          shadow-bias={-0.0005}
+        />
+        <directionalLight position={[8, 6, -7]} intensity={0.85} color="#d4e2f4" />
+        <pointLight position={[-4, 2.5, 4]} intensity={0.45} color="#ffffff" distance={14} />
+        <Environment preset="studio" environmentIntensity={0.5} />
+
+        {/* Subtle Architectural Studio Floor + Grid + Contact AO (Main Canvas) */}
+        {!isMini && (
+          <>
+            <mesh position={[0, floorY - 0.015, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+              <circleGeometry args={[52, 64]} />
+              <meshStandardMaterial color="#101116" roughness={0.98} metalness={0.0} />
+            </mesh>
+            <Grid
+              position={[0, floorY, 0]}
+              args={[48, 48]}
+              cellSize={0.8}
+              cellThickness={0.5}
+              cellColor="#252832"
+              sectionSize={3.2}
+              sectionThickness={0.85}
+              sectionColor="#383c48"
+              fadeDistance={20}
+              fadeStrength={2.5}
+            />
+            <ContactShadows
+              position={[0, floorY + 0.01, 0]}
+              opacity={0.62}
+              scale={16}
+              blur={2.4}
+              far={8.5}
+              resolution={512}
+              color="#040508"
+            />
+          </>
+        )}
 
         <StageSpecimen
           specimenKey={specimenKey}
+          sceneType={sceneType}
           selectedPartName={selectedBuildPart?.name}
           showSignalFlow={showSignalFlow && !isMini}
           hotspots={hotspots}
@@ -549,14 +1051,15 @@ export default function LearnHardwareStage({
           onSelectHotspot={(hs) => onSelectHotspotId(hs ? hs.id : null)}
           isExploded={isExploded}
           isPaused={isPaused}
+          cameraScale={cameraPreset.scale}
         />
 
         {!isMini && (
           <CameraRig
             specimenKey={specimenKey}
+            cameraPreset={cameraPreset}
             activeHotspot={activeHotspot}
-            rotationAngle={rotationAngle}
-            zoomFactor={zoomFactor}
+            cameraCommand={cameraCommand}
             resetNonce={resetNonce}
             isPaused={isPaused}
           />
@@ -568,10 +1071,10 @@ export default function LearnHardwareStage({
             enableRotate={true}
             enableZoom={true}
             enablePan={false}
-            minDistance={2.5}
-            maxDistance={11}
+            minDistance={2.4}
+            maxDistance={12}
             autoRotate={true}
-            autoRotateSpeed={1.2}
+            autoRotateSpeed={1.1}
           />
         )}
       </Canvas>
@@ -579,74 +1082,86 @@ export default function LearnHardwareStage({
       {/* Mini Viewport Mouse Interaction Hint */}
       {isMini && (
         <div className="wb-mini-mouse-hint" aria-hidden="true">
-          <span>Drag to rotate • Scroll to zoom</span>
+          <span>Drag to rotate · Scroll to zoom</span>
         </div>
       )}
 
-      {/* Top-Left Moveable/Toggleable Schematic Bus Window (Hidden in Mini Viewport) */}
+      {/* Top-Left Topic-Anchored Schematic Window */}
       {!isMini && showSchematic && (
         <div className="workbench-schematic-card">
           <div className="schematic-card-head">
-            <span className="schematic-card-title">{lessonTitle}</span>
+            <span className="schematic-card-title">{topicConfig?.schematicTitle || lessonTitle}</span>
             <button
               type="button"
               className="schematic-close-btn"
               onClick={() => setShowSchematic(false)}
-              title="Close schematic diagram"
-              aria-label="Close schematic"
+              title="Close diagram"
+              aria-label="Close diagram"
             >
               ×
             </button>
           </div>
           <div className="schematic-svg-wrap">
-            <svg viewBox="0 0 260 112" className="schematic-svg" aria-label="Hardware Bus Schematic">
-              {/* Main Data / Power Bus Paths */}
-              <rect x="10" y="14" width="64" height="32" rx="5" fill="none" stroke="currentColor" strokeWidth="1.5" />
-              <text x="42" y="29" textAnchor="middle" fontSize="8.5" fontWeight="700" fill="currentColor">PSU +12V</text>
-              <text x="42" y="40" textAnchor="middle" fontSize="7" fill="#ffffff">DC RAILS</text>
+            <svg viewBox="0 0 260 112" className="schematic-svg" aria-label="Hardware Bus Diagram">
+              <rect x="8" y="12" width="112" height="36" rx="5" fill="none" stroke="currentColor" strokeWidth="1.4" />
+              <text x="64" y="27" textAnchor="middle" fontSize="8.5" fontWeight="700" fill="currentColor">
+                {schematicNodes[0]?.title}
+              </text>
+              <text x="64" y="39" textAnchor="middle" fontSize="7" fill="#b08d57">
+                {schematicNodes[0]?.sub}
+              </text>
 
-              <line x1="74" y1="30" x2="98" y2="30" stroke="#ffffff" strokeWidth="2" />
-              <rect x="98" y="10" width="66" height="40" rx="5" fill="rgba(255, 255, 255, 0.05)" stroke="#ffffff" strokeWidth="1.6" />
-              <text x="131" y="27" textAnchor="middle" fontSize="8.5" fontWeight="800" fill="currentColor">CPU / VRM</text>
-              <text x="131" y="39" textAnchor="middle" fontSize="7" fill="#ffffff">CORE BUS</text>
+              <line x1="120" y1="30" x2="140" y2="30" stroke="currentColor" strokeWidth="1.6" />
 
-              <line x1="164" y1="30" x2="188" y2="30" stroke="#3F3F45" strokeWidth="2" />
-              <rect x="188" y="14" width="62" height="32" rx="5" fill="none" stroke="currentColor" strokeWidth="1.5" />
-              <text x="219" y="29" textAnchor="middle" fontSize="8.5" fontWeight="700" fill="currentColor">DDR5 RAM</text>
-              <text x="219" y="40" textAnchor="middle" fontSize="7" fill="#028090">128-BIT</text>
+              <rect x="140" y="12" width="112" height="36" rx="5" fill="rgba(255, 255, 255, 0.05)" stroke="currentColor" strokeWidth="1.4" />
+              <text x="196" y="27" textAnchor="middle" fontSize="8.5" fontWeight="700" fill="currentColor">
+                {schematicNodes[1]?.title}
+              </text>
+              <text x="196" y="39" textAnchor="middle" fontSize="7" fill="#f5e6c7">
+                {schematicNodes[1]?.sub}
+              </text>
 
-              {/* Lower PCIe / NVMe Trunk */}
-              <line x1="131" y1="50" x2="131" y2="70" stroke="#ffffff" strokeWidth="1.8" />
-              <line x1="56" y1="70" x2="206" y2="70" stroke="currentColor" strokeWidth="1.4" strokeDasharray="3 2" />
-              <line x1="56" y1="70" x2="56" y2="78" stroke="currentColor" strokeWidth="1.4" />
-              <line x1="206" y1="70" x2="206" y2="78" stroke="currentColor" strokeWidth="1.4" />
+              <line x1="196" y1="48" x2="196" y2="64" stroke="currentColor" strokeWidth="1.4" />
+              <line x1="64" y1="64" x2="196" y2="64" stroke="currentColor" strokeWidth="1.4" strokeDasharray="3 2" />
+              <line x1="64" y1="64" x2="64" y2="70" stroke="currentColor" strokeWidth="1.4" />
+              <line x1="196" y1="64" x2="196" y2="70" stroke="currentColor" strokeWidth="1.4" />
 
-              <rect x="14" y="78" width="94" height="26" rx="4" fill="none" stroke="currentColor" strokeWidth="1.4" />
-              <text x="61" y="94" textAnchor="middle" fontSize="8" fontWeight="700" fill="currentColor">PCIe x16 GPU</text>
+              <rect x="8" y="70" width="112" height="34" rx="5" fill="none" stroke="currentColor" strokeWidth="1.4" />
+              <text x="64" y="85" textAnchor="middle" fontSize="8.5" fontWeight="700" fill="currentColor">
+                {schematicNodes[2]?.title}
+              </text>
+              <text x="64" y="96" textAnchor="middle" fontSize="7" fill="#b08d57">
+                {schematicNodes[2]?.sub}
+              </text>
 
-              <rect x="152" y="78" width="96" height="26" rx="4" fill="none" stroke="currentColor" strokeWidth="1.4" />
-              <text x="200" y="94" textAnchor="middle" fontSize="8" fontWeight="700" fill="currentColor">M.2 NVMe x4</text>
+              <rect x="140" y="70" width="112" height="34" rx="5" fill="none" stroke="currentColor" strokeWidth="1.4" />
+              <text x="196" y="85" textAnchor="middle" fontSize="8.5" fontWeight="700" fill="currentColor">
+                {schematicNodes[3]?.title}
+              </text>
+              <text x="196" y="96" textAnchor="middle" fontSize="7" fill="#f5e6c7">
+                {schematicNodes[3]?.sub}
+              </text>
             </svg>
           </div>
           <div className="schematic-footnote">
-            {showSignalFlow ? "● Live bus flow active" : "○ Signal flow paused"} · Click any pinout hotspot
+            {showSignalFlow ? "Signal flow active" : "Signal flow paused"}
           </div>
         </div>
       )}
 
-      {/* Floating Part Inspector Card (appears when a hotspot is clicked, hidden in mini mode) */}
+      {/* Floating Part Inspector Card */}
       {!isMini && activeHotspot && (
-        <div className="workbench-inspector-card" role="region" aria-label="Component Inspector">
+        <div className="workbench-inspector-card" role="region" aria-label="Part Details">
           <div className="inspector-card-head">
             <div>
-              <span className="inspector-kicker">Component Inspector</span>
+              <span className="inspector-kicker">Part Inspector</span>
               <h4>{activeHotspot.label}</h4>
             </div>
             <button
               type="button"
               className="schematic-close-btn"
               onClick={() => onSelectHotspotId(null)}
-              aria-label="Close component inspector"
+              aria-label="Close part details"
             >
               ×
             </button>
@@ -655,17 +1170,17 @@ export default function LearnHardwareStage({
 
           <div className="inspector-spec-pills">
             <div className="inspector-pill">
-              <span>Bus Interface</span>
+              <span>Standard</span>
               <strong>{activeHotspot.bus}</strong>
             </div>
             <div className="inspector-pill">
-              <span>Power &amp; Spec</span>
+              <span>Spec</span>
               <strong>{activeHotspot.voltage}</strong>
             </div>
           </div>
 
           <div className="inspector-tip-box">
-            <strong>Lab Tip:</strong> {activeHotspot.tip}
+            <strong>Rule:</strong> {activeHotspot.tip}
           </div>
 
           <div className="inspector-actions">
@@ -673,32 +1188,30 @@ export default function LearnHardwareStage({
               type="button"
               className="inspector-btn-focus"
               onClick={() => {
-                try {
-                  soundManager.click();
-                } catch {}
-                if (zoomFactor > 1.25) {
-                  setZoomFactor(1);
+                if (zoomedFocus) {
+                  setZoomedFocus(false);
+                  handleZoom(1.35);
                 } else {
-                  handleZoom(0.35);
+                  setZoomedFocus(true);
+                  handleZoom(0.72);
                 }
               }}
-              title={zoomFactor > 1.25 ? "Reset camera to standard distance" : "Zoom camera closer to this component"}
             >
-              {zoomFactor > 1.25 ? "Reset Focus View" : "Focus in 3D"}
+              {zoomedFocus ? "Zoom Out" : "Zoom In Closer"}
             </button>
           </div>
         </div>
       )}
 
-      {/* Bottom-Center 3D Viewport Toolbar (Hidden in mini mode) */}
+      {/* Bottom-Center 3D Viewport Toolbar */}
       {!isMini && (
-        <div className="workbench-toolbar" role="toolbar" aria-label="3D Hardware Viewport Controls">
+        <div className="workbench-toolbar" role="toolbar" aria-label="3D Viewport Controls">
           <button
             type="button"
             className="wb-tool-btn"
             onClick={() => handleTurn("left")}
-            data-tooltip="Turn Left (↺)"
-            aria-label="Turn left"
+            title="Rotate Left"
+            aria-label="Rotate left"
           >
             ↺
           </button>
@@ -706,8 +1219,8 @@ export default function LearnHardwareStage({
             type="button"
             className="wb-tool-btn"
             onClick={() => handleTurn("right")}
-            data-tooltip="Turn Right (↻)"
-            aria-label="Turn right"
+            title="Rotate Right"
+            aria-label="Rotate right"
           >
             ↻
           </button>
@@ -715,8 +1228,8 @@ export default function LearnHardwareStage({
           <button
             type="button"
             className="wb-tool-btn"
-            onClick={() => handleZoom(-0.2)}
-            data-tooltip="Zoom Out (−)"
+            onClick={() => handleZoom(1.22)}
+            title="Zoom Out"
             aria-label="Zoom out"
           >
             −
@@ -724,8 +1237,8 @@ export default function LearnHardwareStage({
           <button
             type="button"
             className="wb-tool-btn"
-            onClick={() => handleZoom(0.2)}
-            data-tooltip="Zoom In (+)"
+            onClick={() => handleZoom(0.82)}
+            title="Zoom In"
             aria-label="Zoom in"
           >
             +
@@ -734,10 +1247,10 @@ export default function LearnHardwareStage({
             type="button"
             className="wb-tool-btn"
             onClick={handleResetView}
-            data-tooltip="Reset Camera (⌖)"
-            aria-label="Reset view"
+            title="Reset Camera View"
+            aria-label="Reset camera view"
           >
-            ⌖
+            Reset
           </button>
           <span className="wb-tool-sep" />
           <button
@@ -747,10 +1260,9 @@ export default function LearnHardwareStage({
               try { soundManager.click(); } catch {}
               toggleExploded();
             }}
-            data-tooltip={isExploded ? "Collapse Rig" : "Explode 3D Subassemblies"}
-            aria-label="Toggle Exploded View"
+            aria-label="Toggle exploded view"
           >
-            {isExploded ? "COLLAPSE" : "EXPLODE"}
+            {isExploded ? "Collapse" : "Explode"}
           </button>
           <button
             type="button"
@@ -759,10 +1271,9 @@ export default function LearnHardwareStage({
               try { soundManager.click(); } catch {}
               setShowSignalFlow((s) => !s);
             }}
-            data-tooltip="Toggle Bus Power Flow"
             aria-label="Toggle signal flow"
           >
-            POWER
+            Flow
           </button>
           <button
             type="button"
@@ -771,10 +1282,9 @@ export default function LearnHardwareStage({
               try { soundManager.click(); } catch {}
               setShowSchematic((s) => !s);
             }}
-            data-tooltip="Toggle Schematic Diagram (∿)"
-            aria-label="Toggle bus schematic diagram"
+            aria-label="Toggle diagram"
           >
-            ∿
+            Diagram
           </button>
           <button
             type="button"
@@ -783,24 +1293,26 @@ export default function LearnHardwareStage({
               try { soundManager.click(); } catch {}
               setShowHotspots((s) => !s);
             }}
-            data-tooltip="Toggle 3D Hotspot Labels (◉)"
-            aria-label="Toggle hotspots"
+            aria-label="Toggle 3D labels"
           >
-            ◉
+            Labels
           </button>
-          <span className="wb-tool-sep" />
-          <button
-            type="button"
-            className="wb-tool-video-btn"
-            onClick={() => {
-              try { soundManager.click(); } catch {}
-              onOpenVideo && onOpenVideo();
-            }}
-            data-tooltip="Open Lesson Lecture Video (▶)"
-            aria-label="Watch lecture video"
-          >
-            <span>▶ LECTURE FILM</span>
-          </button>
+          {onOpenVideo && (
+            <>
+              <span className="wb-tool-sep" />
+              <button
+                type="button"
+                className="wb-tool-video-btn"
+                onClick={() => {
+                  try { soundManager.click(); } catch {}
+                  onOpenVideo();
+                }}
+                aria-label="Watch lesson video"
+              >
+                Watch Video
+              </button>
+            </>
+          )}
         </div>
       )}
     </div>

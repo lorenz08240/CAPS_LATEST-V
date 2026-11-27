@@ -24,9 +24,9 @@
     "semantic_hash": ""
   },
   "backend/server.js": {
-    "mtime": 1795498391.3780675,
-    "seen": 1795498479.2272878,
-    "ast_hash": "c7fda954289a84730943f02d2d65c9ef",
+    "mtime": 1795788638.6990764,
+    "seen": 1795790187.329792,
+    "ast_hash": "c1619149da42f1de64fd03cde13619a1",
     "semantic_hash": ""
   },
   "backend/tests/compatibility.test.js": {
@@ -126,9 +126,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/CourseShell.jsx": {
-    "mtime": 1795361418.9721951,
-    "seen": 1795425153.3675327,
-    "ast_hash": "2ad667287877a7b52b3a3c71db132440",
+    "mtime": 1795787863.2085044,
+    "seen": 1795788289.6253412,
+    "ast_hash": "d67fdf0640550190519b7aa140ed2868",
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/CourseVideoPlayer.jsx": {
@@ -408,9 +408,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Home/Home3DHero.jsx": {
-    "mtime": 1795525752.3599696,
-    "seen": 1795525798.8888638,
-    "ast_hash": "c04fd29265e62a58e124746d47815a7b",
+    "mtime": 1795790052.4061596,
+    "seen": 1795790187.3371663,
+    "ast_hash": "6641d0d286585807c3317ac18d89bbd0",
     "semantic_hash": ""
   },
   "frontend/src/components/3D/DDR4RAMModel.jsx": {
@@ -582,9 +582,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/AboutUs/AboutUs.jsx": {
-    "mtime": 1795501345.7659218,
-    "seen": 1795501439.6559832,
-    "ast_hash": "c42ee5198933fd865853741a12ce667a",
+    "mtime": 1795616651.528467,
+    "seen": 1795788289.619369,
+    "ast_hash": "273c06652b05320dc489a00574a65939",
     "semantic_hash": ""
   },
   "frontend/src/components/Admin/AdminLogs.jsx": {
@@ -810,9 +810,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/LearnHardwareStage.jsx": {
-    "mtime": 1795501345.7634027,
-    "seen": 1795501439.6712735,
-    "ast_hash": "6a5cf3ec724e7a8f37c0237a4b1e6e8e",
+    "mtime": 1795788130.699899,
+    "seen": 1795788289.625632,
+    "ast_hash": "652f7e17bbf4288631e04b0e9b8475ab",
     "semantic_hash": ""
   },
   "frontend/src/components/Legal/LegalPage.jsx": {
@@ -936,9 +936,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/3D/ROGStrixMotherboard.jsx": {
-    "mtime": 1795206977.1680102,
-    "seen": 1795425153.360512,
-    "ast_hash": "c2822ab15c143d88a069e79d5191b18a",
+    "mtime": 1795789901.218628,
+    "seen": 1795790187.3321657,
+    "ast_hash": "255ec2a9d3ad42aa2a9fd4c3bb1e2c8a",
     "semantic_hash": ""
   },
   "frontend/src/utilities/useGoogleSignIn.js": {
@@ -2928,9 +2928,9 @@
     "semantic_hash": ""
   },
   "frontend/src/components/Learn/articleHotspots.js": {
-    "mtime": 1795207111.9420538,
-    "seen": 1795425153.367895,
-    "ast_hash": "d294ea672008b8207dbc2fb0a7bedb84",
+    "mtime": 1795788157.3636055,
+    "seen": 1795788289.626079,
+    "ast_hash": "5741caabccf7d918b782f529fa15582c",
     "semantic_hash": ""
   },
   "frontend/src/components/Navigation/DiscreetFullscreenToggle.jsx": {
@@ -3555,6 +3555,24 @@
     "mtime": 1795497456.8281553,
     "seen": 1795497857.2740054,
     "ast_hash": "261a7ad7d824ee964cc58189a064f86e",
+    "semantic_hash": ""
+  },
+  ".agents/agents/frontend-ui-auditor.md": {
+    "mtime": 1795788140.7641666,
+    "seen": 1795788289.6310654,
+    "ast_hash": "1676ac2846f8a686357cbde2cd86401d",
+    "semantic_hash": ""
+  },
+  ".agents/agents/threejs-builder.md": {
+    "mtime": 1795788141.4120767,
+    "seen": 1795788289.631068,
+    "ast_hash": "4b9579ca3fe1716593ce0d11f9aed0cf",
+    "semantic_hash": ""
+  },
+  "package.json": {
+    "mtime": 1795788639.5152938,
+    "seen": 1795790187.3443391,
+    "ast_hash": "1123cdfea535e4a71b63ab9ed56d1de8",
     "semantic_hash": ""
   },
   "backend/package-lock.json": {

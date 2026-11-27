@@ -25,7 +25,7 @@ import {
   TOTAL_TOPICS_COUNT,
   TOTAL_MODULES_COUNT,
 } from "./curriculumData";
-import { ARTICLE_HOTSPOTS } from "./articleHotspots";
+import { getWorkbenchConfigForTopic } from "./articleHotspots";
 import "./CourseShell.css";
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -395,8 +395,13 @@ export default function CourseShell() {
     }
   }, [location.state, currentTopic.moduleNum]);
 
-  // When changing topic, reset the 3D stepper. The workbench opens in 3D first;
-  // the reading document is a separate tab. Viewing a topic no longer marks it done.
+  const activeTopicConfig = useMemo(() => {
+    return getWorkbenchConfigForTopic(currentTopic);
+  }, [currentTopic]);
+
+  const activeHotspots = activeTopicConfig.hotspots;
+
+  // When changing topic, reset the 3D stepper and reading page.
   useEffect(() => {
     setActive3DStepIdx(0);
     setPresentationPage(0);
@@ -531,9 +536,9 @@ export default function CourseShell() {
     });
   }, [videoWatched, quizPassed]);
 
-  // Update quiz and hotspot state when changing topic
+  // Reset hotspot selection and open popovers when changing topic
   useEffect(() => {
-    setSelectedHotspotId(currentTopic.hotspotId || null);
+    setSelectedHotspotId(null);
     setActivePopover(null);
   }, [currentIndex, currentTopic, completed]);
 
@@ -549,18 +554,15 @@ export default function CourseShell() {
     try {
       soundManager.click();
     } catch {}
-    const targetHotspot = currentTopic.hotspotId
-      ? ARTICLE_HOTSPOTS.find((h) => h.id === currentTopic.hotspotId)
-      : ARTICLE_HOTSPOTS.find((h) => h.id.includes(currentTopic.specimenKey));
-
+    const targetHotspot = activeHotspots[0] || null;
     if (targetHotspot) {
       setSelectedHotspotId(targetHotspot.id);
-      setBobSpeech(`Inspecting ${targetHotspot.label}! ${targetHotspot.tip}`);
+      setBobSpeech(`${targetHotspot.label}: ${targetHotspot.tip}`);
     } else {
       setSelectedHotspotId(null);
-      setBobSpeech(`Inspecting ${currentTopic.title} in 3D! Check its physical orientation and connections.`);
+      setBobSpeech(`Inspecting ${currentTopic.title} in 3D.`);
     }
-  }, [currentTopic]);
+  }, [activeHotspots, currentTopic]);
 
   const doneCount = completed.filter((id) => FLAT_TOPICS.some((f) => f.id === id)).length;
   const progressPct = Math.round((doneCount / FLAT_TOPICS.length) * 100);
@@ -622,6 +624,8 @@ export default function CourseShell() {
 
   const handleOpenLectureFilm = useCallback(() => {
     try { soundManager.snap(); } catch {}
+    setCenterMode("presentation");
+    setPresentationPage(1);
     setVideoExpanded(true);
     setVideoHighlighted(true);
     setTimeout(() => setVideoHighlighted(false), 1400);
@@ -629,7 +633,7 @@ export default function CourseShell() {
       rightDockRef.current.scrollTo({ top: 0, behavior: "smooth" });
     }
     setBobSpeech(
-      `Playing the lesson video for ${currentTopic.title}. Watch along!`
+      `Opening lecture video for ${currentTopic.title}.`
     );
   }, [currentTopic]);
 
@@ -1209,9 +1213,11 @@ export default function CourseShell() {
                   try { soundManager.snap(); } catch {}
                   setCenterMode("3d-lab");
                   setActive3DStepIdx(0);
-                  if (ARTICLE_HOTSPOTS[0]) {
-                    setSelectedHotspotId(ARTICLE_HOTSPOTS[0].id);
-                    setBobSpeech(ARTICLE_HOTSPOTS[0].tip);
+                  if (activeHotspots[0]) {
+                    setSelectedHotspotId(activeHotspots[0].id);
+                    setBobSpeech(activeHotspots[0].tip);
+                  } else {
+                    setSelectedHotspotId(null);
                   }
                 }}
                 onProceedToQuiz={() => {
@@ -1229,20 +1235,6 @@ export default function CourseShell() {
             {/* MODE 2: INTERACTIVE 3D HARDWARE LAB */}
             {centerMode === "3d-lab" && (
               <>
-                {!currentTopic.isAssemblyLab && (
-                  <button
-                    type="button"
-                    className="wb-3d-return-pill"
-                    onClick={() => {
-                      try { soundManager.click(); } catch {}
-                      setCenterMode("presentation");
-                    }}
-                    title="Open the reading module"
-                  >
-                    Reading →
-                  </button>
-                )}
-
                 {currentTopic.isAssemblyLab ? (
                   <VirtualAssemblyLab
                     initialCompleted={completed.includes(currentTopic.id)}
@@ -1275,17 +1267,21 @@ export default function CourseShell() {
                 ) : (
                   <>
                     <LearnHardwareStage
+                      lessonKey={currentTopic.id}
                       specimenKey={currentTopic.specimenKey}
+                      topicConfig={activeTopicConfig}
                       selectedBuildPart={currentBuild?.[currentTopic.specimenKey] || null}
                       lessonTitle={currentTopic.title}
-                      hotspots={ARTICLE_HOTSPOTS}
+                      hotspots={activeHotspots}
                       selectedHotspotId={selectedHotspotId}
                       onSelectHotspotId={(id) => {
                         setSelectedHotspotId(id);
                         if (id) {
-                          const hs = ARTICLE_HOTSPOTS.find((h) => h.id === id);
+                          const idx = activeHotspots.findIndex((h) => h.id === id);
+                          if (idx !== -1) setActive3DStepIdx(idx);
+                          const hs = activeHotspots.find((h) => h.id === id);
                           if (hs) {
-                            setBobSpeech(`Checking ${hs.label}! Quick tip: ${hs.tip}`);
+                            setBobSpeech(`${hs.label}: ${hs.tip}`);
                           }
                         }
                       }}
@@ -1297,20 +1293,20 @@ export default function CourseShell() {
                       isPaused={showDashboardOverlay || showBriefingOverlay}
                     />
 
-                    {/* Guided 3D Component Stepper with Auto-Focus Camera & Progression Next Buttons */}
-                    {!showDashboardOverlay && !showBriefingOverlay && (
-                      <div className="wb-3d-guided-stepper" role="region" aria-label="3D Component Stepper">
+                    {/* Docked 3D Topic Stepper below Canvas (never covers Viewport Toolbar) */}
+                    {!showDashboardOverlay && !showBriefingOverlay && activeHotspots.length > 0 && (
+                      <div className="wb-3d-guided-stepper" role="region" aria-label="Topic Part Guide">
                         <div className="stepper-content">
                           <div className="stepper-meta-row">
                             <span className="stepper-kicker">
-                              3D Component Guide · Step {active3DStepIdx + 1} of {ARTICLE_HOTSPOTS.length}
+                              Part {active3DStepIdx + 1} of {activeHotspots.length}
                             </span>
                             <strong className="stepper-part-title">
-                              {ARTICLE_HOTSPOTS[active3DStepIdx]?.label}
+                              {activeHotspots[active3DStepIdx]?.label}
                             </strong>
                           </div>
                           <p className="stepper-part-desc">
-                            {ARTICLE_HOTSPOTS[active3DStepIdx]?.tip}
+                            {activeHotspots[active3DStepIdx]?.tip}
                           </p>
                         </div>
 
@@ -1325,29 +1321,29 @@ export default function CourseShell() {
                               } else {
                                 const newIdx = Math.max(0, active3DStepIdx - 1);
                                 setActive3DStepIdx(newIdx);
-                                setSelectedHotspotId(ARTICLE_HOTSPOTS[newIdx].id);
-                                setBobSpeech(ARTICLE_HOTSPOTS[newIdx].tip);
+                                setSelectedHotspotId(activeHotspots[newIdx].id);
+                                setBobSpeech(activeHotspots[newIdx].tip);
                                 try { soundManager.click(); } catch {}
                               }
                             }}
-                            title={active3DStepIdx === 0 ? "Return to Lesson Presentation" : "Inspect previous component"}
+                            title={active3DStepIdx === 0 ? "Switch to Reading" : "Previous part"}
                           >
-                            {active3DStepIdx === 0 ? "← Overview" : "Previous Component"}
+                            {active3DStepIdx === 0 ? "Reading" : "Previous"}
                           </button>
 
-                          {active3DStepIdx < ARTICLE_HOTSPOTS.length - 1 ? (
+                          {active3DStepIdx < activeHotspots.length - 1 ? (
                             <button
                               type="button"
                               className="btn-stepper-nav btn-stepper-next"
                               onClick={() => {
-                                const newIdx = Math.min(ARTICLE_HOTSPOTS.length - 1, active3DStepIdx + 1);
+                                const newIdx = Math.min(activeHotspots.length - 1, active3DStepIdx + 1);
                                 setActive3DStepIdx(newIdx);
-                                setSelectedHotspotId(ARTICLE_HOTSPOTS[newIdx].id);
-                                setBobSpeech(ARTICLE_HOTSPOTS[newIdx].tip);
+                                setSelectedHotspotId(activeHotspots[newIdx].id);
+                                setBobSpeech(activeHotspots[newIdx].tip);
                                 try { soundManager.snap(); } catch {}
                               }}
                             >
-                              Next Component →
+                              Next Part
                             </button>
                           ) : isLastTopicOfModule && isModuleTopicsCompleted ? (
                             <button
@@ -1359,7 +1355,7 @@ export default function CourseShell() {
                                 setShowQuizModal(true);
                               }}
                             >
-                              Take Module {currentTopic.moduleNum} Assessment →
+                              Module {currentTopic.moduleNum} Quiz
                             </button>
                           ) : (
                             <button
@@ -1368,7 +1364,7 @@ export default function CourseShell() {
                               onClick={handleNextTopic}
                               title="Proceed to next topic"
                             >
-                              Next Topic →
+                              Next Topic
                             </button>
                           )}
                         </div>
@@ -1450,14 +1446,12 @@ export default function CourseShell() {
                   <div className="wb-mini-viewport-container">
                     <LearnHardwareStage
                       isMini={true}
-                      onClickMini={() => {
-                        try { soundManager.snap(); } catch {}
-                        setCenterMode("3d-lab");
-                      }}
+                      lessonKey={currentTopic.id}
+                      topicConfig={activeTopicConfig}
                       specimenKey={currentTopic.isAssemblyLab ? "case" : currentTopic.specimenKey}
                       selectedBuildPart={currentBuild?.[currentTopic.specimenKey] || null}
                       lessonTitle={currentTopic.title}
-                      hotspots={ARTICLE_HOTSPOTS}
+                      hotspots={activeHotspots}
                       theme={workbenchTheme}
                       isExploded={isExploded}
                       isPaused={showDashboardOverlay || showBriefingOverlay}

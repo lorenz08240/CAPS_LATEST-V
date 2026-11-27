@@ -32,7 +32,7 @@
   --wb-border-strong: rgba(201, 199, 192, 0.38);
   --wb-text: #F5F4F0;
   --wb-muted: #C9C7C0;
-  --wb-dim: #8E8D88;
+  --wb-dim: #A2A19B;
   --wb-accent: #C9C7C0;
   --wb-accent-strong: #F5F4F0;
   --wb-accent-soft: rgba(201, 199, 192, 0.12);
@@ -630,25 +630,21 @@
   filter: brightness(1.06);
 }
 
-/* ── GUIDED 3D COMPONENT STEPPER OVERLAY ── */
+/* ── GUIDED 3D COMPONENT STEPPER (DOCKED BELOW CANVAS) ── */
 .wb-3d-guided-stepper {
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
-  right: 20px;
-  z-index: 40;
-  background: var(--wb-overlay-bg);
-  -webkit-backdrop-filter: blur(20px);
-  backdrop-filter: blur(20px);
+  position: relative;
+  flex-shrink: 0;
+  margin: 0 12px 12px;
+  z-index: 25;
+  background: var(--wb-card-bg);
   border: 1px solid var(--wb-border-strong);
-  border-radius: 14px;
-  padding: 14px 20px;
+  border-radius: 12px;
+  padding: 11px 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
   box-shadow: var(--wb-shadow);
-  animation: wbStepperSlideUp 300ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .stepper-content {
@@ -767,6 +763,11 @@
   width: 100%;
   height: 100%;
   z-index: 2;
+  cursor: grab;
+}
+
+.workbench-canvas:active {
+  cursor: grabbing;
 }
 
 .wb-mini-mouse-hint {
@@ -787,59 +788,62 @@
   white-space: nowrap;
 }
 
-/* 3D Callout Hotspot Pills */
+/* 3D Callout Hotspot Pills (High-Contrast, Non-Cluttered) */
 .workbench-hotspot-pill {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   padding: 4px 9px;
   border-radius: 6px;
-  border: 1px solid var(--wb-border-strong);
-  background: var(--wb-overlay-bg);
-  color: var(--wb-text);
-  font-size: 9.5px;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  border: 1px solid rgba(201, 199, 192, 0.35);
+  background: rgba(16, 17, 22, 0.92);
+  color: #F5F4F0;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
   white-space: nowrap;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
-  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.45);
+  transition: transform 150ms ease, border-color 150ms ease, background 150ms ease;
 }
 
 .workbench-hotspot-pill:hover,
 .workbench-hotspot-pill.is-active {
-  transform: scale(1.06);
-  border-color: var(--wb-cta-bg);
-  background: var(--wb-cta-bg);
-  color: var(--wb-cta-text);
+  transform: scale(1.05);
+  border-color: #f5e6c7;
+  background: #f5e6c7;
+  color: #0C0C0F;
+}
+
+.workbench-hotspot-pill:focus-visible {
+  outline: 2px solid #f5e6c7;
+  outline-offset: 2px;
 }
 
 .hotspot-dot {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  background: var(--wb-amber);
-  box-shadow: 0 0 0 3px var(--wb-amber-soft);
+  background: #b08d57;
+  flex-shrink: 0;
 }
 
 .workbench-hotspot-pill.is-active .hotspot-dot {
-  background: var(--wb-emerald);
-  box-shadow: none;
+  background: #0C0C0F;
 }
 
 .hotspot-label {
-  line-height: 1;
+  line-height: 1.1;
 }
 
 /* Top-Left Schematic Card */
 .workbench-schematic-card {
   position: absolute;
-  top: 56px;
+  top: 16px;
   left: 16px;
-  width: 220px;
+  width: 224px;
   background: var(--wb-card-bg);
-  border: 1px solid var(--wb-border);
+  border: 1px solid var(--wb-border-strong);
   border-radius: 12px;
   padding: 10px 12px;
   box-shadow: var(--wb-shadow);
@@ -1023,28 +1027,30 @@
 /* Bottom-Center 3D Viewport Toolbar */
 .workbench-toolbar {
   position: absolute;
-  bottom: 14px;
+  bottom: 12px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   align-items: center;
   gap: 4px;
   padding: 5px 8px;
-  border-radius: 11px;
-  background: var(--wb-card-bg);
-  border: 1px solid var(--wb-border);
-  box-shadow: var(--wb-shadow);
+  border-radius: 10px;
+  background: rgba(24, 24, 28, 0.94);
+  border: 1px solid rgba(201, 199, 192, 0.28);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.48);
   z-index: 15;
+  max-width: calc(100% - 24px);
+  overflow-x: auto;
 }
 
 .wb-tool-btn {
   min-width: 28px;
   height: 28px;
-  padding: 0 7px;
-  border-radius: 7px;
+  padding: 0 8px;
+  border-radius: 6px;
   border: 1px solid transparent;
   background: transparent;
-  color: var(--wb-text);
+  color: #F5F4F0;
   font-size: 11px;
   font-weight: 700;
   cursor: pointer;
@@ -1054,31 +1060,40 @@
 }
 
 .wb-tool-btn:hover {
-  background: var(--wb-card-alt);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.wb-tool-btn:focus-visible,
+.wb-tool-video-btn:focus-visible,
+.btn-stepper-nav:focus-visible,
+.btn-stepper-next:focus-visible,
+.btn-stepper-exam:focus-visible {
+  outline: 2px solid #f5e6c7;
+  outline-offset: 2px;
 }
 
 .wb-tool-btn.is-active {
-  background: var(--wb-accent-soft);
-  border-color: var(--wb-border-strong);
-  color: var(--wb-text);
+  background: rgba(245, 230, 199, 0.16);
+  border-color: rgba(245, 230, 199, 0.45);
+  color: #f5e6c7;
 }
 
 .wb-tool-sep {
   width: 1px;
   height: 16px;
-  background: var(--wb-border);
+  background: rgba(201, 199, 192, 0.24);
   margin: 0 2px;
 }
 
 .wb-tool-video-btn {
   padding: 5px 10px;
-  border-radius: 7px;
-  border: 1px solid var(--wb-border-strong);
-  background: var(--wb-cta-bg);
-  color: var(--wb-cta-text);
-  font-size: 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(245, 230, 199, 0.45);
+  background: #f5e6c7;
+  color: #0C0C0F;
+  font-size: 11px;
   font-weight: 800;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.02em;
   cursor: pointer;
   white-space: nowrap;
 }
