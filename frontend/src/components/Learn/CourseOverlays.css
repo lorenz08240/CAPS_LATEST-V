@@ -428,7 +428,7 @@
 
 .wb-shell.rail-collapsed .bob-floating-free {
   left: 7px !important;
-  bottom: 68px !important;
+  bottom: 80px !important;
 }
 
 .wb-shell:has(.is-3d-lab-fullscreen) .bob-floating-free .eyt-say,
